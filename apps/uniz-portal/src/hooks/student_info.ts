@@ -28,7 +28,7 @@ export function useStudentData() {
     // If no token, skip
     if (!tokenStr) return;
 
-    const token = tokenStr.replace(/^"|"$/g, '');
+    const token = tokenStr.replace(/^"|"$/g, "");
 
     try {
       const res = await fetch(STUDENT_INFO, {
@@ -37,7 +37,7 @@ export function useStudentData() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        redirect: "follow"
+        redirect: "follow",
       });
 
       const data: StudentInfoResponse = await res.json();
@@ -60,4 +60,4 @@ export function useStudentData() {
   }, []);
 
   return { refetch: fetchStudentData };
-};
+}

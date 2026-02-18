@@ -7,7 +7,7 @@ const DURATION = 30; // seconds
 const CONNECTIONS = 200; // Reduced to 200 for a realistic load test
 const PIPELINING = 1;
 
-console.log(`\n🚀 Starting UniZ Load Test - 200 Concurrent Users Simulation`);
+console.log(`\n Starting UniZ Load Test - 200 Concurrent Users Simulation`);
 console.log(`===========================================================`);
 console.log(`Target Backend: ${BACKEND_URL}`);
 console.log(`Target Frontend: ${FRONTEND_URL}`);
@@ -38,11 +38,11 @@ function stopMonitoring() {
 }
 
 function runLoadTest(url, name) {
-  console.log(`\n⚡ Testing ${name} (${url})...`);
+  console.log(`\n Testing ${name} (${url})...`);
   try {
     const cmd = `npx autocannon -c ${CONNECTIONS} -d ${DURATION} --latency "${url}"`;
     execSync(cmd, { stdio: "inherit" });
-    console.log(`✅ ${name} test completed.`);
+    console.log(` ${name} test completed.`);
   } catch (error) {
     console.error(`❌ ${name} test failed:`, error.message);
   }
@@ -66,7 +66,7 @@ function runLoadTest(url, name) {
 
   stopMonitoring();
 
-  console.log(`\n📊 Test Complete.`);
+  console.log(`\n Test Complete.`);
   console.log(
     `Check logs/load_test_monitor.log to see if CPU usage remained manageable.`,
   );

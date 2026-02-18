@@ -1,4 +1,3 @@
-
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { offCampus } from "../store";
 import { UPDATE_STUDENT_STATUS } from "../api/endpoints";
@@ -7,7 +6,13 @@ import { useState, useEffect } from "react";
 import { useIsAuth } from "../hooks/is_authenticated";
 import { toast } from "react-toastify";
 import { useOutsideCampus } from "../hooks/useOutsideCampus";
-import { Search, UserCircle2, Clock, CalendarDays, RefreshCcw } from "lucide-react";
+import {
+  Search,
+  UserCircle2,
+  Clock,
+  CalendarDays,
+  RefreshCcw,
+} from "lucide-react";
 import { Input } from "./Input";
 
 const StudentCardSkeleton = () => (
@@ -39,11 +44,12 @@ export default function UpdateStatus() {
 
   useEffect(() => {
     if (students) {
-       if (searchQuery.trim()) {
+      if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
-        const filtered = students.filter((student: any) => 
-            student.username.toLowerCase().includes(query) || 
-            student.name.toLowerCase().includes(query)
+        const filtered = students.filter(
+          (student: any) =>
+            student.username.toLowerCase().includes(query) ||
+            student.name.toLowerCase().includes(query),
         );
         setFilteredStudents(filtered);
       } else {
@@ -68,10 +74,12 @@ export default function UpdateStatus() {
         body: bodyData,
       });
       const data = await res.json();
-      
+
       if (data.success) {
         toast.success(data.msg);
-        setOffCampus((prev: any[]) => prev.filter((s: any) => s._id !== userId));
+        setOffCampus((prev: any[]) =>
+          prev.filter((s: any) => s._id !== userId),
+        );
       } else {
         toast.error(data.msg);
       }
@@ -91,106 +99,146 @@ export default function UpdateStatus() {
             Off-Campus Students
           </h1>
           <p className="text-slate-500 mt-1">
-             Manage students currently marked as outside the campus.
+            Manage students currently marked as outside the campus.
           </p>
         </div>
-        
+
         <div className="w-full md:w-72">
-            <Input 
-                placeholder="Search by name or ID..."
-                value={searchQuery}
-                onchangeFunction={(e: any) => setSearchQuery(e.target.value)}
-                icon={<Search className="w-4 h-4" />}
-            />
+          <Input
+            placeholder="Search by name or ID..."
+            value={searchQuery}
+            onchangeFunction={(e: any) => setSearchQuery(e.target.value)}
+            icon={<Search className="w-4 h-4" />}
+          />
         </div>
       </div>
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
-             Array.from({ length: 6 }).map((_, i) => <StudentCardSkeleton key={i} />)
+          Array.from({ length: 6 }).map((_, i) => (
+            <StudentCardSkeleton key={i} />
+          ))
         ) : filteredStudents.length > 0 ? (
           filteredStudents.map((student: any) => (
-             <div 
-                key={student._id} 
-                className="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all p-5 flex flex-col h-full"
-             >
-                <div className="flex items-start gap-4 mb-4 pb-4 border-b border-slate-100">
-                     <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
-                         <UserCircle2 className="w-6 h-6" />
-                     </div>
-                     <div>
-                         <h3 className="font-semibold text-slate-900 leading-tight">{student.name}</h3>
-                         <p className="text-sm text-slate-500 font-mono">{student.username}</p>
-                     </div>
+            <div
+              key={student._id}
+              className="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all p-5 flex flex-col h-full"
+            >
+              <div className="flex items-start gap-4 mb-4 pb-4 border-b border-slate-100">
+                <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
+                  <UserCircle2 className="w-6 h-6" />
                 </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 leading-tight">
+                    {student.name}
+                  </h3>
+                  <p className="text-sm text-slate-500 font-mono">
+                    {student.username}
+                  </p>
+                </div>
+              </div>
 
-                <div className="flex-1 space-y-4">
-                    {/* Outings */}
-                    {student.outings_list
-                      .filter((o: any) => !o.is_expired && o.is_approved)
-                      .map((outing: any) => (
-                        <div key={outing._id} className="bg-blue-50/50 rounded-md p-3 border border-blue-100">
-                             <div className="flex items-center gap-2 text-xs font-bold text-blue-700 uppercase mb-2">
-                                <Clock className="w-3.5 h-3.5" /> Outing
-                             </div>
-                             <div className="flex justify-between text-sm mb-1">
-                                 <span className="text-slate-500">From: <span className="text-slate-900 font-medium">{outing.from_time}</span></span>
-                                 <span className="text-slate-500">To: <span className="text-slate-900 font-medium">{outing.to_time}</span></span>
-                             </div>
-                             <p className="text-xs text-slate-500 italic mb-3">"{outing.reason}"</p>
-                             <Button 
-                                size="sm" 
-                                className="w-full"
-                                isLoading={updatingId === outing._id}
-                                onClick={() => updateStatus(student._id, outing._id)}
-                             >
-                                Mark as Returned
-                             </Button>
-                        </div>
-                    ))}
+              <div className="flex-1 space-y-4">
+                {/* Outings */}
+                {student.outings_list
+                  .filter((o: any) => !o.is_expired && o.is_approved)
+                  .map((outing: any) => (
+                    <div
+                      key={outing._id}
+                      className="bg-blue-50/50 rounded-md p-3 border border-blue-100"
+                    >
+                      <div className="flex items-center gap-2 text-xs font-bold text-blue-700 uppercase mb-2">
+                        <Clock className="w-3.5 h-3.5" /> Outing
+                      </div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-slate-500">
+                          From:{" "}
+                          <span className="text-slate-900 font-medium">
+                            {outing.from_time}
+                          </span>
+                        </span>
+                        <span className="text-slate-500">
+                          To:{" "}
+                          <span className="text-slate-900 font-medium">
+                            {outing.to_time}
+                          </span>
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 italic mb-3">
+                        "{outing.reason}"
+                      </p>
+                      <Button
+                        size="sm"
+                        className="w-full"
+                        isLoading={updatingId === outing._id}
+                        onClick={() => updateStatus(student._id, outing._id)}
+                      >
+                        Mark as Returned
+                      </Button>
+                    </div>
+                  ))}
 
-                    {/* Outpasses */}
-                    {student.outpasses_list
-                      .filter((o: any) => !o.is_expired && o.is_approved)
-                      .map((outpass: any) => (
-                         <div key={outpass._id} className="bg-purple-50/50 rounded-md p-3 border border-purple-100">
-                             <div className="flex items-center gap-2 text-xs font-bold text-purple-700 uppercase mb-2">
-                                <CalendarDays className="w-3.5 h-3.5" /> Outpass
-                             </div>
-                             <div className="flex justify-between text-sm mb-1">
-                                 <span className="text-slate-500">From: <span className="text-slate-900 font-medium">{outpass.from_day}</span></span>
-                                 <span className="text-slate-500">To: <span className="text-slate-900 font-medium">{outpass.to_day}</span></span>
-                             </div>
-                             <p className="text-xs text-slate-500 italic mb-3">"{outpass.reason}"</p>
-                             <Button 
-                                size="sm" 
-                                className="w-full"
-                                isLoading={updatingId === outpass._id}
-                                onClick={() => updateStatus(student._id, outpass._id)}
-                             >
-                                Mark as Returned
-                             </Button>
-                        </div>
-                    ))}
-                </div>
-                
-                <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between text-xs text-slate-400">
-                    <span>{student.email}</span>
-                    <span className="capitalize">{student.gender}</span>
-                </div>
-             </div>
+                {/* Outpasses */}
+                {student.outpasses_list
+                  .filter((o: any) => !o.is_expired && o.is_approved)
+                  .map((outpass: any) => (
+                    <div
+                      key={outpass._id}
+                      className="bg-purple-50/50 rounded-md p-3 border border-purple-100"
+                    >
+                      <div className="flex items-center gap-2 text-xs font-bold text-purple-700 uppercase mb-2">
+                        <CalendarDays className="w-3.5 h-3.5" /> Outpass
+                      </div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-slate-500">
+                          From:{" "}
+                          <span className="text-slate-900 font-medium">
+                            {outpass.from_day}
+                          </span>
+                        </span>
+                        <span className="text-slate-500">
+                          To:{" "}
+                          <span className="text-slate-900 font-medium">
+                            {outpass.to_day}
+                          </span>
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 italic mb-3">
+                        "{outpass.reason}"
+                      </p>
+                      <Button
+                        size="sm"
+                        className="w-full"
+                        isLoading={updatingId === outpass._id}
+                        onClick={() => updateStatus(student._id, outpass._id)}
+                      >
+                        Mark as Returned
+                      </Button>
+                    </div>
+                  ))}
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between text-xs text-slate-400">
+                <span>{student.email}</span>
+                <span className="capitalize">{student.gender}</span>
+              </div>
+            </div>
           ))
         ) : (
-             <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
-                 <div className="bg-slate-50 p-4 rounded-full mb-4">
-                     <RefreshCcw className="w-8 h-8 text-slate-300" />
-                 </div>
-                 <h3 className="text-lg font-medium text-slate-900">No active students outside</h3>
-                 <p className="text-slate-500 max-w-sm mx-auto mt-1">
-                    {searchQuery ? `No results for "${searchQuery}"` : "All students are currently marked as present in campus."}
-                 </p>
-             </div>
+          <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
+            <div className="bg-slate-50 p-4 rounded-full mb-4">
+              <RefreshCcw className="w-8 h-8 text-slate-300" />
+            </div>
+            <h3 className="text-lg font-medium text-slate-900">
+              No active students outside
+            </h3>
+            <p className="text-slate-500 max-w-sm mx-auto mt-1">
+              {searchQuery
+                ? `No results for "${searchQuery}"`
+                : "All students are currently marked as present in campus."}
+            </p>
+          </div>
         )}
       </div>
     </div>

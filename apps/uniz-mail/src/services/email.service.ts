@@ -11,7 +11,7 @@ const emailPass = process.env.EMAIL_PASS;
 
 if (process.env.NODE_ENV === "production" && (!emailUser || !emailPass)) {
   console.warn(
-    "⚠️ EMAIL_USER and EMAIL_PASS are missing in production. Using fallbacks.",
+    " EMAIL_USER and EMAIL_PASS are missing in production. Using fallbacks.",
   );
 }
 

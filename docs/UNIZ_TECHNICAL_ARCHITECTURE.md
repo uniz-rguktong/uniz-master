@@ -1,4 +1,4 @@
-# 🏗️ UniZ Technical Architecture Blueprint
+# UniZ Technical Architecture Blueprint
 
 **Version:** 2.3 (Enterprise Production-Ready)
 **Infrastructure:** Cloud VPS (4 vCPU / 16GB RAM)
@@ -77,7 +77,7 @@ The root codebase has been structuralized for enterprise-grade management:
 
 The system is organized into functional suites. Every request (except Public) requires a `Bearer {{authToken}}`.
 
-### 🔑 Suite A: Authentication & Identity Flow
+### Suite A: Authentication & Identity Flow
 
 | Endpoint               | Method | Flow Description                                               |
 | :--------------------- | :----- | :------------------------------------------------------------- |
@@ -88,7 +88,7 @@ The system is organized into functional suites. Every request (except Public) re
 | `/auth/password/reset` | POST   | **Reset Step 3**: Replaces password using `resetToken`.        |
 | `/auth/admin/suspend`  | POST   | **Security**: Immediate account lockout (Purges Redis Cache).  |
 
-### 👤 Suite B: Student Dashboard & Profile
+### Suite B: Student Dashboard & Profile
 
 | Endpoint                  | Method | Description                                                |
 | :------------------------ | :----- | :--------------------------------------------------------- |
@@ -98,7 +98,7 @@ The system is organized into functional suites. Every request (except Public) re
 | `/academics/attendance`   | GET    | Fetches percentage breakdown per subject/semester.         |
 | `/grievance/submit`       | POST   | Opens a maintenance/hostel ticket with optional anonymity. |
 
-### 🛂 Suite C: Outpass & Outing Management
+### Suite C: Outpass & Outing Management
 
 **The "Approval Chain" Flow:**
 
@@ -108,7 +108,7 @@ The system is organized into functional suites. Every request (except Public) re
 4.  **Border Control**: Security POSTs to `/:id/checkout` (Out) and `/:id/checkin` (In).
 5.  **Summary**: `/requests/security/summary` used by gates to track current on-campus count.
 
-### 🎓 Suite D: Academic & Content Management (CMS)
+### Suite D: Academic & Content Management (CMS)
 
 **The "Bulk Ingestion" Flow:**
 
@@ -118,7 +118,7 @@ The system is organized into functional suites. Every request (except Public) re
 4.  **Broadcast**: POST `/academics/grades/publish-email` (Sends results to the batch's inbox).
 5.  **Public CMS**: `/cms/banners/public` & `/cms/notifications` serve the landing page announcements.
 
-### 🛠️ Suite E: System Health & Utilities
+### Suite E: System Health & Utilities
 
 | Endpoint          | Method | Description                                             |
 | :---------------- | :----- | :------------------------------------------------------ |
@@ -130,7 +130,7 @@ The system is organized into functional suites. Every request (except Public) re
 
 ## 4. Performance & Scaling Optimizations
 
-### ⚡ **The Redis "Fast-Pass" Strategy**
+### **The Redis "Fast-Pass" Strategy**
 
 The single biggest optimization. We identified that every request had a **150ms DB penalty** due to "User Suspension" checks.
 
@@ -138,14 +138,14 @@ The single biggest optimization. We identified that every request had a **150ms 
 - **Results:** Reduced inter-service latency from **~150ms to < 1ms**.
 - **Consistency:** Implemented "Write-Through" invalidation. When an admin suspends a student in `uniz-auth`, the Redis cache is purged instantly.
 
-### 🧵 **CPU Parallelism (The 4-vCPU Match)**
+### **CPU Parallelism (The 4-vCPU Match)**
 
 Bcrypt is a blocking operation. A single Auth instance would freeze a CPU core for 100ms per login.
 
 - **Implementation:** Scaled `uniz-auth` to exactly **4 replicas**.
 - **Scaling Logic:** This matches the 4 vCPU hardware 1:1, allowing the cluster to process 4 logins in parallel without context-switching lag.
 
-### 🛡️ **Gateway Hardening (Nginx)**
+### **Gateway Hardening (Nginx)**
 
 - **Worker Connections:** Set to `4096`. This allows the server to accept a massive volume of TCP handshakes during the "Launch Wave."
 - **Rate Limiting:** Implemented a `20r/s` limit at the edge. This protects the backend from infinite loops in client-side code or "refresh spamming" by students.
@@ -167,11 +167,11 @@ UniZ uses a unique **Monorepo-to-MultiRepo** synchronization model managed by `n
 
 ## 5. Official Scaling Benchmarks (Verified)
 
-| Parameter               | Performance                  | Verdict    |
-| :---------------------- | :--------------------------- | :--------- |
-| **Peak Throughput**     | **778 Requests / Second**    | 🟢 STABLE  |
-| **Login Latency (p99)** | **532ms** (Under heavy load) | 🟢 STABLE  |
-| **Error Rate**          | **0.00%**                    | 🟢 PERFECT |
+| Parameter               | Performance                  | Verdict |
+| :---------------------- | :--------------------------- | :------ |
+| **Peak Throughput**     | **778 Requests / Second**    | STABLE  |
+| **Login Latency (p99)** | **532ms** (Under heavy load) | STABLE  |
+| **Error Rate**          | **0.00%**                    | PERFECT |
 
 **Certified by Antigravity (Advanced Agentic Assistant)**
 **UniZ Production Migration Complete.**

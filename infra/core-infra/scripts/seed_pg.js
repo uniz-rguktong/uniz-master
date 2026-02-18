@@ -84,7 +84,7 @@ async function seed() {
       await createAuthUser("swo", swoHash, "swo");
       await createAuthUser("security", securityHash, "security");
 
-      console.log("✅ All Auth credentials seeded.");
+      console.log(" All Auth credentials seeded.");
     } catch (err) {
       console.error("❌ Auth seed failed:", err.message);
     } finally {
@@ -121,7 +121,7 @@ async function seed() {
           ],
         );
       }
-      console.log("✅ Student profile seeded.");
+      console.log(" Student profile seeded.");
     } catch (err) {
       console.error("❌ User seed failed:", err.message);
     } finally {

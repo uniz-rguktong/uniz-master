@@ -21,9 +21,9 @@ async function main() {
     await prisma.facultyProfile.deleteMany();
     await prisma.adminProfile.deleteMany();
     await prisma.banner.deleteMany();
-    console.log("✅ Deleted old user data.");
+    console.log(" Deleted old user data.");
   } catch (e) {
-    console.warn("⚠️  Could not clean old data, proceeding...");
+    console.warn("  Could not clean old data, proceeding...");
   }
 
   // 2. Seed Admin Profiles
@@ -53,7 +53,7 @@ async function main() {
       },
     });
   }
-  console.log("✅ Seeded Admin profiles with deterministic IDs.");
+  console.log(" Seeded Admin profiles with deterministic IDs.");
 
   // 3. Seed Student Profiles
   const students = [
@@ -91,9 +91,9 @@ async function main() {
       },
     });
   }
-  console.log(`✅ Seeded student profiles with deterministic IDs.`);
+  console.log(` Seeded student profiles with deterministic IDs.`);
 
-  console.log("✅ User Service Seeding finished.");
+  console.log(" User Service Seeding finished.");
 }
 
 main()

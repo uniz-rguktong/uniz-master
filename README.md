@@ -1,34 +1,34 @@
 # UniZ - University Management System
 
-Welcome to the internal source code repository for UniZ.
+This repository serves as the Master Vault for the UniZ ecosystem, consolidating all microservices and infrastructure components into a single management point.
 
-## 🔒 Private Repository Access
+## Repository Structure
 
-All core repositories for the UniZ system are **PRIVATE** to restrict access to authorized personnel only. This includes:
+The codebase is organized into functional divisions to ensure modularity and ease of maintenance:
 
-- `uniz-master-vault` (Core Monorepo)
-- `uniz-infrastructure` (DevOps & Testing)
-- `uniz-gateway` (API Gateway)
-- `uniz-auth` (Authentication)
-- `uniz-user` (User Management)
-- `uniz-outpass` (Outpass System)
-- `uniz-academics` (Academic Records)
-- `uniz-files` (File Storage)
-- `uniz-mail` (Email Services)
-- `uniz-notifications` (Notification Dispatch)
-- `uniz-cron` (Scheduled Tasks)
+- **apps/**: Contains individual microservice repositories, including Auth, User, Academics, Outpass, Mail, and the Portal Frontend.
+- **infra/**: Contains the core infrastructure configurations, including Kubernetes manifests and Docker orchestration logic.
+- **scripts/**: Centralized automation scripts for synchronization, development, and system maintenance.
+- **docs/**: Technical specifications, architecture blueprints, and performance reports.
+- **tests/**: Global integration and end-to-end testing suites.
 
-## 🏗️ System Architecture
+## Multi-Repo Synchronization
 
-UniZ utilizes a microservices architecture orchestrated via Docker.
+UniZ utilizes a proprietary synchronization model that allows individual microservices to maintain their own repositories while being centrally managed within this vault.
 
-### Key Components
+### Command Reference
 
-- **Gateway**: Nginx-based entry point handling all traffic.
-- **Auth Service**: JWT-based identity management.
-- **User Service**: Profile and role management.
-- **Outpass Service**: Student movement and permissions.
-- **Academics Service**: Grading, attendance, and results publishing.
-- **Infrastructure**: Redis, PostgreSQL, and Docker Compose for orchestration.
+- **npm install**: Installs dependencies for the root and all sub-modules.
+- **npm run push**: Synchronizes changes from the vault to individual service repositories and the main vault.
+- **npm run pull**: Retrieves the latest updates from all individual service repositories.
+- **npm run dev**: Initializes the local microservices development environment.
+- **npm test**: Executes the comprehensive end-to-end integration suite.
 
-For setup and deployment instructions, please refer to the `uniz-infrastructure` repository.
+## Security and Compliance
+
+Access to this repository and its contents is strictly limited to authorized personnel. All environment configurations and sensitive data are managed within this private ecosystem to ensure maximum security.
+
+---
+
+Performance Certified for Production Deployment.
+Corporate Technical Infrastructure.

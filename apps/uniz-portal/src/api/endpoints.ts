@@ -1,17 +1,16 @@
-
-
-
 // Set this to your Azure VM IP or Domain in .env as VITE_API_URL
-export const BASE_URL = import.meta.env.VITE_API_URL || (
-  import.meta.env.VITE_NODE_ENV === "production"
+export const BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.VITE_NODE_ENV === "production"
     ? "https://uniz-gateway.vercel.app/api/v1"
-    : "http://localhost:3000/api/v1"
-);
+    : "http://localhost:3000/api/v1");
 
 // New Microservices Architecture Endpoints
 // Auth
-export const SIGNIN = (_type: "student" | "admin" | "faculty") => `${BASE_URL}/auth/login`;
-export const SIGNUP = (_type: "student" | "admin" | "faculty") => `${BASE_URL}/auth/signup`;
+export const SIGNIN = (_type: "student" | "admin" | "faculty") =>
+  `${BASE_URL}/auth/login`;
+export const SIGNUP = (_type: "student" | "admin" | "faculty") =>
+  `${BASE_URL}/auth/signup`;
 export const FORGOT_PASS_ENDPOINT = `${BASE_URL}/auth/otp/request`;
 export const VERIFY_OTP_ENDPOINT = `${BASE_URL}/auth/otp/verify`;
 export const SET_NEW_PASS_ENDPOINT = `${BASE_URL}/auth/password/reset`;
@@ -27,15 +26,22 @@ export const SEARCH_STUDENTS = `${BASE_URL}/profile/student/search`;
 export const REQUEST_OUTING = `${BASE_URL}/requests/outing`;
 export const REQUEST_OUTPASS = `${BASE_URL}/requests/outpass`;
 export const STUDENT_HISTORY = `${BASE_URL}/requests/history`;
-export const ADMIN_STUDENT_HISTORY = (id: string) => `${BASE_URL}/requests/history/${id}`;
+export const ADMIN_STUDENT_HISTORY = (id: string) =>
+  `${BASE_URL}/requests/history/${id}`;
 
 // Admin / Approvals (Through Requests Service)
-export const APPROVE_OUTING = (id: string) => `${BASE_URL}/requests/${id}/approve`;
-export const REJECT_OUTING = (id: string) => `${BASE_URL}/requests/${id}/reject`;
-export const FORWARD_OUTING = (id: string) => `${BASE_URL}/requests/${id}/forward`;
-export const APPROVE_OUTPASS = (id: string) => `${BASE_URL}/requests/${id}/approve`;
-export const REJECT_OUTPASS = (id: string) => `${BASE_URL}/requests/${id}/reject`;
-export const FORWARD_OUTPASS = (id: string) => `${BASE_URL}/requests/${id}/forward`;
+export const APPROVE_OUTING = (id: string) =>
+  `${BASE_URL}/requests/${id}/approve`;
+export const REJECT_OUTING = (id: string) =>
+  `${BASE_URL}/requests/${id}/reject`;
+export const FORWARD_OUTING = (id: string) =>
+  `${BASE_URL}/requests/${id}/forward`;
+export const APPROVE_OUTPASS = (id: string) =>
+  `${BASE_URL}/requests/${id}/approve`;
+export const REJECT_OUTPASS = (id: string) =>
+  `${BASE_URL}/requests/${id}/reject`;
+export const FORWARD_OUTPASS = (id: string) =>
+  `${BASE_URL}/requests/${id}/forward`;
 
 // Bulk fetch
 export const GET_OUTING_REQUESTS = `${BASE_URL}/requests/outing/all`;

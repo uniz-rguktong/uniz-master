@@ -106,7 +106,7 @@ export const authMiddleware = async (
     } catch (apiError: any) {
       if (apiError.response?.status === 404) {
         console.warn(
-          `[AUTH-CHECK] ⚠️ User ${parsed.data.id} not found in auth records.`,
+          `[AUTH-CHECK]  User ${parsed.data.id} not found in auth records.`,
         );
         return res.status(401).json({
           code: ErrorCode.AUTH_INVALID_CREDENTIALS,

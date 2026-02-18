@@ -20,6 +20,6 @@
 //                 setOffCampus(data.studens);
 //             }
 //             getDetails();
-//             setInterval(()=>getDetails(),60*1000)  
+//             setInterval(()=>getDetails(),60*1000)
 //     }},[])
 // }

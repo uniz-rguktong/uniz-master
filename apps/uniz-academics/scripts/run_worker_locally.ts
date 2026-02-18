@@ -5,7 +5,7 @@ import { redis } from "../src/utils/redis.util";
 dotenv.config();
 
 async function runLocalWorker() {
-  console.log("🚀 Starting Local Worker...");
+  console.log(" Starting Local Worker...");
 
   let hasJobs = true;
   while (hasJobs) {
@@ -14,7 +14,7 @@ async function runLocalWorker() {
       // Check if there are items in the queue
       const queueLength = await redis.llen("job:queue");
       if (queueLength === 0) {
-        console.log("✅ Queue is empty. Worker finished.");
+        console.log(" Queue is empty. Worker finished.");
         hasJobs = false;
         break;
       }
@@ -26,7 +26,7 @@ async function runLocalWorker() {
         console.log("No result returned, stopping.");
         hasJobs = false;
       } else if (result.status === "completed") {
-        console.log("✅ Batch completed successfully.");
+        console.log(" Batch completed successfully.");
       } else if (result.status === "continued") {
         console.log(`🔄 Job continued. Remaining rows: ${result.remaining}`);
         // Small delay to prevent hammering local CPU/Network too hard

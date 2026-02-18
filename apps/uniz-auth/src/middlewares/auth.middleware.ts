@@ -80,7 +80,7 @@ export const authMiddleware = async (
 
       if (!user) {
         console.warn(
-          `[AUTH-CHECK] ⚠️ User ${parsed.data.id} not found in database.`,
+          `[AUTH-CHECK]  User ${parsed.data.id} not found in database.`,
         );
         return res.status(401).json({
           code: ErrorCode.AUTH_INVALID_CREDENTIALS,

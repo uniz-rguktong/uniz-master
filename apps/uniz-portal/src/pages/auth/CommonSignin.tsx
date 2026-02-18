@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { Input } from "../../components/Input";
@@ -7,8 +6,21 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { adminUsername, is_authenticated, resetTokenState } from "../../store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { SIGNIN, FORGOT_PASS_ENDPOINT, VERIFY_OTP_ENDPOINT, SET_NEW_PASS_ENDPOINT } from "../../api/endpoints";
-import { User, Lock, Mail, KeyRound, ArrowLeft, GraduationCap, ChevronLeft } from "lucide-react";
+import {
+  SIGNIN,
+  FORGOT_PASS_ENDPOINT,
+  VERIFY_OTP_ENDPOINT,
+  SET_NEW_PASS_ENDPOINT,
+} from "../../api/endpoints";
+import {
+  User,
+  Lock,
+  Mail,
+  KeyRound,
+  ArrowLeft,
+  GraduationCap,
+  ChevronLeft,
+} from "lucide-react";
 
 type SigninProps = {
   type: "student" | "admin" | "faculty";
@@ -39,7 +51,12 @@ export default function Signin({ type }: SigninProps) {
   // Redirect if already authenticated
   useEffect(() => {
     if (authState.is_authnticated) {
-      const redirectPath = authState.type === "student" ? "/student" : authState.type === "admin" ? "/admin" : "/faculty";
+      const redirectPath =
+        authState.type === "student"
+          ? "/student"
+          : authState.type === "admin"
+            ? "/admin"
+            : "/faculty";
       navigate(redirectPath, { replace: true });
     }
   }, [authState, navigate]);
@@ -51,7 +68,9 @@ export default function Signin({ type }: SigninProps) {
     }
 
     if (type === "student" && !username.toUpperCase().includes("O")) {
-      toast.error("Student username must be your college ID (e.g., containing 'o')");
+      toast.error(
+        "Student username must be your college ID (e.g., containing 'o')",
+      );
       return;
     }
 
@@ -65,34 +84,54 @@ export default function Signin({ type }: SigninProps) {
       const response = await fetch(SIGNIN(type), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username.trim(), password: password.trim() }),
+        body: JSON.stringify({
+          username: username.trim(),
+          password: password.trim(),
+        }),
       });
 
       if (!response.ok) throw new Error(`Server error: ${response.status}`);
       const data: SigninResponse = await response.json();
 
-      if (data.msg && !data.student_token && !data.admin_token && !(data as any).token) {
+      if (
+        data.msg &&
+        !data.student_token &&
+        !data.admin_token &&
+        !(data as any).token
+      ) {
         toast.error(data.msg);
         return;
       }
 
       // Explicit Role Mismatch Checks
       if (type === "admin" && data.role === "student") {
-        toast.error("This account is a Student account. Please use the Student Login.");
+        toast.error(
+          "This account is a Student account. Please use the Student Login.",
+        );
         return;
       }
-      if (type === "student" && (data.role === "admin" || data.role === "webmaster")) {
+      if (
+        type === "student" &&
+        (data.role === "admin" || data.role === "webmaster")
+      ) {
         toast.error("This is an Admin account. Please use the Admin Login.");
         return;
       }
 
       if (type === "student" && data.student_token && data.role === "student") {
-        localStorage.setItem("student_token", JSON.stringify(data.student_token));
+        localStorage.setItem(
+          "student_token",
+          JSON.stringify(data.student_token),
+        );
         localStorage.setItem("username", JSON.stringify(username.trim()));
         setAuth({ is_authnticated: true, type: "student" });
         toast.success(`Welcome back, ${username.trim()}!`);
         navigate("/student", { replace: true });
-      } else if (type === "admin" && data.admin_token && (data.role === "admin" || data.role === "webmaster")) {
+      } else if (
+        type === "admin" &&
+        data.admin_token &&
+        (data.role === "admin" || data.role === "webmaster")
+      ) {
         localStorage.setItem("admin_token", JSON.stringify(data.admin_token));
         localStorage.setItem("username", JSON.stringify(username.trim()));
         localStorage.setItem("admin_role", (data as any).role || "admin");
@@ -102,7 +141,10 @@ export default function Signin({ type }: SigninProps) {
         navigate("/admin", { replace: true });
       } else if (type === "faculty" && (data as any).token) {
         // ... existing faculty logic ...
-        localStorage.setItem("faculty_token", JSON.stringify((data as any).token));
+        localStorage.setItem(
+          "faculty_token",
+          JSON.stringify((data as any).token),
+        );
         localStorage.setItem("username", JSON.stringify(username.trim()));
         localStorage.setItem("role", (data as any).role);
         setAuth({ is_authnticated: true, type: "faculty" });
@@ -163,7 +205,7 @@ export default function Signin({ type }: SigninProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: username.trim(),
-          otp: otp.trim()
+          otp: otp.trim(),
         }),
       });
       const data = await response.json();
@@ -199,7 +241,7 @@ export default function Signin({ type }: SigninProps) {
         body: JSON.stringify({
           username: username.trim(),
           resetToken: resetToken,
-          newPassword: newPassword
+          newPassword: newPassword,
         }),
       });
 
@@ -237,9 +279,10 @@ export default function Signin({ type }: SigninProps) {
       <Button
         variant="ghost"
         className="absolute top-4 left-4 p-2 text-slate-500 hover:text-slate-900 transition-colors"
-        onClick={() => navigate('/')}
+        onClick={() => navigate("/")}
       >
-        <ChevronLeft className="w-6 h-6" /> <span className="sr-only">Back to Home</span>
+        <ChevronLeft className="w-6 h-6" />{" "}
+        <span className="sr-only">Back to Home</span>
       </Button>
 
       <div className="w-full max-w-md bg-white border border-white shadow-xl rounded-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
@@ -257,17 +300,21 @@ export default function Signin({ type }: SigninProps) {
           </div>
           <h2 className="text-xl font-bold text-white tracking-tight">
             {step === "signin"
-              ? type === "student" ? "Student Login" : type === "faculty" ? "Faculty Portal" : "Administrator"
-              : step === "forgot" ? "Reset Password" : "New Credentials"
-            }
+              ? type === "student"
+                ? "Student Login"
+                : type === "faculty"
+                  ? "Faculty Portal"
+                  : "Administrator"
+              : step === "forgot"
+                ? "Reset Password"
+                : "New Credentials"}
           </h2>
           <p className="text-slate-400 text-sm mt-2">
             {step === "signin"
               ? "Enter your credentials to access the portal"
               : step === "forgot"
                 ? "We'll send an OTP to your registered email"
-                : "Secure your account with a strong password"
-            }
+                : "Secure your account with a strong password"}
           </p>
         </div>
 
@@ -280,7 +327,13 @@ export default function Signin({ type }: SigninProps) {
                 icon={<User className="w-4 h-4" />}
                 value={username}
                 onChange={(e) => setUsername(e.target.value.toUpperCase())}
-                placeholder={type === 'student' ? 'University ID' : type === 'faculty' ? 'Staff ID / Email' : 'Admin ID'}
+                placeholder={
+                  type === "student"
+                    ? "University ID"
+                    : type === "faculty"
+                      ? "Staff ID / Email"
+                      : "Admin ID"
+                }
               />
               <Input
                 label="Password"
@@ -340,7 +393,8 @@ export default function Signin({ type }: SigninProps) {
                   className="inline-flex items-center text-sm text-slate-500 hover:text-slate-700 font-medium transition-all group"
                   onClick={() => setStep("signin")}
                 >
-                  <ArrowLeft className="w-3 h-3 mr-1 group-hover:-translate-x-1 transition-transform" /> Back to Login
+                  <ArrowLeft className="w-3 h-3 mr-1 group-hover:-translate-x-1 transition-transform" />{" "}
+                  Back to Login
                 </button>
               </div>
             </div>

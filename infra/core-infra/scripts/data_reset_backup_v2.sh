@@ -19,7 +19,7 @@ reset_db_and_seed() {
   RAW_DB_URL="${!DB_URL_VAR}"
   
   if [ -z "$RAW_DB_URL" ]; then
-    echo "⚠️  Skipping $SERVICE_NAME: $DB_URL_VAR is not set."
+    echo "  Skipping $SERVICE_NAME: $DB_URL_VAR is not set."
     return
   fi
 
@@ -28,7 +28,7 @@ reset_db_and_seed() {
     # Replace 'uniz-postgres' with 'localhost' so the host machine can connect
     DB_URL="${RAW_DB_URL/uniz-postgres/localhost}"
     
-    echo "🗑️  Resetting $SERVICE_NAME (Local Source)..."
+    echo "🗑  Resetting $SERVICE_NAME (Local Source)..."
     FORCE_COLOR=1 DATABASE_URL="$DB_URL" npx prisma db push --schema="$SCHEMA_REL_PATH" --force-reset --accept-data-loss > /dev/null 2>&1
     
     # Seeding
@@ -41,7 +41,7 @@ reset_db_and_seed() {
   else
     # Check if container is running
     if docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
-      echo "🗑️  Resetting $SERVICE_NAME (Docker Container)..."
+      echo "🗑  Resetting $SERVICE_NAME (Docker Container)..."
       # DB_URL inside container is already correct (uniz-postgres), executed inside
       docker exec -e FORCE_COLOR=1 "$CONTAINER_NAME" npx prisma db push --schema=prisma/schema.prisma --force-reset --accept-data-loss > /dev/null 2>&1
       
@@ -52,7 +52,7 @@ reset_db_and_seed() {
         docker exec -e FORCE_COLOR=1 "$CONTAINER_NAME" npx ts-node prisma/seed.ts > /dev/null 2>&1
       fi
     else
-      echo "⚠️  Skipping $SERVICE_NAME: Source code not found locally AND container '$CONTAINER_NAME' is not running."
+      echo "  Skipping $SERVICE_NAME: Source code not found locally AND container '$CONTAINER_NAME' is not running."
       echo "   To fix: Run 'npm run docker:up' or 'npm run deploy:vps' to start containers first."
     fi
   fi
@@ -68,4 +68,4 @@ reset_db_and_seed "Cron" "uniz-cron" "uniz-cron-service" "CRON_DATABASE_URL"
 reset_db_and_seed "Mail" "uniz-mail" "uniz-mail-service" "MAIL_DATABASE_URL"
 reset_db_and_seed "Notifications" "uniz-notifications" "uniz-notification-service" "NOTIFICATION_DATABASE_URL"
 
-echo "✅ Database schema reset & seed operations complete."
+echo " Database schema reset & seed operations complete."

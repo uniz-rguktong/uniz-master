@@ -1,27 +1,24 @@
-import { useState, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
-import axios from 'axios';
-import { student } from '../../store';
+import { useState, useEffect } from "react";
+import { useRecoilValue } from "recoil";
+import axios from "axios";
+import { student } from "../../store";
 
-import { ChevronDown, Award, AlertCircle } from 'lucide-react';
-import { GET_GRADES } from '../../api/endpoints';
-
-
+import { ChevronDown, Award, AlertCircle } from "lucide-react";
+import { GET_GRADES } from "../../api/endpoints";
 
 // Helper function to truncate long text
 
-
 // Pikachu image URL (you can replace with a local asset)
-const PIKACHU_IMAGE = '/pikachu.png';
+const PIKACHU_IMAGE = "/pikachu.png";
 
 export default function GradeHub() {
   const user = useRecoilValue(student);
   // Hardcoded options as per requirements
-  const years = ['E1', 'E2', 'E3', 'E4'];
-  const semesterOptions = ['Sem 1', 'Sem 2'];
+  const years = ["E1", "E2", "E3", "E4"];
+  const semesterOptions = ["Sem 1", "Sem 2"];
 
-  const [selectedYear, setSelectedYear] = useState(user?.year || 'E1');
-  const [selectedSemester, setSelectedSemester] = useState('Sem 1');
+  const [selectedYear, setSelectedYear] = useState(user?.year || "E1");
+  const [selectedSemester, setSelectedSemester] = useState("Sem 1");
 
   // Update year when user data loads
   useEffect(() => {
@@ -29,18 +26,20 @@ export default function GradeHub() {
   }, [user]);
   const [grades, setGrades] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [resultsFetched, setResultsFetched] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const [loadingMessage, setLoadingMessage] = useState('Pikachu is fetching your records!');
+  const [loadingMessage, setLoadingMessage] = useState(
+    "Pikachu is fetching your records!",
+  );
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isLoading) {
-      setLoadingMessage('getting your results!');
+      setLoadingMessage("getting your results!");
       timer = setTimeout(() => {
-        setLoadingMessage('Pikachu is looking for details...');
+        setLoadingMessage("Pikachu is looking for details...");
       }, 1000);
     }
     return () => clearTimeout(timer);
@@ -48,47 +47,49 @@ export default function GradeHub() {
 
   // Helper to map points to letter grades
   const pointToGrade = (point: number) => {
-    if (point >= 10) return 'Ex';
-    if (point >= 9) return 'A';
-    if (point >= 8) return 'B';
-    if (point >= 7) return 'C';
-    if (point >= 6) return 'D';
-    if (point >= 5) return 'E';
-    return 'R';
+    if (point >= 10) return "Ex";
+    if (point >= 9) return "A";
+    if (point >= 8) return "B";
+    if (point >= 7) return "C";
+    if (point >= 6) return "D";
+    if (point >= 5) return "E";
+    return "R";
   };
 
   // Handle Fetch Results button click
   const handleFetchResults = async () => {
     if (!user?.username) {
-      setError('Please sign in to view grades');
+      setError("Please sign in to view grades");
       return;
     }
 
     if (!selectedYear || !selectedSemester) {
-      setError('Please select both a year and a semester');
+      setError("Please select both a year and a semester");
       return;
     }
 
     setIsLoading(true);
-    setError('');
+    setError("");
     setGrades(null);
     setGrades(null);
 
     try {
-      const token = localStorage.getItem('student_token')?.replace(/^"|"$/g, '');
+      const token = localStorage
+        .getItem("student_token")
+        ?.replace(/^"|"$/g, "");
 
       // Map "Sem 1" -> "SEM-1" and "Sem 2" -> "SEM-2"
-      const mappedSemester = selectedSemester === 'Sem 1' ? 'SEM-1' : 'SEM-2';
+      const mappedSemester = selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
 
       const response = await axios.get(GET_GRADES, {
         params: {
           studentId: user.username,
           semester: mappedSemester,
-          year: selectedYear
+          year: selectedYear,
         },
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       const data = response.data;
@@ -104,7 +105,7 @@ export default function GradeHub() {
           credits: g.subject.credits,
           grade: pointToGrade(g.grade),
           points: g.grade,
-          contribution: (g.grade * g.subject.credits)
+          contribution: g.grade * g.subject.credits,
         }));
 
         // Generate Visualization Data
@@ -115,12 +116,12 @@ export default function GradeHub() {
 
         const pieChart = {
           labels: Object.keys(gradeCounts),
-          data: Object.values(gradeCounts)
+          data: Object.values(gradeCounts),
         };
 
         const barChart = formattedGrades.map((g: any) => ({
           subject: g.subject,
-          points: g.points
+          points: g.points,
         }));
 
         const transformedData = {
@@ -131,28 +132,32 @@ export default function GradeHub() {
           calculation_details: formattedGrades,
           visualization_data: {
             pieChart,
-            barChart
+            barChart,
           },
-          motivational_messages: data.motivation ? [data.motivation] : []
+          motivational_messages: data.motivation ? [data.motivation] : [],
         };
 
         setGrades(transformedData);
         setResultsFetched(true);
-
-
-      } else if (data && (data.success || data.calculation_details || Array.isArray(data.grade_data) || data.grade_data)) {
+      } else if (
+        data &&
+        (data.success ||
+          data.calculation_details ||
+          Array.isArray(data.grade_data) ||
+          data.grade_data)
+      ) {
         // Fallback for old structure if still used
         setGrades(data);
         setResultsFetched(true);
-
-
       } else {
-        setError(data.msg || 'No results found for this selection.');
+        setError(data.msg || "No results found for this selection.");
         setGrades(null);
       }
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.msg || 'Failed to fetch grades. Please try again.');
+      setError(
+        err.response?.data?.msg || "Failed to fetch grades. Please try again.",
+      );
       setGrades(null);
     } finally {
       setIsLoading(false);
@@ -161,19 +166,19 @@ export default function GradeHub() {
 
   // Prepare data for pie chart
 
-
-
-
   // Function to cycle through motivational messages
-
 
   return (
     <div className="min-h-screen bg-white font-sans text-neutral-900 pb-20">
       <div className="max-w-6xl mx-auto px-4 py-12">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-black tracking-tighter text-black mb-2">Results</h1>
-          <p className="text-neutral-500 font-medium text-sm">Track your academic performance across semesters.</p>
+          <h1 className="text-3xl font-black tracking-tighter text-black mb-2">
+            Results
+          </h1>
+          <p className="text-neutral-500 font-medium text-sm">
+            Track your academic performance across semesters.
+          </p>
         </div>
 
         {/* Selection Criteria */}
@@ -182,18 +187,25 @@ export default function GradeHub() {
             <div className="bg-black text-white p-1.5 rounded-md">
               <Award size={16} />
             </div>
-            <h2 className="text-lg font-bold tracking-tight">Select Criteria</h2>
+            <h2 className="text-lg font-bold tracking-tight">
+              Select Criteria
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="relative group">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1.5 block">Academic Year</label>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1.5 block">
+                Academic Year
+              </label>
               <div
                 className="w-full flex items-center justify-between bg-neutral-50 border border-neutral-200 rounded-lg p-3 cursor-pointer hover:border-black transition-colors"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
                 <span className="font-bold text-sm">{selectedYear}</span>
-                <ChevronDown size={16} className="text-neutral-400 group-hover:text-black transition-colors" />
+                <ChevronDown
+                  size={16}
+                  className="text-neutral-400 group-hover:text-black transition-colors"
+                />
               </div>
 
               {showDropdown && (
@@ -201,8 +213,11 @@ export default function GradeHub() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-medium transition-colors ${selectedYear === year ? 'bg-black text-white' : 'hover:bg-neutral-50 text-neutral-700'
-                        }`}
+                      className={`p-3 cursor-pointer text-sm font-medium transition-colors ${
+                        selectedYear === year
+                          ? "bg-black text-white"
+                          : "hover:bg-neutral-50 text-neutral-700"
+                      }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setShowDropdown(false);
@@ -217,7 +232,9 @@ export default function GradeHub() {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1.5 block">Semester</label>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1.5 block">
+                Semester
+              </label>
               <div className="relative">
                 <select
                   value={selectedSemester}
@@ -233,22 +250,28 @@ export default function GradeHub() {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={16} />
+                <ChevronDown
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"
+                  size={16}
+                />
               </div>
             </div>
 
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1.5 block">Actions</label>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1.5 block">
+                Actions
+              </label>
               <button
                 onClick={handleFetchResults}
-                className={`w-full h-[46px] flex items-center justify-center font-bold text-sm rounded-lg transition-all duration-300 ${isLoading ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed' : 'bg-black text-white hover:bg-neutral-800 shadow-md hover:shadow-lg hover:-translate-y-0.5'
-                  }`}
+                className={`w-full h-[46px] flex items-center justify-center font-bold text-sm rounded-lg transition-all duration-300 ${
+                  isLoading
+                    ? "bg-neutral-100 text-neutral-400 cursor-not-allowed"
+                    : "bg-black text-white hover:bg-neutral-800 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                }`}
                 disabled={isLoading || !user?.username}
               >
                 {isLoading ? (
-                  <span className="flex items-center gap-1.5">
-                    Loading...
-                  </span>
+                  <span className="flex items-center gap-1.5">Loading...</span>
                 ) : (
                   <span>View Results</span>
                 )}
@@ -272,7 +295,9 @@ export default function GradeHub() {
               alt="Pikachu"
               className="w-24 h-24 mx-auto mb-4 animate-bounce"
             />
-            <h3 className="text-xl font-semibold mb-2">Pikachu is on the case!</h3>
+            <h3 className="text-xl font-semibold mb-2">
+              Pikachu is on the case!
+            </h3>
             <p className="text-gray-600">{loadingMessage}</p>
           </div>
         )}
@@ -283,18 +308,26 @@ export default function GradeHub() {
             {/* Results Header */}
             <div className="bg-white border-b border-neutral-100 px-6 py-4 flex justify-between items-center">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 block mb-0.5">Results For</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 block mb-0.5">
+                  Results For
+                </span>
                 <h2 className="text-xl font-black text-black">
-                  {grades.year} <span className="text-neutral-300">/</span> {grades.semester}
+                  {grades.year} <span className="text-neutral-300">/</span>{" "}
+                  {grades.semester}
                 </h2>
               </div>
             </div>
 
             {/* Content */}
-            {(grades.gpa === null || grades.gpa === undefined) ? (
+            {grades.gpa === null || grades.gpa === undefined ? (
               <div className="p-12 text-center">
-                <AlertCircle size={48} className="mx-auto mb-4 text-neutral-300" />
-                <h3 className="text-xl font-bold mb-2">Results Not Available</h3>
+                <AlertCircle
+                  size={48}
+                  className="mx-auto mb-4 text-neutral-300"
+                />
+                <h3 className="text-xl font-bold mb-2">
+                  Results Not Available
+                </h3>
                 <p className="text-neutral-500">
                   These details are not yet updated, please check back shortly.
                 </p>
@@ -304,82 +337,113 @@ export default function GradeHub() {
                 <div className="px-6 py-4 space-y-6">
                   {/* Grades Section */}
                   <div>
-                    <h3 className="text-base font-bold mb-3 flex items-center gap-2"><div className="w-1 h-4 bg-black"></div> Grades</h3>
+                    <h3 className="text-base font-bold mb-3 flex items-center gap-2">
+                      <div className="w-1 h-4 bg-black"></div> Grades
+                    </h3>
                     <div className="overflow-hidden rounded-xl border border-neutral-200">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="bg-neutral-50 border-b border-neutral-200">
-                            <th className="px-3 py-2 text-left font-bold text-[10px] uppercase tracking-widest text-neutral-500">S.no</th>
-                            <th className="px-3 py-2 text-left font-bold text-[10px] uppercase tracking-widest text-neutral-500">Subjects</th>
-                            <th className="px-3 py-2 text-center font-bold text-[10px] uppercase tracking-widest text-neutral-500">Credits</th>
-                            <th className="px-3 py-2 text-center font-bold text-[10px] uppercase tracking-widest text-neutral-500">Grade</th>
-                            <th className="px-3 py-2 text-center font-bold text-[10px] uppercase tracking-widest text-neutral-500">Points</th>
+                            <th className="px-3 py-2 text-left font-bold text-[10px] uppercase tracking-widest text-neutral-500">
+                              S.no
+                            </th>
+                            <th className="px-3 py-2 text-left font-bold text-[10px] uppercase tracking-widest text-neutral-500">
+                              Subjects
+                            </th>
+                            <th className="px-3 py-2 text-center font-bold text-[10px] uppercase tracking-widest text-neutral-500">
+                              Credits
+                            </th>
+                            <th className="px-3 py-2 text-center font-bold text-[10px] uppercase tracking-widest text-neutral-500">
+                              Grade
+                            </th>
+                            <th className="px-3 py-2 text-center font-bold text-[10px] uppercase tracking-widest text-neutral-500">
+                              Points
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
-                          {grades.calculation_details?.map((item: any, index: any) => (
-                            <tr
-                              key={index}
-                              className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors last:border-0"
-                            >
-                              <td className="px-3 py-2 text-neutral-400 font-medium text-xs">{index + 1}</td>
-                              <td className="px-3 py-2 font-bold text-neutral-800 text-xs">{item.subject}</td>
-                              <td className="px-3 py-2 text-center text-neutral-600 font-medium text-xs">{item.credits}</td>
-                              <td className="px-3 py-2 text-center">
-                                <span
-                                  className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${item.grade === 'Ex'
-                                    ? 'bg-black text-white'
-                                    : 'bg-neutral-100 text-neutral-800'
+                          {grades.calculation_details?.map(
+                            (item: any, index: any) => (
+                              <tr
+                                key={index}
+                                className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors last:border-0"
+                              >
+                                <td className="px-3 py-2 text-neutral-400 font-medium text-xs">
+                                  {index + 1}
+                                </td>
+                                <td className="px-3 py-2 font-bold text-neutral-800 text-xs">
+                                  {item.subject}
+                                </td>
+                                <td className="px-3 py-2 text-center text-neutral-600 font-medium text-xs">
+                                  {item.credits}
+                                </td>
+                                <td className="px-3 py-2 text-center">
+                                  <span
+                                    className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
+                                      item.grade === "Ex"
+                                        ? "bg-black text-white"
+                                        : "bg-neutral-100 text-neutral-800"
                                     }`}
-                                >
-                                  {item.grade}
-                                </span>
-                              </td>
-                              <td className="px-3 py-2 text-center font-bold text-neutral-800 text-xs">{item.points}</td>
-                            </tr>
-                          ))}
-                          {!grades.calculation_details && grades.grade_data &&
+                                  >
+                                    {item.grade}
+                                  </span>
+                                </td>
+                                <td className="px-3 py-2 text-center font-bold text-neutral-800 text-xs">
+                                  {item.points}
+                                </td>
+                              </tr>
+                            ),
+                          )}
+                          {!grades.calculation_details &&
+                            grades.grade_data &&
                             Object.entries(grades.grade_data).map(
                               ([subject, grade]: any, index) => (
                                 <tr
                                   key={index}
                                   className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors last:border-0"
                                 >
-                                  <td className="px-3 py-2 text-neutral-400 font-medium text-xs">{index + 1}</td>
-                                  <td className="px-3 py-2 font-bold text-neutral-800 text-xs">{subject}</td>
-                                  <td className="px-3 py-2 text-center text-neutral-400 text-xs">-</td>
+                                  <td className="px-3 py-2 text-neutral-400 font-medium text-xs">
+                                    {index + 1}
+                                  </td>
+                                  <td className="px-3 py-2 font-bold text-neutral-800 text-xs">
+                                    {subject}
+                                  </td>
+                                  <td className="px-3 py-2 text-center text-neutral-400 text-xs">
+                                    -
+                                  </td>
                                   <td className="px-3 py-2 text-center">
                                     <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${grade === 'Ex'
-                                        ? 'bg-black text-white'
-                                        : 'bg-neutral-100 text-neutral-800'
-                                        }`}
+                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
+                                        grade === "Ex"
+                                          ? "bg-black text-white"
+                                          : "bg-neutral-100 text-neutral-800"
+                                      }`}
                                     >
                                       {grade}
                                     </span>
                                   </td>
-                                  <td className="px-3 py-2 text-center text-neutral-400 text-xs">-</td>
+                                  <td className="px-3 py-2 text-center text-neutral-400 text-xs">
+                                    -
+                                  </td>
                                 </tr>
-                              )
+                              ),
                             )}
                         </tbody>
                       </table>
                     </div>
                   </div>
-
-
                 </div>
-
-
-
-
 
                 {/* GPA Display - Centered below table */}
                 <div className="px-6 pb-6 bg-white flex flex-col items-center justify-center border-t border-neutral-100 pt-6">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-neutral-600 uppercase tracking-widest">Your SGPA IS :</span>
+                    <span className="text-sm font-bold text-neutral-600 uppercase tracking-widest">
+                      Your SGPA IS :
+                    </span>
                     <span className="text-2xl font-black text-black">
-                      {(grades.gpa !== null && grades.gpa !== undefined) ? Number(grades.gpa).toFixed(2) : 'N/A'}
+                      {grades.gpa !== null && grades.gpa !== undefined
+                        ? Number(grades.gpa).toFixed(2)
+                        : "N/A"}
                     </span>
                   </div>
                   {(grades.gpa === null || grades.gpa === undefined) && (
@@ -393,7 +457,6 @@ export default function GradeHub() {
 
             {/* Action Buttons */}
             {/* Action Buttons */}
-
           </div>
         )}
 
@@ -405,7 +468,8 @@ export default function GradeHub() {
             </div>
             <h3 className="text-2xl font-black mb-3">Sign In Required</h3>
             <p className="text-neutral-500 mb-8 max-w-md mx-auto font-medium">
-              Please sign in to your student account to access your academic performance records and grades.
+              Please sign in to your student account to access your academic
+              performance records and grades.
             </p>
             <button className="bg-black text-white px-8 py-4 rounded-xl font-bold hover:bg-neutral-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
               Sign In to Continue
@@ -422,7 +486,8 @@ export default function GradeHub() {
 
             <h3 className="text-2xl font-black mb-3">No Results Selected</h3>
             <p className="text-neutral-500 mb-6 max-w-sm mx-auto font-medium">
-              Select an academic year and semester above, then click "View Results" to see your grades.
+              Select an academic year and semester above, then click "View
+              Results" to see your grades.
             </p>
           </div>
         )}

@@ -1,4 +1,4 @@
-# 🎓 UniZ Student API Documentation (Production v1)
+# UniZ Student API Documentation (Production v1)
 
 **Base URL (Production Gateway):**
 `https://uniz-gateway.vercel.app/api/v1`
@@ -201,7 +201,7 @@
 
 ---
 
-## 🔍 Search (Admin Only)
+##  Search (Admin Only)
 
 ### 7. Search Students
 
@@ -378,7 +378,7 @@
 
 ---
 
-# 🛡️ UniZ Admin API Documentation
+# UniZ Admin API Documentation
 
 ## 🔐 Admin Authentication
 
@@ -413,7 +413,7 @@ _(Other usernames: `dean_cse`, `warden_male`, `caretaker_female`, `security_admi
 
 ---
 
-## ✅ Workflow & Approvals (Wardens/Caretakers)
+## Workflow & Approvals (Wardens/Caretakers)
 
 ### 16. View Pending Outpasses
 
@@ -472,7 +472,7 @@ _(Other usernames: `dean_cse`, `warden_male`, `caretaker_female`, `security_admi
 
 ---
 
-## 🔍 Director & Dean Features
+##  Director & Dean Features
 
 ### 19. Search Any Student
 
@@ -577,7 +577,7 @@ _(Other usernames: `dean_cse`, `warden_male`, `caretaker_female`, `security_admi
 
 ---
 
-## 🛠️ Webmaster Features
+## Webmaster Features
 
 ### 21. Create Banners
 
@@ -608,7 +608,7 @@ _(Other usernames: `dean_cse`, `warden_male`, `caretaker_female`, `security_admi
 
 ---
 
-## 🛡️ Security Guard Specific Features
+## Security Guard Specific Features
 
 ### 23. Check-In / Check-Out Student
 

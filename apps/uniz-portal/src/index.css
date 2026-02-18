@@ -3,31 +3,35 @@
 @tailwind utilities;
 
 @layer base {
-    body {
-        font-family: "Outfit", sans-serif;
-    }
+  body {
+    font-family: "Outfit", sans-serif;
+  }
 
-    html {
-        scroll-behavior: smooth;
-    }
+  html {
+    scroll-behavior: smooth;
+  }
 
-    /* Hide scrollbar globally */
-    ::-webkit-scrollbar {
-        display: none;
-    }
+  /* Hide scrollbar globally */
+  ::-webkit-scrollbar {
+    display: none;
+  }
 
-    /* Hide scrollbar for IE, Edge and Firefox */
-    * {
-        -ms-overflow-style: none;
-        /* IE and Edge */
-        scrollbar-width: none;
-        /* Firefox */
-    }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  * {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
 }
 
 @layer utilities {
-    @keyframes marquee {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
+  @keyframes marquee {
+    0% {
+      transform: translateX(100%);
     }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
 }

@@ -32,7 +32,7 @@ async function testPasswordResetFlow() {
       process.exit(1);
     }
 
-    console.log("✅ OTP sent successfully!");
+    console.log(" OTP sent successfully!");
 
     // Step 2: Get OTP from user
     const otp = await new Promise((resolve) => {
@@ -42,7 +42,7 @@ async function testPasswordResetFlow() {
     });
 
     // Step 3: Verify OTP
-    console.log("\n🔍 Step 2: Verifying OTP...");
+    console.log("\n Step 2: Verifying OTP...");
     console.log("-".repeat(50));
 
     const verifyResponse = await fetch(`${BASE_URL}/otp/verify`, {
@@ -66,12 +66,12 @@ async function testPasswordResetFlow() {
       process.exit(1);
     }
 
-    console.log("✅ OTP verified! Reset token received.");
+    console.log(" OTP verified! Reset token received.");
     const resetToken = verifyData.resetToken;
 
     // Step 4: Reset Password
     const newPassword = await new Promise((resolve) => {
-      rl.question("\n🔑 Enter new password: ", (answer) => {
+      rl.question("\n Enter new password: ", (answer) => {
         resolve(answer.trim());
       });
     });
@@ -94,7 +94,7 @@ async function testPasswordResetFlow() {
       process.exit(1);
     }
 
-    console.log("✅ Password reset successfully!");
+    console.log(" Password reset successfully!");
 
     // Step 5: Test login with new password
     console.log("\n🔐 Step 4: Testing login with new password...");
@@ -115,7 +115,7 @@ async function testPasswordResetFlow() {
       process.exit(1);
     }
 
-    console.log("✅ Login successful with new password!");
+    console.log(" Login successful with new password!");
 
     console.log("\n" + "=".repeat(50));
     console.log("🎉 All tests passed! Password reset flow works correctly.");

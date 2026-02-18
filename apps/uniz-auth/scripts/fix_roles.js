@@ -16,7 +16,7 @@ async function main() {
         where: { username: u.toUpperCase() },
         data: { role: u },
       });
-      console.log(`✅ Fixed role for ${u}`);
+      console.log(` Fixed role for ${u}`);
     } catch (e) {
       // Try lowercase if uppercase fails
       try {
@@ -24,7 +24,7 @@ async function main() {
           where: { username: u },
           data: { role: u },
         });
-        console.log(`✅ Fixed role for ${u} (lowercase)`);
+        console.log(` Fixed role for ${u} (lowercase)`);
       } catch (e2) {
         console.log(`❌ Could not fix ${u}: ${e2.message}`);
       }

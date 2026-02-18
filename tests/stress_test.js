@@ -6,7 +6,7 @@ const DURATION_SECONDS = 30;
 
 async function runLoadTest() {
   console.log(
-    `🚀 Starting Load Test: ${CONCURRENT_USERS} concurrent users -> ${TARGET_URL}`,
+    ` Starting Load Test: ${CONCURRENT_USERS} concurrent users -> ${TARGET_URL}`,
   );
 
   let successCount = 0;

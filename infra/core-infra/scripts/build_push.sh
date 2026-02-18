@@ -10,7 +10,7 @@ if [ ! -f "$DIR/docker-compose.yml" ]; then
   exit 1
 fi
 
-echo "🚀 Starting Docker Build & Push Process for UniZ Platform..."
+echo " Starting Docker Build & Push Process for UniZ Platform..."
 
 # Check Docker login status
 if ! docker info > /dev/null 2>&1; then
@@ -27,7 +27,7 @@ echo "Building images (this may take a while)..."
 cd "$DIR"
 docker-compose build --pull
 
-echo "✅ Build complete."
+echo " Build complete."
 
 echo "Pushing images to Docker Hub..."
 # Push all built images to the registry
