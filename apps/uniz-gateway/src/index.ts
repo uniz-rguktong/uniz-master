@@ -398,11 +398,14 @@ app.all("/api/v1/:service/:path*", async (req, res) => {
   try {
     const cleanedHeaders = { ...req.headers };
     delete cleanedHeaders.host;
-    delete cleanedHeaders["content-length"];
+    // delete cleanedHeaders["content-length"]; // DO NOT DELETE THIS - Breaks Multipart Uploads
+    const contentType = req.headers["content-type"] || "";
+
+    console.log(`[Proxy] Content-Type: ${contentType}`);
 
     // For multipart/form-data, use pipe to avoid body parsing issues
-    const contentType = req.headers["content-type"] || "";
     if (contentType.includes("multipart/form-data")) {
+      console.log(`[Proxy] Handling as Multipart Stream`);
       const proxyReq = axios({
         method: req.method,
         url: targetUrl,
@@ -439,7 +442,7 @@ app.all("/api/v1/:service/:path*", async (req, res) => {
       validateStatus: () => true,
       maxBodyLength: Infinity,
       maxContentLength: Infinity,
-      timeout: 30000,
+      timeout: 300000, // Increased to 5 minutes
     };
 
     if (req.method !== "GET" && req.method !== "HEAD" && req.body) {
