@@ -10,6 +10,11 @@
 > **UniZ ENTERPRISE INFRASTRUCTURE 2026**
 > _Consolidating fragmented microservices into a unified, high-performance university management ecosystem._
 
+
+
+
+[![.github/workflows/docker-build-push.yml](https://github.com/uniz-rguktong/uniz-master-vault/actions/workflows/docker-build-push.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master-vault/actions/workflows/docker-build-push.yml)
+
 ## Structuralized Architecture Overview
 
 The Master Vault serves as the central orchestration point for the entire UniZ ecosystem. It utilizes a Monorepo-to-MultiRepo synchronization model, ensuring that while code is centralized for development, production deployments remain modular and scalable.
