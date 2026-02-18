@@ -79,6 +79,11 @@ const services = [
     default: "http://localhost:3002",
   },
   {
+    name: "CMS Service",
+    env: "USER_SERVICE_URL",
+    default: "http://localhost:3002",
+  },
+  {
     name: "Academics Service",
     env: "ACADEMICS_SERVICE_URL",
     default: "http://localhost:3004",
@@ -113,6 +118,7 @@ const services = [
 const serviceMap: Record<string, string> = {
   auth: process.env.AUTH_SERVICE_URL || "http://localhost:3001",
   profile: process.env.USER_SERVICE_URL || "http://localhost:3002",
+  cms: process.env.USER_SERVICE_URL || "http://localhost:3002",
   academics: process.env.ACADEMICS_SERVICE_URL || "http://localhost:3004",
   requests: process.env.OUTPASS_SERVICE_URL || "http://localhost:3003",
   files: process.env.FILES_SERVICE_URL || "http://localhost:3005",
