@@ -36,7 +36,7 @@ import cmsRoutes from "../src/routes/cms.routes";
 
 // Routes
 app.use("/", profileRoutes);
-app.use("/cms", cmsRoutes);
+app.use("/", cmsRoutes);
 
 // Error Handler
 app.use(
