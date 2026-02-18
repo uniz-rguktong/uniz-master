@@ -7,6 +7,7 @@ import axios from "axios";
 
 const prisma = new PrismaClient();
 
+
 const GrievanceSchema = z.object({
   category: z.string().min(1, "Category is required"),
   description: z.string().min(10, "Description must be at least 10 characters"),
