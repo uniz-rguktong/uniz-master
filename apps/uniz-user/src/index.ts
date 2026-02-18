@@ -26,7 +26,7 @@ import profileRoutes from "./routes/profile.routes";
 import cmsRoutes from "./routes/cms.routes";
 
 app.use("/", profileRoutes);
-app.use("/cms", cmsRoutes);
+app.use("/", cmsRoutes);
 
 // 404 Handler
 app.use((req, res) => {
