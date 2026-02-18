@@ -167,7 +167,7 @@ app.all(/^\/api\/v1\/([^/]+)\/(.*)/, async (req, res) => {
       validateStatus: () => true,
       maxBodyLength: Infinity,
       maxContentLength: Infinity,
-      timeout: 30000,
+      timeout: 300000, // PATCHED BY ANTIGRAVITY - 5 MIN TIMEOUT
     };
     if (req.method !== "GET" && req.method !== "HEAD" && req.body) {
       axiosConfig.data = req.body;
