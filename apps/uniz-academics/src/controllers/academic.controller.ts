@@ -79,9 +79,9 @@ export const getUploadProgress = async (
             `[Academics] 🚨 Job ${uploadId} appears stuck. Jump-starting via Progress Poll...`,
           );
           // Fire and forget a trigger request to ourselves to avoid blocking the user
-          const protocol = req.protocol || "http";
-          const host = req.get("host");
-          const triggerUrl = `${protocol}://${host}/api/queue/process?lb_poll=${Math.random().toString(36).substring(7)}`;
+          // FIX: Use localhost for internal route access, as /api/queue is not exposed via public Gateway/Nginx
+          const port = process.env.PORT || 3004;
+          const triggerUrl = `http://localhost:${port}/api/queue/process?lb_poll=${Math.random().toString(36).substring(7)}`;
 
           axios
             .post(

@@ -71,9 +71,9 @@ export async function processNextBatch() {
   const totalRows = total;
   const currentUser = user;
 
-  // Process up to 5 batches (100 rows) in one execution to reduce Vercel hop count
-  const BATCHES_PER_RUN = 5;
-  const CHUNK_SIZE = 20;
+  // Process up to 20 batches (1000 rows) in one execution to reduce Vercel hop count
+  const BATCHES_PER_RUN = 20;
+  const CHUNK_SIZE = 50;
 
   let processedInThisRun = 0;
 
@@ -93,153 +93,167 @@ export async function processNextBatch() {
     );
 
     if (type === "GRADES") {
-      // Sequential processing to avoid connection pool exhaustion
-      for (const row of currentBatch) {
-        try {
-          const getVal = (keys: string[]) => {
-            const found = Object.keys(row).find((k) =>
-              keys.includes(k.trim().toLowerCase()),
-            );
-            return found ? String(row[found]).trim() : "";
-          };
+      // Parallel processing for speed
+      await Promise.all(
+        currentBatch.map(async (row: any) => {
+          try {
+            const getVal = (keys: string[]) => {
+              const found = Object.keys(row).find((k) =>
+                keys.includes(k.trim().toLowerCase()),
+              );
+              return found ? String(row[found]).trim() : "";
+            };
 
-          const studentId = getVal([
-            "student id",
-            "studentid",
-            "id",
-          ]).toUpperCase();
-          const code = getVal([
-            "subject code",
-            "subjectcode",
-            "code",
-          ]).toUpperCase();
-          const semesterId = getVal(["semester id", "semesterid", "semester"]);
-          const rawGrade = getVal([
-            "grade",
-            "grade (ex, a, b, c, d, e, r)",
-            "grade (0-10)",
-          ]);
+            const studentId = getVal([
+              "student id",
+              "studentid",
+              "id",
+            ]).toUpperCase();
+            const code = getVal([
+              "subject code",
+              "subjectcode",
+              "code",
+            ]).toUpperCase();
+            const semesterId = getVal([
+              "semester id",
+              "semesterid",
+              "semester",
+            ]);
+            const rawGrade = getVal([
+              "grade",
+              "grade (ex, a, b, c, d, e, r)",
+              "grade (0-10)",
+            ]);
 
-          if (!studentId || !code) throw new Error(`Missing fields`);
-          const grade = mapGradeToPoint(rawGrade);
-          const subject = subjectMap.get(code);
-          if (!subject) throw new Error(`Subject [${code}] not found`);
+            if (!studentId || !code) throw new Error(`Missing fields`);
+            const grade = mapGradeToPoint(rawGrade);
+            const subject = subjectMap.get(code);
+            if (!subject) throw new Error(`Subject [${code}] not found`);
 
-          const targetSemester = semesterId || subject.semester || "SEM-1";
-          const batchYear = studentId.substring(0, 3);
+            const targetSemester = semesterId || subject.semester || "SEM-1";
+            const batchYear = studentId.substring(0, 3);
 
-          await prisma.grade.upsert({
-            where: {
-              studentId_subjectId_semesterId: {
+            await prisma.grade.upsert({
+              where: {
+                studentId_subjectId_semesterId: {
+                  studentId,
+                  subjectId: subject.id,
+                  semesterId: targetSemester,
+                },
+              },
+              update: { grade, batch: batchYear, updatedAt: new Date() },
+              create: {
                 studentId,
                 subjectId: subject.id,
                 semesterId: targetSemester,
+                grade,
+                batch: batchYear,
               },
-            },
-            update: { grade, batch: batchYear, updatedAt: new Date() },
-            create: {
-              studentId,
-              subjectId: subject.id,
-              semesterId: targetSemester,
-              grade,
-              batch: batchYear,
-            },
-          });
-          successCount++;
-        } catch (err: any) {
-          if (failCount === 0) {
-            console.error(`[Worker] [GRADES] First failure on row:`, row);
-            console.error(`[Worker] [GRADES] Error:`, err.message);
+            });
+            successCount++;
+          } catch (err: any) {
+            if (failCount === 0) {
+              console.error(`[Worker] [GRADES] First failure on row:`, row);
+              console.error(`[Worker] [GRADES] Error:`, err.message);
+            }
+            failCount++;
+            errors.push({
+              row:
+                initialProcessed +
+                (successCount - initialSuccess) +
+                (failCount - initialFail),
+              studentId:
+                (row as any).studentId ||
+                (row as any)["Student ID"] ||
+                "UNKNOWN",
+              error: err.message,
+            });
           }
-          failCount++;
-          errors.push({
-            row:
-              initialProcessed +
-              (successCount - initialSuccess) +
-              (failCount - initialFail),
-            studentId:
-              (row as any).studentId || (row as any)["Student ID"] || "UNKNOWN",
-            error: err.message,
-          });
-        }
-      }
+        }),
+      );
     } else if (type === "ATTENDANCE") {
-      for (const row of currentBatch) {
-        try {
-          const getVal = (keys: string[]) => {
-            const found = Object.keys(row).find((k) =>
-              keys.includes(k.trim().toLowerCase()),
-            );
-            return found ? String(row[found]).trim() : "";
-          };
+      await Promise.all(
+        currentBatch.map(async (row: any) => {
+          try {
+            const getVal = (keys: string[]) => {
+              const found = Object.keys(row).find((k) =>
+                keys.includes(k.trim().toLowerCase()),
+              );
+              return found ? String(row[found]).trim() : "";
+            };
 
-          const studentId = getVal([
-            "student id",
-            "studentid",
-            "id",
-          ]).toUpperCase();
-          const code = getVal([
-            "subject code",
-            "subjectcode",
-            "code",
-          ]).toUpperCase();
-          const semesterId = getVal(["semester id", "semesterid", "semester"]);
-          const attended =
-            parseInt(
-              getVal([
-                "total classes attended",
-                "attended classes",
-                "attended",
-              ]),
-            ) || 0;
-          const totalClasses =
-            parseInt(
-              getVal(["total classes occurred", "total classes", "total"]),
-            ) || 0;
+            const studentId = getVal([
+              "student id",
+              "studentid",
+              "id",
+            ]).toUpperCase();
+            const code = getVal([
+              "subject code",
+              "subjectcode",
+              "code",
+            ]).toUpperCase();
+            const semesterId = getVal([
+              "semester id",
+              "semesterid",
+              "semester",
+            ]);
+            const attended =
+              parseInt(
+                getVal([
+                  "total classes attended",
+                  "attended classes",
+                  "attended",
+                ]),
+              ) || 0;
+            const totalClasses =
+              parseInt(
+                getVal(["total classes occurred", "total classes", "total"]),
+              ) || 0;
 
-          if (!studentId || !code)
-            throw new Error("Missing Student ID or Subject Code");
-          const subject = subjectMap.get(code);
-          if (!subject) throw new Error(`Subject not found: ${code}`);
+            if (!studentId || !code)
+              throw new Error("Missing Student ID or Subject Code");
+            const subject = subjectMap.get(code);
+            if (!subject) throw new Error(`Subject not found: ${code}`);
 
-          const batch = studentId.substring(0, 3);
+            const batch = studentId.substring(0, 3);
 
-          await prisma.attendance.upsert({
-            where: {
-              studentId_subjectId_semesterId: {
+            await prisma.attendance.upsert({
+              where: {
+                studentId_subjectId_semesterId: {
+                  studentId,
+                  subjectId: subject.id,
+                  semesterId: semesterId || "SEM-1",
+                },
+              },
+              update: {
+                attendedClasses: attended,
+                totalClasses: totalClasses,
+                batch,
+                updatedAt: new Date(),
+              },
+              create: {
                 studentId,
                 subjectId: subject.id,
                 semesterId: semesterId || "SEM-1",
+                attendedClasses: attended,
+                totalClasses: totalClasses,
+                batch,
               },
-            },
-            update: {
-              attendedClasses: attended,
-              totalClasses: totalClasses,
-              batch,
-              updatedAt: new Date(),
-            },
-            create: {
-              studentId,
-              subjectId: subject.id,
-              semesterId: semesterId || "SEM-1",
-              attendedClasses: attended,
-              totalClasses: totalClasses,
-              batch,
-            },
-          });
-          successCount++;
-        } catch (err: any) {
-          failCount++;
-          errors.push({
-            row:
-              initialProcessed +
-              (successCount - initialSuccess) +
-              (failCount - initialFail),
-            studentId: (row as any).studentId || "UNKNOWN",
-            error: err.message,
-          });
-        }
-      }
+            });
+            successCount++;
+          } catch (err: any) {
+            failCount++;
+            errors.push({
+              row:
+                initialProcessed +
+                (successCount - initialSuccess) +
+                (failCount - initialFail),
+              studentId: (row as any).studentId || "UNKNOWN",
+              error: err.message,
+            });
+          }
+        }),
+      );
     }
 
     // UPDATE PROGRESS AFTER EACH BATCH
