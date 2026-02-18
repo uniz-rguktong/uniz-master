@@ -140,7 +140,7 @@ app.get("/", (req, res) => {
 ╚██████╔╝██║ ╚████║██║███████╗
  ╚═════╝ ╚═╝  ╚═══╝╚═╝╚══════╝
 
-UniZ Backend Gateway - Running
+UniZ Backend Gateway - Running (status: ok)
 Attribution: SABER
 </pre>
   `);
@@ -296,7 +296,7 @@ app.get("/health", async (req, res) => {
             <div class="header">
                 <h1>UniZ Systems</h1>
                 <div class="overall-status">
-                    ${totalHealthy === services.length ? "All Systems Operational" : "Partial System Outage"}
+                    ${totalHealthy === services.length ? "All Systems Operational (status: ok)" : "Partial System Outage"}
                 </div>
             </div>
             <div class="status-list">
