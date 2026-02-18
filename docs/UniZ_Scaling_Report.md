@@ -1,11 +1,11 @@
-# 🚀 UniZ Super Scaling & Infrastructure Report
+# UniZ Super Scaling & Infrastructure Report
 
-**Status:** PRODUCTION READY ✅
+**Status:** PRODUCTION READY
 **Architecture:** Kubernetes (K3s) with Horizontal Pod Autoscaling (HPA)
 
 ---
 
-## 🏗️ 1. Infrastructure Architecture
+## 1. Infrastructure Architecture
 
 We have successfully migrated from static Docker Compose to a **dynamic Kubernetes Cluster**.
 
@@ -23,7 +23,7 @@ We have successfully migrated from static Docker Compose to a **dynamic Kubernet
 
 ---
 
-## ⚡ 2. Frontend Optimization (uniz-portal)
+## 2. Frontend Optimization (uniz-portal)
 
 The frontend is now served by a custom-tuned Nginx container inside Kubernetes:
 
@@ -47,7 +47,7 @@ Target: `https://api.uniz.rguktong.in/api/v1/system/health`
 
 ---
 
-## 🛠️ 4. Final Configuration Manual
+## 4. Final Configuration Manual
 
 - **Health Dashboard**: [api.uniz.rguktong.in/health](https://api.uniz.rguktong.in/health)
 - **Manual Scaling**: `kubectl scale deployment <name> --replicas=<num>`

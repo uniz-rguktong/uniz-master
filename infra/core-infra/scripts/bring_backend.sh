@@ -87,7 +87,7 @@ if [ "$URL_READY" = true ]; then
         echo -e "\n(See Postman collection for full endpoint details)"
     fi
     
-    echo -e "\n${GREEN}${BOLD}You are good to go! 🚀${NC}"
+    echo -e "\n${GREEN}${BOLD}You are good to go! ${NC}"
 else
     echo -e "${RED}${BOLD}✘ Gateway failed to respond after 60s.${NC}"
     echo -e "Check logs with: ${YELLOW}npm run docker:logs${NC}"

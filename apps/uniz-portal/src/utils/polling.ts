@@ -3,7 +3,7 @@ export const pollProgress = async (
   url: string,
   token: string,
   onUpdate: (data: any) => void,
-  onComplete: () => void
+  onComplete: () => void,
 ) => {
   const interval = setInterval(async () => {
     try {

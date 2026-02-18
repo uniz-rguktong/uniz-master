@@ -7,7 +7,7 @@ const DURATION = 30; // seconds
 const CONNECTIONS = 1500;
 const PIPELINING = 1; // standard non-pipelined requests
 
-console.log(`\n🚀 Starting UniZ Load Test - 1.5k Concurrent Users Simulation`);
+console.log(`\n Starting UniZ Load Test - 1.5k Concurrent Users Simulation`);
 console.log(`===========================================================`);
 console.log(`Target Backend: ${BACKEND_URL}`);
 console.log(`Target Frontend: ${FRONTEND_URL}`);
@@ -57,14 +57,14 @@ function stopMonitoring() {
 
 // Function to run autocannon
 function runLoadTest(url, name) {
-  console.log(`\n⚡ Testing ${name} (${url})...`);
+  console.log(`\n Testing ${name} (${url})...`);
   try {
     // Using npx autocannon.
     // -c connections, -d duration, -l latency distribution
     const cmd = `npx autocannon -c ${CONNECTIONS} -d ${DURATION} --latency "${url}"`;
     // We inherit stdio so user sees the progress bar and result
     execSync(cmd, { stdio: "inherit" });
-    console.log(`✅ ${name} test completed.`);
+    console.log(` ${name} test completed.`);
   } catch (error) {
     console.error(`❌ ${name} test failed:`, error.message);
   }
@@ -93,7 +93,7 @@ function runLoadTest(url, name) {
 
   stopMonitoring();
 
-  console.log(`\n📊 Test Complete.`);
+  console.log(`\n Test Complete.`);
   console.log(
     `Check logs/load_test_monitor.log for detailed server stats during the test.`,
   );

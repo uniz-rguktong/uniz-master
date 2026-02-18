@@ -1,6 +1,6 @@
 const autocannon = require("autocannon");
 
-console.log("🔥 Initializing Super Stress Test...");
+console.log(" Initializing Super Stress Test...");
 console.log("Target: api.uniz.rguktong.in");
 console.log("Concurrency: 500 users");
 console.log("Duration: 60 seconds");
@@ -20,7 +20,7 @@ const instance = autocannon(
       console.error("Test Error:", err);
       return;
     }
-    console.log("\n✅ STRESS TEST COMPLETE");
+    console.log("\n STRESS TEST COMPLETE");
     console.log("---------------------------");
     console.log(`Throughput: ${results["requests"].average} req/sec`);
     console.log(`Mean Latency: ${results.latency.average} ms`);
@@ -39,7 +39,7 @@ const interval = setInterval(() => {
   if (seconds >= 60) {
     clearInterval(interval);
   } else {
-    console.log(`⏱️  Running... ${seconds}s elapsed`);
+    console.log(`⏱  Running... ${seconds}s elapsed`);
   }
 }, 5000);
 

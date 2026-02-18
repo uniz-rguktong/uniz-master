@@ -21,7 +21,6 @@ const sendMail = async (type: string, to: string, data: any) => {
     if (!SECRET && process.env.NODE_ENV === "production")
       throw new Error("INTERNAL_SECRET missing");
 
-    
     await axios.post(
       `${GATEWAY}/mail/send`,
       {

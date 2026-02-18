@@ -8,7 +8,11 @@ interface Props {
   schema: string[]; // required headers
 }
 
-export default function SpreadsheetUploader({ title, uploadUrl, schema }: Props) {
+export default function SpreadsheetUploader({
+  title,
+  uploadUrl,
+  schema,
+}: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -32,7 +36,7 @@ export default function SpreadsheetUploader({ title, uploadUrl, schema }: Props)
       const json: any[] = [];
       const headerRow = worksheet?.getRow(1);
       const headers_found: string[] = [];
-      
+
       headerRow?.eachCell((cell, colNumber) => {
         headers_found[colNumber] = cell.text;
       });
@@ -110,11 +114,7 @@ export default function SpreadsheetUploader({ title, uploadUrl, schema }: Props)
         </p>
       )}
 
-      {error && (
-        <div className="text-red-600 font-medium mb-3">
-          ⚠️ {error}
-        </div>
-      )}
+      {error && <div className="text-red-600 font-medium mb-3">⚠️ {error}</div>}
 
       <button
         onClick={handleUpload}

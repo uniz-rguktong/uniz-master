@@ -1,4 +1,4 @@
-# 📝 Meeting Agenda: UniZ Deployment Requirements
+#  Meeting Agenda: UniZ Deployment Requirements
 
 **To:** College Administration  
 **From:** [Your Name/Technical Lead]  
@@ -26,7 +26,7 @@ We present two options based on the expected student load:
 - **Estimated Cost:** ₹1,200 - ₹1,800 per month.
 - **Trade-off:** We must strictly enforce "Slot-wise" login (e.g., 1st Year at 10 AM, 2nd Year at 11 AM). Users may face slight delays if everyone joins at once.
 
-## 2. 🌐 Network & Domain Access
+## 2. Network & Domain Access
 
 To make the platform official and trusted by students:
 
@@ -44,7 +44,7 @@ To populate the system before launch:
   - Phone Number (for OTPs)
 - **Result Data Format:** Agreement on a standard format for uploading results (e.g., standard Excel template) so the system can parse it automatically.
 
-## 4. 🔑 Third-Party Services (Operational Costs)
+## 4. Third-Party Services (Operational Costs)
 
 - **Database Hosting (Neon/Postgres):**
   - _Free Tier_ is risky for 10k users.
@@ -53,7 +53,7 @@ To populate the system before launch:
   - We need a budget for SMS credits (e.g., Fast2SMS or institutional gateway).
   - _Estimate:_ ~0.20 paise per SMS × 10,000 logins = ₹2,000 per event.
 
-## 5. ⚠️ Policy & Governance
+## 5. Policy & Governance
 
 - **Uptime Protocol:** Who is the Point of Contact (PoC) if the university internet/power goes down?
 - **Pilot Test Permission:** We request to run a "Stress Test" with a single batch (e.g., only 3rd Year students) one week before the main launch to verify stability.

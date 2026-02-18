@@ -11,7 +11,6 @@ import PDFDocument from "pdfkit";
 // --- PDF UTILS (pure Node, styled like official result sheets) ---
 const PAGE_MARGIN = 40;
 
-
 const createPdfBuffer = async (
   draw: (doc: InstanceType<typeof PDFDocument>) => void,
 ): Promise<Buffer> => {
@@ -515,7 +514,7 @@ const emailPass = process.env.EMAIL_PASS;
 
 if (process.env.NODE_ENV === "production" && (!emailUser || !emailPass)) {
   console.warn(
-    "⚠️ EMAIL_USER and EMAIL_PASS are not set. Service will use fallback credentials.",
+    " EMAIL_USER and EMAIL_PASS are not set. Service will use fallback credentials.",
   );
 }
 

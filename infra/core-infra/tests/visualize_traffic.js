@@ -19,7 +19,7 @@ const arrow = (label) => {
 
 async function visualizeRequest(type, path, method = "GET", body = {}) {
   console.clear();
-  console.log(`\n\n   🚀 ${method} ${GATEWAY}${path} Initiated...\n`);
+  console.log(`\n\n    ${method} ${GATEWAY}${path} Initiated...\n`);
 
   // 1. Client Step
   console.log(box("USER (Client)", 36));
@@ -55,7 +55,7 @@ async function visualizeRequest(type, path, method = "GET", body = {}) {
   if (path.includes("grades")) {
     console.log(arrow("Checking Cache..."));
     console.log(box("REDIS CACHE (Upstash SG)", 31));
-    console.log(`\n      ✨ HIT! (Skipping Database)`);
+    console.log(`\n       HIT! (Skipping Database)`);
   } else {
     console.log(arrow("Querying Data"));
     console.log(box("NEON POSTGRES (AWS SG)", 32));
@@ -76,9 +76,9 @@ async function visualizeRequest(type, path, method = "GET", body = {}) {
             body.headers ? { headers: body.headers } : {},
           );
 
-    console.log(`\n✅ ${serviceName} Responded: ${res.status} OK`);
+    console.log(`\n ${serviceName} Responded: ${res.status} OK`);
     if (path.includes("grades")) {
-      console.log(`⚡ Speed: Ultra Fast (Cache Hit)`);
+      console.log(` Speed: Ultra Fast (Cache Hit)`);
     }
   } catch (e) {
     console.log(`\n❌ Error: ${e.message}`);

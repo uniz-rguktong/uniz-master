@@ -72,7 +72,7 @@ export const processQueue = async (req: Request, res: Response) => {
 
       // Increased delay to ensure request is dispatched and proxy "rests"
       await new Promise((resolve) => setTimeout(resolve, 500));
-      console.log(`[Queue] 🚀 Next batch dispatched.`);
+      console.log(`[Queue]  Next batch dispatched.`);
     }
 
     return res.status(200).json(result);

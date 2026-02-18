@@ -9,9 +9,9 @@ async function main() {
   try {
     await prisma.outpass.deleteMany();
     await prisma.outing.deleteMany();
-    console.log("✅ Deleted old outpass/outing data.");
+    console.log(" Deleted old outpass/outing data.");
   } catch (e) {
-    console.warn("⚠️  Could not clean old data, proceeding...");
+    console.warn("  Could not clean old data, proceeding...");
   }
 
   // 2. We don't necessarily seed outpasses, but we could add a sample one
@@ -26,10 +26,10 @@ async function main() {
       currentLevel: 'caretaker'
     }
   });
-  console.log('✅ Seeded Sample Outpass');
+  console.log(' Seeded Sample Outpass');
   */
 
-  console.log("✅ Outpass Service reset finished (no default seed required).");
+  console.log(" Outpass Service reset finished (no default seed required).");
 }
 
 main()

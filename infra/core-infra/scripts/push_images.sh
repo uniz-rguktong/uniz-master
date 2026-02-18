@@ -29,21 +29,21 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "🚀 Starting Image Refresh and Push Protocol..."
+echo " Starting Image Refresh and Push Protocol..."
 
 # We use docker-compose commands which are cleaner since we've updated docker-compose.yml with image names
 for SERVICE in "${SERVICES[@]}"; do
-    echo "📦 Building $SERVICE..."
+    echo " Building $SERVICE..."
     docker-compose build --pull "$SERVICE"
     
     echo "📤 Pushing $SERVICE..."
     docker-compose push "$SERVICE"
     
     if [ $? -eq 0 ]; then
-        echo "✅ $SERVICE pushed successfully."
+        echo " $SERVICE pushed successfully."
     else
         echo "❌ Failed to process $SERVICE."
     fi
 done
 
-echo "🏆 All images processed."
+echo " All images processed."

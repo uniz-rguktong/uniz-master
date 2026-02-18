@@ -648,9 +648,9 @@ async function main() {
   try {
     await prisma.grade.deleteMany();
     await prisma.attendance.deleteMany();
-    console.log("✅ Deleted old grades and attendance.");
+    console.log(" Deleted old grades and attendance.");
   } catch (e) {
-    console.warn("⚠️  Could not clean old data, proceeding...");
+    console.warn("  Could not clean old data, proceeding...");
   }
 
   // 2. Flatten and transform logic
@@ -702,13 +702,13 @@ async function main() {
   // 3. Insert into DB
   const existingSubjects = await prisma.subject.count();
   if (existingSubjects < allSubjects.length) {
-    console.log(`🚀 Seeding ${allSubjects.length} subjects (batch mode)...`);
+    console.log(` Seeding ${allSubjects.length} subjects (batch mode)...`);
     await prisma.subject.createMany({
       data: allSubjects,
       skipDuplicates: true,
     });
   } else {
-    console.log("⏭️  Subjects already seeded, skipping.");
+    console.log("⏭  Subjects already seeded, skipping.");
   }
 
   // 4. Seed Sample Grades for Testing
@@ -722,7 +722,7 @@ async function main() {
     take: 20,
   });
 
-  console.log(`📊 Seeding sample grades for ${students.join(", ")}...`);
+  console.log(` Seeding sample grades for ${students.join(", ")}...`);
 
   for (const studentId of students) {
     for (const subject of testSubjects) {
@@ -779,7 +779,7 @@ async function main() {
     }
   }
   */
-  console.log("✅ Seeding complete.");
+  console.log(" Seeding complete.");
 }
 
 main()

@@ -3,7 +3,7 @@ import { Footer } from "./components/Footer";
 import { useWebSocket } from "./hooks/useWebSocket";
 import { useLocation } from "react-router-dom";
 
-const Navbar = React.lazy(() => import('./components/Navbar'));
+const Navbar = React.lazy(() => import("./components/Navbar"));
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,9 +19,9 @@ export function Layout({ children }: LayoutProps) {
   });
 
   const shouldHideNavbar =
-    location.pathname.startsWith('/student') ||
-    location.pathname.startsWith('/admin') ||
-    ['/studyspace', '/campushub'].includes(location.pathname);
+    location.pathname.startsWith("/student") ||
+    location.pathname.startsWith("/admin") ||
+    ["/studyspace", "/campushub"].includes(location.pathname);
 
   if (shouldHideNavbar) {
     return <>{children}</>;
@@ -39,7 +39,9 @@ export function Layout({ children }: LayoutProps) {
 }
 
 const LoadingAnim = () => {
-  return <div className="flex items-center justify-center h-screen">
-    <div className="w-10 h-10 border-4 border-gray-800 border-t-white rounded-full animate-spin"></div>
-  </div>
-}
+  return (
+    <div className="flex items-center justify-center h-screen">
+      <div className="w-10 h-10 border-4 border-gray-800 border-t-white rounded-full animate-spin"></div>
+    </div>
+  );
+};

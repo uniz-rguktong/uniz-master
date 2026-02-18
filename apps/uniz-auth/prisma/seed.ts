@@ -85,7 +85,7 @@ async function main() {
     });
   }
 
-  console.log("✅ Seeded Auth data with deterministic identities.");
+  console.log(" Seeded Auth data with deterministic identities.");
 }
 
 main()

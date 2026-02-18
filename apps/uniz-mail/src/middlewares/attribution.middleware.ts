@@ -8,7 +8,7 @@ const SECURITY_NOTICE = [
   "╚██████╔╝██║ ╚████║██║███████╗",
   " ╚═════╝ ╚═╝  ╚═══╝╚═╝╚══════╝",
   "                               ",
-  "⚠️  SECURITY ALERT: UNIZ INTEGRITY PROTECTION ⚠️",
+  "  SECURITY ALERT: UNIZ INTEGRITY PROTECTION ",
   "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
   "Suspicious activity detected. Logging protocol active.",
   "Architect: SABER",

@@ -9,7 +9,7 @@ ADMIN_USER="WEBMASTER"
 ADMIN_PASS="password" 
 
 echo "---------------------------------------------------"
-echo "🚀 Starting System Flow Verification"
+echo " Starting System Flow Verification"
 echo "---------------------------------------------------"
 
 # 1. Login as Webmaster
@@ -20,16 +20,16 @@ ADMIN_LOGIN=$(curl -s -X POST "$API_URL/auth/login/admin" \
 
 if echo "$ADMIN_LOGIN" | grep -q "token"; then
   ADMIN_TOKEN=$(echo "$ADMIN_LOGIN" | grep -o '"token":"[^"]*' | cut -d'"' -f4)
-  echo "✅ Webmaster Login Successful"
+  echo " Webmaster Login Successful"
 else
-  echo "⚠️ Webmaster Login Failed with seed creds, trying 'password'..."
+  echo " Webmaster Login Failed with seed creds, trying 'password'..."
   ADMIN_LOGIN=$(curl -s -X POST "$API_URL/auth/login/admin" \
     -H "Content-Type: application/json" \
     -d "{\"username\": \"webmaster\", \"password\": \"password\"}")
     
   if echo "$ADMIN_LOGIN" | grep -q "token"; then
     ADMIN_TOKEN=$(echo "$ADMIN_LOGIN" | grep -o '"token":"[^"]*' | cut -d'"' -f4)
-    echo "✅ Webmaster Login Successful (fallback)"
+    echo " Webmaster Login Successful (fallback)"
   else
     echo "❌ Webmaster Login Failed: $ADMIN_LOGIN"
     exit 1
@@ -52,7 +52,7 @@ STUDENT_LOGIN=$(curl -s -X POST "$API_URL/auth/login/student" \
 
 if echo "$STUDENT_LOGIN" | grep -q "token"; then
   STUDENT_TOKEN=$(echo "$STUDENT_LOGIN" | grep -o '"token":"[^"]*' | cut -d'"' -f4)
-  echo "✅ Student Login Successful"
+  echo " Student Login Successful"
 else
   echo "❌ Student Login Failed: $STUDENT_LOGIN"
   exit 1
@@ -64,7 +64,7 @@ PROFILE_RESP=$(curl -s -X GET "$API_URL/profile/student/me" \
   -H "Authorization: Bearer $STUDENT_TOKEN")
 
 if echo "$PROFILE_RESP" | grep -q "student"; then
-  echo "✅ Profile Access Successful"
+  echo " Profile Access Successful"
 else
   echo "❌ Profile Access Failed: $PROFILE_RESP"
   exit 1
@@ -86,7 +86,7 @@ PROFILE_FAIL_RESP=$(curl -s -X GET "$API_URL/profile/student/me" \
   -H "Authorization: Bearer $STUDENT_TOKEN")
 
 if echo "$PROFILE_FAIL_RESP" | grep -q "AUTH_SUSPENDED"; then
-  echo "✅ SUCCESS: User is correctly blocked (403 AUTH_SUSPENDED)"
+  echo " SUCCESS: User is correctly blocked (403 AUTH_SUSPENDED)"
 else
   echo "❌ FAILURE: User was NOT blocked! Response: $PROFILE_FAIL_RESP"
   exit 1
@@ -108,7 +108,7 @@ PROFILE_RESTORED_RESP=$(curl -s -X GET "$API_URL/profile/student/me" \
   -H "Authorization: Bearer $STUDENT_TOKEN")
 
 if echo "$PROFILE_RESTORED_RESP" | grep -q "student"; then
-  echo "✅ SUCCESS: User access restored"
+  echo " SUCCESS: User access restored"
 else
   echo "❌ FAILURE: User access NOT restored! Response: $PROFILE_RESTORED_RESP"
   exit 1

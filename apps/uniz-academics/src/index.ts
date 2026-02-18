@@ -46,7 +46,7 @@ const startWorker = async () => {
       do {
         result = await processNextBatch();
       } while (result && result.status === "continued");
-      console.log("[Academics] ✅ All stuck jobs processed.");
+      console.log("[Academics]  All stuck jobs processed.");
     }
   } catch (err) {
     console.warn("[Academics] Startup worker check failed:", err);

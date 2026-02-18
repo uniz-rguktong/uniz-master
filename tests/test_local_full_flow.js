@@ -29,7 +29,7 @@ let studentProfile = null;
 
 // --- UTILS ---
 const logStep = (step) => console.log(`\n🔹 ${step}`.cyan.bold);
-const logSuccess = (msg) => console.log(`   ✅ ${msg}`.green);
+const logSuccess = (msg) => console.log(`    ${msg}`.green);
 const logError = (msg, err) => {
   console.log(`   ❌ ${msg}`.red);
   if (err.response) {
@@ -325,7 +325,7 @@ async function testPolling() {
 async function testSecurityFlow() {
   logStep("Testing Security Check-In/Out Flow");
   if (!requestId) {
-    console.log("   ⚠️ Skipping Security Flow (No Request ID)");
+    console.log("    Skipping Security Flow (No Request ID)");
     return;
   }
 
@@ -387,7 +387,7 @@ async function testSecurityFlow() {
 
 // --- RUNNER ---
 (async () => {
-  console.log("🚀 Starting UniZ Full Production Flow Test".magenta.bold);
+  console.log(" Starting UniZ Full Production Flow Test".magenta.bold);
 
   await testAuth();
   if (studentToken && adminToken) {
@@ -398,5 +398,5 @@ async function testSecurityFlow() {
     await testPolling();
   }
 
-  console.log("\n✨ Test Sequence Complete".magenta.bold);
+  console.log("\n Test Sequence Complete".magenta.bold);
 })();

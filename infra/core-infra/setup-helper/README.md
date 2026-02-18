@@ -1,4 +1,4 @@
-# 🚀 GoDaddy VPS Deployment Guide (High Traffic Edition)
+# GoDaddy VPS Deployment Guide (High Traffic Edition)
 
 This is your master checklist and runbook for deploying UniZ to a GoDaddy VPS. This setup is specifically tuned to handle **10,000 concurrent users** during "Result Day" events.
 
@@ -27,7 +27,7 @@ This is your master checklist and runbook for deploying UniZ to a GoDaddy VPS. T
 
 ---
 
-## 🛠 Phase 2: Server Setup (One-Time)
+## Phase 2: Server Setup (One-Time)
 
 ### 1. SSH into Server
 
@@ -57,7 +57,7 @@ chmod +x setup_vps.sh
 
 ---
 
-## 📦 Phase 3: Application Deployment
+## Phase 3: Application Deployment
 
 ### 1. Clone Codebase
 
@@ -102,7 +102,7 @@ _Repeat for all services ensuring correct DB URL Schemas and PORTs (3001, 3002, 
 
 ---
 
-## 🚀 Phase 4: Launch & Network
+## Phase 4: Launch & Network
 
 ### 1. Start Microservices with PM2
 
@@ -154,7 +154,7 @@ sudo systemctl restart nginx
     pm2 scale uniz-auth +2
     ```
 
-## ✅ Verification Checklist
+## Verification Checklist
 
 - [ ] SSH works without password (ssh-key recommended).
 - [ ] `node -v` returns v20+.

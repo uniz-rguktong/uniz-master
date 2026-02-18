@@ -3,11 +3,11 @@ set -e
 # UniZ Production Redeploy Script
 # Synchronizes infrastructure and pulls latest Docker images
 
-echo "🚀 Starting Optimized Redeployment..."
+echo " Starting Optimized Redeployment..."
 cd ~/uniz-infrastructure
 
 # Force fetch and reset to avoid "divergent branches" errors on the VPS
-echo "📦 Updating infrastructure configuration..."
+echo " Updating infrastructure configuration..."
 git fetch origin main
 git reset --hard origin/main
 
@@ -23,4 +23,4 @@ docker compose -f docker-compose.prod.yml up -d --force-recreate
 echo "🧹 Cleaning up old images..."
 docker image prune -af --filter "until=24h"
 
-echo "✅ System Updated & Cleaned!"
+echo " System Updated & Cleaned!"

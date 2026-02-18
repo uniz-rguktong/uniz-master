@@ -6,7 +6,7 @@ First off, thank you for considering contributing to UniZ. It's people like you 
 
 This project and everyone participating in it is governed by the [UniZ Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
 
-## 🛠 Workflow
+## Workflow
 
 1.  **Fork** the repository.
 2.  **Clone** the project to your own machine.
@@ -27,7 +27,7 @@ This project and everyone participating in it is governed by the [UniZ Code of C
 - **Search** for existing issues.
 - **Template**: Use the Bug Report template to provide all necessary details.
 
-## ✨ Feature Requests
+## Feature Requests
 
 - **Discuss**: Open a discussion or issue to discuss the feature before implementing.
 - **Detail**: Explain the _why_ and _how_.

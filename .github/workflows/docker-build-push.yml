@@ -3,16 +3,16 @@ on:
     branches:
       - main
     paths:
-      - "uniz-auth/**"
-      - "uniz-user/**"
-      - "uniz-outpass/**"
-      - "uniz-academics/**"
-      - "uniz-files/**"
-      - "uniz-mail/**"
-      - "uniz-notifications/**"
-      - "uniz-cron/**"
-      - "uniz-gateway/**"
-      - "uniz-infrastructure/nginx/**"
+      - "apps/uniz-auth/**"
+      - "apps/uniz-user/**"
+      - "apps/uniz-outpass/**"
+      - "apps/uniz-academics/**"
+      - "apps/uniz-files/**"
+      - "apps/uniz-mail/**"
+      - "apps/uniz-notifications/**"
+      - "apps/uniz-cron/**"
+      - "apps/uniz-gateway/**"
+      - "infra/core-infra/nginx/**"
 
 jobs:
   changes:
@@ -25,16 +25,16 @@ jobs:
         id: filter
         with:
           filters: |
-            uniz-auth-service: 'uniz-auth/**'
-            uniz-user-service: 'uniz-user/**'
-            uniz-outpass-service: 'uniz-outpass/**'
-            uniz-academics-service: 'uniz-academics/**'
-            uniz-files-service: 'uniz-files/**'
-            uniz-mail-service: 'uniz-mail/**'
-            uniz-notification-service: 'uniz-notifications/**'
-            uniz-cron-service: 'uniz-cron/**'
-            uniz-gateway: 'uniz-infrastructure/nginx/**'
-            uniz-gateway-api: 'uniz-gateway/**'
+            uniz-auth-service: 'apps/uniz-auth/**'
+            uniz-user-service: 'apps/uniz-user/**'
+            uniz-outpass-service: 'apps/uniz-outpass/**'
+            uniz-academics-service: 'apps/uniz-academics/**'
+            uniz-files-service: 'apps/uniz-files/**'
+            uniz-mail-service: 'apps/uniz-mail/**'
+            uniz-notification-service: 'apps/uniz-notifications/**'
+            uniz-cron-service: 'apps/uniz-cron/**'
+            uniz-gateway: 'infra/core-infra/nginx/**'
+            uniz-gateway-api: 'apps/uniz-gateway/**'
 
   build-and-push:
     needs: changes
@@ -45,35 +45,35 @@ jobs:
         service_key: ${{ fromJson(needs.changes.outputs.services) }}
         include:
           - service_key: uniz-auth-service
-            context: uniz-auth
-            dockerfile: uniz-auth/Dockerfile
+            context: apps/uniz-auth
+            dockerfile: apps/uniz-auth/Dockerfile
           - service_key: uniz-user-service
-            context: uniz-user
-            dockerfile: uniz-user/Dockerfile
+            context: apps/uniz-user
+            dockerfile: apps/uniz-user/Dockerfile
           - service_key: uniz-outpass-service
-            context: uniz-outpass
-            dockerfile: uniz-outpass/Dockerfile
+            context: apps/uniz-outpass
+            dockerfile: apps/uniz-outpass/Dockerfile
           - service_key: uniz-academics-service
-            context: uniz-academics
-            dockerfile: uniz-academics/Dockerfile
+            context: apps/uniz-academics
+            dockerfile: apps/uniz-academics/Dockerfile
           - service_key: uniz-files-service
-            context: uniz-files
-            dockerfile: uniz-files/Dockerfile
+            context: apps/uniz-files
+            dockerfile: apps/uniz-files/Dockerfile
           - service_key: uniz-mail-service
-            context: uniz-mail
-            dockerfile: uniz-mail/Dockerfile
+            context: apps/uniz-mail
+            dockerfile: apps/uniz-mail/Dockerfile
           - service_key: uniz-notification-service
-            context: uniz-notifications
-            dockerfile: uniz-notifications/Dockerfile
+            context: apps/uniz-notifications
+            dockerfile: apps/uniz-notifications/Dockerfile
           - service_key: uniz-cron-service
-            context: uniz-cron
-            dockerfile: uniz-cron/Dockerfile
+            context: apps/uniz-cron
+            dockerfile: apps/uniz-cron/Dockerfile
           - service_key: uniz-gateway
-            context: uniz-infrastructure/nginx
-            dockerfile: uniz-infrastructure/nginx/Dockerfile
+            context: infra/core-infra/nginx
+            dockerfile: infra/core-infra/nginx/Dockerfile
           - service_key: uniz-gateway-api
-            context: uniz-gateway
-            dockerfile: uniz-gateway/Dockerfile
+            context: apps/uniz-gateway
+            dockerfile: apps/uniz-gateway/Dockerfile
 
     steps:
       - name: Checkout code

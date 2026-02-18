@@ -31,7 +31,7 @@ export default function Resetpassword() {
       (event: React.ChangeEvent<HTMLInputElement>) => {
         setter(event.target.value);
       },
-    []
+    [],
   );
 
   // Validate password strength
@@ -72,7 +72,7 @@ export default function Resetpassword() {
     }
     if (passwordStrength.score < 3) {
       toast.error(
-        "Password must be at least 8 characters long, include a number, and a special character."
+        "Password must be at least 8 characters long, include a number, and a special character.",
       );
       return;
     }
@@ -104,15 +104,18 @@ export default function Resetpassword() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-      const res = await fetch("https://api.uniz.rguktong.in/api/v1/auth/password/change", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${tokenValue}`,
+      const res = await fetch(
+        "https://api.uniz.rguktong.in/api/v1/auth/password/change",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${tokenValue}`,
+          },
+          body: bodyData,
+          signal: controller.signal,
         },
-        body: bodyData,
-        signal: controller.signal,
-      });
+      );
 
       clearTimeout(timeoutId);
 
@@ -161,8 +164,12 @@ export default function Resetpassword() {
     <div className="min-h-screen bg-white font-sans text-neutral-900 pb-20">
       <div className="max-w-6xl mx-auto px-4 pt-12 pb-6">
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-black mb-4">Security</h1>
-          <p className="text-neutral-500 font-medium text-lg">Manage your account security and password preferences.</p>
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-black mb-4">
+            Security
+          </h1>
+          <p className="text-neutral-500 font-medium text-lg">
+            Manage your account security and password preferences.
+          </p>
         </div>
 
         {/* Main Content */}
@@ -172,33 +179,51 @@ export default function Resetpassword() {
             <div className="md:w-2/3 p-6 md:p-12">
               <div className="flex items-center gap-4 mb-8">
                 <div className="p-3 bg-black text-white rounded-xl">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl md:text-2xl font-black text-black tracking-tight">Change Password</h3>
-                  <p className="text-sm font-medium text-neutral-500">Enter your details to update your password</p>
+                  <h3 className="text-xl md:text-2xl font-black text-black tracking-tight">
+                    Change Password
+                  </h3>
+                  <p className="text-sm font-medium text-neutral-500">
+                    Enter your details to update your password
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-6 md:space-y-8">
                 {/* Current Password */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 mb-2 block ml-1">Current Password</label>
+                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 mb-2 block ml-1">
+                    Current Password
+                  </label>
                   <div className="relative group">
                     <Input
                       type="password"
                       onchangeFunction={handleInputChange(setOldPassword)}
                       placeholder="Enter current password"
-                    //   className="w-full bg-neutral-50 border border-neutral-200 rounded-xl p-4 font-bold text-lg focus:outline-none focus:border-black transition-colors"
+                      //   className="w-full bg-neutral-50 border border-neutral-200 rounded-xl p-4 font-bold text-lg focus:outline-none focus:border-black transition-colors"
                     />
                   </div>
                 </div>
 
                 {/* New Password */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 mb-2 block ml-1">New Password</label>
+                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 mb-2 block ml-1">
+                    New Password
+                  </label>
                   <div className="relative group">
                     <Input
                       type="password"
@@ -212,12 +237,20 @@ export default function Resetpassword() {
                         <div className="h-2 flex-1 bg-neutral-100 rounded-full overflow-hidden">
                           <div
                             className={`h-full transition-all duration-500 ${passwordStrength.color}`}
-                            style={{ width: `${(passwordStrength.score / 3) * 100}%` }}
+                            style={{
+                              width: `${(passwordStrength.score / 3) * 100}%`,
+                            }}
                           ></div>
                         </div>
-                        <span className={`text-xs font-bold uppercase tracking-wider w-20 text-right ${passwordStrength.score === 3 ? 'text-black' :
-                          passwordStrength.score === 2 ? 'text-neutral-600' : 'text-neutral-400'
-                          }`}>
+                        <span
+                          className={`text-xs font-bold uppercase tracking-wider w-20 text-right ${
+                            passwordStrength.score === 3
+                              ? "text-black"
+                              : passwordStrength.score === 2
+                                ? "text-neutral-600"
+                                : "text-neutral-400"
+                          }`}
+                        >
                           {passwordStrength.label}
                         </span>
                       </div>
@@ -227,7 +260,9 @@ export default function Resetpassword() {
 
                 {/* Confirm New Password */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 mb-2 block ml-1">Confirm Password</label>
+                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 mb-2 block ml-1">
+                    Confirm Password
+                  </label>
                   <div className="relative group">
                     <Input
                       type="password"
@@ -239,15 +274,35 @@ export default function Resetpassword() {
                     <div className="mt-2 ml-1">
                       {password === repassword ? (
                         <p className="text-xs font-bold text-black flex items-center gap-1.5 uppercase tracking-wide">
-                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                          <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="3"
+                              d="M5 13l4 4L19 7"
+                            />
                           </svg>
                           Passwords match
                         </p>
                       ) : (
                         <p className="text-xs font-bold text-neutral-400 flex items-center gap-1.5 uppercase tracking-wide">
-                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
+                          <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="3"
+                              d="M6 18L18 6M6 6l12 12"
+                            />
                           </svg>
                           Passwords do not match
                         </p>
@@ -262,7 +317,7 @@ export default function Resetpassword() {
                     value={isLoading ? "Processing..." : "Reset Password"}
                     loading={isLoading}
                     onclickFunction={sendDataToBackend}
-                  // className="w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-neutral-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
+                    // className="w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-neutral-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
                   />
                   <button
                     onClick={() => navigateTo("/student")}
@@ -283,23 +338,77 @@ export default function Resetpassword() {
                 </h3>
 
                 <div className="space-y-6">
-                  <div className={`flex items-center gap-3 transition-colors duration-300 ${password.length >= 8 ? 'text-black' : 'text-neutral-400'}`}>
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${password.length >= 8 ? 'border-black bg-black text-white' : 'border-neutral-200'}`}>
-                      {password.length >= 8 && <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                  <div
+                    className={`flex items-center gap-3 transition-colors duration-300 ${password.length >= 8 ? "text-black" : "text-neutral-400"}`}
+                  >
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${password.length >= 8 ? "border-black bg-black text-white" : "border-neutral-200"}`}
+                    >
+                      {password.length >= 8 && (
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      )}
                     </div>
                     <p className="font-medium text-sm">8+ Characters</p>
                   </div>
 
-                  <div className={`flex items-center gap-3 transition-colors duration-300 ${/[0-9]/.test(password) ? 'text-black' : 'text-neutral-400'}`}>
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[0-9]/.test(password) ? 'border-black bg-black text-white' : 'border-neutral-200'}`}>
-                      {/[0-9]/.test(password) && <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                  <div
+                    className={`flex items-center gap-3 transition-colors duration-300 ${/[0-9]/.test(password) ? "text-black" : "text-neutral-400"}`}
+                  >
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[0-9]/.test(password) ? "border-black bg-black text-white" : "border-neutral-200"}`}
+                    >
+                      {/[0-9]/.test(password) && (
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      )}
                     </div>
                     <p className="font-medium text-sm">One Number</p>
                   </div>
 
-                  <div className={`flex items-center gap-3 transition-colors duration-300 ${/[^A-Za-z0-9]/.test(password) ? 'text-black' : 'text-neutral-400'}`}>
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[^A-Za-z0-9]/.test(password) ? 'border-black bg-black text-white' : 'border-neutral-200'}`}>
-                      {/[^A-Za-z0-9]/.test(password) && <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                  <div
+                    className={`flex items-center gap-3 transition-colors duration-300 ${/[^A-Za-z0-9]/.test(password) ? "text-black" : "text-neutral-400"}`}
+                  >
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[^A-Za-z0-9]/.test(password) ? "border-black bg-black text-white" : "border-neutral-200"}`}
+                    >
+                      {/[^A-Za-z0-9]/.test(password) && (
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      )}
                     </div>
                     <p className="font-medium text-sm">Special Character</p>
                   </div>
@@ -308,11 +417,22 @@ export default function Resetpassword() {
 
               <div className="mt-12 p-6 bg-white rounded-2xl border border-neutral-100 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <svg className="h-5 w-5 text-neutral-900 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  <svg
+                    className="h-5 w-5 text-neutral-900 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
                   </svg>
                   <p className="text-xs font-medium text-neutral-600 leading-relaxed">
-                    For your security, you will be automatically logged out from all devices after successfully changing your password.
+                    For your security, you will be automatically logged out from
+                    all devices after successfully changing your password.
                   </p>
                 </div>
               </div>
