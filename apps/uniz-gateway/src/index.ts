@@ -368,7 +368,7 @@ app.get("/gateway-status", (req, res) => {
 });
 
 // Implementation of proxy behavior
-app.all("/api/v1/:service/*", async (req, res) => {
+app.all("/api/v1/:service/(.*)", async (req, res) => {
   const { service } = req.params;
   const serviceKey = service.toLowerCase();
   const targetBase = serviceMap[serviceKey];
