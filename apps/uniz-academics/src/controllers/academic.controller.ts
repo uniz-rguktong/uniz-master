@@ -12,14 +12,6 @@ const GATEWAY_URL =
 
 const getHeaders = (token: string) => ({ headers: { Authorization: token } });
 
-const recordUploadHistory = async (data: any) => {
-  try {
-    await axios.post(`${GATEWAY_URL}/profile/internal/upload-history`, data);
-  } catch (err) {
-    console.warn("Failed to record upload history externally:", err);
-  }
-};
-
 import { mapGradeToPoint } from "../utils/helpers.util";
 import { randomUUID } from "crypto";
 import { redis, notificationQueue } from "../utils/redis.util";
