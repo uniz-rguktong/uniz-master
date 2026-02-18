@@ -127,6 +127,7 @@ const serviceMap: Record<string, string> = {
     process.env.NOTIFICATION_SERVICE_URL || "http://localhost:3007",
   cron: process.env.CRON_SERVICE_URL || "http://localhost:3008",
   grievance: process.env.OUTPASS_SERVICE_URL || "http://localhost:3003",
+  system: "http://localhost:3000",
 };
 
 app.get("/", (req, res) => {
@@ -367,21 +368,31 @@ app.get("/gateway-status", (req, res) => {
 });
 
 // Implementation of proxy behavior
-app.all("/api/v1/:service/:path*", async (req, res) => {
-  const { service, path } = req.params as any;
-  const targetBase = serviceMap[service];
+app.all("/api/v1/:service/*", async (req, res) => {
+  const { service } = req.params;
+  const serviceKey = service.toLowerCase();
+  const targetBase = serviceMap[serviceKey];
+
+  console.log(`[Gateway-DEBUG] Incoming: ${req.method} ${req.url}`);
+  console.log(
+    `[Gateway-DEBUG] Parsed Service: ${service} -> Key: ${serviceKey}`,
+  );
 
   if (!targetBase) {
+    console.warn(`[Gateway-WARN] Service ${serviceKey} NOT found in map!`);
     return res
       .status(404)
       .json({ error: `Service ${service} not found in gateway map` });
   }
 
-  const query = req.url.includes("?")
-    ? req.url.substring(req.url.indexOf("?"))
-    : "";
-  const pathPart = Array.isArray(path) ? path.join("/") : path;
-  const targetUrl = `${targetBase}/${pathPart}${query}`;
+  // Robust path reconstruction
+  // Extract everything after /api/v1/:service
+  const urlParts = req.url.split("/");
+  // /api/v1/:service/the/rest/of/path?query=1
+  // parts: ["", "api", "v1", ":service", "the", "rest", "..."]
+  const pathWithQuery = urlParts.slice(4).join("/");
+  const targetUrl = `${targetBase.replace(/\/$/, "")}/${pathWithQuery}`;
+
   console.log(`[Proxy] ${req.method} ${req.url} -> ${targetUrl}`);
 
   try {
