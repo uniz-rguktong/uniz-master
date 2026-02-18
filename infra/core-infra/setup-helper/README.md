@@ -1,163 +1,103 @@
-# GoDaddy VPS Deployment Guide (High Traffic Edition)
+# UniZ VPS Deployment Guide - Enterprise Scale Implementation
 
-This is your master checklist and runbook for deploying UniZ to a GoDaddy VPS. This setup is specifically tuned to handle **10,000 concurrent users** during "Result Day" events.
+![Ubuntu](https://img.shields.io/badge/Ubuntu-24.04-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-High--Performance-009639?style=for-the-badge&logo=nginx&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![PM2](https://img.shields.io/badge/PM2-Advanced--Orchestration-2B037A?style=for-the-badge&logo=pm2&logoColor=white)
 
-## 📋 Phase 1: Purchase & Prerequisites
+> **UniZ DEPLOYMENT BLUEPRINT 2026**
+> _Step-by-step instructions for deploying the structuralized UniZ ecosystem to a high-performance Linux VPS environment._
 
-### 1. Choice of Server
+## Phase 1: Infrastructure Provisioning
 
-- **GoDaddy VPS**: Follow the standard plan.
-- **Azure for Students**:
-  1. Sign up at [azure.microsoft.com/free/students/](https://azure.microsoft.com/free/students/).
-  2. Create a Virtual Machine: **Ubuntu 24.04**.
-  3. Size: **Standard_B2s** (2 vCPU, 4GB RAM) - Matches your 'Economy' requirement.
-  4. **Networking (CRITICAL)**: In the Azure "Network Security Group" (NSG), add Inbound rules for:
-     - Port 80 (HTTP)
-     - Port 443 (HTTPS)
-     - Port 22 (SSH)
-  5. **Region**: Select **Central India (Pune)** for lowest latency.
+### 1. Server Specification
 
-### 2. Configure DNS
+- **Recommended OS**: Ubuntu 24.04 LTS
+- **Instance Size**: 4 vCPU, 8GB-16GB RAM (e.g., GoDaddy VPS High-RAM or Azure Standard_B4ms)
+- **Region**: Select a region closest to the majority of student traffic (e.g., Central India for RGUKT Ongole)
 
-- Go to your Domain DNS Management.
-- Create an **A Record**:
-  - **Host**: `api` (or `@` for root domain)
-  - **Value**: `YOUR_VPS_IP_ADDRESS` (e.g., 123.45.67.89)
-  - **TTL**: 600 seconds
+### 2. Networking Configuration
 
----
+Ensure the following ports are open in your VPS Firewall/NSG:
 
-## Phase 2: Server Setup (One-Time)
+- **Port 80 (HTTP)**: Redirect to 443
+- **Port 443 (HTTPS)**: Primary API/Portal traffic
+- **Port 22 (SSH)**: Secure administration
 
-### 1. SSH into Server
+## Phase 2: System Optimization (Server Setup)
 
-Open your terminal (Mac/Linux) or PowerShell (Windows).
+### 1. Core Runtime Installation
+
+Execute the core setup scripts to install the Node.js runtime, Redis cache, and Nginx proxy:
 
 ```bash
+# SSH into the server
 ssh root@YOUR_VPS_IP
-# Enter password you set during purchase
+
+# Run the unified setup command (requires deployment assets from repo)
+# Refer to scripts/archive/setup_vps.sh for the baseline implementation
 ```
 
-### 2. Run the Auto-Setup Script
+### 2. Kernel Tuning
 
-I have prepared a script `deploy_config/setup_vps.sh` that installs Node.js, Nginx, Redis, and tunes the Linux kernel for 65k connections.
-
-On your **local machine** (not the server), upload the script:
-
-```bash
-scp deploy_config/setup_vps.sh root@YOUR_VPS_IP:~/setup_vps.sh
-```
-
-Back on the **server**:
-
-```bash
-chmod +x setup_vps.sh
-./setup_vps.sh
-```
-
----
+The platform is tuned for high concurrency. Ensure `ip_local_port_range` is expanded and `file-max` is increased to support >65,000 simultaneous connections.
 
 ## Phase 3: Application Deployment
 
-### 1. Clone Codebase
+### 1. Structuralized Code Retrieval
+
+Clone the Master Vault to the VPS home directory:
 
 ```bash
-# On the VPS
-git clone https://github.com/uniz-rguktong/uniz-rguktong.git
-cd uniz-rguktong
+git clone https://github.com/uniz-rguktong/uniz-master-vault.git
+cd uniz-master-vault
 ```
 
-### 2. Install Dependencies
+### 2. Dependency Orchestration
+
+Utilize the centralized installation script to initialize the root and all sub-modules:
 
 ```bash
-# Root dependencies
 npm install
-
-# Install Service dependencies
-(cd uniz-auth-service && npm install)
-(cd uniz-user-service && npm install)
-(cd uniz-outpass-service && npm install)
-(cd uniz-academics-service && npm install)
-(cd uniz-production-gateway && npm install)
+npm run install:all
 ```
 
-### 3. Configure Environment Variables (CRITICAL)
+### 3. Environment Synchronization
 
-You must create a `.env` file for **EACH** service.
+Populate `.env` files for each microservice within the `apps/` directory. Ensure `DATABASE_URL` entries include the correct schema parameters (e.g., `schema=auth`, `schema=academics`).
 
-- `uniz-auth-service/.env`
-- `uniz-user-service/.env`
-- `uniz-outpass-service/.env`
-- `uniz-academics-service/.env`
+## Phase 4: Production Lifecycle Management
 
-**Example contents for `uniz-academics-service/.env`**:
+### 1. PM2 Orchestration
 
-```env
-DATABASE_URL="postgresql://neondb_owner:npg_5ulZqX3YDptG@ep-frosty-mud-ahwpoi10-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&schema=academics"
-JWT_SECURITY_KEY="uniz_vault_secure_2026_key"
-PORT=3004
-```
-
-_Repeat for all services ensuring correct DB URL Schemas and PORTs (3001, 3002, 3003)._
-
----
-
-## Phase 4: Launch & Network
-
-### 1. Start Microservices with PM2
-
-We use the generated `ecosystem.config.js` to run mapped clusters.
+Use PM2 to manage service clusters and ensure zero-downtime restarts:
 
 ```bash
-# From uniz-rguktong root directory
+# Initialize ecosystem from the root
 pm2 start deploy_config/ecosystem.config.js
 pm2 save
 pm2 startup
 ```
 
-### 2. Configure Nginx (The Traffic Cop)
+### 2. Nginx Proximity Config
 
-This file handles the 10k connections and caches "Result Day" traffic.
+Deploy the optimized Nginx configuration located in `infra/core-infra/nginx/` to the system:
 
 ```bash
-# Backup default
-sudo mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
-
-# Copy our optimized config
-sudo cp deploy_config/nginx_optimized.conf /etc/nginx/nginx.conf
-
-# Test config is valid
-sudo nginx -t
-
-# Restart Nginx
-sudo systemctl restart nginx
+sudo cp infra/core-infra/nginx/nginx_optimized.conf /etc/nginx/nginx.conf
+sudo nginx -t && sudo systemctl restart nginx
 ```
+
+## Phase 5: Result Day Scaling Protocol
+
+During peak load events (Result announcements):
+
+1. **Cache Purge**: `sudo rm -rf /var/cache/nginx/* && sudo systemctl reload nginx`
+2. **Horizontal Scaling**: `pm2 scale uniz-auth +4` to handle intensified Bcrypt overhead.
+3. **Monitor Latency**: `pm2 monit` to track real-time CPU and memory saturation.
 
 ---
 
-## 🚦 Phase 5: "Result Day" Procedure
-
-**Follow this exactly on the morning of results.**
-
-1.  **Flush Cache**: Ensure students don't see old data.
-    ```bash
-    # On VPS
-    sudo rm -rf /var/cache/nginx/*
-    sudo systemctl reload nginx
-    ```
-2.  **Monitor Load**: Watch the server live.
-    ```bash
-    pm2 monit
-    ```
-3.  **Scale Auth (If needed)**: If login is slow, add more auth workers.
-    ```bash
-    pm2 scale uniz-auth +2
-    ```
-
-## Verification Checklist
-
-- [ ] SSH works without password (ssh-key recommended).
-- [ ] `node -v` returns v20+.
-- [ ] `pm2 list` shows all 5 services as "online".
-- [ ] `curl http://localhost:3001/health` works internally.
-- [ ] `curl http://YOUR_VPS_IP/health` works externally via Nginx.
+<p align="center">
+  Corporate Technical Infrastructure - internal Use Only
+</p>

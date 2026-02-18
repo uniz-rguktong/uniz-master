@@ -23,6 +23,24 @@ ROOT_DIR="$( cd "$SCRIPT_DIR/../.." && pwd )"
 
 echo " Starting Global Pull Protocol (Structured)..."
 
+# 0. Self-Repair: Restore git structures if needed
+echo " Checking for git structure restoration..."
+for app in "${APPS[@]}"; do
+    TARGET_DIR="$ROOT_DIR/apps/$app"
+    if [ -d "$TARGET_DIR/.git-preserved" ] && [ ! -d "$TARGET_DIR/.git" ]; then
+        echo "   > Restoring .git for $app..."
+        mv "$TARGET_DIR/.git-preserved" "$TARGET_DIR/.git" 2>/dev/null || true
+    fi
+done
+
+for infra in "${INFRA_SERVICES[@]}"; do
+    TARGET_DIR="$ROOT_DIR/infra/$infra"
+    if [ -d "$TARGET_DIR/.git-preserved" ] && [ ! -d "$TARGET_DIR/.git" ]; then
+        echo "   > Restoring .git for $infra..."
+        mv "$TARGET_DIR/.git-preserved" "$TARGET_DIR/.git" 2>/dev/null || true
+    fi
+done
+
 # 1. Sync Apps
 echo " Pulling latest changes for apps..."
 for app in "${APPS[@]}"; do
