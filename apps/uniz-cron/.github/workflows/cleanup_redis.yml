@@ -1,0 +1,27 @@
+name: Daily Redis Cache Cleanup
+
+on:
+  schedule:
+    # Run at 00:00 UTC every day
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Redis Tools
+        run: sudo apt-get update && sudo apt-get install -y redis-tools
+
+      - name: Flush Redis Cache
+        env:
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+        run: |
+          if [ -z "$REDIS_URL" ]; then
+            echo "REDIS_URL secret is not set. Skipping cleanup."
+            exit 1
+          fi
+          echo "Connecting to Redis and flushing database..."
+          # Using FLUSHDB to clear the current database
+          redis-cli -u $REDIS_URL FLUSHDB
+          echo "Redis cache cleared successfully."

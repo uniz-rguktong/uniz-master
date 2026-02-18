@@ -1,0 +1,40 @@
+# Stage 1: Build
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+ARG VITE_API_URL
+ARG VITE_MAINTENANCE_MODE
+ARG VITE_CLOUDINARY_CLOUD_NAME
+ARG VITE_CLOUDINARY_UPLOAD_PRESET
+ARG VITE_SCRAPER_URL
+
+ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_MAINTENANCE_MODE=${VITE_MAINTENANCE_MODE}
+ENV VITE_CLOUDINARY_CLOUD_NAME=${VITE_CLOUDINARY_CLOUD_NAME}
+ENV VITE_CLOUDINARY_UPLOAD_PRESET=${VITE_CLOUDINARY_UPLOAD_PRESET}
+ENV VITE_SCRAPER_URL=${VITE_SCRAPER_URL}
+
+COPY . .
+
+# Set environment variables for production build
+# This effectively bakes them into the static files
+RUN VITE_API_URL=${VITE_API_URL} \
+    VITE_MAINTENANCE_MODE=${VITE_MAINTENANCE_MODE} \
+    VITE_CLOUDINARY_CLOUD_NAME=${VITE_CLOUDINARY_CLOUD_NAME} \
+    VITE_CLOUDINARY_UPLOAD_PRESET=${VITE_CLOUDINARY_UPLOAD_PRESET} \
+    VITE_SCRAPER_URL=${VITE_SCRAPER_URL} \
+    npm run build
+
+# Stage 2: Serve
+FROM nginx:alpine
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

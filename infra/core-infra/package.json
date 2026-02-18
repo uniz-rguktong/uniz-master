@@ -1,0 +1,72 @@
+{
+  "name": "uniz-infrastructure",
+  "version": "1.0.0",
+  "description": "Welcome to the specific repository for running the **UniZ Backend**. This setup orchestrates all microservices (Auth, User, Academics, etc.) using Docker, giving you a fully functional API locally in minutes.",
+  "main": "comprehensive_test.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "bash scripts/local_test.sh",
+    "test:e2e": "node tests/comprehensive_test.js",
+    "docker:up": "bash scripts/smart_up.sh",
+    "docker:down": "docker-compose down",
+    "docker:clean": "docker-compose down -v --remove-orphans",
+    "docker:logs": "docker-compose logs -f",
+    "docker:restart": "npm run docker:down && npm run docker:up",
+    "update:docker": "bash scripts/update_docker.sh",
+    "deploy:build": "bash scripts/build_push.sh",
+    "deploy:redeploy": "bash scripts/redeploy.sh",
+    "deploy:bootstrap": "bash scripts/bootstrap.sh",
+    "db:seed": "node scripts/seed_pg.js",
+    "data:reset": "bash scripts/data_reset.sh",
+    "db": "docker-compose -f docker-compose.prod.yml pull || echo 'Pull skipped' && docker-compose -f docker-compose.prod.yml up -d --force-recreate && sleep 10 && npm run data:reset && echo '\\nStarting E2E Tests...' && npm run test:e2e && node tests/cors_test.js && echo '\\n✅ BACKEND READY! Base URL: http://localhost/api/v1'",
+    "db:reset-migrate": "npm run data:reset",
+    "dev": "npm run docker:up && sleep 30 && npm run test:e2e",
+    "bring:backend": "bash scripts/bring_backend.sh",
+    "start": "bash scripts/smart_start.sh",
+    "start:safe": "bash scripts/start_sequential.sh",
+    "clean": "rm -rf node_modules logs/*.log .env.clean",
+    "setup": "npm install && (test -f .env || cp .env.example .env) && npm run data:reset",
+    "deploy:vps": "bash scripts/deploy_vps.sh",
+    "health": "curl -s http://localhost/api/v1/system/health | jq",
+    "status": "curl -s http://localhost/gateway-status"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uniz-rguktong/uniz-infrastructure.git"
+  },
+  "keywords": [
+    "uniz",
+    "microservices",
+    "docker",
+    "infrastructure",
+    "education-platform"
+  ],
+  "author": "SABER",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/uniz-rguktong/uniz-infrastructure/issues"
+  },
+  "homepage": "https://github.com/uniz-rguktong/uniz-infrastructure#readme",
+  "dependencies": {
+    "@prisma/client": "^7.4.0",
+    "@types/node": "^25.2.3",
+    "axios": "^1.7.9",
+    "bcryptjs": "^3.0.3",
+    "colors": "^1.4.0",
+    "dotenv": "^17.3.1",
+    "form-data": "^4.0.1",
+    "pg": "^8.18.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
+  }
+}

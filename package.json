@@ -11,12 +11,12 @@
     "pull": "bash scripts/pull_all.sh",
     "test": "node scripts/comprehensive_test.js",
     "clean": "rm -rf logs/ *.log",
-    "install:all": "for d in uniz-*; do (cd $d && npm install && npm audit fix); done",
-    "data-reset": "npm run data:reset --prefix uniz-infrastructure",
-    "setup": "npm run setup --prefix uniz-infrastructure",
+    "install:all": "for d in apps/uniz-* infra/core-infra; do (cd $d && npm install && npm audit fix); done",
+    "data-reset": "npm run data:reset --prefix infra/core-infra",
+    "setup": "npm run setup --prefix infra/core-infra",
     "prettify": "prettier --write .",
     "redeploy:all": "bash scripts/redeploy_all_trigger.sh",
-    "db:reset-migrate": "npm run db:reset-migrate --prefix uniz-infrastructure"
+    "db:reset-migrate": "npm run db:reset-migrate --prefix infra/core-infra"
   },
   "dependencies": {
     "axios": "^1.13.4",

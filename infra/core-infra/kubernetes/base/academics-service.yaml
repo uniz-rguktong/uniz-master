@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-academics-service
+  labels:
+    app: uniz-academics-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uniz-academics-service
+  template:
+    metadata:
+      labels:
+        app: uniz-academics-service
+    spec:
+      containers:
+        - name: academics-service
+          image: desusreecharan/uniz-academics-service:latest
+          ports:
+            - containerPort: 3004
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: uniz-secrets
+                  key: ACADEMICS_DATABASE_URL
+          envFrom:
+            - configMapRef:
+                name: uniz-config
+            - secretRef:
+                name: uniz-secrets
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-academics-service
+spec:
+  selector:
+    app: uniz-academics-service
+  ports:
+    - protocol: TCP
+      port: 3004
+      targetPort: 3004
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: uniz-academics-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: uniz-academics-service
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70

@@ -4,7 +4,7 @@
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
-GATEWAY_DIR="$ROOT_DIR/uniz-gateway"
+GATEWAY_DIR="$ROOT_DIR/apps/uniz-gateway"
 
 MODE="${1:-local}"
 
