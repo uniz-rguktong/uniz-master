@@ -1,0 +1,1 @@
+docker buildx build --platform linux/amd64 -t desusreecharan/uniz-gateway:latest -f uniz-gateway/Dockerfile uniz-gateway --push && docker buildx build --platform linux/amd64 -t desusreecharan/uniz-files-service:latest -f uniz-files/Dockerfile uniz-files --push

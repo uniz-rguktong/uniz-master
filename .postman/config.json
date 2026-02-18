@@ -1,0 +1,16 @@
+{
+  "workspace": {
+    "id": "e014da2c-d425-463b-85d5-5a72bc52ba13"
+  },
+  "entities": {
+    "environments": [],
+    "flows": [],
+    "globals": [],
+    "mocks": [],
+    "specs": [],
+    "collections": [
+      "../UniZ_Admin_Tasks.postman_collection.json",
+      "../UniZ_Production.postman_collection.json"
+    ]
+  }
+}
