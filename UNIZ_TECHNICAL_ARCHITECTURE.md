@@ -51,76 +51,58 @@ graph TD
     style RD fill:#e11,stroke:#333,stroke-width:2px,color:#fff
     style PG fill:#369,stroke:#333,stroke-width:2px,color:#fff
     style AS fill:#6c6,stroke:#333,stroke-width:2px
-```
 
 ---
 
-## 2. Global API Strategy & Flow
+## 3. Comprehensive API Catalog & Operational Flows
 
-The UniZ ecosystem is built on a RESTful microservice architecture. Authentication is handled via JWT, and state is synchronized across services using Redis.
+The system is organized into functional suites. Every request (except Public) requires a `Bearer {{authToken}}`.
 
-### 🔑 A. The Authentication Flow (Identity)
+### 🔑 Suite A: Authentication & Identity Flow
+| Endpoint | Method | Flow Description |
+| :--- | :--- | :--- |
+| `/auth/login/student` | POST | **Primary Entry**: Validates Student ID/Password. Returns JWT. |
+| `/auth/login/admin` | POST | **Administrative Entry**: For Staff/Security/Webmaster. |
+| `/auth/otp/request` | POST | **Reset Step 1**: Sends 6-digit OTP to student email. |
+| `/auth/otp/verify` | POST | **Reset Step 2**: Validates OTP; returns `resetToken`. |
+| `/auth/password/reset` | POST | **Reset Step 3**: Replaces password using `resetToken`. |
+| `/auth/admin/suspend` | POST | **Security**: Immediate account lockout (Purges Redis Cache). |
 
-| Endpoint                      | Method | Responsibility                                                    |
-| :---------------------------- | :----- | :---------------------------------------------------------------- |
-| `/api/v1/auth/login/student`  | POST   | Authenticates student, returns JWT token.                         |
-| `/api/v1/auth/login/admin`    | POST   | Authenticates staff/admin, returns JWT token.                     |
-| `/api/v1/auth/otp/request`    | POST   | **Flow Step 1**: Initiates password reset via email OTP.          |
-| `/api/v1/auth/otp/verify`     | POST   | **Flow Step 2**: Validates OTP, returns short-lived `resetToken`. |
-| `/api/v1/auth/password/reset` | POST   | **Flow Step 3**: Finalizes password change using `resetToken`.    |
-| `/api/v1/auth/admin/suspend`  | POST   | Webmaster-only: Immediately locks user out (Redis Invalidation).  |
+### 👤 Suite B: Student Dashboard & Profile
+| Endpoint | Method | Description |
+| :--- | :--- | :--- |
+| `/profile/student/me` | GET | Returns full profile, hostel details, and campus status. |
+| `/profile/student/update` | PUT | Self-service updates for contact/personal info. |
+| `/academics/grades` | GET | Fetches result history with dynamic GPA calculation. |
+| `/academics/attendance`| GET | Fetches percentage breakdown per subject/semester. |
+| `/grievance/submit` | POST | Opens a maintenance/hostel ticket with optional anonymity. |
 
----
+### 🛂 Suite C: Outpass & Outing Management
+**The "Approval Chain" Flow:**
+1.  **Request**: Student POSTs to `/requests/outpass` (Vacation) or `/requests/outing` (Shopping).
+2.  **Audit**: Caretaker/Warden GETs `/requests/outpass/all` (Filter by Branch/ID).
+3.  **Action**: Admin POSTs to `/:id/approve`, `/:id/reject`, or `/:id/forward`.
+4.  **Border Control**: Security POSTs to `/:id/checkout` (Out) and `/:id/checkin` (In).
+5.  **Summary**: `/requests/security/summary` used by gates to track current on-campus count.
 
-### 👤 B. Student Lifecycle & Dashboard
+### 🎓 Suite D: Academic & Content Management (CMS)
+**The "Bulk Ingestion" Flow:**
+1.  **Template**: Admin GETs `/academics/grades/template` (Excel pre-filled with student list).
+2.  **Ingest**: Admin POSTs to `/academics/grades/upload` (Handles 1,000+ records in seconds).
+3.  **Monitor**: GET `/academics/upload/progress` (Async polling for long-running tasks).
+4.  **Broadcast**: POST `/academics/grades/publish-email` (Sends results to the batch's inbox).
+5.  **Public CMS**: `/cms/banners/public` & `/cms/notifications` serve the landing page announcements.
 
-| Endpoint                         | Method | Responsibility                                                        |
-| :------------------------------- | :----- | :-------------------------------------------------------------------- |
-| `/api/v1/profile/student/me`     | GET    | Fetches authenticated user's core profile.                            |
-| `/api/v1/profile/student/update` | PUT    | Allows students to update personal metadata (Blood group, Room, etc). |
-| `/api/v1/academics/grades`       | GET    | **Enriched**: Returns GPA summary + subject-wise records.             |
-| `/api/v1/academics/attendance`   | GET    | **Enriched**: Returns percentage and semester breakdown.              |
-| `/api/v1/grievance/submit`       | POST   | Submits a helpdesk ticket (supports anonymity).                       |
-
----
-
-### 🛂 C. The Outpass Business Logic Chain
-
-Outpasses follow a strictly hierarchical approval flow:
-
-1. **Creation**: `/api/v1/requests/outpass` (Student requests).
-2. **Review**: `/api/v1/requests/outpass/all` (Admin views pending pool).
-3. **Approval**: `/api/v1/requests/:id/approve` (Caretaker -> Warden -> SWO).
-4. **Execution**: `/api/v1/requests/:id/checkout` (Security verifies).
-5. **Completion**: `/api/v1/requests/:id/checkin` (Security marks return).
-
----
-
-### 🎓 D. Academic Administration (Bulk Operations)
-
-Administrative power is optimized for batch-processing thousands of records:
-
-| Endpoint                | Method | Responsibility                                            |
-| :---------------------- | :----- | :-------------------------------------------------------- |
-| `/*/upload`             | POST   | High-speed ingestion for Students, Grades, or Attendance. |
-| `/*/template`           | GET    | Generates pre-filled Excel sheets for data entry.         |
-| `/*/progress`           | GET    | **Async Tracking**: Monitor progress % of bulk tasks.     |
-| `/grades/publish-email` | POST   | Massive scale email delivery of results (Queued logic).   |
-| `/subjects/add`         | POST   | Upsert logic for managing the campus syllabus.            |
+### 🛠️ Suite E: System Health & Utilities
+| Endpoint | Method | Description |
+| :--- | :--- | :--- |
+| `/system/health` | GET | Master heartbeat check across all 9 microservices. |
+| `/gateway-status` | GET | Real-time Nginx throughput and worker statistics. |
+| `/cron/api/cron` | GET | Manual maintenance trigger (Log rotation & DB pruning). |
 
 ---
 
-### 🛠️ E. System Maintenance & Health
-
-| Endpoint                | Method | Responsibility                                              |
-| :---------------------- | :----- | :---------------------------------------------------------- |
-| `/api/v1/system/health` | GET    | Direct health-check of all 9 microservices + Database.      |
-| `/gateway-status`       | GET    | Nginx performance stats and uptime.                         |
-| `/api/v1/cron/api/cron` | GET    | Manual trigger for maintenance tasks (Redis pruning, logs). |
-
----
-
-## 3. Performance & Scaling Optimizations
+## 4. Performance & Scaling Optimizations
 
 ### ⚡ **The Redis "Fast-Pass" Strategy**
 
@@ -167,3 +149,4 @@ UniZ uses a unique **Monorepo-to-MultiRepo** synchronization model managed by `n
 
 **Certified by Antigravity (Advanced Agentic Assistant)**
 **UniZ Production Migration Complete.**
+```
