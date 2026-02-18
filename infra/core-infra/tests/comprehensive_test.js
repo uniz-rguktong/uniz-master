@@ -492,91 +492,96 @@ async function run() {
   log.pass(revertPwdRes.duration, "PASSWORD_REVERTED");
 
   // 1.5 OTP Reset Flow
-  log.step("Requesting OTP for O210008");
-  const otpReq = await request("POST", "/auth/otp/request", {
-    username: "O210008",
-  });
-  if (otpReq.status === 429) {
-    log.info("Rate limited (429). Bypassing request step.");
-    log.pass(otpReq.duration, "BYPASSED");
-  } else if (otpReq.status !== 200) {
-    log.fail(new Error("OTP Request failed"), otpReq.duration, otpReq.data);
+  if (process.env.SKIP_OTP) {
+    log.info("Skipping OTP flow via SKIP_OTP=true");
   } else {
-    log.pass(otpReq.duration);
-  }
+    log.step("Requesting OTP for O210008");
 
-  // Interactive OTP Prompt
-  if (!process.env.AUTOMATED_TEST && !process.env.CI) {
-    console.log(
-      `\n    ${"ACTION REQUIRED:".yellow.bold} Check logs/email for OTP sent to O210008.`,
-    );
-
-    const readline = require("readline");
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
-
-    const askOTP = () =>
-      new Promise((resolve) => {
-        rl.question(`    ${"›".cyan} Enter OTP: `, (ans) => {
-          resolve(ans.trim());
-        });
-      });
-
-    let verified = false;
-    let attempts = 0;
-
-    while (!verified && attempts < 3) {
-      if (attempts > 0)
-        console.log(
-          `    ${"!".red} Invalid OTP. Try again (${3 - attempts} left)`,
-        );
-
-      const inputOtp = await askOTP();
-      if (!inputOtp) continue;
-
-      log.step("Verifying OTP");
-      const verifyRes = await request("POST", "/auth/otp/verify", {
-        username: "O210008",
-        otp: inputOtp,
-      });
-
-      if (verifyRes.status === 200) {
-        verified = true;
-        resetToken = verifyRes.data.resetToken;
-        log.pass(verifyRes.duration, "RESET_TOKEN_ACQUIRED");
-      } else {
-        log.fail(
-          new Error("OTP Verification failed"),
-          verifyRes.duration,
-          verifyRes.data,
-        );
-        attempts++;
-      }
-    }
-    rl.close();
-
-    if (!verified) {
-      log.fail(new Error("OTP verification failed after 3 attempts"));
-    }
-
-    log.step("Resetting Password");
-    const resetRes = await request("POST", "/auth/password/reset", {
+    const otpReq = await request("POST", "/auth/otp/request", {
       username: "O210008",
-      resetToken,
-      newPassword: "password123",
     });
-    if (resetRes.status !== 200)
-      log.fail(
-        new Error("Password reset failed"),
-        resetRes.duration,
-        resetRes.data,
+    if (otpReq.status === 429) {
+      log.info("Rate limited (429). Bypassing request step.");
+      log.pass(otpReq.duration, "BYPASSED");
+    } else if (otpReq.status !== 200) {
+      log.fail(new Error("OTP Request failed"), otpReq.duration, otpReq.data);
+    } else {
+      log.pass(otpReq.duration);
+    }
+
+    // Interactive OTP Prompt
+    if (!process.env.AUTOMATED_TEST && !process.env.CI) {
+      console.log(
+        `\n    ${"ACTION REQUIRED:".yellow.bold} Check logs/email for OTP sent to O210008.`,
       );
-    log.pass(resetRes.duration, "PASSWORD_UPDATED");
-  } else {
-    log.info("Skipping interactive OTP verification in automated mode.");
-  }
+
+      const readline = require("readline");
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+
+      const askOTP = () =>
+        new Promise((resolve) => {
+          rl.question(`    ${"›".cyan} Enter OTP: `, (ans) => {
+            resolve(ans.trim());
+          });
+        });
+
+      let verified = false;
+      let attempts = 0;
+
+      while (!verified && attempts < 3) {
+        if (attempts > 0)
+          console.log(
+            `    ${"!".red} Invalid OTP. Try again (${3 - attempts} left)`,
+          );
+
+        const inputOtp = await askOTP();
+        if (!inputOtp) continue;
+
+        log.step("Verifying OTP");
+        const verifyRes = await request("POST", "/auth/otp/verify", {
+          username: "O210008",
+          otp: inputOtp,
+        });
+
+        if (verifyRes.status === 200) {
+          verified = true;
+          resetToken = verifyRes.data.resetToken;
+          log.pass(verifyRes.duration, "RESET_TOKEN_ACQUIRED");
+        } else {
+          log.fail(
+            new Error("OTP Verification failed"),
+            verifyRes.duration,
+            verifyRes.data,
+          );
+          attempts++;
+        }
+      }
+      rl.close();
+
+      if (!verified) {
+        log.fail(new Error("OTP verification failed after 3 attempts"));
+      }
+
+      log.step("Resetting Password");
+      const resetRes = await request("POST", "/auth/password/reset", {
+        username: "O210008",
+        resetToken,
+        newPassword: "password123",
+      });
+      if (resetRes.status !== 200)
+        log.fail(
+          new Error("Password reset failed"),
+          resetRes.duration,
+          resetRes.data,
+        );
+      log.pass(resetRes.duration, "PASSWORD_UPDATED");
+    } else {
+      log.info("Skipping interactive OTP verification in automated mode.");
+    }
+  } // End of SKIP_OTP block
 
   log.phase("Phase 2 - Outpass Business Rule Validation");
 
