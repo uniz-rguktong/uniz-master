@@ -1,7 +1,7 @@
 #!/bin/bash
 # Master script to trigger redeploy for all UniZ services
 
-SERVICES=(
+APPS=(
     "uniz-academics"
     "uniz-auth"
     "uniz-cron"
@@ -11,23 +11,37 @@ SERVICES=(
     "uniz-notifications"
     "uniz-outpass"
     "uniz-user"
-    "uniz-infrastructure"
 )
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-ROOT_DIR="$( dirname "$SCRIPT_DIR" )"
+INFRA=("core-infra")
 
-echo "🚀 Initiating System-Wide Recovery Deployment..."
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
+
+echo "🚀 Initiating System-Wide Recovery Deployment (Structured)..."
 echo "------------------------------------------------"
 
-for service in "${SERVICES[@]}"; do
-    if [ -d "$ROOT_DIR/$service" ]; then
-        echo "🌐 Service: $service"
-        cd "$ROOT_DIR/$service"
+for app in "${APPS[@]}"; do
+    DIR="$ROOT_DIR/apps/$app"
+    if [ -d "$DIR" ]; then
+        echo "🌐 Service: $app"
+        cd "$DIR"
         if [ -f "./redeploy.sh" ]; then
-            ./redeploy.sh || echo "⚠️ Failed to trigger $service, continuing..."
+            ./redeploy.sh || echo "⚠️ Failed to trigger $app, continuing..."
         else
-            echo "⚠️ No redeploy.sh found in $service"
+            echo "⚠️ No redeploy.sh found in $app"
+        fi
+        echo "------------------------------------------------"
+    fi
+done
+
+for i in "${INFRA[@]}"; do
+    DIR="$ROOT_DIR/infra/$i"
+    if [ -d "$DIR" ]; then
+        echo "🏗️ Infrastructure: $i"
+        cd "$DIR"
+        if [ -f "./redeploy.sh" ]; then
+            ./redeploy.sh || echo "⚠️ Failed to trigger $i, continuing..."
         fi
         echo "------------------------------------------------"
     fi

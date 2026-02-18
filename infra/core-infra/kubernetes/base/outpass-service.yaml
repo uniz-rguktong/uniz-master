@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-outpass-service
+  labels:
+    app: uniz-outpass-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uniz-outpass-service
+  template:
+    metadata:
+      labels:
+        app: uniz-outpass-service
+    spec:
+      containers:
+        - name: outpass-service
+          image: desusreecharan/uniz-outpass-service:latest
+          ports:
+            - containerPort: 3003
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: uniz-secrets
+                  key: OUTPASS_DATABASE_URL
+          envFrom:
+            - configMapRef:
+                name: uniz-config
+            - secretRef:
+                name: uniz-secrets
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-outpass-service
+spec:
+  selector:
+    app: uniz-outpass-service
+  ports:
+    - protocol: TCP
+      port: 3003
+      targetPort: 3003
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: uniz-outpass-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: uniz-outpass-service
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70

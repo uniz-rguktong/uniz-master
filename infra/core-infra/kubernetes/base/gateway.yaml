@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-gateway
+  labels:
+    app: uniz-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uniz-gateway
+  template:
+    metadata:
+      labels:
+        app: uniz-gateway
+    spec:
+      containers:
+        - name: gateway-nginx
+          image: desusreecharan/uniz-gateway:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: gateway-nginx-conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-gateway
+spec:
+  selector:
+    app: uniz-gateway
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
