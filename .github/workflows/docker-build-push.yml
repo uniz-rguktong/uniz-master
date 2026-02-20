@@ -122,13 +122,22 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             echo "${{ secrets.UNLOCK_PASSWORD }}" | /usr/local/bin/uniz-unlock
-            cd ~/uniz-infrastructure
-            # Check where the script actually is (legacy support)
+            # Migrate to Master Vault if not already there
+            if [ ! -d "~/uniz-master-vault" ]; then
+              git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/uniz-rguktong/uniz-master-vault.git ~/uniz-master-vault
+            fi
+            cd ~/uniz-master-vault/infra/core-infra
+            # Sync the vault
+            git fetch origin main
+            git reset --hard origin/main
+            # Run redeploy - now using the monorepo's local scripts
             if [ -f "scripts/redeploy.sh" ]; then
               bash scripts/redeploy.sh
-            elif [ -f "scripts/system/redeploy.sh" ]; then
-              bash scripts/system/redeploy.sh
+            elif [ -f "../../scripts/redeploy.sh" ]; then
+              bash ../../scripts/redeploy.sh
             else
-              echo "Redeploy script not found!"
+              # Fallback to direct docker command if script missing in sync
+              docker compose -f docker-compose.prod.yml pull
+              docker compose -f docker-compose.prod.yml up -d --force-recreate
             fi
             /usr/local/bin/uniz-lock
