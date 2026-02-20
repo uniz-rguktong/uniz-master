@@ -80,15 +80,6 @@ Deployment is often done by pushing code and running a sync script, or manually 
   ssh root@... "cd ~/uniz-infrastructure && docker compose -f docker-compose.prod.yml up -d --build <service>"
   ```
 
-### Debugging Gateway Issues
-
-If a "Service not found" error occurs:
-
-1.  Check `uniz-gateway-api` (Express) logs.
-2.  Verify the `serviceMap` in `apps/uniz-gateway/src/index.ts`.
-3.  Ensure the Regex router is correctly parsing the URL.
-4.  **Note**: The Nginx config in the repo (`infra/core-infra/nginx/nginx.conf`) might NOT match the live server if recent manual patches were applied. Always check the live state.
-
 ---
 
 ## 5. Troubleshooting History
@@ -113,5 +104,13 @@ If a "Service not found" error occurs:
 ### PDF Report Generation
 
 - **Engine**: `pdfkit`.
-- **Caching Strategy**: Logos and static assets must be cached in the service's `cache/` directory to ensure sub-second report generation.
-- **Consistency**: The `pdf.util.ts` file is shared/duplicated across `uniz-academics` and `uniz-mail` to ensure identical branding in both downloads and email attachments.
+- **Caching Strategy**: Logos and static assets must be cached in the service's `cache/` directory.
+- **Consistency**: The `pdf.util.ts` file is shared/duplicated across `uniz-academics` and `uniz-mail`.
+- **Data Cleanup**: Subject names are cleaned using regex (`cleanSubjectName`) to strip internal codes like `(CSE-...)` before rendering.
+- **Layout**: Institutional headers use absolute Y-positioning to prevent logo overlap. Summaries are rendered in wide horizontal boxes for better space utilization.
+
+---
+
+## 7. Data State Annotations (Feb 20, 2026)
+
+- **Mass Update: Student Branch**: All existing students in `user_v2.StudentProfile` have been updated to branch `CSE` to ensure data consistency across the ecosystem.
