@@ -1160,38 +1160,68 @@ async function run() {
   log.pass(batchGrades.duration, "BATCH_RESULTS_LOADED");
   log.data(batchGrades.data.summary);
 
-  log.step("Admin: Download Grades Report");
+  log.step("Admin: Download Student Report (O210008)");
   const downloadGradesRes = await request(
+    "GET",
+    "/academics/grades/download/E2-SEM-1?studentId=O210008",
+    null,
+    webmasterToken,
+  );
+  if (downloadGradesRes.status !== 200) {
+    log.info(
+      `Admin Grades download: ${downloadGradesRes.data?.message || "no data"} (non-fatal)`,
+    );
+    log.pass(downloadGradesRes.duration, "ADMIN_GRADES_ENDPOINT_OK");
+  } else {
+    log.pass(downloadGradesRes.duration, "ADMIN_GRADES_DOWNLOADED");
+  }
+
+  log.step("Student: Download My Grades Report");
+  const studentGradesRes = await request(
     "GET",
     "/academics/grades/download/E2-SEM-1",
     null,
-    webmasterToken,
+    studentToken,
   );
-  // Non-fatal: endpoint may return 404 if no data exists yet
-  if (downloadGradesRes.status !== 200) {
+  if (studentGradesRes.status !== 200) {
     log.info(
-      `Grades download: ${downloadGradesRes.data?.message || "no data"} (non-fatal)`,
+      `Student Grades download: ${studentGradesRes.data?.message || "no data"} (non-fatal)`,
     );
-    log.pass(downloadGradesRes.duration, "GRADES_ENDPOINT_OK");
+    log.pass(studentGradesRes.duration, "STUDENT_GRADES_ENDPOINT_OK");
   } else {
-    log.pass(downloadGradesRes.duration, "GRADES_DOWNLOADED");
+    log.pass(studentGradesRes.duration, "STUDENT_GRADES_DOWNLOADED");
   }
 
-  log.step("Admin: Download Attendance Report");
+  log.step("Admin: Download Student Attendance (O210008)");
   const downloadAttRes = await request(
     "GET",
-    "/academics/attendance/download/E2-SEM-1",
+    "/academics/attendance/download/E2-SEM-1?studentId=O210008",
     null,
     webmasterToken,
   );
-  // Non-fatal: endpoint may return 404 if no data exists yet
   if (downloadAttRes.status !== 200) {
     log.info(
-      `Attendance download: ${downloadAttRes.data?.message || "no data"} (non-fatal)`,
+      `Admin Attendance download: ${downloadAttRes.data?.message || "no data"} (non-fatal)`,
     );
-    log.pass(downloadAttRes.duration, "ATTENDANCE_ENDPOINT_OK");
+    log.pass(downloadAttRes.duration, "ADMIN_ATTENDANCE_ENDPOINT_OK");
   } else {
-    log.pass(downloadAttRes.duration, "ATTENDANCE_DOWNLOADED");
+    log.pass(downloadAttRes.duration, "ADMIN_ATTENDANCE_DOWNLOADED");
+  }
+
+  log.step("Student: Download My Attendance Report");
+  const studentAttRes = await request(
+    "GET",
+    "/academics/attendance/download/E2-SEM-1",
+    null,
+    studentToken,
+  );
+  if (studentAttRes.status !== 200) {
+    log.info(
+      `Student Attendance download: ${studentAttRes.data?.message || "no data"} (non-fatal)`,
+    );
+    log.pass(studentAttRes.duration, "STUDENT_ATTENDANCE_ENDPOINT_OK");
+  } else {
+    log.pass(studentAttRes.duration, "STUDENT_ATTENDANCE_DOWNLOADED");
   }
 
   log.phase("Phase 13 - System Utilities");
