@@ -19,72 +19,6 @@ export interface ResultData {
   }[];
 }
 
-const LOGO_URL =
-  "https://res.cloudinary.com/dy2fjgt46/image/upload/v1771604895/rguktongole_logo_kbpaui.jpg";
-const CACHE_DIR = path.join(process.cwd(), "cache");
-const CACHE_PATH = path.join(CACHE_DIR, "university_logo.jpg");
-let logoBuffer: Buffer | null = null;
-
-const fetchLogo = async () => {
-  // 1. Check in-memory
-  if (logoBuffer) return logoBuffer;
-
-  // 2. Check local filesystem cache
-  try {
-    if (fs.existsSync(CACHE_PATH)) {
-      logoBuffer = fs.readFileSync(CACHE_PATH);
-      console.log("Logo loaded from filesystem cache.");
-      return logoBuffer;
-    }
-  } catch (err) {
-    console.error("Error reading logo cache:", err);
-  }
-
-  // 3. Fetch from remote
-  try {
-    console.log("Fetching logo from remote...");
-    const response = await axios.get(LOGO_URL, { responseType: "arraybuffer" });
-    logoBuffer = Buffer.from(response.data);
-
-    // Write to filesystem cache for future use
-    if (!fs.existsSync(CACHE_DIR)) {
-      fs.mkdirSync(CACHE_DIR, { recursive: true });
-    }
-    fs.writeFileSync(CACHE_PATH, logoBuffer);
-
-    return logoBuffer;
-  } catch (err) {
-    console.error("Failed to fetch logo:", err);
-    return null;
-  }
-};
-
-// --- PDF UTILS (pure Node, styled similar to HTML version) ---
-const PAGE_MARGIN = 40;
-
-const createPdfBuffer = async (
-  draw: (doc: InstanceType<typeof PDFDocument>) => Promise<void> | void,
-): Promise<Buffer> => {
-  return new Promise<Buffer>((resolve, reject) => {
-    const doc = new PDFDocument({ size: "A4", margin: PAGE_MARGIN });
-    const chunks: any[] = [];
-
-    doc.on("data", (chunk: any) => chunks.push(chunk));
-    doc.on("end", () => resolve(Buffer.concat(chunks)));
-    doc.on("error", (err: Error) => reject(err));
-
-    const execute = async () => {
-      try {
-        await draw(doc);
-        doc.end();
-      } catch (err) {
-        reject(err);
-      }
-    };
-    execute();
-  });
-};
-
 export interface AttendanceData {
   username: string;
   name: string;
@@ -101,18 +35,73 @@ export interface AttendanceData {
   }[];
 }
 
+const LOGO_URL =
+  "https://res.cloudinary.com/dy2fjgt46/image/upload/v1771604895/rguktongole_logo_kbpaui.jpg";
+const CACHE_DIR = path.join(process.cwd(), "cache");
+const CACHE_PATH = path.join(CACHE_DIR, "university_logo.jpg");
+let logoBuffer: Buffer | null = null;
+
+const fetchLogo = async () => {
+  if (logoBuffer) return logoBuffer;
+  try {
+    if (fs.existsSync(CACHE_PATH)) {
+      logoBuffer = fs.readFileSync(CACHE_PATH);
+      return logoBuffer;
+    }
+  } catch (err) {
+    console.error("Error reading logo cache:", err);
+  }
+
+  try {
+    const response = await axios.get(LOGO_URL, { responseType: "arraybuffer" });
+    logoBuffer = Buffer.from(response.data);
+    if (!fs.existsSync(CACHE_DIR)) {
+      fs.mkdirSync(CACHE_DIR, { recursive: true });
+    }
+    fs.writeFileSync(CACHE_PATH, logoBuffer);
+    return logoBuffer;
+  } catch (err) {
+    console.error("Failed to fetch logo:", err);
+    return null;
+  }
+};
+
+const PAGE_MARGIN = 40;
+
+const createPdfBuffer = async (
+  draw: (doc: InstanceType<typeof PDFDocument>) => Promise<void> | void,
+): Promise<Buffer> => {
+  return new Promise<Buffer>((resolve, reject) => {
+    const doc = new PDFDocument({ size: "A4", margin: PAGE_MARGIN });
+    const chunks: any[] = [];
+    doc.on("data", (chunk: any) => chunks.push(chunk));
+    doc.on("end", () => resolve(Buffer.concat(chunks)));
+    doc.on("error", (err: Error) => reject(err));
+    const execute = async () => {
+      try {
+        await draw(doc);
+        doc.end();
+      } catch (err) {
+        reject(err);
+      }
+    };
+    execute();
+  });
+};
+
+// Premium Institutional Colors
+const PRIMARY_MAROON = "#800000";
+const SECONDARY_GRAY = "#444444";
+const ACCENT_GOLD = "#B8860B";
+const BORDER_LIGHT = "#E0E0E0";
+const HEADER_TINT = "#FFF5F5";
+
 export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
   const { name, username, branch, semesterId, grades, campus } = data;
   const logo = await fetchLogo();
+  const campusName =
+    campus && campus !== "N/A" ? campus.toUpperCase() : "RGUKT";
 
-  // Professional Colors (Maroon Theme)
-  const primaryColor = "#800000"; // Maroon
-  const secondaryColor = "#333333"; // Dark Gray
-  const accentColor = "#B8860B"; // Dark Gold
-  const borderColor = "#D1D1D1";
-  const headerBg = "#FDF2F2"; // Very Light Maroon/Red tint
-
-  // Calculate GPA
   let totalCredits = 0;
   let earnedPoints = 0;
   grades.forEach((g) => {
@@ -139,119 +128,130 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
     const { width, height } = doc.page;
     const usableWidth = width - PAGE_MARGIN * 2;
 
-    // 1. Page Border
+    // 1. Double Border Frame
+    doc
+      .rect(15, 15, width - 30, height - 30)
+      .lineWidth(1)
+      .strokeColor(PRIMARY_MAROON)
+      .stroke();
     doc
       .rect(20, 20, width - 40, height - 40)
-      .lineWidth(1.5)
-      .strokeColor(primaryColor)
-      .stroke();
-    doc
-      .rect(25, 25, width - 50, height - 50)
       .lineWidth(0.5)
-      .strokeColor(accentColor)
+      .strokeColor(ACCENT_GOLD)
       .stroke();
 
-    // 2. Institutional Header with Logo
+    // 2. Header
     if (logo) {
-      doc.image(logo, width / 2 - 40, 45, { width: 80 });
+      doc.image(logo, width / 2 - 35, 40, { width: 70 });
       doc.moveDown(5);
     } else {
-      doc.moveDown(1);
+      doc.moveDown(1.5);
     }
 
-    doc.fillColor(primaryColor).font("Helvetica-Bold").fontSize(18);
-    doc.text("RAJIV GANDHI UNIVERSITY OF KNOWLEDGE TECHNOLOGIES", {
-      align: "center",
-    });
-
     doc
-      .fontSize(11)
-      .fillColor(secondaryColor)
-      .text(`ANDHRA PRADESH - ${campus.toUpperCase()} CAMPUS`, {
+      .fillColor(PRIMARY_MAROON)
+      .font("Helvetica-Bold")
+      .fontSize(16)
+      .text("RAJIV GANDHI UNIVERSITY OF KNOWLEDGE TECHNOLOGIES", {
         align: "center",
       });
+    doc
+      .fontSize(10)
+      .fillColor(SECONDARY_GRAY)
+      .text(`ANDHRA PRADESH - ${campusName} CAMPUS`, { align: "center" });
     doc.moveDown(0.2);
     doc
-      .fontSize(8)
+      .fontSize(7)
       .font("Helvetica-Oblique")
       .text("(Established under AP Act 18 of 2008)", { align: "center" });
 
-    // 3. Title Section
-    doc.moveDown(1.5);
-    doc.rect(PAGE_MARGIN, doc.y, usableWidth, 25).fill(headerBg);
-    doc.fillColor(primaryColor).font("Helvetica-Bold").fontSize(13);
-    doc.text("PROVISIONAL SEMESTER GRADE REPORT", PAGE_MARGIN, doc.y + 7, {
-      align: "center",
-    });
-    doc.moveDown(1);
+    // 3. Document Title
+    doc.moveDown(2);
+    doc.rect(PAGE_MARGIN, doc.y, usableWidth, 24).fill(HEADER_TINT);
+    doc
+      .fillColor(PRIMARY_MAROON)
+      .font("Helvetica-Bold")
+      .fontSize(11)
+      .text("PROVISIONAL SEMESTER GRADE REPORT", PAGE_MARGIN, doc.y + 7, {
+        align: "center",
+      });
+    doc.moveDown(2);
 
-    // 4. Student Info Section
+    // 4. Information Grid
     const infoY = doc.y;
-    const labelWidth = 100;
-
-    const drawInfo = (label: string, value: string, x: number, y: number) => {
+    const colWidth = usableWidth / 2;
+    const drawInfo = (label: string, val: string, x: number, y: number) => {
       doc
         .font("Helvetica")
-        .fontSize(9)
-        .fillColor(secondaryColor)
+        .fontSize(8.5)
+        .fillColor(SECONDARY_GRAY)
         .text(label, x, y);
       doc
         .font("Helvetica-Bold")
-        .fontSize(10)
+        .fontSize(9.5)
         .fillColor("#000000")
-        .text(value, x + labelWidth, y);
+        .text(val, x + 85, y);
     };
 
     drawInfo("STUDENT ID:", username, PAGE_MARGIN, infoY);
     drawInfo(
+      "STUDENT NAME:",
+      name === username ? "--" : name.toUpperCase(),
+      PAGE_MARGIN,
+      infoY + 18,
+    );
+    drawInfo(
       "BRANCH:",
-      branch.toUpperCase(),
-      PAGE_MARGIN + usableWidth / 2,
+      branch === "N/A" ? "--" : branch.toUpperCase(),
+      PAGE_MARGIN + colWidth,
       infoY,
     );
-    drawInfo("STUDENT NAME:", name.toUpperCase(), PAGE_MARGIN, infoY + 18);
     drawInfo(
       "SEMESTER:",
       semesterId.toUpperCase(),
-      PAGE_MARGIN + usableWidth / 2,
+      PAGE_MARGIN + colWidth,
       infoY + 18,
     );
 
-    doc.moveDown(2.5);
+    doc.moveDown(3);
 
-    // 5. Grades Table
-    const tCol1 = usableWidth * 0.15; // Code
-    const tCol2 = usableWidth * 0.55; // Name
-    const tCol3 = usableWidth * 0.15; // Credits
-    const tCol4 = usableWidth * 0.15; // Grade
-
+    // 5. Table
+    const tWidths = {
+      code: usableWidth * 0.16,
+      name: usableWidth * 0.52,
+      credits: usableWidth * 0.16,
+      grade: usableWidth * 0.16,
+    };
     let tableY = doc.y;
 
-    // Header
-    doc.rect(PAGE_MARGIN, tableY, usableWidth, 30).fill(primaryColor);
-    doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(9);
-    doc.text("COURSE CODE", PAGE_MARGIN + 10, tableY + 10, { width: tCol1 });
-    doc.text("SUBJECT DESCRIPTION", PAGE_MARGIN + tCol1 + 10, tableY + 10, {
-      width: tCol2,
-    });
-    doc.text("CREDITS", PAGE_MARGIN + tCol1 + tCol2, tableY + 10, {
-      width: tCol3,
+    doc.rect(PAGE_MARGIN, tableY, usableWidth, 28).fill(PRIMARY_MAROON);
+    doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(8.5);
+    doc.text("COURSE CODE", PAGE_MARGIN + 10, tableY + 9);
+    doc.text(
+      "SUBJECT DESCRIPTION",
+      PAGE_MARGIN + tWidths.code + 10,
+      tableY + 9,
+    );
+    doc.text("CREDITS", PAGE_MARGIN + tWidths.code + tWidths.name, tableY + 9, {
+      width: tWidths.credits,
       align: "center",
     });
-    doc.text("GRADE", PAGE_MARGIN + tCol1 + tCol2 + tCol3, tableY + 10, {
-      width: tCol4,
-      align: "center",
-    });
+    doc.text(
+      "GRADE",
+      PAGE_MARGIN + tWidths.code + tWidths.name + tWidths.credits,
+      tableY + 9,
+      { width: tWidths.grade, align: "center" },
+    );
 
-    tableY += 30;
+    tableY += 28;
     doc.fillColor("#000000").font("Helvetica").fontSize(9);
 
-    // Body with Dynamic Height
     grades.forEach((g, idx) => {
-      const nameHeight = doc.heightOfString(g.subject.name, {
-        width: tCol2 - 20,
+      const nameText = g.subject.name;
+      const nameHeight = doc.heightOfString(nameText, {
+        width: tWidths.name - 20,
       });
-      const rowHeight = Math.max(25, nameHeight + 12);
+      const rowHeight = Math.max(26, nameHeight + 12);
 
       if (tableY + rowHeight > height - 120) {
         doc.addPage();
@@ -259,7 +259,7 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
       }
 
       if (idx % 2 === 1)
-        doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill("#FDF2F2");
+        doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill("#FAFAFA");
 
       doc.fillColor("#000000");
       doc.text(
@@ -268,82 +268,79 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
         tableY + (rowHeight / 2 - 4.5),
       );
       doc.text(
-        g.subject.name,
-        PAGE_MARGIN + tCol1 + 10,
+        nameText,
+        PAGE_MARGIN + tWidths.code + 10,
         tableY + (rowHeight / 2 - nameHeight / 2),
-        { width: tCol2 - 20 },
+        { width: tWidths.name - 20 },
       );
       doc.text(
         g.subject.credits.toFixed(1),
-        PAGE_MARGIN + tCol1 + tCol2,
+        PAGE_MARGIN + tWidths.code + tWidths.name,
         tableY + (rowHeight / 2 - 4.5),
-        { width: tCol3, align: "center" },
+        { width: tWidths.credits, align: "center" },
       );
+
+      const gLetter = getGradeLetter(g.grade);
+      if (gLetter === "R") doc.fillColor("#D32F2F");
       doc
         .font("Helvetica-Bold")
         .text(
-          getGradeLetter(g.grade),
-          PAGE_MARGIN + tCol1 + tCol2 + tCol3,
+          gLetter,
+          PAGE_MARGIN + tWidths.code + tWidths.name + tWidths.credits,
           tableY + (rowHeight / 2 - 4.5),
-          { width: tCol4, align: "center" },
+          { width: tWidths.grade, align: "center" },
         );
-      doc.font("Helvetica");
+      doc.font("Helvetica").fillColor("#000000");
 
       tableY += rowHeight;
       doc
         .moveTo(PAGE_MARGIN, tableY)
         .lineTo(PAGE_MARGIN + usableWidth, tableY)
         .lineWidth(0.3)
-        .strokeColor(borderColor)
+        .strokeColor(BORDER_LIGHT)
         .stroke();
     });
 
-    // 6. Summary and SGPA
-    doc.moveDown(1.5);
-    const summX = PAGE_MARGIN + usableWidth - 180;
-    const summY = tableY + 20;
+    // 6. SGPA Summary
+    doc.moveDown(3);
+    const boxW = 160;
+    const boxX = PAGE_MARGIN + usableWidth - boxW;
+    const boxY = doc.y;
 
     doc
-      .rect(summX, summY, 180, 50)
-      .lineWidth(1)
-      .strokeColor(primaryColor)
+      .rect(boxX, boxY, boxW, 50)
+      .lineWidth(1.5)
+      .strokeColor(PRIMARY_MAROON)
       .stroke();
+    doc.rect(boxX + 1, boxY + 1, boxW - 2, 20).fill(HEADER_TINT);
     doc
-      .fontSize(10)
+      .fontSize(8.5)
       .font("Helvetica-Bold")
-      .text("ACADEMIC PERFORMANCE", summX + 10, summY + 10);
-    doc
-      .fontSize(14)
-      .fillColor(primaryColor)
-      .text(`SGPA: ${sgpa}`, summX + 10, summY + 28);
+      .fillColor(PRIMARY_MAROON)
+      .text("ACADEMIC PERFORMANCE", boxX + 10, boxY + 7);
+    doc.fontSize(14).text(`SGPA: ${sgpa}`, boxX + 10, boxY + 28);
 
-    // 7. Official Footer
+    // 7. Footer
     const footerY = height - 100;
-    doc
-      .fontSize(8)
-      .fillColor(secondaryColor)
-      .font("Helvetica-Oblique")
-      .text(
-        "* EX: Excellent, A: Very Good, B: Good, C: Fair, D: Satisfactory, E: Pass, R: Remedial",
-        PAGE_MARGIN,
-        footerY,
-      );
+    doc.fontSize(7.5).fillColor(SECONDARY_GRAY).font("Helvetica-Oblique");
     doc.text(
-      "* This is an automated provisional report. Please verify with official records.",
+      "* EX: Excellent, A: Very Good, B: Good, C: Fair, D: Satisfactory, E: Pass, R: Remedial",
+      PAGE_MARGIN,
+      footerY,
+    );
+    doc.text(
+      "* This is a provisional report. Please verify with official university records.",
       PAGE_MARGIN,
       footerY + 12,
     );
 
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(10)
-      .fillColor(primaryColor)
-      .text(
-        "Controller of Examinations",
-        PAGE_MARGIN + usableWidth - 150,
-        footerY + 30,
-        { align: "center" },
-      );
+    doc.font("Helvetica-Bold").fontSize(10).fillColor(PRIMARY_MAROON);
+    doc.text(
+      "Controller of Examinations",
+      PAGE_MARGIN + usableWidth - 180,
+      footerY + 30,
+      { width: 180, align: "center" },
+    );
   });
 };
 
@@ -352,10 +349,8 @@ export const generateAttendancePdf = async (
 ): Promise<Buffer> => {
   const { name, username, branch, semesterId, records, campus } = data;
   const logo = await fetchLogo();
-
-  const primaryColor = "#800000"; // Maroon
-  const secondaryColor = "#333333";
-  const headerBg = "#FDF2F2";
+  const campusName =
+    campus && campus !== "N/A" ? campus.toUpperCase() : "RGUKT";
 
   let totalAttended = 0;
   let totalClasses = 0;
@@ -372,85 +367,105 @@ export const generateAttendancePdf = async (
     const { width, height } = doc.page;
     const usableWidth = width - PAGE_MARGIN * 2;
 
-    // Border
     doc
-      .rect(20, 20, width - 40, height - 40)
-      .lineWidth(1.5)
-      .strokeColor(primaryColor)
+      .rect(15, 15, width - 30, height - 30)
+      .lineWidth(1)
+      .strokeColor(PRIMARY_MAROON)
       .stroke();
 
-    // Header with Logo
     if (logo) {
-      doc.image(logo, width / 2 - 40, 45, { width: 80 });
+      doc.image(logo, width / 2 - 35, 40, { width: 70 });
       doc.moveDown(5);
     } else {
-      doc.moveDown(1);
+      doc.moveDown(1.5);
     }
 
     doc
-      .fillColor(primaryColor)
+      .fillColor(PRIMARY_MAROON)
       .font("Helvetica-Bold")
-      .fontSize(18)
+      .fontSize(16)
       .text("RAJIV GANDHI UNIVERSITY OF KNOWLEDGE TECHNOLOGIES", {
         align: "center",
       });
     doc
-      .fontSize(11)
-      .fillColor(secondaryColor)
-      .text(`${campus.toUpperCase()} CAMPUS - STUDENT ATTENDANCE REPORT`, {
+      .fontSize(10)
+      .fillColor(SECONDARY_GRAY)
+      .text(`${campusName} CAMPUS - STUDENT ATTENDANCE REPORT`, {
         align: "center",
       });
-    doc.moveDown(1.5);
+    doc.moveDown(2);
 
-    // Student Info
+    // Info Bar
+    doc
+      .rect(PAGE_MARGIN, doc.y, usableWidth, 40)
+      .lineWidth(0.5)
+      .strokeColor(BORDER_LIGHT)
+      .stroke();
+    const infoY = doc.y + 10;
     doc
       .fontSize(9)
       .font("Helvetica")
-      .text("ID / NAME:", PAGE_MARGIN)
+      .fillColor(SECONDARY_GRAY)
+      .text("ID / NAME:", PAGE_MARGIN + 12, infoY);
+    doc
       .font("Helvetica-Bold")
-      .text(`${username} / ${name.toUpperCase()}`, PAGE_MARGIN + 60, doc.y - 9);
+      .fillColor("#000000")
+      .text(
+        `${username} / ${name === username ? "--" : name.toUpperCase()}`,
+        PAGE_MARGIN + 80,
+        infoY,
+      );
     doc
       .font("Helvetica")
-      .text("BRANCH / SEM:", PAGE_MARGIN)
+      .fillColor(SECONDARY_GRAY)
+      .text("BRANCH / SEM:", PAGE_MARGIN + 12, infoY + 16);
+    doc
       .font("Helvetica-Bold")
+      .fillColor("#000000")
       .text(
-        `${branch.toUpperCase()} / ${semesterId.toUpperCase()}`,
-        PAGE_MARGIN + 75,
-        doc.y - 9,
+        `${branch === "N/A" ? "--" : branch.toUpperCase()} / ${semesterId.toUpperCase()}`,
+        PAGE_MARGIN + 100,
+        infoY + 16,
       );
-    doc.moveDown(1);
 
-    // Table
+    doc.moveDown(3);
+
+    const tWidths = {
+      name: usableWidth * 0.65,
+      count: usableWidth * 0.17,
+      percent: usableWidth * 0.18,
+    };
     let tableY = doc.y;
-    const tCol1 = usableWidth * 0.6;
-    const tCol2 = usableWidth * 0.2;
-    const tCol3 = usableWidth * 0.2;
 
-    doc.rect(PAGE_MARGIN, tableY, usableWidth, 25).fill(primaryColor);
-    doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(9);
-    doc.text("COURSE DESCRIPTION", PAGE_MARGIN + 10, tableY + 8, {
-      width: tCol1,
-    });
-    doc.text("CLASSES", PAGE_MARGIN + tCol1, tableY + 8, {
-      width: tCol2,
-      align: "center",
-    });
-    doc.text("PERCENT", PAGE_MARGIN + tCol1 + tCol2, tableY + 8, {
-      width: tCol3,
-      align: "center",
-    });
+    doc.rect(PAGE_MARGIN, tableY, usableWidth, 26).fill(PRIMARY_MAROON);
+    doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(8.5);
+    doc.text("COURSE DESCRIPTION", PAGE_MARGIN + 12, tableY + 9);
+    doc.text(
+      "CLASSES",
+      PAGE_MARGIN + tWidths.count + 10 + tWidths.name - usableWidth * 0.65,
+      tableY + 9,
+      { width: tWidths.count, align: "center" },
+    );
+    doc.text(
+      "PERCENT",
+      PAGE_MARGIN + tWidths.name + tWidths.count,
+      tableY + 9,
+      { width: tWidths.percent, align: "center" },
+    );
 
-    tableY += 25;
+    tableY += 26;
     doc.fillColor("#000000").font("Helvetica").fontSize(9);
 
     records.forEach((r, idx) => {
-      const nameHeight = doc.heightOfString(r.subject.name, {
-        width: tCol1 - 20,
+      // REFINE: Ignore Subject Code in Description
+      const nameText = r.subject.name;
+      const nameHeight = doc.heightOfString(nameText, {
+        width: tWidths.name - 24,
       });
-      const rowHeight = Math.max(22, nameHeight + 10);
+      const rowHeight = Math.max(24, nameHeight + 12);
 
       if (idx % 2 === 1)
-        doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill(headerBg);
+        doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill(HEADER_TINT);
       const percent =
         r.totalClasses > 0
           ? ((r.attendedClasses / r.totalClasses) * 100).toFixed(1)
@@ -458,27 +473,28 @@ export const generateAttendancePdf = async (
 
       doc.fillColor("#000000");
       doc.text(
-        `${r.subject.name} (${r.subject.code})`,
-        PAGE_MARGIN + 10,
+        nameText,
+        PAGE_MARGIN + 12,
         tableY + (rowHeight / 2 - nameHeight / 2),
-        { width: tCol1 - 20 },
+        { width: tWidths.name - 24 },
       );
       doc.text(
         `${r.attendedClasses} / ${r.totalClasses}`,
-        PAGE_MARGIN + tCol1,
+        PAGE_MARGIN + tWidths.name + 10,
         tableY + (rowHeight / 2 - 4.5),
-        { width: tCol2, align: "center" },
+        { width: tWidths.count, align: "center" },
       );
 
-      const pColor = Number(percent) < 75 ? "#D32F2F" : "#1B5E20";
+      const pVal = Number(percent);
+      const pColor = pVal < 75 ? "#D32F2F" : pVal > 90 ? "#1B5E20" : "#000000";
       doc
         .fillColor(pColor)
         .font("Helvetica-Bold")
         .text(
           `${percent}%`,
-          PAGE_MARGIN + tCol1 + tCol2,
+          PAGE_MARGIN + tWidths.name + tWidths.count,
           tableY + (rowHeight / 2 - 4.5),
-          { width: tCol3, align: "center" },
+          { width: tWidths.percent, align: "center" },
         );
       doc.font("Helvetica");
 
@@ -487,24 +503,40 @@ export const generateAttendancePdf = async (
         .moveTo(PAGE_MARGIN, tableY)
         .lineTo(PAGE_MARGIN + usableWidth, tableY)
         .lineWidth(0.2)
-        .strokeColor("#BDBDBD")
+        .strokeColor(BORDER_LIGHT)
         .stroke();
     });
 
-    // Subtotal
-    doc.moveDown(1);
-    doc
-      .fontSize(11)
-      .font("Helvetica-Bold")
-      .fillColor(primaryColor)
-      .text(`OVERALL ATTENDANCE: ${overallPercent}%`, { align: "right" });
+    // Overall Attendance Summary with spacing
+    doc.moveDown(4);
+    const summW = 200;
+    const summX = PAGE_MARGIN + usableWidth - summW;
+    const summY = doc.y;
 
     doc
-      .fontSize(8)
-      .fillColor(secondaryColor)
+      .rect(summX, summY, summW, 35)
+      .fill(Number(overallPercent) < 75 ? "#FFF2F2" : "#F2FFF2");
+    doc
+      .rect(summX, summY, summW, 35)
+      .lineWidth(1)
+      .strokeColor(PRIMARY_MAROON)
+      .stroke();
+
+    doc
+      .fontSize(10)
+      .font("Helvetica-Bold")
+      .fillColor(PRIMARY_MAROON)
+      .text("OVERALL ATTENDANCE:", summX + 12, summY + 12);
+    const oColor = Number(overallPercent) < 75 ? "#D32F2F" : "#1B5E20";
+    doc.fillColor(oColor).text(`${overallPercent}%`, summX + 150, summY + 12);
+
+    doc.moveDown(5);
+    doc
+      .fontSize(7.5)
+      .fillColor(SECONDARY_GRAY)
       .font("Helvetica-Oblique")
       .text(
-        "* A minimum of 75% attendance is required to be eligible for end-semester examinations.",
+        "* A minimum of 75% attendance is required as per university regulations.",
         PAGE_MARGIN,
         height - 60,
       );
