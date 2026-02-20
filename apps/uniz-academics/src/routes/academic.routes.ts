@@ -69,4 +69,3 @@ router.get("/subjects", getSubjects);
 router.post("/subjects/add", addSubject);
 
 export default router;
- 
