@@ -98,3 +98,20 @@ If a "Service not found" error occurs:
 - **Microservice IP Caching**: Encounted 502 Bad Gateway after service updates because Nginx cached stale Docker internal IPs. **Solution**: Explicitly reloaded Nginx (`nginx -s reload`) after container recreation.
 - **System Health Check**: Fixed by adding explicit route handlers.
 - **Bad Gateway (502)**: Caused by legacy `k3s` port conflicts. Resolved by stopping `k3s`.
+- **PDF Logo Latency**: Report generation was slow due to repeated Cloudinary fetches. **Solution**: Implemented filesystem caching (`/usr/src/app/cache`) within the Academics and Mail services.
+
+---
+
+## 6. Design & Reporting Standards (Feb 20, 2026)
+
+### Institutional Branding
+
+- **Color Scheme**: Maroon (`#800000`) is the primary institutional color for all official documents and PDF reports.
+- **Official Logo**: Uses the RGUKT Ongole logo (`rguktongole_logo_kbpaui.jpg`).
+- **Typography**: Professional sans-serif (Helvetica) for all generated documentation.
+
+### PDF Report Generation
+
+- **Engine**: `pdfkit`.
+- **Caching Strategy**: Logos and static assets must be cached in the service's `cache/` directory to ensure sub-second report generation.
+- **Consistency**: The `pdf.util.ts` file is shared/duplicated across `uniz-academics` and `uniz-mail` to ensure identical branding in both downloads and email attachments.
