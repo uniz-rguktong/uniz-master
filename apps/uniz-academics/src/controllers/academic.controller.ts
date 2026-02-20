@@ -1406,7 +1406,21 @@ const generateExcel = async (
   });
 
   // Style header row
-  worksheet.getRow(1).font = { bold: true };
+  const headerRow = worksheet.getRow(1);
+  headerRow.font = { bold: true, color: { argb: "FFFFFF" } };
+  headerRow.fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "1A237E" }, // Deep Navy
+  };
+  headerRow.alignment = { vertical: "middle", horizontal: "center" };
+  headerRow.height = 25;
+
+  // Style data rows and set widths
+  worksheet.columns.forEach((col: any) => {
+    col.width = 25;
+    col.alignment = { vertical: "middle", horizontal: "left" };
+  });
 
   res.setHeader(
     "Content-Type",
