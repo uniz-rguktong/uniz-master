@@ -17,9 +17,14 @@ if (process.env.NODE_ENV === "production" && (!emailUser || !emailPass)) {
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
+  pool: true, // Use pooling to handle large volumes
+  maxConnections: 5, // No more than 5 connections
+  maxMessages: 100, // Send up to 100 messages per connection
+  rateDelta: 1000, // Time window (1 second)
+  rateLimit: 1, // Max 1 email per second
   auth: {
-    user: emailUser || "noreplycampusschield@gmail.com",
-    pass: emailPass || "acix rfbi kujh xwtj",
+    user: emailUser || "noreply.uniz@gmail.com",
+    pass: emailPass || "rllc qsdq vuxg gggl",
   },
 });
 

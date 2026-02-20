@@ -17,6 +17,7 @@ import { randomUUID } from "crypto";
 import { redis, notificationQueue } from "../utils/redis.util";
 import { generateMotivation } from "../utils/ai.util";
 import { processNextBatch } from "../services/upload.service";
+import { generateResultPdf, generateAttendancePdf } from "../utils/pdf.util";
 
 // GPA calculation and templates now use database-provided subject credits.
 // GRADE_MAP and mapGradeToPoint are now imported from helpers.util
@@ -1846,5 +1847,184 @@ export const uploadAttendance = async (req: any, res: Response) => {
     return res
       .status(500)
       .json({ message: "Failed to process the uploaded file." });
+  }
+};
+
+export const downloadGrades = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ success: false });
+
+  const targetStudentId = (
+    (req.query.studentId as string) || user.username
+  ).toUpperCase();
+  const semesterId = req.params.semesterId;
+
+  // Security check
+  if (targetStudentId !== user.username && user.role === "student") {
+    return res.status(403).json({ success: false, message: "Forbidden" });
+  }
+
+  try {
+    const grades = await prisma.grade.findMany({
+      where: {
+        studentId: { equals: targetStudentId, mode: "insensitive" },
+        semesterId: { equals: semesterId, mode: "insensitive" },
+      },
+      include: { subject: true },
+      orderBy: { subject: { code: "asc" } },
+    });
+
+    if (!grades.length) {
+      return res
+        .status(404)
+        .json({
+          success: false,
+          message: "No grades found for this semester.",
+        });
+    }
+
+    // Attempt to fetch profile details using GATEWAY_URL (optional)
+    let profileName = targetStudentId;
+    let branch = "N/A";
+    let campus = "RGUKT";
+    try {
+      const searchRes = await axios.post(
+        `${GATEWAY_URL}/profile/student/search`,
+        { studentIds: [targetStudentId] },
+        { headers: { Authorization: req.headers.authorization } },
+      );
+      if (
+        searchRes.data &&
+        searchRes.data.students &&
+        searchRes.data.students[0]
+      ) {
+        const p = searchRes.data.students[0];
+        profileName = p.name || targetStudentId;
+        branch = p.branch || branch;
+        campus = p.campus || campus;
+      }
+    } catch (e) {
+      console.warn("Could not fetch profile for download, using defaults.");
+    }
+
+    const pdfBuffer = await generateResultPdf({
+      username: targetStudentId,
+      name: profileName,
+      branch: branch,
+      campus: campus,
+      semesterId,
+      grades: grades.map((g) => ({
+        grade: g.grade,
+        subject: {
+          code: g.subject.code,
+          name: g.subject.name,
+          credits: g.subject.credits,
+        },
+      })),
+    });
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="RESULTS_${targetStudentId}_${semesterId}.pdf"`,
+    );
+    res.setHeader("Content-Type", "application/pdf");
+    res.send(pdfBuffer);
+  } catch (error: any) {
+    console.error("PDF Download Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to generate PDF." });
+  }
+};
+
+export const downloadAttendance = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ success: false });
+
+  const targetStudentId = (
+    (req.query.studentId as string) || user.username
+  ).toUpperCase();
+  const semesterId = req.params.semesterId;
+
+  // Security check
+  if (targetStudentId !== user.username && user.role === "student") {
+    return res.status(403).json({ success: false, message: "Forbidden" });
+  }
+
+  try {
+    const records = await prisma.attendance.findMany({
+      where: {
+        studentId: { equals: targetStudentId, mode: "insensitive" },
+        semesterId: { equals: semesterId, mode: "insensitive" },
+      },
+      include: { subject: true },
+      orderBy: { subject: { code: "asc" } },
+    });
+
+    if (!records.length) {
+      return res
+        .status(404)
+        .json({
+          success: false,
+          message: "No attendance records found for this semester.",
+        });
+    }
+
+    let profileName = targetStudentId;
+    let branch = "N/A";
+    let campus = "RGUKT";
+    try {
+      const searchRes = await axios.post(
+        `${GATEWAY_URL}/profile/student/search`,
+        { studentIds: [targetStudentId] },
+        { headers: { Authorization: req.headers.authorization } },
+      );
+      if (
+        searchRes.data &&
+        searchRes.data.students &&
+        searchRes.data.students[0]
+      ) {
+        const p = searchRes.data.students[0];
+        profileName = p.name || targetStudentId;
+        branch = p.branch || branch;
+        campus = p.campus || campus;
+      }
+    } catch (e) {
+      console.warn("Could not fetch profile for download, using defaults.");
+    }
+
+    const pdfBuffer = await generateAttendancePdf({
+      username: targetStudentId,
+      name: profileName,
+      branch: branch,
+      campus: campus,
+      semesterId,
+      records: records.map((r) => ({
+        attendedClasses: r.attendedClasses,
+        totalClasses: r.totalClasses,
+        subject: {
+          code: r.subject.code,
+          name: r.subject.name,
+        },
+      })),
+    });
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="ATTENDANCE_${targetStudentId}_${semesterId}.pdf"`,
+    );
+    res.setHeader("Content-Type", "application/pdf");
+    res.send(pdfBuffer);
+  } catch (error: any) {
+    console.error("PDF Download Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to generate PDF." });
   }
 };

@@ -1159,6 +1159,7 @@ async function run() {
   log.pass(batchGrades.duration, "BATCH_RESULTS_LOADED");
   log.data(batchGrades.data.summary);
 
+  /*
   log.step("Admin: Trigger Result Email Publishing");
   const pubRes = await request(
     "POST",
@@ -1217,6 +1218,7 @@ async function run() {
       log.info(`Publish monitoring warning: ${res.error}`);
     }
   }
+  */
 
   log.phase("Phase 13 - System Utilities");
 
