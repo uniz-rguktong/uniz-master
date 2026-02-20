@@ -1588,7 +1588,7 @@
                       "key": "file",
                       "type": "file",
                       "src": [
-                        "/Users/sreecharandesu/Projects/uniz-master-vault/tests/data/full_batch_attendance.xlsx"
+                        "/Users/sreecharandesu/Projects/uniz-master/tests/data/full_batch_attendance.xlsx"
                       ]
                     }
                   ]
@@ -1636,7 +1636,7 @@
                       "key": "file",
                       "type": "file",
                       "src": [
-                        "/Users/sreecharandesu/Projects/uniz-master-vault/tests/data/full_batch_grades.xlsx"
+                        "/Users/sreecharandesu/Projects/uniz-master/tests/data/full_batch_grades.xlsx"
                       ]
                     }
                   ]
@@ -2103,7 +2103,7 @@
                       "key": "file",
                       "type": "file",
                       "src": [
-                        "/Users/sreecharandesu/Projects/uniz-master-vault/tests/data/full_batch_attendance.xlsx"
+                        "/Users/sreecharandesu/Projects/uniz-master/tests/data/full_batch_attendance.xlsx"
                       ]
                     }
                   ]
@@ -2151,7 +2151,7 @@
                       "key": "file",
                       "type": "file",
                       "src": [
-                        "/Users/sreecharandesu/Projects/uniz-master-vault/tests/data/full_batch_grades.xlsx"
+                        "/Users/sreecharandesu/Projects/uniz-master/tests/data/full_batch_grades.xlsx"
                       ]
                     }
                   ]
