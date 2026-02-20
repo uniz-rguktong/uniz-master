@@ -130,6 +130,8 @@ const serviceMap: Record<string, string> = {
   system: "http://localhost:3000",
 };
 
+app.get("/favicon.ico", (req, res) => res.status(204).end());
+
 app.get("/", (req, res) => {
   console.log(`[Gateway] Serving ASCII Banner to ${req.ip}`);
   res.send(`
