@@ -14,6 +14,7 @@ on:
       - "apps/uniz-gateway/**"
       - "infra/core-infra/nginx/**"
       - "apps/uniz-portal/**"
+      - ".github/workflows/docker-build-push.yml"
 
 permissions:
   contents: read
