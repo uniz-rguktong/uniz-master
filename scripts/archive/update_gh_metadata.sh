@@ -14,7 +14,7 @@ DESCS["uniz-cron"]="Schedule Controller: Managed background processor for recurr
 DESCS["uniz-gateway"]="Edge Gateway: High-performance API routing, edge caching, and Vercel-optimized request orchestration."
 DESCS["uniz-infrastructure"]="Cloud Orchestration: Production-grade DevOps infrastructure for Docker-based microservice deployment and network routing."
 DESCS["uniz-shared"]="Core Library: Shared TypeScript types, utility functions, and domain logic used across the entire UniZ ecosystem."
-DESCS["uniz-master-vault"]="Master Archive: Consolidated monorepo containing the entire UniZ ecosystem source code, configurations, and environment secrets."
+DESCS["uniz-master"]="Master Archive: Consolidated monorepo containing the entire UniZ ecosystem source code, configurations, and environment secrets."
 
 declare -A TOPICS
 TOPICS["uniz-portal"]="uniz,rgukt,react,vite,dashboard"
@@ -29,7 +29,7 @@ TOPICS["uniz-cron"]="uniz,rgukt,cron,background-jobs,scheduler"
 TOPICS["uniz-gateway"]="uniz,rgukt,gateway,vercel,proxy"
 TOPICS["uniz-infrastructure"]="uniz,rgukt,devops,docker,infrastructure"
 TOPICS["uniz-shared"]="uniz,rgukt,typescript,shared-library,shared-logic"
-TOPICS["uniz-master-vault"]="uniz,rgukt,monorepo,backup,vault"
+TOPICS["uniz-master"]="uniz,rgukt,monorepo,backup,vault"
 
 for repo in "${!DESCS[@]}"; do
     echo "Updating $repo..."

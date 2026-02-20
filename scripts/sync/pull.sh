@@ -74,7 +74,7 @@ done
 echo " Pulling Master Vault..."
 cd "$ROOT_DIR"
 if [ -d ".git" ]; then
-    echo "   > Pulling uniz-master-vault..."
+    echo "   > Pulling uniz-master..."
     git pull origin main || echo "  Pull failed for Master Vault."
 else
     echo "  Root is not a git repository."

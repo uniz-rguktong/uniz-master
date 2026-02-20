@@ -2,7 +2,7 @@
 # Connect Vercel projects to GitHub repo
 
 ROOT_DIR=$(pwd)
-REPO_URL="https://github.com/uniz-rguktong/uniz-master-vault"
+REPO_URL="https://github.com/uniz-rguktong/uniz-master"
 
 connect_project() {
     local svc=$1

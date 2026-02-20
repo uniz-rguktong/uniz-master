@@ -10,7 +10,7 @@
 > **UniZ ENTERPRISE INFRASTRUCTURE 2026**
 > _Consolidating fragmented microservices into a unified, high-performance university management ecosystem._
 
-[![.github/workflows/docker-build-push.yml](https://github.com/uniz-rguktong/uniz-master-vault/actions/workflows/docker-build-push.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master-vault/actions/workflows/docker-build-push.yml)
+[![.github/workflows/docker-build-push.yml](https://github.com/uniz-rguktong/uniz-master/actions/workflows/docker-build-push.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/docker-build-push.yml)
 
 ## Structuralized Architecture Overview
 
@@ -19,7 +19,7 @@ The Master Vault serves as the central orchestration point for the entire UniZ e
 ```mermaid
 graph TD
     subgraph Development_Vault [Master Vault]
-        ROOT[uniz-master-vault]
+        ROOT[uniz-master]
         ROOT --> APPS[apps/]
         ROOT --> INFRA[infra/core-infra/]
         ROOT --> SCR[scripts/]

@@ -66,7 +66,7 @@ When a user submits a query (e.g., _"What is my current attendance?"_), the ML m
 ## 4. Developer Implementation Checklist
 
 1.  **Environment Setup**:
-    - Clone `uniz-master-vault`.
+    - Clone `uniz-master`.
     - Retrieve database credentials from `infra/core-infra/.env`.
 2.  **Bot Initialization**:
     - Build a Python Flask/FastAPI service.

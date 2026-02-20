@@ -123,10 +123,10 @@ jobs:
           script: |
             echo "${{ secrets.UNLOCK_PASSWORD }}" | /usr/local/bin/uniz-unlock
             # Migrate to Master Vault if not already there
-            if [ ! -d "~/uniz-master-vault" ]; then
-              git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/uniz-rguktong/uniz-master-vault.git ~/uniz-master-vault
+            if [ ! -d "~/uniz-master" ]; then
+              git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/uniz-rguktong/uniz-master.git ~/uniz-master
             fi
-            cd ~/uniz-master-vault/infra/core-infra
+            cd ~/uniz-master/infra/core-infra
             # Sync the vault
             git fetch origin main
             git reset --hard origin/main

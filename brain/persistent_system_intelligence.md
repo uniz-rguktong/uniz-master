@@ -86,7 +86,7 @@ The system is a **microservices-based monorepo** using a centralized API Gateway
 
 ## 4. Codebase Intelligence
 
-### Repository Structure `uniz-master-vault`
+### Repository Structure `uniz-master`
 
 - **`apps/`**: Source code for all microservices.
   - `uniz-gateway/src/index.ts`: **Critical**. Contains the Regex Router logic.
