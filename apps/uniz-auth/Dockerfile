@@ -8,3 +8,4 @@ RUN if [ -f "prisma/schema.prisma" ]; then npx prisma generate; fi
 RUN npm run build
 CMD ["npm", "start"]
  
+ 
