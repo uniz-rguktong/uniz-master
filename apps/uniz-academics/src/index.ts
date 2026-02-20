@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3004;
 
 app.use(helmet());
 app.use(compression());
-app.use(cors());
+// app.use(cors());
 
 app.use(express.json());
 
