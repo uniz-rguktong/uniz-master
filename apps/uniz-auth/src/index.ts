@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(helmet());
 app.use(compression());
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
