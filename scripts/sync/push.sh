@@ -17,7 +17,7 @@ APPS=(
     "uniz-notifications"
     "uniz-cron"
     "uniz-gateway"
-    "uniz-portal"
+    # "uniz-portal"
 )
 
 INFRA_SERVICES=(
