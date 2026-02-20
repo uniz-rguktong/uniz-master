@@ -36,6 +36,7 @@ export const linkTelegramAccount = async (req: Request, res: Response) => {
 
     const profile = await prisma.studentProfile.update({
       where: { username: targetUsername },
+      // @ts-ignore
       data: { telegramChatId: chatId.toString() },
     });
 
@@ -58,6 +59,8 @@ export const getBotProfile = async (req: Request, res: Response) => {
     const chatId = req.query.chatId as string;
 
     const profile = await prisma.studentProfile.findFirst({
+      // @ts-ignore
+
       where: { telegramChatId: chatId.toString() },
     });
 
