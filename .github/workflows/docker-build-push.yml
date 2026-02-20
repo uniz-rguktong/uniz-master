@@ -13,6 +13,7 @@ on:
       - "apps/uniz-cron/**"
       - "apps/uniz-gateway/**"
       - "infra/core-infra/nginx/**"
+      - "apps/uniz-portal/**"
 
 permissions:
   contents: read
@@ -39,6 +40,7 @@ jobs:
             uniz-cron-service: 'apps/uniz-cron/**'
             uniz-gateway: 'infra/core-infra/nginx/**'
             uniz-gateway-api: 'apps/uniz-gateway/**'
+            uniz-portal: 'apps/uniz-portal/**'
 
   build-and-push:
     needs: changes
@@ -78,6 +80,9 @@ jobs:
           - service_key: uniz-gateway-api
             context: apps/uniz-gateway
             dockerfile: apps/uniz-gateway/Dockerfile
+          - service_key: uniz-portal
+            context: apps/uniz-portal
+            dockerfile: apps/uniz-portal/Dockerfile
 
     steps:
       - name: Checkout code
