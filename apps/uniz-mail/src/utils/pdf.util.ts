@@ -58,72 +58,25 @@ export interface AttendanceData {
 export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
   const { name, username, branch, semesterId, grades, campus } = data;
 
-  // Calculate GPA/Credits
+  // Professional Colors
+  const primaryColor = "#1A237E"; // Deep Navy
+  const secondaryColor = "#424242"; // Charcoal
+  const accentColor = "#B8860B"; // Dark Gold
+  const borderColor = "#D1D1D1";
+  const headerBg = "#F8F9FA";
+
+  // Calculate GPA
   let totalCredits = 0;
   let earnedPoints = 0;
   grades.forEach((g) => {
     const credit = Number(g.subject.credits);
-    const gradePoint = Number(g.grade);
-    totalCredits += credit;
-    // GPA typically includes all credits registered, but let's follow standard
-    // If gradePoint is 0 (Remedial), it counts as attempted (credits added) but 0 points.
     if (credit > 0) {
-      earnedPoints += credit * (gradePoint > 0 ? gradePoint : 0);
+      totalCredits += credit;
+      earnedPoints += credit * Number(g.grade || 0);
     }
   });
-
   const sgpa =
     totalCredits > 0 ? (earnedPoints / totalCredits).toFixed(2) : "0.00";
-  /* 
-    Title Logic:
-    1. Try to parse E#S# or P#S# from semesterId (e.g., "E2S1", "AY24-E3-S2")
-    2. If not found, try to infer from first subject code (e.g., "CS2101" -> E2 S1)
-    3. Fallback to raw semesterId
-  */
-  let titleText = `${semesterId.toUpperCase()} RESULTS`;
-
-  // Regex for E1S1, P2S1, E3-S2, etc.
-  // Regex for E1S1, P2S1, E3-S2, etc.
-  // We decouple Year and Sem extraction to handle cases like "SEM-1" (Year missing)
-
-  let yearStr = "";
-  let semStr = "";
-
-  // 1. Try to extract Year (E1-E4, P1-P2) from semesterId
-  const yearMatch = semesterId.match(/([EP])[-_ ]?([1-4])/i);
-  if (yearMatch) {
-    yearStr = `${yearMatch[1].toUpperCase()}${yearMatch[2]}`;
-  }
-
-  // 2. Try to extract Semester (S1-S3) from semesterId
-  const semMatch = semesterId.match(/S(?:em(?:ester)?)?[-_ ]?([1-3])/i);
-  if (semMatch) {
-    semStr = semMatch[1];
-  }
-
-  // 3. Fallback: Infer Year from Subject Code if missing (e.g. CS2101 -> E2)
-  if (
-    !yearStr &&
-    grades.length > 0 &&
-    grades[0].subject &&
-    grades[0].subject.code
-  ) {
-    // Matches: First digit after letters (CS2... -> 2)
-    const codeMatch = grades[0].subject.code.match(/^[a-zA-Z]+[-_ ]?([1-4])/);
-    if (codeMatch) {
-      yearStr = `E${codeMatch[1]}`; // Default to Engineering
-    }
-  }
-
-  if (yearStr && semStr) {
-    titleText = `${yearStr} SEMESTER-${semStr} RESULTS`;
-  } else {
-    // Fallback if partial info
-    titleText = `${semesterId.toUpperCase()} RESULTS`.replace(
-      " RESULTS RESULTS",
-      " RESULTS",
-    );
-  }
 
   const getGradeLetter = (point: number) => {
     if (point >= 10) return "EX";
@@ -135,234 +88,212 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
     return "R";
   };
 
-  const rows = grades.map((g) => ({
-    title: g.subject.name,
-    credits: g.subject.credits.toFixed(1),
-    gradeLetter: getGradeLetter(g.grade),
-  }));
-
   return createPdfBuffer((doc) => {
-    const { width } = doc.page;
+    const { width, height } = doc.page;
     const usableWidth = width - PAGE_MARGIN * 2;
-    const tableStartX = PAGE_MARGIN;
 
-    // Watermark
-    doc.save();
-    doc.rotate(-45, { origin: [width / 2, 400] });
+    // 1. Page Border
     doc
-      .fillColor("rgba(0,0,0,0.05)")
-      .fontSize(80)
-      .text(`RGUKT ${campus.toUpperCase()}`, {
-        align: "center",
-      });
-    doc.restore();
-
-    // Header
-    doc.fillColor("#cc0000");
-    doc.font("Helvetica-Bold");
+      .rect(20, 20, width - 40, height - 40)
+      .lineWidth(1.5)
+      .strokeColor(primaryColor)
+      .stroke();
     doc
-      .fontSize(22)
-      .text("RAJIV GANDHI UNIVERSITY OF KNOWLEDGE", { align: "center" });
-    doc.text("TECHNOLOGIES - ANDHRA PRADESH", { align: "center" });
-
-    doc.font("Helvetica");
-    doc
-      .fontSize(8.5)
-      .text(
-        "(Established by the Govt. of Andhra Pradesh and recognized as per Section 2(f), 12(B) of UGC Act, 1956)",
-        { align: "center" },
-      );
-
-    // Orange separator
-    doc.moveDown(0.5);
-    doc
-      .moveTo(PAGE_MARGIN, doc.y)
-      .lineTo(PAGE_MARGIN + usableWidth, doc.y)
-      .lineWidth(3)
-      .strokeColor("#ff9900")
+      .rect(25, 25, width - 50, height - 50)
+      .lineWidth(0.5)
+      .strokeColor(accentColor)
       .stroke();
 
+    // 2. Institutional Header
+    doc.fillColor(primaryColor).font("Helvetica-Bold").fontSize(18);
+    doc.text("RAJIV GANDHI UNIVERSITY OF KNOWLEDGE TECHNOLOGIES", {
+      align: "center",
+    });
+
+    doc
+      .fontSize(11)
+      .fillColor(secondaryColor)
+      .text(`ANDHRA PRADESH - ${campus.toUpperCase()} CAMPUS`, {
+        align: "center",
+      });
+    doc.moveDown(0.2);
+    doc
+      .fontSize(8)
+      .font("Helvetica-Oblique")
+      .text("(Established under AP Act 18 of 2008)", { align: "center" });
+
+    // 3. Title Section
+    doc.moveDown(1.5);
+    doc.rect(PAGE_MARGIN, doc.y, usableWidth, 25).fill(headerBg);
+    doc.fillColor(primaryColor).font("Helvetica-Bold").fontSize(13);
+    doc.text("PROVISIONAL SEMESTER GRADE REPORT", PAGE_MARGIN, doc.y + 7, {
+      align: "center",
+    });
     doc.moveDown(1);
 
-    // Student info table (2 rows, 4 columns)
-    const cellHeight = 18;
-    const colWidths = [
-      usableWidth * 0.15,
-      usableWidth * 0.35,
-      usableWidth * 0.15,
-      usableWidth * 0.35,
-    ];
-    let y = doc.y;
+    // 4. Student Info Section
+    const infoY = doc.y;
+    const labelWidth = 100;
+    const valueWidth = usableWidth / 2 - labelWidth;
 
-    const drawRow = (
-      leftLabel: string,
-      leftValue: string,
-      rightLabel: string,
-      rightValue: string,
-    ) => {
-      let x = tableStartX;
-      const labels = [leftLabel, leftValue, rightLabel, rightValue];
-
-      // Cells
-      for (let i = 0; i < 4; i++) {
-        doc
-          .rect(x, y, colWidths[i], cellHeight)
-          .lineWidth(0.5)
-          .strokeColor("#dddddd")
-          .stroke();
-        x += colWidths[i];
-      }
-
-      // Text
-      x = tableStartX;
-      doc.fontSize(10).fillColor("#000000");
-      doc.text(leftLabel, x + 4, y + 4, { width: colWidths[0] - 8 });
-      x += colWidths[0];
-      doc
-        .font("Helvetica-Bold")
-        .text(leftValue, x + 4, y + 4, { width: colWidths[1] - 8 });
-      x += colWidths[1];
+    const drawInfo = (label: string, value: string, x: number, y: number) => {
       doc
         .font("Helvetica")
-        .text(rightLabel, x + 4, y + 4, { width: colWidths[2] - 8 });
-      x += colWidths[2];
+        .fontSize(9)
+        .fillColor(secondaryColor)
+        .text(label, x, y);
       doc
         .font("Helvetica-Bold")
-        .text(rightValue, x + 4, y + 4, { width: colWidths[3] - 8 });
-
-      y += cellHeight;
+        .fontSize(10)
+        .fillColor("#000000")
+        .text(value, x + labelWidth, y);
     };
 
-    drawRow("ID", username, "Branch:", branch);
-    drawRow("Name:", name, "Campus:", campus);
-    doc.moveDown(1.5);
+    drawInfo("STUDENT ID:", username, PAGE_MARGIN, infoY);
+    drawInfo(
+      "BRANCH:",
+      branch.toUpperCase(),
+      PAGE_MARGIN + usableWidth / 2,
+      infoY,
+    );
+    drawInfo("STUDENT NAME:", name.toUpperCase(), PAGE_MARGIN, infoY + 18);
+    drawInfo(
+      "SEMESTER:",
+      semesterId.toUpperCase(),
+      PAGE_MARGIN + usableWidth / 2,
+      infoY + 18,
+    );
 
-    // Results title
-    doc.font("Helvetica-Bold");
-    doc.fontSize(16).fillColor("#000000").text(titleText, { align: "center" });
-    doc.moveDown(1.2);
+    doc.moveDown(2.5);
 
-    // Results table
-    const headerHeight = 22;
-    const rowHeight = 20;
-    const colTitleWidth = usableWidth * 0.7;
-    const colCreditsWidth = usableWidth * 0.15;
-    const colGradeWidth = usableWidth * 0.15;
+    // 5. Grades Table
+    const tCol1 = usableWidth * 0.15; // Code
+    const tCol2 = usableWidth * 0.55; // Name
+    const tCol3 = usableWidth * 0.15; // Credits
+    const tCol4 = usableWidth * 0.15; // Grade
 
     let tableY = doc.y;
 
-    // Table Borders Configuration
-    const drawTableBorder = (y1: number, y2: number) => {
-      doc
-        .lineWidth(1)
-        .strokeColor("#000000")
-        .rect(tableStartX, y1, usableWidth, y2 - y1)
-        .stroke();
-
-      // Vertical lines
-      doc
-        .moveTo(tableStartX + colTitleWidth, y1)
-        .lineTo(tableStartX + colTitleWidth, y2)
-        .stroke();
-      doc
-        .moveTo(tableStartX + colTitleWidth + colCreditsWidth, y1)
-        .lineTo(tableStartX + colTitleWidth + colCreditsWidth, y2)
-        .stroke();
-    };
-
-    // Header with green borders
-    doc.lineWidth(2).strokeColor("#008000");
-    doc
-      .moveTo(tableStartX, tableY)
-      .lineTo(tableStartX + usableWidth, tableY)
-      .stroke();
-    doc
-      .moveTo(tableStartX, tableY + headerHeight)
-      .lineTo(tableStartX + usableWidth, tableY + headerHeight)
-      .stroke();
-
-    doc.fontSize(12).font("Helvetica-Bold").fillColor("#000000");
-    let x = tableStartX;
-    doc.text("COURSE TITLE", x + 6, tableY + 6, { width: colTitleWidth - 12 });
-    x += colTitleWidth;
-    doc.text("Credits", x, tableY + 6, {
-      width: colCreditsWidth,
+    // Header
+    doc.rect(PAGE_MARGIN, tableY, usableWidth, 30).fill(primaryColor);
+    doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(9);
+    doc.text("COURSE CODE", PAGE_MARGIN + 10, tableY + 10, { width: tCol1 });
+    doc.text("SUBJECT DESCRIPTION", PAGE_MARGIN + tCol1 + 10, tableY + 10, {
+      width: tCol2,
+    });
+    doc.text("CREDITS", PAGE_MARGIN + tCol1 + tCol2, tableY + 10, {
+      width: tCol3,
       align: "center",
     });
-    x += colCreditsWidth;
-    doc.text("Grade", x, tableY + 6, { width: colGradeWidth, align: "center" });
+    doc.text("GRADE", PAGE_MARGIN + tCol1 + tCol2 + tCol3, tableY + 10, {
+      width: tCol4,
+      align: "center",
+    });
 
-    // Body rows
-    const tableBodyStartY = tableY + headerHeight;
-    tableY += headerHeight;
-    doc.fontSize(11).font("Helvetica");
+    tableY += 30;
+    doc.fillColor("#000000").font("Helvetica").fontSize(9);
 
-    rows.forEach((r) => {
-      let colX = tableStartX;
-
-      doc.text(r.title, colX + 6, tableY + 6, { width: colTitleWidth - 12 });
-      colX += colTitleWidth;
-      doc.text(r.credits, colX, tableY + 6, {
-        width: colCreditsWidth,
-        align: "center",
+    // Body with Dynamic Height
+    grades.forEach((g, idx) => {
+      // Calculate height needed for subject name
+      const nameHeight = doc.heightOfString(g.subject.name, {
+        width: tCol2 - 20,
       });
-      colX += colCreditsWidth;
-      doc.text(r.gradeLetter, colX, tableY + 6, {
-        width: colGradeWidth,
-        align: "center",
-      });
+      const rowHeight = Math.max(25, nameHeight + 12);
+
+      // Page break check (simple)
+      if (tableY + rowHeight > height - 120) {
+        doc.addPage();
+        tableY = PAGE_MARGIN;
+        // (Simplified: in a real app you'd redraw headers)
+      }
+
+      if (idx % 2 === 1)
+        doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill("#F4F6F7");
+
+      doc.fillColor("#000000");
+      doc.text(
+        g.subject.code,
+        PAGE_MARGIN + 10,
+        tableY + (rowHeight / 2 - 4.5),
+      );
+      doc.text(
+        g.subject.name,
+        PAGE_MARGIN + tCol1 + 10,
+        tableY + (rowHeight / 2 - nameHeight / 2),
+        { width: tCol2 - 20 },
+      );
+      doc.text(
+        g.subject.credits.toFixed(1),
+        PAGE_MARGIN + tCol1 + tCol2,
+        tableY + (rowHeight / 2 - 4.5),
+        { width: tCol3, align: "center" },
+      );
+      doc
+        .font("Helvetica-Bold")
+        .text(
+          getGradeLetter(g.grade),
+          PAGE_MARGIN + tCol1 + tCol2 + tCol3,
+          tableY + (rowHeight / 2 - 4.5),
+          { width: tCol4, align: "center" },
+        );
+      doc.font("Helvetica");
 
       tableY += rowHeight;
-
       doc
-        .lineWidth(0.5)
-        .strokeColor("#333333")
-        .moveTo(tableStartX, tableY)
-        .lineTo(tableStartX + usableWidth, tableY)
+        .moveTo(PAGE_MARGIN, tableY)
+        .lineTo(PAGE_MARGIN + usableWidth, tableY)
+        .lineWidth(0.3)
+        .strokeColor(borderColor)
         .stroke();
     });
 
-    // Total row
-    doc.font("Helvetica-Bold");
-    let totalX = tableStartX;
-    doc.text("Total", totalX, tableY + 6, {
-      width: colTitleWidth - 6,
-      align: "right",
-    });
-    totalX += colTitleWidth;
-    doc.text(totalCredits.toFixed(0), totalX, tableY + 6, {
-      width: colCreditsWidth,
-      align: "center",
-    });
-    totalX += colCreditsWidth;
-    doc.text(earnedPoints.toFixed(1), totalX, tableY + 6, {
-      width: colGradeWidth,
-      align: "center",
-    });
+    // 6. Summary and SGPA
+    doc.moveDown(1.5);
+    const summX = PAGE_MARGIN + usableWidth - 180;
+    const summY = tableY + 20;
 
-    tableY += rowHeight;
     doc
+      .rect(summX, summY, 180, 50)
       .lineWidth(1)
-      .strokeColor("#000000")
-      .moveTo(tableStartX, tableY)
-      .lineTo(tableStartX + usableWidth, tableY)
+      .strokeColor(primaryColor)
       .stroke();
+    doc
+      .fontSize(10)
+      .font("Helvetica-Bold")
+      .text("ACADEMIC PERFORMANCE", summX + 10, summY + 10);
+    doc
+      .fontSize(14)
+      .fillColor(primaryColor)
+      .text(`SGPA: ${sgpa}`, summX + 10, summY + 28);
 
-    // SGPA row
-    let sgpaX = tableStartX;
-    doc.text("SGPA", sgpaX, tableY + 6, {
-      width: colTitleWidth + colCreditsWidth - 6,
-      align: "right",
-    });
-    sgpaX += colTitleWidth + colCreditsWidth;
-    doc.text(sgpa, sgpaX, tableY + 6, {
-      width: colGradeWidth,
-      align: "center",
-    });
+    // 7. Official Footer
+    const footerY = height - 100;
+    doc
+      .fontSize(8)
+      .fillColor(secondaryColor)
+      .font("Helvetica-Oblique")
+      .text(
+        "* EX: Excellent, A: Very Good, B: Good, C: Fair, D: Satisfactory, E: Pass, R: Remedial",
+        PAGE_MARGIN,
+        footerY,
+      );
+    doc.text(
+      "* This is an automated provisional report. Please verify with official records.",
+      PAGE_MARGIN,
+      footerY + 12,
+    );
 
-    tableY += rowHeight;
-
-    drawTableBorder(tableBodyStartY - headerHeight, tableY);
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(10)
+      .fillColor(primaryColor)
+      .text(
+        "Controller of Examinations",
+        PAGE_MARGIN + usableWidth - 150,
+        footerY + 30,
+        { align: "center" },
+      );
   });
 };
 
@@ -371,240 +302,153 @@ export const generateAttendancePdf = async (
 ): Promise<Buffer> => {
   const { name, username, branch, semesterId, records, campus } = data;
 
+  const primaryColor = "#1B5E20"; // Dark Forest Green
+  const secondaryColor = "#424242";
+  const accentColor = "#66BB6A";
+
   let totalAttended = 0;
   let totalClasses = 0;
   records.forEach((r) => {
     totalAttended += r.attendedClasses;
     totalClasses += r.totalClasses;
   });
-
   const overallPercent =
     totalClasses > 0
       ? ((totalAttended / totalClasses) * 100).toFixed(2)
       : "0.00";
 
-  const rows = records.map((r) => {
-    const percent =
-      r.totalClasses > 0
-        ? ((r.attendedClasses / r.totalClasses) * 100).toFixed(1)
-        : "0.0";
-    return {
-      title: `${r.subject.name} (${r.subject.code})`,
-      attended: r.attendedClasses,
-      total: r.totalClasses,
-      percent,
-    };
-  });
-
   return createPdfBuffer((doc) => {
-    const { width } = doc.page;
+    const { width, height } = doc.page;
     const usableWidth = width - PAGE_MARGIN * 2;
-    const tableStartX = PAGE_MARGIN;
 
-    // Watermark
-    doc.save();
-    doc.rotate(-45, { origin: [width / 2, 400] });
+    // Border
     doc
-      .fillColor("rgba(0,0,0,0.05)")
-      .fontSize(80)
-      .text(`RGUKT ${campus.toUpperCase()}`, {
-        align: "center",
-      });
-    doc.restore();
-
-    // Header
-    doc.fillColor("#cc0000");
-    doc.font("Helvetica-Bold");
-    doc
-      .fontSize(22)
-      .text("RAJIV GANDHI UNIVERSITY OF KNOWLEDGE", { align: "center" });
-    doc.text("TECHNOLOGIES - ANDHRA PRADESH", { align: "center" });
-
-    doc.font("Helvetica");
-    doc
-      .fontSize(8.5)
-      .text(
-        "(Established by the Govt. of Andhra Pradesh and recognized as per Section 2(f), 12(B) of UGC Act, 1956)",
-        { align: "center" },
-      );
-
-    // Orange separator
-    doc.moveDown(0.5);
-    doc
-      .moveTo(PAGE_MARGIN, doc.y)
-      .lineTo(PAGE_MARGIN + usableWidth, doc.y)
-      .lineWidth(3)
-      .strokeColor("#ff9900")
+      .rect(20, 20, width - 40, height - 40)
+      .lineWidth(1.5)
+      .strokeColor(primaryColor)
       .stroke();
 
-    doc.moveDown(1);
-
-    // Student info table (2 rows, 4 columns)
-    const cellHeight = 18;
-    const colWidths = [
-      usableWidth * 0.15,
-      usableWidth * 0.35,
-      usableWidth * 0.15,
-      usableWidth * 0.35,
-    ];
-    let y = doc.y;
-
-    const drawRow = (
-      leftLabel: string,
-      leftValue: string,
-      rightLabel: string,
-      rightValue: string,
-    ) => {
-      let x = tableStartX;
-
-      // Cells
-      for (let i = 0; i < 4; i++) {
-        doc
-          .rect(x, y, colWidths[i], cellHeight)
-          .lineWidth(0.5)
-          .strokeColor("#dddddd")
-          .stroke();
-        x += colWidths[i];
-      }
-
-      // Text
-      x = tableStartX;
-      doc.fontSize(10).fillColor("#000000");
-      doc.text(leftLabel, x + 4, y + 4, { width: colWidths[0] - 8 });
-      x += colWidths[0];
-      doc
-        .font("Helvetica-Bold")
-        .text(leftValue, x + 4, y + 4, { width: colWidths[1] - 8 });
-      x += colWidths[1];
-      doc
-        .font("Helvetica")
-        .text(rightLabel, x + 4, y + 4, { width: colWidths[2] - 8 });
-      x += colWidths[2];
-      doc
-        .font("Helvetica-Bold")
-        .text(rightValue, x + 4, y + 4, { width: colWidths[3] - 8 });
-
-      y += cellHeight;
-    };
-
-    drawRow("ID", username, "Branch:", branch);
-    drawRow("Name:", name, "Campus:", campus);
+    // Header
+    doc
+      .fillColor(primaryColor)
+      .font("Helvetica-Bold")
+      .fontSize(18)
+      .text("RAJIV GANDHI UNIVERSITY OF KNOWLEDGE TECHNOLOGIES", {
+        align: "center",
+      });
+    doc
+      .fontSize(11)
+      .fillColor(secondaryColor)
+      .text(`${campus.toUpperCase()} CAMPUS - STUDENT ATTENDANCE REPORT`, {
+        align: "center",
+      });
     doc.moveDown(1.5);
 
-    // Title
-    doc.font("Helvetica-Bold");
+    // Student Info
     doc
-      .fontSize(16)
-      .fillColor("#000000")
-      .text(`ATTENDANCE REPORT: ${semesterId.toUpperCase()}`, {
-        align: "center",
-      });
-    doc.moveDown();
+      .fontSize(9)
+      .font("Helvetica")
+      .text("ID / NAME:", PAGE_MARGIN)
+      .font("Helvetica-Bold")
+      .text(`${username} / ${name.toUpperCase()}`, PAGE_MARGIN + 60, doc.y - 9);
+    doc
+      .font("Helvetica")
+      .text("BRANCH / SEM:", PAGE_MARGIN)
+      .font("Helvetica-Bold")
+      .text(
+        `${branch.toUpperCase()} / ${semesterId.toUpperCase()}`,
+        PAGE_MARGIN + 75,
+        doc.y - 9,
+      );
+    doc.moveDown(1);
 
-    // Results table
-    const headerHeight = 20;
-    const rowHeight = 18;
-    const colTitleWidth = usableWidth * 0.55;
-    const colAttWidth = usableWidth * 0.25;
-    const colPercentWidth = usableWidth * 0.2;
-
+    // Table
     let tableY = doc.y;
+    const tCol1 = usableWidth * 0.6;
+    const tCol2 = usableWidth * 0.2;
+    const tCol3 = usableWidth * 0.2;
 
-    // Outer border
-    doc
-      .rect(
-        tableStartX,
-        tableY,
-        usableWidth,
-        headerHeight + rows.length * rowHeight + rowHeight * 2,
-      )
-      .lineWidth(1.5)
-      .strokeColor("#000000")
-      .stroke();
-
-    // Header
-    doc
-      .rect(tableStartX, tableY, usableWidth, headerHeight)
-      .lineWidth(1)
-      .strokeColor("#000000")
-      .stroke();
-
-    doc.fontSize(12).font("Helvetica-Bold");
-    let x = tableStartX;
-    doc.text("Course Title", x + 6, tableY + 4, {
-      width: colTitleWidth - 12,
+    doc.rect(PAGE_MARGIN, tableY, usableWidth, 25).fill(primaryColor);
+    doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(9);
+    doc.text("COURSE DESCRIPTION", PAGE_MARGIN + 10, tableY + 8, {
+      width: tCol1,
     });
-    x += colTitleWidth;
-    doc.text("Attended / Total", x, tableY + 4, {
-      width: colAttWidth,
+    doc.text("CLASSES", PAGE_MARGIN + tCol1, tableY + 8, {
+      width: tCol2,
       align: "center",
     });
-    x += colAttWidth;
-    doc.text("Percentage", x, tableY + 4, {
-      width: colPercentWidth,
+    doc.text("PERCENT", PAGE_MARGIN + tCol1 + tCol2, tableY + 8, {
+      width: tCol3,
       align: "center",
     });
 
-    // Body
-    tableY += headerHeight;
-    doc.fontSize(11).font("Helvetica");
+    tableY += 25;
+    doc.fillColor("#000000").font("Helvetica").fontSize(9);
 
-    rows.forEach((r) => {
-      let colX = tableStartX;
+    records.forEach((r, idx) => {
+      const nameHeight = doc.heightOfString(r.subject.name, {
+        width: tCol1 - 20,
+      });
+      const rowHeight = Math.max(22, nameHeight + 10);
+
+      if (idx % 2 === 1)
+        doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill("#F1F8E9");
+      const percent =
+        r.totalClasses > 0
+          ? ((r.attendedClasses / r.totalClasses) * 100).toFixed(1)
+          : "0.0";
+
+      doc.fillColor("#000000");
+      doc.text(
+        `${r.subject.name} (${r.subject.code})`,
+        PAGE_MARGIN + 10,
+        tableY + (rowHeight / 2 - nameHeight / 2),
+        { width: tCol1 - 20 },
+      );
+      doc.text(
+        `${r.attendedClasses} / ${r.totalClasses}`,
+        PAGE_MARGIN + tCol1,
+        tableY + (rowHeight / 2 - 4.5),
+        { width: tCol2, align: "center" },
+      );
+
+      const pColor = Number(percent) < 75 ? "#D32F2F" : primaryColor;
       doc
-        .moveTo(tableStartX, tableY)
-        .lineTo(tableStartX + usableWidth, tableY)
-        .lineWidth(0.5)
-        .strokeColor("#000000")
-        .stroke();
-
-      doc.text(r.title, colX + 6, tableY + 4, {
-        width: colTitleWidth - 12,
-      });
-      colX += colTitleWidth;
-      doc.text(`${r.attended} / ${r.total}`, colX, tableY + 4, {
-        width: colAttWidth,
-        align: "center",
-      });
-      colX += colAttWidth;
-      doc.text(`${r.percent}%`, colX, tableY + 4, {
-        width: colPercentWidth,
-        align: "center",
-      });
+        .fillColor(pColor)
+        .font("Helvetica-Bold")
+        .text(
+          `${percent}%`,
+          PAGE_MARGIN + tCol1 + tCol2,
+          tableY + (rowHeight / 2 - 4.5),
+          { width: tCol3, align: "center" },
+        );
+      doc.font("Helvetica");
 
       tableY += rowHeight;
+      doc
+        .moveTo(PAGE_MARGIN, tableY)
+        .lineTo(PAGE_MARGIN + usableWidth, tableY)
+        .lineWidth(0.2)
+        .strokeColor("#BDBDBD")
+        .stroke();
     });
 
-    // Overall total row
-    doc.font("Helvetica-Bold");
+    // Subtotal
+    doc.moveDown(1);
     doc
-      .moveTo(tableStartX, tableY)
-      .lineTo(tableStartX + usableWidth, tableY)
-      .lineWidth(0.75)
-      .strokeColor("#000000")
-      .stroke();
+      .fontSize(11)
+      .font("Helvetica-Bold")
+      .fillColor(primaryColor)
+      .text(`OVERALL ATTENDANCE: ${overallPercent}%`, { align: "right" });
 
-    let totalX = tableStartX;
-    doc.text("OVERALL TOTAL", totalX, tableY + 4, {
-      width: colTitleWidth - 6,
-      align: "right",
-    });
-    totalX += colTitleWidth;
-    doc.text(`${totalAttended} / ${totalClasses}`, totalX, tableY + 4, {
-      width: colAttWidth,
-      align: "center",
-    });
-    totalX += colAttWidth;
-    doc.text(`${overallPercent}%`, totalX, tableY + 4, {
-      width: colPercentWidth,
-      align: "center",
-    });
-
-    doc.moveDown(2);
-    doc.font("Helvetica").fontSize(10).fillColor("#666666");
-    doc.text(
-      "* Mandatory 75% attendance is required to appear for examinations.",
-    );
-    doc.fontSize(9).text(`Generated on: ${new Date().toLocaleString()}`);
+    doc
+      .fontSize(8)
+      .fillColor(secondaryColor)
+      .font("Helvetica-Oblique")
+      .text(
+        "* A minimum of 75% attendance is required to be eligible for end-semester examinations.",
+        PAGE_MARGIN,
+        height - 60,
+      );
   });
 };
