@@ -1,134 +1,84 @@
-# 🤖 UniZ ML Telegram Bot - Technical Specification
+# UniZ ML Telegram Bot - Technical Specification
 
-Welcome to the UniZ Telegram Bot integration project! This document outlines the architecture, data flow, and API endpoints required for the Python ML Telegram Bot to interact with the UniZ Node.js Microservices.
+## 1. Executive Summary
 
-## 🏗️ Architecture Overview
-
-To maintain strict security and avoid duplicating business logic, the Telegram Bot uses a **Separation of Concerns** architecture:
-
-1.  **UniZ Node.js Backend:** Handles all Database connections, Authentication, PDF generation, and strict Data rules.
-2.  **Python ML Service:** Handles the Telegram Webhook, NLP (Natural Language Processing) to parse student intent, and acts as a client calling the Node.js internal APIs.
-
-_(Note: The Python service should **NOT** connect directly to the PostgreSQL database. It must use the internal APIs listed below to ensure data integrity across microservices)._
+This document provides the technical requirements for integrating a Python-based Machine Learning (ML) Telegram Bot into the UniZ Microservices framework. The bot serves as an intelligent NLP interface for students to query academic and profile data.
 
 ---
 
-## 🔄 Flow 1: Account Linking (OAUTH-Style)
+## 2. Infrastructure & Data Access
 
-_We need to securely connect a Telegram `chatId` to a UniZ `studentId`._
+### 2.1 Database Access (PostgreSQL)
 
-1.  **Student Action:** Logs into the UniZ Web Portal and clicks "Link Telegram".
-2.  **Node.js Portal:** Generates a secure random 6-digit Link Code (e.g., `839201`) and saves it temporarily in Redis. Displays a button to the student: `t.me/YourUniZBot?start=839201`.
-3.  **Bot Action:** The student clicks the link and opens Telegram. The Python bot receives the `/start 839201` command along with the user's Telegram `chatId`.
-4.  **Python API Call:** The Python bot sends the `chatId` and `code` to the Node.js API to finalize the link.
+The ML Bot is granted read-access to the primary PostgreSQL instance to facilitate complex NLP intent matching and data extraction.
 
-### 🔌 API: Finalize Bot Link
+| Parameter       | Configuration                                         |
+| :-------------- | :---------------------------------------------------- |
+| **Host**        | `uniz-postgres` (Internal) / VPC IP (Production)      |
+| **Port**        | `5432`                                                |
+| **Database**    | `uniz_db`                                             |
+| **Schemas**     | `users`, `academics`, `auth`, `outpass`               |
+| **Credentials** | Consult `.env` (`POSTGRES_USER`, `POSTGRES_PASSWORD`) |
 
-_Called by Python when a user sends the `/start <code>` command._
+**Connection Requirement:** The bot must utilize the internal Docker network or a secure VPN bridge to reach the database. Use a connection pool (e.g., `SQLAlchemy` or `psycopg2`) for efficient querying.
 
-- **Endpoint:** `POST https://api.rguktong.ac.in/api/v1/bot/link`
-- **Headers:**
-  - `x-internal-secret`: `[YOUR_INTERNAL_BOT_SECRET]` _(Sreecharan will provide this to you)_
-- **Body:**
-  ```json
-  {
-    "chatId": "123456789",
-    "telegramCode": "839201"
-  }
-  ```
-- **Response (200 OK):**
-  ```json
-  {
-    "success": true,
-    "studentId": "O210008",
-    "name": "Sreecharan",
-    "message": "Account successfully linked."
-  }
-  ```
-- **Bot Action:** Reply to user: _"Hi Sreecharan! Your UniZ account (O210008) is successfully linked. You can now ask me for your grades, attendance, or outpass status!"_
+### 2.2 Internal Secret Authentication
+
+All API communication between the Python Bot and Node.js microservices must be authenticated via a shared internal secret.
+
+- **Header Key**: `x-internal-secret`
+- **Header Value**: Stored as `INTERNAL_SECRET` in the vault environment.
 
 ---
 
-## 🔄 Flow 2: NLP Intent Processing (Data Fetching)
+## 3. Core Integration Workflows
 
-_When a linked student asks the bot a question (e.g., "What is my SEM-1 attendance?")._
+### 3.1 Flow A: Secure Account Linking
 
-1.  **Student Action:** Sends text: _"Show my grades for E2"_ to the bot.
-2.  **ML Model:** Parses the text. Identifies:
-    - `Intent`: `FETCH_GRADES`
-    - `Entity[Semester]`: `E2`
-    - `Context`: `chatId = 123456789`
-3.  **Python API Call:** The Python bot hits the Node.js internal API requesting the grades for that specific `chatId`.
+Establishes a 1:1 mapping between a Telegram `chatId` and a UniZ `studentId`.
 
-### 🔌 API 1: Fetch Academic Grades
+1.  **Verification**: Student retrieves a 6-digit OTP from the UniZ Portal.
+2.  **Handshake**: Student sends `/start <OTP>` to the Telegram Bot.
+3.  **Finalization**: Bot executes the following internal call:
 
-- **Endpoint:** `GET https://api.rguktong.ac.in/api/v1/bot/academics/grades?chatId=123456789&semesterId=E2`
-- **Headers:**
-  - `x-internal-secret`: `[YOUR_INTERNAL_BOT_SECRET]`
-- **Response (200 OK):**
+- **Endpoint**: `POST /api/v1/bot/link`
+- **Payload**:
   ```json
   {
-    "success": true,
-    "studentId": "O210008",
-    "semesterId": "E2-SEM-1",
-    "sgpa": "9.2",
-    "grades": [
-      { "subject": "Data Structures", "grade": "O" },
-      { "subject": "Operating Systems", "grade": "A" }
-    ],
-    "downloadLink": "https://api.rguktong.ac.in/api/v1/academics/grades/download/E2-SEM-1"
+    "chatId": "TELEGRAM_CHAT_ID",
+    "telegramCode": "6_DIGIT_OTP"
   }
   ```
-- **Bot Action:** Formats the JSON into a beautiful Telegram Markdown message and sends it. Attaches the `downloadLink` as an **Inline Keyboard Button** so the student can download the official PDF directly!
+- **Response**: Returns `studentId` and `name` on success.
 
-### 🔌 API 2: Fetch Attendance
+### 3.2 Flow B: NLP Data Retrieval
 
-- **Endpoint:** `GET https://api.rguktong.ac.in/api/v1/bot/academics/attendance?chatId=123456789&semesterId=SEM-1`
-- **Headers:**
-  - `x-internal-secret`: `[YOUR_INTERNAL_BOT_SECRET]`
-- **Response (200 OK):**
-  ```json
-  {
-    "success": true,
-    "studentId": "O210008",
-    "overallPercentage": "86.5",
-    "records": [
-      {
-        "subject": "Data Structures",
-        "attended": 40,
-        "total": 45,
-        "percentage": "88.8"
-      }
-    ],
-    "downloadLink": "https://api.rguktong.ac.in/api/v1/academics/attendance/download/SEM-1"
-  }
-  ```
+When a user submits a query (e.g., _"What is my current attendance?"_), the ML model extracts intent and parameters to call the relevant internal API.
 
-### 🔌 API 3: Verify Profile (Who am I talking to?)
+#### Optimized Internal API Endpoints:
 
-_If the ML model needs basic context (Name, Branch, Room No.) to contextualize the chat._
-
-- **Endpoint:** `GET https://api.rguktong.ac.in/api/v1/bot/profile?chatId=123456789`
-- **Headers:**
-  - `x-internal-secret`: `[YOUR_INTERNAL_BOT_SECRET]`
-- **Response (200 OK):**
-  ```json
-  {
-    "success": true,
-    "name": "Sreecharan",
-    "studentId": "O210008",
-    "branch": "CSE",
-    "isPresentInCampus": true
-  }
-  ```
+- **Profile Summary**: `GET /api/v1/bot/profile?chatId={id}`
+- **Academic Grades**: `GET /api/v1/bot/academics/grades?chatId={id}&semesterId={sem}`
+- **Attendance Stats**: `GET /api/v1/bot/academics/attendance?chatId={id}&semesterId={sem}`
 
 ---
 
-## 📝 Next Steps for ML Developer:
+## 4. Developer Implementation Checklist
 
-1.  **Set up the Webhook:** Build the Python Flask/FastAPI server to receive Telegram webhooks.
-2.  **Build the NLP:** Train/Configure the LLM (or use regex/intent-matching frameworks like RASA/Dialogflow) to extract `Action` (Grades, Attendance, Identity) and `Entities` (Semester ID).
-3.  **Mock the APIs:** While integrating, you can use Mock JSON responses (based on the outputs above) to test your NLP flow until the Node.js endpoints are fully connected.
-4.  **Error Handling:** Ensure the bot handles 404 responses (e.g., student not linked, or grades not found) gracefully.
+1.  **Environment Setup**:
+    - Clone `uniz-master-vault`.
+    - Retrieve database credentials from `infra/core-infra/.env`.
+2.  **Bot Initialization**:
+    - Build a Python Flask/FastAPI service.
+    - Implement `python-telegram-bot` for webhook/polling management.
+3.  **NLP Integration**:
+    - Configure LLM or Intent Wrapper (e.g., RASA, LangChain).
+    - Map student queries to the database schemas or internal APIs.
+4.  **Security**:
+    - Ensure `chatId` is validated against the `users.bot_links` table before returning sensitive academic data.
+5.  **Output Formatting**:
+    - Deliver responses using Telegram MarkdownV2 for premium UI/UX.
 
-You have all the details needed to start! Happy coding! 🚀
+---
+
+_UniZ Enterprise Infrastructure - Internal Development Document_
