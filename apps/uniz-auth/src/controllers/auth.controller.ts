@@ -21,6 +21,7 @@ const prisma = new PrismaClient({
   },
 });
 
+
 export const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
