@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import axios from "axios";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../utils/prisma";
 import { signToken, verifyToken } from "../utils/token.util";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { redis } from "../utils/redis.util";
@@ -12,15 +12,6 @@ import {
 import { comparePassword, hashPassword } from "../utils/password.util";
 import { ErrorCode } from "../shared/error-codes";
 import { UserRole } from "../shared/roles.enum";
-
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL,
-    },
-  },
-});
-
 
 export const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;

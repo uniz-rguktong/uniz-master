@@ -1,10 +1,9 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-console.log("DEBUG: DATABASE_URL loaded:", process.env.DATABASE_URL);
+import { prisma } from "./utils/prisma";
 
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+console.log("DEBUG: DATABASE_URL loaded:", process.env.DATABASE_URL);
 
 console.log(
   "DEBUG: Prisma Datasource:",

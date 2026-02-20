@@ -2,10 +2,8 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { JwtPayload, JwtPayloadSchema } from "../shared/jwt.schema";
 import { ErrorCode } from "../shared/error-codes";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../utils/prisma";
 import { redis } from "../utils/redis.util";
-
-const prisma = new PrismaClient();
 
 const SECRET = process.env.JWT_SECURITY_KEY;
 if (!SECRET && process.env.NODE_ENV === "production") {
