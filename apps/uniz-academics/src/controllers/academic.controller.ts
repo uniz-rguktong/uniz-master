@@ -1524,6 +1524,22 @@ export const uploadGrades = async (req: any, res: Response) => {
       headers.push(cell.value ? String(cell.value).trim() : "");
     }
 
+    // Header Validation
+    const requiredHeaders = [
+      "Student ID",
+      "Subject Code",
+      "Semester ID",
+      "Grade (EX, A, B, C, D, E, R)",
+    ];
+    const missingHeaders = requiredHeaders.filter((h) => !headers.includes(h));
+
+    if (missingHeaders.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid Excel format. Missing required columns: ${missingHeaders.join(", ")}`,
+      });
+    }
+
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber === 1) return;
       const rowData: any = {};
@@ -1729,6 +1745,23 @@ export const uploadAttendance = async (req: any, res: Response) => {
     for (let i = 1; i <= colCount; i++) {
       const cell = headerRow.getCell(i);
       headers.push(cell.value ? String(cell.value).trim() : "");
+    }
+
+    // Header Validation
+    const requiredHeaders = [
+      "Student ID",
+      "Subject Code",
+      "Semester ID",
+      "Total Classes Occurred",
+      "Total Classes Attended",
+    ];
+    const missingHeaders = requiredHeaders.filter((h) => !headers.includes(h));
+
+    if (missingHeaders.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid Excel format. Missing required columns: ${missingHeaders.join(", ")}`,
+      });
     }
 
     worksheet.eachRow((row, rowNumber) => {
