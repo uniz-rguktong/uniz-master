@@ -23,8 +23,22 @@ const generateExcel = async (
     worksheet.addRow(row);
   });
 
-  // Basic styling for headers
-  worksheet.getRow(1).font = { bold: true };
+  // Style header row
+  const headerRow = worksheet.getRow(1);
+  headerRow.font = { bold: true, color: { argb: "FFFFFF" } };
+  headerRow.fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "1A237E" }, // Deep Navy
+  };
+  headerRow.alignment = { vertical: "middle", horizontal: "center" };
+  headerRow.height = 25;
+
+  // Style data rows and set widths
+  worksheet.columns.forEach((col: any, i) => {
+    col.width = 20;
+    col.alignment = { vertical: "middle", horizontal: "left" };
+  });
 
   res.setHeader(
     "Content-Type",
@@ -362,18 +376,28 @@ export const exportStudentsSelective = async (
         .replace(/([A-Z])/g, " $1")
         .trim(),
     );
-    worksheet.addRow(headerRow);
-    worksheet.getRow(1).font = { bold: true };
+    const row = worksheet.addRow(headerRow);
+
+    // Premium Styling
+    row.font = { bold: true, color: { argb: "FFFFFF" } };
+    row.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "1A237E" }, // Deep Navy
+    };
+    row.alignment = { vertical: "middle", horizontal: "center" };
+    row.height = 25;
 
     // Add Data
     students.forEach((s) => {
-      const row = exportFields.map((f) => (s as any)[f]);
-      worksheet.addRow(row);
+      const dataRow = exportFields.map((f) => (s as any)[f]);
+      worksheet.addRow(dataRow);
     });
 
     // Auto-width columns
     worksheet.columns.forEach((col: any) => {
       col.width = 20;
+      col.alignment = { vertical: "middle", horizontal: "left" };
     });
 
     res.setHeader(
