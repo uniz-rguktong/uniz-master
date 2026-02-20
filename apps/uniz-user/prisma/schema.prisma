@@ -32,6 +32,7 @@ model StudentProfile {
   roomno               String    @default("")
   isPresentInCampus    Boolean   @default(true)
   isApplicationPending Boolean   @default(false)
+  telegramChatId       String?
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -64,45 +65,46 @@ model AdminProfile {
 }
 
 model Banner {
-  id          String   @id @default(uuid())
-  title       String
-  text        String
-  imageUrl    String
-  isVisible   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  title     String
+  text      String
+  imageUrl  String
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model PublicNotification {
-  id          String   @id @default(uuid())
-  title       String
-  content     String
-  link        String?
-  isVisible   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  link      String?
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Tender {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
   description String
   pdfUrl      String?
   deadline    DateTime?
-  isVisible   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isVisible   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
+
 model UploadHistory {
   id           String   @id @default(uuid())
-  type         String   // "STUDENTS" | "GRADES" | "ATTENDANCE" | "FACULTY"
+  type         String // "STUDENTS" | "GRADES" | "ATTENDANCE" | "FACULTY"
   filename     String?
   totalRows    Int      @default(0)
   successCount Int      @default(0)
   failCount    Int      @default(0)
-  errors       Json?    // Summary of errors or specific row failures
+  errors       Json? // Summary of errors or specific row failures
   status       String   @default("COMPLETED") // "COMPLETED" | "FAILED" | "PARTIAL"
-  uploadedBy   String   // Username of the webmaster
+  uploadedBy   String // Username of the webmaster
   createdAt    DateTime @default(now())
 
   @@index([type])
