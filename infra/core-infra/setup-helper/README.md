@@ -49,8 +49,8 @@ The platform is tuned for high concurrency. Ensure `ip_local_port_range` is expa
 Clone the Master Vault to the VPS home directory:
 
 ```bash
-git clone https://github.com/uniz-rguktong/uniz-master-vault.git
-cd uniz-master-vault
+git clone https://github.com/uniz-rguktong/uniz-master.git
+cd uniz-master
 ```
 
 ### 2. Dependency Orchestration
