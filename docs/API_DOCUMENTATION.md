@@ -201,7 +201,7 @@
 
 ---
 
-##  Search (Admin Only)
+## Search (Admin Only)
 
 ### 7. Search Students
 
@@ -472,7 +472,7 @@ _(Other usernames: `dean_cse`, `warden_male`, `caretaker_female`, `security_admi
 
 ---
 
-##  Director & Dean Features
+## Director & Dean Features
 
 ### 19. Search Any Student
 

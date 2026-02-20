@@ -10,9 +10,6 @@
 > **UniZ ENTERPRISE INFRASTRUCTURE 2026**
 > _Consolidating fragmented microservices into a unified, high-performance university management ecosystem._
 
-
-
-
 [![.github/workflows/docker-build-push.yml](https://github.com/uniz-rguktong/uniz-master-vault/actions/workflows/docker-build-push.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master-vault/actions/workflows/docker-build-push.yml)
 
 ## Structuralized Architecture Overview

@@ -1878,12 +1878,10 @@ export const downloadGrades = async (
     });
 
     if (!grades.length) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "No grades found for this semester.",
-        });
+      return res.status(404).json({
+        success: false,
+        message: "No grades found for this semester.",
+      });
     }
 
     // Attempt to fetch profile details using GATEWAY_URL (optional)
@@ -1968,12 +1966,10 @@ export const downloadAttendance = async (
     });
 
     if (!records.length) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "No attendance records found for this semester.",
-        });
+      return res.status(404).json({
+        success: false,
+        message: "No attendance records found for this semester.",
+      });
     }
 
     let profileName = targetStudentId;
