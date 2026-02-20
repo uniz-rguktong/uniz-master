@@ -59,12 +59,12 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-academics-service
-  minReplicas: 1
-  maxReplicas: 8
+  minReplicas: 2
+  maxReplicas: 10
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 70
+          averageUtilization: 40
