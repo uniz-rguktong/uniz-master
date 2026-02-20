@@ -40,16 +40,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/login/student",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "auth",
-                "login",
-                "student"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login", "student"]
             }
           },
           "response": []
@@ -76,9 +68,7 @@
               "listen": "prerequest",
               "script": {
                 "id": "131d952e-6c70-4af4-9440-1a0123892944",
-                "exec": [
-                  ""
-                ],
+                "exec": [""],
                 "type": "text/javascript",
                 "packages": {},
                 "requests": {}
@@ -100,16 +90,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/login/admin",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "auth",
-                "login",
-                "admin"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login", "admin"]
             }
           },
           "response": []
@@ -131,16 +113,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/otp/request",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "auth",
-                "otp",
-                "request"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "otp", "request"]
             },
             "description": "Step 1: Request OTP for password reset. OTP will be sent to the user's registered email (username@rguktong.ac.in). OTP is valid for 10 minutes."
           },
@@ -178,16 +152,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/otp/verify",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "auth",
-                "otp",
-                "verify"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "otp", "verify"]
             },
             "description": "Step 2: Verify the OTP received via email. On successful verification, returns a resetToken valid for 5 minutes. This token is automatically saved to the environment variable 'resetToken' for use in password reset."
           },
@@ -201,15 +167,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/system/health",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "system",
-                "health"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "system", "health"]
             }
           },
           "response": []
@@ -222,12 +181,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/gateway-status",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "gateway-status"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["gateway-status"]
             },
             "description": "Checks the status of the Nginx Gateway itself."
           },
@@ -241,16 +196,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/cron/api/cron",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "cron",
-                "api",
-                "cron"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "cron", "api", "cron"]
             }
           },
           "response": []
@@ -272,16 +219,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/password/reset",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "auth",
-                "password",
-                "reset"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "password", "reset"]
             },
             "description": "Step 3: Reset password using the resetToken obtained from OTP verification. The resetToken is valid for 5 minutes and can only be used once. After successful password reset, the token is automatically deleted."
           },
@@ -307,16 +246,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/profile/student/me",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "profile",
-                "student",
-                "me"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profile", "student", "me"]
             }
           },
           "response": []
@@ -335,15 +266,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/academics/grades?studentId=O210008&semester=SEM-1&year=E2",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "academics",
-                "grades"
-              ],
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "academics", "grades"],
               "query": [
                 {
                   "key": "studentId",
@@ -380,15 +304,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/academics/attendance?studentId=O210008&year=E2&semester=SEM-1",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "academics",
-                "attendance"
-              ],
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "academics", "attendance"],
               "query": [
                 {
                   "key": "studentId",
@@ -435,16 +352,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/profile/student/update",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "profile",
-                "student",
-                "update"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profile", "student", "update"]
             }
           },
           "response": []
@@ -472,15 +381,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/requests/outpass",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "requests",
-                "outpass"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "requests", "outpass"]
             }
           },
           "response": []
@@ -508,15 +410,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/requests/outing",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "requests",
-                "outing"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "requests", "outing"]
             }
           },
           "response": []
@@ -534,15 +429,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/requests/history",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "requests",
-                "history"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "requests", "history"]
             }
           },
           "response": []
@@ -564,16 +452,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/otp/request",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "auth",
-                "otp",
-                "request"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "otp", "request"]
             },
             "description": "Step 1: Request OTP for password reset. OTP will be sent to the user's registered email (username@rguktong.ac.in). OTP is valid for 10 minutes."
           },
@@ -611,16 +491,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/otp/verify",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "auth",
-                "otp",
-                "verify"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "otp", "verify"]
             },
             "description": "Step 2: Verify the OTP received via email. On successful verification, returns a resetToken valid for 5 minutes. This token is automatically saved to the environment variable 'resetToken' for use in password reset."
           },
@@ -643,16 +515,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/password/reset",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "auth",
-                "password",
-                "reset"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "password", "reset"]
             },
             "description": "Step 3: Reset password using the resetToken obtained from OTP verification. The resetToken is valid for 5 minutes and can only be used once. After successful password reset, the token is automatically deleted."
           },
@@ -681,15 +545,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/grievance/submit",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "grievance",
-                "submit"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "grievance", "submit"]
             }
           },
           "response": []
@@ -716,16 +573,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/cms/banners/public",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "cms",
-                    "banners",
-                    "public"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "cms", "banners", "public"]
                 },
                 "description": "Fetches all active banners for the landing page. Restricted via Origin/API-Key guard."
               },
@@ -744,15 +593,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/cms/notifications",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "cms",
-                    "notifications"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "cms", "notifications"]
                 },
                 "description": "Fetches both active Updates and Tenders in a single response for the landing page."
               },
@@ -776,16 +618,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/cms/admin/banners",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "cms",
-                    "admin",
-                    "banners"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "cms", "admin", "banners"]
                 }
               },
               "response": []
@@ -812,16 +646,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/cms/admin/banners",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "cms",
-                    "admin",
-                    "banners"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "cms", "admin", "banners"]
                 }
               },
               "response": []
@@ -848,16 +674,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/cms/admin/updates",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "cms",
-                    "admin",
-                    "updates"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "cms", "admin", "updates"]
                 }
               },
               "response": []
@@ -884,16 +702,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/cms/admin/tenders",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "cms",
-                    "admin",
-                    "tenders"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "cms", "admin", "tenders"]
                 }
               },
               "response": []
@@ -920,9 +730,7 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/cms/admin/visibility/:type/:id",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "api",
                     "v1",
@@ -979,9 +787,7 @@
                   "listen": "prerequest",
                   "script": {
                     "id": "131d952e-6c70-4af4-9440-1a0123892944",
-                    "exec": [
-                      ""
-                    ],
+                    "exec": [""],
                     "type": "text/javascript",
                     "packages": {},
                     "requests": {}
@@ -1003,16 +809,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/login/admin",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "auth",
-                    "login",
-                    "admin"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "auth", "login", "admin"]
                 }
               },
               "response": []
@@ -1031,16 +829,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/requests/outpass/all?page=1&limit=50&search=O210008",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "requests",
-                    "outpass",
-                    "all"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "requests", "outpass", "all"],
                   "query": [
                     {
                       "key": "page",
@@ -1073,16 +863,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/requests/outing/all?page=1&limit=50&search=O210008",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "requests",
-                    "outing",
-                    "all"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "requests", "outing", "all"],
                   "query": [
                     {
                       "key": "page",
@@ -1126,16 +908,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/requests/:id/approve",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "requests",
-                    ":id",
-                    "approve"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "requests", ":id", "approve"],
                   "variable": [
                     {
                       "key": "id",
@@ -1169,16 +943,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/requests/:id/reject",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "requests",
-                    ":id",
-                    "reject"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "requests", ":id", "reject"],
                   "variable": [
                     {
                       "key": "id",
@@ -1203,16 +969,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/requests/:id/checkout",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "requests",
-                    ":id",
-                    "checkout"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "requests", ":id", "checkout"],
                   "variable": [
                     {
                       "key": "id",
@@ -1237,16 +995,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/requests/:id/checkin",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "requests",
-                    ":id",
-                    "checkin"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "requests", ":id", "checkin"],
                   "variable": [
                     {
                       "key": "id",
@@ -1271,16 +1021,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/requests/security/summary?search=O210008&limit=50&page=1",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "requests",
-                    "security",
-                    "summary"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "requests", "security", "summary"],
                   "query": [
                     {
                       "key": "search",
@@ -1324,16 +1066,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/requests/:id/forward",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "requests",
-                    ":id",
-                    "forward"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "requests", ":id", "forward"],
                   "variable": [
                     {
                       "key": "id",
@@ -1372,9 +1106,7 @@
                   "listen": "prerequest",
                   "script": {
                     "id": "131d952e-6c70-4af4-9440-1a0123892944",
-                    "exec": [
-                      ""
-                    ],
+                    "exec": [""],
                     "type": "text/javascript",
                     "packages": {},
                     "requests": {}
@@ -1396,15 +1128,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/login",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "auth",
-                    "login"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "auth", "login"]
                 }
               },
               "response": []
@@ -1432,16 +1157,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/requests/:id/approve",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "requests",
-                    ":id",
-                    "approve"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "requests", ":id", "approve"],
                   "variable": [
                     {
                       "key": "id",
@@ -1475,16 +1192,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/requests/:id/reject",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "requests",
-                    ":id",
-                    "reject"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "requests", ":id", "reject"],
                   "variable": [
                     {
                       "key": "id",
@@ -1518,16 +1227,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/profile/student/status",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "profile",
-                    "student",
-                    "status"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "profile", "student", "status"]
                 }
               },
               "response": []
@@ -1552,9 +1253,7 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/profile/admin/student/:username",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "api",
                     "v1",
@@ -1588,9 +1287,7 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/profile/admin/student/template",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "api",
                     "v1",
@@ -1628,17 +1325,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/profile/admin/student/upload",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "profile",
-                    "admin",
-                    "student",
-                    "upload"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "profile", "admin", "student", "upload"]
                 },
                 "description": "Uploads the filled Student Upload Template. Automatically creates/updates student profiles and generates default auth credentials (username/password as Student ID) for new students. Returns immediately; tracking progress via the progress API."
               },
@@ -1658,9 +1346,7 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/profile/admin/student/upload/progress",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "api",
                     "v1",
@@ -1688,9 +1374,7 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/profile/admin/student/export?branch=CSE&year=E1&fields=username,name,email,branch,section",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "api",
                     "v1",
@@ -1739,16 +1423,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/profile/admin/upload-history",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "profile",
-                    "admin",
-                    "upload-history"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "profile", "admin", "upload-history"]
                 },
                 "description": "Retrieves the historical report of all bulk upload operations (Students, Grades, Attendance) performed by the webmaster."
               },
@@ -1777,16 +1453,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/grades/bulk-update",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "grades",
-                    "bulk-update"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "grades", "bulk-update"]
                 },
                 "description": "Updates multiple student grades in one call. Supports both internal Subject UUIDs and human-readable Subject Codes (e.g. 'E2-SEM-1-CSE-1'). Includes 'Smart Merge' logic: if a student already has a record for the subject in a different semester bucket (e.g. 'SEM-1' vs 'E2-SEM-1'), the system will merge them into a single consistent record to prevent GPA fragmentation."
               },
@@ -1806,15 +1474,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/subjects",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "subjects"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "subjects"]
                 }
               },
               "response": []
@@ -1842,16 +1503,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/subjects/add",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "subjects",
-                    "add"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "subjects", "add"]
                 },
                 "description": "Creates or updates a subject. If a subject with the same 'code' exists, it will be updated."
               },
@@ -1880,16 +1533,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/grades/publish-email",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "grades",
-                    "publish-email"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "grades", "publish-email"]
                 },
                 "description": "Triggers a background process to send result emails to students. Supports filtering by semesterId and optionally by year (e.g. 'E2'). Returns immediately; use progress API to track status."
               },
@@ -1921,16 +1566,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/attendance/upload",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "attendance",
-                    "upload"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "attendance", "upload"]
                 },
                 "description": "Upload the filled Excel template. Supports 'Total Classes Occurred' and 'Total Classes Attended' columns. Updates existing records (upsert)."
               },
@@ -1977,16 +1614,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/grades/upload",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "grades",
-                    "upload"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "grades", "upload"]
                 },
                 "description": "Upload the filled Excel template. Supports both numeric (0-10) and character grades (EX, A, B, C, D, E, R). Updates existing records (upsert)."
               },
@@ -2030,16 +1659,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/grades/batch?branch=CSE&year=E2&failedOnly=true&semesterId=SEM-1",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "grades",
-                    "batch"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "grades", "batch"],
                   "query": [
                     {
                       "key": "branch",
@@ -2082,16 +1703,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/attendance/template?branch=CSE&year=E2&semesterId=SEM-1",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "attendance",
-                    "template"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "attendance", "template"],
                   "query": [
                     {
                       "key": "branch",
@@ -2125,16 +1738,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/grades/template?branch=CSE&year=E2&semesterId=SEM-1&subjectCode=CS201&remedialsOnly=false",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "grades",
-                    "template"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "grades", "template"],
                   "query": [
                     {
                       "key": "branch",
@@ -2190,16 +1795,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/admin/suspend",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "auth",
-                    "admin",
-                    "suspend"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "auth", "admin", "suspend"]
                 }
               },
               "response": []
@@ -2227,16 +1824,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/profile/student/search",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "profile",
-                    "student",
-                    "search"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "profile", "student", "search"]
                 }
               },
               "response": []
@@ -2255,16 +1844,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/upload/progress?uploadId={{uploadId}}",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "upload",
-                    "progress"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "upload", "progress"],
                   "query": [
                     {
                       "key": "uploadId",
@@ -2291,9 +1872,7 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/grades/publish/progress",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "api",
                     "v1",
@@ -2335,9 +1914,7 @@
                   "listen": "prerequest",
                   "script": {
                     "id": "131d952e-6c70-4af4-9440-1a0123892944",
-                    "exec": [
-                      ""
-                    ],
+                    "exec": [""],
                     "type": "text/javascript",
                     "packages": {},
                     "requests": {}
@@ -2359,15 +1936,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/login",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "auth",
-                    "login"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "auth", "login"]
                 }
               },
               "response": []
@@ -2386,9 +1956,7 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/profile/admin/student/:username",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "api",
                     "v1",
@@ -2430,16 +1998,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/grades/bulk-update",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "grades",
-                    "bulk-update"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "grades", "bulk-update"]
                 },
                 "description": "Updates multiple student grades in one call. Supports both internal Subject UUIDs and human-readable Subject Codes. Automatically resolves Subject Codes to IDs and merges duplicate semester records for the same student/subject to maintain a clean academic history."
               },
@@ -2459,15 +2019,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/subjects",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "subjects"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "subjects"]
                 }
               },
               "response": []
@@ -2495,16 +2048,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/subjects/add",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "subjects",
-                    "add"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "subjects", "add"]
                 },
                 "description": "Creates or updates a subject. If a subject with the same 'code' exists, it will be updated."
               },
@@ -2536,16 +2081,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/attendance/upload",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "attendance",
-                    "upload"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "attendance", "upload"]
                 },
                 "description": "Upload the filled Excel template. Supports 'Total Classes Occurred' and 'Total Classes Attended' columns. Updates existing records (upsert)."
               },
@@ -2592,16 +2129,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/grades/upload",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "grades",
-                    "upload"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "grades", "upload"]
                 },
                 "description": "Upload the filled Excel template. Supports both numeric (0-10) and character grades (EX, A, B, C, D, E, R). Updates existing records (upsert)."
               },
@@ -2645,16 +2174,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/grades/batch?branch=CSE&year=E2&failedOnly=true&semesterId=SEM-1",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "grades",
-                    "batch"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "grades", "batch"],
                   "query": [
                     {
                       "key": "branch",
@@ -2697,16 +2218,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/attendance/template?branch=CSE&year=E2&semesterId=SEM-1",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "attendance",
-                    "template"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "attendance", "template"],
                   "query": [
                     {
                       "key": "branch",
@@ -2740,16 +2253,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/grades/template?branch=CSE&year=E2&semesterId=SEM-1&subjectCode=CS201&remedialsOnly=false",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "grades",
-                    "template"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "grades", "template"],
                   "query": [
                     {
                       "key": "branch",
@@ -2805,16 +2310,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/admin/suspend",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "auth",
-                    "admin",
-                    "suspend"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "auth", "admin", "suspend"]
                 }
               },
               "response": []
@@ -2842,16 +2339,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/profile/student/search",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "profile",
-                    "student",
-                    "search"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "profile", "student", "search"]
                 }
               },
               "response": []
@@ -2870,16 +2359,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/upload/progress?uploadId={{uploadId}}",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "upload",
-                    "progress"
-                  ],
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "upload", "progress"],
                   "query": [
                     {
                       "key": "uploadId",
@@ -2915,9 +2396,7 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/profile/admin/student/:username",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "api",
                     "v1",
@@ -2944,16 +2423,8 @@
                 "header": [],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/cron/api/cron",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "cron",
-                    "api",
-                    "cron"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "cron", "api", "cron"]
                 }
               },
               "response": []
@@ -2981,16 +2452,8 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/grades/add",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "academics",
-                    "grades",
-                    "add"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "academics", "grades", "add"]
                 }
               },
               "response": []
@@ -3018,9 +2481,7 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/attendance/publish-email",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "api",
                     "v1",
@@ -3047,9 +2508,7 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/academics/attendance/publish/progress",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
+                  "host": ["{{baseUrl}}"],
                   "path": [
                     "api",
                     "v1",
@@ -3077,16 +2536,8 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/requests/grievance/list",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "requests",
-                    "grievance",
-                    "list"
-                  ]
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "requests", "grievance", "list"]
                 }
               },
               "response": []
