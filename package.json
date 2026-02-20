@@ -3,19 +3,14 @@
   "version": "1.1.0",
   "description": "UniZ Microservices Production Ecosystem - Master Vault",
   "scripts": {
-    "dev": "bash scripts/dev/start.sh",
-    "db:push": "bash scripts/system/db-reset.sh",
-    "db:seed": "node scripts/dev/seed.js && bash scripts/dev/seed-admins.sh",
-    "deploy": "bash scripts/sync/push.sh",
-    "push": "bash scripts/sync/push.sh",
-    "pull": "bash scripts/sync/pull.sh",
-    "test": "node scripts/dev/test-suite.js",
+    "deploy": "git push origin main",
+    "push": "git push",
+    "pull": "git pull",
     "clean": "rm -rf logs/ *.log",
     "install:all": "for d in apps/uniz-* infra/core-infra; do (cd $d && npm install && npm audit fix); done",
     "data-reset": "npm run data:reset --prefix infra/core-infra",
     "setup": "npm run setup --prefix infra/core-infra",
     "prettify": "prettier --write .",
-    "redeploy:all": "bash scripts/system/redeploy.sh",
     "db:reset-migrate": "npm run db:reset-migrate --prefix infra/core-infra"
   },
   "dependencies": {

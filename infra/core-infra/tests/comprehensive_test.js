@@ -1159,66 +1159,37 @@ async function run() {
   log.pass(batchGrades.duration, "BATCH_RESULTS_LOADED");
   log.data(batchGrades.data.summary);
 
-  /*
-  log.step("Admin: Trigger Result Email Publishing");
-  const pubRes = await request(
-    "POST",
-    "/academics/grades/publish-email",
-    { semesterId: "SEM-1", year: "E2" },
+  log.step("Admin: Download Grades Report");
+  const downloadGradesRes = await request(
+    "GET",
+    "/academics/grades/download/SEM-1",
+    null,
     webmasterToken,
   );
-  if (pubRes.status !== 202 && pubRes.status !== 200) {
-    log.fail(new Error("Publish trigger failed"), pubRes.duration, pubRes.data);
-  }
-  const pubJobId = pubRes.data.jobId || pubRes.data.uploadId; // Assuming returns an ID
-  log.pass(pubRes.duration, "STARTED");
-
-  // Monitoring Publish - Grades
-  if (pubJobId) {
-    log.step("Publish Grades: Monitoring");
-    const res = await monitorTask(
-      pubJobId,
-      "/academics/grades/publish/progress",
-      "Publish Grades",
-      webmasterToken,
+  if (downloadGradesRes.status !== 200) {
+    log.fail(
+      new Error("Grades download failed"),
+      downloadGradesRes.duration,
+      downloadGradesRes.data,
     );
-    if (res.success) {
-      log.pass(res.duration, "EMAILS_SENT");
-    } else {
-      log.info(`Publish monitoring warning: ${res.error}`);
-      // Don't fail hard on email monitoring if system is mocked/limping, but good to know
-    }
   }
+  log.pass(downloadGradesRes.duration, "GRADES_DOWNLOADED");
 
-  log.step("Admin: Trigger Attendance Email Publishing");
-  const pubAtt = await request(
-    "POST",
-    "/academics/attendance/publish-email",
-    { semesterId: "SEM-1", year: "E2" },
+  log.step("Admin: Download Attendance Report");
+  const downloadAttRes = await request(
+    "GET",
+    "/academics/attendance/download/SEM-1",
+    null,
     webmasterToken,
   );
-  if (pubAtt.status !== 202 && pubAtt.status !== 200) {
-    log.fail(new Error("Publish trigger failed"), pubAtt.duration, pubAtt.data);
-  }
-  const attJobId = pubAtt.data.jobId || pubAtt.data.uploadId;
-  log.pass(pubAtt.duration, "STARTED");
-
-  // Monitoring Publish - Attendance
-  if (attJobId) {
-    log.step("Publish Attendance: Monitoring");
-    const res = await monitorTask(
-      attJobId,
-      "/academics/attendance/publish/progress",
-      "Publish Attendance",
-      webmasterToken,
+  if (downloadAttRes.status !== 200) {
+    log.fail(
+      new Error("Attendance download failed"),
+      downloadAttRes.duration,
+      downloadAttRes.data,
     );
-    if (res.success) {
-      log.pass(res.duration, "EMAILS_SENT");
-    } else {
-      log.info(`Publish monitoring warning: ${res.error}`);
-    }
   }
-  */
+  log.pass(downloadAttRes.duration, "ATTENDANCE_DOWNLOADED");
 
   log.phase("Phase 13 - System Utilities");
 
