@@ -68,3 +68,18 @@ Use these responses if the other team or administration inquires about the confi
 - **Disk**: ~24GB Used / 200GB (Cleaned)
 - **PgBouncer**: Configured to ignore `search_path` parameter (Fixed Cron errors).
 - **OS Health**: 0 failed systemd units.
+
+---
+
+## 4. Deployment Safety Checklist
+
+When updating containers or configurations, follow this order to prevent downtime/502s:
+
+1.  **Unlock**: `uniz-unlock` (or `chattr -R -i .`)
+2.  **Fetch & Sync**: `git pull` / `git reset --hard`
+3.  **Build**: `docker compose build <service>`
+4.  **Up**: `docker compose -f docker-compose.prod.yml up -d --force-recreate <service>`
+5.  **RELOAD NGINX**: `docker exec uniz-gateway nginx -s reload`
+    - **CRITICAL**: Failing to do this causes 502 Bad Gateway because Nginx may hold stale Docker internal IPs in its upstream cache.
+6.  **Verify**: `curl -I https://api.uniz.rguktong.in/health`
+7.  **Lock**: `uniz-lock`

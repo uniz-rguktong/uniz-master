@@ -33,14 +33,15 @@ UniZ is a **microservices-based monorepo** built with Node.js, Express, Docker, 
 
 ---
 
-## 2. Infrastructure & Routing (CRITICAL)
+## 2. Infrastructure & Routing (UPDATED: Feb 20, 2026)
 
-**⚠️ Important Production State Note (Feb 18, 2026)**
-The infrastructure currently uses a **"Dumb Pipe" Nginx configuration**.
-While the repository contains an `nginx.conf` with detailed location blocks, the **live production server** is configured to proxy **ALL** traffic from Nginx (`uniz-gateway`) directly to the Express Gateway (`uniz-gateway-api`).
+The infrastructure has transitioned from a "Dumb Pipe" setup to **Edge-Managed Routing and CORS** via Nginx.
 
-- **Traffic Flow**: `Internet -> Nginx (Port 80/443) -> Express Gateway (Port 3000) -> Microservices`
-- **Routing Logic**: The Express Gateway uses a **Regex-based router** (`/api/v1/:service/:path*`) to dynamically map requests to downstream services.
+- **Traffic Flow**: `Internet -> Nginx (Port 80/443) -> Target Microservice (Directly via Nginx)`
+- **CORS Strategy**: Managed **EXCLUSIVELY** at the Nginx level.
+  - All microservices have `cors()` middleware disabled in code.
+  - Nginx adds `Access-Control-Allow-Origin` dynamically based on a whitelist.
+  - Nginx uses `proxy_hide_header` for all `Access-Control-*` headers from backends to prevent duplicate header errors in the browser.
 
 **Service Mapping (Express Gateway):**
 
@@ -92,6 +93,8 @@ If a "Service not found" error occurs:
 
 ## 5. Troubleshooting History
 
-- **CORS/Regex Issue**: The Gateway originally failed to route complex paths or handle CORS correctly over Nginx. Fixed by implementing a robust Regex router in Express and simplifying Nginx to a passthrough.
-- **System Health Check**: The `/api/v1/system/health` endpoint failed because `system` wasn't a valid service. Fixed by adding an explicit route handler in the Gateway.
-- **Bad Gateway (502)**: Caused by port conflicts with a legacy `k3s` / `nginx-ingress-controller` installation hijacking ports 80/443. Fixed by stopping `k3s` and restarting the host Nginx.
+- **CORS/Regex Issue (Deprecated)**: The Gateway originally used a Regex router in Express for everything.
+- **Production CORS Conflict (Feb 20, 2026)**: Fixed "Duplicate Access-Control-Allow-Origin" error caused by both Nginx and microservices adding headers. **Solution**: Disabled CORS in Node.js code and centralized it in Nginx using `proxy_hide_header` to sanitise backend responses.
+- **Microservice IP Caching**: Encounted 502 Bad Gateway after service updates because Nginx cached stale Docker internal IPs. **Solution**: Explicitly reloaded Nginx (`nginx -s reload`) after container recreation.
+- **System Health Check**: Fixed by adding explicit route handlers.
+- **Bad Gateway (502)**: Caused by legacy `k3s` port conflicts. Resolved by stopping `k3s`.

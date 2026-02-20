@@ -1,4 +1,7 @@
 import PDFDocument from "pdfkit";
+import axios from "axios";
+import fs from "fs";
+import path from "path";
 
 export interface ResultData {
   username: string;
@@ -16,11 +19,51 @@ export interface ResultData {
   }[];
 }
 
+const LOGO_URL =
+  "https://res.cloudinary.com/dy2fjgt46/image/upload/v1771604895/rguktongole_logo_kbpaui.jpg";
+const CACHE_DIR = path.join(process.cwd(), "cache");
+const CACHE_PATH = path.join(CACHE_DIR, "university_logo.jpg");
+let logoBuffer: Buffer | null = null;
+
+const fetchLogo = async () => {
+  // 1. Check in-memory
+  if (logoBuffer) return logoBuffer;
+
+  // 2. Check local filesystem cache
+  try {
+    if (fs.existsSync(CACHE_PATH)) {
+      logoBuffer = fs.readFileSync(CACHE_PATH);
+      console.log("Logo loaded from filesystem cache.");
+      return logoBuffer;
+    }
+  } catch (err) {
+    console.error("Error reading logo cache:", err);
+  }
+
+  // 3. Fetch from remote
+  try {
+    console.log("Fetching logo from remote...");
+    const response = await axios.get(LOGO_URL, { responseType: "arraybuffer" });
+    logoBuffer = Buffer.from(response.data);
+
+    // Write to filesystem cache for future use
+    if (!fs.existsSync(CACHE_DIR)) {
+      fs.mkdirSync(CACHE_DIR, { recursive: true });
+    }
+    fs.writeFileSync(CACHE_PATH, logoBuffer);
+
+    return logoBuffer;
+  } catch (err) {
+    console.error("Failed to fetch logo:", err);
+    return null;
+  }
+};
+
 // --- PDF UTILS (pure Node, styled similar to HTML version) ---
 const PAGE_MARGIN = 40;
 
 const createPdfBuffer = async (
-  draw: (doc: InstanceType<typeof PDFDocument>) => void,
+  draw: (doc: InstanceType<typeof PDFDocument>) => Promise<void> | void,
 ): Promise<Buffer> => {
   return new Promise<Buffer>((resolve, reject) => {
     const doc = new PDFDocument({ size: "A4", margin: PAGE_MARGIN });
@@ -30,12 +73,15 @@ const createPdfBuffer = async (
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", (err: Error) => reject(err));
 
-    try {
-      draw(doc);
-      doc.end();
-    } catch (err) {
-      reject(err);
-    }
+    const execute = async () => {
+      try {
+        await draw(doc);
+        doc.end();
+      } catch (err) {
+        reject(err);
+      }
+    };
+    execute();
   });
 };
 
@@ -57,13 +103,14 @@ export interface AttendanceData {
 
 export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
   const { name, username, branch, semesterId, grades, campus } = data;
+  const logo = await fetchLogo();
 
-  // Professional Colors
-  const primaryColor = "#1A237E"; // Deep Navy
-  const secondaryColor = "#424242"; // Charcoal
+  // Professional Colors (Maroon Theme)
+  const primaryColor = "#800000"; // Maroon
+  const secondaryColor = "#333333"; // Dark Gray
   const accentColor = "#B8860B"; // Dark Gold
   const borderColor = "#D1D1D1";
-  const headerBg = "#F8F9FA";
+  const headerBg = "#FDF2F2"; // Very Light Maroon/Red tint
 
   // Calculate GPA
   let totalCredits = 0;
@@ -88,7 +135,7 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
     return "R";
   };
 
-  return createPdfBuffer((doc) => {
+  return createPdfBuffer(async (doc) => {
     const { width, height } = doc.page;
     const usableWidth = width - PAGE_MARGIN * 2;
 
@@ -104,7 +151,14 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
       .strokeColor(accentColor)
       .stroke();
 
-    // 2. Institutional Header
+    // 2. Institutional Header with Logo
+    if (logo) {
+      doc.image(logo, width / 2 - 40, 45, { width: 80 });
+      doc.moveDown(5);
+    } else {
+      doc.moveDown(1);
+    }
+
     doc.fillColor(primaryColor).font("Helvetica-Bold").fontSize(18);
     doc.text("RAJIV GANDHI UNIVERSITY OF KNOWLEDGE TECHNOLOGIES", {
       align: "center",
@@ -134,7 +188,6 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
     // 4. Student Info Section
     const infoY = doc.y;
     const labelWidth = 100;
-    const valueWidth = usableWidth / 2 - labelWidth;
 
     const drawInfo = (label: string, value: string, x: number, y: number) => {
       doc
@@ -195,21 +248,18 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
 
     // Body with Dynamic Height
     grades.forEach((g, idx) => {
-      // Calculate height needed for subject name
       const nameHeight = doc.heightOfString(g.subject.name, {
         width: tCol2 - 20,
       });
       const rowHeight = Math.max(25, nameHeight + 12);
 
-      // Page break check (simple)
       if (tableY + rowHeight > height - 120) {
         doc.addPage();
         tableY = PAGE_MARGIN;
-        // (Simplified: in a real app you'd redraw headers)
       }
 
       if (idx % 2 === 1)
-        doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill("#F4F6F7");
+        doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill("#FDF2F2");
 
       doc.fillColor("#000000");
       doc.text(
@@ -301,10 +351,11 @@ export const generateAttendancePdf = async (
   data: AttendanceData,
 ): Promise<Buffer> => {
   const { name, username, branch, semesterId, records, campus } = data;
+  const logo = await fetchLogo();
 
-  const primaryColor = "#1B5E20"; // Dark Forest Green
-  const secondaryColor = "#424242";
-  const accentColor = "#66BB6A";
+  const primaryColor = "#800000"; // Maroon
+  const secondaryColor = "#333333";
+  const headerBg = "#FDF2F2";
 
   let totalAttended = 0;
   let totalClasses = 0;
@@ -317,7 +368,7 @@ export const generateAttendancePdf = async (
       ? ((totalAttended / totalClasses) * 100).toFixed(2)
       : "0.00";
 
-  return createPdfBuffer((doc) => {
+  return createPdfBuffer(async (doc) => {
     const { width, height } = doc.page;
     const usableWidth = width - PAGE_MARGIN * 2;
 
@@ -328,7 +379,14 @@ export const generateAttendancePdf = async (
       .strokeColor(primaryColor)
       .stroke();
 
-    // Header
+    // Header with Logo
+    if (logo) {
+      doc.image(logo, width / 2 - 40, 45, { width: 80 });
+      doc.moveDown(5);
+    } else {
+      doc.moveDown(1);
+    }
+
     doc
       .fillColor(primaryColor)
       .font("Helvetica-Bold")
@@ -392,7 +450,7 @@ export const generateAttendancePdf = async (
       const rowHeight = Math.max(22, nameHeight + 10);
 
       if (idx % 2 === 1)
-        doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill("#F1F8E9");
+        doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill(headerBg);
       const percent =
         r.totalClasses > 0
           ? ((r.attendedClasses / r.totalClasses) * 100).toFixed(1)
@@ -412,7 +470,7 @@ export const generateAttendancePdf = async (
         { width: tCol2, align: "center" },
       );
 
-      const pColor = Number(percent) < 75 ? "#D32F2F" : primaryColor;
+      const pColor = Number(percent) < 75 ? "#D32F2F" : "#1B5E20";
       doc
         .fillColor(pColor)
         .font("Helvetica-Bold")
