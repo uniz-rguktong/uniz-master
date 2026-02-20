@@ -148,7 +148,7 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
     // 2. Header
     if (logo) {
       doc.image(logo, width / 2 - 35, 40, { width: 70 });
-      doc.y = 120; // Absolute spacing to avoid overlap
+      doc.y = 120; // Absolute spacing
     } else {
       doc.moveDown(2);
     }
@@ -380,7 +380,7 @@ export const generateAttendancePdf = async (
 
     if (logo) {
       doc.image(logo, width / 2 - 35, 40, { width: 70 });
-      doc.y = 120; // Final absolute spacing fix
+      doc.y = 120;
     } else {
       doc.moveDown(2);
     }
@@ -460,7 +460,6 @@ export const generateAttendancePdf = async (
     doc.fillColor("#000000").font("Helvetica").fontSize(9);
 
     records.forEach((r, idx) => {
-      // FIX: Strip Subject Code from name specifically
       const nameText = cleanSubjectName(r.subject.name);
       const nameHeight = doc.heightOfString(nameText, {
         width: tWidths.name - 24,
@@ -510,33 +509,29 @@ export const generateAttendancePdf = async (
         .stroke();
     });
 
-    // OVERALL Summary Refinement: Horizontal Space
+    // OVERALL Summary Refinement: Horizontal Space FIX
     doc.moveDown(4);
-    const summW = 300; // MUCH wider box
+    const summW = 340;
     const summX = PAGE_MARGIN + usableWidth - summW;
     const summY = doc.y;
 
     doc
-      .rect(summX, summY, summW, 35)
+      .rect(summX, summY, summW, 40)
       .fill(Number(overallPercent) < 75 ? "#FFF2F2" : "#F2FFF2");
     doc
-      .rect(summX, summY, summW, 35)
-      .lineWidth(1)
+      .rect(summX, summY, summW, 40)
+      .lineWidth(1.2)
       .strokeColor(PRIMARY_MAROON)
       .stroke();
 
-    // Put on one line
-    const label = "OVERALL SEMESTER ATTENDANCE:";
-    const val = `${overallPercent}%`;
-    const labelWidth = doc.widthOfString(label);
-
-    doc
-      .fontSize(10)
-      .font("Helvetica-Bold")
-      .fillColor(PRIMARY_MAROON)
-      .text(label, summX + 15, summY + 12);
     const oColor = Number(overallPercent) < 75 ? "#D32F2F" : "#1B5E20";
-    doc.fillColor(oColor).text(val, summX + 15 + labelWidth + 10, summY + 12);
+
+    // Using continued(true) to avoid text overlapping
+    doc.fontSize(10.5).font("Helvetica-Bold").fillColor(PRIMARY_MAROON);
+    doc.text("OVERALL SEMESTER ATTENDANCE: ", summX + 20, summY + 14, {
+      continued: true,
+    });
+    doc.fillColor(oColor).text(`${overallPercent}%`);
 
     doc.moveDown(5);
     doc
