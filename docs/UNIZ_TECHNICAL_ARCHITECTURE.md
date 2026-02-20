@@ -12,7 +12,7 @@
 ```mermaid
 graph TD
     subgraph "DEV OPS & SOURCE MANAGEMENT" [1. Monorepo Structure]
-        ROOT[uniz-master-vault]
+        ROOT[uniz-master]
         ROOT --> APPS[apps/]
         ROOT --> INFRA[infra/core-infra/]
         ROOT --> SCR[scripts/]
@@ -158,7 +158,7 @@ Bcrypt is a blocking operation. A single Auth instance would freeze a CPU core f
 
 UniZ uses a unique **Monorepo-to-MultiRepo** synchronization model managed by `npm run push`.
 
-1.  **Code Centralization:** All code is written in the `uniz-master-vault`.
+1.  **Code Centralization:** All code is written in the `uniz-master`.
 2.  **Sync Logic:** `scripts/push_all.sh` moves changes to individual GitHub repositories.
 3.  **CI Trigger:** GitHub Actions build Docker images and push to Docker Hub.
 4.  **Rollout:** VPS pulls the latest images for zero-downtime updates.
