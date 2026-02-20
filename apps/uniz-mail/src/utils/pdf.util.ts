@@ -96,6 +96,11 @@ const ACCENT_GOLD = "#B8860B";
 const BORDER_LIGHT = "#E0E0E0";
 const HEADER_TINT = "#FFF5F5";
 
+// Helper to clean subject name from codes
+const cleanSubjectName = (name: string) => {
+  return name.replace(/\s*\([\w-]+\)$/, "").trim();
+};
+
 export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
   const { name, username, branch, semesterId, grades, campus } = data;
   const logo = await fetchLogo();
@@ -143,9 +148,9 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
     // 2. Header
     if (logo) {
       doc.image(logo, width / 2 - 35, 40, { width: 70 });
-      doc.moveDown(5);
+      doc.y = 120;
     } else {
-      doc.moveDown(1.5);
+      doc.moveDown(2);
     }
 
     doc
@@ -247,7 +252,7 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
     doc.fillColor("#000000").font("Helvetica").fontSize(9);
 
     grades.forEach((g, idx) => {
-      const nameText = g.subject.name;
+      const nameText = cleanSubjectName(g.subject.name);
       const nameHeight = doc.heightOfString(nameText, {
         width: tWidths.name - 20,
       });
@@ -375,9 +380,9 @@ export const generateAttendancePdf = async (
 
     if (logo) {
       doc.image(logo, width / 2 - 35, 40, { width: 70 });
-      doc.moveDown(5);
+      doc.y = 120;
     } else {
-      doc.moveDown(1.5);
+      doc.moveDown(2);
     }
 
     doc
@@ -440,12 +445,10 @@ export const generateAttendancePdf = async (
     doc.rect(PAGE_MARGIN, tableY, usableWidth, 26).fill(PRIMARY_MAROON);
     doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(8.5);
     doc.text("COURSE DESCRIPTION", PAGE_MARGIN + 12, tableY + 9);
-    doc.text(
-      "CLASSES",
-      PAGE_MARGIN + tWidths.count + 10 + tWidths.name - usableWidth * 0.65,
-      tableY + 9,
-      { width: tWidths.count, align: "center" },
-    );
+    doc.text("CLASSES", PAGE_MARGIN + tWidths.name + 10, tableY + 9, {
+      width: tWidths.count,
+      align: "center",
+    });
     doc.text(
       "PERCENT",
       PAGE_MARGIN + tWidths.name + tWidths.count,
@@ -457,8 +460,7 @@ export const generateAttendancePdf = async (
     doc.fillColor("#000000").font("Helvetica").fontSize(9);
 
     records.forEach((r, idx) => {
-      // REFINE: Ignore Subject Code in Description
-      const nameText = r.subject.name;
+      const nameText = cleanSubjectName(r.subject.name);
       const nameHeight = doc.heightOfString(nameText, {
         width: tWidths.name - 24,
       });
@@ -507,9 +509,9 @@ export const generateAttendancePdf = async (
         .stroke();
     });
 
-    // Overall Attendance Summary with spacing
+    // OVERALL Summary Refinement: Horizontal Space
     doc.moveDown(4);
-    const summW = 200;
+    const summW = 300;
     const summX = PAGE_MARGIN + usableWidth - summW;
     const summY = doc.y;
 
@@ -522,13 +524,17 @@ export const generateAttendancePdf = async (
       .strokeColor(PRIMARY_MAROON)
       .stroke();
 
+    const label = "OVERALL SEMESTER ATTENDANCE:";
+    const val = `${overallPercent}%`;
+    const labelWidth = doc.widthOfString(label);
+
     doc
       .fontSize(10)
       .font("Helvetica-Bold")
       .fillColor(PRIMARY_MAROON)
-      .text("OVERALL ATTENDANCE:", summX + 12, summY + 12);
+      .text(label, summX + 15, summY + 12);
     const oColor = Number(overallPercent) < 75 ? "#D32F2F" : "#1B5E20";
-    doc.fillColor(oColor).text(`${overallPercent}%`, summX + 150, summY + 12);
+    doc.fillColor(oColor).text(val, summX + 15 + labelWidth + 10, summY + 12);
 
     doc.moveDown(5);
     doc
