@@ -4,7 +4,7 @@ set -e
 # Synchronizes infrastructure and pulls latest Docker images
 
 echo " Starting Optimized Redeployment..."
-cd ~/uniz-infrastructure
+cd ~/uniz-master/infra/core-infra
 
 # Force fetch and reset to avoid "divergent branches" errors on the VPS
 echo " Updating infrastructure configuration..."
