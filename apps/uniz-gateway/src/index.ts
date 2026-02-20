@@ -22,24 +22,10 @@ console.log("Allowed Origins:", allowedOrigins);
 //   }),
 // );
 
-/* 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  const allowedOriginsRaw =
-    process.env.CLIENT_URL ||
-    "http://localhost:5173,http://localhost:5174,http://localhost:3000";
-  const allowedOrigins = allowedOriginsRaw.split(",").map((o) => o.trim());
-
-  console.log(
-    `[CORS-DEBUG] Request Origin: ${origin}, Method: ${req.method}, Path: ${req.url}`,
-  );
-
-  // Debug header to trace where response is coming from
-  res.setHeader("X-CORS-Middleware", "Active");
-  res.setHeader("X-Allowed-Origins", allowedOrigins.join(", "));
 
   if (origin && allowedOrigins.includes(origin)) {
-    console.log(`[CORS-DEBUG] Origin matched. Setting headers.`);
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader(
@@ -50,24 +36,14 @@ app.use((req, res, next) => {
       "Access-Control-Allow-Headers",
       "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization",
     );
-  } else {
-    console.log(`[CORS-DEBUG] Origin NOT matched. Sent: ${origin}`);
   }
 
   if (req.method === "OPTIONS") {
-    // Handling OPTIONS preflight
-    if (origin && allowedOrigins.includes(origin)) {
-      return res.status(204).end();
-    }
-    // Still return 204 but without CORS headers?
-    // Usually better to let it fail or return 403.
-    // But for safety let's return 204.
     return res.status(204).end();
   }
 
   next();
 });
-*/
 app.use(express.json());
 
 const services = [
