@@ -1,8 +1,0 @@
-{
-  "SERVICES": {
-    "AUTH": "https://uniz-auth.vercel.app",
-    "USER": "https://uniz-user-service-five.vercel.app",
-    "ACADEMICS": "https://uniz-academics-service-beryl.vercel.app"
-  },
-  "INTERNAL_SECRET": "uniz-core"
-}
