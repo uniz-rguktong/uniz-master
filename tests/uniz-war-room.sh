@@ -64,51 +64,97 @@ function run_test() {
     done
 
     echo -e "${GREEN}✅ Deployment Complete. Entering Observation Deck...${NC}"
-    echo -e "${CYAN}Press Ctrl+C to stop monitoring and return to menu.${NC}"
     
+    local frame=0
     # Live Dashboard Loop
     while true; do
+        # Animation frames for "Incoming Traffic"
+        local frames=(">>      " " >>     " "  >>    " "   >>   " "    >>  " "     >> " "      >>")
+        local flow=${frames[$((frame % 7))]}
+        ((frame++))
+
         clear
         banner
-        echo -e "${BOLD}MODE:${NC} $mode | ${BOLD}BOTS:${NC} $count"
-        echo -e "${CYAN}----------------------------------------------------------------${NC}"
-        echo -e "${BOLD}SERVICE POD STATUS:${NC}"
-        printf "%-25s %-10s %-10s\n" "DEPLOYMENT" "REPLICAS" "CPU AVG"
-        
-        # Get Gateway Stats
-        gw_repl=$(kubectl get deployment uniz-gateway-api -o jsonpath='{.status.readyReplicas}')
-        gw_cpu=$(kubectl top pods -l app=uniz-gateway-api --no-headers 2>/dev/null | awk '{sum+=$2} END {print sum}')
-        [ -z "$gw_repl" ] && gw_repl=0
-        [ -z "$gw_cpu" ] && gw_cpu=0
-        printf "%-25s %-10s %-10s\n" "uniz-gateway-api" "$gw_repl/15" "${gw_cpu}m"
-
-        # Get User Stats
-        u_repl=$(kubectl get deployment uniz-user-service -o jsonpath='{.status.readyReplicas}')
-        u_cpu=$(kubectl top pods -l app=uniz-user-service --no-headers 2>/dev/null | awk '{sum+=$2} END {print sum}')
-        [ -z "$u_repl" ] && u_repl=0
-        [ -z "$u_cpu" ] && u_cpu=0
-        printf "%-25s %-10s %-10s\n" "uniz-user-service" "$u_repl/10" "${u_cpu}m"
-
-        echo -e "${CYAN}----------------------------------------------------------------${NC}"
-        echo -e "${BOLD}HPA LIVE TARGETS:${NC}"
-        kubectl get hpa uniz-gateway-api --no-headers 2>/dev/null | awk '{print "Gateway: " $3 " | Replicas: " $6}'
-        kubectl get hpa uniz-user-service --no-headers 2>/dev/null | awk '{print "Profile: " $3 " | Replicas: " $6}'
+        echo -e "${BOLD}TRAFFIC STATUS:${NC} $mode [${RED}${BOLD}$flow${NC}] | ${BOLD}ACTIVE BOTS:${NC} $count"
         echo -e "${CYAN}----------------------------------------------------------------${NC}"
         
-        sleep 5
+        # Deployment Scaling Progress Bars
+        printf "${BOLD}%-24s %-12s %-25s${NC}\n" "SERVICE" "EST. REQ" "SCALING STATUS"
+        
+        # 1. Gateway API
+        gw_repl=$(kubectl get deployment uniz-gateway-api -o jsonpath='{.status.readyReplicas}' 2>/dev/null || echo 0)
+        gw_bar=$(printf '█%.0s' $(seq 1 $gw_repl))
+        printf "%-24s %-12s [${GREEN}%-15s${NC}]\n" "Gateway API" "$((gw_repl * 300))/s" "$gw_bar"
+
+        # 2. User Service
+        u_repl=$(kubectl get deployment uniz-user-service -o jsonpath='{.status.readyReplicas}' 2>/dev/null || echo 0)
+        u_bar=$(printf '█%.0s' $(seq 1 $u_repl))
+        printf "%-24s %-12s [${BLUE}%-10s${NC}]\n" "User Profile" "$((u_repl * 200))/s" "$u_bar"
+
+        # 3. Academics Service
+        a_repl=$(kubectl get deployment uniz-academics-service -o jsonpath='{.status.readyReplicas}' 2>/dev/null || echo 0)
+        a_bar=$(printf '█%.0s' $(seq 1 $a_repl))
+        printf "%-24s %-12s [${YELLOW}%-10s${NC}]\n" "Academics/PDF" "$((a_repl * 50))/s" "$a_bar"
+
+        # 4. Auth Service
+        au_repl=$(kubectl get deployment uniz-auth-service -o jsonpath='{.status.readyReplicas}' 2>/dev/null || echo 0)
+        au_bar=$(printf '█%.0s' $(seq 1 $au_repl))
+        printf "%-24s %-12s [${PURPLE}%-10s${NC}]\n" "Auth Engine" "$((au_repl * 400))/s" "$au_bar"
+
+        echo -e "${CYAN}----------------------------------------------------------------${NC}"
+        
+        # HPA Live Metrics
+        echo -e "${BOLD}AUTOSCALER BRAIN:${NC}"
+        kubectl get hpa --no-headers 2>/dev/null | grep -E "gateway-api|user-service|academics-service|auth-service" | awk '{
+            status = ($3 ~ /%/ ? (substr($3,1,index($3,"%")-1)+0 > (substr($4,1,index($4,"%")-1)+0) ? "🔥 SPIKE" : "✅ OK") : "⏳ WARM")
+            printf "  %-18s: %-10s %-8s Pods: %s/%s\n", $1, status, $3, $6, $5
+        }'
+        
+        echo -e "${CYAN}----------------------------------------------------------------${NC}"
+        echo -e "${YELLOW}Press Ctrl+C to stop LOAD and enter COOLDOWN phase...${NC}"
+        
+        sleep 1
     done
 }
 
-# Trap Ctrl+C to stop the monitoring loop but NOT the bots (let user decide in menu)
-trap "echo -e '\nReturn to menu...'; break" SIGINT
+function cooldown() {
+    clear
+    banner
+    echo -e "${BOLD}🛑 ENTERING COOLDOWN PHASE${NC}"
+    echo -e "${CYAN}----------------------------------------------------------------${NC}"
+    stop_test
+    echo -e "${BLUE}Monitoring cluster as pods terminate...${NC}"
+    
+    for i in {1..12}; do
+        clear
+        banner
+        echo -e "${BOLD}PHASE:${NC} ${GREEN}COOLDOWN${NC}"
+        echo -e "${CYAN}----------------------------------------------------------------${NC}"
+        
+        # Show all services shrinking
+        for svc in "uniz-gateway-api" "uniz-user-service" "uniz-academics-service" "uniz-auth-service"; do
+             repl=$(kubectl get deployment $svc -o jsonpath='{.status.readyReplicas}' 2>/dev/null || echo 0)
+             bar=$(printf '█%.0s' $(seq 1 $repl))
+             printf "%-25s [${RED}%-15s${NC}]\n" "$svc" "$bar"
+        done
+        
+        echo -e "\n${YELLOW}System is reducing capacity to save VPS resources...${NC}"
+        echo -e "Cooldown Progress: $i/12 seconds"
+        sleep 1
+    done
+    echo -e "${GREEN}✅ System Fully Cooled.${NC}"
+}
+
+# Trap Ctrl+C to move to cooldown
+trap "echo -e '\nStopping load...'; return" SIGINT
 
 while true; do
     banner
     show_menu
     case $choice in
-        1) run_test 2 "LITE" ;;
-        2) run_test 5 "HEAVY" ;;
-        3) run_test 12 "WAR" ;;
+        1) run_test 2 "LITE"; cooldown ;;
+        2) run_test 5 "HEAVY"; cooldown ;;
+        3) run_test 12 "WAR"; cooldown ;;
         4) stop_test; read -p "Press Enter to continue..." ;;
         5) exit 0 ;;
         *) echo "Invalid choice." ;;
