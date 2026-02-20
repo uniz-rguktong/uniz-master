@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="https://via.placeholder.com/150x150?text=UniZ" alt="UniZ Logo" width="120" height="120" style="border-radius: 20%; margin-bottom: 20px;" />
 
 # UniZ - University Management System
 
@@ -18,13 +17,13 @@
 
 ---
 
-## 📖 Overview
+## Overview
 
 **UniZ** is a comprehensive, enterprise-grade university management platform designed to consolidate fragmented systems into a unified, high-performance ecosystem. Built from the ground up using a microservices architecture, UniZ provides seamless integration across various university operations including academics, student life, administration, and digital communication.
 
 By leveraging a centralized Monorepo architecture (`uniz-master`), we ensure deterministic builds, streamlined CI/CD pipelines, and robust infrastructure orchestration, while maintaining modular runtime deployments.
 
-## ✨ Key Features
+## Key Features
 
 - **Centralized API Gateway**: Nginx-backed ingress routing with unified authentication, rate-limiting, and CORS management.
 - **Robust Authentication**: JWT-based stateless authentication with OTP password recovery flows and role-based access control (RBAC).
@@ -34,7 +33,7 @@ By leveraging a centralized Monorepo architecture (`uniz-master`), we ensure det
 - **Automated Notifications & Mailing**: Integrated asynchronous email and notification services via Redis message queues.
 - **Scheduled Cron Jobs**: Automated system maintenance, data synchronization, and scheduled event triggers.
 
-## 🏗 Architecture
+## Architecture
 
 UniZ implements a bounded-context microservices pattern, orchestrated via Docker Compose for local environments and Kubernetes for production.
 
@@ -56,7 +55,7 @@ graph TD
     AUTH & USER & ACAD & OUTPASS & MAIL & NOTIF --> REDIS[(Redis Cache / Queue)]
 ```
 
-## 📂 Repository Structure
+## Repository Structure
 
 The `uniz-master` repository is structured to manage the entire ecosystem efficiently:
 
@@ -76,7 +75,7 @@ The `uniz-master` repository is structured to manage the entire ecosystem effici
 - **`docs/`**: Technical specification documents, API contracts, and architecture blueprints.
 - **`scripts/`**: Automation scripts for development, data seeding, and CI/CD operations.
 
-## 🛠 Technology Stack
+## Technology Stack
 
 ### Backend Infrastructure
 
@@ -99,7 +98,7 @@ The `uniz-master` repository is structured to manage the entire ecosystem effici
 - **CI/CD**: GitHub Actions, Shell Scripting Registry
 - **Testing**: Jest, Supertest, Axios-based E2E Scripts
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -153,7 +152,7 @@ Ensure you have the following installed on your local machine:
    npm run test
    ```
 
-## 🔒 Security & Data Integrity
+## Security & Data Integrity
 
 UniZ takes security seriously. All microservices are isolated within internal Docker networks, exposing only the Gateway port. JWT secrets are rotated natively, and all inter-service communication requires strict payload verification and origin validation.
 

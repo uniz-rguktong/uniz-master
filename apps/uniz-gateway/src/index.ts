@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import axios from "axios";
+import path from "path";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -130,7 +131,9 @@ const serviceMap: Record<string, string> = {
   system: "http://localhost:3000",
 };
 
-app.get("/favicon.ico", (req, res) => res.status(204).end());
+app.get("/favicon.ico", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/favicon.ico"));
+});
 
 app.get("/", (req, res) => {
   console.log(`[Gateway] Serving ASCII Banner to ${req.ip}`);
