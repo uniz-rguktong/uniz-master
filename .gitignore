@@ -33,3 +33,4 @@ ehthumbs.db
 [Dd]esktop.ini
 
 node_modules
+infra/core-infra/test_output/
