@@ -8,6 +8,7 @@ import cors from "cors";
 import webpush from "web-push";
 import prisma from "./utils/prisma.util";
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
+import { requireAuth, requireAdmin } from "./middlewares/auth.middleware";
 import PDFDocument from "pdfkit";
 
 // --- PDF UTILS (pure Node, styled like official result sheets) ---
@@ -948,7 +949,7 @@ app.get("/", (req, res) => {
   });
 });
 
-app.post("/subscribe", async (req, res) => {
+app.post("/subscribe", requireAuth, async (req, res) => {
   try {
     const { username, subscription } = req.body;
     if (!username || !subscription) {
@@ -989,7 +990,7 @@ app.post("/subscribe", async (req, res) => {
  *   target=year   → send to users in a specific academic year (stored as username prefix year digit)
  *   target=all    → send to all subscribed users
  */
-app.post("/push/send", async (req, res) => {
+app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
   try {
     const { target, username, batch, year, title, body } = req.body;
     if (!title || !body) {
@@ -1098,7 +1099,7 @@ app.post("/push/send", async (req, res) => {
  *   ?prefix=o21   → filter by username prefix (e.g. batch)
  *   ?page=1&limit=100 → paginate results
  */
-app.get("/push/subscribers", async (req, res) => {
+app.get("/push/subscribers", requireAuth, requireAdmin, async (req, res) => {
   try {
     const prefix = req.query.prefix as string | undefined;
     const page = Math.max(1, parseInt((req.query.page as string) || "1", 10));
