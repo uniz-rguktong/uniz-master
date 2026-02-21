@@ -35,7 +35,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   kubectl set image deployment/uniz-academics-service academics-service=docker.io/library/uniz-academics-service:local
   kubectl set image deployment/uniz-gateway-api gateway-api=docker.io/library/uniz-gateway-api:local
   kubectl set image deployment/uniz-gateway gateway-nginx=docker.io/library/uniz-gateway:local
-  kubectl set image deployment/uniz-portal uniz-portal=docker.io/library/uniz-portal:local
+  kubectl set image deployment/uniz-portal portal=docker.io/library/uniz-portal:local
 
   echo "🔄 Restarting all deployments..."
   kubectl rollout restart deployment

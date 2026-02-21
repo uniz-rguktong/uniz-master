@@ -36,12 +36,13 @@ self.addEventListener("push", function (event) {
     image: data.image || undefined,
     vibrate: [200, 100, 200, 100, 200],
     // 'tag' groups notifications — same tag replaces the old one instead of stacking
+    // Using a dynamic tag or unique tag allows multiple notifications to show
     tag: data.tag || "uniz-notification",
     // 'renotify: true' means even if the tag matches, re-vibrate/sound the phone
     renotify: true,
     // 'requireInteraction: true' keeps the notification on screen until user dismisses
-    // CRITICAL for mobile: without this, Chrome may auto-dismiss it in background
-    requireInteraction: false,
+    // CRITICAL for background reliability: ensures the OS doesn't hide it immediately
+    requireInteraction: true,
     data: {
       url: (data.data && data.data.url) || "https://uniz.rguktong.in",
       type: (data.data && data.data.type) || "GENERIC",
@@ -126,7 +127,6 @@ self.addEventListener("pushsubscriptionchange", function (event) {
       })
       .then(function (subscription) {
         // Read the username from IndexedDB or a stored cookie/header if available.
-        // We store it in a simple cache during subscribe flow.
         return self.clients
           .matchAll({ includeUncontrolled: true })
           .then(function (clients) {
@@ -138,8 +138,7 @@ self.addEventListener("pushsubscriptionchange", function (event) {
               });
             });
 
-            // Also attempt a blind re-sync to backend using stored username
-            // The username is stored in the SW's own cache during the subscribe flow
+            // Re-sync to backend
             return caches.open("uniz-push-meta").then(function (cache) {
               return cache.match("username").then(function (response) {
                 if (!response) return;

@@ -585,7 +585,7 @@ const sendWebPush = async (
               keys: { p256dh: sub.p256dh, auth: sub.auth },
             },
             pushPayload,
-            { TTL: 60 }, // 60s delivery window; avoids stale notifications queued for hours
+            { TTL: 86400, urgency: "high" }, // 24h window + High urgency to wake up background devices
           );
           console.log(`[Push] ✅ Sent to endpoint: ${sub.endpoint.slice(-30)}`);
         } catch (pushErr: any) {
@@ -1060,7 +1060,7 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
               keys: { p256dh: sub.p256dh, auth: sub.auth },
             },
             pushPayload,
-            { TTL: 60 },
+            { TTL: 86400, urgency: "high" },
           );
         } catch (pushErr: any) {
           const statusCode = pushErr.statusCode || pushErr.status;
