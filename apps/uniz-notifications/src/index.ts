@@ -5,6 +5,8 @@ import nodemailer from "nodemailer";
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
+import webpush from "web-push";
+import prisma from "./utils/prisma.util";
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
 import PDFDocument from "pdfkit";
 
@@ -536,6 +538,65 @@ const getTransporter = () => {
   return transporter;
 };
 
+// --- WEB PUSH SETUP ---
+const publicVapidKey =
+  process.env.VAPID_PUBLIC_KEY ||
+  "BBUDnL9QZfs1W_wmn1kCW7U81ISk0isqNro00JEIamFsQaMGqC3AO8nnK32jY94o3zCg0Thuz-Le1o3mH3Z8Thc";
+const privateVapidKey =
+  process.env.VAPID_PRIVATE_KEY ||
+  "oWMk2dkJanNgjqhOAmcJ9cf4dLFaFQSmsvPyD1AlMzw";
+
+webpush.setVapidDetails(
+  "mailto:admin@uniz.rguktong.in",
+  publicVapidKey,
+  privateVapidKey,
+);
+
+const sendWebPush = async (username: string, payload: any) => {
+  try {
+    const subscriptions = await prisma.pushSubscription.findMany({
+      where: { username },
+    });
+
+    if (subscriptions.length === 0) {
+      console.log(`[Push] No subscriptions found for user: ${username}`);
+      return;
+    }
+
+    const pushPayload = JSON.stringify({
+      title: payload.title || "UniZ Notification",
+      body: payload.body || "",
+      icon: "/icon-192x192.png",
+      data: payload.data || {},
+    });
+
+    const results = await Promise.allSettled(
+      subscriptions.map((sub) =>
+        webpush.sendNotification(
+          {
+            endpoint: sub.endpoint,
+            keys: {
+              p256dh: sub.p256dh,
+              auth: sub.auth,
+            },
+          },
+          pushPayload,
+        ),
+      ),
+    );
+
+    const failures = results.filter((r) => r.status === "rejected");
+    if (failures.length > 0) {
+      console.warn(
+        `[Push] Failed to send ${failures.length}/${subscriptions.length} notifications for ${username}`,
+      );
+    }
+  } catch (err: any) {
+    console.error(`[Push] Error in sendWebPush: ${err.message}`);
+  }
+};
+// --- END WEB PUSH SETUP ---
+
 // Verify transporter pool at startup (non-blocking)
 console.log(
   `[NotificationWorker] Verifying SMTP pool with ${transporters.length} accounts...`,
@@ -647,6 +708,15 @@ const worker = new Worker(
             html || emailTemplate(subject || "Notification", `<p>${body}</p>`),
         });
 
+        // Trigger Targeted Web Push
+        const username =
+          (job.data as any).username || rawRecipient.split("@")[0];
+        await sendWebPush(username, {
+          title: subject || "UniZ Notification",
+          body: body || "You have a new notification",
+          data: { type: "GENERIC" },
+        });
+
         console.log(
           `${logPrefix} EMAIL send success`,
           JSON.stringify({
@@ -715,6 +785,13 @@ const worker = new Worker(
             withAttachment: !!pdfBuffer,
           }),
         );
+
+        // Trigger Targeted Web Push for Results
+        await sendWebPush((job.data as any).username, {
+          title: `Results Declared: ${semesterId}`,
+          body: `The academic results for ${semesterId} are now available.`,
+          data: { type: "RESULTS", semesterId },
+        });
       } else if (jobType === "ATTENDANCE_REPORT") {
         const { semesterId } = job.data as any;
         console.log(
@@ -775,6 +852,13 @@ const worker = new Worker(
             withAttachment: !!pdfBuffer,
           }),
         );
+
+        // Trigger Targeted Web Push for Attendance
+        await sendWebPush((job.data as any).username, {
+          title: `Attendance Updated: ${semesterId}`,
+          body: `Your attendance report for ${semesterId} is ready.`,
+          data: { type: "ATTENDANCE", semesterId },
+        });
       } else {
         console.warn(
           `${logPrefix} Unknown job type; skipping processing.`,
@@ -834,8 +918,42 @@ app.get("/", (req, res) => {
     version: "1.0.0",
     endpoints: {
       health: "/health",
+      subscribe: "/subscribe",
     },
+    vapidPublicKey: publicVapidKey,
   });
+});
+
+app.post("/subscribe", async (req, res) => {
+  try {
+    const { username, subscription } = req.body;
+    if (!username || !subscription) {
+      return res
+        .status(400)
+        .json({ error: "Missing username or subscription" });
+    }
+
+    await prisma.pushSubscription.upsert({
+      where: { endpoint: subscription.endpoint },
+      update: {
+        username,
+        p256dh: subscription.keys.p256dh,
+        auth: subscription.keys.auth,
+      },
+      create: {
+        username,
+        endpoint: subscription.endpoint,
+        p256dh: subscription.keys.p256dh,
+        auth: subscription.keys.auth,
+      },
+    });
+
+    res
+      .status(201)
+      .json({ status: "success", message: "Subscribed successfully" });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.get("/health", (req, res) => {
