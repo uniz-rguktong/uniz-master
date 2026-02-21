@@ -1196,9 +1196,9 @@ export const securityCheckOut = async (
     }
 
     // Notify Student
-    const istTimeOut = new Date().toLocaleTimeString("en-IN", {
+    const istTimeOut = new Date().toLocaleTimeString("en-US", {
       timeZone: "Asia/Kolkata",
-      hour: "numeric",
+      hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
       hour12: true,
@@ -1269,9 +1269,9 @@ export const securityCheckIn = async (
     }
 
     // Notify Student
-    const istTimeIn = new Date().toLocaleTimeString("en-IN", {
+    const istTimeIn = new Date().toLocaleTimeString("en-US", {
       timeZone: "Asia/Kolkata",
-      hour: "numeric",
+      hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
       hour12: true,
