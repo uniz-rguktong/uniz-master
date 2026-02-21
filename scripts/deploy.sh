@@ -64,13 +64,14 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
         BUILD_CONTEXT="$DIR"
       fi
 
-      docker build --no-cache -t $IMG:local $BUILD_CONTEXT
+      TAG="local-$(date +%s)"
+      docker build --no-cache -t $IMG:$TAG $BUILD_CONTEXT
       echo "📦 Importing $IMG to K3s..."
-      docker save $IMG:local | k3s ctr -n k8s.io images import -
+      docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
       
       echo "🛡️  Updating Kubernetes deployment $DEP..."
-      kubectl set image deployment/$DEP $CON=docker.io/library/$IMG:local
-      kubectl patch deployment $DEP -p '{"spec":{"template":{"spec":{"containers":[{"name":"'$CON'","imagePullPolicy":"IfNotPresent"}]}}}}'
+      kubectl set image deployment/$DEP $CON=docker.io/library/$IMG:$TAG
+      kubectl patch deployment $DEP -p '{"spec":{"template":{"spec":{"containers":[{"name":"'$CON'","imagePullPolicy":"Always"}]}}}}'
       kubectl rollout restart deployment/$DEP
       
       ((REBUILT_COUNT++))

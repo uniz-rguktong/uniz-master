@@ -1103,7 +1103,6 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
 app.get("/push/subscribers", requireAuth, requireAdmin, async (req, res) => {
   try {
     const prefix = req.query.prefix as string | undefined;
-    console.log(`[DEBUG] /push/subscribers query:`, req.query);
     const page = Math.max(1, parseInt((req.query.page as string) || "1", 10));
     const limit = Math.min(
       500,
@@ -1112,34 +1111,49 @@ app.get("/push/subscribers", requireAuth, requireAdmin, async (req, res) => {
     const skip = (page - 1) * limit;
 
     const where = prefix
-      ? { username: { startsWith: prefix, mode: "insensitive" } }
+      ? {
+          OR: [
+            { username: { startsWith: prefix.toLowerCase() } },
+            { username: { startsWith: prefix.toUpperCase() } },
+            { username: { startsWith: prefix, mode: "insensitive" as any } },
+          ],
+        }
       : {};
 
-    // Raw unique usernames with device count
-    const grouped = await prisma.pushSubscription.groupBy({
-      by: ["username"],
+    // Get unique usernames matching the filter
+    const allMatching = await prisma.pushSubscription.findMany({
       where,
-      _count: { endpoint: true },
-      orderBy: { username: "asc" },
-      skip,
-      take: limit,
+      select: { username: true },
+      distinct: ["username"],
     });
 
-    const total = await prisma.pushSubscription.groupBy({
+    const total_users = allMatching.length;
+
+    // Get paginated results
+    const paginatedUsernames = allMatching
+      .slice(skip, skip + limit)
+      .map((u) => u.username);
+
+    const counts = await prisma.pushSubscription.groupBy({
       by: ["username"],
-      where,
+      where: { username: { in: paginatedUsernames } },
       _count: { endpoint: true },
+    });
+
+    const subscribers = paginatedUsernames.map((uname) => {
+      const c = counts.find((g) => g.username === uname);
+      return {
+        username: uname,
+        devices: c?._count.endpoint || 0,
+      };
     });
 
     res.json({
       status: "ok",
-      total_users: total.length,
+      total_users,
       page,
       limit,
-      subscribers: grouped.map((g) => ({
-        username: g.username,
-        devices: g._count.endpoint,
-      })),
+      subscribers,
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
