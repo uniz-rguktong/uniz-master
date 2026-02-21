@@ -14,6 +14,23 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 /**
+ * Tokens are stored via JSON.stringify, so they come back from localStorage
+ * with surrounding quotes: `"eyJ..."`. This helper strips them correctly.
+ */
+function getStoredToken(): string | undefined {
+  try {
+    const raw =
+      localStorage.getItem("student_token") ||
+      localStorage.getItem("admin_token");
+    if (!raw) return undefined;
+    const parsed = JSON.parse(raw);
+    return typeof parsed === "string" ? parsed : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * Store the username in the SW cache so the `pushsubscriptionchange` handler
  * can re-sync with the backend even when the app is closed.
  */
@@ -66,10 +83,7 @@ export async function initPushNotifications(
         console.log(
           "[Push] Different user detected. Re-syncing subscription to backend.",
         );
-        const tok =
-          localStorage.getItem("student_token") ||
-          localStorage.getItem("admin_token") ||
-          undefined;
+        const tok = getStoredToken();
         await syncSubscriptionToBackend(
           existingSub,
           username,
@@ -120,10 +134,7 @@ export async function initPushNotifications(
     }
 
     // Subscribe to push
-    // Read the JWT token from localStorage to authenticate the /subscribe call
-    const jwtToken =
-      localStorage.getItem("student_token") ||
-      localStorage.getItem("admin_token");
+    const jwtToken = getStoredToken();
 
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
@@ -135,10 +146,7 @@ export async function initPushNotifications(
       if (event.data?.type === "PUSH_SUBSCRIPTION_CHANGED") {
         const newSub = event.data.subscription;
         if (newSub) {
-          const refreshedTok =
-            localStorage.getItem("student_token") ||
-            localStorage.getItem("admin_token") ||
-            undefined;
+          const refreshedTok = getStoredToken();
           await syncSubscriptionToBackend(
             newSub,
             username,
