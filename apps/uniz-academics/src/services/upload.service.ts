@@ -4,7 +4,10 @@ import { mapGradeToPoint } from "../utils/helpers.util";
 import axios from "axios";
 
 const GATEWAY_URL = (
-  process.env.GATEWAY_URL || "http://localhost:3000/api/v1"
+  process.env.GATEWAY_URL ||
+  (process.env.DOCKER_ENV === "true"
+    ? "http://uniz-gateway-api:3000/api/v1"
+    : "http://localhost:3000/api/v1")
 ).replace(/\/$/, "");
 const USER_SERVICE_URL = (
   process.env.USER_SERVICE_URL || `${GATEWAY_URL}/profile`
