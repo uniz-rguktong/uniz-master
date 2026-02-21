@@ -123,9 +123,12 @@ const MaintenanceGuard = ({ children }: { children: JSX.Element }) => {
   return children;
 };
 
+import { InstallPWA } from "./components/InstallPWA";
+
 export default function App() {
   return (
     <>
+      <InstallPWA />
       <ToastContainer
         position="top-center"
         autoClose={3000}
