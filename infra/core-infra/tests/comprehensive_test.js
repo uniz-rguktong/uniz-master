@@ -249,6 +249,9 @@ async function run() {
     fs.writeFileSync("logs/academics.log", "");
   }
 
+  // Ensure test_output directory exists
+  if (!fs.existsSync("test_output")) fs.mkdirSync("test_output");
+
   // 0.1 Health Check
   log.step("Checking System Health");
   let healthRes;
@@ -1178,7 +1181,11 @@ async function run() {
     downloadGradesRes.status === 200 &&
     downloadGradesRes.headers["content-type"] === "application/pdf"
   ) {
-    log.pass(downloadGradesRes.duration, "PDF_RECEIVED");
+    fs.writeFileSync(
+      "test_output/Admin_Grades_O210008.pdf",
+      downloadGradesRes.data,
+    );
+    log.pass(downloadGradesRes.duration, "PDF_RECEIVED -> test_output/");
   } else {
     log.info(
       `Admin Grades download check: ${downloadGradesRes.status} ${downloadGradesRes.headers["content-type"]}`,
@@ -1197,7 +1204,11 @@ async function run() {
     studentGradesRes.status === 200 &&
     studentGradesRes.headers["content-type"] === "application/pdf"
   ) {
-    log.pass(studentGradesRes.duration, "PDF_RECEIVED");
+    fs.writeFileSync(
+      "test_output/Student_Grades_My.pdf",
+      studentGradesRes.data,
+    );
+    log.pass(studentGradesRes.duration, "PDF_RECEIVED -> test_output/");
   } else {
     log.info(`Student Grades download check: ${studentGradesRes.status}`);
     log.pass(studentGradesRes.duration, "ENDPOINT_ACCESSED");
@@ -1214,7 +1225,11 @@ async function run() {
     downloadAttRes.status === 200 &&
     downloadAttRes.headers["content-type"] === "application/pdf"
   ) {
-    log.pass(downloadAttRes.duration, "PDF_RECEIVED");
+    fs.writeFileSync(
+      "test_output/Admin_Attendance_O210008.pdf",
+      downloadAttRes.data,
+    );
+    log.pass(downloadAttRes.duration, "PDF_RECEIVED -> test_output/");
   } else {
     log.info(`Admin Attendance check: ${downloadAttRes.status}`);
     log.pass(downloadAttRes.duration, "ENDPOINT_ACCESSED");
@@ -1231,7 +1246,11 @@ async function run() {
     studentAttRes.status === 200 &&
     studentAttRes.headers["content-type"] === "application/pdf"
   ) {
-    log.pass(studentAttRes.duration, "PDF_RECEIVED");
+    fs.writeFileSync(
+      "test_output/Student_Attendance_My.pdf",
+      studentAttRes.data,
+    );
+    log.pass(studentAttRes.duration, "PDF_RECEIVED -> test_output/");
   } else {
     log.info(`Student Attendance check: ${studentAttRes.status}`);
     log.pass(studentAttRes.duration, "ENDPOINT_ACCESSED");
