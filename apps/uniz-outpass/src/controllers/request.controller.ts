@@ -1196,10 +1196,18 @@ export const securityCheckOut = async (
     }
 
     // Notify Student
+    const istTimeOut = new Date().toLocaleTimeString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+
     triggerNotification("CHECK_OUT", {
       recipient: `${existing.studentId}@rguktong.ac.in`,
-      subject: "Checked Out",
-      body: `You have successfully checked out at ${new Date().toLocaleTimeString()}. Safe journey!`,
+      subject: "Campus Check-Out",
+      body: `You have successfully checked out at ${istTimeOut}.`,
       extra: { username: existing.studentId },
     }).catch((err) => {
       console.error("[OUTPASS] Background check-out notification failed:", err);
@@ -1261,10 +1269,18 @@ export const securityCheckIn = async (
     }
 
     // Notify Student
+    const istTimeIn = new Date().toLocaleTimeString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+
     triggerNotification("CHECK_IN", {
       recipient: `${existing.studentId}@rguktong.ac.in`,
-      subject: "Checked In",
-      body: `Welcome back! You checked in at ${new Date().toLocaleTimeString()}.`,
+      subject: "Campus Check-In",
+      body: `You have successfully checked in at ${istTimeIn}.`,
       extra: { username: existing.studentId },
     }).catch((err) => {
       console.error("[OUTPASS] Background check-in notification failed:", err);
