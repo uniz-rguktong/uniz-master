@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "../../components/Button";
 import { toast } from "react-toastify";
 import { AlertCircle, Send } from "lucide-react";
+import { BASE_URL } from "../../api/endpoints";
 
 export default function Grievance() {
   const [category, setCategory] = useState("Hostel");
@@ -42,10 +43,7 @@ export default function Grievance() {
     };
 
     try {
-      const res = await fetch(
-        "https://api.uniz.rguktong.in/api/v1/grievance/submit",
-        requestOptions,
-      );
+      const res = await fetch(`${BASE_URL}/grievance/submit`, requestOptions);
 
       if (res.ok) {
         toast.success("Grievance submitted successfully!");

@@ -6,6 +6,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { is_authenticated, student } from "../../store";
 import { useStudentData } from "../../hooks/student_info";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../../api/endpoints";
 
 export default function Resetpassword() {
   const [oldPassword, setOldPassword] = useState("");
@@ -104,18 +105,15 @@ export default function Resetpassword() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-      const res = await fetch(
-        "https://api.uniz.rguktong.in/api/v1/auth/password/change",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${tokenValue}`,
-          },
-          body: bodyData,
-          signal: controller.signal,
+      const res = await fetch(`${BASE_URL}/auth/password/change`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tokenValue}`,
         },
-      );
+        body: bodyData,
+        signal: controller.signal,
+      });
 
       clearTimeout(timeoutId);
 

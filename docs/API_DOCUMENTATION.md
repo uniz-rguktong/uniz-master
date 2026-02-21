@@ -1,7 +1,7 @@
 # UniZ Student API Documentation (Production v1)
 
 **Base URL (Production Gateway):**
-`https://uniz-gateway.vercel.app/api/v1`
+`https://api.uniz.rguktong.in/api/v1`
 
 ---
 

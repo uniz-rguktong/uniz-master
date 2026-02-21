@@ -2,6 +2,7 @@ import { useRecoilValue } from "recoil";
 import { student } from "../../store";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
+import { STUDENT_HISTORY } from "../../api/endpoints";
 
 import {
   Clock,
@@ -54,10 +55,7 @@ export default function Outpass_Outing({ request }: requestProps) {
       };
 
       // Using the prescribed URL
-      const response = await fetch(
-        "https://api.uniz.rguktong.in/api/v1/requests/history",
-        requestOptions,
-      );
+      const response = await fetch(STUDENT_HISTORY, requestOptions);
       const result = await response.json();
 
       if (result.success && Array.isArray(result.history)) {
