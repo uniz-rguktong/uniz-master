@@ -24,3 +24,4 @@ data:
   CLIENT_URL: "https://uniz.rguktong.in,http://localhost:3000"
   # DB Connectivity (assuming pgbouncer service in k8s)
   REDIS_URL: "redis://uniz-redis:6379"
+  EMAIL_POOL: "" # Format: "user1:pass1,user2:pass2"

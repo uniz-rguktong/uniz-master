@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: portal
-          image: desusreecharan/uniz-portal:latest
+          image: uniz-portal:local
+          imagePullPolicy: Never
           ports:
             - containerPort: 80
           resources:

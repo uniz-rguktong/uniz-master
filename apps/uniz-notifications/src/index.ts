@@ -509,33 +509,45 @@ const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 const connection = new IORedis(REDIS_URL, { maxRetriesPerRequest: null });
 connection.on("error", (err) => console.error("Redis connection error:", err));
 
-const emailUser = process.env.EMAIL_USER;
-const emailPass = process.env.EMAIL_PASS;
+const emailPoolStr = process.env.EMAIL_POOL || "";
+const accounts = emailPoolStr
+  ? emailPoolStr
+      .split(",")
+      .map((a) => a.split(":"))
+      .filter((a) => a.length === 2)
+  : [
+      [
+        process.env.EMAIL_USER || "noreplycampusschield@gmail.com",
+        process.env.EMAIL_PASS || "acix rfbi kujh xwtj",
+      ],
+    ];
 
-if (process.env.NODE_ENV === "production" && (!emailUser || !emailPass)) {
-  console.warn(
-    " EMAIL_USER and EMAIL_PASS are not set. Service will use fallback credentials.",
-  );
-}
+let currentTransporterIndex = 0;
+const transporters = accounts.map(([user, pass]) =>
+  nodemailer.createTransport({
+    service: "gmail",
+    auth: { user, pass },
+  }),
+);
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: emailUser || "noreplycampusschield@gmail.com",
-    pass: emailPass || "acix rfbi kujh xwtj",
-  },
-});
+const getTransporter = () => {
+  const transporter = transporters[currentTransporterIndex];
+  currentTransporterIndex = (currentTransporterIndex + 1) % transporters.length;
+  return transporter;
+};
 
-// Verify transporter configuration at startup (non-blocking)
-console.log("[NotificationWorker] Verifying SMTP transporter...");
-transporter
+// Verify transporter pool at startup (non-blocking)
+console.log(
+  `[NotificationWorker] Verifying SMTP pool with ${transporters.length} accounts...`,
+);
+transporters[0]
   .verify()
   .then(() => {
-    console.log("[NotificationWorker] SMTP transporter is ready");
+    console.log("[NotificationWorker] Primary transporter is ready");
   })
   .catch((err) => {
     console.error(
-      "[NotificationWorker] SMTP transporter verification failed:",
+      "[NotificationWorker] Primary transporter verification failed:",
       err.message,
     );
   });
@@ -627,7 +639,7 @@ const worker = new Worker(
           }),
         );
 
-        const info = await transporter.sendMail({
+        const info = await getTransporter().sendMail({
           from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
           to: rawRecipient,
           subject: subject || "UniZ Notification",
@@ -671,7 +683,7 @@ const worker = new Worker(
           }),
         );
 
-        const info = await transporter.sendMail({
+        const info = await getTransporter().sendMail({
           from: '"UniZ Academics" <noreplycampusschield@gmail.com>',
           to: rawRecipient,
           subject: `Result Declaration: ${semesterId}`,
@@ -731,7 +743,7 @@ const worker = new Worker(
           }),
         );
 
-        const info = await transporter.sendMail({
+        const info = await getTransporter().sendMail({
           from: '"UniZ Academics" <noreplycampusschield@gmail.com>',
           to: rawRecipient,
           subject: `Attendance Report: ${semesterId}`,

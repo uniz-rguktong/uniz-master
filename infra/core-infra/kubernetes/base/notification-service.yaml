@@ -16,7 +16,9 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: desusreecharan/uniz-notification-service:latest
+          image: uniz-notification-service:local
+          imagePullPolicy: Never
+          imagePullPolicy: Never
           ports:
             - containerPort: 3007
           envFrom:
