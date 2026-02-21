@@ -71,7 +71,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
       
       echo "🛡️  Updating Kubernetes deployment $DEP..."
       kubectl set image deployment/$DEP $CON=docker.io/library/$IMG:$TAG
-      kubectl patch deployment $DEP -p '{"spec":{"template":{"spec":{"containers":[{"name":"'$CON'","imagePullPolicy":"Always"}]}}}}'
+      kubectl patch deployment $DEP -p '{"spec":{"template":{"spec":{"containers":[{"name":"'$CON'","imagePullPolicy":"IfNotPresent"}]}}}}'
       kubectl rollout restart deployment/$DEP
       
       ((REBUILT_COUNT++))
