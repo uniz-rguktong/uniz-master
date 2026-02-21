@@ -116,18 +116,23 @@ export function NotificationPanel() {
   const toggleNotifyPause = () => setNotifyPaused(!isNotifyPaused);
 
   useEffect(() => {
+    const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1";
+
     const myHeaders = new Headers();
     myHeaders.append("x-cms-api-key", "uniz-landing-v1-key");
 
-    const requestOptions = {
+    fetch(`${BASE}/cms/notifications`, {
       method: "GET",
       headers: myHeaders,
       redirect: "follow" as RequestRedirect,
-    };
-
-    fetch("/api/v1/cms/notifications", requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
+    })
+      .then(async (response) => {
+        const contentType = response.headers.get("content-type") || "";
+        if (!contentType.includes("application/json")) {
+          // Gateway returned HTML/text (404 or not running locally) — ignore silently
+          return;
+        }
+        const result = await response.json();
         if (result.success && result.notifications) {
           // Process Updates (Announcements)
           const updates = result.notifications.updates.map((item: any) => {
@@ -174,7 +179,9 @@ export function NotificationPanel() {
           setTenders(tendersData);
         }
       })
-      .catch((error) => console.error("Error fetching notifications:", error));
+      .catch(() => {
+        // Silently ignore — panel shows empty state (careers fallback is still shown)
+      });
   }, []);
 
   return (
