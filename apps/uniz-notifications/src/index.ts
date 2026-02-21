@@ -519,8 +519,8 @@ const accounts = emailPoolStr
       .filter((a) => a.length === 2)
   : [
       [
-        process.env.EMAIL_USER || "noreplycampusschield@gmail.com",
-        process.env.EMAIL_PASS || "acix rfbi kujh xwtj",
+        process.env.EMAIL_USER || "noreply.uniz@gmail.com",
+        process.env.EMAIL_PASS || "pdke hcfz fltp qagc",
       ],
     ];
 
@@ -990,11 +990,9 @@ app.post("/push/send", async (req, res) => {
       });
     } else if (target === "year") {
       if (!year)
-        return res
-          .status(400)
-          .json({
-            error: "year required for target=year (e.g. E1,E2,E3,E4,P1...)",
-          });
+        return res.status(400).json({
+          error: "year required for target=year (e.g. E1,E2,E3,E4,P1...)",
+        });
       // Match usernames that contain the year pattern — stored in profile, filter by batch prefix
       // e.g year=o21 sends to all o21* users
       subscriptions = await prisma.pushSubscription.findMany({
