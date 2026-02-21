@@ -760,6 +760,103 @@
       ]
     },
     {
+      "name": "Notifications & Push",
+      "item": [
+        {
+          "name": "Subscribe to Push",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"O210008\",\n    \"subscription\": {\n        \"endpoint\": \"https://fcm.googleapis.com/fcm/send/...\",\n        \"keys\": {\n            \"p256dh\": \"...\",\n            \"auth\": \"...\"\n        }\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications/subscribe",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "notifications", "subscribe"]
+            },
+            "description": "Registers a browser push subscription for a user. Handled by the Service Worker."
+          },
+          "response": []
+        },
+        {
+          "name": "List Push Subscribers (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications/push/subscribers?prefix=o21&page=1&limit=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "notifications", "push", "subscribers"],
+              "query": [
+                {
+                  "key": "prefix",
+                  "value": "o21"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Retrieve users with active push subscriptions. Requires Admin role."
+          },
+          "response": []
+        },
+        {
+          "name": "Broadcast Push (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"target\": \"all\",\n    \"title\": \"Campus Update\",\n    \"body\": \"All students please report to OAT for a brief meeting.\",\n    \"image\": \"https://images.unsplash.com/photo-1543722530-d2c3201371e7\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/notifications/push/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "notifications", "push", "send"]
+            },
+            "description": "Broadcast a push notification to specific targets (user, batch, year, or all). Requires Admin role."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Administrative Suite",
       "item": [
         {
@@ -1203,6 +1300,88 @@
                 }
               },
               "response": []
+            }
+          ],
+          "id": "f911d900-da15-4b82-98e5-85b43c57dc81"
+        },
+        {
+          "name": "Staff & Faculty APIs",
+          "item": [
+            {
+              "name": "Search Students (Staff/Admin)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"username\": \"o21\",\n    \"branch\": \"CSE\",\n    \"year\": \"E2\",\n    \"gender\": \"M\",\n    \"page\": 1,\n    \"limit\": 20\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/profile/student/search",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "profile", "student", "search"]
+                },
+                "description": "Powerful student search and filtering for staff/admins."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Faculty Profile (Self)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/profile/faculty/me",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "profile", "faculty", "me"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Faculty Profile (Admin)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"username\": \"FAC001\",\n    \"name\": \"Dr. John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"department\": \"CSE\",\n    \"designation\": \"Professor\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/profile/faculty/create",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "profile", "faculty", "create"]
+                }
+              },
+              "response": []
             },
             {
               "name": "Update Presence Status",
@@ -1233,8 +1412,65 @@
               },
               "response": []
             }
-          ],
-          "id": "f911d900-da15-4b82-98e5-85b43c57dc81"
+          ]
+        },
+        {
+          "name": "Telegram Bot Integration (Internal)",
+          "item": [
+            {
+              "name": "Link Telegram Account",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-bot-secret",
+                    "value": "{{internalSecret}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"username\": \"O210008\",\n    \"chatId\": \"123456789\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/profile/bot/link",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "profile", "bot", "link"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Bot Profile",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "x-bot-secret",
+                    "value": "{{internalSecret}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/profile/bot/profile?chatId=123456789",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "v1", "profile", "bot", "profile"],
+                  "query": [
+                    {
+                      "key": "chatId",
+                      "value": "123456789"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
         },
         {
           "name": "Director & Dean",
