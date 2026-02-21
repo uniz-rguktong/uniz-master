@@ -913,6 +913,7 @@ app.get("/", (req, res) => {
       health: "/health",
       subscribe: "/subscribe",
     },
+    buildTimestamp: "2026-02-21T07:42:00Z",
     vapidPublicKey: publicVapidKey,
   });
 });
