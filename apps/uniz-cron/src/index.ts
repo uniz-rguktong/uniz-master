@@ -8,7 +8,10 @@ const prisma = new PrismaClient();
 
 const clearPendingStatus = async (studentId: string) => {
   try {
-    const GATEWAY = (process.env.DOCKER_ENV === "true" ? "http://uniz-gateway-api:3000/api/v1" : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1";
+    const GATEWAY =
+      (process.env.DOCKER_ENV === "true"
+        ? "http://uniz-gateway-api:3000/api/v1"
+        : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1";
     const SECRET = process.env.INTERNAL_SECRET;
     if (!SECRET && process.env.NODE_ENV === "production")
       throw new Error("INTERNAL_SECRET missing");
@@ -32,7 +35,7 @@ const clearPendingStatus = async (studentId: string) => {
 };
 
 // Job 1: Expire Outpasses & Outings (Runs every 5 minutes for better security responsiveness)
-const runMaintenance = async () => {
+export const runMaintenance = async () => {
   console.log("Running Maintenance Job (Expiry Checks)...");
   try {
     const now = new Date();
@@ -168,19 +171,19 @@ app.use((req, res) => {
 
 const server = app.listen(3008, () => {
   console.log("Cron Service Health Server Started on 3008");
-server.keepAliveTimeout = 65000;
-server.headersTimeout = 66000;
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
 });
 
 // Graceful Shutdown Handler
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received. Starting graceful shutdown...');
+process.on("SIGTERM", async () => {
+  console.log("SIGTERM received. Starting graceful shutdown...");
   server.close(() => {
-    console.log('HTTP server closed.');
+    console.log("HTTP server closed.");
   });
   try {
-    if ((global as any).prisma || require('./utils/db.util').prisma) {
-        // generic attempt to close prisma if it exists
+    if ((global as any).prisma || require("./utils/db.util").prisma) {
+      // generic attempt to close prisma if it exists
     }
   } catch (e) {}
   process.exit(0);
