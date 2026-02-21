@@ -6,11 +6,14 @@ import prisma from "../utils/prisma.util";
 import { ErrorCode } from "../shared/error-codes";
 
 const GATEWAY_URL = (
-  process.env.GATEWAY_URL ||
   (process.env.DOCKER_ENV === "true"
     ? "http://uniz-gateway-api:3000/api/v1"
-    : "http://localhost:3000/api/v1")
+    : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
 ).replace(/\/$/, "");
+
+console.log(
+  `[SYS] Academics Booting with Gateway: ${GATEWAY_URL} (Priority: Internal)`,
+);
 
 const getHeaders = (token: string) => ({ headers: { Authorization: token } });
 
@@ -242,7 +245,10 @@ export const getBatchGrades = async (
             year: year || undefined,
             limit: 2000,
           },
-          getHeaders(req.headers.authorization || ""),
+          {
+            ...getHeaders(req.headers.authorization || ""),
+            timeout: 5000,
+          },
         );
         studentProfiles = profilesRes.data.students || [];
       }
@@ -1941,7 +1947,10 @@ export const downloadGrades = async (
       const searchRes = await axios.post(
         `${GATEWAY_URL}/profile/student/search`,
         { studentIds: [targetStudentId] },
-        { headers: { Authorization: req.headers.authorization } },
+        {
+          headers: { Authorization: req.headers.authorization },
+          timeout: 5000,
+        },
       );
       if (
         searchRes.data &&
