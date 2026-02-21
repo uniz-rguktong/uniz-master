@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: academics-service
-          image: desusreecharan/uniz-academics-service:latest
+          image: uniz-academics-service:local
+          imagePullPolicy: Never
           ports:
             - containerPort: 3004
           env:

@@ -25,7 +25,7 @@ import axios from "axios";
 const sendMail = async (type: string, to: string, data: any) => {
   try {
     const rawGateway = (
-      process.env.GATEWAY_URL || "http://localhost:3000/api/v1"
+      process.env.GATEWAY_URL || (process.env.DOCKER_ENV === "true" ? "http://uniz-gateway-api:3000/api/v1" : "http://localhost:3000/api/v1")
     ).trim();
     const rawMailUrl = process.env.MAIL_SERVICE_URL;
     const MAIL_SERVICE = rawMailUrl
@@ -137,7 +137,7 @@ const sendAdminConfirmation = async (
 async function getStudentStatus(token: string) {
   try {
     const GATEWAY = (
-      process.env.GATEWAY_URL || "http://localhost:3000/api/v1"
+      process.env.GATEWAY_URL || (process.env.DOCKER_ENV === "true" ? "http://uniz-gateway-api:3000/api/v1" : "http://localhost:3000/api/v1")
     ).trim();
     const res = await axios.get(`${GATEWAY}/profile/student/me`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -160,7 +160,7 @@ async function updateStudentProfileStatus(
 ) {
   try {
     const GATEWAY = (
-      process.env.GATEWAY_URL || "http://localhost:3000/api/v1"
+      process.env.GATEWAY_URL || (process.env.DOCKER_ENV === "true" ? "http://uniz-gateway-api:3000/api/v1" : "http://localhost:3000/api/v1")
     ).trim();
     await axios.put(
       `${GATEWAY}/profile/student/status`,

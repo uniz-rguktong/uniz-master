@@ -23,5 +23,5 @@ redis.on("error", (err: any) => {
 });
 
 redis.on("connect", () => {
-  console.log(redisUrl ? "Connected to Redis" : "Connected to Local Redis");
+  console.log(redisUrl && (redisUrl.includes("upstash") || redisUrl.includes("redis-cloud")) ? "Connected to Redis Cloud" : "Connected to Internal Redis");
 });
