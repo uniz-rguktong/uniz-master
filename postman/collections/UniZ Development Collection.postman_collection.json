@@ -2788,7 +2788,12 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost",
+      "value": "https://api.uniz.rguktong.in",
+      "type": "string"
+    },
+    {
+      "key": "internalSecret",
+      "value": "your-internal-secret-here",
       "type": "string"
     }
   ]
