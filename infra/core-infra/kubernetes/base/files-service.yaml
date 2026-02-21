@@ -33,11 +33,11 @@ spec:
                 name: uniz-secrets
           resources:
             limits:
-              cpu: "500m"
+              cpu: "1000m"
               memory: "512Mi"
             requests:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: "1000m"
+              memory: "512Mi"
 ---
 apiVersion: v1
 kind: Service

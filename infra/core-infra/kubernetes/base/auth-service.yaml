@@ -33,17 +33,19 @@ spec:
                 name: uniz-secrets
           resources:
             limits:
-              cpu: "500m"
+              cpu: "1000m"
               memory: "512Mi"
             requests:
-              cpu: "200m"
-              memory: "256Mi"
+              cpu: "1000m"
+              memory: "512Mi"
           livenessProbe:
             httpGet:
               path: /health
               port: 3001
             initialDelaySeconds: 15
-            periodSeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 2
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /health
@@ -80,4 +82,13 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 40
+          averageUtilization: 60
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300

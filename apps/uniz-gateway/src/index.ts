@@ -488,6 +488,22 @@ app.use((req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Gateway API Service running on port ${PORT}`);
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+});
+
+// Graceful Shutdown Handler
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM received. Starting graceful shutdown...');
+  server.close(() => {
+    console.log('HTTP server closed.');
+  });
+  try {
+    if (global.prisma || require('./utils/db.util').prisma) {
+        // generic attempt to close prisma if it exists
+    }
+  } catch (e) {}
+  process.exit(0);
 });

@@ -33,11 +33,11 @@ spec:
                 name: uniz-secrets
           resources:
             limits:
-              cpu: "500m"
+              cpu: "1000m"
               memory: "512Mi"
             requests:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: "1000m"
+              memory: "512Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -68,4 +68,13 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 40
+          averageUtilization: 60
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
