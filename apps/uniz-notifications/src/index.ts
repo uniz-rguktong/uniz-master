@@ -5,7 +5,7 @@ import nodemailer from "nodemailer";
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
-import webpush from "web-push";
+import * as webpush from "web-push";
 import prisma from "./utils/prisma.util";
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
 import { requireAuth, requireAdmin } from "./middlewares/auth.middleware";
@@ -1179,8 +1179,8 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3007;
 // In local/dev we want an HTTP health server on a port.
 const server = app.listen(port, () => {
   console.log(`Notification Service Worker & Health Server Started on ${port}`);
-server.keepAliveTimeout = 65000;
-server.headersTimeout = 66000;
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
 });
 
 console.log("Notification Service Worker Started");
@@ -1188,14 +1188,14 @@ console.log("Notification Service Worker Started");
 export default app;
 
 // Graceful Shutdown Handler
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received. Starting graceful shutdown...');
+process.on("SIGTERM", async () => {
+  console.log("SIGTERM received. Starting graceful shutdown...");
   server.close(() => {
-    console.log('HTTP server closed.');
+    console.log("HTTP server closed.");
   });
   try {
-    if ((global as any).prisma || require('./utils/db.util').prisma) {
-        // generic attempt to close prisma if it exists
+    if ((global as any).prisma || require("./utils/db.util").prisma) {
+      // generic attempt to close prisma if it exists
     }
   } catch (e) {}
   process.exit(0);
