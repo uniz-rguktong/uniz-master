@@ -31,7 +31,7 @@
     "chart.js": "^4.4.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "exceljs": "^4.1.1",
+    "exceljs": "^4.4.0",
     "framer-motion": "^11.18.2",
     "lodash": "^4.17.21",
     "lottie-react": "^2.4.1",
@@ -83,7 +83,7 @@
   "author": "",
   "license": "ISC",
   "overrides": {
-    "minimatch": "^3.1.2",
-    "glob": "^7.2.3"
+    "minimatch": "^10.2.1",
+    "glob": "^10.3.10"
   }
 }

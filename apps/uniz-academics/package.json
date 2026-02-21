@@ -27,7 +27,7 @@
     "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "exceljs": "^4.1.1",
+    "exceljs": "^4.4.0",
     "express": "^4.19.2",
     "helmet": "^7.1.0",
     "ioredis": "^5.9.2",
@@ -52,7 +52,7 @@
     "typescript": "^5.4.5"
   },
   "overrides": {
-    "minimatch": "^3.1.2",
-    "glob": "^7.2.3"
+    "minimatch": "^10.2.1",
+    "glob": "^10.3.10"
   }
 }
