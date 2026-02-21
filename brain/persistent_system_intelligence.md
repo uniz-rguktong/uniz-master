@@ -136,8 +136,8 @@ _(This section to be expanded as APIs are indexed)_
     - **Cause**: Port conflict or Nginx upstream caching old Container IPs.
     - **Fix**: Restart Nginx, or explicitly check `kubectl get endpoints` to ensure K8s is routing to healthy pods.
 3.  **CORS Issues**:
-    - **Cause**: Dual header injection (Nginx + Express).
-    - **Fix**: Centralized CORS in Nginx load balancer; disabled in microservices.
+    - **Cause**: Dual header injection (Nginx + Express) and hardcoded Absolute URLs in React bypassing proxies.
+    - **Fix**: We now use a **Proxy-Only Networking Architecture**. Frontend uses relative paths (`/api/v1`), intercepted by Vite server locally and Nginx in production, eliminating cross-origin requests entirely.
 4.  **Terminal Hang (3-minute Timeout)**:
     - **Cause**: Internal routing loop where services call the public Gateway URL from inside the cluster.
     - **Fix**: Force internal DNS strings (`-service`, `-api`) in code and add axios timeouts.
