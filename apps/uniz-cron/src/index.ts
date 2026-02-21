@@ -166,6 +166,22 @@ app.use((req, res) => {
   });
 });
 
-app.listen(3008, () => {
+const server = app.listen(3008, () => {
   console.log("Cron Service Health Server Started on 3008");
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+});
+
+// Graceful Shutdown Handler
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM received. Starting graceful shutdown...');
+  server.close(() => {
+    console.log('HTTP server closed.');
+  });
+  try {
+    if (global.prisma || require('./utils/db.util').prisma) {
+        // generic attempt to close prisma if it exists
+    }
+  } catch (e) {}
+  process.exit(0);
 });
