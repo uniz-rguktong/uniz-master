@@ -116,12 +116,10 @@ export function NotificationPanel() {
   const toggleNotifyPause = () => setNotifyPaused(!isNotifyPaused);
 
   useEffect(() => {
-    const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1";
-
     const myHeaders = new Headers();
     myHeaders.append("x-cms-api-key", "uniz-landing-v1-key");
 
-    fetch(`${BASE}/cms/notifications`, {
+    fetch("/api/v1/cms/notifications", {
       method: "GET",
       headers: myHeaders,
       redirect: "follow" as RequestRedirect,
