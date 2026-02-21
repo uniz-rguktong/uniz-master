@@ -124,3 +124,15 @@ Deployment is often done by pushing code and running a sync script, or manually 
 ## 7. Data State Annotations (Feb 20, 2026)
 
 - **Mass Update: Student Branch**: All existing students in `user_v2.StudentProfile` have been updated to branch `CSE` to ensure data consistency across the ecosystem.
+
+---
+
+## 8. Future Integrations (Multi-Tenant)
+
+- **Ornate Frontend (`ornate.rguktong.in`)**: The K3s + Nginx Ingress architecture natively supports multi-tenant domains. In the future, a containerized Next.js application will be deployed alongside the UniZ infrastructure.
+  - **Implementation Plan**:
+    1. Containerize the Next.js app (Dockerfile).
+    2. Deploy it to the cluster (e.g., `ornate-portal` deployment).
+    3. Expose it via a ClusterIP service (e.g., port 3000).
+    4. Update the K3s `ingress.yaml` to route `host: ornate.rguktong.in` directly to the `ornate-portal` service.
+    5. Secure the new domain via `certbot --nginx -d ornate.rguktong.in` on the host.
