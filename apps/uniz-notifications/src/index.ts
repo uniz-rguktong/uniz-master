@@ -1018,7 +1018,7 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
           .status(400)
           .json({ error: "batch required for target=batch (e.g. o21, o22)" });
       subscriptions = await prisma.pushSubscription.findMany({
-        where: { username: { startsWith: batch.toLowerCase() } },
+        where: { username: { startsWith: batch, mode: "insensitive" } },
       });
     } else if (target === "year") {
       if (!year)
@@ -1028,7 +1028,7 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       // Match usernames that contain the year pattern — stored in profile, filter by batch prefix
       // e.g year=o21 sends to all o21* users
       subscriptions = await prisma.pushSubscription.findMany({
-        where: { username: { startsWith: year.toLowerCase() } },
+        where: { username: { startsWith: year, mode: "insensitive" } },
       });
     } else if (target === "all") {
       subscriptions = await prisma.pushSubscription.findMany();
@@ -1111,7 +1111,7 @@ app.get("/push/subscribers", requireAuth, requireAdmin, async (req, res) => {
     const skip = (page - 1) * limit;
 
     const where = prefix
-      ? { username: { startsWith: prefix.toLowerCase() } }
+      ? { username: { startsWith: prefix, mode: "insensitive" } }
       : {};
 
     // Raw unique usernames with device count
