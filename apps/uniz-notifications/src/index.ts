@@ -552,7 +552,10 @@ webpush.setVapidDetails(
   privateVapidKey,
 );
 
-const sendWebPush = async (username: string, payload: any) => {
+const sendWebPush = async (
+  username: string,
+  payload: { title: string; body: string; data?: any },
+) => {
   try {
     const subscriptions = await prisma.pushSubscription.findMany({
       where: { username },
@@ -564,33 +567,26 @@ const sendWebPush = async (username: string, payload: any) => {
     }
 
     const pushPayload = JSON.stringify({
-      title: payload.title || "UniZ Notification",
-      body: payload.body || "",
+      title: payload.title,
+      body: payload.body,
       icon: "/icon-192x192.png",
       data: payload.data || {},
     });
 
-    const results = await Promise.allSettled(
+    await Promise.allSettled(
       subscriptions.map((sub) =>
         webpush.sendNotification(
           {
             endpoint: sub.endpoint,
-            keys: {
-              p256dh: sub.p256dh,
-              auth: sub.auth,
-            },
+            keys: { p256dh: sub.p256dh, auth: sub.auth },
           },
           pushPayload,
         ),
       ),
     );
-
-    const failures = results.filter((r) => r.status === "rejected");
-    if (failures.length > 0) {
-      console.warn(
-        `[Push] Failed to send ${failures.length}/${subscriptions.length} notifications for ${username}`,
-      );
-    }
+    console.log(
+      `[Push] Sent to ${subscriptions.length} device(s) for user: ${username}`,
+    );
   } catch (err: any) {
     console.error(`[Push] Error in sendWebPush: ${err.message}`);
   }
@@ -708,14 +704,25 @@ const worker = new Worker(
             html || emailTemplate(subject || "Notification", `<p>${body}</p>`),
         });
 
-        // Trigger Targeted Web Push
-        const username =
-          (job.data as any).username || rawRecipient.split("@")[0];
-        await sendWebPush(username, {
-          title: subject || "UniZ Notification",
-          body: body || "You have a new notification",
-          data: { type: "GENERIC" },
-        });
+        // Trigger Targeted Web Push for outpass/outing/profile notifications
+        const pushSubjects = [
+          "outpass",
+          "outing",
+          "profile",
+          "security alert",
+          "login",
+        ];
+        const subjectLower = (subject || "").toLowerCase();
+        const shouldPush = pushSubjects.some((k) => subjectLower.includes(k));
+        if (shouldPush) {
+          const pushUsername =
+            (job.data as any).username || rawRecipient.split("@")[0];
+          await sendWebPush(pushUsername, {
+            title: subject || "UniZ Notification",
+            body: body || "You have a new update on UniZ.",
+            data: { type: "GENERIC" },
+          });
+        }
 
         console.log(
           `${logPrefix} EMAIL send success`,
@@ -781,17 +788,10 @@ const worker = new Worker(
           JSON.stringify({
             to: rawRecipient,
             messageId: info.messageId,
-            response: info.response,
             withAttachment: !!pdfBuffer,
           }),
         );
-
-        // Trigger Targeted Web Push for Results
-        await sendWebPush((job.data as any).username, {
-          title: `Results Declared: ${semesterId}`,
-          body: `The academic results for ${semesterId} are now available.`,
-          data: { type: "RESULTS", semesterId },
-        });
+        // Results are email-only, no push notification
       } else if (jobType === "ATTENDANCE_REPORT") {
         const { semesterId } = job.data as any;
         console.log(
@@ -848,17 +848,10 @@ const worker = new Worker(
           JSON.stringify({
             to: rawRecipient,
             messageId: info.messageId,
-            response: info.response,
             withAttachment: !!pdfBuffer,
           }),
         );
-
-        // Trigger Targeted Web Push for Attendance
-        await sendWebPush((job.data as any).username, {
-          title: `Attendance Updated: ${semesterId}`,
-          body: `Your attendance report for ${semesterId} is ready.`,
-          data: { type: "ATTENDANCE", semesterId },
-        });
+        // Attendance is email-only, no push notification
       } else {
         console.warn(
           `${logPrefix} Unknown job type; skipping processing.`,
@@ -951,6 +944,105 @@ app.post("/subscribe", async (req, res) => {
     res
       .status(201)
       .json({ status: "success", message: "Subscribed successfully" });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * POST /push/send
+ * Webmaster-triggered targeted push notification.
+ * Body: { target: "user"|"batch"|"year"|"all", username?, batch?, year?, title, body }
+ *   target=user   → send to specific username
+ *   target=batch  → send to all users whose username starts with batch (e.g. "o21")
+ *   target=year   → send to users in a specific academic year (stored as username prefix year digit)
+ *   target=all    → send to all subscribed users
+ */
+app.post("/push/send", async (req, res) => {
+  try {
+    const { target, username, batch, year, title, body } = req.body;
+    if (!title || !body) {
+      return res.status(400).json({ error: "title and body are required" });
+    }
+
+    let subscriptions: {
+      endpoint: string;
+      p256dh: string;
+      auth: string;
+      username: string;
+    }[] = [];
+
+    if (target === "user") {
+      if (!username)
+        return res
+          .status(400)
+          .json({ error: "username required for target=user" });
+      subscriptions = await prisma.pushSubscription.findMany({
+        where: { username },
+      });
+    } else if (target === "batch") {
+      if (!batch)
+        return res
+          .status(400)
+          .json({ error: "batch required for target=batch (e.g. o21, o22)" });
+      subscriptions = await prisma.pushSubscription.findMany({
+        where: { username: { startsWith: batch.toLowerCase() } },
+      });
+    } else if (target === "year") {
+      if (!year)
+        return res
+          .status(400)
+          .json({
+            error: "year required for target=year (e.g. E1,E2,E3,E4,P1...)",
+          });
+      // Match usernames that contain the year pattern — stored in profile, filter by batch prefix
+      // e.g year=o21 sends to all o21* users
+      subscriptions = await prisma.pushSubscription.findMany({
+        where: { username: { startsWith: year.toLowerCase() } },
+      });
+    } else if (target === "all") {
+      subscriptions = await prisma.pushSubscription.findMany();
+    } else {
+      return res
+        .status(400)
+        .json({ error: "target must be one of: user, batch, year, all" });
+    }
+
+    if (subscriptions.length === 0) {
+      return res.status(200).json({ status: "no_subscribers", sent: 0 });
+    }
+
+    const pushPayload = JSON.stringify({
+      title,
+      body,
+      icon: "/icon-192x192.png",
+      data: { type: "BROADCAST" },
+    });
+
+    const results = await Promise.allSettled(
+      subscriptions.map((sub) =>
+        webpush.sendNotification(
+          {
+            endpoint: sub.endpoint,
+            keys: { p256dh: sub.p256dh, auth: sub.auth },
+          },
+          pushPayload,
+        ),
+      ),
+    );
+
+    const succeeded = results.filter((r) => r.status === "fulfilled").length;
+    const failed = results.filter((r) => r.status === "rejected").length;
+
+    console.log(
+      `[Push][Broadcast] target=${target} sent=${succeeded} failed=${failed}`,
+    );
+    res.json({
+      status: "done",
+      sent: succeeded,
+      failed,
+      total: subscriptions.length,
+    });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

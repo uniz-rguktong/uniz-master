@@ -5,6 +5,11 @@ export const BASE_URL =
     ? "https://uniz-gateway.vercel.app/api/v1"
     : "http://localhost:3000/api/v1");
 
+// Direct notification service URL for push subscription (bypasses gateway)
+export const NOTIFICATION_SERVICE_URL =
+  import.meta.env.VITE_NOTIFICATION_URL ||
+  "https://api.uniz.rguktong.in/api/v1/notifications";
+
 // New Microservices Architecture Endpoints
 // Auth
 export const SIGNIN = (_type: "student" | "admin" | "faculty") =>

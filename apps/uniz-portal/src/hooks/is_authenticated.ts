@@ -1,14 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { is_authenticated } from "../store";
 import { useRecoilState } from "recoil";
 import { useNavigate, useLocation } from "react-router-dom";
 import { isTokenValid, parseJwt, clearSession } from "../utils/security";
 import { toast } from "react-toastify";
+import { initPushNotifications } from "../utils/pushNotifications";
+import { NOTIFICATION_SERVICE_URL } from "../api/endpoints";
 
 export function useIsAuth() {
   const [isAuth, setAuth] = useRecoilState(is_authenticated);
   const navigateTo = useNavigate();
   const location = useLocation();
+  const pushInitialized = useRef(false);
 
   useEffect(() => {
     const getSafeToken = (key: string) => {
@@ -75,6 +78,12 @@ export function useIsAuth() {
         setAuth({ is_authnticated: true, type: "admin" });
       }
 
+      // Silently init push notifications once
+      if (!pushInitialized.current && decoded?.username) {
+        pushInitialized.current = true;
+        initPushNotifications(decoded.username, NOTIFICATION_SERVICE_URL);
+      }
+
       if (publicPaths.includes(location.pathname)) {
         navigateTo("/admin");
       }
@@ -99,6 +108,12 @@ export function useIsAuth() {
       // Valid Student
       if (!isAuth.is_authnticated) {
         setAuth({ is_authnticated: true, type: "student" });
+      }
+
+      // Silently init push notifications once
+      if (!pushInitialized.current && decoded?.username) {
+        pushInitialized.current = true;
+        initPushNotifications(decoded.username, NOTIFICATION_SERVICE_URL);
       }
 
       if (publicPaths.includes(location.pathname)) {
