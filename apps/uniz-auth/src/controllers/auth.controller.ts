@@ -12,6 +12,7 @@ import {
 import { comparePassword, hashPassword } from "../utils/password.util";
 import { ErrorCode } from "../shared/error-codes";
 import { UserRole } from "../shared/roles.enum";
+import { UAParser } from "ua-parser-js";
 
 export const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -70,12 +71,21 @@ export const login = async (req: Request, res: Response) => {
       response.admin_token = token;
     }
 
+    // Parse User-Agent for device info
+    const uaString = req.headers["user-agent"];
+    const parser = new UAParser(uaString);
+    const result = parser.getResult();
+    const osName = result.os.name || "Unknown OS";
+    const browserName = result.browser.name || "Unknown Browser";
+    const deviceInfo = `${browserName} on ${osName}`;
+
     // Send login notification (Backgrounded for latency optimization)
     const email = `${normalizedUsername.toLowerCase()}@rguktong.ac.in`;
     sendLoginNotification(
       email,
       normalizedUsername,
       req.ip || "Unknown IP",
+      deviceInfo,
     ).catch((err) => {
       console.error("[AUTH] Background login notification failed:", err);
     });

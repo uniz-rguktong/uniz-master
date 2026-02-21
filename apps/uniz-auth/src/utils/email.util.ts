@@ -88,12 +88,16 @@ export const sendLoginNotification = async (
   email: string,
   username: string,
   ipAddress?: string,
+  deviceInfo?: string,
 ): Promise<boolean> => {
-  // User requested to use push for everything except OTP
+  const deviceStr =
+    deviceInfo && deviceInfo !== "Unknown Browser on Unknown OS"
+      ? ` using ${deviceInfo}`
+      : "";
   await sendPush(
     username,
-    "Login Security Alert",
-    `A new login was detected from IP: ${ipAddress || "Unknown"}. If this wasn't you, please secure your account.`,
+    "New Login Detected",
+    `A new login was detected${deviceStr}. If this wasn't you, please secure your account immediately.`,
   );
   return true;
 };
