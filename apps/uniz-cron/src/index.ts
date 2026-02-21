@@ -179,7 +179,7 @@ process.on('SIGTERM', async () => {
     console.log('HTTP server closed.');
   });
   try {
-    if (global.prisma || require('./utils/db.util').prisma) {
+    if ((global as any).prisma || require('./utils/db.util').prisma) {
         // generic attempt to close prisma if it exists
     }
   } catch (e) {}
