@@ -10,39 +10,85 @@ git push origin main
 echo "🌐 Starting VPS Deployment..."
 ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   cd /root/uniz-master
+  
+  ORIG_HEAD=$(git rev-parse HEAD)
+  echo "📥 Pulling latest code..."
   git pull origin main
+  NEW_HEAD=$(git rev-parse HEAD)
 
-  # List of services to be built from the latest code
-  SERVICES="uniz-academics:uniz-academics-service uniz-auth:uniz-auth-service uniz-cron:uniz-cron-service uniz-files:uniz-files-service uniz-gateway:uniz-gateway-api uniz-mail:uniz-mail-service uniz-notifications:uniz-notification-service uniz-outpass:uniz-outpass-service uniz-portal:uniz-portal uniz-user:uniz-user-service ../infra/core-infra/nginx:uniz-gateway"
+  # Detect changed files
+  CHANGED_FILES=$(git diff --name-only $ORIG_HEAD $NEW_HEAD)
+  
+  if [ -z "$CHANGED_FILES" ]; then
+    echo "ℹ️  No changes detected in Git. Using all services for safety (one-time force)."
+    CHANGED_FILES="FORCE_ALL"
+  fi
 
-  for s in $SERVICES; do
-    DIR=${s%%:*}
-    IMG=${s##*:}
-    echo "🏗️  Building $IMG from apps/$DIR..."
-    docker build --no-cache -t $IMG:local apps/$DIR
-    echo "📦 Importing $IMG to K3s..."
-    docker save $IMG:local | k3s ctr -n k8s.io images import -
+  # Service mapping: "folder_name:image_name:deployment_name:container_name"
+  # Note: uniz-gateway is in infra/core-infra/nginx
+  ALL_SERVICES=(
+    "uniz-academics:uniz-academics-service:uniz-academics-service:academics-service"
+    "uniz-auth:uniz-auth-service:uniz-auth-service:auth-service"
+    "uniz-cron:uniz-cron-service:uniz-cron-service:cron-service"
+    "uniz-files:uniz-files-service:uniz-files-service:files-service"
+    "uniz-gateway:uniz-gateway-api:uniz-gateway-api:gateway-api"
+    "uniz-mail:uniz-mail-service:uniz-mail-service:mail-service"
+    "uniz-notifications:uniz-notification-service:uniz-notification-service:notification-service"
+    "uniz-outpass:uniz-outpass-service:uniz-outpass-service:outpass-service"
+    "uniz-portal:uniz-portal:uniz-portal:portal"
+    "uniz-user:uniz-user-service:uniz-user-service:user-service"
+    "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
+  )
+
+  REBUILT_COUNT=0
+
+  for s in "${ALL_SERVICES[@]}"; do
+    IFS=':' read -r DIR IMG DEP CON <<< "$s"
+    
+    SHOULD_BUILD=false
+    if [ "$CHANGED_FILES" == "FORCE_ALL" ]; then
+      SHOULD_BUILD=true
+    else
+      # Check if any changed file is within this service directory
+      if echo "$CHANGED_FILES" | grep -q "^apps/$DIR\|^$DIR"; then
+        SHOULD_BUILD=true
+      fi
+    fi
+
+    if [ "$SHOULD_BUILD" == "true" ]; then
+      echo "🏗️  Changes detected in $DIR. Rebuilding $IMG..."
+      
+      # Determine build context correctly
+      BUILD_CONTEXT="apps/$DIR"
+      if [[ "$DIR" == *"infra"* ]]; then
+        BUILD_CONTEXT="$DIR"
+      fi
+
+      docker build --no-cache -t $IMG:local $BUILD_CONTEXT
+      echo "📦 Importing $IMG to K3s..."
+      docker save $IMG:local | k3s ctr -n k8s.io images import -
+      
+      echo "🛡️  Updating Kubernetes deployment $DEP..."
+      kubectl set image deployment/$DEP $CON=docker.io/library/$IMG:local
+      kubectl patch deployment $DEP -p '{"spec":{"template":{"spec":{"containers":[{"name":"'$CON'","imagePullPolicy":"IfNotPresent"}]}}}}'
+      kubectl rollout restart deployment/$DEP
+      
+      ((REBUILT_COUNT++))
+    else
+      echo "⏭️  Skipping $IMG (No changes)."
+    fi
   done
 
-  echo "🛡️  Updating Kubernetes image references..."
-  kubectl set image deployment/uniz-auth-service auth-service=docker.io/library/uniz-auth-service:local
-  kubectl set image deployment/uniz-user-service user-service=docker.io/library/uniz-user-service:local
-  kubectl set image deployment/uniz-outpass-service outpass-service=docker.io/library/uniz-outpass-service:local
-  kubectl set image deployment/uniz-notification-service notification-service=docker.io/library/uniz-notification-service:local
-  kubectl set image deployment/uniz-mail-service mail-service=docker.io/library/uniz-mail-service:local
-  kubectl set image deployment/uniz-files-service files-service=docker.io/library/uniz-files-service:local
-  kubectl set image deployment/uniz-cron-service cron-service=docker.io/library/uniz-cron-service:local
-  kubectl set image deployment/uniz-academics-service academics-service=docker.io/library/uniz-academics-service:local
-  kubectl set image deployment/uniz-gateway-api gateway-api=docker.io/library/uniz-gateway-api:local
-  kubectl set image deployment/uniz-gateway gateway-nginx=docker.io/library/uniz-gateway:local
-  kubectl set image deployment/uniz-portal portal=docker.io/library/uniz-portal:local
-
-  echo "🔄 Restarting all deployments..."
-  kubectl rollout restart deployment
+  if [ $REBUILT_COUNT -gt 0 ]; then
+    echo "✅ Successfully redeployed $REBUILT_COUNT services."
+  else
+    echo "✨ Everything is up to date."
+  fi
   
-  echo "⌛ Waiting for key services to stabilize..."
-  kubectl rollout status deployment/uniz-portal --timeout=120s
-  kubectl rollout status deployment/uniz-auth-service --timeout=120s
-
-  echo "✅ VPS Deployment Complete!"
+  echo "⌛ Stabilization check..."
+  kubectl get pods
 EOF
+
+echo "🚀 Quick check on API health..."
+curl -s -o /dev/null -w "%{http_code}" https://api.uniz.rguktong.in/api/v1/health || true
+echo -e "\n✅ Deployment Pipeline Complete!"
