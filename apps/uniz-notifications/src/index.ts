@@ -1103,6 +1103,7 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
 app.get("/push/subscribers", requireAuth, requireAdmin, async (req, res) => {
   try {
     const prefix = req.query.prefix as string | undefined;
+    console.log(`[DEBUG] /push/subscribers query:`, req.query);
     const page = Math.max(1, parseInt((req.query.page as string) || "1", 10));
     const limit = Math.min(
       500,
