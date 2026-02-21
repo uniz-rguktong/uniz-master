@@ -5,6 +5,7 @@ import helmet from "helmet";
 import compression from "compression";
 
 dotenv.config();
+  console.log("[DEBUG] Service starting with priority fixes...");
 
 const app = express();
 const PORT = process.env.PORT || 3003;
