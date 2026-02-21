@@ -9,48 +9,38 @@ import { randomUUID } from "crypto";
 
 const prisma = new PrismaClient();
 
-const sendMail = async (type: string, to: string, data: any) => {
-  try {
-    const rawGateway = (
-      (process.env.DOCKER_ENV === "true" ? "http://uniz-gateway-api:3000/api/v1" : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
-    ).trim();
-    const rawMailUrl = process.env.MAIL_SERVICE_URL;
-    const MAIL_SERVICE = rawMailUrl
-      ? rawMailUrl.trim().replace(/\/health$/, "")
-      : `${rawGateway}/mail`;
+const NOTIFICATION_SERVICE_URL = (
+  (process.env.DOCKER_ENV === "true"
+    ? "http://uniz-notifications-service:3007"
+    : process.env.NOTIFICATION_SERVICE_URL) || "http://localhost:3007"
+)
+  .trim()
+  .replace(/\/health$/, "");
 
+const sendPush = async (username: string, title: string, body: string) => {
+  try {
+    const url = `${NOTIFICATION_SERVICE_URL}/push/send`;
     const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
 
-    console.log(
-      `[USER][DEBUG] Attempting to send mail: type=${type}, to=${to}, url=${MAIL_SERVICE}/send`,
-    );
-
     await axios.post(
-      `${MAIL_SERVICE}/send`,
+      url,
       {
-        type,
-        to,
-        data,
+        target: "user",
+        username: username,
+        title,
+        body,
       },
       {
         headers: { "x-internal-secret": SECRET },
+        timeout: 5000,
       },
     );
-    console.log(
-      `[USER] Successfully sent ${type} mail request to mail service for: ${to}`,
-    );
+    console.log(`[USER] Successfully sent push notification to: ${username}`);
   } catch (e: any) {
     console.error(
-      `[USER][ERROR] Failed to send mail (${type}) to ${to}:`,
+      `[USER][ERROR] Failed to send push notification to ${username}:`,
       e.message,
     );
-    if (e.response) {
-      console.error(
-        `[USER][ERROR] Mail Service Response:`,
-        e.response.status,
-        e.response.data,
-      );
-    }
   }
 };
 
@@ -142,7 +132,9 @@ export const getStudentProfile = async (
     const token = req.headers.authorization;
     if (token && req.params.username) {
       const GATEWAY_URL = (
-        (process.env.DOCKER_ENV === "true" ? "http://uniz-gateway-api:3000/api/v1" : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
+        (process.env.DOCKER_ENV === "true"
+          ? "http://uniz-gateway-api:3000/api/v1"
+          : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
       ).trim();
       try {
         const [gradesRes, attendanceRes] = await Promise.all([
@@ -213,13 +205,10 @@ export const updateStudentProfile = async (
     await redis.del(`profile:v2:${user.username}`);
 
     // Notify student (Backgrounded for latency optimization)
-    sendMail(
-      "profile_update",
-      updated.email || `${user.username}@rguktong.ac.in`,
-      {
-        username: updated.name || user.username,
-        updatedFields: Object.keys(updates),
-      },
+    sendPush(
+      user.username,
+      "Profile Updated",
+      `Your profile has been updated. Changed fields: ${Object.keys(updates).join(", ")}.`,
     );
 
     return res.json({ success: true, student: mapStudentProfile(updated) });
@@ -257,10 +246,11 @@ export const adminUpdateStudentProfile = async (
     await redis.del(`profile:v2:${username}`);
 
     // Notify student (Backgrounded for latency optimization)
-    sendMail("profile_update", updated.email || `${username}@rguktong.ac.in`, {
-      username: updated.name || username,
-      updatedFields: Object.keys(updates),
-    });
+    sendPush(
+      username,
+      "Profile Updated",
+      `Your profile has been updated by an administrator. Changed fields: ${Object.keys(updates).join(", ")}.`,
+    );
 
     return res.json({ success: true, student: mapStudentProfile(updated) });
   } catch (e: any) {

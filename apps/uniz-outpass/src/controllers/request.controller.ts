@@ -21,123 +21,99 @@ const appendLog = (currentLogs: any, entry: ApprovalLogEntry) => {
 import axios from "axios";
 
 // Helper: Check if student is in campus
-// Helper to trigger notifications via Mail Service
-const sendMail = async (type: string, to: string, data: any) => {
+const NOTIFICATION_SERVICE_URL = (
+  (process.env.DOCKER_ENV === "true"
+    ? "http://uniz-notifications-service:3007"
+    : process.env.NOTIFICATION_SERVICE_URL) || "http://localhost:3007"
+)
+  .trim()
+  .replace(/\/health$/, "");
+
+const sendPush = async (username: string, title: string, body: string) => {
   try {
-    const rawGateway = (
-      (process.env.DOCKER_ENV === "true" ? "http://uniz-gateway-api:3000/api/v1" : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
-    ).trim();
-    const rawMailUrl = process.env.MAIL_SERVICE_URL;
-    const MAIL_SERVICE = rawMailUrl
-      ? rawMailUrl.trim().replace(/\/health$/, "")
-      : `${rawGateway}/mail`;
-
+    const url = `${NOTIFICATION_SERVICE_URL}/push/send`;
     const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
-
     await axios.post(
-      `${MAIL_SERVICE}/send`,
+      url,
       {
-        type,
-        to,
-        data,
+        target: "user",
+        username: username,
+        title,
+        body,
       },
       {
         headers: { "x-internal-secret": SECRET },
+        timeout: 5000,
       },
     );
     console.log(
-      `[OUTPASS] Successfully sent ${type} mail request to mail service for: ${to}`,
+      `[OUTPASS] Successfully sent push notification to: ${username}`,
     );
   } catch (e: any) {
     console.error(
-      `[OUTPASS] Failed to send mail (${type}) to ${to}:`,
+      `[OUTPASS] Failed to send push notification to ${username}:`,
       e.message,
     );
   }
 };
 
 const triggerNotification = async (evt: string, payload: any) => {
-  // Adapter to map old events to new Mail Service types
-  // payload: { recipient, subject, body, ...extra }
-
-  // We need to parse strict data from the loose payload or passed in extra
-  // This is a bit hacky, normally we'd refactor the callsites.
-  // Let's rely on 'extra details' being passed in payload for specific fields.
-
   const { recipient, extra } = payload;
-  if (!extra) return; // Need structured data
+  if (!extra) return;
 
-  let mailType = "";
-  let mailData: any = {};
+  let title = "";
+  let body = "";
+  const username =
+    extra.username_raw || extra.username || recipient.split("@")[0];
 
   switch (evt) {
     case "OUTPASS_REQUEST":
-      mailType = "outpass_request";
-      mailData = {
-        username: extra.username,
-        reason: extra.reason,
-        fromDate: extra.fromDate,
-        toDate: extra.toDate,
-      };
+      title = "Outpass Request Submitted";
+      body = `Your outpass request for ${extra.fromDate} to ${extra.toDate} has been submitted.`;
       break;
     case "OUTING_REQUEST":
-      mailType = "outing_request";
-      mailData = {
-        username: extra.username,
-        reason: extra.reason,
-        fromDate: extra.fromDate,
-        toDate: extra.toDate,
-      };
+      title = "Outing Request Submitted";
+      body = `Your outing request for ${extra.fromDate} has been submitted.`;
       break;
     case "REQUEST_UPDATE":
     case "REQUEST_REJECTED":
-      mailType =
-        extra.requestType === "outing" ? "outing_approval" : "outpass_approval";
-      mailData = {
-        username: extra.username, // Student ID/Name
-        status: extra.status, // approved, rejected, forwarded
-        approver: extra.approver,
-        comment: extra.comment,
-      };
+      const type = extra.requestType === "outing" ? "Outing" : "Outpass";
+      title = `${type} Status Update`;
+      body = `Your ${type} has been ${extra.status} by ${extra.approver || "Staff"}. Comment: ${extra.comment || "None"}`;
       break;
     case "CHECK_IN":
     case "CHECK_OUT":
-      mailType = "checkpoint";
-      mailData = {
-        username: extra.username,
-        type: evt === "CHECK_IN" ? "check_in" : "check_out",
-        time: new Date().toLocaleTimeString("en-IN", {
-          timeZone: "Asia/Kolkata",
-        }),
-      };
+      const dir = evt === "CHECK_IN" ? "In" : "Out";
+      title = `Campus Check-${dir}`;
+      body = `You have successfully checked ${dir.toLowerCase()} at ${new Date().toLocaleTimeString()}.`;
       break;
   }
 
-  if (mailType && recipient) {
-    // Await to ensure delivery in serverless
-    await sendMail(mailType, recipient, mailData);
+  if (title && body && username) {
+    await sendPush(username, title, body);
   }
 };
 
 const sendAdminConfirmation = async (
-  adminEmail: string,
+  adminUsername: string,
   action: "approved" | "rejected" | "forwarded",
   studentName: string,
   studentId: string,
   type: "outing" | "outpass",
 ) => {
-  await sendMail("admin_action_confirmation", adminEmail, {
-    action,
-    studentName,
-    studentId,
-    type,
-  });
+  await sendPush(
+    adminUsername,
+    "Action Confirmation",
+    `You have ${action} the ${type} request for ${studentName} (${studentId}).`,
+  );
 };
 
 async function getStudentStatus(token: string) {
   try {
     const GATEWAY = (
-      (process.env.DOCKER_ENV === "true" ? "http://uniz-gateway-api:3000/api/v1" : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
+      (process.env.DOCKER_ENV === "true"
+        ? "http://uniz-gateway-api:3000/api/v1"
+        : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
     ).trim();
     const res = await axios.get(`${GATEWAY}/profile/student/me`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -160,7 +136,9 @@ async function updateStudentProfileStatus(
 ) {
   try {
     const GATEWAY = (
-      (process.env.DOCKER_ENV === "true" ? "http://uniz-gateway-api:3000/api/v1" : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
+      (process.env.DOCKER_ENV === "true"
+        ? "http://uniz-gateway-api:3000/api/v1"
+        : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
     ).trim();
     await axios.put(
       `${GATEWAY}/profile/student/status`,
