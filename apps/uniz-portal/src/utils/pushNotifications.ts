@@ -13,11 +13,6 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   return outputArray;
 }
 
-/**
- * Registers SW, requests permission, subscribes this browser,
- * then POSTs the subscription to the notification service.
- * Call this once after a successful login.
- */
 export async function initPushNotifications(
   username: string,
   notificationServiceUrl: string,
@@ -30,58 +25,71 @@ export async function initPushNotifications(
       return;
     }
 
-    // Register the service worker
+    // 1. Unregister existing workers to force a clean slate (fix for persistent errors)
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    for (const reg of registrations) {
+      console.log(
+        "[Push] Found existing worker. Unregistering to ensure fresh state...",
+      );
+      await reg.unregister();
+    }
+
+    // 2. Register the service worker fresh
     console.log("[Push] Registering service worker...");
     const registration = await navigator.serviceWorker.register("/sw.js", {
       scope: "/",
     });
-    await navigator.serviceWorker.ready;
-    console.log("[Push] Service worker ready.");
 
-    // Log current permission before asking
-    console.log(`[Push] Current permission state: ${Notification.permission}`);
+    // 3. Wait for activation (crucial for some browsers)
+    console.log("[Push] Waiting for service worker to activate...");
+    await navigator.serviceWorker.ready;
+
+    // Polling check for activation state if ready isn't enough
+    let attempts = 0;
+    while (registration.active?.state !== "activated" && attempts < 20) {
+      await new Promise((r) => setTimeout(r, 200));
+      attempts++;
+    }
+    console.log("[Push] Service worker active and ready.");
 
     if (Notification.permission === "denied") {
-      console.warn(
-        "[Push] Notifications were previously DENIED. Reset in browser site settings.",
-      );
+      console.warn("[Push] Notifications DENIED. Reset in browser settings.");
       return;
     }
 
-    // Request permission - silently skip if denied
     const permission = await Notification.requestPermission();
     console.log(`[Push] Permission result: ${permission}`);
-    if (permission !== "granted") {
-      return;
-    }
+    if (permission !== "granted") return;
 
-    // Force-refresh the subscription to avoid stale/corrupt registrations (fixes AbortError)
+    // 4. Force a fresh subscription to avoid "push service error" with old keys
     let subscription = await registration.pushManager.getSubscription();
     if (subscription) {
-      console.log("[Push] Existing subscription found. Refreshing...");
+      console.log("[Push] Clearing old subscription...");
       await subscription.unsubscribe();
-      console.log("[Push] Unsubscribed successfully.");
     }
 
-    console.log("[Push] Requesting new subscription from browser service...");
+    console.log("[Push] Requesting new subscription from browser...");
     subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as any,
     });
 
-    // Send to backend: POST /subscribe
+    // 5. Send to backend
     console.log(
-      `[Push] Sending subscription to backend: ${notificationServiceUrl}/subscribe`,
+      `[Push] Sending subscription to: ${notificationServiceUrl}/subscribe`,
     );
     const resp = await fetch(`${notificationServiceUrl}/subscribe`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, subscription }),
     });
-    console.log(`[Push] Backend response: ${resp.status}`);
-    console.log(`[Push] ✅ Subscription registered for ${username}`);
+
+    if (resp.ok) {
+      console.log(`[Push] ✅ Successfully registered for ${username}`);
+    } else {
+      console.error(`[Push] Backend rejected subscription: ${resp.status}`);
+    }
   } catch (err) {
-    // Non-fatal - email still works as fallback
-    console.warn("[Push] Push setup failed (non-fatal):", err);
+    console.warn("[Push] Nuclear setup failed:", err);
   }
 }
