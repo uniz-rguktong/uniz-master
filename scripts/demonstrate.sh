@@ -33,11 +33,21 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
 
   echo ">>> Installing K3s (Lightweight Kubernetes by Rancher)..."
   if ! command -v k3s &> /dev/null; then
-    curl -sfL https://get.k3s.io | sh -
+    # Must disable default traefik so we can use standard nginx ingress
+    curl -sfL https://get.k3s.io | sh -s - --disable traefik --disable servicelb
   else
     echo "[-] K3s is already installed."
   fi
+
+  export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
+  echo ">>> Installing Ingress-Nginx Controller & Cert-Manager..."
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/baremetal/deploy.yaml
+  kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.2/cert-manager.yaml
   
+  echo ">>> Waiting for Ingress controller to come online..."
+  sleep 15
+  kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s || true
   echo ">>> Cloning UniZ Master Repository..."
   cd /root
   if [ -d "uniz-master/.git" ]; then
@@ -52,8 +62,45 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   fi
 
   echo ">>> Applying Initial Kubernetes Infrastructure Manifests..."
-  export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
   kubectl apply -k infra/core-infra/kubernetes/base
+
+  echo ">>> Automatically mapping Nginx Host proxy to K3s Ingress..."
+  # Dynamically extract the NodePort assigned to the Nginx Ingress Controller
+  NODE_PORT=$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}')
+  
+  cat << 'NCFG' > /etc/nginx/sites-available/uniz-api
+server {
+    server_name api.uniz.rguktong.in uniz.rguktong.in;
+
+    location / {
+        proxy_pass http://127.0.0.1:${NODE_PORT};
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        
+        proxy_request_buffering off;
+        proxy_buffering off;
+        
+        proxy_hide_header "Access-Control-Allow-Origin";
+        proxy_hide_header "Access-Control-Allow-Methods";
+        proxy_hide_header "Access-Control-Allow-Headers";
+        proxy_hide_header "Access-Control-Allow-Credentials";
+    }
+
+    # SSL is assumed to be configured post-deployment via Certbot
+    listen 80;
+}
+NCFG
+  
+  # Inject the port dynamically into the file
+  sed -i "s/\${NODE_PORT}/$NODE_PORT/g" /etc/nginx/sites-available/uniz-api
+
+  ln -sf /etc/nginx/sites-available/uniz-api /etc/nginx/sites-enabled/
+  rm -f /etc/nginx/sites-enabled/default
+  systemctl restart nginx
+
+  echo "⚠️  NOTE: Run 'certbot --nginx -d api.uniz.rguktong.in -d uniz.rguktong.in' later to re-enable SSL."
 EOF
 
 echo -e "\n=========================================="
