@@ -6,14 +6,11 @@
     "deploy": "./scripts/deploy.sh",
     "push": "git push",
     "pull": "git pull",
-    "attack" : "npx autocannon -c 200 -d 90 https://api.uniz.rguktong.in/gateway-status",
-    "watch" : "ssh -o StrictHostKeyChecking=no root@76.13.241.174 \"kubectl get hpa uniz-gateway-api-hpa --watch\"",
+    "attack": "npx autocannon -c 200 -d 90 https://api.uniz.rguktong.in/gateway-status",
+    "watch": "ssh -o StrictHostKeyChecking=no root@76.13.241.174 \"kubectl get hpa uniz-gateway-api-hpa --watch\"",
     "clean": "rm -rf logs/ *.log",
     "install:all": "for d in apps/uniz-* infra/core-infra; do (cd $d && npm install && npm audit fix); done",
-    "data-reset": "npm run data:reset --prefix infra/core-infra",
-    "setup": "npm run setup --prefix infra/core-infra",
-    "prettify": "prettier --write .",
-    "db:reset-migrate": "npm run db:reset-migrate --prefix infra/core-infra"
+    "prettify": "prettier --write ."
   },
   "dependencies": {
     "axios": "^1.13.4",
