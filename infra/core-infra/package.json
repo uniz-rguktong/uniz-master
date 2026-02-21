@@ -35,7 +35,7 @@
   "dependencies": {
     "@prisma/client": "^7.4.0",
     "@types/node": "^25.2.3",
-    "axios": "^1.7.9",
+    "axios": "^1.13.5",
     "bcryptjs": "^3.0.3",
     "colors": "^1.4.0",
     "dotenv": "^17.3.1",
