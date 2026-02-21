@@ -5,7 +5,15 @@ echo "🚀 Welcome to the UniZ Zero-to-Production Demonstration Simulator!"
 echo "This script automates Phase 2 and Phase 3 of the infrastructure deployment."
 echo "Prerequisite (Phase 1): You must have ALREADY wiped the Hostinger VPS to a blank Ubuntu 24.04 OS."
 echo ""
-read -p "Press ENTER to begin bootstrapping the core infrastructure on 76.13.241.174, or CTRL+C to cancel..."
+read -s -p "🔐 Enter administration password to begin wiping and bootstrapping 76.13.241.174: " input_pass
+echo ""
+
+if [ "$input_pass" != "sree@2006" ]; then
+    echo "❌ Authentication failed. Unauthorized deployment aborted."
+    exit 1
+fi
+
+echo "✅ Authentication successful. Proceeding with deployment..."
 
 echo -e "\n=========================================="
 echo " PHASE 2: Bootstrapping Core Dependencies "
