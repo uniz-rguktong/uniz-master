@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "description": "UniZ Microservices Production Ecosystem - Master Vault",
   "scripts": {
-    "deploy": "git push origin main",
+    "deploy": "./scripts/deploy.sh",
     "push": "git push",
     "pull": "git pull",
     "clean": "rm -rf logs/ *.log",
