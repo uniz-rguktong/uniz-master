@@ -992,7 +992,7 @@ app.post("/subscribe", requireAuth, async (req, res) => {
  */
 app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
   try {
-    const { target, username, batch, year, title, body } = req.body;
+    const { target, username, batch, year, title, body, image } = req.body;
     if (!title || !body) {
       return res.status(400).json({ error: "title and body are required" });
     }
@@ -1045,6 +1045,7 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
     const pushPayload = JSON.stringify({
       title,
       body,
+      image,
       icon: "/assets/ongole_logo.png",
       badge: "/assets/ongole_logo.png",
       tag: `uniz-broadcast-${Date.now()}`,
