@@ -29,7 +29,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   ALL_SERVICES=(
     "uniz-academics:uniz-academics-service:uniz-academics-service:academics-service"
     "uniz-auth:uniz-auth-service:uniz-auth-service:auth-service"
-    "uniz-cron:uniz-cron-service:uniz-cron-service:cron-service"
+    "uniz-cron:uniz-cron-service:uniz-maintenance-job:cron-worker"
     "uniz-files:uniz-files-service:uniz-files-service:files-service"
     "uniz-gateway:uniz-gateway-api:uniz-gateway-api:gateway-api"
     "uniz-mail:uniz-mail-service:uniz-mail-service:mail-service"
@@ -69,10 +69,21 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
       echo "📦 Importing $IMG to K3s..."
       docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
       
-      echo "🛡️  Updating Kubernetes deployment $DEP..."
-      kubectl set image deployment/$DEP $CON=docker.io/library/$IMG:$TAG
-      kubectl patch deployment $DEP -p '{"spec":{"template":{"spec":{"containers":[{"name":"'$CON'","imagePullPolicy":"IfNotPresent"}]}}}}'
-      kubectl rollout restart deployment/$DEP
+      # Verify image exists in K3s
+      if ! k3s crictl images | grep -q "$IMG.*$TAG"; then
+        echo "❌ Failed to import $IMG:$TAG to K3s. Retrying..."
+        docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
+      fi
+
+      if [[ "$DEP" == *"job"* ]]; then
+        echo "🛡️  Updating Kubernetes CronJob $DEP..."
+        kubectl set image cronjob/$DEP cron-worker=docker.io/library/$IMG:$TAG
+      else
+        echo "🛡️  Updating Kubernetes deployment $DEP..."
+        kubectl set image deployment/$DEP $CON=docker.io/library/$IMG:$TAG
+        kubectl patch deployment $DEP -p '{"spec":{"template":{"spec":{"containers":[{"name":"'$CON'","imagePullPolicy":"IfNotPresent"}]}}}}'
+        kubectl rollout restart deployment/$DEP
+      fi
       
       ((REBUILT_COUNT++))
     else
