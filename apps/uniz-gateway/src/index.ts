@@ -426,6 +426,7 @@ app.all("/api/v1/:service/:path*", async (req, res) => {
         ...cleanedHeaders,
         host: new URL(targetBase).host,
       },
+      responseType: "arraybuffer", // Use arraybuffer to preserve binary data fully
       validateStatus: () => true,
       maxBodyLength: Infinity,
       maxContentLength: Infinity,
@@ -437,7 +438,19 @@ app.all("/api/v1/:service/:path*", async (req, res) => {
     }
 
     const response = await axios(axiosConfig);
-    res.status(response.status).json(response.data);
+
+    // Pass headers down perfectly, ensuring content-types mismatch don't happen
+    Object.entries(response.headers).forEach(([key, value]) => {
+      // Axios auto-decompresses responses, so we must remove the encoding headers to prevent browser decode errors
+      if (
+        key.toLowerCase() !== "content-encoding" &&
+        key.toLowerCase() !== "transfer-encoding"
+      ) {
+        res.setHeader(key, value as string);
+      }
+    });
+
+    res.status(response.status).send(response.data);
   } catch (error: any) {
     if (!res.headersSent) {
       res.status(500).json({
