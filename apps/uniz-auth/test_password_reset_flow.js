@@ -5,7 +5,7 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-const BASE_URL = "https://uniz-gateway.vercel.app/api/v1/auth";
+const BASE_URL = "https://api.uniz.rguktong.in/api/v1/auth";
 
 async function testPasswordResetFlow() {
   console.log("\n🔐 Testing New Password Reset Flow\n");

@@ -1,5 +1,5 @@
 const axios = require("axios");
-const GATEWAY = "https://uniz-gateway.vercel.app/api/v1";
+const GATEWAY = "https://api.uniz.rguktong.in/api/v1";
 
 const box = (text, color = 0) => {
   // 0: Reset, 32: Green, 36: Cyan, 33: Yellow, 35: Magenta

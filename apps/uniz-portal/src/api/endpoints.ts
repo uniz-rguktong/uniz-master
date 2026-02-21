@@ -1,14 +1,8 @@
 // Set this to your Azure VM IP or Domain in .env as VITE_API_URL
-export const BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  (import.meta.env.VITE_NODE_ENV === "production"
-    ? "https://uniz-gateway.vercel.app/api/v1"
-    : "http://localhost:3000/api/v1");
+export const BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
 
-// Direct notification service URL for push subscription (bypasses gateway)
-export const NOTIFICATION_SERVICE_URL =
-  import.meta.env.VITE_NOTIFICATION_URL ||
-  "https://api.uniz.rguktong.in/api/v1/notifications";
+// Notification service URL - routes through same-origin nginx proxy
+export const NOTIFICATION_SERVICE_URL = `${BASE_URL}/notifications`;
 
 // New Microservices Architecture Endpoints
 // Auth

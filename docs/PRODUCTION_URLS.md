@@ -2,7 +2,7 @@
 
 ## API Gateway
 
-- **Production Gateway**: `https://uniz-gateway.vercel.app/api/v1`
+- **Production Gateway**: `https://api.uniz.rguktong.in/api/v1`
 
 ## Microservices
 
