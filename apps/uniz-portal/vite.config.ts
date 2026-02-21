@@ -7,9 +7,9 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://uniz-gateway.vercel.app",
+        target: "https://api.uniz.rguktong.in",
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
     },
   },
