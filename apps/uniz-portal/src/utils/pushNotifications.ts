@@ -55,17 +55,19 @@ export async function initPushNotifications(
       return;
     }
 
-    // Check if already subscribed to avoid duplicate DB writes
+    // Force-refresh the subscription to avoid stale/corrupt registrations (fixes AbortError)
     let subscription = await registration.pushManager.getSubscription();
     if (subscription) {
-      console.log("[Push] Already subscribed, re-sending to backend...");
-    } else {
-      console.log("[Push] Creating new subscription...");
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as any,
-      });
+      console.log("[Push] Existing subscription found. Refreshing...");
+      await subscription.unsubscribe();
+      console.log("[Push] Unsubscribed successfully.");
     }
+
+    console.log("[Push] Requesting new subscription from browser service...");
+    subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as any,
+    });
 
     // Send to backend: POST /subscribe
     console.log(
