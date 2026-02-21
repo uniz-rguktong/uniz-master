@@ -29,8 +29,9 @@ This file serves as the **authoritative source of truth** for the UniZ ecosystem
 
 ### Container Orchestration
 
-- **Runtime**: Docker Engine (27.5.1) with Docker Compose (v2.32.4)
-- **Network**: `uniz-infrastructure_default` (Bridge Network)
+- **Network**: `uniz-infrastructure_default` (Legacy) / **K3s Cluster Network** (Active)
+- **Runtime**: Hybrid transition from Docker to **K3s (Kubernetes)**.
+- **Image Management**: K3s uses its own internal image store (containerd). Manual import via `k3s ctr images import` is required for local builds.
 
 ### Reverse Proxy (Nginx)
 
@@ -62,8 +63,10 @@ The system is a **microservices-based monorepo** using a centralized API Gateway
 
 ### Inter-Service Communication
 
-- **Protocol**: HTTP/REST over Docker internal network.
-- **Discovery**: DNS-based via Docker Service Names (e.g., `http://uniz-user-service:3002`).
+- **Protocol**: HTTP/REST over internal K8s cluster network.
+- **Discovery**: K8s Service DNS (e.g., `http://uniz-user-service:3002`).
+- **Internal Priority**: Services are hardcoded to prioritize internal service names over public `GATEWAY_URL` when `DOCKER_ENV=true` to prevent routing loops.
+- **Resilience**: All internal axios calls enforce a **5-second timeout**.
 
 ---
 
@@ -130,11 +133,17 @@ _(This section to be expanded as APIs are indexed)_
     - **Cause**: The Gateway's Regex router encountered a service key (e.g., `system`) that wasn't mapped in `serviceMap`.
     - **Fix**: Add explicit route handlers in Gateway code or update `serviceMap`.
 2.  **Bad Gateway (502)**:
-    - **Cause**: Port conflict with legacy K3s/Ingress Controller hijacking 80/443.
-    - **Fix**: `systemctl stop k3s`, `k3s-killall.sh`, restart Nginx.
+    - **Cause**: Port conflict or Nginx upstream caching old Container IPs.
+    - **Fix**: Restart Nginx, or explicitly check `kubectl get endpoints` to ensure K8s is routing to healthy pods.
 3.  **CORS Issues**:
-    - **Cause**: Nginx handling CORS logic conflicting with Express.
-    - **Fix**: Simplified Nginx to pass headers through; handled detailed CORS logic in Express Gateway.
+    - **Cause**: Dual header injection (Nginx + Express).
+    - **Fix**: Centralized CORS in Nginx load balancer; disabled in microservices.
+4.  **Terminal Hang (3-minute Timeout)**:
+    - **Cause**: Internal routing loop where services call the public Gateway URL from inside the cluster.
+    - **Fix**: Force internal DNS strings (`-service`, `-api`) in code and add axios timeouts.
+5.  **K3s Pods Not Using Local Build**:
+    - **Cause**: K3s/containerd handles images separately from Docker daemon.
+    - **Fix**: Perform `docker save | k3s ctr images import` after every build.
 
 ### Scaling Constraints
 

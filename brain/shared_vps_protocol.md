@@ -71,15 +71,33 @@ Use these responses if the other team or administration inquires about the confi
 
 ---
 
-## 4. Deployment Safety Checklist
+## 4. Deployment Safety Checklist (K3s / Local Build)
 
-When updating containers or configurations, follow this order to prevent downtime/502s:
+When updating services, follow this sequence to ensure the latest code is pulled and actually _runs_ in the cluster:
 
-1.  **Unlock**: `uniz-unlock` (or `chattr -R -i .`)
-2.  **Fetch & Sync**: `git pull` / `git reset --hard`
-3.  **Build**: `docker compose build <service>`
-4.  **Up**: `docker compose -f docker-compose.prod.yml up -d --force-recreate <service>`
-5.  **RELOAD NGINX**: `docker exec uniz-gateway nginx -s reload`
-    - **CRITICAL**: Failing to do this causes 502 Bad Gateway because Nginx may hold stale Docker internal IPs in its upstream cache.
-6.  **Verify**: `curl -I https://api.uniz.rguktong.in/health`
+1.  **Unlock**: `uniz-unlock`
+2.  **Sync**: `git pull origin main`
+3.  **Local Build**:
+    ```bash
+    docker build -t <service-name>:local apps/<folder-name>
+    ```
+    _(e.g., `docker build -t uniz-academics-service:local apps/uniz-academics`)_
+4.  **K3s Import (CRITICAL)**:
+    ```bash
+    docker save <service-name>:local | k3s ctr images import -
+    ```
+    _If this step is skipped, K8s will run old images even if the build succeeded._
+5.  **Restart Pods**:
+    ```bash
+    kubectl rollout restart deployment <deployment-name>
+    ```
+6.  **Verify**: `kubectl logs -l app=<app-label> --tail=20`
 7.  **Lock**: `uniz-lock`
+
+---
+
+## 5. Network & Routing Guarantees
+
+- **Internal Priority**: All microservices must use `DOCKER_ENV=true` logic to prioritize `uniz-gateway-api:3000` for inter-service communication.
+- **Axios Timeouts**: Every internal `axios` call MUST have a `{ timeout: 5000 }` to prevent terminal hangs during network loops.
+- **ConfigMap**: `GATEWAY_URL` in `uniz-config` points to the public API, but services should ignore this in favor of internal DNS when inside the cluster.

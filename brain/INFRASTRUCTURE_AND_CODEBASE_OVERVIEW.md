@@ -8,7 +8,8 @@ UniZ is a **microservices-based monorepo** built with Node.js, Express, Docker, 
 
 - **Frontend**: `uniz-portal` (React/Vite)
 - **Backend API**: Accessible via `https://api.uniz.rguktong.in` (Production)
-- **Gateway**: A dual-layer setup involving Nginx and an Express-based Application Gateway.
+- **Runtime**: Hybrid transition from Docker Compose to **Kubernetes (K3s)**.
+- **Gateway**: A dual-layer setup involving K8s Nginx Ingress/Nginx Load Balancer and an Express-based Application Gateway.
 
 ### Core Components
 
@@ -59,12 +60,12 @@ The infrastructure has transitioned from a "Dumb Pipe" setup to **Edge-Managed R
 
 ## 3. Key Directories
 
-| Path                 | Purpose                                                                                  |
-| :------------------- | :--------------------------------------------------------------------------------------- |
-| `/apps/`             | Contains all microservice source code (`uniz-*`).                                        |
-| `/infra/core-infra/` | Docker Compose files (`docker-compose.prod.yml`), Nginx configs.                         |
-| `/scripts/`          | Helper scripts for dev (`dev/start.sh`), deployment (`sync/push.sh`), and DB management. |
-| `/package.json`      | Root scripts for installing dependencies and managing the monorepo.                      |
+| Path                 | Purpose                                                                |
+| :------------------- | :--------------------------------------------------------------------- |
+| `/apps/`             | Contains all microservice source code (`uniz-*`).                      |
+| `/infra/core-infra/` | Contains K8s manifests (`kubernetes/base/`) and legacy Docker Compose. |
+| `/scripts/`          | Helper scripts for dev, deployment, and DB management.                 |
+| `/package.json`      | Root scripts for installing dependencies and managing the monorepo.    |
 
 ---
 
@@ -86,10 +87,12 @@ Deployment is often done by pushing code and running a sync script, or manually 
 
 - **CORS/Regex Issue (Deprecated)**: The Gateway originally used a Regex router in Express for everything.
 - **Production CORS Conflict (Feb 20, 2026)**: Fixed "Duplicate Access-Control-Allow-Origin" error caused by both Nginx and microservices adding headers. **Solution**: Disabled CORS in Node.js code and centralized it in Nginx using `proxy_hide_header` to sanitise backend responses.
-- **Microservice IP Caching**: Encounted 502 Bad Gateway after service updates because Nginx cached stale Docker internal IPs. **Solution**: Explicitly reloaded Nginx (`nginx -s reload`) after container recreation.
+- **Microservice IP Caching**: Encountered 502 Bad Gateway after service updates because Nginx cached stale Docker internal IPs. **Solution**: Explicitly reloaded Nginx (`nginx -s reload`) or used K8s Service abstraction.
 - **System Health Check**: Fixed by adding explicit route handlers.
-- **Bad Gateway (502)**: Caused by legacy `k3s` port conflicts. Resolved by stopping `k3s`.
-- **PDF Logo Latency**: Report generation was slow due to repeated Cloudinary fetches. **Solution**: Implemented filesystem caching (`/usr/src/app/cache`) within the Academics and Mail services.
+- **Vercel Loop Busters (Feb 12, 2026)**: Implemented randomized query parameters (`?lb=...`) to prevent Vercel from caching failed internal requests during heavy bulk uploads.
+- **K3s Node.js Path**: `node` was not in PATH during SSH sessions. Added `/opt/homebrew/bin` to exports.
+- **Internal Gateway Loop (Feb 21, 2026)**: Services were trying to talk to the Gateway via the public URL (`https://api.uniz...`) inside the cluster. This created a routing loop that hung for **180 seconds** (default TCP timeout). **Solution**: Forced `DOCKER_ENV=true` logic to prioritize `http://uniz-gateway-api:3000` and added strict **5s axios timeouts** to all inter-service calls.
+- **Stale K3s Images**: Images built with `docker build` weren't automatically used by K3s pods. **Solution**: Switched to `:local` tags and manually imported images using `k3s ctr images import`.
 
 ---
 
