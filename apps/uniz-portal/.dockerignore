@@ -5,5 +5,5 @@
 **/dist
 **/build
 **/*.log
-.env*
-! .env.example
+.env.local
+.env.*.local
