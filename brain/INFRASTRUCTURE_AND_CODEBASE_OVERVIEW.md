@@ -38,11 +38,11 @@ UniZ is a **microservices-based monorepo** built with Node.js, Express, Docker, 
 
 The infrastructure has transitioned from a "Dumb Pipe" setup to **Edge-Managed Routing and CORS** via Nginx.
 
-- **Traffic Flow**: `Internet -> Nginx (Port 80/443) -> Target Microservice (Directly via Nginx)`
-- **CORS Strategy**: Managed **EXCLUSIVELY** at the Nginx level.
-  - All microservices have `cors()` middleware disabled in code.
-  - Nginx adds `Access-Control-Allow-Origin` dynamically based on a whitelist.
-  - Nginx uses `proxy_hide_header` for all `Access-Control-*` headers from backends to prevent duplicate header errors in the browser.
+- **Traffic Flow**: `Internet -> Nginx (Port 80/443) -> Target Microservice`
+- **CORS Strategy (The Proxy Approach)**: Managed by **eliminating cross-origin requests entirely**.
+  - **Local Development**: `VITE_API_URL` is set to relative `/api/v1` in `.env.local`. Vite's dev server proxies `/api` to the backend. No CORS needed.
+  - **Production**: `VITE_API_URL` is set to relative `/api/v1` in `.env`. The frontend Nginx container proxies `location /api/v1/` to the internal K8s gateway service (`http://uniz-gateway-api:3000`). No CORS needed.
+  - **Rule**: NEVER use absolute URLs (e.g., `https://api...`) in frontend source code. Always use relative URLs relying on the proxy.
 
 **Service Mapping (Express Gateway):**
 
@@ -86,7 +86,8 @@ Deployment is often done by pushing code and running a sync script, or manually 
 ## 5. Troubleshooting History
 
 - **CORS/Regex Issue (Deprecated)**: The Gateway originally used a Regex router in Express for everything.
-- **Production CORS Conflict (Feb 20, 2026)**: Fixed "Duplicate Access-Control-Allow-Origin" error caused by both Nginx and microservices adding headers. **Solution**: Disabled CORS in Node.js code and centralized it in Nginx using `proxy_hide_header` to sanitise backend responses.
+- **Production CORS Conflict & Resolution (Feb 21, 2026)**: Persistent CORS errors (including "Duplicate Access-Control-Allow-Origin") were fundamentally fixed by abandoning cross-origin requests. **Solution**: Hardcoded absolute URLs (`https://api.uniz...`) in React were causing the browser to enforce CORS. By switching `VITE_API_URL` and all endpoints to relative paths (`/api/v1`), requests hit the same origin. In Dev, the Vite proxy handles it. In Prod, a new Nginx block in `uniz-portal` proxies it to `uniz-gateway-api:3000` internally.
+- **Stale Browser Caching of 502 Errors**: Browsers heavily cached `text/html` error pages from Gateway crashes. Fixed by adding `Cache-Control: no-store` to the Nginx API proxy block and `NotificationPanel` fetch calls.
 - **Microservice IP Caching**: Encountered 502 Bad Gateway after service updates because Nginx cached stale Docker internal IPs. **Solution**: Explicitly reloaded Nginx (`nginx -s reload`) or used K8s Service abstraction.
 - **System Health Check**: Fixed by adding explicit route handlers.
 - **Vercel Loop Busters (Feb 12, 2026)**: Implemented randomized query parameters (`?lb=...`) to prevent Vercel from caching failed internal requests during heavy bulk uploads.
