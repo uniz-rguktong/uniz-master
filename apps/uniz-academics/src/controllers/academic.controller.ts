@@ -11,10 +11,6 @@ const GATEWAY_URL = (
     : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
 ).replace(/\/$/, "");
 
-console.log(
-  `[SYS] Academics Booting with Gateway: ${GATEWAY_URL} (Priority: Internal)`,
-);
-
 const getHeaders = (token: string) => ({ headers: { Authorization: token } });
 
 import { mapGradeToPoint } from "../utils/helpers.util";
