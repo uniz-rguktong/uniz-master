@@ -1091,6 +1091,58 @@ app.post("/push/send", async (req, res) => {
   }
 });
 
+/**
+ * GET /push/subscribers
+ * Returns all users who have at least one active push subscription.
+ * Optional query params:
+ *   ?prefix=o21   → filter by username prefix (e.g. batch)
+ *   ?page=1&limit=100 → paginate results
+ */
+app.get("/push/subscribers", async (req, res) => {
+  try {
+    const prefix = req.query.prefix as string | undefined;
+    const page = Math.max(1, parseInt((req.query.page as string) || "1", 10));
+    const limit = Math.min(
+      500,
+      parseInt((req.query.limit as string) || "100", 10),
+    );
+    const skip = (page - 1) * limit;
+
+    const where = prefix
+      ? { username: { startsWith: prefix.toLowerCase() } }
+      : {};
+
+    // Raw unique usernames with device count
+    const grouped = await prisma.pushSubscription.groupBy({
+      by: ["username"],
+      where,
+      _count: { endpoint: true },
+      orderBy: { username: "asc" },
+      skip,
+      take: limit,
+    });
+
+    const total = await prisma.pushSubscription.groupBy({
+      by: ["username"],
+      where,
+      _count: { endpoint: true },
+    });
+
+    res.json({
+      status: "ok",
+      total_users: total.length,
+      page,
+      limit,
+      subscribers: grouped.map((g) => ({
+        username: g.username,
+        devices: g._count.endpoint,
+      })),
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get("/health", (req, res) => {
   res.json({ status: "ok", service: "uniz-notification-service" });
 });
