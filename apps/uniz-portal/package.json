@@ -31,7 +31,7 @@
     "chart.js": "^4.4.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "exceljs": "^4.4.0",
+    "exceljs": "^4.1.1",
     "framer-motion": "^11.18.2",
     "lodash": "^4.17.21",
     "lottie-react": "^2.4.1",
@@ -67,7 +67,7 @@
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
     "baseline-browser-mapping": "^2.9.11",
-    "eslint": "^9.9.0",
+    "eslint": "^10.0.1",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
@@ -81,5 +81,9 @@
   "main": "eslint.config.js",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "overrides": {
+    "minimatch": "^3.1.2",
+    "glob": "^7.2.3"
+  }
 }

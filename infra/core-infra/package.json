@@ -50,5 +50,9 @@
   },
   "devDependencies": {
     "prisma": "^5.22.0"
+  },
+  "overrides": {
+    "minimatch": "^3.1.2",
+    "glob": "^7.2.3"
   }
 }
