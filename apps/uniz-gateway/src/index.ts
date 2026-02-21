@@ -381,8 +381,12 @@ app.all("/api/v1/:service/:path*", async (req, res) => {
   try {
     const cleanedHeaders = { ...req.headers };
     delete cleanedHeaders.host;
-    // delete cleanedHeaders["content-length"]; // DO NOT DELETE THIS - Breaks Multipart Uploads
     const contentType = req.headers["content-type"] || "";
+
+    // For non-multipart requests, remove content-length so axios can recalculate it correctly
+    if (!contentType.includes("multipart/form-data")) {
+      delete cleanedHeaders["content-length"];
+    }
 
     console.log(`[Proxy] Content-Type: ${contentType}`);
 
