@@ -1,6 +1,5 @@
 // UniZ Service Worker - Web Push Notifications
 self.addEventListener("push", function (event) {
-  console.log("[SW] Push received:", event);
   if (!event.data) return;
 
   let data = {};
@@ -13,14 +12,19 @@ self.addEventListener("push", function (event) {
   const title = data.title || "UniZ Notification";
   const options = {
     body: data.body || "",
-    icon: "/vite.svg", // Use existing file
-    badge: "/vite.svg", // Use existing file
+    icon: "/assets/ongole_logo.png", // Your branding
+    badge: "/assets/ongole_logo.png", // Status bar icon
+    image: data.image || null, // Support for big banner images
     vibrate: [200, 100, 200],
     data: data.data || {},
     actions: [
       {
         action: "open",
-        title: "Open Portal",
+        title: "View Details",
+      },
+      {
+        action: "close",
+        title: "Dismiss",
       },
     ],
   };
