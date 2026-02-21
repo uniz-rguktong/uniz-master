@@ -48,18 +48,18 @@ The system is a **microservices-based monorepo** using a centralized API Gateway
 
 ### Service Registry
 
-| Service Name             | Docker Service              | Internal Port | Replics | Responsibilities                                                          |
-| :----------------------- | :-------------------------- | :------------ | :------ | :------------------------------------------------------------------------ |
-| **API Gateway**          | `uniz-gateway-api`          | 3000          | 3       | **Primary Router**, Request Validation, Rate Limiting, CORS, Aggregation. |
-| **Auth Service**         | `uniz-auth-service`         | 3001          | 1       | User Authentication, JWT Issuance, Session Management.                    |
-| **User Service**         | `uniz-user-service`         | 3002          | 1       | User Profiles, **CMS (Banners/Content)**.                                 |
-| **Outpass Service**      | `uniz-outpass-service`      | 3003          | 1       | Student Outpasses, Grievances, Requests workflow.                         |
-| **Academics Service**    | `uniz-academics-service`    | 3004          | 1       | Grades, Attendance, Curriculum Management.                                |
-| **Files Service**        | `uniz-files-service`        | 3005          | 1       | S3-compatible file storage interface.                                     |
-| **Mail Service**         | `uniz-mail-service`         | 3006          | 1       | Email dispatch (SendGrid/SMTP).                                           |
-| **Notification Service** | `uniz-notification-service` | 3007          | 1       | Push Notifications, In-app alerts.                                        |
-| **Cron Service**         | `uniz-cron-service`         | 3008          | 1       | Background tasks, Scheduled jobs.                                         |
-| **Frontend**             | `uniz-portal`               | 8081          | 1       | React/Vite SPA.                                                           |
+| Service Name             | Docker Service              | Internal Port | Replics | Responsibilities                                                            |
+| :----------------------- | :-------------------------- | :------------ | :------ | :-------------------------------------------------------------------------- |
+| **API Gateway**          | `uniz-gateway-api`          | 3000          | 3       | **Primary Router**, Request Validation, Rate Limiting, CORS, Aggregation.   |
+| **Auth Service**         | `uniz-auth-service`         | 3001          | 1       | User Authentication, JWT Issuance, Session Management.                      |
+| **User Service**         | `uniz-user-service`         | 3002          | 1       | User Profiles, **CMS (Banners/Content)**.                                   |
+| **Outpass Service**      | `uniz-outpass-service`      | 3003          | 1       | Student Outpasses, Grievances, Requests workflow.                           |
+| **Academics Service**    | `uniz-academics-service`    | 3004          | 1       | Grades, Attendance, Curriculum Management.                                  |
+| **Files Service**        | `uniz-files-service`        | 3005          | 1       | S3-compatible file storage interface.                                       |
+| **Mail Service**         | `uniz-mail-service`         | 3006          | 1       | Email dispatch (SendGrid/SMTP).                                             |
+| **Notification Service** | `uniz-notification-service` | 3007          | 1       | Push Notifications (Web/App), In-app alerts, **Support for Image Banners**. |
+| **Cron Service**         | `uniz-cron-service`         | 3008          | 1       | Background tasks, Scheduled jobs.                                           |
+| **Frontend**             | `uniz-portal`               | 8081          | 1       | React/Vite SPA.                                                             |
 
 ### Inter-Service Communication
 
@@ -142,8 +142,15 @@ _(This section to be expanded as APIs are indexed)_
     - **Cause**: Internal routing loop where services call the public Gateway URL from inside the cluster.
     - **Fix**: Force internal DNS strings (`-service`, `-api`) in code and add axios timeouts.
 5.  **K3s Pods Not Using Local Build**:
-    - **Cause**: K3s/containerd handles images separately from Docker daemon.
-    - **Fix**: Perform `docker save | k3s ctr images import` after every build.
+    - **Cause**: K3s/containerd nodes cache image tags (like `:local`). Importing a new image with the same tag does not always trigger a container refresh.
+    - **Fix**: Updated `deploy.sh` to use **Timestamped Tags** (`:local-$(date +%s)`) and force `imagePullPolicy: Always`.
+
+6.  **504 Gateway Timeout (JSON Payloads)**:
+    - **Cause**: The Node.js gateway was passing through the client's `Content-Length` header. If the gateway re-stringifies the JSON (or slightly modifies it), the length mismatch causes the upstream service/Nginx to hang and timeout.
+    - **Fix**: Explicitly remove `Content-Length` for all non-multipart requests in `uniz-gateway/src/index.ts` to let `axios` recalculate it.
+7.  **Empty Search Results for Push Subscribers**:
+    - **Cause**: Case-sensitivity. Student IDs are stored as `O21...` (uppercase 'O'), but search prefixes like `?prefix=o21` were treated literally or lowercase-forced.
+    - **Fix**: Refactored `uniz-notification-service` subscribers endpoint to use separate `findMany` with `mode: 'insensitive'` and manual counts.
 
 ### Scaling Constraints
 
@@ -164,4 +171,4 @@ _(This section to be expanded as APIs are indexed)_
 
 ---
 
-**Last Updated**: 2026-02-18
+**Last Updated**: 2026-02-21

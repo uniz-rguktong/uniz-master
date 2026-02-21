@@ -93,7 +93,10 @@ Deployment is often done by pushing code and running a sync script, or manually 
 - **Vercel Loop Busters (Feb 12, 2026)**: Implemented randomized query parameters (`?lb=...`) to prevent Vercel from caching failed internal requests during heavy bulk uploads.
 - **K3s Node.js Path**: `node` was not in PATH during SSH sessions. Added `/opt/homebrew/bin` to exports.
 - **Internal Gateway Loop (Feb 21, 2026)**: Services were trying to talk to the Gateway via the public URL (`https://api.uniz...`) inside the cluster. This created a routing loop that hung for **180 seconds** (default TCP timeout). **Solution**: Forced `DOCKER_ENV=true` logic to prioritize `http://uniz-gateway-api:3000` and added strict **5s axios timeouts** to all inter-service calls.
-- **Stale K3s Images**: Images built with `docker build` weren't automatically used by K3s pods. **Solution**: Switched to `:local` tags and manually imported images using `k3s ctr images import`.
+- **504 Gateway Timeout (Feb 21, 2026)**: Gateway was passing client `Content-Length` headers which caused upstream timeouts on JSON requests. **Fix**: Explicitly remove `Content-Length` in `uniz-gateway/src/index.ts` for non-multipart requests.
+- **Push Notification Image Support (Feb 21, 2026)**: Enabled rich notifications with banner images by updating the `uniz-notifications` payload and `sw.js` service worker.
+- **Stale K3s Images (Feb 21, 2026)**: K3s node caching prevented `:local` tag updates. **Fix**: Switched to timestamped tags (e.g., `:local-1771673842`) and `imagePullPolicy: Always`.
+- **Case-Insensitive Subscriber Search (Feb 21, 2026)**: Fixed empty subscriber lists when searching with mixed-case prefixes by refactoring SQL queries to use `mode: 'insensitive'`.
 
 ---
 
