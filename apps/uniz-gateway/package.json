@@ -7,7 +7,7 @@
     "dev": "ts-node-dev --respawn src/index.ts"
   },
   "dependencies": {
-    "@vercel/node": "^5.6.2",
+    "@vercel/node": "^2.1.0",
     "axios": "^1.6.0",
     "cors": "^2.8.6",
     "express": "^5.2.1"
@@ -22,6 +22,8 @@
   "overrides": {
     "undici": "^6.22.1",
     "path-to-regexp": "^6.3.0",
-    "tar": "^7.5.7"
+    "tar": "^7.5.7",
+    "minimatch": "^3.1.2",
+    "glob": "^7.2.3"
   }
 }

@@ -21,7 +21,7 @@
     "nodemailer": "^8.0.1",
     "pdfkit": "^0.17.2",
     "pg": "^8.18.0",
-    "web-push": "^3.6.7",
+    "web-push": "^1.0.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -37,5 +37,9 @@
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.3"
+  },
+  "overrides": {
+    "minimatch": "^3.1.2",
+    "glob": "^7.2.3"
   }
 }
