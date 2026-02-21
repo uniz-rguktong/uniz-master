@@ -62,13 +62,13 @@ async function main() {
   console.log("Status:", subs.status);
   console.log(JSON.stringify(subs.body, null, 2));
 
-  console.log("\n--- POST /push/send → O210829 ---");
+  console.log("\n--- POST /push/send → O210139 ---");
   const send = await req(
     "POST",
     "/api/v1/notifications/push/send",
     {
       target: "user",
-      username: "O210829",
+      username: "O210139",
       title: "Important Update",
       body: "Your outpass has been approved.",
     },
