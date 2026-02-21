@@ -152,8 +152,10 @@ export const getStudentProfile = async (
             .catch(() => ({ data: null })),
         ]);
 
+        if (gradesRes.data && gradesRes.data.success) {
+          mapped.grades_summary = gradesRes.data.gpa;
+        }
         if (attendanceRes.data && attendanceRes.data.success) {
-          mapped.attendance = attendanceRes.data.attendance;
           mapped.attendance_summary = attendanceRes.data.summary;
         }
       } catch (err) {
