@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: cron-service
-          image: desusreecharan/uniz-cron-service:latest
+          image: uniz-cron-service:local
+          imagePullPolicy: Never
           ports:
             - containerPort: 3008
           env:

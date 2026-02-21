@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: files-service
-          image: desusreecharan/uniz-files-service:latest
+          image: uniz-files-service:local
+          imagePullPolicy: Never
           ports:
             - containerPort: 3005
           env:

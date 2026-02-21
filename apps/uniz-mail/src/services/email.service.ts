@@ -9,24 +9,38 @@ import {
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 
-if (process.env.NODE_ENV === "production" && (!emailUser || !emailPass)) {
-  console.warn(
-    " EMAIL_USER and EMAIL_PASS are missing in production. Using fallbacks.",
-  );
-}
+const emailPoolStr = process.env.EMAIL_POOL || ""; // format: "u1:p1,u2:p2"
+const accounts = emailPoolStr
+  ? emailPoolStr
+      .split(",")
+      .map((a) => a.split(":"))
+      .filter((a) => a.length === 2)
+  : [
+      [
+        process.env.EMAIL_USER || "noreply.uniz@gmail.com",
+        process.env.EMAIL_PASS || "rllc qsdq vuxg gggl",
+      ],
+    ];
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  pool: true, // Use pooling to handle large volumes
-  maxConnections: 5, // No more than 5 connections
-  maxMessages: 100, // Send up to 100 messages per connection
-  rateDelta: 1000, // Time window (1 second)
-  rateLimit: 1, // Max 1 email per second
-  auth: {
-    user: emailUser || "noreply.uniz@gmail.com",
-    pass: emailPass || "rllc qsdq vuxg gggl",
-  },
-});
+let currentTransporterIndex = 0;
+const transporters = accounts.map(([user, pass]) =>
+  nodemailer.createTransport({
+    service: "gmail",
+    pool: true,
+    maxConnections: 3,
+    auth: { user, pass },
+  }),
+);
+
+const getTransporter = () => {
+  const transporter = transporters[currentTransporterIndex];
+  currentTransporterIndex = (currentTransporterIndex + 1) % transporters.length;
+  return transporter;
+};
+
+console.log(
+  `[MAIL] Transporter Pool Initialized with ${transporters.length} accounts.`,
+);
 
 console.log(
   `[MAIL] Transporter Ready: User=${emailUser || "noreplycampusschield@gmail.com"}`,
@@ -77,7 +91,7 @@ export const sendOtpEmail = async (
       <p style="font-size: 13px; color: #718096;">This code is valid for 10 minutes. If you did not request this, please ignore this email.</p>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await getTransporter().sendMail({
       from: '"UniZ Security" <noreplycampusschield@gmail.com>',
       to: email,
       subject: "Verification Code: " + otp,
@@ -111,7 +125,7 @@ export const sendLoginNotification = async (
       <p style="color: #e53e3e; font-size: 13px; font-weight: 500;">If this was not you, please reset your password immediately via the UniZ portal.</p>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await getTransporter().sendMail({
       from: '"UniZ Security" <noreplycampusschield@gmail.com>',
       to: email,
       subject: "Security Alert: New Login",
@@ -145,7 +159,7 @@ export const sendOutpassRequestNotification = async (
       <p>You will receive another email once your request is processed.</p>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await getTransporter().sendMail({
       from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
       to: email,
       subject: "Outpass Application Submitted",
@@ -181,7 +195,7 @@ export const sendOutingRequestNotification = async (
       <p>You will be notified once the request is reviewed.</p>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await getTransporter().sendMail({
       from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
       to: email,
       subject: "Outing Application Submitted",
@@ -216,7 +230,7 @@ export const sendOutpassApprovalNotification = async (
       </div>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await getTransporter().sendMail({
       from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
       to: email,
       subject: `Outpass Application ${statusText}`,
@@ -250,7 +264,7 @@ export const sendOutingApprovalNotification = async (
       </div>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await getTransporter().sendMail({
       from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
       to: email,
       subject: `Outing Application ${statusText}`,
@@ -283,7 +297,7 @@ export const sendCheckpointNotification = async (
       <p>Safe travels!</p>
     `;
 
-    await transporter.sendMail({
+    await getTransporter().sendMail({
       from: '"UniZ Security" <noreplycampusschield@gmail.com>',
       to: email,
       subject: `Campus ${action}`,
@@ -323,7 +337,7 @@ export const sendResultEmail = async (
       grades,
     });
 
-    await transporter.sendMail({
+    await getTransporter().sendMail({
       from: '"UniZ Academics" <noreplycampusschield@gmail.com>',
       to: email,
       subject: `Result Declaration: ${semesterId}`,
@@ -369,7 +383,7 @@ export const sendAttendanceReportEmail = async (
       records,
     });
 
-    await transporter.sendMail({
+    await getTransporter().sendMail({
       from: '"UniZ Academics" <noreplycampusschield@gmail.com>',
       to: email,
       subject: `Attendance Report: ${semesterId}`,
@@ -408,7 +422,7 @@ export const sendNewRequestAlertToAdmin = async (
       <p>Please login to the UniZ Admin Portal to review and take action.</p>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await getTransporter().sendMail({
       from: '"UniZ Alerts" <noreplycampusschield@gmail.com>',
       to: adminEmail,
       subject: `New ${label}: ${studentId}`,
@@ -440,7 +454,7 @@ export const sendGrievanceSubmissionNotification = async (
       <p>The Student Welfare Office will look into this matter shortly.</p>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await getTransporter().sendMail({
       from: '"UniZ Grievance Cell" <noreplycampusschield@gmail.com>',
       to: email,
       subject: `Grievance Received: ${ticketId}`,
@@ -469,7 +483,7 @@ export const sendActionConfirmationToAdmin = async (
       <p>You have successfully <strong>${actionText.toLowerCase()}</strong> the ${label.toLowerCase()} request for <strong>${studentName}</strong> (${studentId}).</p>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await getTransporter().sendMail({
       from: '"UniZ System" <noreplycampusschield@gmail.com>',
       to: adminEmail,
       subject: `Action Confirmed: ${actionText} ${studentId}`,
@@ -499,7 +513,7 @@ export const sendPasswordChangeNotification = async (
       <p style="color: #e53e3e; font-size: 13px; margin-top: 20px;">If you did not perform this action, please contact UniZ administration immediately.</p>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await getTransporter().sendMail({
       from: '"UniZ Security" <noreplycampusschield@gmail.com>',
       to: email,
       subject: "Security Alert: Password Changed",
@@ -536,7 +550,7 @@ export const sendProfileUpdateNotification = async (
       <p style="font-size: 13px; color: #718096;">If you did not make these changes, please notify administration.</p>
     `;
 
-    const info = await transporter.sendMail({
+    const info = await getTransporter().sendMail({
       from: '"UniZ Security" <noreplycampusschield@gmail.com>',
       to: email,
       subject: "Security Alert: Profile Updated",

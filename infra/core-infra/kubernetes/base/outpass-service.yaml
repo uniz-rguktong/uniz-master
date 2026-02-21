@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: outpass-service
-          image: desusreecharan/uniz-outpass-service:latest
+          image: uniz-outpass-service:local
+          imagePullPolicy: Never
           ports:
             - containerPort: 3003
           env:

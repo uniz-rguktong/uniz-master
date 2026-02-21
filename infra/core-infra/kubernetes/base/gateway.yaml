@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: gateway-nginx
-          image: desusreecharan/uniz-gateway:latest
+          image: uniz-gateway:local
+          imagePullPolicy: Never
           ports:
             - containerPort: 80
           volumeMounts:
