@@ -4,7 +4,6 @@
   "description": "UniZ Microservices Production Ecosystem - Master Vault",
   "scripts": {
     "deploy": "./scripts/deploy.sh",
-    "demonstrate": "bash ./scripts/demonstrate.sh",
     "push": "git push",
     "pull": "git pull",
     "attack": "npx autocannon -c 200 -d 90 https://api.uniz.rguktong.in/gateway-status",
