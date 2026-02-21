@@ -47,3 +47,17 @@ ACADEMICS_DATABASE_URL="postgresql://neondb_owner:npg_BP1it9EkDRGs@ep-red-queen-
 MAP_LOCALHOST=false \
 node infra/core-infra/tests/comprehensive_test.js
 ```
+
+### 5. Load Testing & HPA Auto-Scaling
+
+To rigorously verify that the Kubernetes Horizontal Pod Autoscaler (HPA) is functioning and successfully mitigating DDoS attacks, use the included npm scripts:
+
+```bash
+# Terminal 1: Watch the scaling metrics in real-time
+npm run watch
+
+# Terminal 2: Launch the attack simulation (200 concurrent connections, 90 seconds)
+npm run attack
+```
+
+The HPA should detect average pod CPU spikes strictly over 40% and automatically provision up to 15 pods for the Gateway dynamically. Once the attack completes, it will enter a standard 5-minute `ScaleDownStabilized` cooldown period before gracefully dropping back down to 3 minimum replicas to conserve cluster resources.

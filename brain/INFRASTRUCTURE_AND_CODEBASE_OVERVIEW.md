@@ -97,6 +97,9 @@ Deployment is often done by pushing code and running a sync script, or manually 
 - **Push Notification Image Support (Feb 21, 2026)**: Enabled rich notifications with banner images by updating the `uniz-notifications` payload and `sw.js` service worker.
 - **Stale K3s Images (Feb 21, 2026)**: K3s node caching prevented `:local` tag updates. **Fix**: Switched to timestamped tags (e.g., `:local-1771673842`) and `imagePullPolicy: Always`.
 - **Case-Insensitive Subscriber Search (Feb 21, 2026)**: Fixed empty subscriber lists when searching with mixed-case prefixes by refactoring SQL queries to use `mode: 'insensitive'`.
+- **Gateway PDF Proxy Corruption (Feb 21, 2026)**: Downloading PDFs through the Gateway resulted in corrupted empty files or JSON syntax errors. **Solution**: Configured Axios to use `responseType: "arraybuffer"` and explicitly stripped `Content-Encoding` and `Transfer-Encoding` headers from the proxy response object before sending binary arrays, as Axios auto-decompresses the stream natively.
+- **Push Notification Timestamps (Feb 21, 2026)**: Check-in/Check-out push notifications were displaying in 24-hour UTC or inconsistent local formats. **Solution**: Switched `toLocaleString` arguments to explicit `en-US` with `Asia/Kolkata` bounds to force native AM/PM Indian Standard Time rendering exactly as expected by the UI.
+- **Push Notification Device Context (Feb 21, 2026)**: Security alerts sent opaque IP addresses ("from IP: X.X.X.X"). **Solution**: Added `ua-parser-js` to `uniz-auth-service` to parse `User-Agent` headers and inject human-readable device info (e.g., "Chrome on Mac OS").
 
 ---
 

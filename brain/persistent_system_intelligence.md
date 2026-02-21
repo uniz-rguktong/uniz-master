@@ -151,6 +151,12 @@ _(This section to be expanded as APIs are indexed)_
 7.  **Empty Search Results for Push Subscribers**:
     - **Cause**: Case-sensitivity. Student IDs are stored as `O21...` (uppercase 'O'), but search prefixes like `?prefix=o21` were treated literally or lowercase-forced.
     - **Fix**: Refactored `uniz-notification-service` subscribers endpoint to use separate `findMany` with `mode: 'insensitive'` and manual counts.
+8.  **Binary Data / PDF Proxy Corruption**:
+    - **Cause**: Gateway was incorrectly casting binary arraybuffers as JSON objects, and forwarding mismatched `Content-Encoding` headers from upstream services after Axios had natively decompressed them.
+    - **Fix**: Updated Gateway Express proxy to strictly enforce `responseType: "arraybuffer"` for exact byte-matching, and explicitly ignore upstream `Content-Encoding`/`Transfer-Encoding` when relaying headers.
+9.  **Timezone Format Inconsistencies**:
+    - **Cause**: Standard Node.js `toLocaleTimeString("en-IN")` doesn't strictly guarantee 12-hour AM/PM formatting uniformly across all OS language packs.
+    - **Fix**: Used the `en-US` locale explicitly combined with `timeZone: "Asia/Kolkata"` and `hour12: true` options to strictly enforce Indian Standard Time format exactly as required by the mobile UI.
 
 ### Scaling Constraints
 
