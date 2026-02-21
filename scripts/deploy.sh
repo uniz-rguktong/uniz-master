@@ -91,5 +91,5 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
 EOF
 
 echo "🚀 Quick check on API health..."
-curl -s -o /dev/null -w "%{http_code}" https://api.uniz.rguktong.in/api/v1/health || true
+curl -s -o /dev/null -w "%{http_code}" https://api.uniz.rguktong.in/api/v1/system/health || true
 echo -e "\n✅ Deployment Pipeline Complete!"
