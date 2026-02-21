@@ -125,6 +125,7 @@ export function NotificationPanel() {
       method: "GET",
       headers: myHeaders,
       redirect: "follow" as RequestRedirect,
+      cache: "no-store",
     })
       .then(async (response) => {
         const contentType = response.headers.get("content-type") || "";
