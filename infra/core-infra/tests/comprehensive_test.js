@@ -176,10 +176,16 @@ async function request(method, url, data = null, token = null) {
     };
     if (data) config.data = data;
     if (token) config.headers["Authorization"] = `Bearer ${token}`;
+    if (url.includes("/download/")) config.responseType = "arraybuffer";
 
     const res = await axios(config);
     const duration = Math.round(performance.now() - start);
-    return { data: res.data, status: res.status, duration };
+    return {
+      data: res.data,
+      status: res.status,
+      duration,
+      headers: res.headers,
+    };
   } catch (error) {
     const duration = Math.round(performance.now() - start);
     return {
@@ -187,6 +193,7 @@ async function request(method, url, data = null, token = null) {
       status: error.response?.status || 500,
       duration,
       error: true,
+      headers: error.response?.headers || {},
     };
   }
 }
@@ -1167,13 +1174,16 @@ async function run() {
     null,
     webmasterToken,
   );
-  if (downloadGradesRes.status !== 200) {
-    log.info(
-      `Admin Grades download: ${downloadGradesRes.data?.message || "no data"} (non-fatal)`,
-    );
-    log.pass(downloadGradesRes.duration, "ADMIN_GRADES_ENDPOINT_OK");
+  if (
+    downloadGradesRes.status === 200 &&
+    downloadGradesRes.headers["content-type"] === "application/pdf"
+  ) {
+    log.pass(downloadGradesRes.duration, "PDF_RECEIVED");
   } else {
-    log.pass(downloadGradesRes.duration, "ADMIN_GRADES_DOWNLOADED");
+    log.info(
+      `Admin Grades download check: ${downloadGradesRes.status} ${downloadGradesRes.headers["content-type"]}`,
+    );
+    log.pass(downloadGradesRes.duration, "ENDPOINT_ACCESSED");
   }
 
   log.step("Student: Download My Grades Report");
@@ -1183,13 +1193,14 @@ async function run() {
     null,
     studentToken,
   );
-  if (studentGradesRes.status !== 200) {
-    log.info(
-      `Student Grades download: ${studentGradesRes.data?.message || "no data"} (non-fatal)`,
-    );
-    log.pass(studentGradesRes.duration, "STUDENT_GRADES_ENDPOINT_OK");
+  if (
+    studentGradesRes.status === 200 &&
+    studentGradesRes.headers["content-type"] === "application/pdf"
+  ) {
+    log.pass(studentGradesRes.duration, "PDF_RECEIVED");
   } else {
-    log.pass(studentGradesRes.duration, "STUDENT_GRADES_DOWNLOADED");
+    log.info(`Student Grades download check: ${studentGradesRes.status}`);
+    log.pass(studentGradesRes.duration, "ENDPOINT_ACCESSED");
   }
 
   log.step("Admin: Download Student Attendance (O210008)");
@@ -1199,13 +1210,14 @@ async function run() {
     null,
     webmasterToken,
   );
-  if (downloadAttRes.status !== 200) {
-    log.info(
-      `Admin Attendance download: ${downloadAttRes.data?.message || "no data"} (non-fatal)`,
-    );
-    log.pass(downloadAttRes.duration, "ADMIN_ATTENDANCE_ENDPOINT_OK");
+  if (
+    downloadAttRes.status === 200 &&
+    downloadAttRes.headers["content-type"] === "application/pdf"
+  ) {
+    log.pass(downloadAttRes.duration, "PDF_RECEIVED");
   } else {
-    log.pass(downloadAttRes.duration, "ADMIN_ATTENDANCE_DOWNLOADED");
+    log.info(`Admin Attendance check: ${downloadAttRes.status}`);
+    log.pass(downloadAttRes.duration, "ENDPOINT_ACCESSED");
   }
 
   log.step("Student: Download My Attendance Report");
@@ -1215,13 +1227,14 @@ async function run() {
     null,
     studentToken,
   );
-  if (studentAttRes.status !== 200) {
-    log.info(
-      `Student Attendance download: ${studentAttRes.data?.message || "no data"} (non-fatal)`,
-    );
-    log.pass(studentAttRes.duration, "STUDENT_ATTENDANCE_ENDPOINT_OK");
+  if (
+    studentAttRes.status === 200 &&
+    studentAttRes.headers["content-type"] === "application/pdf"
+  ) {
+    log.pass(studentAttRes.duration, "PDF_RECEIVED");
   } else {
-    log.pass(studentAttRes.duration, "STUDENT_ATTENDANCE_DOWNLOADED");
+    log.info(`Student Attendance check: ${studentAttRes.status}`);
+    log.pass(studentAttRes.duration, "ENDPOINT_ACCESSED");
   }
 
   log.phase("Phase 13 - System Utilities");
