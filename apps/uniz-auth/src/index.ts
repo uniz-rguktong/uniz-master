@@ -7,6 +7,7 @@ import compression from "compression";
 import authRoutes from "./routes/auth.routes";
 
 dotenv.config();
+  console.log("[DEBUG] Service starting with priority fixes...");
 
 const app = express();
 app.set("trust proxy", 1); // Trust first proxy (Vercel/Gateway)
