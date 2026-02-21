@@ -23,28 +23,44 @@ export async function initPushNotifications(
   notificationServiceUrl: string,
 ): Promise<void> {
   try {
+    console.log(`[Push] initPushNotifications called for user: ${username}`);
+
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-      console.log("[Push] Browser does not support push notifications.");
+      console.warn("[Push] Browser does not support push notifications.");
       return;
     }
 
     // Register the service worker
+    console.log("[Push] Registering service worker...");
     const registration = await navigator.serviceWorker.register("/sw.js", {
       scope: "/",
     });
     await navigator.serviceWorker.ready;
+    console.log("[Push] Service worker ready.");
+
+    // Log current permission before asking
+    console.log(`[Push] Current permission state: ${Notification.permission}`);
+
+    if (Notification.permission === "denied") {
+      console.warn(
+        "[Push] Notifications were previously DENIED. Reset in browser site settings.",
+      );
+      return;
+    }
 
     // Request permission - silently skip if denied
     const permission = await Notification.requestPermission();
+    console.log(`[Push] Permission result: ${permission}`);
     if (permission !== "granted") {
-      console.log("[Push] Notification permission denied.");
       return;
     }
 
     // Check if already subscribed to avoid duplicate DB writes
     let subscription = await registration.pushManager.getSubscription();
-
-    if (!subscription) {
+    if (subscription) {
+      console.log("[Push] Already subscribed, re-sending to backend...");
+    } else {
+      console.log("[Push] Creating new subscription...");
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
@@ -52,13 +68,16 @@ export async function initPushNotifications(
     }
 
     // Send to backend: POST /subscribe
-    await fetch(`${notificationServiceUrl}/subscribe`, {
+    console.log(
+      `[Push] Sending subscription to backend: ${notificationServiceUrl}/subscribe`,
+    );
+    const resp = await fetch(`${notificationServiceUrl}/subscribe`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, subscription }),
     });
-
-    console.log(`[Push] Subscription registered for ${username}`);
+    console.log(`[Push] Backend response: ${resp.status}`);
+    console.log(`[Push] ✅ Subscription registered for ${username}`);
   } catch (err) {
     // Non-fatal - email still works as fallback
     console.warn("[Push] Push setup failed (non-fatal):", err);

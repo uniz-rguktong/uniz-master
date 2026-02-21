@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { is_authenticated } from "../store";
 import { useRecoilState } from "recoil";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -7,11 +7,15 @@ import { toast } from "react-toastify";
 import { initPushNotifications } from "../utils/pushNotifications";
 import { NOTIFICATION_SERVICE_URL } from "../api/endpoints";
 
+// Module-level singleton — shared across ALL useIsAuth instances in the app.
+// useRef(false) would NOT work here because useIsAuth is called by 10+ components,
+// each getting their own separate ref. This ensures push fires exactly once per session.
+let pushInitialized = false;
+
 export function useIsAuth() {
   const [isAuth, setAuth] = useRecoilState(is_authenticated);
   const navigateTo = useNavigate();
   const location = useLocation();
-  const pushInitialized = useRef(false);
 
   useEffect(() => {
     const getSafeToken = (key: string) => {
@@ -79,8 +83,8 @@ export function useIsAuth() {
       }
 
       // Silently init push notifications once
-      if (!pushInitialized.current && decoded?.username) {
-        pushInitialized.current = true;
+      if (!pushInitialized && decoded?.username) {
+        pushInitialized = true;
         initPushNotifications(decoded.username, NOTIFICATION_SERVICE_URL);
       }
 
@@ -111,8 +115,8 @@ export function useIsAuth() {
       }
 
       // Silently init push notifications once
-      if (!pushInitialized.current && decoded?.username) {
-        pushInitialized.current = true;
+      if (!pushInitialized && decoded?.username) {
+        pushInitialized = true;
         initPushNotifications(decoded.username, NOTIFICATION_SERVICE_URL);
       }
 
