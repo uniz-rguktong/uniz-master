@@ -569,23 +569,53 @@ const sendWebPush = async (
     const pushPayload = JSON.stringify({
       title: payload.title,
       body: payload.body,
-      icon: "/icon-192x192.png",
+      icon: "/assets/ongole_logo.png",
+      badge: "/assets/ongole_logo.png",
+      tag: `uniz-${username}-${Date.now()}`,
       data: payload.data || {},
     });
 
-    await Promise.allSettled(
-      subscriptions.map((sub) =>
-        webpush.sendNotification(
-          {
-            endpoint: sub.endpoint,
-            keys: { p256dh: sub.p256dh, auth: sub.auth },
-          },
-          pushPayload,
-        ),
-      ),
+    const results = await Promise.allSettled(
+      subscriptions.map(async (sub) => {
+        try {
+          await webpush.sendNotification(
+            {
+              endpoint: sub.endpoint,
+              keys: { p256dh: sub.p256dh, auth: sub.auth },
+            },
+            pushPayload,
+            { TTL: 60 }, // 60s delivery window; avoids stale notifications queued for hours
+          );
+          console.log(`[Push] ✅ Sent to endpoint: ${sub.endpoint.slice(-30)}`);
+        } catch (pushErr: any) {
+          const statusCode = pushErr.statusCode || pushErr.status;
+          // 410 Gone = subscription expired/unsubscribed; 404 Not Found = invalid endpoint
+          // Both mean we must delete the subscription from DB — it will NEVER work again
+          if (statusCode === 410 || statusCode === 404) {
+            console.warn(
+              `[Push] Subscription expired (${statusCode}) for user ${username}. Deleting endpoint: ${sub.endpoint.slice(-30)}`,
+            );
+            await prisma.pushSubscription
+              .delete({ where: { endpoint: sub.endpoint } })
+              .catch((e: any) =>
+                console.error(
+                  `[Push] Failed to delete stale sub: ${e.message}`,
+                ),
+              );
+          } else {
+            console.error(
+              `[Push] Push failed for user ${username} (status=${statusCode}): ${pushErr.message}`,
+            );
+            throw pushErr;
+          }
+        }
+      }),
     );
+
+    const succeeded = results.filter((r) => r.status === "fulfilled").length;
+    const failed = results.filter((r) => r.status === "rejected").length;
     console.log(
-      `[Push] Sent to ${subscriptions.length} device(s) for user: ${username}`,
+      `[Push] Sent to ${subscriptions.length} device(s) for user: ${username} (ok=${succeeded} fail=${failed})`,
     );
   } catch (err: any) {
     console.error(`[Push] Error in sendWebPush: ${err.message}`);
@@ -1014,20 +1044,34 @@ app.post("/push/send", async (req, res) => {
     const pushPayload = JSON.stringify({
       title,
       body,
-      icon: "/icon-192x192.png",
+      icon: "/assets/ongole_logo.png",
+      badge: "/assets/ongole_logo.png",
+      tag: `uniz-broadcast-${Date.now()}`,
       data: { type: "BROADCAST" },
     });
 
     const results = await Promise.allSettled(
-      subscriptions.map((sub) =>
-        webpush.sendNotification(
-          {
-            endpoint: sub.endpoint,
-            keys: { p256dh: sub.p256dh, auth: sub.auth },
-          },
-          pushPayload,
-        ),
-      ),
+      subscriptions.map(async (sub) => {
+        try {
+          await webpush.sendNotification(
+            {
+              endpoint: sub.endpoint,
+              keys: { p256dh: sub.p256dh, auth: sub.auth },
+            },
+            pushPayload,
+            { TTL: 60 },
+          );
+        } catch (pushErr: any) {
+          const statusCode = pushErr.statusCode || pushErr.status;
+          if (statusCode === 410 || statusCode === 404) {
+            await prisma.pushSubscription
+              .delete({ where: { endpoint: sub.endpoint } })
+              .catch(() => {});
+          } else {
+            throw pushErr;
+          }
+        }
+      }),
     );
 
     const succeeded = results.filter((r) => r.status === "fulfilled").length;
