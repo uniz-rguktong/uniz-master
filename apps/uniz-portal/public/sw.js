@@ -1,5 +1,6 @@
 // UniZ Service Worker - Web Push Notifications
 self.addEventListener("push", function (event) {
+  console.log("[SW] Push received:", event);
   if (!event.data) return;
 
   let data = {};
@@ -12,8 +13,8 @@ self.addEventListener("push", function (event) {
   const title = data.title || "UniZ Notification";
   const options = {
     body: data.body || "",
-    icon: "/assets/icon-192x192.png",
-    badge: "/assets/icon-192x192.png",
+    icon: "/vite.svg", // Use existing file
+    badge: "/vite.svg", // Use existing file
     vibrate: [200, 100, 200],
     data: data.data || {},
     actions: [
