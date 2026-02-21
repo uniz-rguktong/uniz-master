@@ -66,10 +66,15 @@ export async function initPushNotifications(
         console.log(
           "[Push] Different user detected. Re-syncing subscription to backend.",
         );
+        const tok =
+          localStorage.getItem("student_token") ||
+          localStorage.getItem("admin_token") ||
+          undefined;
         await syncSubscriptionToBackend(
           existingSub,
           username,
           notificationServiceUrl,
+          tok,
         );
         localStorage.setItem("push_last_sync_user", username);
         return;
@@ -115,6 +120,11 @@ export async function initPushNotifications(
     }
 
     // Subscribe to push
+    // Read the JWT token from localStorage to authenticate the /subscribe call
+    const jwtToken =
+      localStorage.getItem("student_token") ||
+      localStorage.getItem("admin_token");
+
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as any,
@@ -125,10 +135,15 @@ export async function initPushNotifications(
       if (event.data?.type === "PUSH_SUBSCRIPTION_CHANGED") {
         const newSub = event.data.subscription;
         if (newSub) {
+          const refreshedTok =
+            localStorage.getItem("student_token") ||
+            localStorage.getItem("admin_token") ||
+            undefined;
           await syncSubscriptionToBackend(
             newSub,
             username,
             notificationServiceUrl,
+            refreshedTok,
           );
           localStorage.setItem("push_last_sync_user", username);
           console.log("[Push] ✅ Re-synced new subscription after change.");
@@ -141,6 +156,7 @@ export async function initPushNotifications(
       subscription,
       username,
       notificationServiceUrl,
+      jwtToken ?? undefined,
     );
     localStorage.setItem("push_last_sync_user", username);
     console.log(`[Push] ✅ Successfully registered push for ${username}`);
@@ -155,10 +171,16 @@ async function syncSubscriptionToBackend(
     | { endpoint: string; keys?: any; [k: string]: any },
   username: string,
   notificationServiceUrl: string,
+  token?: string,
 ): Promise<void> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
   const resp = await fetch(`${notificationServiceUrl}/subscribe`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify({ username, subscription }),
   });
 
