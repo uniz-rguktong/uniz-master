@@ -23,7 +23,7 @@ import axios from "axios";
 // Helper: Check if student is in campus
 const NOTIFICATION_SERVICE_URL = (
   (process.env.DOCKER_ENV === "true"
-    ? "http://uniz-notifications-service:3007"
+    ? "http://uniz-notification-service:3007"
     : process.env.NOTIFICATION_SERVICE_URL) || "http://localhost:3007"
 )
   .trim()
