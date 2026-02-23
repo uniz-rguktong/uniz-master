@@ -238,7 +238,7 @@ export const uploadStudents = async (req: any, res: Response) => {
                   process.env.INTERNAL_SECRET || "uniz-core"
                 ).trim();
                 await axios.post(
-                  `${AUTH_SERVICE_URL}/api/v1/auth/signup`,
+                  `${AUTH_SERVICE_URL}/signup`,
                   {
                     username: id,
                     password: `${id}@rguktong`, // Updated default password policy
