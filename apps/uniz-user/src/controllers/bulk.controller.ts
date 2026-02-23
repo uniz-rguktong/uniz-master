@@ -103,8 +103,13 @@ export const getUploadProgress = async (
 
 export const uploadStudents = async (req: any, res: Response) => {
   const user = req.user;
-  if (!user || user.role === UserRole.STUDENT) {
-    return res.status(403).json({ success: false, message: "Unauthorized" });
+  if (!user || user.role !== UserRole.WEBMASTER) {
+    return res
+      .status(403)
+      .json({
+        success: false,
+        message: "Unauthorized: Access restricted to Webmaster only",
+      });
   }
 
   if (!req.file)
@@ -232,7 +237,7 @@ export const uploadStudents = async (req: any, res: Response) => {
               try {
                 await axios.post(`${AUTH_SERVICE_URL}/api/v1/auth/signup`, {
                   username: id,
-                  password: id, // Default password is ID
+                  password: `${id}@rguktong`, // Updated default password policy
                   role: "student",
                   email: email,
                 });
