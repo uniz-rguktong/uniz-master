@@ -5,7 +5,7 @@ metadata:
   labels:
     app: uniz-auth-service
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: uniz-auth-service
@@ -33,11 +33,11 @@ spec:
                 name: uniz-secrets
           resources:
             limits:
-              cpu: "1000m"
+              cpu: "800m"
               memory: "512Mi"
             requests:
-              cpu: "1000m"
-              memory: "512Mi"
+              cpu: "200m"
+              memory: "256Mi"
           livenessProbe:
             httpGet:
               path: /health
@@ -74,8 +74,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-auth-service
-  minReplicas: 2
-  maxReplicas: 10
+  minReplicas: 4
+  maxReplicas: 12
   metrics:
     - type: Resource
       resource:
@@ -87,8 +87,8 @@ spec:
     scaleUp:
       stabilizationWindowSeconds: 0
       policies:
-      - type: Percent
-        value: 100
-        periodSeconds: 15
+        - type: Percent
+          value: 100
+          periodSeconds: 15
     scaleDown:
-      stabilizationWindowSeconds: 300
+      stabilizationWindowSeconds: 600
