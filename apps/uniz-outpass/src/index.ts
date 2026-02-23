@@ -25,7 +25,7 @@ app.get("/health", (req, res) => {
 import requestRoutes from "./routes/request.routes";
 import grievanceRoutes from "./routes/grievance.routes";
 
-app.use("/grievance", grievanceRoutes); // Mount specific routes first
+app.use("/", grievanceRoutes); // Mount specific routes first
 app.use("/", requestRoutes);
 
 // 404 Handler
@@ -40,19 +40,19 @@ app.use((req, res) => {
 
 const server = app.listen(PORT, () => {
   console.log(`Outpass Service running on port ${PORT}`);
-server.keepAliveTimeout = 65000;
-server.headersTimeout = 66000;
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
 });
 
 // Graceful Shutdown Handler
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received. Starting graceful shutdown...');
+process.on("SIGTERM", async () => {
+  console.log("SIGTERM received. Starting graceful shutdown...");
   server.close(() => {
-    console.log('HTTP server closed.');
+    console.log("HTTP server closed.");
   });
   try {
-    if ((global as any).prisma || require('./utils/db.util').prisma) {
-        // generic attempt to close prisma if it exists
+    if ((global as any).prisma || require("./utils/db.util").prisma) {
+      // generic attempt to close prisma if it exists
     }
   } catch (e) {}
   process.exit(0);
