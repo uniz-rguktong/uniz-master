@@ -3,7 +3,7 @@ const ExcelJS = require("exceljs");
 const path = require("path");
 
 const API_BASE = "https://api.uniz.rguktong.in/api/v1";
-const BATCH_SIZE = 400; // Fire 400 requests at a time
+const BATCH_SIZE = 500; // Fire 500 requests at a time
 
 async function loadTest() {
   const wb = new ExcelJS.Workbook();
@@ -43,12 +43,15 @@ async function loadTest() {
       ),
     );
 
-    results.forEach((r) => {
+    results.forEach((r, idx) => {
       if (r.status === "fulfilled" && r.value.status === 200) success++;
       else {
         fail++;
-        if (r.reason?.response) {
-          // console.log(`Fail: ${r.reason.response.status}`);
+        if (fail === 1 || fail % 100 === 0) {
+          const err = r.reason?.response;
+          console.log(
+            `[ERR SAMPLE] Status: ${err?.status}, Message: ${JSON.stringify(err?.data)}`,
+          );
         }
       }
     });
