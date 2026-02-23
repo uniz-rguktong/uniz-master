@@ -5,7 +5,7 @@ metadata:
   labels:
     app: uniz-user-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: uniz-user-service
@@ -36,8 +36,8 @@ spec:
               cpu: "1000m"
               memory: "512Mi"
             requests:
-              cpu: "1000m"
-              memory: "512Mi"
+              cpu: "100m"
+              memory: "256Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -60,8 +60,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-user-service
-  minReplicas: 2
-  maxReplicas: 10
+  minReplicas: 3
+  maxReplicas: 12
   metrics:
     - type: Resource
       resource:
@@ -73,8 +73,8 @@ spec:
     scaleUp:
       stabilizationWindowSeconds: 0
       policies:
-      - type: Percent
-        value: 100
-        periodSeconds: 15
+        - type: Percent
+          value: 100
+          periodSeconds: 15
     scaleDown:
       stabilizationWindowSeconds: 300
