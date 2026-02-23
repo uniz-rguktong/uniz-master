@@ -26,6 +26,7 @@ const NOTIFICATION_SERVICE_URL = (
   .replace(/\/health$/, "");
 
 const sendPush = async (username: string, title: string, body: string) => {
+  if (process.env.SKIP_PUSH === "true") return;
   try {
     const url = `${NOTIFICATION_SERVICE_URL}/push/send`;
     await axios.post(
