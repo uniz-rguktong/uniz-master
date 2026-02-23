@@ -3,7 +3,7 @@ const ExcelJS = require("exceljs");
 const path = require("path");
 
 const API_BASE = "https://api.uniz.rguktong.in/api/v1";
-const BATCH_SIZE = 200; // Fire 200 requests at a time
+const BATCH_SIZE = 400; // Fire 400 requests at a time
 
 async function loadTest() {
   const wb = new ExcelJS.Workbook();
