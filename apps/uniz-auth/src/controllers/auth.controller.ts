@@ -456,6 +456,7 @@ export const signup = async (req: Request, res: Response) => {
     if (existing) {
       if (isInternal) {
         // Upsert behavior for internal services
+        console.log(`[AUTH-INTERNAL] Updating credential for: ${username}`);
         const updated = await prisma.authCredential.update({
           where: { id: existing.id },
           data: {
