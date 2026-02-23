@@ -60,7 +60,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-user-service
-  minReplicas: 3
+  minReplicas: 2
   maxReplicas: 12
   metrics:
     - type: Resource
