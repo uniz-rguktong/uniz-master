@@ -12,6 +12,7 @@ import {
   VERIFY_OTP_ENDPOINT,
   SET_NEW_PASS_ENDPOINT,
 } from "../../api/endpoints";
+import { apiClient } from "../../api/apiClient";
 import {
   User,
   Lock,
@@ -81,9 +82,8 @@ export default function Signin({ type }: SigninProps) {
 
     setIsLoading(true);
     try {
-      const response = await fetch(SIGNIN(type), {
+      const data = await apiClient<SigninResponse>(SIGNIN(type), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username:
             type === "student"
@@ -93,18 +93,7 @@ export default function Signin({ type }: SigninProps) {
         }),
       });
 
-      if (!response.ok) throw new Error(`Server error: ${response.status}`);
-      const data: SigninResponse = await response.json();
-
-      if (
-        data.msg &&
-        !data.student_token &&
-        !data.admin_token &&
-        !(data as any).token
-      ) {
-        toast.error(data.msg);
-        return;
-      }
+      if (!data) return;
 
       // Explicit Role Mismatch Checks
       if (type === "admin" && data.role === "student") {
@@ -121,39 +110,26 @@ export default function Signin({ type }: SigninProps) {
         return;
       }
 
-      if (type === "student" && data.student_token && data.role === "student") {
-        localStorage.setItem(
-          "student_token",
-          JSON.stringify(data.student_token),
-        );
+      const token =
+        data.student_token || data.admin_token || (data as any).token;
+
+      if (type === "student" && token && data.role === "student") {
+        localStorage.setItem("student_token", JSON.stringify(token));
         localStorage.setItem("username", JSON.stringify(username.trim()));
         setAuth({ is_authnticated: true, type: "student" });
         toast.success(`Welcome back, ${username.trim()}!`);
         navigate("/student", { replace: true });
-      } else if (
-        type === "admin" &&
-        (data.admin_token || (data as any).token || data.success)
-      ) {
-        const token = data.admin_token || (data as any).token || "";
+      } else if (type === "admin" && (token || data.success)) {
         localStorage.setItem("admin_token", JSON.stringify(token));
         localStorage.setItem("username", JSON.stringify(username.trim()));
-        const userRole = (data as any).role || "admin";
-        localStorage.setItem("admin_role", userRole);
+        localStorage.setItem("admin_role", (data as any).role || "admin");
 
         setAuth({ is_authnticated: true, type: "admin" });
         setAdmin(username.trim());
         toast.success("Welcome back, Admin!");
-
-        // Use a small delay to ensure Recoil state update is processed
-        setTimeout(() => {
-          navigate("/admin", { replace: true });
-        }, 100);
-      } else if (type === "faculty" && (data as any).token) {
-        // ... existing faculty logic ...
-        localStorage.setItem(
-          "faculty_token",
-          JSON.stringify((data as any).token),
-        );
+        setTimeout(() => navigate("/admin", { replace: true }), 100);
+      } else if (type === "faculty" && token) {
+        localStorage.setItem("faculty_token", JSON.stringify(token));
         localStorage.setItem("username", JSON.stringify(username.trim()));
         localStorage.setItem("role", (data as any).role);
         setAuth({ is_authnticated: true, type: "faculty" });
@@ -163,7 +139,8 @@ export default function Signin({ type }: SigninProps) {
         toast.error("Access denied: Invalid credentials for this portal.");
       }
     } catch (error: any) {
-      toast.error(`Failed to sign in: ${error.message || "Network error"}`);
+      // apiClient handles toasts, but we can add fallback
+      console.error("Signin failed:", error);
     } finally {
       setIsLoading(false);
     }
@@ -177,26 +154,18 @@ export default function Signin({ type }: SigninProps) {
 
     setIsLoading(true);
     try {
-      const response = await fetch(FORGOT_PASS_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username.trim() }),
-      });
+      const data = await apiClient<{ success: boolean; message?: string }>(
+        FORGOT_PASS_ENDPOINT,
+        {
+          method: "POST",
+          body: JSON.stringify({ username: username.trim() }),
+        },
+      );
 
-      const data = await response.json();
-      if (!response.ok) {
-        toast.error(data?.msg || `Failed to request OTP`);
-        return;
-      }
-
-      if (data.success) {
-        toast.success(data.msg || "OTP sent successfully");
+      if (data && data.success) {
+        toast.success(data.message || "OTP sent successfully");
         setStep("verifyOtp");
-      } else {
-        toast.error(data.msg || "Failed to send OTP");
       }
-    } catch (error: any) {
-      toast.error(`Error: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -209,24 +178,22 @@ export default function Signin({ type }: SigninProps) {
     }
     setIsLoading(true);
     try {
-      const response = await fetch(VERIFY_OTP_ENDPOINT, {
+      const data = await apiClient<{
+        success: boolean;
+        message?: string;
+        resetToken?: string;
+      }>(VERIFY_OTP_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: username.trim(),
           otp: otp.trim(),
         }),
       });
-      const data = await response.json();
 
-      if (data.success && data.resetToken) {
+      if (data && data.success && data.resetToken) {
         setResetToken(data.resetToken);
         toast.success(data.message || "OTP Verified");
-      } else {
-        toast.error(data.message || "Failed to verify OTP");
       }
-    } catch (error: any) {
-      toast.error(`Verification failed: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -244,33 +211,25 @@ export default function Signin({ type }: SigninProps) {
 
     setIsLoading(true);
     try {
-      const response = await fetch(SET_NEW_PASS_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: username.trim(),
-          resetToken: resetToken,
-          newPassword: newPassword,
-        }),
-      });
+      const data = await apiClient<{ success: boolean; message?: string }>(
+        SET_NEW_PASS_ENDPOINT,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            username: username.trim(),
+            resetToken: resetToken,
+            newPassword: newPassword,
+          }),
+        },
+      );
 
-      const data = await response.json();
-      if (!response.ok) {
-        toast.error(data?.msg || `Failed to reset password`);
-        return;
-      }
-
-      if (data.success) {
-        toast.success(data.msg || "Password reset successfully");
+      if (data && data.success) {
+        toast.success(data.message || "Password reset successfully");
         setOtp("");
         setNewPassword("");
         setResetToken(null);
         setStep("signin");
-      } else {
-        toast.error(data.msg || "Failed to reset password");
       }
-    } catch (error: any) {
-      toast.error(`Error: ${error.message}`);
     } finally {
       setIsLoading(false);
     }

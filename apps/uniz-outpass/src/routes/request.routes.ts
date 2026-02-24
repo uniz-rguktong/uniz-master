@@ -10,6 +10,7 @@ import {
   securityCheckOut,
   securityCheckIn,
   getSecuritySummary,
+  getOutsideStudents,
 } from "../controllers/request.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 
@@ -24,6 +25,7 @@ router.post("/outpass", submissionLimiter, createOutpass);
 router.post("/outing", submissionLimiter, createOuting);
 router.get("/history", getHistory);
 router.get("/history/:id", getHistory);
+router.get("/outside", getOutsideStudents);
 router.get("/outing/all", getAllOutings);
 router.get("/outpass/all", getAllOutpasses);
 

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { apiClient } from "../../api/apiClient";
 import { BASE_URL } from "../../api/endpoints";
 import {
   Trash2,
@@ -12,6 +14,9 @@ import {
   Upload,
   EyeOff,
 } from "lucide-react";
+
+const CLOUDINARY_UPLOAD_PRESET = "hho_unsigned";
+const CLOUDINARY_CLOUD_NAME = "dy2fjgt46";
 import { useDropzone } from "react-dropzone";
 import {
   DndContext,
@@ -138,16 +143,13 @@ export default function BannerManager() {
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const token = localStorage.getItem("admin_token");
-  const CLOUDINARY_UPLOAD_PRESET = "hho_unsigned";
-  const CLOUDINARY_CLOUD_NAME = "dy2fjgt46";
-
   const fetchBanners = async () => {
-    const res = await fetch(`${BASE_URL}/admin/banners`, {
-      headers: { Authorization: `Bearer ${JSON.parse(token!)}` },
-    });
-    const data = await res.json();
-    if (data.success) setBanners(data.banners);
+    try {
+      const data = await apiClient<any>(`${BASE_URL}/admin/banners`);
+      if (data && data.success) setBanners(data.banners);
+    } catch (err) {
+      console.error("fetchBanners error:", err);
+    }
   };
 
   useEffect(() => {
@@ -167,29 +169,26 @@ export default function BannerManager() {
   };
 
   const addBanner = async () => {
-    if (!title || !text || !image)
-      return alert("Title, Text and Image are required");
+    if (!title || !text || !image) {
+      toast.error("Title, Text and Image are required");
+      return;
+    }
     setLoading(true);
     try {
       const imageUrl = await uploadToCloudinary(image);
-      const res = await fetch(`${BASE_URL}/admin/banners`, {
+      const data = await apiClient<any>(`${BASE_URL}/admin/banners`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${JSON.parse(token!)}`,
-        },
         body: JSON.stringify({ title, text, imageUrl }),
       });
-      const data = await res.json();
-      if (data.success) {
+      if (data && data.success) {
         setText("");
         setTitle("");
         setImage(null);
         fetchBanners();
-      } else alert("Failed to add banner");
+        toast.success("Banner added successfully");
+      }
     } catch (err) {
-      console.error(err);
-      alert("Error uploading image or adding banner");
+      console.error("addBanner error:", err);
     } finally {
       setLoading(false);
     }
@@ -197,23 +196,35 @@ export default function BannerManager() {
 
   const deleteBanner = async (id: string) => {
     if (!confirm("Are you sure you want to delete this banner?")) return;
-    await fetch(`${BASE_URL}/admin/banners/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${JSON.parse(token!)}` },
-    });
-    fetchBanners();
+    try {
+      const data = await apiClient<any>(`${BASE_URL}/admin/banners/${id}`, {
+        method: "DELETE",
+      });
+      if (data && data.success) {
+        toast.success("Banner deleted");
+        fetchBanners();
+      }
+    } catch (err) {
+      console.error("deleteBanner error:", err);
+    }
   };
 
   const publishBanner = async (id: string, publish: boolean) => {
-    await fetch(`${BASE_URL}/admin/banners/${id}/publish`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${JSON.parse(token!)}`,
-      },
-      body: JSON.stringify({ publish }),
-    });
-    fetchBanners();
+    try {
+      const data = await apiClient<any>(
+        `${BASE_URL}/admin/banners/${id}/publish`,
+        {
+          method: "POST",
+          body: JSON.stringify({ publish }),
+        },
+      );
+      if (data && data.success) {
+        toast.success(publish ? "Banner published" : "Banner unpublished");
+        fetchBanners();
+      }
+    } catch (err) {
+      console.error("publishBanner error:", err);
+    }
   };
 
   const sensors = useSensors(useSensor(PointerSensor));

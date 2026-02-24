@@ -10,6 +10,7 @@ import {
   FORWARD_OUTING,
   FORWARD_OUTPASS,
 } from "../../api/endpoints";
+import { apiClient } from "../../api/apiClient";
 import { useState, useMemo } from "react";
 import { Button } from "../../components/Button";
 import { useIsAuth } from "../../hooks/is_authenticated";
@@ -58,9 +59,6 @@ export default function ApproveComp({ type }: ApproveProps) {
     action: "approve" | "reject" | "forward",
     id: string,
   ) => {
-    const token = localStorage.getItem("admin_token");
-    if (!token) return;
-
     let endpoint = "";
     const body: any = { id };
 
@@ -86,18 +84,13 @@ export default function ApproveComp({ type }: ApproveProps) {
     setLoadingId(id);
 
     try {
-      const res = await fetch(endpoint, {
+      const data = await apiClient<any>(endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${JSON.parse(token)}`,
-        },
         body: JSON.stringify(body),
       });
-      const data = await res.json();
 
-      if (data.success) {
-        toast.success(data.msg);
+      if (data && data.success) {
+        toast.success(data.msg || "Action successful");
 
         // Optimistic UI Update
         const updateState = (prev: any[]) => {
@@ -121,11 +114,9 @@ export default function ApproveComp({ type }: ApproveProps) {
 
         if (type === "outing") setOutings(updateState);
         else setOutpasses(updateState);
-      } else {
-        toast.error(data.msg);
       }
     } catch (err) {
-      toast.error(`Failed to ${action} request`);
+      console.error(`Failed to ${action} request:`, err);
     } finally {
       setLoadingId(null);
     }

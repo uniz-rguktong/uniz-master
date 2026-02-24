@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
-import axios from "axios";
+import { toast } from "react-toastify";
+import { apiClient } from "../../api/apiClient";
 import { student } from "../../store";
 
 import { ChevronDown, Award, AlertCircle } from "lucide-react";
@@ -59,43 +60,39 @@ export default function GradeHub() {
   // Handle Fetch Results button click
   const handleFetchResults = async () => {
     if (!user?.username) {
-      setError("Please sign in to view grades");
+      toast.error("Please sign in to view grades");
       return;
     }
 
     if (!selectedYear || !selectedSemester) {
-      setError("Please select both a year and a semester");
+      toast.error("Please select both a year and a semester");
       return;
     }
 
     setIsLoading(true);
     setError("");
     setGrades(null);
-    setGrades(null);
+
+    // Map "Sem 1" -> "SEM-1" and "Sem 2" -> "SEM-2"
+    const mappedSemester = selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
 
     try {
-      const token = localStorage
-        .getItem("student_token")
-        ?.replace(/^"|"$/g, "");
-
-      // Map "Sem 1" -> "SEM-1" and "Sem 2" -> "SEM-2"
-      const mappedSemester = selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
-
-      const response = await axios.get(GET_GRADES, {
+      const data = await apiClient<any>(GET_GRADES, {
+        method: "GET",
         params: {
           studentId: user.username,
           semester: mappedSemester,
           year: selectedYear,
         },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
 
-      const data = response.data;
+      // apiClient handles status 404, 401, etc.
+      if (!data) {
+        setIsLoading(false);
+        return;
+      }
 
-      // Handle the new response structure
-      if (data && data.success && data.grades) {
+      if (data.success && data.grades) {
         const semesterKey = `${selectedYear}-${mappedSemester}`;
         const gpaData = data.gpa?.[semesterKey];
         const extractedGPA = gpaData ? gpaData.gpa : null;
@@ -139,26 +136,12 @@ export default function GradeHub() {
 
         setGrades(transformedData);
         setResultsFetched(true);
-      } else if (
-        data &&
-        (data.success ||
-          data.calculation_details ||
-          Array.isArray(data.grade_data) ||
-          data.grade_data)
-      ) {
-        // Fallback for old structure if still used
-        setGrades(data);
-        setResultsFetched(true);
       } else {
         setError(data.msg || "No results found for this selection.");
         setGrades(null);
       }
     } catch (err: any) {
-      console.error(err);
-      setError(
-        err.response?.data?.msg || "Failed to fetch grades. Please try again.",
-      );
-      setGrades(null);
+      console.error("Fetch grades error:", err);
     } finally {
       setIsLoading(false);
     }

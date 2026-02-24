@@ -12,16 +12,29 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   cd /root/uniz-master
   
   ORIG_HEAD=$(git rev-parse HEAD)
-  echo "📥 Pulling latest code..."
-  git pull origin main
+  echo "📥 Force pulling latest code..."
+  git fetch origin main
+  # Stash any local changes (like .env files if they are accidentally tracked) to avoid merge conflicts
+  git stash
+  git reset --hard origin/main
   NEW_HEAD=$(git rev-parse HEAD)
 
   # Detect changed files
   CHANGED_FILES=$(git diff --name-only $ORIG_HEAD $NEW_HEAD)
   
+  # Global rebuild detection (if root config files changed or force requested)
+  COMMIT_MSG=$(git log -1 --pretty=%B)
+  GLOBAL_REBUILD=false
+  if echo "$CHANGED_FILES" | grep -q "^package.json\|^package-lock.json\|^Dockerfile\|^.dockerignore\|^scripts/deploy.sh"; then
+    echo "🚨 Root configuration changed. Triggering global rebuild..."
+    GLOBAL_REBUILD=true
+  elif [[ "$COMMIT_MSG" == *"[force build]"* ]] || [[ "$COMMIT_MSG" == *"[rebuild all]"* ]]; then
+    echo "💪 Force rebuild requested via commit message. Triggering global rebuild..."
+    GLOBAL_REBUILD=true
+  fi
+
   if [ -z "$CHANGED_FILES" ]; then
-    echo "ℹ️  No changes detected in Git. Using all services for safety (one-time force)."
-    CHANGED_FILES="FORCE_ALL"
+    echo "ℹ️  No changes detected in Git. Skipping builds."
   fi
 
   # Service mapping: "folder_name:image_name:deployment_name:container_name"
@@ -44,19 +57,19 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
 
   for s in "${ALL_SERVICES[@]}"; do
     IFS=':' read -r DIR IMG DEP CON <<< "$s"
-    
+    echo "🎯 Checking for changes in $DIR..."
     SHOULD_BUILD=false
-    if [ "$CHANGED_FILES" == "FORCE_ALL" ]; then
+    
+    # Check if any changed file is within this service directory or its app/ equivalent
+    if [ "$GLOBAL_REBUILD" == "true" ]; then
+       SHOULD_BUILD=true
+    elif echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
+      echo "🎯 Change detected in $DIR"
       SHOULD_BUILD=true
-    else
-      # Check if any changed file is within this service directory
-      if echo "$CHANGED_FILES" | grep -q "^apps/$DIR\|^$DIR"; then
-        SHOULD_BUILD=true
-      fi
     fi
 
     if [ "$SHOULD_BUILD" == "true" ]; then
-      echo "🏗️  Changes detected in $DIR. Rebuilding $IMG..."
+      echo "🏗️  Rebuilding $IMG..."
       
       # Determine build context correctly
       BUILD_CONTEXT="apps/$DIR"

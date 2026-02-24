@@ -13,27 +13,41 @@ const GrievanceSchema = z.object({
   isAnonymous: z.boolean().default(false),
 });
 
-// Helper for sending mail
-const sendMail = async (type: string, to: string, data: any) => {
+const NOTIFICATION_SERVICE_URL = (
+  (process.env.DOCKER_ENV === "true"
+    ? "http://uniz-notification-service:3007"
+    : process.env.NOTIFICATION_SERVICE_URL) || "http://localhost:3007"
+)
+  .trim()
+  .replace(/\/health$/, "");
+
+// Helper for sending push notification
+const sendPush = async (username: string, title: string, body: string) => {
   try {
-    const GATEWAY = process.env.GATEWAY_URL || "http://localhost:3000/api/v1";
-    const SECRET = process.env.INTERNAL_SECRET;
-    if (!SECRET && process.env.NODE_ENV === "production")
-      throw new Error("INTERNAL_SECRET missing");
+    const url = `${NOTIFICATION_SERVICE_URL}/push/send`;
+    const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
 
     await axios.post(
-      `${GATEWAY}/mail/send`,
+      url,
       {
-        type,
-        to,
-        data,
+        target: "user",
+        username: username,
+        title,
+        body,
       },
       {
         headers: { "x-internal-secret": SECRET },
+        timeout: 5000,
       },
     );
+    console.log(
+      `[Grievance] Successfully sent push notification to: ${username}`,
+    );
   } catch (e: any) {
-    console.error(`Failed to send mail (${type}) to ${to}:`, e.message);
+    console.error(
+      `[Grievance][ERROR] Failed to send push notification to ${username}:`,
+      e.message,
+    );
   }
 };
 
@@ -66,25 +80,20 @@ export const submitGrievance = async (
       },
     });
 
-    // Notify SWO
-    await sendMail("admin_alert", "swo@rguktong.ac.in", {
-      studentName: isAnonymous
-        ? "Anonymous Student"
-        : (user as any).name || user.username,
-      studentId: isAnonymous ? "HIDDEN" : user.username,
-      reason: `Grievance [${category}]: ${description}`,
-      type: "grievance",
-    });
+    // Notify SWO (Assuming username 'swo' or role 'swo' exists, the push service sends by username)
+    // We send to 'swo' username as a placeholder for the SWO account
+    sendPush(
+      "swo",
+      "New Grievance Received",
+      `A new grievance in category '${category}' has been submitted.`,
+    );
 
     // Notify Student (only if not anonymous)
     if (!isAnonymous) {
-      await sendMail(
-        "grievance_submission",
-        user.email || `${user.username}@rguktong.ac.in`,
-        {
-          category,
-          ticketId: grievance.id,
-        },
+      sendPush(
+        user.username,
+        "Grievance Submitted",
+        `Your grievance regarding '${category}' has been received. Ticket ID: ${grievance.id.slice(-8).toUpperCase()}`,
       );
     }
 

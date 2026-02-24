@@ -196,6 +196,7 @@ export const createOutpass = async (
 
   const fromDateObj = new Date(fromDay);
   const toDateObj = new Date(toDay);
+  toDateObj.setHours(23, 59, 59, 999);
 
   // Calculate days
   const diffMs = toDateObj.getTime() - fromDateObj.getTime();
@@ -206,6 +207,29 @@ export const createOutpass = async (
     const { isInCampus, hasPending, gender } = await getStudentStatus(
       req.headers.authorization?.split(" ")[1] || "",
     );
+    const studentId = user.username.toUpperCase();
+
+    // 1. Proactive Expiry: Clean up any past requests for this student that aren't finalized
+    await Promise.all([
+      prisma.outpass.updateMany({
+        where: {
+          studentId,
+          isExpired: false,
+          toDay: { lt: now }, // Already past the end of the day or specified date
+          checkedOutTime: null, // Only if they never even left
+        },
+        data: { isExpired: true },
+      }),
+      prisma.outing.updateMany({
+        where: {
+          studentId,
+          isExpired: false,
+          toTime: { lt: now },
+          checkedOutTime: null,
+        },
+        data: { isExpired: true },
+      }),
+    ]);
 
     if (!isInCampus) {
       return res.status(403).json({
@@ -215,15 +239,47 @@ export const createOutpass = async (
     }
 
     if (hasPending) {
-      return res.status(409).json({
-        code: ErrorCode.RESOURCE_ALREADY_EXISTS,
-        message:
-          "You already have a pending request (Profile indicates Pending).",
-      });
+      // Self-healing: check if student is marked as pending in profile but has no active requests in DB
+      const currentActive = await Promise.all([
+        prisma.outpass.findFirst({
+          where: {
+            studentId,
+            isRejected: false,
+            isExpired: false,
+            checkedInTime: null,
+            OR: [{ toDay: { gte: now } }, { checkedOutTime: { not: null } }],
+          },
+        }),
+        prisma.outing.findFirst({
+          where: {
+            studentId,
+            isRejected: false,
+            isExpired: false,
+            checkedInTime: null,
+            OR: [{ toTime: { gte: now } }, { checkedOutTime: { not: null } }],
+          },
+        }),
+      ]);
+
+      if (!currentActive[0] && !currentActive[1]) {
+        console.log(
+          `[OUTPASS] Self-healing: Clearing stuck pending status for ${studentId}`,
+        );
+        await updateStudentProfileStatus(
+          user.username,
+          req.headers.authorization?.split(" ")[1] || "",
+          { isPending: false },
+        );
+      } else {
+        return res.status(409).json({
+          code: ErrorCode.RESOURCE_ALREADY_EXISTS,
+          message:
+            "You already have a pending/active request (Profile indicates Pending).",
+        });
+      }
     }
 
     // 2. Double check local DB for existing pending Outpass AND Outing
-    const studentId = user.username.toUpperCase();
     const [existingOutpass, existingOuting] = await Promise.all([
       prisma.outpass.findFirst({
         where: {
@@ -231,6 +287,7 @@ export const createOutpass = async (
           isRejected: false,
           isExpired: false,
           checkedInTime: null,
+          OR: [{ toDay: { gte: now } }, { checkedOutTime: { not: null } }],
         },
       }),
       prisma.outing.findFirst({
@@ -239,6 +296,7 @@ export const createOutpass = async (
           isRejected: false,
           isExpired: false,
           checkedInTime: null,
+          OR: [{ toTime: { gte: now } }, { checkedOutTime: { not: null } }],
         },
       }),
     ]);
@@ -362,16 +420,72 @@ export const createOuting = async (
       });
     }
 
+    const studentId = user.username.toUpperCase();
+
+    // 1. Proactive Expiry: Clean up any past requests for this student that aren't finalized
+    await Promise.all([
+      prisma.outpass.updateMany({
+        where: {
+          studentId,
+          isExpired: false,
+          toDay: { lt: now },
+          checkedOutTime: null,
+        },
+        data: { isExpired: true },
+      }),
+      prisma.outing.updateMany({
+        where: {
+          studentId,
+          isExpired: false,
+          toTime: { lt: now },
+          checkedOutTime: null,
+        },
+        data: { isExpired: true },
+      }),
+    ]);
+
     if (hasPending) {
-      return res.status(409).json({
-        code: ErrorCode.RESOURCE_ALREADY_EXISTS,
-        message:
-          "You already have a pending request (Profile indicates Pending).",
-      });
+      // Self-healing: check if student is marked as pending in profile but has no active requests in DB
+      const currentActive = await Promise.all([
+        prisma.outpass.findFirst({
+          where: {
+            studentId,
+            isRejected: false,
+            isExpired: false,
+            checkedInTime: null,
+            OR: [{ toDay: { gte: now } }, { checkedOutTime: { not: null } }],
+          },
+        }),
+        prisma.outing.findFirst({
+          where: {
+            studentId,
+            isRejected: false,
+            isExpired: false,
+            checkedInTime: null,
+            OR: [{ toTime: { gte: now } }, { checkedOutTime: { not: null } }],
+          },
+        }),
+      ]);
+
+      if (!currentActive[0] && !currentActive[1]) {
+        console.log(
+          `[OUTING] Self-healing: Clearing stuck pending status for ${studentId}`,
+        );
+        await updateStudentProfileStatus(
+          user.username,
+          req.headers.authorization?.split(" ")[1] || "",
+          { isPending: false },
+        );
+      } else {
+        return res.status(409).json({
+          code: ErrorCode.RESOURCE_ALREADY_EXISTS,
+          message:
+            "You already have a pending/active request (Profile indicates Pending).",
+        });
+      }
     }
 
     // 2. Double check local DB for existing pending Outpass AND Outing
-    const studentId = user.username.toUpperCase();
     const [existingOutpass, existingOuting] = await Promise.all([
       prisma.outpass.findFirst({
         where: {
@@ -379,6 +493,7 @@ export const createOuting = async (
           isRejected: false,
           isExpired: false,
           checkedInTime: null,
+          OR: [{ toDay: { gte: now } }, { checkedOutTime: { not: null } }],
         },
       }),
       prisma.outing.findFirst({
@@ -387,6 +502,7 @@ export const createOuting = async (
           isRejected: false,
           isExpired: false,
           checkedInTime: null,
+          OR: [{ toTime: { gte: now } }, { checkedOutTime: { not: null } }],
         },
       }),
     ]);
@@ -1291,6 +1407,118 @@ export const securityCheckIn = async (
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to process check-in.",
+    });
+  }
+};
+
+export const getOutsideStudents = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ code: ErrorCode.AUTH_UNAUTHORIZED });
+
+  try {
+    // 1. Fetch all active outside records (checked out but not in)
+    const [outpasses, outings] = await Promise.all([
+      prisma.outpass.findMany({
+        where: { checkedOutTime: { not: null }, checkedInTime: null },
+      }),
+      prisma.outing.findMany({
+        where: { checkedOutTime: { not: null }, checkedInTime: null },
+      }),
+    ]);
+
+    // 2. Identify unique student IDs
+    const studentIds = [
+      ...new Set([
+        ...outpasses.map((o) => o.studentId),
+        ...outings.map((o) => o.studentId),
+      ]),
+    ];
+
+    if (studentIds.length === 0) {
+      return res.json({ success: true, students: [] });
+    }
+
+    // 3. Fetch basic profile info from User Service (Batch)
+    const GATEWAY = (
+      (process.env.DOCKER_ENV === "true"
+        ? "http://uniz-gateway-api:3000/api/v1"
+        : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
+    ).trim();
+
+    const internalSecret = process.env.INTERNAL_SECRET || "uniz-core";
+    const profilesRes = await axios
+      .post(
+        `${GATEWAY}/profile/internal/bulk-profiles`,
+        { usernames: studentIds },
+        { headers: { "x-internal-secret": internalSecret } },
+      )
+      .catch(() => ({ data: { success: false, students: [] } }));
+
+    const studentsMap = new Map();
+    if (profilesRes.data && profilesRes.data.success) {
+      profilesRes.data.students.forEach((s: any) =>
+        studentsMap.set(s.username.toUpperCase(), s),
+      );
+    }
+
+    // 4. Group requests by student
+    const result = studentIds.map((sid) => {
+      const sidUpper = sid.toUpperCase();
+      const profile = studentsMap.get(sidUpper) || {
+        username: sidUpper,
+        name: "Unknown Student",
+        email: "N/A",
+        gender: "N/A",
+      };
+
+      const sOutpasses = outpasses
+        .filter((o) => o.studentId === sidUpper)
+        .map((o) => ({
+          ...o,
+          _id: o.id,
+          is_approved: o.isApproved,
+          is_expired: o.isExpired,
+          from_day: new Date(o.fromDay).toLocaleDateString("en-IN"),
+          to_day: new Date(o.toDay).toLocaleDateString("en-IN"),
+        }));
+
+      const sOutings = outings
+        .filter((o) => o.studentId === sidUpper)
+        .map((o) => ({
+          ...o,
+          _id: o.id,
+          is_approved: o.isApproved,
+          is_expired: o.isExpired,
+          from_time: new Date(o.fromTime).toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          to_time: new Date(o.toTime).toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        }));
+
+      return {
+        _id: profile._id || sidUpper,
+        username: sidUpper,
+        name: profile.name,
+        email: profile.email,
+        gender: profile.gender,
+        outpasses_list: sOutpasses,
+        outings_list: sOutings,
+      };
+    });
+
+    return res.json({ success: true, students: result });
+  } catch (e: any) {
+    console.error("Failed to fetch outside students:", e.message);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to fetch outside students list.",
     });
   }
 };

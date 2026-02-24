@@ -29,25 +29,11 @@ export const InstallPWA = () => {
       e.preventDefault();
       setDeferredPrompt(e);
       if (!isStandaloneMatch) {
-        // If not standalone, always show the prompt on visit
         setIsVisible(true);
       }
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-
-    // 4. Force visibility check for mobile
-    const isMobile =
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent,
-      );
-
-    // Show if explicitly allowed or if it's mobile and not installed
-    if (!isStandaloneMatch && isMobile) {
-      // Give it a small delay for better UX
-      const timer = setTimeout(() => setIsVisible(true), 1500);
-      return () => clearTimeout(timer);
-    }
 
     return () => {
       window.removeEventListener(
@@ -57,9 +43,31 @@ export const InstallPWA = () => {
     };
   }, []);
 
+  // 4. Force visibility check for mobile
+  useEffect(() => {
+    const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
+    if (isDismissed) return;
+
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent,
+      );
+
+    const isStandaloneMatch =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true;
+
+    // Show if mobile and not installed
+    if (!isStandaloneMatch && isMobile) {
+      const timer = setTimeout(() => setIsVisible(true), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isStandalone]);
+
   // 5. Immediate show after login if not already standalone
   useEffect(() => {
-    if (auth.is_authnticated && !isStandalone) {
+    const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
+    if (auth.is_authnticated && !isStandalone && !isDismissed) {
       setIsVisible(true);
     }
   }, [auth.is_authnticated, isStandalone]);
@@ -75,6 +83,11 @@ export const InstallPWA = () => {
     return () => clearTimeout(timer);
   }, [isVisible]);
 
+  const handleDismiss = () => {
+    setIsVisible(false);
+    localStorage.setItem("pwa_prompt_dismissed", "true");
+  };
+
   const handleInstallClick = async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
@@ -85,12 +98,10 @@ export const InstallPWA = () => {
         setIsVisible(false);
       }
     } else if (isIOS) {
-      // iOS instructions are handled in the UI via descriptive text
       alert(
         "To install UniZ App: Tap 'Share' icon in Safari bottom menu, then select 'Add to Home Screen'.",
       );
     } else {
-      // Fallback for browsers that don't support the prompt but could be installed
       alert(
         "Open your browser menu (usually three dots) and look for 'Install App' or 'Add to Home Screen'.",
       );
@@ -109,13 +120,11 @@ export const InstallPWA = () => {
         className="fixed bottom-6 left-4 right-4 z-[99999] md:left-auto md:right-6 md:max-w-[380px]"
       >
         <div className="relative bg-white/95 backdrop-blur-2xl border border-white shadow-[0_30px_70px_-10px_rgba(0,0,0,0.3)] rounded-[2.5rem] p-6 overflow-hidden">
-          {/* Glassmorphism Accents */}
           <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#800000]/5 rounded-full blur-[40px]" />
           <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/5 rounded-full blur-[40px]" />
 
-          {/* Close button icon */}
           <button
-            onClick={() => setIsVisible(false)}
+            onClick={handleDismiss}
             className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-all active:scale-90"
           >
             <X size={16} />

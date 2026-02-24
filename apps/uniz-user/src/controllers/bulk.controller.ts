@@ -103,8 +103,11 @@ export const getUploadProgress = async (
 
 export const uploadStudents = async (req: any, res: Response) => {
   const user = req.user;
-  if (!user || user.role === UserRole.STUDENT) {
-    return res.status(403).json({ success: false, message: "Unauthorized" });
+  if (!user || user.role !== UserRole.WEBMASTER) {
+    return res.status(403).json({
+      success: false,
+      message: "Unauthorized: Access restricted to Webmaster only",
+    });
   }
 
   if (!req.file)
@@ -229,21 +232,27 @@ export const uploadStudents = async (req: any, res: Response) => {
               successCount++;
 
               // 2. Create Auth Credential (if needed)
+              // 2. Create/Update Auth Credential
               try {
-                await axios.post(`${AUTH_SERVICE_URL}/api/v1/auth/signup`, {
-                  username: id,
-                  password: id, // Default password is ID
-                  role: "student",
-                  email: email,
-                });
+                const SECRET = (
+                  process.env.INTERNAL_SECRET || "uniz-core"
+                ).trim();
+                await axios.post(
+                  `${AUTH_SERVICE_URL}/signup`,
+                  {
+                    username: id,
+                    password: `${id}@rguktong`, // Updated default password policy
+                    role: "student",
+                    email: email,
+                  },
+                  {
+                    headers: { "x-internal-secret": SECRET },
+                  },
+                );
               } catch (authErr: any) {
-                if (authErr.response && authErr.response.status === 409) {
-                  // already exists, skip
-                } else {
-                  console.warn(
-                    `Failed to create auth for ${id}: ${authErr.message}`,
-                  );
-                }
+                console.warn(
+                  `Failed to sync auth for ${id}: ${authErr.message}`,
+                );
               }
             } catch (dbErr: any) {
               failCount++;

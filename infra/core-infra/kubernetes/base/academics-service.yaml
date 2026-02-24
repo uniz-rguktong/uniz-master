@@ -5,7 +5,7 @@ metadata:
   labels:
     app: uniz-academics-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: uniz-academics-service
@@ -37,8 +37,8 @@ spec:
               cpu: "1000m"
               memory: "512Mi"
             requests:
-              cpu: "1000m"
-              memory: "512Mi"
+              cpu: "100m"
+              memory: "256Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -62,7 +62,7 @@ spec:
     kind: Deployment
     name: uniz-academics-service
   minReplicas: 2
-  maxReplicas: 10
+  maxReplicas: 15
   metrics:
     - type: Resource
       resource:

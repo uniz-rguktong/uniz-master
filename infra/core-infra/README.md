@@ -33,7 +33,6 @@ The Core Infrastructure module manages the environmental state and deployment or
 
 - Docker & Docker Compose
 - Node.js 20+
-- Access to Neon PostgreSQL & Upstash Redis (Production)
 
 ### Environmental Setup
 

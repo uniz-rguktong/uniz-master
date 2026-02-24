@@ -28,7 +28,6 @@ The following environment variables should be set in each service:
 - `GATEWAY_URL` - Points to the production gateway
 - `INTERNAL_SECRET` - Shared secret for internal service communication
 - `DATABASE_URL` - PostgreSQL connection string
-- `REDIS_URL` - Upstash Redis URL
 - `JWT_SECURITY_KEY` - JWT signing key
 
 ## GitHub Organization
