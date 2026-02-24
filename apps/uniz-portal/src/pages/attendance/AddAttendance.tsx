@@ -10,8 +10,9 @@ import {
   X,
   FileSpreadsheet,
 } from "lucide-react";
-import { BASE_URL } from "../../api/endpoints";
+import { BASE_URL, GET_ATTENDANCE_TEMPLATE } from "../../api/endpoints";
 import { Button } from "../../components/Button";
+import { downloadFile } from "../../api/apiClient";
 import { cn } from "../../utils/cn";
 
 export default function AddAttendance() {
@@ -71,23 +72,10 @@ export default function AddAttendance() {
   };
 
   const downloadTemplate = async () => {
-    try {
-      const res = await fetch(`${BASE_URL}/academics/attendance/template`, {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token!)}`,
-        },
-      });
-      if (!res.ok) throw new Error("Download failed");
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Attendance_Template.xlsx`;
-      a.click();
-      a.remove();
-    } catch {
-      setError("Error downloading template");
-    }
+    await downloadFile(
+      GET_ATTENDANCE_TEMPLATE("", "", ""),
+      "Attendance_Template.xlsx",
+    );
   };
 
   return (
