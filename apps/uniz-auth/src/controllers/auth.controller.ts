@@ -442,19 +442,40 @@ export const toggleSuspension = async (req: Request, res: Response) => {
 
 export const signup = async (req: Request, res: Response) => {
   const { username, password, role, email } = req.body;
+  const internalSecret = req.headers["x-internal-secret"];
+  const isInternal =
+    internalSecret === (process.env.INTERNAL_SECRET || "uniz-core").trim();
 
   try {
     const existing = await prisma.authCredential.findFirst({
       where: { username: { equals: username, mode: "insensitive" } },
     });
+
+    const hashedPassword = await hashPassword(password);
+
     if (existing) {
+      if (isInternal) {
+        // Upsert behavior for internal services
+        const updated = await prisma.authCredential.update({
+          where: { id: existing.id },
+          data: {
+            passwordHash: hashedPassword,
+            role: role || existing.role,
+          },
+        });
+        return res.json({
+          success: true,
+          message: "Credential updated",
+          id: updated.id,
+        });
+      }
+
       return res.status(409).json({
         code: ErrorCode.VALIDATION_ERROR,
         message: "Username already exists",
       });
     }
 
-    const hashedPassword = await hashPassword(password);
     const user = await prisma.authCredential.create({
       data: {
         username,

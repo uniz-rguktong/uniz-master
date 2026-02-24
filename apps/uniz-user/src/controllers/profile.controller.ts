@@ -295,6 +295,9 @@ export const searchStudents = async (
     if (req.body.isPresentInCampus !== undefined) {
       where.isPresentInCampus = req.body.isPresentInCampus;
     }
+    if (req.body.isApplicationPending !== undefined) {
+      where.isApplicationPending = req.body.isApplicationPending;
+    }
 
     // Cache search results for 1 minute
     res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=300");
@@ -505,5 +508,34 @@ export const updateStudentPresence = async (
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to update presence",
     });
+  }
+};
+
+export const getBulkProfiles = async (req: Request, res: Response) => {
+  const secret = req.headers["x-internal-secret"];
+  const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+
+  if (secret !== INTERNAL_SECRET) {
+    return res.status(401).json({ message: "Internal secret mismatch" });
+  }
+
+  const { usernames } = req.body;
+
+  if (!Array.isArray(usernames)) {
+    return res.status(400).json({ message: "usernames array is required" });
+  }
+
+  try {
+    const profiles = await prisma.studentProfile.findMany({
+      where: {
+        username: { in: usernames.map((u: string) => u.toUpperCase()) },
+      },
+    });
+    return res.json({
+      success: true,
+      students: profiles.map(mapStudentProfile),
+    });
+  } catch (e) {
+    return res.status(500).json({ message: "Bulk fetch failed" });
   }
 };
