@@ -301,10 +301,8 @@ export default function GradeHub() {
               </div>
               <button
                 onClick={async () => {
-                  const mappedSemester = selectedSemester.replace(
-                    "Sem - ",
-                    "SEM-",
-                  );
+                  const mappedSemester =
+                    selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
                   const semId = `${selectedYear}-${mappedSemester}`;
                   await downloadFile(
                     DOWNLOAD_GRADES(semId),
