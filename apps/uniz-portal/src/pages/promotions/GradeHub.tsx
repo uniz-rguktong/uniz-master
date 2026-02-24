@@ -79,12 +79,10 @@ export default function GradeHub() {
     try {
       const data = await apiClient<any>(GET_GRADES, {
         method: "GET",
-        headers: {
-          "x-params": JSON.stringify({
-            studentId: user.username,
-            semester: mappedSemester,
-            year: selectedYear,
-          }),
+        params: {
+          studentId: user.username,
+          semester: mappedSemester,
+          year: selectedYear,
         },
       });
 
