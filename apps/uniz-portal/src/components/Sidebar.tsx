@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { is_authenticated, student } from "../store";
 import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../hooks/is_authenticated";
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useEffect } from "react";
 import { enableOutingsAndOutpasses } from "../pages/student/student";
 import {
   LayoutDashboard,
@@ -14,13 +14,12 @@ import {
   Laptop,
   KeyRound,
   LogOut,
-  Pencil,
   AlertCircle,
+  Menu,
+  X
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
-import { Sidebar as SidebarUI, SidebarBody, SidebarLink } from "./ui/sidebar";
-import { motion } from "framer-motion";
 
 const CampusHub = lazy(() => import("../pages/promotions/CampusHub"));
 const Attendance = lazy(() => import("../pages/attendance/Attendance"));
@@ -36,18 +35,18 @@ export { enableOutingsAndOutpasses } from "../pages/student/student";
 
 interface MainContent {
   content:
-    | "outpass"
-    | "outing"
-    | "gradehub"
-    | "resetpassword"
-    | "dashboard"
-    | "requestOuting"
-    | "requestOutpass"
-    | "campushub"
-    | "studyspace"
-    | "attendance"
-    | "grievance"
-    | "error";
+  | "outpass"
+  | "outing"
+  | "gradehub"
+  | "resetpassword"
+  | "dashboard"
+  | "requestOuting"
+  | "requestOutpass"
+  | "campushub"
+  | "studyspace"
+  | "attendance"
+  | "grievance"
+  | "error";
 }
 
 const ContentSkeleton = () => (
@@ -56,44 +55,29 @@ const ContentSkeleton = () => (
   </div>
 );
 
-const Logo = () => {
-  return (
-    <div className="font-normal hidden md:flex space-x-2 items-center text-sm text-black py-1 relative z-20">
-      <img
-        src="/assets/ongole_logo.png"
-        className="h-12 w-12 object-contain"
-        alt="Ongole Logo"
-      />
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-extrabold text-xl tracking-tighter text-black whitespace-pre"
-      >
-        Ongole
-      </motion.span>
-    </div>
-  );
-};
-
-const LogoIcon = () => {
-  return (
-    <div className="font-normal hidden md:flex space-x-2 items-center text-sm text-black py-1 relative z-20">
-      <img
-        src="/assets/ongole_logo.png"
-        className="h-12 w-12 object-contain"
-        alt="Ongole Logo"
-      />
-    </div>
-  );
-};
-
 export default function Sidebar({ content }: MainContent) {
   useIsAuth();
   const userData = useRecoilValue<any>(student);
   const navigate = useNavigate();
   const [_isAuth, setAuth] = useRecoilState(is_authenticated);
-  const [open, setOpen] = useState(false);
+
+  const [isOpen, setIsOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+
+  // Auto-open sidebar on desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsOpen(true);
+      } else {
+        setIsOpen(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("student_token");
@@ -108,62 +92,71 @@ export default function Sidebar({ content }: MainContent) {
 
   const navItems = [
     {
+      id: "dashboard",
       label: "My Profile",
       href: "/student",
       content: "dashboard",
-      icon: <LayoutDashboard className="h-5 w-5 shrink-0" />,
+      icon: LayoutDashboard,
     },
     ...(enableOutingsAndOutpasses
       ? [
-          {
-            label: "Outing Requests",
-            href: "/student/outing",
-            content: "outing",
-            icon: <Clock className="h-5 w-5 shrink-0" />,
-          },
-          {
-            label: "Outpass Requests",
-            href: "/student/outpass",
-            content: "outpass",
-            icon: <CalendarDays className="h-5 w-5 shrink-0" />,
-          },
-        ]
+        {
+          id: "outing",
+          label: "Outing Requests",
+          href: "/student/outing",
+          content: "outing",
+          icon: Clock,
+        },
+        {
+          id: "outpass",
+          label: "Outpass Requests",
+          href: "/student/outpass",
+          content: "outpass",
+          icon: CalendarDays,
+        },
+      ]
       : []),
     {
+      id: "gradehub",
       label: "Results",
       href: "/student/gradehub",
       content: "gradehub",
-      icon: <GraduationCap className="h-5 w-5 shrink-0" />,
+      icon: GraduationCap,
     },
     {
+      id: "attendance",
       label: "Attendance",
       href: "/student/attendance",
       content: "attendance",
-      icon: <CalendarCheck className="h-5 w-5 shrink-0" />,
+      icon: CalendarCheck,
     },
     {
+      id: "campushub",
       label: "Campus Hub",
       href: "/campushub",
       content: "campushub",
-      icon: <Home className="h-5 w-5 shrink-0" />,
+      icon: Home,
     },
     {
+      id: "studyspace",
       label: "Study Space",
       href: "/studyspace",
       content: "studyspace",
-      icon: <Laptop className="h-5 w-5 shrink-0" />,
+      icon: Laptop,
     },
     {
+      id: "resetpassword",
       label: "Settings",
       href: "/student/resetpassword",
       content: "resetpassword",
-      icon: <KeyRound className="h-5 w-5 shrink-0" />,
+      icon: KeyRound,
     },
     {
+      id: "grievance",
       label: "Grievance",
       href: "/student/grievance",
       content: "grievance",
-      icon: <AlertCircle className="h-5 w-5 shrink-0" />,
+      icon: AlertCircle,
     },
   ];
 
@@ -182,98 +175,146 @@ export default function Sidebar({ content }: MainContent) {
     error: <Error />,
   };
 
+  const toggleSidebar = () => setIsOpen(!isOpen);
+
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-white overflow-hidden">
-      <SidebarUI open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            {open ? <Logo /> : <LogoIcon />}
-            <div className="md:hidden flex flex-col items-center mt-6 mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="font-bold text-lg text-neutral-800">
-                  {userData?.name || "Student"}
-                </span>
-                <div
-                  onClick={() => {
-                    navigate("/student?edit=true");
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer p-1.5 rounded-full hover:bg-slate-100 active:bg-slate-200 transition-colors group"
-                >
-                  <Pencil className="h-4 w-4 text-neutral-400 group-hover:text-[#800000] transition-colors" />
+    <div className="flex flex-col md:flex-row h-screen bg-[#F8FAFC] overflow-hidden">
+      {/* Mobile hamburger button */}
+      <button
+        onClick={toggleSidebar}
+        className="fixed top-6 left-6 z-50 p-3 rounded-lg bg-white shadow-md border border-slate-100 md:hidden hover:bg-slate-50 transition-all duration-200"
+        aria-label="Toggle sidebar"
+      >
+        {isOpen ?
+          <X className="h-[19px] w-[19px] text-slate-600" /> :
+          <Menu className="h-[19px] w-[19px] text-slate-600" />
+        }
+      </button>
+
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden transition-opacity duration-300"
+          onClick={toggleSidebar}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`
+          fixed top-0 left-0 h-full bg-white border-r border-slate-200 z-40 transition-all duration-300 ease-in-out flex flex-col
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+          w-72
+          md:translate-x-0 md:static md:z-auto
+        `}
+      >
+        {/* Header with logo and collapse button */}
+        <div className="flex items-center justify-between p-6 bg-white/50 backdrop-blur-sm">
+          <div className="flex items-center space-x-3.5">
+            <div className="w-14 h-14 flex items-center justify-center p-1">
+              <img
+                src="/assets/ongole_logo.png"
+                className="h-full w-full object-contain"
+                alt="Ongole Logo"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-bold text-slate-900 text-[19px] tracking-tight leading-none">Ongole</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-blue-600/70 font-bold mt-1.5 px-0.5">Student Portal</span>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-2 overflow-y-auto">
+          <ul className="space-y-3">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = content === item.content;
+
+              return (
+                <li key={item.id}>
+                  <button
+                    onClick={() => {
+                      navigate(item.href);
+                      if (window.innerWidth < 768) setIsOpen(false);
+                    }}
+                    className={`
+                      w-full flex items-center space-x-3 px-3 py-3 rounded-md text-left transition-all duration-200 group relative
+                      ${isActive
+                        ? "bg-blue-50 text-blue-700 shadow-sm"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      }
+                    `}
+                  >
+                    <div className="flex items-center justify-center min-w-[24px]">
+                      <Icon
+                        className={`
+                          h-[21px] w-[21px] flex-shrink-0
+                          ${isActive
+                            ? "text-blue-600"
+                            : "text-slate-400 group-hover:text-slate-700"
+                          }
+                        `}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between w-full">
+                      <span className={`text-[15px] ${isActive ? "font-semibold" : "font-medium"}`}>{item.label}</span>
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        {/* Bottom section with profile and logout */}
+        <div className="mt-auto px-3 py-4 space-y-1">
+          {/* Profile Section */}
+          <div className="">
+            <div className="flex items-center px-3 py-2 transition-all duration-300 group">
+              <div className="flex items-center justify-center min-w-[24px]">
+                <div className="w-[22px] h-[22px] bg-gradient-to-br from-slate-50 to-slate-100 rounded-full flex items-center justify-center overflow-hidden border border-slate-200">
+                  {userData?.profile_url ? (
+                    <img src={userData.profile_url} alt="Profile" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-slate-700 font-bold text-[10px]">{userData?.name?.charAt(0) || 'S'}</span>
+                  )}
                 </div>
               </div>
-              <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-slate-200 bg-neutral-100 flex items-center justify-center">
-                {userData?.profile_url ? (
-                  <img
-                    src={userData.profile_url}
-                    className="h-full w-full object-cover"
-                    alt="Avatar"
-                  />
-                ) : (
-                  <span className="text-3xl font-bold text-neutral-800">
-                    {userData?.name?.charAt(0)?.toUpperCase() || "S"}
-                  </span>
-                )}
+              <div className="flex-1 min-w-0 ml-3">
+                <p className="text-[15px] font-semibold text-slate-900 truncate tracking-tight">{userData?.name || 'Student'}</p>
               </div>
-            </div>
-            <div className="mt-8 flex flex-col gap-2">
-              {navItems.map((item, idx) => (
-                <SidebarLink
-                  key={idx}
-                  isActive={content === item.content}
-                  link={{
-                    label: item.label,
-                    href: "#",
-                    icon: item.icon,
-                    onClick: () => navigate(item.href),
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-          <div>
-            <SidebarLink
-              className="hidden md:flex"
-              link={{
-                label: userData?.name || "Student",
-                href: "#",
-                icon: (
-                  <div className="h-7 w-7 shrink-0 rounded-full overflow-hidden border border-neutral-200 bg-neutral-100 flex items-center justify-center">
-                    {userData?.profile_url ? (
-                      <img
-                        src={userData.profile_url}
-                        className="h-full w-full object-cover"
-                        alt="Avatar"
-                      />
-                    ) : (
-                      <span className="text-xs font-bold text-neutral-800">
-                        {userData?.name?.charAt(0)?.toUpperCase() || "S"}
-                      </span>
-                    )}
-                  </div>
-                ),
-              }}
-            />
-            <SidebarLink
-              link={{
-                label: "Sign Out",
-                href: "#",
-                icon: (
-                  <LogOut className="h-5 w-5 shrink-0 text-black group-hover/sidebar:text-white transition-colors" />
-                ),
-                onClick: () => setShowConfirm(true),
-              }}
-              className="mt-2 text-red-500"
-            />
-          </div>
-        </SidebarBody>
-      </SidebarUI>
 
-      <main className="flex-1 h-screen overflow-y-auto bg-white md:rounded-tl-2xl md:border-l border-neutral-100 p-2 md:p-10">
-        <Suspense fallback={<ContentSkeleton />}>
-          {contentMap[content] || <Error />}
-        </Suspense>
+            </div>
+          </div>
+
+          {/* Logout Button */}
+          <div className="">
+            <button
+              onClick={() => setShowConfirm(true)}
+              className="w-full flex items-center space-x-3 px-3 py-2 rounded-md text-left transition-all duration-200 group relative text-red-500 hover:bg-red-50"
+            >
+              <div className="flex items-center justify-center min-w-[24px]">
+                <LogOut className="h-[20px] w-[20px] flex-shrink-0 group-hover:text-red-600" />
+              </div>
+              <span className="text-[15px] font-semibold">Logout</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <main
+        className="flex-1 h-screen overflow-y-auto bg-[#F8FAFC] transition-all duration-300 ease-in-out"
+      >
+        <div className="p-4 md:p-10 min-h-full">
+          <Suspense fallback={<ContentSkeleton />}>
+            {contentMap[content] || <Error />}
+          </Suspense>
+        </div>
       </main>
 
       <ConfirmModal
@@ -285,3 +326,4 @@ export default function Sidebar({ content }: MainContent) {
     </div>
   );
 }
+

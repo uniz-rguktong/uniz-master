@@ -13,7 +13,7 @@ import { GET_ATTENDANCE, DOWNLOAD_ATTENDANCE } from "../../api/endpoints";
 import { downloadFile } from "../../api/apiClient";
 
 interface AttendanceRecord {
-  subject: string | { name: string; [key: string]: any };
+  subject: string | { name: string;[key: string]: any };
   totalClasses: number;
   attendedClasses: number;
   percentage: string | number;
@@ -130,7 +130,7 @@ export default function Attendance() {
 
   // Skeleton Loader Component
   return (
-    <div className="min-h-screen bg-white font-sans text-black">
+    <div className="min-h-screen font-sans text-black">
       <div className="max-w-6xl mx-auto px-4 pt-8 pb-4">
         <h1 className="text-3xl font-black tracking-tighter text-black mb-2">
           Attendance
@@ -170,11 +170,10 @@ export default function Attendance() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-medium hover:bg-neutral-50 transition-colors ${
-                        selectedYear === year
+                      className={`p-3 cursor-pointer text-sm font-medium hover:bg-neutral-50 transition-colors ${selectedYear === year
                           ? "bg-black text-white hover:bg-black"
                           : "text-neutral-600"
-                      }`}
+                        }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setSelectedSemester(
@@ -223,11 +222,10 @@ export default function Attendance() {
             <div className="flex items-end">
               <button
                 onClick={handleFetchAttendance}
-                className={`w-full h-[46px] flex items-center justify-center font-bold text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 ${
-                  isLoading
+                className={`w-full h-[46px] flex items-center justify-center font-bold text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 ${isLoading
                     ? "bg-neutral-100 text-neutral-400 cursor-not-allowed shadow-none"
                     : "bg-black text-white hover:bg-neutral-800"
-                }`}
+                  }`}
                 disabled={isLoading || !user?.username}
               >
                 {isLoading ? (
@@ -306,8 +304,8 @@ export default function Attendance() {
 
               {/* Content */}
               {!attendanceData.attendance ||
-              !Array.isArray(attendanceData.attendance) ||
-              attendanceData.attendance.length === 0 ? (
+                !Array.isArray(attendanceData.attendance) ||
+                attendanceData.attendance.length === 0 ? (
                 <div className="bg-neutral-50 rounded-xl p-8 text-center border border-neutral-200">
                   <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm border border-neutral-100">
                     <AlertCircle size={28} className="text-neutral-400" />
@@ -361,16 +359,15 @@ export default function Attendance() {
                                 </td>
                                 <td className="px-4 py-2 text-center">
                                   <span
-                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                                      parseFloat(String(record.percentage)) >=
-                                      75
+                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${parseFloat(String(record.percentage)) >=
+                                        75
                                         ? "bg-black text-white"
                                         : parseFloat(
-                                              String(record.percentage),
-                                            ) >= 65
+                                          String(record.percentage),
+                                        ) >= 65
                                           ? "bg-neutral-200 text-neutral-700"
                                           : "bg-neutral-100 text-neutral-400"
-                                    }`}
+                                      }`}
                                   >
                                     {record.percentage}%
                                   </span>
