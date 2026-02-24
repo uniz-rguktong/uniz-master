@@ -26,18 +26,32 @@ export default function Home() {
   // Secret Admin Access (Easter Egg)
   useEffect(() => {
     let keyBuffer = "";
+    let lastKeyTime = Date.now();
     const targetSequence = "admin";
-    const handleKeyPress = (event: KeyboardEvent) => {
-      keyBuffer += event.key.toLowerCase();
-      if (keyBuffer.length > targetSequence.length)
-        keyBuffer = keyBuffer.slice(1);
-      if (keyBuffer === targetSequence) {
-        navigate("/admin/signin");
-        keyBuffer = "";
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Clear buffer if more than 2 seconds since last key
+      const now = Date.now();
+      if (now - lastKeyTime > 2000) keyBuffer = "";
+      lastKeyTime = now;
+
+      // Only track single character alphanumeric keys
+      if (event.key.length === 1) {
+        keyBuffer += event.key.toLowerCase();
+
+        if (keyBuffer.length > targetSequence.length) {
+          keyBuffer = keyBuffer.slice(-targetSequence.length);
+        }
+
+        if (keyBuffer === targetSequence) {
+          keyBuffer = ""; // Reset immediately
+          navigate("/admin/signin");
+        }
       }
     };
-    window.addEventListener("keypress", handleKeyPress);
-    return () => window.removeEventListener("keypress", handleKeyPress);
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [navigate]);
 
   return (
@@ -239,9 +253,8 @@ function Carousel() {
       {CAROUSEL_IMAGES.map((src, index) => (
         <div
           key={src}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-            index === currentIndex ? "opacity-100" : "opacity-0"
-          }`}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentIndex ? "opacity-100" : "opacity-0"
+            }`}
         >
           <img
             src={src}

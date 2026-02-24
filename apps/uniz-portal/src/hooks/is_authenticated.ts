@@ -70,10 +70,22 @@ export function useIsAuth() {
         "caretaker",
         "warden",
         "dsw",
+        "swo",
         "hod",
         "faculty",
+        "security",
+        "warden_male",
+        "warden_female",
+        "caretaker_male",
+        "caretaker_female",
       ];
-      if (!decoded || !validAdminRoles.includes(decoded.role || "")) {
+      const storedRole = localStorage.getItem("admin_role");
+      const roleToVerify =
+        decoded?.role ||
+        (storedRole ? storedRole.replace(/"/g, "") : "") ||
+        "admin";
+
+      if (!validAdminRoles.includes(roleToVerify)) {
         return logoutAndRedirect("Access violation: Invalid Role");
       }
 

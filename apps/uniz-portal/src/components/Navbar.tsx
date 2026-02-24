@@ -170,11 +170,12 @@ export default function Navbar() {
                 </div>
               ) : (
                 !isMaintenance && (
-                  <Link to="/student/signin">
-                    <button className="bg-[#800000] hover:bg-[#600000] text-white shadow-md shadow-red-900/10 px-8 rounded-md tracking-wide font-bold uppercase text-xs h-10 ml-2 transition-all">
-                      Login
-                    </button>
-                  </Link>
+                  <button
+                    onClick={() => navigate("/student/signin")}
+                    className="bg-[#800000] hover:bg-[#600000] text-white shadow-md shadow-red-900/10 px-8 rounded-md tracking-wide font-bold uppercase text-xs h-10 ml-2 transition-all"
+                  >
+                    Login
+                  </button>
                 )
               )}
             </div>
