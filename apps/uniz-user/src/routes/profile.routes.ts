@@ -35,9 +35,10 @@ const validateRequest =
       next();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res
-          .status(400)
-          .json({ code: ErrorCode.VALIDATION_ERROR, errors: error.errors });
+        return res.status(400).json({
+          code: ErrorCode.VALIDATION_ERROR,
+          message: error.errors[0]?.message || "Validation failed",
+        });
       }
       next(error);
     }
