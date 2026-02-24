@@ -26,8 +26,6 @@ redis.on("error", (err) => {
 
 redis.on("connect", () => {
   console.log(
-    redisUrl &&
-      ? "Connected to Redis Cloud"
-      : "Connected to Internal Redis",
+    redisUrl ? "Connected to Redis Cloud" : "Connected to Internal Redis",
   );
 });
