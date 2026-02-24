@@ -1940,10 +1940,12 @@ export const downloadGrades = async (
     let campus = "RGUKT";
     try {
       const searchRes = await axios.post(
-        `${GATEWAY_URL}/profile/student/search`,
-        { studentIds: [targetStudentId] },
+        `${GATEWAY_URL}/profile/internal/bulk-profiles`,
+        { usernames: [targetStudentId] },
         {
-          headers: { Authorization: req.headers.authorization },
+          headers: {
+            "x-internal-secret": process.env.INTERNAL_SECRET || "uniz-core",
+          },
           timeout: 5000,
         },
       );
@@ -2030,9 +2032,14 @@ export const downloadAttendance = async (
     let campus = "RGUKT";
     try {
       const searchRes = await axios.post(
-        `${GATEWAY_URL}/profile/student/search`,
-        { studentIds: [targetStudentId] },
-        { headers: { Authorization: req.headers.authorization } },
+        `${GATEWAY_URL}/profile/internal/bulk-profiles`,
+        { usernames: [targetStudentId] },
+        {
+          headers: {
+            "x-internal-secret": process.env.INTERNAL_SECRET || "uniz-core",
+          },
+          timeout: 5000,
+        },
       );
       if (
         searchRes.data &&
