@@ -1959,8 +1959,12 @@ export const downloadGrades = async (
         branch = p.branch || branch;
         campus = p.campus || campus;
       }
-    } catch (e) {
-      console.warn("Could not fetch profile for download, using defaults.");
+    } catch (e: any) {
+      console.warn(
+        "Could not fetch profile for download, using defaults.",
+        e.message,
+        e.response?.data,
+      );
     }
 
     const pdfBuffer = await generateResultPdf({
@@ -2051,8 +2055,12 @@ export const downloadAttendance = async (
         branch = p.branch || branch;
         campus = p.campus || campus;
       }
-    } catch (e) {
-      console.warn("Could not fetch profile for download, using defaults.");
+    } catch (e: any) {
+      console.warn(
+        "Could not fetch profile for download, using defaults.",
+        e.message,
+        e.response?.data,
+      );
     }
 
     const pdfBuffer = await generateAttendancePdf({
