@@ -15,6 +15,7 @@ import {
   Activity,
   Briefcase,
   Mail,
+  Smartphone,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -27,6 +28,7 @@ import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";
 import TendersSection from "./TendersSection";
 import EmailNotification from "../EmailNotification";
+import PushNotificationSection from "./PushNotificationSection";
 import GradesSection from "./GradesSection";
 import StudentBulkSection from "./StudentBulkSection";
 import SystemLogsSection from "./SystemLogsSection";
@@ -46,6 +48,7 @@ export default function WebmasterDashboard() {
     | "updates"
     | "tenders"
     | "notifications"
+    | "push_alerts"
     | "grades_mgmt"
     | "system_logs"
   >("dashboard");
@@ -66,6 +69,7 @@ export default function WebmasterDashboard() {
     { id: "banners", label: "Home Banners", icon: Layout },
     { id: "updates", label: "Campus Updates", icon: Bell },
     { id: "notifications", label: "Email Broadcasts", icon: Mail },
+    { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
     { id: "tenders", label: "Tenders", icon: Briefcase },
     { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
     { id: "system_logs", label: "System & Logs", icon: Activity },
@@ -96,6 +100,8 @@ export default function WebmasterDashboard() {
         return <UpdatesSection />;
       case "notifications":
         return <EmailNotification />;
+      case "push_alerts":
+        return <PushNotificationSection />;
       case "tenders":
         return <TendersSection />;
       case "grades_mgmt":
