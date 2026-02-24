@@ -35,7 +35,7 @@ async function importStudents() {
       continue;
     }
 
-    const headers = [];
+    const headers: string[] = [];
     worksheet.getRow(1).eachCell((cell) => {
       headers.push(
         String(cell.value || "")
@@ -49,7 +49,7 @@ async function importStudents() {
 
     for (let i = 2; i <= worksheet.rowCount; i++) {
       const row = worksheet.getRow(i);
-      const rowData = {};
+      const rowData: Record<string, any> = {};
       row.eachCell((cell, colNumber) => {
         rowData[headers[colNumber - 1]] = cell.value;
       });
@@ -125,7 +125,7 @@ async function importStudents() {
 
         if (fileCount % 100 === 0)
           console.log(`- Processed ${fileCount} students...`);
-      } catch (err) {
+      } catch (err: any) {
         console.error(`Failed to import ${id}:`, err.message);
       }
     }
