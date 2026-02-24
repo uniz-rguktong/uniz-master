@@ -25,8 +25,9 @@ app.get("/health", (req, res) => {
 import requestRoutes from "./routes/request.routes";
 import grievanceRoutes from "./routes/grievance.routes";
 
-app.use("/grievance", grievanceRoutes); // Mount specific routes first
-app.use("/", requestRoutes);
+app.use("/grievance", grievanceRoutes); // For /api/v1/requests/grievance/...
+app.use("/", grievanceRoutes); // For /api/v1/grievance/...
+app.use("/", requestRoutes); // For /api/v1/requests/...
 
 // 404 Handler
 app.use((req, res) => {
