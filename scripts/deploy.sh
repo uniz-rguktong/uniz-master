@@ -12,8 +12,11 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   cd /root/uniz-master
   
   ORIG_HEAD=$(git rev-parse HEAD)
-  echo "📥 Pulling latest code..."
-  git pull origin main
+  echo "📥 Force pulling latest code..."
+  git fetch origin main
+  # Stash any local changes (like .env files if they are accidentally tracked) to avoid merge conflicts
+  git stash
+  git reset --hard origin/main
   NEW_HEAD=$(git rev-parse HEAD)
 
   # Detect changed files
