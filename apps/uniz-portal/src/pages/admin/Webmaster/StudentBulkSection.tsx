@@ -28,9 +28,9 @@ export default function StudentBulkSection() {
 
     // Export State
     const [exportParams, setExportParams] = useState({
-        branch: "",
-        year: "",
-        fields: "username,name,email,branch,year,section"
+        branch: "CSE",
+        year: "E1",
+        fields: "username,name,email,branch,section"
     });
 
     // Template Function

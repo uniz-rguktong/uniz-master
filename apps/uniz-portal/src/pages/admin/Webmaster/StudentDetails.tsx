@@ -27,6 +27,10 @@ export default function StudentDetails() {
     const [searchMode, setSearchMode] = useState<"id" | "filter" | "none">("id");
     const [studentId, setStudentId] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const role = (localStorage.getItem("admin_role") || "admin").replace(/"/g, "");
+    const isWebmaster = role === "webmaster";
+
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [selectedStudent, setSelectedStudent] = useState<any>(null);
     const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
@@ -311,19 +315,21 @@ export default function StudentDetails() {
                                 </div>
 
                                 <div className="flex items-center gap-3">
-                                    <button
-                                        onClick={(e) => handleToggleSuspension(e, std.username, std.is_active !== false)}
-                                        className={`p-3 rounded-xl transition-all border ${std.is_active !== false
+                                    {isWebmaster && (
+                                        <button
+                                            onClick={(e) => handleToggleSuspension(e, std.username, std.is_active !== false)}
+                                            className={`p-3 rounded-xl transition-all border ${std.is_active !== false
                                                 ? 'text-slate-400 hover:text-red-500 hover:bg-red-50 border-transparent hover:border-red-100'
                                                 : 'text-emerald-500 bg-emerald-50 border-emerald-100 hover:bg-emerald-100'
-                                            }`}
-                                    >
-                                        {isActionLoading === std.username ? (
-                                            <Loader2 size={18} className="animate-spin" />
-                                        ) : (
-                                            std.is_active !== false ? <Trash2 size={18} /> : <ShieldCheck size={18} />
-                                        )}
-                                    </button>
+                                                }`}
+                                        >
+                                            {isActionLoading === std.username ? (
+                                                <Loader2 size={18} className="animate-spin" />
+                                            ) : (
+                                                std.is_active !== false ? <Trash2 size={18} /> : <ShieldCheck size={18} />
+                                            )}
+                                        </button>
+                                    )}
                                     <ChevronRight size={18} className={`text-slate-300 transition-transform ${selectedStudent?.username === std.username ? 'translate-x-1 text-slate-900' : ''}`} />
                                 </div>
                             </div>
@@ -345,12 +351,14 @@ export default function StudentDetails() {
                         <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl overflow-hidden">
                             <div className="bg-slate-900 p-8 text-white relative">
                                 <div className="absolute top-6 right-6 flex items-center gap-2">
-                                    <button
-                                        onClick={() => isEditing ? setIsEditing(false) : startEditing()}
-                                        className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white"
-                                    >
-                                        {isEditing ? <X size={20} /> : <Pencil size={18} />}
-                                    </button>
+                                    {isWebmaster && (
+                                        <button
+                                            onClick={() => isEditing ? setIsEditing(false) : startEditing()}
+                                            className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white"
+                                        >
+                                            {isEditing ? <X size={20} /> : <Pencil size={18} />}
+                                        </button>
+                                    )}
                                     <button
                                         onClick={() => { setSelectedStudent(null); setIsEditing(false); }}
                                         className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white"
@@ -451,17 +459,19 @@ export default function StudentDetails() {
                                     <DetailItem icon={GraduationCap} label="Campus Status" value={selectedStudent.is_in_campus ? "Present in Campus" : "Outside Campus"} />
                                     <DetailItem icon={Users} label="Parental Guardian" value={selectedStudent.father_name || "Not provided"} />
 
-                                    <div className="md:col-span-2 pt-4">
-                                        <button
-                                            onClick={(e) => handleToggleSuspension(e, selectedStudent.username, selectedStudent.is_active !== false)}
-                                            disabled={isActionLoading === selectedStudent.username}
-                                            className={`w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all ${selectedStudent.is_active !== false ? "bg-red-50 text-red-600 hover:bg-red-600 hover:text-white" : "bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white"
-                                                }`}
-                                        >
-                                            {isActionLoading === selectedStudent.username ? <Loader2 size={16} className="animate-spin" /> : (selectedStudent.is_active !== false ? <ShieldAlert size={16} /> : <ShieldCheck size={16} />)}
-                                            {selectedStudent.is_active !== false ? "Suspend Student Access" : "Restore Student Access"}
-                                        </button>
-                                    </div>
+                                    {isWebmaster && (
+                                        <div className="md:col-span-2 pt-4">
+                                            <button
+                                                onClick={(e) => handleToggleSuspension(e, selectedStudent.username, selectedStudent.is_active !== false)}
+                                                disabled={isActionLoading === selectedStudent.username}
+                                                className={`w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all ${selectedStudent.is_active !== false ? "bg-red-50 text-red-600 hover:bg-red-600 hover:text-white" : "bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                                                    }`}
+                                            >
+                                                {isActionLoading === selectedStudent.username ? <Loader2 size={16} className="animate-spin" /> : (selectedStudent.is_active !== false ? <ShieldAlert size={16} /> : <ShieldCheck size={16} />)}
+                                                {selectedStudent.is_active !== false ? "Suspend Student Access" : "Restore Student Access"}
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
