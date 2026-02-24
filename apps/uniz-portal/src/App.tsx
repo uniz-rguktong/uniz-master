@@ -29,6 +29,7 @@ const SearchStudents = lazy(() => import("./pages/admin/searchstudents"));
 const UpdateStatus = lazy(() => import("./components/UpdateStudentStatus"));
 const ApproveComp = lazy(() => import("./pages/admin/approve-comp"));
 const AddFaculty = lazy(() => import("./pages/admin/AddFaculty"));
+const SecurityPortal = lazy(() => import("./pages/admin/SecurityPortal"));
 const ContactUs = lazy(() => import("./pages/ContactUs"));
 
 // Public Info Pages
@@ -503,6 +504,14 @@ export default function App() {
             element={
               <PageTransition>
                 <SearchStudents />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/admin/security"
+            element={
+              <PageTransition>
+                <SecurityPortal />
               </PageTransition>
             }
           />

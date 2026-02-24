@@ -19,6 +19,17 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   # Detect changed files
   CHANGED_FILES=$(git diff --name-only $ORIG_HEAD $NEW_HEAD)
   
+  # Global rebuild detection (if root config files changed or force requested)
+  COMMIT_MSG=$(git log -1 --pretty=%B)
+  GLOBAL_REBUILD=false
+  if echo "$CHANGED_FILES" | grep -q "^package.json\|^package-lock.json\|^Dockerfile\|^.dockerignore\|^scripts/deploy.sh"; then
+    echo "🚨 Root configuration changed. Triggering global rebuild..."
+    GLOBAL_REBUILD=true
+  elif [[ "$COMMIT_MSG" == *"[force build]"* ]] || [[ "$COMMIT_MSG" == *"[rebuild all]"* ]]; then
+    echo "💪 Force rebuild requested via commit message. Triggering global rebuild..."
+    GLOBAL_REBUILD=true
+  fi
+
   if [ -z "$CHANGED_FILES" ]; then
     echo "ℹ️  No changes detected in Git. Skipping builds."
   fi
@@ -45,9 +56,12 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     IFS=':' read -r DIR IMG DEP CON <<< "$s"
     echo "🎯 Checking for changes in $DIR..."
     SHOULD_BUILD=false
+    
     # Check if any changed file is within this service directory or its app/ equivalent
-    if echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
-      echo "🎯 Change detected in $DIR (Triggered by files: $(echo "$CHANGED_FILES" | grep "^apps/$DIR/\|^$DIR/" | tr '\n' ' '))"
+    if [ "$GLOBAL_REBUILD" == "true" ]; then
+       SHOULD_BUILD=true
+    elif echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
+      echo "🎯 Change detected in $DIR"
       SHOULD_BUILD=true
     fi
 
