@@ -84,6 +84,24 @@ export const ADMIN_SUSPEND_ACCOUNT = `${BASE_URL}/auth/admin/suspend`;
 export const ADMIN_UPDATE_STUDENT = (id: string) =>
   `${BASE_URL}/profile/admin/student/${id}`;
 
+// Student Bulk Management
+export const ADMIN_STUDENT_UPLOAD = `${BASE_URL}/profile/admin/student/upload`;
+export const ADMIN_STUDENT_TEMPLATE = `${BASE_URL}/profile/admin/student/template`;
+export const ADMIN_STUDENT_PROGRESS = `${BASE_URL}/profile/admin/student/upload/progress`;
+export const ADMIN_STUDENT_EXPORT = (branch?: string, year?: string, fields?: string) => {
+  let url = `${BASE_URL}/profile/admin/student/export?`;
+  if (branch) url += `branch=${branch}&`;
+  if (year) url += `year=${year}&`;
+  if (fields) url += `fields=${fields}&`;
+  return url.endsWith('&') || url.endsWith('?') ? url.slice(0, -1) : url;
+};
+
+// System & Logs
+export const ADMIN_UPLOAD_HISTORY = `${BASE_URL}/profile/admin/upload-history`;
+export const TRIGGER_CRON = `${BASE_URL}/cron/api/cron`;
+export const ACADEMICS_PROGRESS = (uploadId: string) =>
+  `${BASE_URL}/academics/upload/progress?uploadId=${uploadId}`;
+
 export const GET_GRIEVANCES_LIST = `${BASE_URL}/requests/grievance/list`;
 
 export const BANNERS_BASE = `${BASE_URL}/cms/admin/banners`;

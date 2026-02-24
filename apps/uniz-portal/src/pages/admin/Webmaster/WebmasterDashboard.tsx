@@ -11,7 +11,8 @@ import {
     LayoutDashboard,
     MessageSquare,
     Layout,
-    Bell
+    Bell,
+    Activity
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -23,11 +24,13 @@ import GrievanceSection from "./GrievanceSection";
 import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";
 import GradesSection from "./GradesSection";
+import StudentBulkSection from "./StudentBulkSection";
+import SystemLogsSection from "./SystemLogsSection";
 
 export default function WebmasterDashboard() {
     useIsAuth();
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState<"dashboard" | "student" | "subjects" | "attendance" | "grades" | "grievances" | "banners" | "updates" | "grades_mgmt">("dashboard");
+    const [activeTab, setActiveTab] = useState<"dashboard" | "student" | "student_bulk" | "subjects" | "attendance" | "grades" | "grievances" | "banners" | "updates" | "grades_mgmt" | "system_logs">("dashboard");
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
     const username = JSON.parse(localStorage.getItem("username") || '"Webmaster"');
@@ -35,6 +38,7 @@ export default function WebmasterDashboard() {
     const navItems = [
         { id: "dashboard", label: "Overview", icon: LayoutDashboard },
         { id: "student", label: "Student Details", icon: Users },
+        { id: "student_bulk", label: "Student Bulk Ops", icon: Users },
         { id: "subjects", label: "Manage Subjects", icon: BookOpen },
         { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
         { id: "grades", label: "Grades Upload", icon: GraduationCap },
@@ -42,6 +46,7 @@ export default function WebmasterDashboard() {
         { id: "banners", label: "Home Banners", icon: Layout },
         { id: "updates", label: "Campus Updates", icon: Bell },
         { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
+        { id: "system_logs", label: "System & Logs", icon: Activity },
     ];
 
     const handleLogout = () => {
@@ -53,6 +58,8 @@ export default function WebmasterDashboard() {
         switch (activeTab) {
             case "student":
                 return <StudentDetails />;
+            case "student_bulk":
+                return <StudentBulkSection />;
             case "subjects":
                 return <SubjectManagement />;
             case "attendance":
@@ -67,6 +74,8 @@ export default function WebmasterDashboard() {
                 return <UpdatesSection />;
             case "grades_mgmt":
                 return <GradesSection />;
+            case "system_logs":
+                return <SystemLogsSection />;
             default:
                 return (
                     <div className="p-8 space-y-8 animate-in fade-in duration-500">
