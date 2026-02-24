@@ -45,17 +45,14 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     IFS=':' read -r DIR IMG DEP CON <<< "$s"
     
     SHOULD_BUILD=false
-    if [ "$CHANGED_FILES" == "FORCE_ALL" ]; then
+    # Check if any changed file is within this service directory or its app/ equivalent
+    if echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
+      echo "🎯 Change detected in $DIR (Triggered by files: $(echo "$CHANGED_FILES" | grep "^apps/$DIR/\|^$DIR/" | tr '\n' ' '))"
       SHOULD_BUILD=true
-    else
-      # Check if any changed file is within this service directory
-      if echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
-        SHOULD_BUILD=true
-      fi
     fi
 
     if [ "$SHOULD_BUILD" == "true" ]; then
-      echo "🏗️  Changes detected in $DIR. Rebuilding $IMG..."
+      echo "🏗️  Rebuilding $IMG..."
       
       # Determine build context correctly
       BUILD_CONTEXT="apps/$DIR"

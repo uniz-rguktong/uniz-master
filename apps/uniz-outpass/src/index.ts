@@ -25,12 +25,17 @@ app.get("/health", (req, res) => {
 import requestRoutes from "./routes/request.routes";
 import grievanceRoutes from "./routes/grievance.routes";
 
-app.use("/grievance", grievanceRoutes); // For /api/v1/requests/grievance/...
-app.use("/", grievanceRoutes); // For /api/v1/grievance/...
-app.use("/", requestRoutes); // For /api/v1/requests/...
+// Consolidated Routing
+// 1. Grievance routes (handles both /grievance/list and /list if prefix stripped)
+app.use("/grievance", grievanceRoutes);
+app.use("/", grievanceRoutes);
 
-// 404 Handler
+// 2. Request routes (handles history, outpass, etc.)
+app.use("/", requestRoutes);
+
+// 404 Handler with internal path logging
 app.use((req, res) => {
+  console.log(`[Outpass] 404 - No route for: ${req.method} ${req.url}`);
   res.status(404).json({
     status: "error",
     message: `Route ${req.method} ${req.url} not found`,
