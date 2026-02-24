@@ -6,8 +6,10 @@ import { useNavigate } from "react-router";
 import { useRecoilValue } from "recoil";
 import { student } from "../../store";
 import { useStudentData } from "../../hooks/student_info";
-import { REQUEST_OUTING, REQUEST_OUTPASS } from "../..//api/endpoints";
+import { REQUEST_OUTING, REQUEST_OUTPASS } from "../../api/endpoints";
 import { useIsAuth } from "../../hooks/is_authenticated";
+import { apiClient } from "../../api/apiClient";
+import { toast } from "react-toastify";
 
 type RequestCompProps = {
   type: "outpass" | "outing";
@@ -32,95 +34,75 @@ export default function RequestComp({ type }: RequestCompProps) {
     };
 
   const sendDataToBackend = async () => {
-    const token = localStorage.getItem("student_token");
-    if (!token) {
-      console.error("Missing auth_token. Authorization failed!");
-      localStorage.removeItem("student_token");
-      localStorage.removeItem("username");
-      navigateTo("/");
-      return;
-    } else if (
-      (type == "outpass" &&
-        (from_date == null || to_date == null || reason == null)) ||
-      (type == "outing" &&
-        (from_time == null || to_time == null || reason == null))
+    if (
+      (type === "outpass" && (!from_date || !to_date || !reason)) ||
+      (type === "outing" && (!from_time || !to_time || !reason))
     ) {
-      console.error("Please fill all the details!");
+      toast.error("Please fill all the mandatory fields.");
       return;
     }
 
     let bodyData;
 
-    if (type === "outpass") {
-      const start = new Date(from_date!);
-      start.setHours(9, 0, 0, 0);
-
-      const end = new Date(to_date!);
-      end.setHours(18, 0, 0, 0);
-
-      const diffTime = Math.abs(end.getTime() - start.getTime());
-      const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
-
-      bodyData = JSON.stringify({
-        reason,
-        fromDay: start.toISOString(),
-        toDay: end.toISOString(),
-        days,
-      });
-    } else {
-      // Outing payload
-      const today = new Date();
-      const start = new Date(today);
-      const [startHours, startMinutes] = from_time!.split(":").map(Number);
-      start.setHours(startHours, startMinutes, 0, 0);
-
-      const end = new Date(today);
-      const [endHours, endMinutes] = to_time!.split(":").map(Number);
-      end.setHours(endHours, endMinutes, 0, 0);
-
-      // Handle overnight outing case if needed, or assume same day.
-      // If end time is earlier than start time, assume end time is invalid for same-day outing.
-      // For now, calculating simplified difference.
-      let diffMs = end.getTime() - start.getTime();
-
-      // If negative, it implies end time is before start time.
-      // Ideally should validate, but if representing next day (unlikely for "outing"), add 24h.
-      // Let's assume strict validation is better, but code block handles construction.
-      // Simple absolute diff for safety or just diff.
-      // Taking strict diff.
-
-      const hours = Math.ceil(diffMs / (1000 * 60 * 60)); // Rounding up to nearest hour
-
-      bodyData = JSON.stringify({
-        reason,
-        fromTime: start.toISOString(),
-        toTime: end.toISOString(),
-        hours: hours > 0 ? hours : 0,
-      });
-    }
-
     try {
+      if (type === "outpass") {
+        const start = new Date(from_date!);
+        const end = new Date(to_date!);
+
+        if (start < new Date(new Date().setHours(0, 0, 0, 0))) {
+          toast.error("From date cannot be in the past.");
+          return;
+        }
+        if (end < start) {
+          toast.error("To date cannot be before From date.");
+          return;
+        }
+
+        bodyData = {
+          reason,
+          fromDay: start.toISOString(),
+          toDay: end.toISOString(),
+        };
+      } else {
+        const today = new Date();
+        const start = new Date(today);
+        const [startHours, startMinutes] = from_time!.split(":").map(Number);
+        start.setHours(startHours, startMinutes, 0, 0);
+
+        const end = new Date(today);
+        const [endHours, endMinutes] = to_time!.split(":").map(Number);
+        end.setHours(endHours, endMinutes, 0, 0);
+
+        if (end <= start) {
+          toast.error("Return time must be after leaving time.");
+          return;
+        }
+
+        bodyData = {
+          reason,
+          fromTime: start.toISOString(),
+          toTime: end.toISOString(),
+        };
+      }
+
       const endpoint = type === "outing" ? REQUEST_OUTING : REQUEST_OUTPASS;
       setLoading(true);
-      const res = await fetch(endpoint, {
+
+      const data = await apiClient(endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${JSON.parse(token)}`, // Ensure token is clean string if parsed, or use as is if stored as string. Previous code used JSON.parse(token), suggesting token might be stored stringified.
-        },
-        body: bodyData,
+        body: JSON.stringify(bodyData),
       });
 
-      const data = await res.json();
-      setLoading(false);
-      console.log(data.msg);
-      if (data.success) {
-        // simple success handling or navigation
+      if (data && data.success) {
+        toast.success(
+          `${type.charAt(0).toUpperCase() + type.slice(1)} request submitted successfully.`,
+        );
         navigateTo("/student");
       }
-    } catch (error) {
-      console.error("Error:", error);
-      console.error("An error occurred while sending the request.");
+    } catch (error: any) {
+      console.error("Submission error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -16,6 +16,7 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { SEARCH_STUDENTS, ADMIN_STUDENT_HISTORY } from "../../api/endpoints";
+import { apiClient } from "../../api/apiClient";
 import { Input } from "../../components/Input";
 import { Pagination } from "../../components/Pagination";
 import { cn } from "../../utils/cn";
@@ -117,20 +118,12 @@ export default function SearchStudents() {
   const debouncedQuery = useDebounce(query, 500);
 
   const fetchStudents = async (q: string, page = 1) => {
-    const token = localStorage.getItem("admin_token");
-    if (!token) return;
-
     try {
       setIsLoading(page === 1);
       setError("");
-      const cleanToken = token.replace(/^["'](.+(?=["']$))["']$/, "$1");
 
-      const res = await fetch(SEARCH_STUDENTS, {
+      const data = await apiClient<any>(SEARCH_STUDENTS, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cleanToken}`,
-        },
         body: JSON.stringify({
           username: q,
           branch: branch || undefined,
@@ -143,8 +136,7 @@ export default function SearchStudents() {
         }),
       });
 
-      const data = await res.json();
-      if (!data.success) {
+      if (!data || !data.success) {
         if (page === 1) {
           setResults([]);
           setSuggestions([]);
@@ -166,6 +158,7 @@ export default function SearchStudents() {
       }
     } catch (err) {
       setError("Failed to fetch students");
+      console.error("fetchStudents error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -176,25 +169,18 @@ export default function SearchStudents() {
   }, [debouncedQuery, branch, year, gender, isPending, isOutside]);
 
   const fetchHistory = async (studentId: string, page = 1) => {
-    const token = localStorage.getItem("admin_token");
-    if (!token) return;
-
     try {
       setIsHistoryLoading(true);
-      const cleanToken = token.replace(/^["'](.+(?=["']$))["']$/, "$1");
-      const res = await fetch(
+      const data = await apiClient<any>(
         `${ADMIN_STUDENT_HISTORY(studentId)}?page=${page}&limit=5`,
-        {
-          headers: { Authorization: `Bearer ${cleanToken}` },
-        },
+        { method: "GET" },
       );
-      const data = await res.json();
-      if (data.success) {
+      if (data && data.success) {
         setHistory(data.history);
         setHistoryPagination(data.pagination);
       }
     } catch (err) {
-      console.error("Failed to fetch history");
+      console.error("fetchHistory error:", err);
     } finally {
       setIsHistoryLoading(false);
     }

@@ -19,6 +19,7 @@ import {
   SEARCH_STUDENTS,
 } from "../../api/endpoints";
 import { toast } from "react-toastify";
+import { apiClient } from "../../api/apiClient";
 
 export default function SecurityPortal() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,31 +33,14 @@ export default function SecurityPortal() {
     fetchSummary();
   }, []);
 
-  const getAuthToken = () => {
-    const rawToken = localStorage.getItem("admin_token");
-    if (!rawToken) return "";
-    try {
-      return JSON.parse(rawToken);
-    } catch (e) {
-      return rawToken;
-    }
-  };
-
   const fetchSummary = async () => {
-    setLoading(true);
-    const token = getAuthToken();
     try {
-      const res = await fetch(SECURITY_SUMMARY, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (data.success) {
+      const data = await apiClient<any>(SECURITY_SUMMARY);
+      if (data && data.success) {
         setSummary(data.summary);
       }
     } catch (error) {
       console.error("Failed to fetch security summary", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -65,22 +49,16 @@ export default function SecurityPortal() {
     if (!searchQuery.trim()) return;
 
     setSearching(true);
-    const token = getAuthToken();
     try {
-      const res = await fetch(SEARCH_STUDENTS, {
+      const data = await apiClient<any>(SEARCH_STUDENTS, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ username: searchQuery, limit: 5 }),
       });
-      const data = await res.json();
-      if (data.success) {
+      if (data && data.success) {
         setSearchResults(data.students || []);
       }
     } catch (error) {
-      toast.error("Search failed");
+      console.error("Search failed:", error);
     } finally {
       setSearching(false);
     }
@@ -91,31 +69,25 @@ export default function SecurityPortal() {
     action: "checkin" | "checkout",
   ) => {
     setProcessingId(requestId);
-    const token = getAuthToken();
     const endpoint =
       action === "checkin"
         ? SECURITY_CHECKIN(requestId)
         : SECURITY_CHECKOUT(requestId);
 
     try {
-      const res = await fetch(endpoint, {
+      const data = await apiClient<any>(endpoint, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-      if (data.success) {
+      if (data && data.success) {
         toast.success(
           `Success: ${action === "checkin" ? "Checked-In" : "Checked-Out"}`,
         );
         fetchSummary();
-        // If the action was from search results, clear search to refresh
         setSearchResults([]);
         setSearchQuery("");
-      } else {
-        toast.error(data.msg || "Operation failed");
       }
     } catch (error) {
-      toast.error("Network error");
+      console.error("Operation failed:", error);
     } finally {
       setProcessingId(null);
     }

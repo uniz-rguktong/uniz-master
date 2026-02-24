@@ -16,10 +16,10 @@ import {
   Mail,
   Briefcase,
 } from "lucide-react";
-import axios from "axios";
 import { student } from "../../store";
 import { useIsAuth } from "../../hooks/is_authenticated";
 import { useStudentData } from "../../hooks/student_info";
+import { apiClient } from "../../api/apiClient";
 import {
   UPDATE_DETAILS,
   STUDENT_HISTORY,
@@ -156,18 +156,18 @@ export default function StudentProfilePage() {
   const fetchHistory = async (page = 1) => {
     try {
       setIsHistoryLoading(true);
-      const token = localStorage
-        .getItem("student_token")
-        ?.replace(/^"|"$/g, "");
-      const res = await axios.get(`${STUDENT_HISTORY}?page=${page}&limit=5`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.data.success) {
-        setHistory(res.data.history);
-        setHistoryPagination(res.data.pagination);
+      const data = await apiClient<any>(
+        `${STUDENT_HISTORY}?page=${page}&limit=5`,
+        {
+          method: "GET",
+        },
+      );
+      if (data && data.success) {
+        setHistory(data.history);
+        setHistoryPagination(data.pagination);
       }
     } catch (err) {
-      console.error(err);
+      console.error("fetchHistory error:", err);
     } finally {
       setIsHistoryLoading(false);
     }
@@ -186,25 +186,20 @@ export default function StudentProfilePage() {
     if (e) e.preventDefault();
     setIsSubmitting(true);
     try {
-      const token = localStorage
-        .getItem("student_token")
-        ?.replace(/^"|"$/g, "");
-      const response = await axios.put(
-        UPDATE_DETAILS,
-        { ...fields },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      if (response.data.success) {
+      const data = await apiClient<any>(UPDATE_DETAILS, {
+        method: "PUT",
+        body: JSON.stringify({ ...fields }),
+      });
+      if (data && data.success) {
         await refetch();
         setIsEditing(false);
         toast.success("Profile updated successfully!");
-      } else {
-        toast.error(response.data.msg);
       }
     } catch (err: any) {
-      toast.error(err.response?.data?.msg || "Update failed");
+      console.error("Profile update failed:", err);
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   const handleRequestSubmit = async (e: React.FormEvent) => {
@@ -213,10 +208,7 @@ export default function StudentProfilePage() {
     setRequestLoading(true);
 
     try {
-      const token = localStorage
-        .getItem("student_token")
-        ?.replace(/^"|"$/g, "");
-
+      let bodyData;
       if (requestType === "outpass") {
         if (!requestForm.from || !requestForm.to) {
           toast.error("Please select both From and To dates");
@@ -224,18 +216,8 @@ export default function StudentProfilePage() {
           return;
         }
 
-        // Construct dates with specific times as per requirements (9 AM start, 6 PM end)
         const fromDate = new Date(requestForm.from);
-        fromDate.setHours(9, 0, 0, 0);
-
         const toDate = new Date(requestForm.to);
-        toDate.setHours(18, 0, 0, 0);
-
-        if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
-          toast.error("Invalid date selection");
-          setRequestLoading(false);
-          return;
-        }
 
         if (toDate < fromDate) {
           toast.error("Return date cannot be before departure date");
@@ -243,63 +225,54 @@ export default function StudentProfilePage() {
           return;
         }
 
-        const diffTime = Math.abs(toDate.getTime() - fromDate.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
-
-        const myHeaders = new Headers();
-        myHeaders.append("Authorization", `Bearer ${token}`);
-        myHeaders.append("Content-Type", "application/json");
-
-        const raw = JSON.stringify({
+        bodyData = {
           reason: requestForm.reason,
           fromDay: fromDate.toISOString(),
           toDay: toDate.toISOString(),
-          days: diffDays,
-        });
-
-        const requestOptions: RequestInit = {
-          method: "POST",
-          headers: myHeaders,
-          body: raw,
-          redirect: "follow",
         };
-
-        // Using endpoint from constants but fallback to localhost/api if needed, keeping consistency with existing codebase
-        const response = await fetch(REQUEST_OUTPASS, requestOptions);
-        const result = await response.json();
-
-        if (response.ok && result.success) {
-          toast.success("Outpass requested successfully!");
-          setRequestType(null);
-          setRequestForm({ reason: "", from: "", to: "" });
-        } else {
-          console.error("Outpass Error:", result);
-          toast.error(
-            result.msg || result.message || "Failed to request outpass",
-          );
-        }
       } else {
-        // Keep existing Axios logic for 'outing'
-        const payload = {
-          reason: requestForm.reason,
-          fromTime: requestForm.from,
-          toTime: requestForm.to,
-        };
-
-        const res = await axios.post(REQUEST_OUTING, payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.data.success) {
-          toast.success("Outing requested successfully!");
-          setRequestType(null);
-          setRequestForm({ reason: "", from: "", to: "" });
-        } else {
-          toast.error(res.data.msg);
+        // Outing
+        if (!requestForm.from || !requestForm.to) {
+          toast.error("Please select both From and To times");
+          setRequestLoading(false);
+          return;
         }
+
+        // For outing, we assume today's date if only time requested, but usually it's full ISO in backends or separate.
+        // Backend expects fromTime and toTime as ISO strings.
+        const today = new Date();
+        const start = new Date(today);
+        const [startH, startM] = requestForm.from.split(":").map(Number);
+        if (!isNaN(startH)) start.setHours(startH, startM, 0, 0);
+
+        const end = new Date(today);
+        const [endH, endM] = requestForm.to.split(":").map(Number);
+        if (!isNaN(endH)) end.setHours(endH, endM, 0, 0);
+
+        bodyData = {
+          reason: requestForm.reason,
+          fromTime: start.toISOString(),
+          toTime: end.toISOString(),
+        };
+      }
+
+      const endpoint =
+        requestType === "outing" ? REQUEST_OUTING : REQUEST_OUTPASS;
+      const data = await apiClient<any>(endpoint, {
+        method: "POST",
+        body: JSON.stringify(bodyData),
+      });
+
+      if (data && data.success) {
+        toast.success(
+          `${requestType.charAt(0).toUpperCase() + requestType.slice(1)} requested successfully!`,
+        );
+        setRequestType(null);
+        setRequestForm({ reason: "", from: "", to: "" });
+        refetch();
       }
     } catch (err: any) {
       console.error("Request failed", err);
-      toast.error(err.message || "Request failed");
     } finally {
       setRequestLoading(false);
     }
