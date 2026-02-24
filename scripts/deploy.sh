@@ -20,8 +20,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   CHANGED_FILES=$(git diff --name-only $ORIG_HEAD $NEW_HEAD)
   
   if [ -z "$CHANGED_FILES" ]; then
-    echo "ℹ️  No changes detected in Git. Using all services for safety (one-time force)."
-    CHANGED_FILES="FORCE_ALL"
+    echo "ℹ️  No changes detected in Git. Skipping builds."
   fi
 
   # Service mapping: "folder_name:image_name:deployment_name:container_name"
@@ -50,7 +49,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
       SHOULD_BUILD=true
     else
       # Check if any changed file is within this service directory
-      if echo "$CHANGED_FILES" | grep -q "^apps/$DIR\|^$DIR"; then
+      if echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
         SHOULD_BUILD=true
       fi
     fi
