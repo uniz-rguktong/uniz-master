@@ -114,10 +114,74 @@ export const runMaintenance = async () => {
       data: { isExpired: true },
     });
 
-    // 3. Clear Pending Flags in Profile Service
+    // 3. Deep Cleanup: Find students stuck in "Pending" status in Profile Service
+    try {
+      const GATEWAY =
+        (process.env.DOCKER_ENV === "true"
+          ? "http://uniz-gateway-api:3000/api/v1"
+          : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1";
+      const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+
+      // Search for all students marked as pending
+      const pendingStudentsRes = await axios.post(
+        `${GATEWAY}/profile/student/search`,
+        { isApplicationPending: true, limit: 1000 },
+        { headers: { "x-internal-secret": SECRET } },
+      );
+
+      if (
+        pendingStudentsRes.data?.success &&
+        pendingStudentsRes.data.students?.length > 0
+      ) {
+        const pendingUsernames = pendingStudentsRes.data.students.map(
+          (s: any) => s.username,
+        );
+        console.log(
+          `[CRON] Deep Cleanup: Auditing ${pendingUsernames.length} pending profiles...`,
+        );
+
+        for (const username of pendingUsernames) {
+          const [activeOutpass, activeOuting] = await Promise.all([
+            prisma.outpass.findFirst({
+              where: {
+                studentId: username,
+                isRejected: false,
+                isExpired: false,
+                checkedInTime: null,
+                OR: [
+                  { toDay: { gte: now } },
+                  { checkedOutTime: { not: null } },
+                ],
+              },
+            }),
+            prisma.outing.findFirst({
+              where: {
+                studentId: username,
+                isRejected: false,
+                isExpired: false,
+                checkedInTime: null,
+                OR: [
+                  { toTime: { gte: now } },
+                  { checkedOutTime: { not: null } },
+                ],
+              },
+            }),
+          ]);
+
+          if (!activeOutpass && !activeOuting) {
+            console.log(`[CRON] Auto-fixing stuck student: ${username}`);
+            await clearPendingStatus(username);
+          }
+        }
+      }
+    } catch (cleanupErr: any) {
+      console.error("[CRON] Deep cleanup failed:", cleanupErr.message);
+    }
+
+    // 4. Clear Pending Flags for newly expired requests (from lists in step 1)
     if (studentIdsToClear.length > 0) {
       console.log(
-        `Clearing pending status for ${studentIdsToClear.length} students...`,
+        `Clearing pending status for ${studentIdsToClear.length} newly expired students...`,
       );
       await Promise.all(
         studentIdsToClear.map((sid) => clearPendingStatus(sid)),
