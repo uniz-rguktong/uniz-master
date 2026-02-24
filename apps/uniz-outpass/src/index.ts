@@ -28,6 +28,7 @@ import grievanceRoutes from "./routes/grievance.routes";
 // Consolidated Routing
 // 1. Grievance routes (handles both /grievance/list and /list if prefix stripped)
 app.use("/grievance", grievanceRoutes);
+app.use("/api/v1/requests/grievance", grievanceRoutes); // Direct match fallback
 app.use("/", grievanceRoutes);
 
 // 2. Request routes (handles history, outpass, etc.)

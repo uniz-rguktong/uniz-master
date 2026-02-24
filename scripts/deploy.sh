@@ -28,7 +28,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   ALL_SERVICES=(
     "uniz-academics:uniz-academics-service:uniz-academics-service:academics-service"
     "uniz-auth:uniz-auth-service:uniz-auth-service:auth-service"
-    "uniz-cron:uniz-cron-service:uniz-maintenance-job:cron-worker"
+    "uniz-cron:uniz-cron-service:uniz-cron-service:cron-worker"
     "uniz-files:uniz-files-service:uniz-files-service:files-service"
     "uniz-gateway:uniz-gateway-api:uniz-gateway-api:gateway-api"
     "uniz-mail:uniz-mail-service:uniz-mail-service:mail-service"
@@ -43,7 +43,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
 
   for s in "${ALL_SERVICES[@]}"; do
     IFS=':' read -r DIR IMG DEP CON <<< "$s"
-    
+    echo "🎯 Checking for changes in $DIR..."
     SHOULD_BUILD=false
     # Check if any changed file is within this service directory or its app/ equivalent
     if echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
