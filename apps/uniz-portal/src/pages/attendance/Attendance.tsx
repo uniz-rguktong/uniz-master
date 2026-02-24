@@ -362,9 +362,12 @@ export default function Attendance() {
                                 <td className="px-4 py-2 text-center">
                                   <span
                                     className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                                      parseFloat(record.percentage) >= 75
+                                      parseFloat(String(record.percentage)) >=
+                                      75
                                         ? "bg-black text-white"
-                                        : parseFloat(record.percentage) >= 65
+                                        : parseFloat(
+                                              String(record.percentage),
+                                            ) >= 65
                                           ? "bg-neutral-200 text-neutral-700"
                                           : "bg-neutral-100 text-neutral-400"
                                     }`}
