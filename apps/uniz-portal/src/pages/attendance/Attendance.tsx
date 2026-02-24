@@ -16,7 +16,7 @@ interface AttendanceRecord {
   subject: string | { name: string; [key: string]: any };
   totalClasses: number;
   attendedClasses: number;
-  attendancePercentage: string;
+  percentage: string | number;
 }
 
 interface AttendanceResponse {
@@ -342,40 +342,39 @@ export default function Attendance() {
                       </thead>
                       <tbody className="divide-y divide-neutral-100">
                         {Array.isArray(attendanceData.attendance) &&
-                          attendanceData.attendance.map((record, index) => (
-                            <tr
-                              key={index}
-                              className="group hover:bg-neutral-50 transition-colors"
-                            >
-                              <td className="px-4 py-2 font-bold text-xs text-neutral-900">
-                                {typeof record.subject === "string"
-                                  ? record.subject
-                                  : record.subject?.name || "Unknown Subject"}
-                              </td>
-                              <td className="px-4 py-2 text-center text-neutral-600 font-medium text-xs">
-                                {record.totalClasses}
-                              </td>
-                              <td className="px-4 py-2 text-center text-neutral-600 font-medium text-xs">
-                                {record.attendedClasses}
-                              </td>
-                              <td className="px-4 py-2 text-center">
-                                <span
-                                  className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                                    parseFloat(record.attendancePercentage) >=
-                                    75
-                                      ? "bg-black text-white"
-                                      : parseFloat(
-                                            record.attendancePercentage,
-                                          ) >= 65
-                                        ? "bg-neutral-200 text-neutral-700"
-                                        : "bg-neutral-100 text-neutral-400"
-                                  }`}
-                                >
-                                  {record.attendancePercentage}%
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
+                          attendanceData.attendance.map(
+                            (record: any, index: number) => (
+                              <tr
+                                key={index}
+                                className="group hover:bg-neutral-50 transition-colors"
+                              >
+                                <td className="px-4 py-2 font-bold text-xs text-neutral-900">
+                                  {typeof record.subject === "string"
+                                    ? record.subject
+                                    : record.subject?.name || "Unknown Subject"}
+                                </td>
+                                <td className="px-4 py-2 text-center text-neutral-600 font-medium text-xs">
+                                  {record.totalClasses}
+                                </td>
+                                <td className="px-4 py-2 text-center text-neutral-600 font-medium text-xs">
+                                  {record.attendedClasses}
+                                </td>
+                                <td className="px-4 py-2 text-center">
+                                  <span
+                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                      parseFloat(record.percentage) >= 75
+                                        ? "bg-black text-white"
+                                        : parseFloat(record.percentage) >= 65
+                                          ? "bg-neutral-200 text-neutral-700"
+                                          : "bg-neutral-100 text-neutral-400"
+                                    }`}
+                                  >
+                                    {record.percentage}%
+                                  </span>
+                                </td>
+                              </tr>
+                            ),
+                          )}
                       </tbody>
                     </table>
                   </div>
@@ -396,11 +395,9 @@ export default function Attendance() {
                           <p className="text-2xl font-black text-white">
                             {(
                               attendanceData.attendance.reduce(
-                                (acc, curr) =>
+                                (acc, curr: any) =>
                                   acc +
-                                  (parseFloat(
-                                    curr?.attendancePercentage || "0",
-                                  ) || 0),
+                                  (parseFloat(curr?.percentage || "0") || 0),
                                 0,
                               ) / (attendanceData.attendance.length || 1)
                             ).toFixed(1)}
