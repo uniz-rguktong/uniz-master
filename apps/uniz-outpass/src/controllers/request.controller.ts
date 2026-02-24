@@ -209,6 +209,28 @@ export const createOutpass = async (
     );
     const studentId = user.username.toUpperCase();
 
+    // 1. Proactive Expiry: Clean up any past requests for this student that aren't finalized
+    await Promise.all([
+      prisma.outpass.updateMany({
+        where: {
+          studentId,
+          isExpired: false,
+          toDay: { lt: now }, // Already past the end of the day or specified date
+          checkedOutTime: null, // Only if they never even left
+        },
+        data: { isExpired: true },
+      }),
+      prisma.outing.updateMany({
+        where: {
+          studentId,
+          isExpired: false,
+          toTime: { lt: now },
+          checkedOutTime: null,
+        },
+        data: { isExpired: true },
+      }),
+    ]);
+
     if (!isInCampus) {
       return res.status(403).json({
         code: ErrorCode.AUTH_FORBIDDEN,
@@ -399,6 +421,28 @@ export const createOuting = async (
     }
 
     const studentId = user.username.toUpperCase();
+
+    // 1. Proactive Expiry: Clean up any past requests for this student that aren't finalized
+    await Promise.all([
+      prisma.outpass.updateMany({
+        where: {
+          studentId,
+          isExpired: false,
+          toDay: { lt: now },
+          checkedOutTime: null,
+        },
+        data: { isExpired: true },
+      }),
+      prisma.outing.updateMany({
+        where: {
+          studentId,
+          isExpired: false,
+          toTime: { lt: now },
+          checkedOutTime: null,
+        },
+        data: { isExpired: true },
+      }),
+    ]);
 
     if (hasPending) {
       // Self-healing: check if student is marked as pending in profile but has no active requests in DB
