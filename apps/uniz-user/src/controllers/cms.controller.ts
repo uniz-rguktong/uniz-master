@@ -27,25 +27,19 @@ export const getPublicBanners = async (req: Request, res: Response) => {
   }
 };
 
-// Consolidated notifications (Updates + Tenders)
+// Consolidated notifications (Updates only, Tenders removed)
 export const getPublicNotifications = async (req: Request, res: Response) => {
   try {
     res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=1200");
 
-    const [updates, tenders] = await Promise.all([
-      prisma.publicNotification.findMany({
-        where: { isVisible: true },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.tender.findMany({
-        where: { isVisible: true },
-        orderBy: { createdAt: "desc" },
-      }),
-    ]);
+    const updates = await prisma.publicNotification.findMany({
+      where: { isVisible: true },
+      orderBy: { createdAt: "desc" },
+    });
 
     return res.json({
       success: true,
-      notifications: { updates, tenders },
+      notifications: { updates, tenders: [] },
     });
   } catch (e) {
     return res
