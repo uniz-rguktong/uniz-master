@@ -25,7 +25,6 @@ export default function SecurityPortal() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [summary, setSummary] = useState<any>(null);
-  const [_loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
 
