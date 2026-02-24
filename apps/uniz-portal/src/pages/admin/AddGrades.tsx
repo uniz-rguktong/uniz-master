@@ -12,6 +12,8 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "../../components/Button";
+import { downloadFile } from "../../api/apiClient";
+import { GET_GRADES_TEMPLATE } from "../../api/endpoints";
 
 export default function AddGrades() {
   const navigate = useNavigate();
@@ -73,27 +75,10 @@ export default function AddGrades() {
 
   // --- Download template ---
   const downloadTemplate = async () => {
-    try {
-      const res = await fetch(`${BASE_URL}/academics/grades/template`, {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token!)}`,
-        },
-      });
-      if (!res.ok) throw new Error("Failed to download template");
-
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Grades_Template.xlsx`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("Template download error", err);
-      setError("Failed to download template");
-    }
+    await downloadFile(
+      GET_GRADES_TEMPLATE("", "", "", "", false),
+      "Grades_Template.xlsx",
+    );
   };
 
   return (

@@ -65,6 +65,10 @@ export const RESET_PASS = `${BASE_URL}/auth/reset-password`;
 // Academic / Grades (Pending Microservice Migration)
 export const GET_ATTENDANCE = `${BASE_URL}/academics/attendance`;
 export const GET_GRADES = `${BASE_URL}/academics/grades`;
+export const DOWNLOAD_GRADES = (semesterId: string) =>
+  `${BASE_URL}/academics/grades/download/${semesterId}`;
+export const DOWNLOAD_ATTENDANCE = (semesterId: string) =>
+  `${BASE_URL}/academics/attendance/download/${semesterId}`;
 
 // Additional Legacy Endpoints
 export const UPDATE_STUDENT_STATUS = `${BASE_URL}/profile/student/status`;

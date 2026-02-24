@@ -88,6 +88,61 @@ export async function apiClient<T = any>(
   }
 }
 
+export async function downloadFile(
+  endpoint: string,
+  fileName: string,
+  params?: Record<string, any>,
+): Promise<void> {
+  const token =
+    localStorage.getItem("student_token") ||
+    localStorage.getItem("admin_token") ||
+    localStorage.getItem("faculty_token");
+  const cleanToken = token ? token.replace(/^"|"$/g, "") : null;
+
+  let url = endpoint;
+  if (params) {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        searchParams.append(key, String(value));
+      }
+    });
+    const queryString = searchParams.toString();
+    if (queryString) {
+      url += (url.includes("?") ? "&" : "?") + queryString;
+    }
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        ...(cleanToken ? { Authorization: `Bearer ${cleanToken}` } : {}),
+      },
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      handleHttpError(response.status, data, true);
+      return;
+    }
+
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
+    toast.success("Download started");
+  } catch (error: any) {
+    toast.error("Failed to download file. Please try again.");
+    console.error("Download error:", error);
+  }
+}
+
 function handleHttpError(status: number, data: any, showToast: boolean) {
   if (!showToast) return;
 

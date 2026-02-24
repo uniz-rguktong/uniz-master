@@ -14,9 +14,15 @@ import {
   Info,
   ChevronRight,
   GraduationCap,
+  Download,
 } from "lucide-react";
-import { SEARCH_STUDENTS, ADMIN_STUDENT_HISTORY } from "../../api/endpoints";
-import { apiClient } from "../../api/apiClient";
+import {
+  SEARCH_STUDENTS,
+  ADMIN_STUDENT_HISTORY,
+  DOWNLOAD_GRADES,
+  DOWNLOAD_ATTENDANCE,
+} from "../../api/endpoints";
+import { apiClient, downloadFile } from "../../api/apiClient";
 import { Input } from "../../components/Input";
 import { Pagination } from "../../components/Pagination";
 import { cn } from "../../utils/cn";
@@ -692,6 +698,71 @@ export default function SearchStudents() {
                   )}
                 </Section>
               </div>
+
+              {/* Academic Reports Download Section */}
+              <Section icon={Download} title="Official Reports (PDF)">
+                {(() => {
+                  const uniqueSemesters = Array.from(
+                    new Set([
+                      ...(selectedStudent.grades?.map((g) => g.semester) || []),
+                      ...(selectedStudent.attendance?.map(
+                        (a) => a.semesterId,
+                      ) || []),
+                    ]),
+                  ).filter(Boolean);
+
+                  if (uniqueSemesters.length === 0) {
+                    return (
+                      <p className="text-slate-400 font-bold italic py-2 col-span-full">
+                        No report data generated yet.
+                      </p>
+                    );
+                  }
+
+                  return uniqueSemesters
+                    .sort()
+                    .reverse()
+                    .map((sem: any) => (
+                      <div
+                        key={sem}
+                        className="p-4 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col gap-3 shadow-lg"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-white font-black text-sm uppercase tracking-tighter">
+                            {sem} Report
+                          </span>
+                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() =>
+                              downloadFile(
+                                DOWNLOAD_GRADES(sem),
+                                `Grades_${selectedStudent.username}_${sem}.pdf`,
+                                { studentId: selectedStudent.username },
+                              )
+                            }
+                            className="flex-1 bg-white text-black py-2 rounded-xl font-bold text-[10px] uppercase flex items-center justify-center gap-1.5 hover:bg-slate-100 transition-all"
+                          >
+                            <GraduationCap size={12} /> Grade
+                          </button>
+                          <button
+                            onClick={() =>
+                              downloadFile(
+                                DOWNLOAD_ATTENDANCE(sem),
+                                `Attendance_${selectedStudent.username}_${sem}.pdf`,
+                                { studentId: selectedStudent.username },
+                              )
+                            }
+                            className="flex-1 bg-white/10 text-white py-2 rounded-xl font-bold text-[10px] uppercase flex items-center justify-center gap-1.5 hover:bg-white/20 transition-all border border-white/10"
+                          >
+                            <BookOpen size={12} /> Attendance
+                          </button>
+                        </div>
+                      </div>
+                    ));
+                })()}
+              </Section>
 
               {/* History Section */}
               <div className="space-y-6">
