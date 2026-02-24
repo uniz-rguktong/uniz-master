@@ -131,6 +131,11 @@ export const UPDATES_BASE = `${BASE_URL}/cms/admin/updates`;
 export const TENDERS_BASE = `${BASE_URL}/cms/admin/tenders`;
 export const GET_NOTIFICATIONS = `${BASE_URL}/cms/notifications`;
 
+// Push Notifications
+export const PUSH_SUBSCRIBE = `${BASE_URL}/notifications/subscribe`;
+export const PUSH_SUBSCRIBERS = `${BASE_URL}/notifications/push/subscribers`;
+export const PUSH_SEND = `${BASE_URL}/notifications/push/send`;
+
 export const BULK_UPDATE_GRADES = `${BASE_URL}/academics/grades/bulk-update`;
 export const GET_BATCH_GRADES = `${BASE_URL}/academics/grades/batch`;
 export const ADD_MANUAL_GRADE = `${BASE_URL}/academics/grades/add`;
