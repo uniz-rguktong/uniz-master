@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { toast } from "react-toastify";
-import { apiClient } from "../../api/apiClient";
+import { apiClient, downloadFile } from "../../api/apiClient";
 import { student } from "../../store";
 
-import { ChevronDown, Award, AlertCircle } from "lucide-react";
-import { GET_GRADES } from "../../api/endpoints";
+import { ChevronDown, Award, AlertCircle, Download } from "lucide-react";
+import { GET_GRADES, DOWNLOAD_GRADES } from "../../api/endpoints";
 
 // Helper function to truncate long text
 
@@ -299,6 +299,24 @@ export default function GradeHub() {
                   {grades.semester}
                 </h2>
               </div>
+              <button
+                onClick={async () => {
+                  const mappedSemester = selectedSemester.replace(
+                    "Sem - ",
+                    "SEM-",
+                  );
+                  const semId = `${selectedYear}-${mappedSemester}`;
+                  await downloadFile(
+                    DOWNLOAD_GRADES(semId),
+                    `Grades_${user.username}_${semId}.pdf`,
+                    { studentId: user.username },
+                  );
+                }}
+                className="flex items-center gap-2 bg-neutral-900 text-white px-4 py-2 rounded-xl font-bold text-xs hover:bg-black transition-all shadow-sm hover:shadow-md"
+              >
+                <Download size={16} />
+                Download Report
+              </button>
             </div>
 
             {/* Content */}

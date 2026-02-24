@@ -2,8 +2,15 @@ import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import axios from "axios";
 import { student } from "../../store";
-import { ChevronDown, Award, AlertCircle, CheckCircle } from "lucide-react";
-import { GET_ATTENDANCE } from "../../api/endpoints";
+import {
+  ChevronDown,
+  Award,
+  AlertCircle,
+  CheckCircle,
+  Download,
+} from "lucide-react";
+import { GET_ATTENDANCE, DOWNLOAD_ATTENDANCE } from "../../api/endpoints";
+import { downloadFile } from "../../api/apiClient";
 
 interface AttendanceRecord {
   subject: string | { name: string; [key: string]: any };
@@ -277,6 +284,24 @@ export default function Attendance() {
                     {selectedYear} - {selectedSemester}
                   </h2>
                 </div>
+                <button
+                  onClick={async () => {
+                    const mappedSemester = selectedSemester.replace(
+                      "Sem - ",
+                      "SEM-",
+                    );
+                    const semId = `${selectedYear}-${mappedSemester}`;
+                    await downloadFile(
+                      DOWNLOAD_ATTENDANCE(semId),
+                      `Attendance_${user.username}_${semId}.pdf`,
+                      { studentId: user.username },
+                    );
+                  }}
+                  className="flex items-center gap-2 bg-neutral-900 text-white px-4 py-2 rounded-xl font-bold text-xs hover:bg-black transition-all shadow-sm hover:shadow-md ml-auto"
+                >
+                  <Download size={16} />
+                  Download Report
+                </button>
               </div>
 
               {/* Content */}
