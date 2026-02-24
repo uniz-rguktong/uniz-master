@@ -507,3 +507,32 @@ export const updateStudentPresence = async (
     });
   }
 };
+
+export const getBulkProfiles = async (req: Request, res: Response) => {
+  const secret = req.headers["x-internal-secret"];
+  const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+
+  if (secret !== INTERNAL_SECRET) {
+    return res.status(401).json({ message: "Internal secret mismatch" });
+  }
+
+  const { usernames } = req.body;
+
+  if (!Array.isArray(usernames)) {
+    return res.status(400).json({ message: "usernames array is required" });
+  }
+
+  try {
+    const profiles = await prisma.studentProfile.findMany({
+      where: {
+        username: { in: usernames.map((u: string) => u.toUpperCase()) },
+      },
+    });
+    return res.json({
+      success: true,
+      students: profiles.map(mapStudentProfile),
+    });
+  } catch (e) {
+    return res.status(500).json({ message: "Bulk fetch failed" });
+  }
+};
