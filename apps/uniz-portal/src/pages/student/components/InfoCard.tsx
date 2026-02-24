@@ -17,36 +17,36 @@ export const InfoCard = memo(
 
     return (
       <div
-        className={`bg-white p-4 rounded-2xl border border-neutral-100 shadow-[0_2px_8px_-4px_rgba(0,0,0,0.02)] hover:border-neutral-200 transition-all ${fullWidth ? "col-span-full" : ""}`}
+        className={`bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.03)] hover:border-blue-100 transition-all duration-300 ${fullWidth ? "col-span-full" : ""}`}
       >
-        <div className="flex items-center gap-2 mb-2">
-          <span className="p-2 bg-neutral-50 rounded-lg text-neutral-500">
+        <div className="flex items-center gap-2.5 mb-3">
+          <span className="p-2 bg-blue-50 rounded-xl text-blue-600">
             {icon}
           </span>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
             {label}
           </span>
         </div>
 
         {isLoading ? (
-          <div className="bg-neutral-50 rounded w-3/4 h-6 animate-pulse"></div>
+          <div className="bg-slate-50 rounded-lg w-3/4 h-6 animate-pulse"></div>
         ) : isEditing && editable ? (
           <input
             type={type}
             name={name}
             value={value}
             onChange={handleChange}
-            className="w-full bg-neutral-50 text-black text-base font-medium p-2 rounded-lg border border-neutral-100 focus:border-black focus:ring-1 focus:ring-black focus:outline-none transition-all"
+            className="w-full bg-slate-50 text-slate-900 text-[15px] font-semibold p-3 rounded-xl border border-slate-100 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition-all placeholder:text-slate-400 placeholder:font-normal"
             autoComplete="off"
             placeholder={`Enter ${label.toLowerCase()}`}
           />
         ) : (
-          <p className="text-neutral-900 text-base font-semibold truncate leading-tight tracking-tight">
+          <p className="text-slate-900 text-[15px] font-bold truncate leading-tight tracking-tight px-1">
             {value ? (
               value
             ) : (
-              <span className="text-neutral-300 font-normal italic text-sm">
-                Not Provided
+              <span className="text-slate-300 font-medium italic text-sm">
+                No data
               </span>
             )}
           </p>
