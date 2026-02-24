@@ -1575,7 +1575,6 @@ export const uploadGrades = async (req: any, res: Response) => {
     });
 
     const total = rows.length;
-    // Push entire Job to Redis (Upstash limit usually ~1MB for REST, check your plan)
     // If rows > 2000, consider chunking or storing in Blob storage.
     // Assuming < 2000 rows as per requirements.
 
