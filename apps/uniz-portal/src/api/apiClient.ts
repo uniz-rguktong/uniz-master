@@ -25,9 +25,13 @@ interface ApiResponse<T = any> {
   errors?: any[];
 }
 
+export interface ApiOptions extends RequestInit {
+  params?: Record<string, any>;
+}
+
 export async function apiClient<T = any>(
   endpoint: string,
-  options: RequestInit = {},
+  options: ApiOptions = {},
   showToast = true,
 ): Promise<T | null> {
   const token =
@@ -41,8 +45,23 @@ export async function apiClient<T = any>(
     ...(cleanToken ? { Authorization: `Bearer ${cleanToken}` } : {}),
   };
 
+  // Handle Query Parameters
+  let url = endpoint;
+  if (options.params) {
+    const searchParams = new URLSearchParams();
+    Object.entries(options.params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        searchParams.append(key, String(value));
+      }
+    });
+    const queryString = searchParams.toString();
+    if (queryString) {
+      url += (url.includes("?") ? "&" : "?") + queryString;
+    }
+  }
+
   try {
-    const response = await fetch(endpoint, {
+    const response = await fetch(url, {
       ...options,
       headers: {
         ...defaultHeaders,
