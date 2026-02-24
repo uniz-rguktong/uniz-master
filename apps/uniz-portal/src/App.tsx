@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { Route, Routes, Link, useNavigate } from "react-router-dom";
+import { Route, Routes, Link, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 import "./index.css";
 import { ToastContainer } from "react-toastify";
@@ -270,6 +270,14 @@ export default function App() {
                 <ExamCell />
               </PageTransition>
             }
+          />
+          <Route
+            path="/login"
+            element={<Navigate to="/student/signin" replace />}
+          />
+          <Route
+            path="/signin"
+            element={<Navigate to="/student/signin" replace />}
           />
           <Route
             path="/student/signin"
