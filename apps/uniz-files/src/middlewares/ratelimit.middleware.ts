@@ -10,7 +10,6 @@ export const rateLimiter = async (
   const key = `ratelimit:${ip}`;
 
   // Temporary bypass for Redis 'NaN' error causing crashes
-  // TODO: Investigate why ioredis/upstash throws UnhandledRejection despite try/catch
   next();
   /*
     try {

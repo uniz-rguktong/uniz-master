@@ -40,10 +40,6 @@ BASE_URL=https://api.uniz.rguktong.in/api/v1 \
 GW_STATUS_URL=https://api.uniz.rguktong.in/api/v1/system/health \
 SKIP_OTP=true \
 INTERNAL_SECRET=uniz-core \
-AUTH_DATABASE_URL="postgresql://neondb_owner:npg_BP1it9EkDRGs@ep-red-queen-a12hqixj.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&schema=auth_v2" \
-USER_DATABASE_URL="postgresql://neondb_owner:npg_BP1it9EkDRGs@ep-red-queen-a12hqixj.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&schema=users_v2" \
-OUTPASS_DATABASE_URL="postgresql://neondb_owner:npg_BP1it9EkDRGs@ep-red-queen-a12hqixj.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&schema=outpass_v2" \
-ACADEMICS_DATABASE_URL="postgresql://neondb_owner:npg_BP1it9EkDRGs@ep-red-queen-a12hqixj.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&schema=academics_v2" \
 MAP_LOCALHOST=false \
 node infra/core-infra/tests/comprehensive_test.js
 ```

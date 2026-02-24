@@ -5,11 +5,9 @@ const { PrismaClient } = require("@prisma/client");
 async function generate() {
   const userPrisma = new PrismaClient({
     datasourceUrl:
-      "postgresql://neondb_owner:npg_BP1it9EkDRGs@ep-red-queen-a12hqixj-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require&schema=users",
   });
   const academicPrisma = new PrismaClient({
     datasourceUrl:
-      "postgresql://neondb_owner:npg_BP1it9EkDRGs@ep-red-queen-a12hqixj-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require&schema=academics",
   });
 
   try {
