@@ -196,6 +196,7 @@ export const createOutpass = async (
 
   const fromDateObj = new Date(fromDay);
   const toDateObj = new Date(toDay);
+  toDateObj.setHours(23, 59, 59, 999);
 
   // Calculate days
   const diffMs = toDateObj.getTime() - fromDateObj.getTime();
@@ -206,6 +207,7 @@ export const createOutpass = async (
     const { isInCampus, hasPending, gender } = await getStudentStatus(
       req.headers.authorization?.split(" ")[1] || "",
     );
+    const studentId = user.username.toUpperCase();
 
     if (!isInCampus) {
       return res.status(403).json({
@@ -215,15 +217,47 @@ export const createOutpass = async (
     }
 
     if (hasPending) {
-      return res.status(409).json({
-        code: ErrorCode.RESOURCE_ALREADY_EXISTS,
-        message:
-          "You already have a pending request (Profile indicates Pending).",
-      });
+      // Self-healing: check if student is marked as pending in profile but has no active requests in DB
+      const currentActive = await Promise.all([
+        prisma.outpass.findFirst({
+          where: {
+            studentId,
+            isRejected: false,
+            isExpired: false,
+            checkedInTime: null,
+            OR: [{ toDay: { gte: now } }, { checkedOutTime: { not: null } }],
+          },
+        }),
+        prisma.outing.findFirst({
+          where: {
+            studentId,
+            isRejected: false,
+            isExpired: false,
+            checkedInTime: null,
+            OR: [{ toTime: { gte: now } }, { checkedOutTime: { not: null } }],
+          },
+        }),
+      ]);
+
+      if (!currentActive[0] && !currentActive[1]) {
+        console.log(
+          `[OUTPASS] Self-healing: Clearing stuck pending status for ${studentId}`,
+        );
+        await updateStudentProfileStatus(
+          user.username,
+          req.headers.authorization?.split(" ")[1] || "",
+          { isPending: false },
+        );
+      } else {
+        return res.status(409).json({
+          code: ErrorCode.RESOURCE_ALREADY_EXISTS,
+          message:
+            "You already have a pending/active request (Profile indicates Pending).",
+        });
+      }
     }
 
     // 2. Double check local DB for existing pending Outpass AND Outing
-    const studentId = user.username.toUpperCase();
     const [existingOutpass, existingOuting] = await Promise.all([
       prisma.outpass.findFirst({
         where: {
@@ -231,6 +265,7 @@ export const createOutpass = async (
           isRejected: false,
           isExpired: false,
           checkedInTime: null,
+          OR: [{ toDay: { gte: now } }, { checkedOutTime: { not: null } }],
         },
       }),
       prisma.outing.findFirst({
@@ -239,6 +274,7 @@ export const createOutpass = async (
           isRejected: false,
           isExpired: false,
           checkedInTime: null,
+          OR: [{ toTime: { gte: now } }, { checkedOutTime: { not: null } }],
         },
       }),
     ]);
@@ -362,16 +398,50 @@ export const createOuting = async (
       });
     }
 
+    const studentId = user.username.toUpperCase();
+
     if (hasPending) {
-      return res.status(409).json({
-        code: ErrorCode.RESOURCE_ALREADY_EXISTS,
-        message:
-          "You already have a pending request (Profile indicates Pending).",
-      });
+      // Self-healing: check if student is marked as pending in profile but has no active requests in DB
+      const currentActive = await Promise.all([
+        prisma.outpass.findFirst({
+          where: {
+            studentId,
+            isRejected: false,
+            isExpired: false,
+            checkedInTime: null,
+            OR: [{ toDay: { gte: now } }, { checkedOutTime: { not: null } }],
+          },
+        }),
+        prisma.outing.findFirst({
+          where: {
+            studentId,
+            isRejected: false,
+            isExpired: false,
+            checkedInTime: null,
+            OR: [{ toTime: { gte: now } }, { checkedOutTime: { not: null } }],
+          },
+        }),
+      ]);
+
+      if (!currentActive[0] && !currentActive[1]) {
+        console.log(
+          `[OUTING] Self-healing: Clearing stuck pending status for ${studentId}`,
+        );
+        await updateStudentProfileStatus(
+          user.username,
+          req.headers.authorization?.split(" ")[1] || "",
+          { isPending: false },
+        );
+      } else {
+        return res.status(409).json({
+          code: ErrorCode.RESOURCE_ALREADY_EXISTS,
+          message:
+            "You already have a pending/active request (Profile indicates Pending).",
+        });
+      }
     }
 
     // 2. Double check local DB for existing pending Outpass AND Outing
-    const studentId = user.username.toUpperCase();
     const [existingOutpass, existingOuting] = await Promise.all([
       prisma.outpass.findFirst({
         where: {
@@ -379,6 +449,7 @@ export const createOuting = async (
           isRejected: false,
           isExpired: false,
           checkedInTime: null,
+          OR: [{ toDay: { gte: now } }, { checkedOutTime: { not: null } }],
         },
       }),
       prisma.outing.findFirst({
@@ -387,6 +458,7 @@ export const createOuting = async (
           isRejected: false,
           isExpired: false,
           checkedInTime: null,
+          OR: [{ toTime: { gte: now } }, { checkedOutTime: { not: null } }],
         },
       }),
     ]);

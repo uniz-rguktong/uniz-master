@@ -295,6 +295,9 @@ export const searchStudents = async (
     if (req.body.isPresentInCampus !== undefined) {
       where.isPresentInCampus = req.body.isPresentInCampus;
     }
+    if (req.body.isApplicationPending !== undefined) {
+      where.isApplicationPending = req.body.isApplicationPending;
+    }
 
     // Cache search results for 1 minute
     res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=300");
