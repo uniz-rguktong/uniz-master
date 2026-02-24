@@ -6,8 +6,8 @@
     "deploy": "./scripts/deploy.sh",
     "push": "git push",
     "pull": "git pull",
-    "attack": "npx autocannon -c 200 -d 90 https://api.uniz.rguktong.in/gateway-status",
-    "watch": "ssh -o StrictHostKeyChecking=no root@76.13.241.174 \"kubectl get hpa uniz-gateway-api-hpa --watch\"",
+    "attack": "npx autocannon -c 500 -p 10 -d 120 https://api.uniz.rguktong.in/gateway-status",
+    "watch": "ssh -o StrictHostKeyChecking=no root@76.13.241.174 \"watch -n 1 'kubectl get hpa; echo; kubectl get pods'\"",
     "clean": "rm -rf logs/ *.log",
     "install:all": "for d in apps/uniz-* infra/core-infra; do (cd $d && npm install && npm audit fix); done",
     "prettify": "prettier --write ."
