@@ -33,6 +33,8 @@ export function useIsAuth() {
     const storedUsername = getSafeToken("username");
     const publicPaths = [
       "/",
+      "/login",
+      "/signin",
       "/student/signin",
       "/admin/signin",
       "/admin/signin/",
