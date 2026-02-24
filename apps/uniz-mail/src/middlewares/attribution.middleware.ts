@@ -1,19 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 
-const SECURITY_NOTICE = [
-  "██╗   ██╗███╗   ██╗██╗███████╗",
-  "██║   ██║████╗  ██║██║╚══███╔╝",
-  "██║   ██║██╔██╗ ██║██║  ███╔╝ ",
-  "██║   ██║██║╚██╗██║██║ ███╔╝  ",
-  "╚██████╔╝██║ ╚████║██║███████╗",
-  " ╚═════╝ ╚═╝  ╚═══╝╚═╝╚══════╝",
-  "                               ",
-  "  SECURITY ALERT: UNIZ INTEGRITY PROTECTION ",
-  "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-  "Suspicious activity detected. Logging protocol active.",
-  "Architect: SABER",
-];
-
 /**
  *
  * Middleware to enforce author attribution and handle malformed activity signaling.
@@ -59,8 +45,6 @@ export const attributionMiddleware = (
         console.warn(
           `[SECURITY] Malformed activity detected. IP: ${req.ip}, Status: ${status}, URL: ${req.originalUrl}, Code: ${body.code || "N/A"}`,
         );
-
-        body.security_notice = SECURITY_NOTICE;
 
         // Ensure standardized response message for malformed behavior
         if (
