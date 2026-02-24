@@ -93,7 +93,7 @@ export default function CampusHub() {
   // Staggered animation for svg elements
 
   return (
-    <div className="min-h-screen bg-white text-black font-sans">
+    <div className="min-h-screen text-black font-sans">
       {/* Hero Section */}
       <header className="relative overflow-hidden bg-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20">

@@ -10,6 +10,15 @@ import { REQUEST_OUTING, REQUEST_OUTPASS } from "../../api/endpoints";
 import { useIsAuth } from "../../hooks/is_authenticated";
 import { apiClient } from "../../api/apiClient";
 import { toast } from "react-toastify";
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  AlertCircle,
+  Loader2,
+  Send,
+  RefreshCw,
+} from "lucide-react";
 
 type RequestCompProps = {
   type: "outpass" | "outing";
@@ -29,9 +38,9 @@ export default function RequestComp({ type }: RequestCompProps) {
 
   const handleInputChange =
     (setter: React.Dispatch<React.SetStateAction<any>>) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setter(event.target.value);
-    };
+      (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setter(event.target.value);
+      };
 
   const sendDataToBackend = async () => {
     if (
@@ -107,194 +116,157 @@ export default function RequestComp({ type }: RequestCompProps) {
   };
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto">
+    <div className="max-w-7xl mx-auto px-6 md:px-10 pb-32">
+      {/* Header Section */}
       <div className="mb-10">
         <button
           onClick={() => navigateTo("/student")}
-          className="text-neutral-500 hover:text-black font-bold text-sm flex items-center gap-2 mb-6 transition-colors"
+          className="text-slate-400 hover:text-blue-600 font-bold text-[11px] uppercase tracking-[0.2em] flex items-center gap-2 mb-8 transition-all group"
         >
-          ← Back to Dashboard
+          <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+          Back to Dashboard
         </button>
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div>
-            <h1 className="text-4xl font-black text-black tracking-tighter mb-2">
+
+        <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-6 px-2">
+          <div className="text-center md:text-left">
+            <p className="text-lg font-medium text-slate-400 mb-0.5 tracking-tight">
+              New Application
+            </p>
+            <h1 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tighter mb-2">
               Request {type === "outing" ? "Outing" : "Outpass"}
             </h1>
-            <p className="text-neutral-500 font-medium">
-              Please fill in the details below for approval.
+            <p className="text-slate-400 font-bold text-[13px] uppercase tracking-widest opacity-60">
+              Campus Leave Authorization
             </p>
           </div>
-          <div className="bg-neutral-50 p-3 rounded-2xl">
+          <div className="p-4 bg-white text-blue-600 rounded-3xl border border-slate-100 shadow-sm shrink-0 transition-transform hover:scale-105 duration-500">
             {type === "outpass" ? (
-              <svg
-                className="w-8 h-8 text-black"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
+              <Calendar className="w-8 h-8" />
             ) : (
-              <svg
-                className="w-8 h-8 text-black"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              <Clock className="w-8 h-8" />
             )}
           </div>
         </div>
       </div>
 
-      <div className="bg-white space-y-8">
-        {/* Form Fields */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        {/* Main Form Area */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-[2.5rem] p-8 md:p-10 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)]">
+            <div className="space-y-8">
+              <div className="space-y-3">
+                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300 ml-1">
+                  Reason for {type}
+                </label>
+                <textarea
+                  onChange={handleInputChange(setReason)}
+                  placeholder="Clearly explain the purpose of your request..."
+                  className="w-full bg-slate-50/50 p-6 rounded-2xl border border-slate-100/50 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none min-h-[160px] font-bold text-base text-slate-700 placeholder:text-slate-200 placeholder:font-normal resize-none transition-all shadow-inner"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                {type === "outpass" ? (
+                  <>
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300 ml-1">
+                        Departure Date
+                      </label>
+                      <Input
+                        type="date"
+                        onchangeFunction={handleInputChange(setFromDate)}
+                        className="w-full bg-slate-50/50 p-5 rounded-2xl border border-slate-100/50 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-base text-slate-700 transition-all cursor-pointer shadow-inner"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300 ml-1">
+                        Expected Return
+                      </label>
+                      <Input
+                        type="date"
+                        onchangeFunction={handleInputChange(setToDate)}
+                        className="w-full bg-slate-50/50 p-5 rounded-2xl border border-slate-100/50 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-base text-slate-700 transition-all cursor-pointer shadow-inner"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300 ml-1">
+                        Exit Time
+                      </label>
+                      <Input
+                        type="time"
+                        onchangeFunction={handleInputChange(setFromTime)}
+                        className="w-full bg-slate-50/50 p-5 rounded-2xl border border-slate-100/50 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-base text-slate-700 transition-all cursor-pointer shadow-inner"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300 ml-1">
+                        Return Window
+                      </label>
+                      <Input
+                        type="time"
+                        onchangeFunction={handleInputChange(setToTime)}
+                        className="w-full bg-slate-50/50 p-5 rounded-2xl border border-slate-100/50 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-base text-slate-700 transition-all cursor-pointer shadow-inner"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar Info & Action */}
         <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 ml-1">
-              Reason for {type}
-            </label>
-            <textarea
-              onChange={handleInputChange(setReason)}
-              placeholder="Please explain why you need to leave..."
-              className="w-full bg-neutral-50 p-4 rounded-xl border border-neutral-200 focus:border-black focus:ring-1 focus:ring-black focus:outline-none min-h-[140px] font-medium text-neutral-900 placeholder:text-neutral-400 resize-none transition-all"
-            />
+          <div className="bg-slate-50/50 rounded-[2.5rem] p-8 border border-slate-100/50">
+            <div className="flex gap-4 items-start mb-6">
+              <div className="p-3 bg-white text-blue-600 rounded-xl shadow-sm border border-slate-100/50 shrink-0">
+                <AlertCircle className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <p className="font-black text-slate-900 text-sm uppercase tracking-tight">Requirement</p>
+                <p className="text-slate-400 font-medium text-xs leading-relaxed">
+                  All fields are mandatory. Details will be vetted by the authority.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-5 bg-white/60 rounded-2xl border border-white shadow-sm">
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1.5">Notification Sent To</p>
+              <p className="text-[13px] font-bold text-slate-700 truncate">{Student?.email}</p>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
-            {type === "outpass" ? (
-              <>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 ml-1">
-                    From Date
-                  </label>
-                  <Input
-                    type="date"
-                    onchangeFunction={handleInputChange(setFromDate)}
-                    className="w-full bg-neutral-50 p-4 rounded-xl border border-neutral-200 focus:border-black focus:ring-1 focus:ring-black focus:outline-none font-bold text-lg text-neutral-900 transition-all"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 ml-1">
-                    To Date
-                  </label>
-                  <Input
-                    type="date"
-                    onchangeFunction={handleInputChange(setToDate)}
-                    className="w-full bg-neutral-50 p-4 rounded-xl border border-neutral-200 focus:border-black focus:ring-1 focus:ring-black focus:outline-none font-bold text-lg text-neutral-900 transition-all"
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 ml-1">
-                    From Time
-                  </label>
-                  <Input
-                    type="time"
-                    onchangeFunction={handleInputChange(setFromTime)}
-                    className="w-full bg-neutral-50 p-4 rounded-xl border border-neutral-200 focus:border-black focus:ring-1 focus:ring-black focus:outline-none font-bold text-lg text-neutral-900 transition-all"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 ml-1">
-                    To Time
-                  </label>
-                  <Input
-                    type="time"
-                    onchangeFunction={handleInputChange(setToTime)}
-                    className="w-full bg-neutral-50 p-4 rounded-xl border border-neutral-200 focus:border-black focus:ring-1 focus:ring-black focus:outline-none font-bold text-lg text-neutral-900 transition-all"
-                  />
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Info Box */}
-        <div className="bg-neutral-50 rounded-2xl p-6 border border-neutral-100 flex gap-4">
-          <div className="p-2 bg-black text-white rounded-lg h-fit">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div className="space-y-4">
+            <button
+              onClick={sendDataToBackend}
+              disabled={isLoading}
+              className="group w-full py-5 bg-blue-600 text-white rounded-[2rem] font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-blue-100 hover:bg-blue-700 hover:-translate-y-1 transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <div className="text-sm space-y-1">
-            <p className="font-bold text-black">Important Request Notes</p>
-            <ul className="text-neutral-500 font-medium list-disc ml-4 space-y-1">
-              <li>All fields are mandatory.</li>
-              <li>
-                Updates sent to{" "}
-                <span className="text-black font-bold">{Student?.email}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+              {isLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  Submit Request
+                  <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
+            </button>
 
-        {/* Actions */}
-        <div className="pt-4 space-y-4">
-          <button
-            onClick={sendDataToBackend}
-            disabled={isLoading}
-            className="w-full py-4 bg-black text-white rounded-xl font-bold text-lg hover:bg-neutral-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {isLoading ? (
-              <svg
-                className="animate-spin h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-            ) : (
-              "Submit Request"
-            )}
-          </button>
-
-          <button
-            onClick={() =>
-              navigateTo(
-                `/student/${type === "outing" ? "outpass" : "outing"}/request${type === "outing" ? "outpass" : "outing"}`,
-              )
-            }
-            className="w-full py-4 bg-white border-2 border-neutral-100 text-neutral-600 rounded-xl font-bold hover:bg-neutral-50 hover:text-black hover:border-black transition-all"
-          >
-            Switch to {type === "outing" ? "Outpass" : "Outing"} Request
-          </button>
+            <button
+              onClick={() =>
+                navigateTo(
+                  `/student/${type === "outing" ? "outpass" : "outing"}/request${type === "outing" ? "outpass" : "outing"}`,
+                )
+              }
+              className="w-full py-4 bg-transparent border border-slate-100 text-slate-400 rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 hover:text-blue-600 transition-all flex items-center justify-center gap-2"
+            >
+              <RefreshCw className="w-3 h-3" />
+              Switch to {type === "outing" ? "Outpass" : "Outing"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
