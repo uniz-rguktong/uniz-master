@@ -21,6 +21,7 @@ import {
 import { clearSession } from "../../utils/security";
 import { motion } from "framer-motion";
 import WebmasterDashboard from "./Webmaster/WebmasterDashboard";
+import DeanDashboard from "./Dean/DeanDashboard";
 
 const QuickActionButton = ({
   onClick,
@@ -63,6 +64,10 @@ export default function Admin() {
 
   if (role === "webmaster") {
     return <WebmasterDashboard />;
+  }
+
+  if (role === "dean") {
+    return <DeanDashboard />;
   }
 
   const handleLogout = () => {

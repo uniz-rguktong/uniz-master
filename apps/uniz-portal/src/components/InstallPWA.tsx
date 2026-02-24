@@ -72,6 +72,17 @@ export const InstallPWA = () => {
     }
   }, [auth.is_authnticated, isStandalone]);
 
+  // 6. Auto-dismiss after 8 seconds of visibility
+  useEffect(() => {
+    let timer: any;
+    if (isVisible) {
+      timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 8000);
+    }
+    return () => clearTimeout(timer);
+  }, [isVisible]);
+
   const handleDismiss = () => {
     setIsVisible(false);
     localStorage.setItem("pwa_prompt_dismissed", "true");
