@@ -3,6 +3,7 @@ import { student } from "../../store";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { STUDENT_HISTORY } from "../../api/endpoints";
+import { apiClient } from "../../api/apiClient";
 
 import {
   Clock,
@@ -40,26 +41,16 @@ export default function Outpass_Outing({ request }: requestProps) {
 
   const fetchHistory = async () => {
     try {
-      const token = localStorage
-        .getItem("student_token")
-        ?.replace(/^"|"$/g, "");
-      if (!token) return;
+      setLoading(true);
+      const data = await apiClient<{ success: boolean; history: any[] }>(
+        STUDENT_HISTORY,
+        {
+          method: "GET",
+        },
+      );
 
-      const myHeaders = new Headers();
-      myHeaders.append("Authorization", `Bearer ${token}`);
-
-      const requestOptions: RequestInit = {
-        method: "GET",
-        headers: myHeaders,
-        redirect: "follow",
-      };
-
-      // Using the prescribed URL
-      const response = await fetch(STUDENT_HISTORY, requestOptions);
-      const result = await response.json();
-
-      if (result.success && Array.isArray(result.history)) {
-        setHistory(result.history);
+      if (data && data.success && Array.isArray(data.history)) {
+        setHistory(data.history);
       }
     } catch (error) {
       console.error("Failed to fetch history:", error);
