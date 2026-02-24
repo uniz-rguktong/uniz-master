@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { clearSession } from "../../utils/security";
 import { motion } from "framer-motion";
+import WebmasterDashboard from "./Webmaster/WebmasterDashboard";
 
 const QuickActionButton = ({
   onClick,
@@ -58,7 +59,11 @@ export default function Admin() {
   useAdminname();
   const navigate = useNavigate();
   const username = JSON.parse(localStorage.getItem("username") || `"Admin"`);
-  const role = localStorage.getItem("admin_role") || "admin";
+  const role = (localStorage.getItem("admin_role") || "admin").replace(/"/g, "");
+
+  if (role === "webmaster") {
+    return <WebmasterDashboard />;
+  }
 
   const handleLogout = () => {
     clearSession();
@@ -67,9 +72,11 @@ export default function Admin() {
 
   const isDirector = role === "director" || role === "webmaster";
   const isDean = role === "dean" || isDirector;
-  const isDSW = role === "dsw" || isDean;
-  const isWarden = role === "warden" || isDSW;
-  const isCaretaker = role === "caretaker" || isWarden;
+  const isDSW = role === "dsw" || role === "swo" || isDean;
+  const isWarden =
+    role === "warden" || role.includes("warden") || isDSW;
+  const isCaretaker =
+    role === "caretaker" || role.includes("caretaker") || isWarden;
   const isSecurity = role === "security" || isDirector;
 
   // Define actions using a cleaner data structure
@@ -129,39 +136,39 @@ export default function Admin() {
       items: [
         ...(isDean
           ? [
-              {
-                onClick: () => navigate("/admin/addfaculty"),
-                title: "Faculty",
-                subtitle: "Manage Staff",
-                Icon: UserPlus,
-              },
-              {
-                onClick: () => navigate("/admin/addstudents"),
-                title: "Students",
-                subtitle: "Import CSV",
-                Icon: UserPlus,
-              },
-            ]
+            {
+              onClick: () => navigate("/admin/addfaculty"),
+              title: "Faculty",
+              subtitle: "Manage Staff",
+              Icon: UserPlus,
+            },
+            {
+              onClick: () => navigate("/admin/addstudents"),
+              title: "Students",
+              subtitle: "Import CSV",
+              Icon: UserPlus,
+            },
+          ]
           : []),
         ...(isDirector
           ? [
-              {
-                onClick: () => navigate("/admin/roles"),
-                title: "Roles",
-                subtitle: "Permissions",
-                Icon: UserCog,
-              },
-            ]
+            {
+              onClick: () => navigate("/admin/roles"),
+              title: "Roles",
+              subtitle: "Permissions",
+              Icon: UserCog,
+            },
+          ]
           : []),
         ...(isSecurity
           ? [
-              {
-                onClick: () => navigate("/admin/searchstudents"),
-                title: "Search",
-                subtitle: "Find Students",
-                Icon: Search,
-              },
-            ]
+            {
+              onClick: () => navigate("/admin/searchstudents"),
+              title: "Search",
+              subtitle: "Find Students",
+              Icon: Search,
+            },
+          ]
           : []),
       ],
     },
@@ -177,13 +184,13 @@ export default function Admin() {
         },
         ...(isDean
           ? [
-              {
-                onClick: () => navigate("/admin/banners"),
-                title: "Banners",
-                subtitle: "Site Visuals",
-                Icon: ImageIcon,
-              },
-            ]
+            {
+              onClick: () => navigate("/admin/banners"),
+              title: "Banners",
+              subtitle: "Site Visuals",
+              Icon: ImageIcon,
+            },
+          ]
           : []),
       ],
     },

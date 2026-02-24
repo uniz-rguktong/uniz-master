@@ -6,8 +6,8 @@ export const NOTIFICATION_SERVICE_URL = `${BASE_URL}/notifications`;
 
 // New Microservices Architecture Endpoints
 // Auth
-export const SIGNIN = (_type: "student" | "admin" | "faculty") =>
-  `${BASE_URL}/auth/login`;
+export const SIGNIN = (type: "student" | "admin" | "faculty") =>
+  type === "admin" ? `${BASE_URL}/auth/login/admin` : `${BASE_URL}/auth/login`;
 export const SIGNUP = (_type: "student" | "admin" | "faculty") =>
   `${BASE_URL}/auth/signup`;
 export const FORGOT_PASS_ENDPOINT = `${BASE_URL}/auth/otp/request`;
@@ -65,3 +65,33 @@ export const GET_GRADES = `${BASE_URL}/academics/grades`;
 export const UPDATE_STUDENT_STATUS = `${BASE_URL}/profile/student/status`;
 export const STUDENT_OUTSIDE_CAMPUS = `${BASE_URL}/requests/outside`;
 export const CREATE_FACULTY = `${BASE_URL}/profile/faculty/create`;
+
+// Webmaster / Specialized Admin Endpoints
+export const ADMIN_VIEW_STUDENT = (id: string) =>
+  `${BASE_URL}/profile/admin/student/${id}`;
+export const GET_SUBJECTS = `${BASE_URL}/academics/subjects`;
+export const ADD_SUBJECT = `${BASE_URL}/academics/subjects/add`;
+export const UPLOAD_ATTENDANCE = `${BASE_URL}/academics/attendance/upload`;
+export const UPLOAD_GRADES = `${BASE_URL}/academics/grades/upload`;
+
+export const GET_ATTENDANCE_TEMPLATE = (branch: string, year: string, semesterId: string) =>
+  `${BASE_URL}/academics/attendance/template?branch=${branch}&year=${year}&semesterId=${semesterId}`;
+
+export const GET_GRADES_TEMPLATE = (branch: string, year: string, semesterId: string, subjectCode: string, remedialsOnly: boolean) =>
+  `${BASE_URL}/academics/grades/template?branch=${branch}&year=${year}&semesterId=${semesterId}&subjectCode=${subjectCode}&remedialsOnly=${remedialsOnly}`;
+
+export const ADMIN_SUSPEND_ACCOUNT = `${BASE_URL}/auth/admin/suspend`;
+export const ADMIN_UPDATE_STUDENT = (id: string) =>
+  `${BASE_URL}/profile/admin/student/${id}`;
+
+export const GET_GRIEVANCES_LIST = `${BASE_URL}/requests/grievance/list`;
+
+export const BANNERS_BASE = `${BASE_URL}/cms/admin/banners`;
+export const UPDATE_BANNER_VISIBILITY = (id: string) => `${BASE_URL}/cms/admin/visibility/banner/${id}`;
+
+export const UPDATES_BASE = `${BASE_URL}/cms/admin/updates`;
+export const GET_NOTIFICATIONS = `${BASE_URL}/cms/notifications`;
+
+export const BULK_UPDATE_GRADES = `${BASE_URL}/academics/grades/bulk-update`;
+export const GET_BATCH_GRADES = `${BASE_URL}/academics/grades/batch`;
+export const ADD_MANUAL_GRADE = `${BASE_URL}/academics/grades/add`;
