@@ -45,6 +45,11 @@ export const FORWARD_OUTPASS = (id: string) =>
 // Bulk fetch
 export const GET_OUTING_REQUESTS = `${BASE_URL}/requests/outing/all`;
 export const GET_OUTPASS_REQUESTS = `${BASE_URL}/requests/outpass/all`;
+export const SECURITY_SUMMARY = `${BASE_URL}/requests/security/summary`;
+export const SECURITY_CHECKOUT = (id: string) =>
+  `${BASE_URL}/requests/${id}/checkout`;
+export const SECURITY_CHECKIN = (id: string) =>
+  `${BASE_URL}/requests/${id}/checkin`;
 
 // Notes:
 // The frontend expects many endpoints that were present in the monolith.
@@ -74,10 +79,20 @@ export const ADD_SUBJECT = `${BASE_URL}/academics/subjects/add`;
 export const UPLOAD_ATTENDANCE = `${BASE_URL}/academics/attendance/upload`;
 export const UPLOAD_GRADES = `${BASE_URL}/academics/grades/upload`;
 
-export const GET_ATTENDANCE_TEMPLATE = (branch: string, year: string, semesterId: string) =>
+export const GET_ATTENDANCE_TEMPLATE = (
+  branch: string,
+  year: string,
+  semesterId: string,
+) =>
   `${BASE_URL}/academics/attendance/template?branch=${branch}&year=${year}&semesterId=${semesterId}`;
 
-export const GET_GRADES_TEMPLATE = (branch: string, year: string, semesterId: string, subjectCode: string, remedialsOnly: boolean) =>
+export const GET_GRADES_TEMPLATE = (
+  branch: string,
+  year: string,
+  semesterId: string,
+  subjectCode: string,
+  remedialsOnly: boolean,
+) =>
   `${BASE_URL}/academics/grades/template?branch=${branch}&year=${year}&semesterId=${semesterId}&subjectCode=${subjectCode}&remedialsOnly=${remedialsOnly}`;
 
 export const ADMIN_SUSPEND_ACCOUNT = `${BASE_URL}/auth/admin/suspend`;
@@ -88,12 +103,16 @@ export const ADMIN_UPDATE_STUDENT = (id: string) =>
 export const ADMIN_STUDENT_UPLOAD = `${BASE_URL}/profile/admin/student/upload`;
 export const ADMIN_STUDENT_TEMPLATE = `${BASE_URL}/profile/admin/student/template`;
 export const ADMIN_STUDENT_PROGRESS = `${BASE_URL}/profile/admin/student/upload/progress`;
-export const ADMIN_STUDENT_EXPORT = (branch?: string, year?: string, fields?: string) => {
+export const ADMIN_STUDENT_EXPORT = (
+  branch?: string,
+  year?: string,
+  fields?: string,
+) => {
   let url = `${BASE_URL}/profile/admin/student/export?`;
   if (branch) url += `branch=${branch}&`;
   if (year) url += `year=${year}&`;
   if (fields) url += `fields=${fields}&`;
-  return url.endsWith('&') || url.endsWith('?') ? url.slice(0, -1) : url;
+  return url.endsWith("&") || url.endsWith("?") ? url.slice(0, -1) : url;
 };
 
 // System & Logs
@@ -105,9 +124,11 @@ export const ACADEMICS_PROGRESS = (uploadId: string) =>
 export const GET_GRIEVANCES_LIST = `${BASE_URL}/requests/grievance/list`;
 
 export const BANNERS_BASE = `${BASE_URL}/cms/admin/banners`;
-export const UPDATE_BANNER_VISIBILITY = (id: string) => `${BASE_URL}/cms/admin/visibility/banner/${id}`;
+export const UPDATE_BANNER_VISIBILITY = (id: string) =>
+  `${BASE_URL}/cms/admin/visibility/banner/${id}`;
 
 export const UPDATES_BASE = `${BASE_URL}/cms/admin/updates`;
+export const TENDERS_BASE = `${BASE_URL}/cms/admin/tenders`;
 export const GET_NOTIFICATIONS = `${BASE_URL}/cms/notifications`;
 
 export const BULK_UPDATE_GRADES = `${BASE_URL}/academics/grades/bulk-update`;
