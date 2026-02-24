@@ -69,7 +69,7 @@ export default function Signin({ type }: SigninProps) {
 
     if (type === "student" && !username.toUpperCase().includes("O")) {
       toast.error(
-        "Student username must be your college ID (e.g., containing 'o')",
+        "Student username must be your college ID (e.g., containing 'O')",
       );
       return;
     }
@@ -85,7 +85,10 @@ export default function Signin({ type }: SigninProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: username.trim(),
+          username:
+            type === "student"
+              ? username.trim().toUpperCase()
+              : username.trim().toLowerCase(),
           password: password.trim(),
         }),
       });
@@ -129,16 +132,22 @@ export default function Signin({ type }: SigninProps) {
         navigate("/student", { replace: true });
       } else if (
         type === "admin" &&
-        data.admin_token &&
-        (data.role === "admin" || data.role === "webmaster")
+        (data.admin_token || (data as any).token || data.success)
       ) {
-        localStorage.setItem("admin_token", JSON.stringify(data.admin_token));
+        const token = data.admin_token || (data as any).token || "";
+        localStorage.setItem("admin_token", JSON.stringify(token));
         localStorage.setItem("username", JSON.stringify(username.trim()));
-        localStorage.setItem("admin_role", (data as any).role || "admin");
+        const userRole = (data as any).role || "admin";
+        localStorage.setItem("admin_role", userRole);
+
         setAuth({ is_authnticated: true, type: "admin" });
         setAdmin(username.trim());
         toast.success("Welcome back, Admin!");
-        navigate("/admin", { replace: true });
+
+        // Use a small delay to ensure Recoil state update is processed
+        setTimeout(() => {
+          navigate("/admin", { replace: true });
+        }, 100);
       } else if (type === "faculty" && (data as any).token) {
         // ... existing faculty logic ...
         localStorage.setItem(
@@ -362,6 +371,20 @@ export default function Signin({ type }: SigninProps) {
                     onClick={() => setStep("forgot")}
                   >
                     Forgot password?
+                  </button>
+                </div>
+              )}
+              {type === "admin" && (
+                <div className="text-center pt-2">
+                  <button
+                    type="button"
+                    className="text-sm text-slate-900 hover:text-black font-bold uppercase tracking-widest underline transition-all opacity-50 hover:opacity-100"
+                    onClick={() => {
+                      setUsername("security");
+                      setPassword("security@uniz");
+                    }}
+                  >
+                    Quick Login (Security)
                   </button>
                 </div>
               )}

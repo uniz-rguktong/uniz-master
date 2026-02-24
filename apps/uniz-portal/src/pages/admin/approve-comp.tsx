@@ -320,18 +320,19 @@ export default function ApproveComp({ type }: ApproveProps) {
                       <Ban className="w-4 h-4 lg:mr-2" />{" "}
                       <span className="hidden lg:inline">Reject</span>
                     </Button>
-                    {request.current_level !== "dsw" && (
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => handleAction("forward", request._id)}
-                        isLoading={loadingId === request._id}
-                      >
-                        <Forward className="w-4 h-4 lg:mr-2" />{" "}
-                        <span className="hidden lg:inline">Forward</span>
-                      </Button>
-                    )}
+                    {request.current_level !== "dsw" &&
+                      request.current_level !== "swo" && (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => handleAction("forward", request._id)}
+                          isLoading={loadingId === request._id}
+                        >
+                          <Forward className="w-4 h-4 lg:mr-2" />{" "}
+                          <span className="hidden lg:inline">Forward</span>
+                        </Button>
+                      )}
                   </div>
                 )}
             </div>
