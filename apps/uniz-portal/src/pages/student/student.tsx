@@ -361,7 +361,7 @@ export default function StudentProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen font-sans text-slate-900 pb-20">
+    <div className="font-sans text-slate-900">
       <div className="container mx-auto px-4 max-w-5xl relative z-10">
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6 mb-4 md:mb-6">

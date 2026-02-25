@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from "react";
-import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -49,7 +48,7 @@ export default function Resetpassword() {
       case 2:
         return { score, label: "Moderate", color: "bg-slate-400" };
       case 3:
-        return { score, label: "Strong", color: "bg-black" };
+        return { score, label: "Strong", color: "bg-blue-600" };
       default:
         return { score: 0, label: "", color: "" };
     }
@@ -159,24 +158,25 @@ export default function Resetpassword() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-neutral-900 pb-20">
+    <div className="font-sans text-slate-900">
       <div className="max-w-6xl mx-auto px-4 pt-12 pb-6">
-        <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-black mb-4">
+        <div className="mb-8">
+          <h1 className="text-3xl font-black tracking-tighter text-slate-900 mb-2">
             Security
           </h1>
-          <p className="text-neutral-500 font-medium text-lg">
+          <p className="text-slate-500 font-medium text-sm">
             Manage your account security and password preferences.
           </p>
         </div>
 
         {/* Main Content */}
-        <div className="bg-white rounded-3xl md:rounded-[2.5rem] overflow-hidden border border-neutral-200 shadow-sm">
+        <div className="bg-white rounded-3xl md:rounded-[2.5rem] overflow-hidden border border-slate-200 shadow-sm">
           <div className="md:flex">
             {/* Form Section */}
-            <div className="md:w-2/3 p-6 md:p-12">
+            {/* Form Section */}
+            <div className="md:w-2/3 p-6 md:p-8 md:px-10">
               <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-black text-white rounded-xl">
+                <div className="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-100">
                   <svg
                     className="w-6 h-6"
                     fill="none"
@@ -192,19 +192,19 @@ export default function Resetpassword() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl md:text-2xl font-black text-black tracking-tight">
+                  <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
                     Change Password
                   </h3>
-                  <p className="text-sm font-medium text-neutral-500">
+                  <p className="text-sm font-medium text-slate-500">
                     Enter your details to update your password
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-6 md:space-y-8">
+              <div className="space-y-4 md:space-y-6">
                 {/* Current Password */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 mb-2 block ml-1">
+                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
                     Current Password
                   </label>
                   <div className="relative group">
@@ -212,14 +212,14 @@ export default function Resetpassword() {
                       type="password"
                       onchangeFunction={handleInputChange(setOldPassword)}
                       placeholder="Enter current password"
-                      //   className="w-full bg-neutral-50 border border-neutral-200 rounded-xl p-4 font-bold text-lg focus:outline-none focus:border-black transition-colors"
+                      className="focus:border-blue-600 focus:ring-blue-600"
                     />
                   </div>
                 </div>
 
                 {/* New Password */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 mb-2 block ml-1">
+                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
                     New Password
                   </label>
                   <div className="relative group">
@@ -227,12 +227,13 @@ export default function Resetpassword() {
                       type="password"
                       onchangeFunction={handleInputChange(setPassword)}
                       placeholder="Enter new password"
+                      className="focus:border-blue-600 focus:ring-blue-600"
                     />
                   </div>
                   {password && (
                     <div className="mt-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-2 flex-1 bg-neutral-100 rounded-full overflow-hidden">
+                        <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
                           <div
                             className={`h-full transition-all duration-500 ${passwordStrength.color}`}
                             style={{
@@ -241,13 +242,12 @@ export default function Resetpassword() {
                           ></div>
                         </div>
                         <span
-                          className={`text-xs font-bold uppercase tracking-wider w-20 text-right ${
-                            passwordStrength.score === 3
-                              ? "text-black"
-                              : passwordStrength.score === 2
-                                ? "text-neutral-600"
-                                : "text-neutral-400"
-                          }`}
+                          className={`text-xs font-bold uppercase tracking-wider w-20 text-right ${passwordStrength.score === 3
+                            ? "text-blue-600"
+                            : passwordStrength.score === 2
+                              ? "text-slate-600"
+                              : "text-slate-400"
+                            }`}
                         >
                           {passwordStrength.label}
                         </span>
@@ -258,7 +258,7 @@ export default function Resetpassword() {
 
                 {/* Confirm New Password */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-neutral-500 mb-2 block ml-1">
+                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
                     Confirm Password
                   </label>
                   <div className="relative group">
@@ -266,12 +266,13 @@ export default function Resetpassword() {
                       type="password"
                       onchangeFunction={handleInputChange(setRePassword)}
                       placeholder="Confirm new password"
+                      className="focus:border-blue-600 focus:ring-blue-600"
                     />
                   </div>
                   {password && repassword && (
                     <div className="mt-2 ml-1">
                       {password === repassword ? (
-                        <p className="text-xs font-bold text-black flex items-center gap-1.5 uppercase tracking-wide">
+                        <p className="text-xs font-bold text-blue-600 flex items-center gap-1.5 uppercase tracking-wide">
                           <svg
                             className="h-4 w-4"
                             fill="none"
@@ -288,7 +289,7 @@ export default function Resetpassword() {
                           Passwords match
                         </p>
                       ) : (
-                        <p className="text-xs font-bold text-neutral-400 flex items-center gap-1.5 uppercase tracking-wide">
+                        <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5 uppercase tracking-wide">
                           <svg
                             className="h-4 w-4"
                             fill="none"
@@ -310,16 +311,17 @@ export default function Resetpassword() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="pt-4 md:pt-8 space-y-4">
-                  <Button
-                    value={isLoading ? "Processing..." : "Reset Password"}
-                    loading={isLoading}
-                    onclickFunction={sendDataToBackend}
-                    // className="w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-neutral-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
-                  />
+                <div className="pt-2 md:pt-4 space-y-3">
+                  <button
+                    onClick={sendDataToBackend}
+                    disabled={isLoading}
+                    className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2"
+                  >
+                    {isLoading ? "Processing..." : "Reset Password"}
+                  </button>
                   <button
                     onClick={() => navigateTo("/student")}
-                    className="w-full text-neutral-500 hover:text-black font-bold py-4 rounded-xl transition-colors duration-300 flex items-center justify-center gap-2"
+                    className="w-full text-slate-500 hover:text-blue-600 font-bold py-3.5 rounded-xl transition-colors duration-300 flex items-center justify-center gap-2"
                     disabled={isLoading}
                   >
                     Back to Dashboard
@@ -329,18 +331,18 @@ export default function Resetpassword() {
             </div>
 
             {/* Info Section */}
-            <div className="md:w-1/3 bg-neutral-50 p-6 md:p-12 border-l border-neutral-100 flex flex-col justify-between">
+            <div className="md:w-1/3 bg-slate-50/50 p-6 md:p-8 border-l border-slate-100 flex flex-col justify-between">
               <div>
-                <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
                   Password Strength
                 </h3>
 
                 <div className="space-y-6">
                   <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${password.length >= 8 ? "text-black" : "text-neutral-400"}`}
+                    className={`flex items-center gap-3 transition-colors duration-300 ${password.length >= 8 ? "text-blue-600" : "text-slate-400"}`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${password.length >= 8 ? "border-black bg-black text-white" : "border-neutral-200"}`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${password.length >= 8 ? "border-blue-600 bg-blue-600 text-white" : "border-slate-200"}`}
                     >
                       {password.length >= 8 && (
                         <svg
@@ -362,10 +364,10 @@ export default function Resetpassword() {
                   </div>
 
                   <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${/[0-9]/.test(password) ? "text-black" : "text-neutral-400"}`}
+                    className={`flex items-center gap-3 transition-colors duration-300 ${/[0-9]/.test(password) ? "text-blue-600" : "text-slate-400"}`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[0-9]/.test(password) ? "border-black bg-black text-white" : "border-neutral-200"}`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[0-9]/.test(password) ? "border-blue-600 bg-blue-600 text-white" : "border-slate-200"}`}
                     >
                       {/[0-9]/.test(password) && (
                         <svg
@@ -387,10 +389,10 @@ export default function Resetpassword() {
                   </div>
 
                   <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${/[^A-Za-z0-9]/.test(password) ? "text-black" : "text-neutral-400"}`}
+                    className={`flex items-center gap-3 transition-colors duration-300 ${/[^A-Za-z0-9]/.test(password) ? "text-blue-600" : "text-slate-400"}`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[^A-Za-z0-9]/.test(password) ? "border-black bg-black text-white" : "border-neutral-200"}`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[^A-Za-z0-9]/.test(password) ? "border-blue-600 bg-blue-600 text-white" : "border-slate-200"}`}
                     >
                       {/[^A-Za-z0-9]/.test(password) && (
                         <svg
@@ -413,10 +415,10 @@ export default function Resetpassword() {
                 </div>
               </div>
 
-              <div className="mt-12 p-6 bg-white rounded-2xl border border-neutral-100 shadow-sm">
+              <div className="mt-8 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
                 <div className="flex items-start gap-3">
                   <svg
-                    className="h-5 w-5 text-neutral-900 mt-0.5"
+                    className="h-5 w-5 text-blue-600 mt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -428,7 +430,7 @@ export default function Resetpassword() {
                       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                     />
                   </svg>
-                  <p className="text-xs font-medium text-neutral-600 leading-relaxed">
+                  <p className="text-xs font-medium text-slate-600 leading-relaxed">
                     For your security, you will be automatically logged out from
                     all devices after successfully changing your password.
                   </p>

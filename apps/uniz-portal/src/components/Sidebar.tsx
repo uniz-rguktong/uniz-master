@@ -63,6 +63,26 @@ export default function Sidebar({ content }: MainContent) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  // Mobile dock scroll logic
+  useEffect(() => {
+    const handleScroll = () => {
+      if (typeof window !== "undefined") {
+        const currentScrollY = window.scrollY;
+        if (currentScrollY > lastScrollY && currentScrollY > 50) {
+          setIsVisible(false);
+        } else {
+          setIsVisible(true);
+        }
+        setLastScrollY(currentScrollY);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   // Auto-open sidebar on desktop
   useEffect(() => {
@@ -178,7 +198,7 @@ export default function Sidebar({ content }: MainContent) {
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-[#F8FAFC] overflow-hidden">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#F8FAFC]">
       {/* Mobile hamburger button */}
       <button
         onClick={toggleSidebar}
@@ -202,10 +222,10 @@ export default function Sidebar({ content }: MainContent) {
       {/* Sidebar */}
       <div
         className={`
-          fixed top-0 left-0 h-full bg-white border-r border-slate-200 z-40 transition-all duration-300 ease-in-out flex flex-col
+          fixed top-0 left-0 h-screen bg-white border-r border-slate-200 z-40 transition-all duration-300 ease-in-out flex flex-col
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           w-72
-          md:translate-x-0 md:static md:z-auto
+          md:sticky md:top-0 md:z-auto
         `}
       >
         {/* Header with logo and collapse button */}
@@ -308,9 +328,9 @@ export default function Sidebar({ content }: MainContent) {
 
       {/* Main Content Area */}
       <main
-        className="flex-1 h-screen overflow-y-auto bg-[#F8FAFC] transition-all duration-300 ease-in-out"
+        className="flex-1 transition-all duration-300 ease-in-out"
       >
-        <div className="p-4 md:p-10 min-h-full">
+        <div className="p-4 pb-32 md:p-10 min-h-full">
           <Suspense fallback={<ContentSkeleton />}>
             {contentMap[content] || <Error />}
           </Suspense>
@@ -323,6 +343,44 @@ export default function Sidebar({ content }: MainContent) {
         onConfirm={handleLogout}
         message="Are you sure you want to end your session?"
       />
+
+      {/* Mobile Bottom Navigation Bar - Exact Unstop Dimensions */}
+      <div
+        className={`md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[72%] max-w-[280px] transition-all duration-500 ease-in-out ${isVisible ? "translate-y-0 opacity-100" : "translate-y-24 opacity-0 pointer-events-none"
+          }`}
+      >
+        <div className="bg-white/80 backdrop-blur-xl border border-white/40 rounded-[2rem] shadow-[0_12px_40px_rgba(0,0,0,0.12)] px-4 py-3 flex items-center justify-between">
+          {/* Outpass Option */}
+          <button
+            onClick={() => navigate("/student/outpass")}
+            className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${content === "outpass" ? "text-blue-600" : "text-slate-400"
+              }`}
+          >
+            <CalendarDays className="h-6 w-6" />
+            <span className="text-[9px] font-bold uppercase tracking-tight">Outpass</span>
+          </button>
+
+          {/* Results Option (Center) */}
+          <button
+            onClick={() => navigate("/student/gradehub")}
+            className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${content === "gradehub" ? "text-blue-600" : "text-slate-400"
+              }`}
+          >
+            <GraduationCap className="h-6 w-6" />
+            <span className="text-[9px] font-bold uppercase tracking-tight">Results</span>
+          </button>
+
+          {/* Settings Option */}
+          <button
+            onClick={() => navigate("/student/resetpassword")}
+            className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${content === "resetpassword" ? "text-blue-600" : "text-slate-400"
+              }`}
+          >
+            <KeyRound className="h-6 w-6" />
+            <span className="text-[9px] font-bold uppercase tracking-tight">Settings</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

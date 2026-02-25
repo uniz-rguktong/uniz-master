@@ -106,7 +106,7 @@ export default function Outpass_Outing({ request }: requestProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-10 pb-32">
+    <div className="max-w-7xl mx-auto px-6 md:px-10">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6 mb-8 mt-6">
         <div className="flex-1 text-center md:text-left">
