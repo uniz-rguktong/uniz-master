@@ -17,8 +17,8 @@ const accounts = emailPoolStr
       .filter((a) => a.length === 2)
   : [
       [
-        process.env.EMAIL_USER || "noreply.uniz@gmail.com",
-        process.env.EMAIL_PASS || "rllc qsdq vuxg gggl",
+        process.env.EMAIL_USER || "webadmin@rguktong.ac.in",
+        process.env.EMAIL_PASS || "kwcn zptw vagg ksbi",
       ],
     ];
 
