@@ -11,6 +11,7 @@ import {
   FORGOT_PASS_ENDPOINT,
   VERIFY_OTP_ENDPOINT,
   SET_NEW_PASS_ENDPOINT,
+  REQUEST_OTP_EMAIL_ENDPOINT,
 } from "../../api/endpoints";
 import { apiClient } from "../../api/apiClient";
 import {
@@ -171,6 +172,25 @@ export default function Signin({ type }: SigninProps) {
     }
   };
 
+  const requestEmailOtp = async () => {
+    setIsLoading(true);
+    try {
+      const data = await apiClient<{ success: boolean; message?: string }>(
+        REQUEST_OTP_EMAIL_ENDPOINT,
+        {
+          method: "POST",
+          body: JSON.stringify({ username: username.trim() }),
+        },
+      );
+
+      if (data && data.success) {
+        toast.success(data.message || "OTP sent to your email");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleVerifyOtp = async () => {
     if (otp.trim().length !== 6) {
       toast.error("Please enter a valid 6-digit OTP");
@@ -281,8 +301,8 @@ export default function Signin({ type }: SigninProps) {
             {step === "signin"
               ? "Enter your credentials to access the portal"
               : step === "forgot"
-                ? "We'll send an OTP to your registered devices & email"
-                : "Secure your account with a strong password"}
+                ? "We'll send an OTP to your registered devices"
+                : "Enter the 6-digit verification code"}
           </p>
         </div>
 
@@ -409,6 +429,16 @@ export default function Signin({ type }: SigninProps) {
                   >
                     Verify OTP
                   </Button>
+                  <div className="text-center pt-4">
+                    <button
+                      type="button"
+                      className="text-xs text-slate-500 hover:text-slate-900 font-bold uppercase tracking-widest underline transition-all"
+                      onClick={requestEmailOtp}
+                      disabled={isLoading}
+                    >
+                      Didn't receive code? Try Email
+                    </button>
+                  </div>
                 </div>
               )}
 

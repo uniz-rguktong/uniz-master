@@ -213,16 +213,9 @@ export const sendLoginNotification = async (
       <p style="color: #e53e3e; font-size: 13px; font-weight: 500;">If this was not you, please reset your password immediately via the UniZ portal.</p>
     `;
 
-    const success = await sendEmailUnified(
-      {
-        from: '"UniZ Security" <noreply@uniz.rguktong.in>',
-        to: email,
-        subject: "Security Alert: New Login",
-        html: emailTemplate("New Login Detected", content),
-      },
-      true,
-    ); // High Priority = Use Resend
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Login notification suppressed for ${username}`);
+    return true;
   } catch (error) {
     console.error(`Failed to send login notification:`, error);
     return false;
@@ -249,13 +242,9 @@ export const sendOutpassRequestNotification = async (
       <p>You will receive another email once your request is processed.</p>
     `;
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
-      to: email,
-      subject: "Outpass Application Submitted",
-      html: emailTemplate("Outpass Submission", content),
-    });
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Outpass notification suppressed for ${username}`);
+    return true;
   } catch (error) {
     console.error(`Failed to send outpass request notification:`, error);
     return false;
@@ -282,13 +271,9 @@ export const sendOutingRequestNotification = async (
       <p>You will be notified once the request is reviewed.</p>
     `;
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
-      to: email,
-      subject: "Outing Application Submitted",
-      html: emailTemplate("Outing Submission", content),
-    });
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Outing notification suppressed for ${username}`);
+    return true;
   } catch (error) {
     console.error(`Failed to send outing request notification:`, error);
     return false;
@@ -314,13 +299,9 @@ export const sendOutpassApprovalNotification = async (
       </div>
     `;
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
-      to: email,
-      subject: `Outpass Application ${statusText}`,
-      html: emailTemplate("Request Processed", content),
-    });
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Outpass approval suppressed for ${username}`);
+    return true;
   } catch (error) {
     return false;
   }
@@ -345,13 +326,9 @@ export const sendOutingApprovalNotification = async (
       </div>
     `;
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
-      to: email,
-      subject: `Outing Application ${statusText}`,
-      html: emailTemplate("Request Processed", content),
-    });
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Outing approval suppressed for ${username}`);
+    return true;
   } catch (error) {
     return false;
   }
@@ -375,13 +352,9 @@ export const sendCheckpointNotification = async (
       <p>Safe travels!</p>
     `;
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Security" <noreply@uniz.rguktong.in>',
-      to: email,
-      subject: `Campus ${action}`,
-      html: emailTemplate("Gate Activity Alert", content),
-    });
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Checkpoint notification suppressed for ${username}`);
+    return true;
   } catch (error) {
     return false;
   }
@@ -415,20 +388,9 @@ export const sendResultEmail = async (
       grades,
     });
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
-      to: email,
-      subject: `Result Declaration: ${semesterId}`,
-      html: emailTemplate("Academic Results Published", content),
-      attachments: [
-        {
-          filename: `ACADEMIC_REPORT_${username}_${semesterId}.pdf`,
-          content: pdfBuffer,
-          contentType: "application/pdf",
-        },
-      ],
-    });
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Result email suppressed for ${username}`);
+    return true;
 
     return true;
   } catch (error: any) {
@@ -462,20 +424,9 @@ export const sendAttendanceReportEmail = async (
       records,
     });
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
-      to: email,
-      subject: `Attendance Report: ${semesterId}`,
-      html: emailTemplate("Attendance Report Available", content),
-      attachments: [
-        {
-          filename: `${username}_Attendance_${semesterId}.pdf`,
-          content: pdfBuffer,
-          contentType: "application/pdf",
-        },
-      ],
-    });
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Attendance email suppressed for ${username}`);
+    return true;
 
     return true;
   } catch (error: any) {
@@ -502,13 +453,9 @@ export const sendNewRequestAlertToAdmin = async (
       <p>Please login to the UniZ Admin Portal to review and take action.</p>
     `;
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Alerts" <noreply@uniz.rguktong.in>',
-      to: adminEmail,
-      subject: `New ${label}: ${studentId}`,
-      html: emailTemplate("New Admin Task", content),
-    });
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Admin alert suppressed`);
+    return true;
   } catch (error) {
     console.error(`Failed to send admin alert:`, error);
     return false;
@@ -531,13 +478,9 @@ export const sendGrievanceSubmissionNotification = async (
       <p>The Student Welfare Office will look into this matter shortly.</p>
     `;
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Grievance Cell" <noreply@uniz.rguktong.in>',
-      to: email,
-      subject: `Grievance Received: ${ticketId}`,
-      html: emailTemplate("Grievance Status", content),
-    });
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Grievance ack suppressed`);
+    return true;
   } catch (error) {
     console.error(`Failed to send grievance ack:`, error);
     return false;
@@ -559,13 +502,9 @@ export const sendActionConfirmationToAdmin = async (
       <p>You have successfully <strong>${actionText.toLowerCase()}</strong> the ${label.toLowerCase()} request for <strong>${studentName}</strong> (${studentId}).</p>
     `;
 
-    const success = await sendEmailUnified({
-      from: '"UniZ System" <noreply@uniz.rguktong.in>',
-      to: adminEmail,
-      subject: `Action Confirmed: ${actionText} ${studentId}`,
-      html: emailTemplate("Confirmation", content),
-    });
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Admin confirmation suppressed`);
+    return true;
   } catch (error) {
     return false;
   }
@@ -586,16 +525,9 @@ export const sendPasswordChangeNotification = async (
       <p style="color: #e53e3e; font-size: 13px; margin-top: 20px;">If you did not perform this action, please contact UniZ administration immediately.</p>
     `;
 
-    const success = await sendEmailUnified(
-      {
-        from: '"UniZ Security" <noreply@uniz.rguktong.in>',
-        to: email,
-        subject: "Security Alert: Password Changed",
-        html: emailTemplate("Password Security Update", content),
-      },
-      true,
-    ); // High Priority = Use Resend
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Password change alert suppressed for ${username}`);
+    return true;
   } catch (error) {
     return false;
   }
@@ -623,13 +555,9 @@ export const sendProfileUpdateNotification = async (
       <p style="font-size: 13px; color: #718096;">If you did not make these changes, please notify administration.</p>
     `;
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Security" <noreply@uniz.rguktong.in>',
-      to: email,
-      subject: "Security Alert: Profile Updated",
-      html: emailTemplate("Profile Information Updated", content),
-    });
-    return success;
+    // Disabled per user policy: only OTP-on-demand uses email
+    console.log(`[MAIL] Profile update alert suppressed for ${username}`);
+    return true;
   } catch (error) {
     return false;
   }

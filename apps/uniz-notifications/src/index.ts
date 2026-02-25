@@ -560,7 +560,8 @@ const sendEmailUnified = async (
   },
   highPriority: boolean = false,
 ): Promise<{ success: boolean; id?: string }> => {
-  // 1. Try Resend ONLY for high priority (Security/OTP)
+  // 1. Try Resend ONLY for high priority (Manual OTP fallback only)
+  // Per user request: "we only use email delivery for otp delivery only no other service"
   const apiKey = getResendKey();
   if (highPriority && apiKey) {
     try {
@@ -806,13 +807,11 @@ const worker = new Worker(
           }),
         );
 
-        const subjectLower = (subject || "").toLowerCase();
-        // Password and login alerts are high priority for Resend
-        const isSecurityAlert =
-          subjectLower.includes("password") ||
-          subjectLower.includes("login") ||
-          subjectLower.includes("verification");
-
+        // Generic EMAIL jobs are disabled per user policy
+        console.log(
+          `[NotificationWorker] Generic email suppressed for ${rawRecipient}`,
+        );
+        /*
         const emailResult = await sendEmailUnified(
           {
             from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
@@ -822,8 +821,10 @@ const worker = new Worker(
               html ||
               emailTemplate(subject || "Notification", `<p>${body}</p>`),
           },
-          isSecurityAlert,
-        );
+          false,
+        ); // Notification worker jobs are never high priority for Resend
+        */
+        const emailResult = { success: true, id: "SUPPRESSED" }; // Mock result for suppressed email
 
         // Trigger Targeted Web Push for outpass/outing/profile notifications
         const pushSubjects = [
@@ -833,7 +834,7 @@ const worker = new Worker(
           "security alert",
           "login",
         ];
-        // subjectLower already defined above
+        const subjectLower = (subject || "").toLowerCase();
         const shouldPush = pushSubjects.some((k) => subjectLower.includes(k));
         if (shouldPush) {
           const pushUsername =
@@ -881,6 +882,11 @@ const worker = new Worker(
           }),
         );
 
+        // RESULTS email jobs are disabled per user policy
+        console.log(
+          `[NotificationWorker] Results email suppressed for ${rawRecipient}`,
+        );
+        /*
         const emailResult = await sendEmailUnified(
           {
             from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
@@ -906,6 +912,8 @@ const worker = new Worker(
           },
           false,
         ); // Results are NOT high priority for Resend
+        */
+        const emailResult = { success: true, id: "SUPPRESSED" }; // Mock result for suppressed email
 
         console.log(
           `${logPrefix} RESULTS email sent`,
@@ -944,6 +952,11 @@ const worker = new Worker(
           }),
         );
 
+        // ATTENDANCE email jobs are disabled per user policy
+        console.log(
+          `[NotificationWorker] Attendance email suppressed for ${rawRecipient}`,
+        );
+        /*
         const emailResult = await sendEmailUnified(
           {
             from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
@@ -969,6 +982,8 @@ const worker = new Worker(
           },
           false,
         ); // Attendance is NOT high priority for Resend
+        */
+        const emailResult = { success: true, id: "SUPPRESSED" }; // Mock result for suppressed email
 
         console.log(
           `${logPrefix} ATTENDANCE_REPORT email sent`,
