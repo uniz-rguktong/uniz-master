@@ -16,7 +16,7 @@ import {
   LogOut,
   AlertCircle,
   Menu,
-  X
+  X,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -35,18 +35,18 @@ export { enableOutingsAndOutpasses } from "../pages/student/student";
 
 interface MainContent {
   content:
-  | "outpass"
-  | "outing"
-  | "gradehub"
-  | "resetpassword"
-  | "dashboard"
-  | "requestOuting"
-  | "requestOutpass"
-  | "campushub"
-  | "studyspace"
-  | "attendance"
-  | "grievance"
-  | "error";
+    | "outpass"
+    | "outing"
+    | "gradehub"
+    | "resetpassword"
+    | "dashboard"
+    | "requestOuting"
+    | "requestOutpass"
+    | "campushub"
+    | "studyspace"
+    | "attendance"
+    | "grievance"
+    | "error";
 }
 
 const ContentSkeleton = () => (
@@ -75,8 +75,8 @@ export default function Sidebar({ content }: MainContent) {
     };
 
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleLogout = () => {
@@ -100,21 +100,21 @@ export default function Sidebar({ content }: MainContent) {
     },
     ...(enableOutingsAndOutpasses
       ? [
-        {
-          id: "outing",
-          label: "Outing Requests",
-          href: "/student/outing",
-          content: "outing",
-          icon: Clock,
-        },
-        {
-          id: "outpass",
-          label: "Outpass Requests",
-          href: "/student/outpass",
-          content: "outpass",
-          icon: CalendarDays,
-        },
-      ]
+          {
+            id: "outing",
+            label: "Outing Requests",
+            href: "/student/outing",
+            content: "outing",
+            icon: Clock,
+          },
+          {
+            id: "outpass",
+            label: "Outpass Requests",
+            href: "/student/outpass",
+            content: "outpass",
+            icon: CalendarDays,
+          },
+        ]
       : []),
     {
       id: "gradehub",
@@ -185,10 +185,11 @@ export default function Sidebar({ content }: MainContent) {
         className="fixed top-6 left-6 z-50 p-3 rounded-lg bg-white shadow-md border border-slate-100 md:hidden hover:bg-slate-50 transition-all duration-200"
         aria-label="Toggle sidebar"
       >
-        {isOpen ?
-          <X className="h-[19px] w-[19px] text-slate-600" /> :
+        {isOpen ? (
+          <X className="h-[19px] w-[19px] text-slate-600" />
+        ) : (
           <Menu className="h-[19px] w-[19px] text-slate-600" />
-        }
+        )}
       </button>
 
       {/* Mobile overlay */}
@@ -219,12 +220,15 @@ export default function Sidebar({ content }: MainContent) {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-slate-900 text-[19px] tracking-tight leading-none">Ongole</span>
-              <span className="text-[10px] uppercase tracking-[0.2em] text-blue-600/70 font-bold mt-1.5 px-0.5">Student Portal</span>
+              <span className="font-bold text-slate-900 text-[19px] tracking-tight leading-none">
+                Ongole
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-blue-600/70 font-bold mt-1.5 px-0.5">
+                Student Portal
+              </span>
             </div>
           </div>
         </div>
-
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-2 overflow-y-auto">
@@ -242,9 +246,10 @@ export default function Sidebar({ content }: MainContent) {
                     }}
                     className={`
                       w-full flex items-center space-x-3 px-3 py-3 rounded-md text-left transition-all duration-200 group relative
-                      ${isActive
-                        ? "bg-blue-50 text-blue-700 shadow-sm"
-                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      ${
+                        isActive
+                          ? "bg-blue-50 text-blue-700 shadow-sm"
+                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                       }
                     `}
                   >
@@ -252,16 +257,21 @@ export default function Sidebar({ content }: MainContent) {
                       <Icon
                         className={`
                           h-[21px] w-[21px] flex-shrink-0
-                          ${isActive
-                            ? "text-blue-600"
-                            : "text-slate-400 group-hover:text-slate-700"
+                          ${
+                            isActive
+                              ? "text-blue-600"
+                              : "text-slate-400 group-hover:text-slate-700"
                           }
                         `}
                       />
                     </div>
 
                     <div className="flex items-center justify-between w-full">
-                      <span className={`text-[15px] ${isActive ? "font-semibold" : "font-medium"}`}>{item.label}</span>
+                      <span
+                        className={`text-[15px] ${isActive ? "font-semibold" : "font-medium"}`}
+                      >
+                        {item.label}
+                      </span>
                     </div>
                   </button>
                 </li>
@@ -278,16 +288,23 @@ export default function Sidebar({ content }: MainContent) {
               <div className="flex items-center justify-center min-w-[24px]">
                 <div className="w-[22px] h-[22px] bg-gradient-to-br from-slate-50 to-slate-100 rounded-full flex items-center justify-center overflow-hidden border border-slate-200">
                   {userData?.profile_url ? (
-                    <img src={userData.profile_url} alt="Profile" className="h-full w-full object-cover" />
+                    <img
+                      src={userData.profile_url}
+                      alt="Profile"
+                      className="h-full w-full object-cover"
+                    />
                   ) : (
-                    <span className="text-slate-700 font-bold text-[10px]">{userData?.name?.charAt(0) || 'S'}</span>
+                    <span className="text-slate-700 font-bold text-[10px]">
+                      {userData?.name?.charAt(0) || "S"}
+                    </span>
                   )}
                 </div>
               </div>
               <div className="flex-1 min-w-0 ml-3">
-                <p className="text-[15px] font-semibold text-slate-900 truncate tracking-tight">{userData?.name || 'Student'}</p>
+                <p className="text-[15px] font-semibold text-slate-900 truncate tracking-tight">
+                  {userData?.name || "Student"}
+                </p>
               </div>
-
             </div>
           </div>
 
@@ -307,9 +324,7 @@ export default function Sidebar({ content }: MainContent) {
       </div>
 
       {/* Main Content Area */}
-      <main
-        className="flex-1 h-screen overflow-y-auto bg-[#F8FAFC] transition-all duration-300 ease-in-out"
-      >
+      <main className="flex-1 h-screen overflow-y-auto bg-[#F8FAFC] transition-all duration-300 ease-in-out">
         <div className="p-4 md:p-10 min-h-full">
           <Suspense fallback={<ContentSkeleton />}>
             {contentMap[content] || <Error />}
@@ -326,4 +341,3 @@ export default function Sidebar({ content }: MainContent) {
     </div>
   );
 }
-

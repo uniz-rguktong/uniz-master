@@ -100,9 +100,9 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                     const percentage =
                       att.totalClasses > 0
                         ? (
-                          (att.attendedClasses / att.totalClasses) *
-                          100
-                        ).toFixed(1)
+                            (att.attendedClasses / att.totalClasses) *
+                            100
+                          ).toFixed(1)
                         : "0.0";
                     const isLow = parseFloat(percentage) < 75;
                     return (

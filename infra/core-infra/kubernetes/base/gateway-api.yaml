@@ -18,7 +18,6 @@ spec:
         - name: gateway-api
           image: uniz-gateway-api:local
           imagePullPolicy: Never
-          imagePullPolicy: Never
           ports:
             - containerPort: 3000
           envFrom:
@@ -82,8 +81,8 @@ spec:
     scaleUp:
       stabilizationWindowSeconds: 0
       policies:
-      - type: Percent
-        value: 100
-        periodSeconds: 15
+        - type: Percent
+          value: 100
+          periodSeconds: 15
     scaleDown:
       stabilizationWindowSeconds: 300

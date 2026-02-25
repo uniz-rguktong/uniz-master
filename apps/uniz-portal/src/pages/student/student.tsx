@@ -438,10 +438,11 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                  className={`pb-3 relative text-[11px] font-black uppercase tracking-[0.2em] transition-all ${activeTab === tab
-                    ? "text-blue-600 translate-y-[-1px]"
-                    : "text-slate-400 hover:text-slate-600"
-                    }`}
+                  className={`pb-3 relative text-[11px] font-black uppercase tracking-[0.2em] transition-all ${
+                    activeTab === tab
+                      ? "text-blue-600 translate-y-[-1px]"
+                      : "text-slate-400 hover:text-slate-600"
+                  }`}
                 >
                   {tab}
                   {activeTab === tab && (

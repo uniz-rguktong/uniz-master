@@ -196,10 +196,11 @@ export default function GradeHub() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-medium transition-colors ${selectedYear === year
+                      className={`p-3 cursor-pointer text-sm font-medium transition-colors ${
+                        selectedYear === year
                           ? "bg-black text-white"
                           : "hover:bg-neutral-50 text-neutral-700"
-                        }`}
+                      }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setShowDropdown(false);
@@ -245,10 +246,11 @@ export default function GradeHub() {
               </label>
               <button
                 onClick={handleFetchResults}
-                className={`w-full h-[46px] flex items-center justify-center font-bold text-sm rounded-lg transition-all duration-300 ${isLoading
+                className={`w-full h-[46px] flex items-center justify-center font-bold text-sm rounded-lg transition-all duration-300 ${
+                  isLoading
                     ? "bg-neutral-100 text-neutral-400 cursor-not-allowed"
                     : "bg-black text-white hover:bg-neutral-800 shadow-md hover:shadow-lg hover:-translate-y-0.5"
-                  }`}
+                }`}
                 disabled={isLoading || !user?.username}
               >
                 {isLoading ? (
@@ -376,10 +378,11 @@ export default function GradeHub() {
                                 </td>
                                 <td className="px-3 py-2 text-center">
                                   <span
-                                    className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${item.grade === "Ex"
+                                    className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
+                                      item.grade === "Ex"
                                         ? "bg-black text-white"
                                         : "bg-neutral-100 text-neutral-800"
-                                      }`}
+                                    }`}
                                   >
                                     {item.grade}
                                   </span>
@@ -409,10 +412,11 @@ export default function GradeHub() {
                                   </td>
                                   <td className="px-3 py-2 text-center">
                                     <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${grade === "Ex"
+                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
+                                        grade === "Ex"
                                           ? "bg-black text-white"
                                           : "bg-neutral-100 text-neutral-800"
-                                        }`}
+                                      }`}
                                     >
                                       {grade}
                                     </span>

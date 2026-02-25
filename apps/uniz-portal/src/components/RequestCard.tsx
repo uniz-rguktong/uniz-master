@@ -136,17 +136,25 @@ export default function RequestCard({
             {request.approval_logs.map((log: any, i: number) => (
               <div key={i} className="text-[13px] relative group/log">
                 <span
-                  className={`absolute -left-[19.5px] top-1 w-2.5 h-2.5 rounded-full border-2 border-white ring-1 ring-slate-100 transition-all duration-300 ${log.action === "approve"
+                  className={`absolute -left-[19.5px] top-1 w-2.5 h-2.5 rounded-full border-2 border-white ring-1 ring-slate-100 transition-all duration-300 ${
+                    log.action === "approve"
                       ? "bg-blue-600"
                       : log.action === "reject"
                         ? "bg-red-500"
                         : "bg-slate-200"
-                    }`}
+                  }`}
                 ></span>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <span className="text-slate-600 font-semibold group-hover/log:text-slate-900 transition-colors">
-                    <span className={`font-black uppercase text-[11px] tracking-widest ${log.action === "approve" ? "text-blue-600" : log.action === "reject" ? "text-red-500" : "text-slate-400"
-                      }`}>
+                    <span
+                      className={`font-black uppercase text-[11px] tracking-widest ${
+                        log.action === "approve"
+                          ? "text-blue-600"
+                          : log.action === "reject"
+                            ? "text-red-500"
+                            : "text-slate-400"
+                      }`}
+                    >
                       {log.action}
                     </span>{" "}
                     by <span className="text-slate-900">{log.role}</span>
