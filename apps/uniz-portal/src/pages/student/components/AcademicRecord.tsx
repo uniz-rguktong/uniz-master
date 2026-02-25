@@ -55,12 +55,12 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                     CGPA: 0.00
                   </div>
                 </div>
-                <table className="w-full text-sm text-left">
+                <table className="w-full text-sm text-left table-fixed">
                   <thead className="bg-white text-slate-400 border-b border-slate-50 text-[10px] uppercase tracking-[0.2em] font-black">
                     <tr>
-                      <th className="px-5 py-3">Subject</th>
-                      <th className="px-5 py-3 text-center">Credit</th>
-                      <th className="px-5 py-3 text-right">Grade</th>
+                      <th className="px-3 py-3 w-[60%]">Subject</th>
+                      <th className="px-3 py-3 text-center w-[20%]">Cr</th>
+                      <th className="px-3 py-3 text-right w-[20%]">Gr</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
@@ -69,14 +69,14 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                         key={g.id}
                         className="hover:bg-slate-50/50 transition-colors"
                       >
-                        <td className="px-5 py-3.5 font-bold text-[15px] text-slate-900">
+                        <td className="px-3 py-3.5 font-bold text-[14px] text-slate-900 leading-tight">
                           {g.subject.name}
                         </td>
-                        <td className="px-5 py-3.5 text-center text-slate-500 font-semibold">
+                        <td className="px-3 py-3.5 text-center text-slate-500 font-semibold text-xs">
                           {g.subject.credits}
                         </td>
-                        <td className="px-5 py-3.5 text-right">
-                          <span className="inline-block px-2.5 py-1 bg-blue-50 text-blue-600 rounded-lg text-xs font-black">
+                        <td className="px-3 py-3.5 text-right">
+                          <span className="inline-block px-2 py-1 bg-blue-50 text-blue-600 rounded-lg text-[11px] font-black">
                             {g.grade}
                           </span>
                         </td>

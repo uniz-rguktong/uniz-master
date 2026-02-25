@@ -337,24 +337,21 @@ export default function GradeHub() {
                     <h3 className="text-base font-bold mb-3 flex items-center gap-2">
                       <div className="w-1 h-4 bg-blue-600"></div> Grades
                     </h3>
-                    <div className="overflow-hidden rounded-xl border border-slate-200">
-                      <table className="w-full text-sm">
+                    <div className="rounded-xl border border-slate-200 bg-white">
+                      <table className="w-full text-sm table-fixed">
                         <thead>
                           <tr className="bg-blue-50/50 border-b border-slate-200">
-                            <th className="px-3 py-2 text-left font-bold text-[10px] uppercase tracking-widest text-slate-500">
-                              S.no
-                            </th>
-                            <th className="px-3 py-2 text-left font-bold text-[10px] uppercase tracking-widest text-slate-500">
+                            <th className="px-2 py-3 text-left font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[55%]">
                               Subjects
                             </th>
-                            <th className="px-3 py-2 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500">
-                              Credits
+                            <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[15%]">
+                              Cr
                             </th>
-                            <th className="px-3 py-2 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500">
-                              Grade
+                            <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[15%]">
+                              Gr
                             </th>
-                            <th className="px-3 py-2 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500">
-                              Points
+                            <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[15%]">
+                              Pt
                             </th>
                           </tr>
                         </thead>
@@ -365,16 +362,13 @@ export default function GradeHub() {
                                 key={index}
                                 className="border-b border-slate-100 hover:bg-slate-50 transition-colors last:border-0"
                               >
-                                <td className="px-3 py-2 text-slate-400 font-medium text-xs">
-                                  {index + 1}
-                                </td>
-                                <td className="px-3 py-2 font-bold text-slate-800 text-xs">
+                                <td className="px-2 py-2.5 font-bold text-slate-800 text-xs leading-tight">
                                   {item.subject}
                                 </td>
-                                <td className="px-3 py-2 text-center text-slate-600 font-medium text-xs">
+                                <td className="px-2 py-2.5 text-center text-slate-600 font-medium text-xs">
                                   {item.credits}
                                 </td>
-                                <td className="px-3 py-2 text-center">
+                                <td className="px-2 py-2.5 text-center">
                                   <span
                                     className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${item.grade === "Ex"
                                       ? "bg-blue-600 text-white"
@@ -384,7 +378,7 @@ export default function GradeHub() {
                                     {item.grade}
                                   </span>
                                 </td>
-                                <td className="px-3 py-2 text-center font-bold text-slate-800 text-xs">
+                                <td className="px-2 py-2.5 text-center font-bold text-slate-800 text-xs">
                                   {item.points}
                                 </td>
                               </tr>
@@ -398,16 +392,13 @@ export default function GradeHub() {
                                   key={index}
                                   className="border-b border-slate-100 hover:bg-slate-50 transition-colors last:border-0"
                                 >
-                                  <td className="px-3 py-2 text-slate-400 font-medium text-xs">
-                                    {index + 1}
-                                  </td>
-                                  <td className="px-3 py-2 font-bold text-slate-800 text-xs">
+                                  <td className="px-2 py-2.5 font-bold text-slate-800 text-xs leading-tight">
                                     {subject}
                                   </td>
-                                  <td className="px-3 py-2 text-center text-slate-400 text-xs">
+                                  <td className="px-2 py-2.5 text-center text-slate-400 text-xs">
                                     -
                                   </td>
-                                  <td className="px-3 py-2 text-center">
+                                  <td className="px-2 py-2.5 text-center">
                                     <span
                                       className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${grade === "Ex"
                                         ? "bg-blue-600 text-white"
@@ -417,7 +408,7 @@ export default function GradeHub() {
                                       {grade}
                                     </span>
                                   </td>
-                                  <td className="px-3 py-2 text-center text-slate-400 text-xs">
+                                  <td className="px-2 py-2.5 text-center text-slate-400 text-xs">
                                     -
                                   </td>
                                 </tr>
@@ -487,6 +478,6 @@ export default function GradeHub() {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 }
