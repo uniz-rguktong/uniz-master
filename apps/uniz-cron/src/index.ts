@@ -263,3 +263,4 @@ process.on("SIGTERM", async () => {
   } catch (e) {}
   process.exit(0);
 });
+// trigger rebuild
