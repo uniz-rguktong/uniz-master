@@ -17,5 +17,6 @@ resources:
   - mail-service.yaml
   - notification-service.yaml
   - cron-service.yaml
+  - storage-cleanup-job.yaml
   - portal.yaml
   - ingress.yaml
