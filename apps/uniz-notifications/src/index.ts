@@ -9,7 +9,7 @@ import * as webpush from "web-push";
 import prisma from "./utils/prisma.util";
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
 import { requireAuth, requireAdmin } from "./middlewares/auth.middleware";
-import PDFDocument from "pdfkit";
+import PDFDocument, { info } from "pdfkit";
 
 // --- PDF UTILS (pure Node, styled like official result sheets) ---
 const PAGE_MARGIN = 40;
@@ -539,6 +539,78 @@ const getTransporter = () => {
   return transporter;
 };
 
+// --- RESEND SETUP ---
+const resendKeys = (process.env.RESEND_POOL || "").split(",").filter(Boolean);
+let currentResendIndex = 0;
+
+const getResendKey = () => {
+  if (resendKeys.length === 0) return null;
+  const key = resendKeys[currentResendIndex];
+  currentResendIndex = (currentResendIndex + 1) % resendKeys.length;
+  return key;
+};
+
+const sendEmailUnified = async (options: {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+  attachments?: any[];
+}): Promise<{ success: boolean; id?: string }> => {
+  // 1. Try Resend first
+  const apiKey = getResendKey();
+  if (apiKey) {
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: options.from.replace("<", "").replace(">", ""),
+          to: options.to,
+          subject: options.subject,
+          html: options.html,
+          attachments: options.attachments?.map((a) => ({
+            filename: a.filename,
+            content: a.content.toString("base64"),
+          })),
+        }),
+      });
+
+      if (res.ok) {
+        const data: any = await res.json();
+        console.log(
+          `[NotificationWorker] Sent via Resend: ID=${data.id}, To=${options.to}`,
+        );
+        return { success: true, id: data.id };
+      } else {
+        const errorData = await res.json();
+        console.error(`[NotificationWorker] Resend API error:`, errorData);
+      }
+    } catch (err: any) {
+      console.error(`[NotificationWorker] Resend request failed:`, err.message);
+    }
+  }
+
+  // 2. Fallback to Gmail Pool
+  try {
+    const info = await getTransporter().sendMail(options);
+    console.log(
+      `[NotificationWorker] Sent via Gmail Pool: ID=${info.messageId}, To=${options.to}`,
+    );
+    return { success: true, id: info.messageId };
+  } catch (err: any) {
+    console.error(
+      `[NotificationWorker] All email providers failed for ${options.to}:`,
+      err.message,
+    );
+    return { success: false };
+  }
+};
+// --- END RESEND SETUP ---
+
 // --- WEB PUSH SETUP ---
 const publicVapidKey =
   process.env.VAPID_PUBLIC_KEY ||
@@ -731,8 +803,8 @@ const worker = new Worker(
           }),
         );
 
-        const info = await getTransporter().sendMail({
-          from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+        const emailResult = await sendEmailUnified({
+          from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
           to: rawRecipient,
           subject: subject || "UniZ Notification",
           html:
@@ -760,11 +832,11 @@ const worker = new Worker(
         }
 
         console.log(
-          `${logPrefix} EMAIL send success`,
+          `${logPrefix} EMAIL send result`,
           JSON.stringify({
             to: rawRecipient,
-            messageId: info.messageId,
-            response: info.response,
+            success: emailResult.success,
+            id: emailResult.id,
           }),
         );
       } else if (jobType === "RESULTS") {
@@ -795,8 +867,8 @@ const worker = new Worker(
           }),
         );
 
-        const info = await getTransporter().sendMail({
-          from: '"UniZ Academics" <noreplycampusschield@gmail.com>',
+        const emailResult = await sendEmailUnified({
+          from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
           to: rawRecipient,
           subject: `Result Declaration: ${semesterId}`,
           html: emailTemplate(
@@ -822,8 +894,8 @@ const worker = new Worker(
           `${logPrefix} RESULTS email sent`,
           JSON.stringify({
             to: rawRecipient,
-            messageId: info.messageId,
-            withAttachment: !!pdfBuffer,
+            success: emailResult.success,
+            id: emailResult.id,
           }),
         );
         // Results are email-only, no push notification
@@ -855,8 +927,8 @@ const worker = new Worker(
           }),
         );
 
-        const info = await getTransporter().sendMail({
-          from: '"UniZ Academics" <noreplycampusschield@gmail.com>',
+        const emailResult = await sendEmailUnified({
+          from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
           to: rawRecipient,
           subject: `Attendance Report: ${semesterId}`,
           html: emailTemplate(
@@ -882,8 +954,8 @@ const worker = new Worker(
           `${logPrefix} ATTENDANCE_REPORT email sent`,
           JSON.stringify({
             to: rawRecipient,
-            messageId: info.messageId,
-            withAttachment: !!pdfBuffer,
+            success: emailResult.success,
+            id: emailResult.id,
           }),
         );
         // Attendance is email-only, no push notification
