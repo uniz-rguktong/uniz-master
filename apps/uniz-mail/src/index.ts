@@ -47,19 +47,19 @@ app.use(
 
 const server = app.listen(PORT, () => {
   console.log(`Mail Service running on port ${PORT}`);
-server.keepAliveTimeout = 65000;
-server.headersTimeout = 66000;
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
 });
 
 // Graceful Shutdown Handler
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received. Starting graceful shutdown...');
+process.on("SIGTERM", async () => {
+  console.log("SIGTERM received. Starting graceful shutdown...");
   server.close(() => {
-    console.log('HTTP server closed.');
+    console.log("HTTP server closed.");
   });
   try {
-    if ((global as any).prisma || require('./utils/db.util').prisma) {
-        // generic attempt to close prisma if it exists
+    if ((global as any).prisma || require("./utils/db.util").prisma) {
+      // generic attempt to close prisma if it exists
     }
   } catch (e) {}
   process.exit(0);

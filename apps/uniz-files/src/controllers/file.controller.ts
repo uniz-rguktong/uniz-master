@@ -17,7 +17,10 @@ const prisma = new PrismaClient();
 
 import axios from "axios";
 
-const GATEWAY_URL = (process.env.DOCKER_ENV === "true" ? "http://uniz-gateway-api:3000/api/v1" : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1";
+const GATEWAY_URL =
+  (process.env.DOCKER_ENV === "true"
+    ? "http://uniz-gateway-api:3000/api/v1"
+    : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1";
 
 export const downloadAttendanceTemplate = async (
   req: AuthenticatedRequest,

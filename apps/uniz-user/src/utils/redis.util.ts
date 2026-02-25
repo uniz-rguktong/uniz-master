@@ -22,5 +22,4 @@ redis.on("error", (err: any) => {
   console.error("Redis connection error:", err);
 });
 
-redis.on("connect", () => {
-});
+redis.on("connect", () => {});
