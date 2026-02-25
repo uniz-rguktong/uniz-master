@@ -273,9 +273,12 @@ export default function Sidebar({ content }: MainContent) {
 
             {/* Bottom Left Actions */}
             <div className="mt-auto flex flex-col items-center space-y-6">
-              <button className="text-slate-400 hover:text-blue-600 transition-colors relative">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+              <button
+                onClick={() => { setShowConfirm(true); setIsOpen(false); }}
+                className="text-slate-400 hover:text-red-500 transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-5 h-5" />
               </button>
               <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 p-[2px] shadow-lg shadow-blue-100 overflow-hidden ring-2 ring-blue-50 ring-offset-0">
                 {userData?.profile_url ? (
@@ -340,17 +343,7 @@ export default function Sidebar({ content }: MainContent) {
                     );
                   })}
 
-                <div className="pt-6 px-2">
-                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-300">Other</span>
-                </div>
 
-                <button
-                  onClick={() => { setShowConfirm(true); setIsOpen(false); }}
-                  className="w-full flex items-center gap-4 px-5 py-3 rounded-2xl text-red-500 hover:bg-red-50 transition-all mt-2"
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span className="text-[15px] font-black">Logout</span>
-                </button>
               </div>
 
               {/* Profile Bar at the bottom of the card */}
