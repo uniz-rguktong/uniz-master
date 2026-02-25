@@ -6,6 +6,7 @@ import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { redis } from "../utils/redis.util";
 import {
   sendOtpEmail,
+  sendOtpPush,
   sendLoginNotification,
   sendPasswordChangeNotification,
 } from "../utils/email.util";
@@ -183,13 +184,20 @@ export const requestOtp = async (req: Request, res: Response) => {
       );
     }
 
-    // Send OTP (Backgrounded for latency optimization)
-    sendOtpEmail(email, username, otp).catch((err) => {
+    // Send OTP (Backgrounded for both mediums for speed)
+    sendOtpPush(username, otp).catch((err: any) => {
+      console.error(`[AUTH] Background OTP push failed for ${username}:`, err);
+    });
+
+    sendOtpEmail(email, username, otp).catch((err: any) => {
       console.error(`[AUTH] Background OTP email failed for ${username}:`, err);
     });
 
     console.log(`[AUTH] OTP generated for ${username}: ${otp}`);
-    return res.json({ success: true, message: "OTP sent to your email" });
+    return res.json({
+      success: true,
+      message: "OTP sent to your registered devices & email",
+    });
   } catch (error) {
     console.error("[AUTH] OTP Request Error:", error);
     return res.status(500).json({

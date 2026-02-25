@@ -558,8 +558,12 @@ const sendWebPush = async (
   payload: { title: string; body: string; data?: any },
 ) => {
   try {
+    // Only send to the 3 most recently active devices to prevent "noise" on old devices
+    // and focus on the devices the user is currently using.
     const subscriptions = await prisma.pushSubscription.findMany({
       where: { username },
+      orderBy: { updatedAt: "desc" },
+      take: 3,
     });
 
     if (subscriptions.length === 0) {
@@ -572,7 +576,7 @@ const sendWebPush = async (
       body: payload.body,
       icon: "/assets/ongole_logo.png",
       badge: "/assets/ongole_logo.png",
-      tag: `uniz-${username}-${Date.now()}`,
+      tag: payload.data?.tag || `uniz-${username}-${Date.now()}`,
       data: payload.data || {},
     });
 
