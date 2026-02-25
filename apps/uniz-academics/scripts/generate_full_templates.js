@@ -6,6 +6,7 @@ async function generate() {
   const userPrisma = new PrismaClient({
     datasourceUrl:
   });
+
   const academicPrisma = new PrismaClient({
     datasourceUrl:
   });
