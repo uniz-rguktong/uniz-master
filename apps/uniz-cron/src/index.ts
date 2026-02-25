@@ -2,6 +2,7 @@ import { CronJob } from "cron";
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import dotenv from "dotenv";
+import { runStorageCleanup } from "./utils/storage";
 dotenv.config();
 
 const prisma = new PrismaClient();
@@ -199,6 +200,16 @@ export const runMaintenance = async () => {
 // Job 1: Expire Outpasses (Runs every 5 minutes for better security responsiveness)
 const maintenanceJob = new CronJob("*/5 * * * *", runMaintenance);
 maintenanceJob.start();
+
+// Job 2: Automate Storage Cleanup (Runs every day at 3 AM)
+const storageCleanupJob = new CronJob("0 3 * * *", async () => {
+  try {
+    await runStorageCleanup();
+  } catch (err: any) {
+    console.error("[CRON] Storage cleanup job failed:", err.message);
+  }
+});
+storageCleanupJob.start();
 
 console.log("Cron Service Started");
 
