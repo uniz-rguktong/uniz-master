@@ -115,16 +115,17 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     echo "✨ Everything is up to date."
   fi
   
-  echo "⌛ Stabilization check..."
+  echo "⌛ Waiting for deployments to stabilize (60s)..."
+  sleep 60
   kubectl get pods
 
   # 3. Clean up storage to prevent build-up
   if [ $REBUILT_COUNT -gt 0 ]; then
-    echo "🧹 Final Cleanup: Removing old images and build cache..."
+    echo "🧹 Final Cleanup: Removing old build cache..."
     # Remove dangling images from Docker
     docker image prune -f
-    # Remove unused images from K3s (crictl)
-    k3s crictl rmi --prune
+    # DO NOT prune k3s images here as it might delete newly imported images before they are fully used
+    # k3s crictl rmi --prune 
     # Optional: Clear buildx cache if used
     docker builder prune -f --filter "until=24h"
     echo "✨ Storage cleaned."
