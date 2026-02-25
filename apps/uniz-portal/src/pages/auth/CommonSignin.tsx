@@ -281,7 +281,7 @@ export default function Signin({ type }: SigninProps) {
             {step === "signin"
               ? "Enter your credentials to access the portal"
               : step === "forgot"
-                ? "We'll send an OTP to your registered email"
+                ? "We'll send an OTP to your registered devices & email"
                 : "Secure your account with a strong password"}
           </p>
         </div>
@@ -356,7 +356,13 @@ export default function Signin({ type }: SigninProps) {
                 label="University ID"
                 icon={<User className="w-4 h-4" />}
                 value={username}
-                onChange={(e) => setUsername(e.target.value.toLowerCase())}
+                onChange={(e) =>
+                  setUsername(
+                    type === "student"
+                      ? e.target.value.toUpperCase()
+                      : e.target.value.toLowerCase(),
+                  )
+                }
                 placeholder="Enter your ID"
               />
               <div className="pt-2">

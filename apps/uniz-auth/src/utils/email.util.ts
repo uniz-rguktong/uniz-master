@@ -51,6 +51,17 @@ const sendPush = async (username: string, title: string, body: string) => {
   }
 };
 
+export const sendOtpPush = async (
+  username: string,
+  otp: string,
+): Promise<void> => {
+  await sendPush(
+    username,
+    "UniZ Authentication OTP",
+    `Your verification code is ${otp}. It expires in 10 minutes.`,
+  );
+};
+
 export const sendOtpEmail = async (
   email: string,
   username: string,
