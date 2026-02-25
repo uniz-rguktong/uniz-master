@@ -346,7 +346,7 @@ export default function Sidebar({ content }: MainContent) {
 
       {/* Mobile Bottom Navigation Bar - Exact Unstop Dimensions */}
       <div
-        className={`md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[72%] max-w-[280px] transition-all duration-500 ease-in-out ${isVisible ? "translate-y-0 opacity-100" : "translate-y-24 opacity-0 pointer-events-none"
+        className={`md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[72%] max-w-[280px] transition-all duration-500 ease-in-out ${isVisible ? "translate-y-0 opacity-100" : "translate-y-24 opacity-0 pointer-events-none"
           }`}
       >
         <div className="bg-white/80 backdrop-blur-xl border border-white/40 rounded-[2rem] shadow-[0_12px_40px_rgba(0,0,0,0.12)] px-4 py-3 flex items-center justify-between">
