@@ -137,9 +137,14 @@ export default function Outpass_Outing({ request }: requestProps) {
               <AlertCircle className="w-6 h-6" />
             </div>
             <div className="space-y-0.5">
-              <p className="font-black text-slate-900 text-lg uppercase tracking-tight">Notification Channel</p>
+              <p className="font-black text-slate-900 text-lg uppercase tracking-tight">
+                Notification Channel
+              </p>
               <p className="text-slate-400 font-bold text-[15px]">
-                Updates for all requests are sent to <span className="text-blue-600 font-black">{Student?.email}</span>
+                Updates for all requests are sent to{" "}
+                <span className="text-blue-600 font-black">
+                  {Student?.email}
+                </span>
               </p>
             </div>
           </div>

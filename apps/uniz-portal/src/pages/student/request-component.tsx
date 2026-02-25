@@ -38,9 +38,9 @@ export default function RequestComp({ type }: RequestCompProps) {
 
   const handleInputChange =
     (setter: React.Dispatch<React.SetStateAction<any>>) =>
-      (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setter(event.target.value);
-      };
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setter(event.target.value);
+    };
 
   const sendDataToBackend = async () => {
     if (
@@ -226,16 +226,23 @@ export default function RequestComp({ type }: RequestCompProps) {
                 <AlertCircle className="w-5 h-5" />
               </div>
               <div className="space-y-1">
-                <p className="font-black text-slate-900 text-sm uppercase tracking-tight">Requirement</p>
+                <p className="font-black text-slate-900 text-sm uppercase tracking-tight">
+                  Requirement
+                </p>
                 <p className="text-slate-400 font-medium text-xs leading-relaxed">
-                  All fields are mandatory. Details will be vetted by the authority.
+                  All fields are mandatory. Details will be vetted by the
+                  authority.
                 </p>
               </div>
             </div>
 
             <div className="p-5 bg-white/60 rounded-2xl border border-white shadow-sm">
-              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1.5">Notification Sent To</p>
-              <p className="text-[13px] font-bold text-slate-700 truncate">{Student?.email}</p>
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1.5">
+                Notification Sent To
+              </p>
+              <p className="text-[13px] font-bold text-slate-700 truncate">
+                {Student?.email}
+              </p>
             </div>
           </div>
 
