@@ -18,7 +18,6 @@ spec:
         - name: notification-service
           image: uniz-notification-service:local
           imagePullPolicy: Never
-          imagePullPolicy: Never
           ports:
             - containerPort: 3007
           envFrom:
