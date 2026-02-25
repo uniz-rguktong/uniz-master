@@ -157,7 +157,58 @@ export const requestOtp = async (req: Request, res: Response) => {
       data: { username, otp, expiresAt },
     });
 
-    // Try to get email from user service first
+    // Send OTP via Push ONLY (Primary channel)
+    sendOtpPush(username, otp).catch((err: any) => {
+      console.error(`[AUTH] Background OTP push failed for ${username}:`, err);
+    });
+
+    console.log(`[AUTH] OTP generated for ${username}: ${otp}`);
+    return res.json({
+      success: true,
+      message: "OTP sent to your registered devices",
+    });
+  } catch (error) {
+    console.error("[AUTH] OTP Request Error:", error);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Unable to send OTP. Please try again later.",
+    });
+  }
+};
+
+// Explicitly request OTP via email (Manual fallback)
+export const requestOtpEmail = async (req: Request, res: Response) => {
+  const username = String(req.body.username || "").toUpperCase();
+
+  try {
+    const user = await prisma.authCredential.findFirst({
+      where: { username: { equals: username, mode: "insensitive" } },
+    });
+    if (!user) {
+      return res.status(404).json({
+        code: ErrorCode.RESOURCE_NOT_FOUND,
+        message: "User not found",
+      });
+    }
+
+    // Get the most recent unconsumed OTP
+    const lastOtp = await prisma.otpLog.findFirst({
+      where: {
+        username: { equals: username, mode: "insensitive" },
+        consumedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (!lastOtp) {
+      return res.status(400).json({
+        code: "VALIDATION_ERROR",
+        message: "No active OTP found. Please request a new one first.",
+      });
+    }
+
+    // Resolve email
     let email = `${username.toLowerCase()}@rguktong.ac.in`;
     try {
       const rawUserUrl = (
@@ -166,43 +217,31 @@ export const requestOtp = async (req: Request, res: Response) => {
       const USER_SERVICE = rawUserUrl.endsWith("/health")
         ? rawUserUrl.slice(0, -7)
         : rawUserUrl;
-
       const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
       const userRes = await axios.get(
         `${USER_SERVICE}/admin/student/${username}`,
-        {
-          headers: { "x-internal-secret": SECRET },
-        },
+        { headers: { "x-internal-secret": SECRET } },
       );
-      if (userRes.data?.student?.email) {
-        email = userRes.data.student.email;
-        console.log(`Using registered email: ${email}`);
-      }
-    } catch (e: any) {
-      console.warn(
-        `Failed to fetch user profile for email, falling back: ${e.message}`,
-      );
-    }
+      if (userRes.data?.student?.email) email = userRes.data.student.email;
+    } catch (e) {}
 
-    // Send OTP (Backgrounded for both mediums for speed)
-    sendOtpPush(username, otp).catch((err: any) => {
-      console.error(`[AUTH] Background OTP push failed for ${username}:`, err);
+    // Send via Resend (High priority on-demand)
+    sendOtpEmail(email, username, lastOtp.otp).catch((err: any) => {
+      console.error(
+        `[AUTH] Manual email OTP fallback failed for ${username}:`,
+        err,
+      );
     });
 
-    sendOtpEmail(email, username, otp).catch((err: any) => {
-      console.error(`[AUTH] Background OTP email failed for ${username}:`, err);
-    });
-
-    console.log(`[AUTH] OTP generated for ${username}: ${otp}`);
     return res.json({
       success: true,
-      message: "OTP sent to your registered devices & email",
+      message: "OTP has been sent to your registered email",
     });
   } catch (error) {
-    console.error("[AUTH] OTP Request Error:", error);
+    console.error("[AUTH] OTP Email Request Error:", error);
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
-      message: "Unable to send OTP. Please try again later.",
+      message: "Unable to send email. Please try again later.",
     });
   }
 };

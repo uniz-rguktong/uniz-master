@@ -4,6 +4,7 @@ import {
   studentLogin,
   adminLogin,
   requestOtp,
+  requestOtpEmail,
   resetPassword,
   verifyOtp,
   signup,
@@ -69,6 +70,12 @@ router.post(
   rateLimiter,
   validateRequest(OtpRequestSchema),
   requestOtp,
+);
+router.post(
+  "/otp/request-email",
+  rateLimiter,
+  validateRequest(OtpRequestSchema),
+  requestOtpEmail,
 );
 router.post(
   "/otp/verify",

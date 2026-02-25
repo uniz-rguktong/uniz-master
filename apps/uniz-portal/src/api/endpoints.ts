@@ -11,6 +11,7 @@ export const SIGNIN = (type: "student" | "admin" | "faculty") =>
 export const SIGNUP = (_type: "student" | "admin" | "faculty") =>
   `${BASE_URL}/auth/signup`;
 export const FORGOT_PASS_ENDPOINT = `${BASE_URL}/auth/otp/request`;
+export const REQUEST_OTP_EMAIL_ENDPOINT = `${BASE_URL}/auth/otp/request-email`;
 export const VERIFY_OTP_ENDPOINT = `${BASE_URL}/auth/otp/verify`;
 export const SET_NEW_PASS_ENDPOINT = `${BASE_URL}/auth/password/reset`;
 
