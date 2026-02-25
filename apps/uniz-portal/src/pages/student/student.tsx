@@ -361,7 +361,7 @@ export default function StudentProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen font-sans text-slate-900 pb-20">
+    <div className="font-sans text-slate-900">
       <div className="container mx-auto px-4 max-w-5xl relative z-10">
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6 mb-4 md:mb-6">
@@ -385,7 +385,7 @@ export default function StudentProfilePage() {
                 </span>
               </div>
               {user?.has_pending_requests && (
-                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 animate-pulse ml-1 shadow-lg shadow-blue-200">
+                <span className="text-blue-600 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 animate-pulse ml-1">
                   <Clock className="w-3 h-3" /> Pending Request
                 </span>
               )}
@@ -623,8 +623,8 @@ export default function StudentProfilePage() {
                     className="group relative overflow-hidden bg-white hover:bg-blue-600 rounded-2xl p-6 transition-all duration-300 border border-slate-100 hover:border-blue-600 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-xl"
                   >
                     <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-white/20 group-hover:text-white flex items-center justify-center shadow-sm transition-colors duration-300">
-                        <Clock className="w-6 h-6" />
+                      <div className="text-blue-500 group-hover:text-white transition-colors duration-300">
+                        <Clock className="w-7 h-7" />
                       </div>
                       <div>
                         <h3 className="text-[17px] font-black text-slate-900 group-hover:text-white mb-1 tracking-tight transition-colors">
@@ -642,8 +642,8 @@ export default function StudentProfilePage() {
                     className="group relative overflow-hidden bg-white hover:bg-blue-600 rounded-2xl p-6 transition-all duration-300 border border-slate-100 hover:border-blue-600 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-xl"
                   >
                     <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-white/20 group-hover:text-white flex items-center justify-center shadow-sm transition-colors duration-300">
-                        <Calendar className="w-6 h-6" />
+                      <div className="text-blue-500 group-hover:text-white transition-colors duration-300">
+                        <Calendar className="w-7 h-7" />
                       </div>
                       <div>
                         <h3 className="text-[17px] font-black text-slate-900 group-hover:text-white mb-1 tracking-tight transition-colors">
@@ -659,8 +659,8 @@ export default function StudentProfilePage() {
 
                 <div>
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="p-1.5 bg-blue-600 text-white rounded-lg">
-                      <History className="w-4 h-4" />
+                    <div className="text-blue-600">
+                      <History className="w-5 h-5" />
                     </div>
                     <h3 className="text-lg font-black text-slate-800 tracking-tight">
                       Request History
@@ -720,11 +720,11 @@ export default function StudentProfilePage() {
                 className="bg-white rounded-[2rem] p-6 md:p-10 max-w-lg w-full shadow-2xl overflow-hidden relative"
               >
                 <div className="flex items-center gap-5 mb-8">
-                  <div className="p-4 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-200">
+                  <div className="text-blue-600">
                     {requestType === "outpass" ? (
-                      <Calendar className="w-7 h-7" />
+                      <Calendar className="w-8 h-8" />
                     ) : (
-                      <Clock className="w-7 h-7" />
+                      <Clock className="w-8 h-8" />
                     )}
                   </div>
                   <div>
