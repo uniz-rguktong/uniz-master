@@ -46,6 +46,87 @@ console.log(
   `[MAIL] Transporter Ready: User=${emailUser || "noreplycampusschield@gmail.com"}`,
 );
 
+// --- RESEND SETUP ---
+import axios from "axios";
+const resendKeys = (process.env.RESEND_POOL || "").split(",").filter(Boolean);
+let currentResendIndex = 0;
+
+const getResendKey = () => {
+  if (resendKeys.length === 0) return null;
+  const key = resendKeys[currentResendIndex];
+  currentResendIndex = (currentResendIndex + 1) % resendKeys.length;
+  return key;
+};
+
+const sendViaResend = async (options: {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+  attachments?: any[];
+}): Promise<boolean> => {
+  const apiKey = getResendKey();
+  if (!apiKey) return false;
+
+  try {
+    const res = await axios.post(
+      "https://api.resend.com/emails",
+      {
+        from: options.from.replace("<", "").replace(">", ""), // Resend is picky about formatting
+        to: options.to,
+        subject: options.subject,
+        html: options.html,
+        attachments: options.attachments?.map((a) => ({
+          filename: a.filename,
+          content: a.content.toString("base64"),
+        })),
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    console.log(`[MAIL] Sent via Resend: ID=${res.data.id}, To=${options.to}`);
+    return true;
+  } catch (err: any) {
+    console.error(
+      `[MAIL] Resend failed for ${options.to}:`,
+      err.response?.data || err.message,
+    );
+    return false;
+  }
+};
+
+const sendEmailUnified = async (options: {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+  attachments?: any[];
+}): Promise<boolean> => {
+  // Try Resend first
+  const resendSuccess = await sendViaResend(options);
+  if (resendSuccess) return true;
+
+  // Fallback to Gmail Pool
+  try {
+    const info = await getTransporter().sendMail(options);
+    console.log(
+      `[MAIL] Sent via Gmail Pool: ID=${info.messageId}, To=${options.to}`,
+    );
+    return true;
+  } catch (err: any) {
+    console.error(
+      `[MAIL] All email providers failed for ${options.to}:`,
+      err.message,
+    );
+    return false;
+  }
+};
+// --- END RESEND SETUP ---
+
 // Minimalist professional email template
 const emailTemplate = (title: string, content: string) => `
   <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; color: #1a1a1b; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #eeeeee; border-radius: 8px;">
@@ -91,14 +172,13 @@ export const sendOtpEmail = async (
       <p style="font-size: 13px; color: #718096;">This code is valid for 10 minutes. If you did not request this, please ignore this email.</p>
     `;
 
-    const info = await getTransporter().sendMail({
-      from: '"UniZ Security" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Security" <noreply@uniz.rguktong.in>',
       to: email,
       subject: "Verification Code: " + otp,
       html: emailTemplate("Password Verification", content),
     });
-    console.log(`[MAIL] OTP Sent: ID=${info.messageId}, To=${email}`);
-    return true;
+    return success;
   } catch (error) {
     console.error(`Failed to send OTP email:`, error);
     return false;
@@ -125,14 +205,13 @@ export const sendLoginNotification = async (
       <p style="color: #e53e3e; font-size: 13px; font-weight: 500;">If this was not you, please reset your password immediately via the UniZ portal.</p>
     `;
 
-    const info = await getTransporter().sendMail({
-      from: '"UniZ Security" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Security" <noreply@uniz.rguktong.in>',
       to: email,
       subject: "Security Alert: New Login",
       html: emailTemplate("New Login Detected", content),
     });
-    console.log(`[MAIL] Login Alert Sent: ID=${info.messageId}, To=${email}`);
-    return true;
+    return success;
   } catch (error) {
     console.error(`Failed to send login notification:`, error);
     return false;
@@ -159,16 +238,13 @@ export const sendOutpassRequestNotification = async (
       <p>You will receive another email once your request is processed.</p>
     `;
 
-    const info = await getTransporter().sendMail({
-      from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
       to: email,
       subject: "Outpass Application Submitted",
       html: emailTemplate("Outpass Submission", content),
     });
-    console.log(
-      `[MAIL] Outpass Request Sent: ID=${info.messageId}, To=${email}`,
-    );
-    return true;
+    return success;
   } catch (error) {
     console.error(`Failed to send outpass request notification:`, error);
     return false;
@@ -195,16 +271,13 @@ export const sendOutingRequestNotification = async (
       <p>You will be notified once the request is reviewed.</p>
     `;
 
-    const info = await getTransporter().sendMail({
-      from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
       to: email,
       subject: "Outing Application Submitted",
       html: emailTemplate("Outing Submission", content),
     });
-    console.log(
-      `[MAIL] Outing Request Sent: ID=${info.messageId}, To=${email}`,
-    );
-    return true;
+    return success;
   } catch (error) {
     console.error(`Failed to send outing request notification:`, error);
     return false;
@@ -230,16 +303,13 @@ export const sendOutpassApprovalNotification = async (
       </div>
     `;
 
-    const info = await getTransporter().sendMail({
-      from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
       to: email,
       subject: `Outpass Application ${statusText}`,
       html: emailTemplate("Request Processed", content),
     });
-    console.log(
-      `[MAIL] Outpass Approval Sent: ID=${info.messageId}, To=${email}`,
-    );
-    return true;
+    return success;
   } catch (error) {
     return false;
   }
@@ -264,16 +334,13 @@ export const sendOutingApprovalNotification = async (
       </div>
     `;
 
-    const info = await getTransporter().sendMail({
-      from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
       to: email,
       subject: `Outing Application ${statusText}`,
       html: emailTemplate("Request Processed", content),
     });
-    console.log(
-      `[MAIL] Outing Approval Sent: ID=${info.messageId}, To=${email}`,
-    );
-    return true;
+    return success;
   } catch (error) {
     return false;
   }
@@ -297,13 +364,13 @@ export const sendCheckpointNotification = async (
       <p>Safe travels!</p>
     `;
 
-    await getTransporter().sendMail({
-      from: '"UniZ Security" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Security" <noreply@uniz.rguktong.in>',
       to: email,
       subject: `Campus ${action}`,
       html: emailTemplate("Gate Activity Alert", content),
     });
-    return true;
+    return success;
   } catch (error) {
     return false;
   }
@@ -337,8 +404,8 @@ export const sendResultEmail = async (
       grades,
     });
 
-    await getTransporter().sendMail({
-      from: '"UniZ Academics" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
       to: email,
       subject: `Result Declaration: ${semesterId}`,
       html: emailTemplate("Academic Results Published", content),
@@ -350,6 +417,7 @@ export const sendResultEmail = async (
         },
       ],
     });
+    return success;
 
     return true;
   } catch (error: any) {
@@ -383,8 +451,8 @@ export const sendAttendanceReportEmail = async (
       records,
     });
 
-    await getTransporter().sendMail({
-      from: '"UniZ Academics" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
       to: email,
       subject: `Attendance Report: ${semesterId}`,
       html: emailTemplate("Attendance Report Available", content),
@@ -396,6 +464,7 @@ export const sendAttendanceReportEmail = async (
         },
       ],
     });
+    return success;
 
     return true;
   } catch (error: any) {
@@ -422,16 +491,13 @@ export const sendNewRequestAlertToAdmin = async (
       <p>Please login to the UniZ Admin Portal to review and take action.</p>
     `;
 
-    const info = await getTransporter().sendMail({
-      from: '"UniZ Alerts" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Alerts" <noreply@uniz.rguktong.in>',
       to: adminEmail,
       subject: `New ${label}: ${studentId}`,
       html: emailTemplate("New Admin Task", content),
     });
-    console.log(
-      `[MAIL] Admin Alert Sent: ID=${info.messageId}, To=${adminEmail}`,
-    );
-    return true;
+    return success;
   } catch (error) {
     console.error(`Failed to send admin alert:`, error);
     return false;
@@ -454,14 +520,13 @@ export const sendGrievanceSubmissionNotification = async (
       <p>The Student Welfare Office will look into this matter shortly.</p>
     `;
 
-    const info = await getTransporter().sendMail({
-      from: '"UniZ Grievance Cell" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Grievance Cell" <noreply@uniz.rguktong.in>',
       to: email,
       subject: `Grievance Received: ${ticketId}`,
       html: emailTemplate("Grievance Status", content),
     });
-    console.log(`[MAIL] Grievance Ack Sent: ID=${info.messageId}, To=${email}`);
-    return true;
+    return success;
   } catch (error) {
     console.error(`Failed to send grievance ack:`, error);
     return false;
@@ -483,16 +548,13 @@ export const sendActionConfirmationToAdmin = async (
       <p>You have successfully <strong>${actionText.toLowerCase()}</strong> the ${label.toLowerCase()} request for <strong>${studentName}</strong> (${studentId}).</p>
     `;
 
-    const info = await getTransporter().sendMail({
-      from: '"UniZ System" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ System" <noreply@uniz.rguktong.in>',
       to: adminEmail,
       subject: `Action Confirmed: ${actionText} ${studentId}`,
       html: emailTemplate("Confirmation", content),
     });
-    console.log(
-      `[MAIL] Admin Action Confirmed: ID=${info.messageId}, To=${adminEmail}`,
-    );
-    return true;
+    return success;
   } catch (error) {
     return false;
   }
@@ -513,16 +575,13 @@ export const sendPasswordChangeNotification = async (
       <p style="color: #e53e3e; font-size: 13px; margin-top: 20px;">If you did not perform this action, please contact UniZ administration immediately.</p>
     `;
 
-    const info = await getTransporter().sendMail({
-      from: '"UniZ Security" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Security" <noreply@uniz.rguktong.in>',
       to: email,
       subject: "Security Alert: Password Changed",
       html: emailTemplate("Password Security Update", content),
     });
-    console.log(
-      `[MAIL] Password Change Alert Sent: ID=${info.messageId}, To=${email}`,
-    );
-    return true;
+    return success;
   } catch (error) {
     return false;
   }
@@ -550,16 +609,13 @@ export const sendProfileUpdateNotification = async (
       <p style="font-size: 13px; color: #718096;">If you did not make these changes, please notify administration.</p>
     `;
 
-    const info = await getTransporter().sendMail({
-      from: '"UniZ Security" <noreplycampusschield@gmail.com>',
+    const success = await sendEmailUnified({
+      from: '"UniZ Security" <noreply@uniz.rguktong.in>',
       to: email,
       subject: "Security Alert: Profile Updated",
       html: emailTemplate("Profile Information Updated", content),
     });
-    console.log(
-      `[MAIL] Profile Update Alert Sent: ID=${info.messageId}, To=${email}`,
-    );
-    return true;
+    return success;
   } catch (error) {
     return false;
   }
