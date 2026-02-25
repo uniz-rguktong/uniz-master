@@ -1,4 +1,4 @@
-import { Button } from "./Button";
+
 import { AlertCircle } from "lucide-react";
 
 interface ConfirmModalProps {
@@ -25,31 +25,33 @@ export function ConfirmModal({
       >
         <div className="p-6">
           <div className="flex flex-col items-center text-center gap-4">
-            <div className="p-3 bg-slate-100 rounded-full text-slate-900">
-              <AlertCircle size={24} />
+            <div className="p-3 rounded-full text-red-600">
+              <AlertCircle size={28} />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-slate-900">
+              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                 Confirm Action
               </h3>
-              <p className="text-sm text-slate-500 mt-1">{message}</p>
+              <p className="text-[14px] font-medium text-slate-500 mt-1.5 leading-relaxed">{message}</p>
             </div>
           </div>
 
-          <div className="flex gap-3 mt-6">
-            <Button variant="outline" onClick={onClose} className="flex-1">
+          <div className="flex gap-3 mt-8">
+            <button
+              onClick={onClose}
+              className=" border-2 flex-1 py-2.5 rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold"
+            >
               Cancel
-            </Button>
-            <Button
-              variant="primary"
+            </button>
+            <button
               onClick={() => {
                 onConfirm();
                 onClose();
               }}
-              className="flex-1"
+              className="flex-1 py-2.5 rounded-xl bg-blue-600  text-white font-bold shadow-md shadow-blue-200"
             >
               Confirm
-            </Button>
+            </button>
           </div>
         </div>
       </div>
