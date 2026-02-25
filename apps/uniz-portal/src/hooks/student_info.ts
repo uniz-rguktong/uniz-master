@@ -37,7 +37,10 @@ export function useStudentData() {
   };
 
   useEffect(() => {
-    fetchStudentData();
+    const token = localStorage.getItem("student_token");
+    if (token) {
+      fetchStudentData();
+    }
   }, []);
 
   return { refetch: fetchStudentData };
