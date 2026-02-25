@@ -550,16 +550,19 @@ const getResendKey = () => {
   return key;
 };
 
-const sendEmailUnified = async (options: {
-  from: string;
-  to: string;
-  subject: string;
-  html: string;
-  attachments?: any[];
-}): Promise<{ success: boolean; id?: string }> => {
-  // 1. Try Resend first
+const sendEmailUnified = async (
+  options: {
+    from: string;
+    to: string;
+    subject: string;
+    html: string;
+    attachments?: any[];
+  },
+  highPriority: boolean = false,
+): Promise<{ success: boolean; id?: string }> => {
+  // 1. Try Resend ONLY for high priority (Security/OTP)
   const apiKey = getResendKey();
-  if (apiKey) {
+  if (highPriority && apiKey) {
     try {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
@@ -585,16 +588,16 @@ const sendEmailUnified = async (options: {
           `[NotificationWorker] Sent via Resend: ID=${data.id}, To=${options.to}`,
         );
         return { success: true, id: data.id };
-      } else {
-        const errorData = await res.json();
-        console.error(`[NotificationWorker] Resend API error:`, errorData);
       }
     } catch (err: any) {
-      console.error(`[NotificationWorker] Resend request failed:`, err.message);
+      console.error(
+        `[NotificationWorker] Resend failed, falling back:`,
+        err.message,
+      );
     }
   }
 
-  // 2. Fallback to Gmail Pool
+  // 2. Fallback or Direct to Gmail Pool
   try {
     const info = await getTransporter().sendMail(options);
     console.log(
@@ -803,13 +806,24 @@ const worker = new Worker(
           }),
         );
 
-        const emailResult = await sendEmailUnified({
-          from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
-          to: rawRecipient,
-          subject: subject || "UniZ Notification",
-          html:
-            html || emailTemplate(subject || "Notification", `<p>${body}</p>`),
-        });
+        const subjectLower = (subject || "").toLowerCase();
+        // Password and login alerts are high priority for Resend
+        const isSecurityAlert =
+          subjectLower.includes("password") ||
+          subjectLower.includes("login") ||
+          subjectLower.includes("verification");
+
+        const emailResult = await sendEmailUnified(
+          {
+            from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
+            to: rawRecipient,
+            subject: subject || "UniZ Notification",
+            html:
+              html ||
+              emailTemplate(subject || "Notification", `<p>${body}</p>`),
+          },
+          isSecurityAlert,
+        );
 
         // Trigger Targeted Web Push for outpass/outing/profile notifications
         const pushSubjects = [
@@ -819,7 +833,7 @@ const worker = new Worker(
           "security alert",
           "login",
         ];
-        const subjectLower = (subject || "").toLowerCase();
+        // subjectLower already defined above
         const shouldPush = pushSubjects.some((k) => subjectLower.includes(k));
         if (shouldPush) {
           const pushUsername =
@@ -867,28 +881,31 @@ const worker = new Worker(
           }),
         );
 
-        const emailResult = await sendEmailUnified({
-          from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
-          to: rawRecipient,
-          subject: `Result Declaration: ${semesterId}`,
-          html: emailTemplate(
-            `Result Declaration: ${semesterId}`,
-            `<p>Dear Student,<br><br>The results for <strong>${semesterId}</strong> have been published.${
-              pdfBuffer
-                ? "<br>Please find the detailed grade report attached."
-                : "<br>(Note: PDF generation is currently unavailable; this email has no attachment.)"
-            }</p>`,
-          ),
-          attachments: pdfBuffer
-            ? [
-                {
-                  filename: `ACADEMIC_REPORT_${(job.data as any).username}_${semesterId}.pdf`,
-                  content: pdfBuffer,
-                  contentType: "application/pdf",
-                },
-              ]
-            : [],
-        });
+        const emailResult = await sendEmailUnified(
+          {
+            from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
+            to: rawRecipient,
+            subject: `Result Declaration: ${semesterId}`,
+            html: emailTemplate(
+              `Result Declaration: ${semesterId}`,
+              `<p>Dear Student,<br><br>The results for <strong>${semesterId}</strong> have been published.${
+                pdfBuffer
+                  ? "<br>Please find the detailed grade report attached."
+                  : "<br>(Note: PDF generation is currently unavailable; this email has no attachment.)"
+              }</p>`,
+            ),
+            attachments: pdfBuffer
+              ? [
+                  {
+                    filename: `ACADEMIC_REPORT_${(job.data as any).username}_${semesterId}.pdf`,
+                    content: pdfBuffer,
+                    contentType: "application/pdf",
+                  },
+                ]
+              : [],
+          },
+          false,
+        ); // Results are NOT high priority for Resend
 
         console.log(
           `${logPrefix} RESULTS email sent`,
@@ -927,28 +944,31 @@ const worker = new Worker(
           }),
         );
 
-        const emailResult = await sendEmailUnified({
-          from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
-          to: rawRecipient,
-          subject: `Attendance Report: ${semesterId}`,
-          html: emailTemplate(
-            `Attendance Report: ${semesterId}`,
-            `<p>Dear Student,<br><br>The attendance report for <strong>${semesterId}</strong> is now available.${
-              pdfBuffer
-                ? "<br>Please find your detailed attendance record attached."
-                : "<br>(Note: PDF generation is currently unavailable; this email has no attachment.)"
-            }</p>`,
-          ),
-          attachments: pdfBuffer
-            ? [
-                {
-                  filename: `${(job.data as any).username.toUpperCase()}_Attendance_${semesterId}.pdf`,
-                  content: pdfBuffer,
-                  contentType: "application/pdf",
-                },
-              ]
-            : [],
-        });
+        const emailResult = await sendEmailUnified(
+          {
+            from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
+            to: rawRecipient,
+            subject: `Attendance Report: ${semesterId}`,
+            html: emailTemplate(
+              `Attendance Report: ${semesterId}`,
+              `<p>Dear Student,<br><br>The attendance report for <strong>${semesterId}</strong> is now available.${
+                pdfBuffer
+                  ? "<br>Please find your detailed attendance record attached."
+                  : "<br>(Note: PDF generation is currently unavailable; this email has no attachment.)"
+              }</p>`,
+            ),
+            attachments: pdfBuffer
+              ? [
+                  {
+                    filename: `${(job.data as any).username.toUpperCase()}_Attendance_${semesterId}.pdf`,
+                    content: pdfBuffer,
+                    contentType: "application/pdf",
+                  },
+                ]
+              : [],
+          },
+          false,
+        ); // Attendance is NOT high priority for Resend
 
         console.log(
           `${logPrefix} ATTENDANCE_REPORT email sent`,

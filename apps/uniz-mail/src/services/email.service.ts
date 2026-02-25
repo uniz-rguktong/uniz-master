@@ -99,18 +99,23 @@ const sendViaResend = async (options: {
   }
 };
 
-const sendEmailUnified = async (options: {
-  from: string;
-  to: string;
-  subject: string;
-  html: string;
-  attachments?: any[];
-}): Promise<boolean> => {
-  // Try Resend first
-  const resendSuccess = await sendViaResend(options);
-  if (resendSuccess) return true;
+const sendEmailUnified = async (
+  options: {
+    from: string;
+    to: string;
+    subject: string;
+    html: string;
+    attachments?: any[];
+  },
+  isHighPriority: boolean = false,
+): Promise<boolean> => {
+  // Try Resend ONLY for high priority (OTP/Security) to stay within free limits
+  if (isHighPriority) {
+    const resendSuccess = await sendViaResend(options);
+    if (resendSuccess) return true;
+  }
 
-  // Fallback to Gmail Pool
+  // Fallback/Direct to Gmail Pool
   try {
     const info = await getTransporter().sendMail(options);
     console.log(
@@ -172,12 +177,15 @@ export const sendOtpEmail = async (
       <p style="font-size: 13px; color: #718096;">This code is valid for 10 minutes. If you did not request this, please ignore this email.</p>
     `;
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Security" <noreply@uniz.rguktong.in>',
-      to: email,
-      subject: "Verification Code: " + otp,
-      html: emailTemplate("Password Verification", content),
-    });
+    const success = await sendEmailUnified(
+      {
+        from: '"UniZ Security" <noreply@uniz.rguktong.in>',
+        to: email,
+        subject: "Verification Code: " + otp,
+        html: emailTemplate("Password Verification", content),
+      },
+      true,
+    ); // High Priority = Use Resend
     return success;
   } catch (error) {
     console.error(`Failed to send OTP email:`, error);
@@ -205,12 +213,15 @@ export const sendLoginNotification = async (
       <p style="color: #e53e3e; font-size: 13px; font-weight: 500;">If this was not you, please reset your password immediately via the UniZ portal.</p>
     `;
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Security" <noreply@uniz.rguktong.in>',
-      to: email,
-      subject: "Security Alert: New Login",
-      html: emailTemplate("New Login Detected", content),
-    });
+    const success = await sendEmailUnified(
+      {
+        from: '"UniZ Security" <noreply@uniz.rguktong.in>',
+        to: email,
+        subject: "Security Alert: New Login",
+        html: emailTemplate("New Login Detected", content),
+      },
+      true,
+    ); // High Priority = Use Resend
     return success;
   } catch (error) {
     console.error(`Failed to send login notification:`, error);
@@ -575,12 +586,15 @@ export const sendPasswordChangeNotification = async (
       <p style="color: #e53e3e; font-size: 13px; margin-top: 20px;">If you did not perform this action, please contact UniZ administration immediately.</p>
     `;
 
-    const success = await sendEmailUnified({
-      from: '"UniZ Security" <noreply@uniz.rguktong.in>',
-      to: email,
-      subject: "Security Alert: Password Changed",
-      html: emailTemplate("Password Security Update", content),
-    });
+    const success = await sendEmailUnified(
+      {
+        from: '"UniZ Security" <noreply@uniz.rguktong.in>',
+        to: email,
+        subject: "Security Alert: Password Changed",
+        html: emailTemplate("Password Security Update", content),
+      },
+      true,
+    ); // High Priority = Use Resend
     return success;
   } catch (error) {
     return false;
