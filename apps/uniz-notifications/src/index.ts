@@ -539,81 +539,30 @@ const getTransporter = () => {
   return transporter;
 };
 
-// --- RESEND SETUP ---
-const resendKeys = (process.env.RESEND_POOL || "").split(",").filter(Boolean);
-let currentResendIndex = 0;
-
-const getResendKey = () => {
-  if (resendKeys.length === 0) return null;
-  const key = resendKeys[currentResendIndex];
-  currentResendIndex = (currentResendIndex + 1) % resendKeys.length;
-  return key;
-};
-
-const sendEmailUnified = async (
-  options: {
-    from: string;
-    to: string;
-    subject: string;
-    html: string;
-    attachments?: any[];
-  },
-  highPriority: boolean = false,
-): Promise<{ success: boolean; id?: string }> => {
-  // 1. Try Resend ONLY for high priority (Manual OTP fallback only)
-  // Per user request: "we only use email delivery for otp delivery only no other service"
-  const apiKey = getResendKey();
-  if (highPriority && apiKey) {
-    try {
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: options.from.replace("<", "").replace(">", ""),
-          to: options.to,
-          subject: options.subject,
-          html: options.html,
-          attachments: options.attachments?.map((a) => ({
-            filename: a.filename,
-            content: a.content.toString("base64"),
-          })),
-        }),
-      });
-
-      if (res.ok) {
-        const data: any = await res.json();
-        console.log(
-          `[NotificationWorker] Sent via Resend: ID=${data.id}, To=${options.to}`,
-        );
-        return { success: true, id: data.id };
-      }
-    } catch (err: any) {
-      console.error(
-        `[NotificationWorker] Resend failed, falling back:`,
-        err.message,
-      );
-    }
-  }
-
-  // 2. Fallback or Direct to Gmail Pool
+// --- EMAIL DELIVERY SETUP ---
+const sendEmailUnified = async (options: {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+  attachments?: any[];
+}): Promise<{ success: boolean; id?: string }> => {
+  // Direct to Gmail Pool (Organization Account)
   try {
     const info = await getTransporter().sendMail(options);
     console.log(
-      `[NotificationWorker] Sent via Gmail Pool: ID=${info.messageId}, To=${options.to}`,
+      `[NotificationWorker] Sent via Org Mail: ID=${info.messageId}, To=${options.to}`,
     );
     return { success: true, id: info.messageId };
   } catch (err: any) {
     console.error(
-      `[NotificationWorker] All email providers failed for ${options.to}:`,
+      `[NotificationWorker] Email delivery failed for ${options.to}:`,
       err.message,
     );
     return { success: false };
   }
 };
-// --- END RESEND SETUP ---
+// --- END EMAIL DELIVERY SETUP ---
 
 // --- WEB PUSH SETUP ---
 const publicVapidKey =

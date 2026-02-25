@@ -47,90 +47,31 @@ console.log(
 );
 
 // --- RESEND SETUP ---
-import axios from "axios";
-const resendKeys = (process.env.RESEND_POOL || "").split(",").filter(Boolean);
-let currentResendIndex = 0;
-
-const getResendKey = () => {
-  if (resendKeys.length === 0) return null;
-  const key = resendKeys[currentResendIndex];
-  currentResendIndex = (currentResendIndex + 1) % resendKeys.length;
-  return key;
-};
-
-const sendViaResend = async (options: {
+// --- EMAIL DELIVERY SETUP ---
+// Unified email sender using the Gmail Pool (Google Workspace / Organizational)
+const sendEmailUnified = async (options: {
   from: string;
   to: string;
   subject: string;
   html: string;
   attachments?: any[];
 }): Promise<boolean> => {
-  const apiKey = getResendKey();
-  if (!apiKey) return false;
-
-  try {
-    const res = await axios.post(
-      "https://api.resend.com/emails",
-      {
-        from: options.from.replace("<", "").replace(">", ""), // Resend is picky about formatting
-        to: options.to,
-        subject: options.subject,
-        html: options.html,
-        attachments: options.attachments?.map((a) => ({
-          filename: a.filename,
-          content: a.content.toString("base64"),
-        })),
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-      },
-    );
-    console.log(`[MAIL] Sent via Resend: ID=${res.data.id}, To=${options.to}`);
-    return true;
-  } catch (err: any) {
-    console.error(
-      `[MAIL] Resend failed for ${options.to}:`,
-      err.response?.data || err.message,
-    );
-    return false;
-  }
-};
-
-const sendEmailUnified = async (
-  options: {
-    from: string;
-    to: string;
-    subject: string;
-    html: string;
-    attachments?: any[];
-  },
-  isHighPriority: boolean = false,
-): Promise<boolean> => {
-  // Try Resend ONLY for high priority (OTP/Security) to stay within free limits
-  if (isHighPriority) {
-    const resendSuccess = await sendViaResend(options);
-    if (resendSuccess) return true;
-  }
-
-  // Fallback/Direct to Gmail Pool
   try {
     const info = await getTransporter().sendMail(options);
     console.log(
-      `[MAIL] Sent via Gmail Pool: ID=${info.messageId}, To=${options.to}`,
+      `[MAIL] Sent via Org Mail: ID=${info.messageId}, To=${options.to}`,
     );
     return true;
   } catch (err: any) {
     console.error(
-      `[MAIL] All email providers failed for ${options.to}:`,
+      `[MAIL] Email delivery failed for ${options.to}:`,
       err.message,
     );
     return false;
   }
 };
-// --- END RESEND SETUP ---
+
+// Logic moved to simplified sendEmailUnified above
 
 // Minimalist professional email template
 const emailTemplate = (title: string, content: string) => `
@@ -177,15 +118,12 @@ export const sendOtpEmail = async (
       <p style="font-size: 13px; color: #718096;">This code is valid for 10 minutes. If you did not request this, please ignore this email.</p>
     `;
 
-    const success = await sendEmailUnified(
-      {
-        from: '"UniZ Official" <webadmin@rguktong.ac.in>',
-        to: email,
-        subject: "Verification Code: " + otp,
-        html: emailTemplate("Password Verification", content),
-      },
-      true,
-    ); // High Priority = Use Resend
+    const success = await sendEmailUnified({
+      from: '"UniZ Official" <webadmin@rguktong.ac.in>',
+      to: email,
+      subject: "Verification Code: " + otp,
+      html: emailTemplate("Password Verification", content),
+    });
     return success;
   } catch (error) {
     console.error(`Failed to send OTP email:`, error);

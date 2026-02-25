@@ -4,8 +4,7 @@ import { PrismaClient } from "../src/generated/client";
 // But we need to use raw SQL to alter tables across schemas.
 const prisma = new PrismaClient({
   datasources: {
-    db: {
-    },
+    db: {},
   },
 });
 
