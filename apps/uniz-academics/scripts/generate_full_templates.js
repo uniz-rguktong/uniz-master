@@ -1,14 +1,19 @@
+require("dotenv").config();
 const XLSX = require("xlsx");
 const fs = require("fs");
 const { PrismaClient } = require("@prisma/client");
 
 async function generate() {
   const userPrisma = new PrismaClient({
-    datasourceUrl:
+    datasources: {
+      db: { url: process.env.USER_DATABASE_URL },
+    },
   });
 
   const academicPrisma = new PrismaClient({
-    datasourceUrl:
+    datasources: {
+      db: { url: process.env.DATABASE_URL },
+    },
   });
 
   try {
@@ -80,7 +85,7 @@ async function generate() {
       "Template",
     );
     fs.writeFileSync(
-      "/Users/sreecharandesu/Projects/uniz-rguktong/tests/data/full_batch_grades.xlsx",
+      "./full_batch_grades.xlsx",
       XLSX.write(wbGrades, { type: "buffer", bookType: "xlsx" }),
     );
 
@@ -91,13 +96,11 @@ async function generate() {
       "Template",
     );
     fs.writeFileSync(
-      "/Users/sreecharandesu/Projects/uniz-rguktong/tests/data/full_batch_attendance.xlsx",
+      "./full_batch_attendance.xlsx",
       XLSX.write(wbAtt, { type: "buffer", bookType: "xlsx" }),
     );
 
-    console.log(
-      "Successfully generated full batch files in /Users/sreecharandesu/Projects/uniz-rguktong/tests/data/",
-    );
+    console.log("Successfully generated full batch files in current directory");
   } finally {
     await userPrisma.$disconnect();
     await academicPrisma.$disconnect();
