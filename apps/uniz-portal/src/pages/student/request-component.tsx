@@ -116,9 +116,9 @@ export default function RequestComp({ type }: RequestCompProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-10 pb-32">
+    <div className="max-w-7xl mx-auto px-4 md:px-10 pb-32">
       {/* Header Section */}
-      <div className="mb-10">
+      <div className="mb-8 mt-2 md:mt-0">
         <button
           onClick={() => navigateTo("/student")}
           className="text-slate-400 hover:text-blue-600 font-bold text-[11px] uppercase tracking-[0.2em] flex items-center gap-2 mb-8 transition-all group"
@@ -139,11 +139,11 @@ export default function RequestComp({ type }: RequestCompProps) {
               Campus Leave Authorization
             </p>
           </div>
-          <div className="p-4 bg-white text-blue-600 rounded-3xl border border-slate-100 shadow-sm shrink-0 transition-transform hover:scale-105 duration-500">
+          <div className="text-blue-600 flex-shrink-0">
             {type === "outpass" ? (
-              <Calendar className="w-8 h-8" />
+              <Calendar className="w-10 h-10" />
             ) : (
-              <Clock className="w-8 h-8" />
+              <Clock className="w-10 h-10" />
             )}
           </div>
         </div>
@@ -161,7 +161,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                 <textarea
                   onChange={handleInputChange(setReason)}
                   placeholder="Clearly explain the purpose of your request..."
-                  className="w-full bg-slate-50/50 p-6 rounded-2xl border border-slate-100/50 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none min-h-[160px] font-bold text-base text-slate-700 placeholder:text-slate-200 placeholder:font-normal resize-none transition-all shadow-inner"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-6 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none min-h-[180px] font-bold text-base text-slate-800 placeholder:text-slate-300 placeholder:font-normal resize-none transition-all"
                 />
               </div>
 
@@ -175,7 +175,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                       <Input
                         type="date"
                         onchangeFunction={handleInputChange(setFromDate)}
-                        className="w-full bg-slate-50/50 p-5 rounded-2xl border border-slate-100/50 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-base text-slate-700 transition-all cursor-pointer shadow-inner"
+                        className="w-full bg-slate-50 p-5 rounded-2xl border border-slate-100 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-base text-slate-800 transition-all cursor-pointer"
                       />
                     </div>
                     <div className="space-y-3">
@@ -185,7 +185,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                       <Input
                         type="date"
                         onchangeFunction={handleInputChange(setToDate)}
-                        className="w-full bg-slate-50/50 p-5 rounded-2xl border border-slate-100/50 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-base text-slate-700 transition-all cursor-pointer shadow-inner"
+                        className="w-full bg-slate-50 p-5 rounded-2xl border border-slate-100 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-base text-slate-800 transition-all cursor-pointer"
                       />
                     </div>
                   </>
@@ -198,7 +198,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                       <Input
                         type="time"
                         onchangeFunction={handleInputChange(setFromTime)}
-                        className="w-full bg-slate-50/50 p-5 rounded-2xl border border-slate-100/50 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-base text-slate-700 transition-all cursor-pointer shadow-inner"
+                        className="w-full bg-slate-50 p-5 rounded-2xl border border-slate-100 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-base text-slate-800 transition-all cursor-pointer"
                       />
                     </div>
                     <div className="space-y-3">
@@ -208,7 +208,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                       <Input
                         type="time"
                         onchangeFunction={handleInputChange(setToTime)}
-                        className="w-full bg-slate-50/50 p-5 rounded-2xl border border-slate-100/50 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-base text-slate-700 transition-all cursor-pointer shadow-inner"
+                        className="w-full bg-slate-50 p-5 rounded-2xl border border-slate-100 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-base text-slate-800 transition-all cursor-pointer"
                       />
                     </div>
                   </>
@@ -220,22 +220,22 @@ export default function RequestComp({ type }: RequestCompProps) {
 
         {/* Sidebar Info & Action */}
         <div className="space-y-6">
-          <div className="bg-slate-50/50 rounded-[2.5rem] p-8 border border-slate-100/50">
+          <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm">
             <div className="flex gap-4 items-start mb-6">
-              <div className="p-3 bg-white text-blue-600 rounded-xl shadow-sm border border-slate-100/50 shrink-0">
-                <AlertCircle className="w-5 h-5" />
+              <div className="text-blue-600 flex-shrink-0">
+                <AlertCircle className="w-6 h-6" />
               </div>
               <div className="space-y-1">
                 <p className="font-black text-slate-900 text-sm uppercase tracking-tight">Requirement</p>
-                <p className="text-slate-400 font-medium text-xs leading-relaxed">
+                <p className="text-slate-500 font-medium text-xs leading-relaxed">
                   All fields are mandatory. Details will be vetted by the authority.
                 </p>
               </div>
             </div>
 
-            <div className="p-5 bg-white/60 rounded-2xl border border-white shadow-sm">
+            <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
               <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1.5">Notification Sent To</p>
-              <p className="text-[13px] font-bold text-slate-700 truncate">{Student?.email}</p>
+              <p className="text-[13px] font-bold text-slate-600 truncate">{Student?.email}</p>
             </div>
           </div>
 

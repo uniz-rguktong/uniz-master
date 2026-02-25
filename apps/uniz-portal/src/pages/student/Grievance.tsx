@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button } from "../../components/Button";
+
 import { toast } from "react-toastify";
 import { AlertCircle, Send } from "lucide-react";
 import { BASE_URL } from "../../api/endpoints";
@@ -63,7 +63,7 @@ export default function Grievance() {
 
   return (
     <div className="font-sans text-slate-900">
-      <div className="max-w-6xl mx-auto px-4 pt-12 pb-6">
+      <div className="max-w-6xl mx-auto px-4 pt-2 md:pt-12 pb-6">
         <div className="mb-8">
           <h1 className="text-3xl font-black tracking-tighter text-slate-900 mb-2">
             Grievance
@@ -78,9 +78,9 @@ export default function Grievance() {
           <div className="md:flex">
             {/* Form Section */}
             <div className="md:w-2/3 p-6 md:p-8 md:px-10">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-100">
-                  <AlertCircle className="w-6 h-6" />
+              <div className="flex items-center gap-5 mb-10">
+                <div className="text-blue-600">
+                  <AlertCircle className="w-8 h-8" />
                 </div>
                 <div>
                   <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
@@ -137,7 +137,7 @@ export default function Grievance() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Provide detailed information about your grievance..."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 font-bold text-[15px] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all min-h-[160px] resize-none text-slate-900 placeholder:text-slate-300 placeholder:font-normal"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-5 font-bold text-[15px] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all min-h-[180px] resize-none text-slate-900 placeholder:text-slate-300 placeholder:font-normal"
                   />
                 </div>
 
@@ -160,19 +160,18 @@ export default function Grievance() {
 
                 {/* Action Buttons */}
                 <div className="pt-2 md:pt-4 space-y-4">
-                  <Button
-                    variant="primary"
+                  <button
                     className="w-full bg-blue-600 text-white hover:bg-blue-700 py-3.5 h-auto rounded-xl font-bold shadow-lg shadow-blue-100 transition-all hover:-translate-y-1 flex items-center justify-center gap-2"
-                    value={loading ? "Submitting..." : "Submit Grievance"}
-                    loading={loading}
-                    onclickFunction={handleSubmit}
-                  />
+                    onClick={() => handleSubmit()}
+                  >
+                    {loading ? "Submitting..." : "Submit Grievance"}
+                  </button>
                 </div>
               </div>
             </div>
 
-            {/* Info Section */}
-            <div className="md:w-1/3 bg-slate-50/50 p-6 md:p-8 border-l border-slate-100 flex flex-col justify-between">
+            {/* Info Section - Hidden on Mobile */}
+            <div className="hidden md:flex md:w-1/3 bg-slate-50/50 p-6 md:p-8 border-l border-slate-100 flex-col justify-between">
               <div>
                 <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
                   Guidelines

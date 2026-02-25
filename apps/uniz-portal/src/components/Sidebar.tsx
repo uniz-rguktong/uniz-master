@@ -16,10 +16,7 @@ import {
   LogOut,
   AlertCircle,
   Menu,
-  Bell,
   ChevronDown,
-  User,
-  Plus
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -66,6 +63,7 @@ export default function Sidebar({ content }: MainContent) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showProfilePopup, setShowProfilePopup] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [activeGroup, setActiveGroup] = useState<"student" | "academic" | "campus">("student");
@@ -203,14 +201,65 @@ export default function Sidebar({ content }: MainContent) {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#F8FAFC]">
-      {/* Mobile hamburger button */}
-      <button
-        onClick={toggleSidebar}
-        className={`fixed top-6 left-6 z-50 p-3 rounded-lg bg-white shadow-md border border-slate-100 md:hidden hover:bg-slate-50 transition-all duration-200 ${isOpen ? "hidden" : "flex"}`}
-        aria-label="Toggle sidebar"
-      >
-        <Menu className="h-[19px] w-[19px] text-slate-600" />
-      </button>
+      {/* Mobile Top Header */}
+      <div className={`md:hidden sticky top-0 left-0 right-0 z-30 bg-white/80 backdrop-blur-lg border-b border-slate-200/50 px-6 py-3.5 flex items-center justify-between ${isOpen ? "hidden" : "flex"}`}>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={toggleSidebar}
+            className="p-1.5 -ml-1 hover:bg-slate-100 rounded-lg transition-colors active:scale-90"
+            aria-label="Toggle sidebar"
+          >
+            <Menu className="h-6 w-6 text-slate-700" />
+          </button>
+          <h1 className="font-bold text-slate-900 text-[19px] tracking-tight">RGUKT Ongole</h1>
+        </div>
+
+
+        {/* Profile Icon with Popup Trigger */}
+        <div className="relative">
+          <button
+            onClick={() => setShowProfilePopup(!showProfilePopup)}
+            className="w-10 h-10 rounded-full bg-white p-[2px] border border-blue-100 shadow-sm overflow-hidden active:scale-95 transition-all"
+          >
+            {userData?.profile_url ? (
+              <img src={userData.profile_url} alt="Profile" className="w-full h-full object-cover rounded-full" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-black text-xs uppercase rounded-full">
+                {userData?.name?.charAt(0) || 'S'}
+              </div>
+            )}
+          </button>
+
+          {/* Profile Popup */}
+          {showProfilePopup && (
+            <>
+              <div
+                className="fixed inset-0 z-40 bg-transparent"
+                onClick={() => setShowProfilePopup(false)}
+              />
+              <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 p-5 z-50 animate-in fade-in zoom-in duration-200 origin-top-right">
+                <div className="flex flex-col gap-1.5 mb-5">
+                  <span className="text-[17px] font-black text-slate-900 leading-tight">{userData?.name || 'Student'}</span>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[11px] font-bold text-blue-600 uppercase tracking-tighter">Year {userData?.year || 'N/A'} • {userData?.branch || 'General'}</span>
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{userData?.email || ''}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => { setShowConfirm(true); setShowProfilePopup(false); }}
+                  className="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-red-50 text-red-600 rounded-xl font-bold text-sm hover:bg-red-100 transition-colors border border-red-100/50"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout Account
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+
+
+      </div>
 
       {/* Mobile overlay */}
       {isOpen && (
@@ -233,46 +282,90 @@ export default function Sidebar({ content }: MainContent) {
       >
         {/* MOBILE VIEW NAVIGATION (Unstop Style) */}
         <div className="flex w-full h-full md:hidden">
-          {/* Left Script Strip */}
-          <div className="w-[70px] bg-white flex flex-col items-center py-6 border-r border-slate-100">
-            {/* Logo Circle */}
-            <div className="w-11 h-11 rounded-full bg-slate-50 p-1.5 border border-slate-100 mb-8 overflow-hidden shadow-sm">
+          {/* Left Strip - Refined with Light Blue Motif */}
+          <div className="w-[72px] bg-[#EBF5FF] flex flex-col items-center py-6 relative z-10">
+            {/* Logo - Transparent & Larger */}
+            <div className="w-12 h-12 mb-6 mt-3 overflow-hidden">
               <img src="/assets/ongole_logo.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
 
-            {/* Icons List */}
-            <div className="flex-1 flex flex-col items-center space-y-8 mt-4">
+            {/* Icons List with Active 'Tab' Effect */}
+            <div className="flex-1 w-full flex flex-col items-center space-y-2 mt-2">
               <button
                 onClick={() => setActiveGroup("student")}
-                className="flex flex-col items-center gap-1 group"
+                className="w-full flex flex-col items-center group py-1"
               >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all group-active:scale-95 ${activeGroup === "student" ? "bg-blue-50 text-blue-600" : "bg-slate-50 text-slate-400"}`}>
-                  <User className="w-5 h-5" />
+                <div className="w-full relative flex flex-col items-center py-1">
+                  {activeGroup === "student" && (
+                    <>
+                      {/* The Merge Tab Background - Sliver Selective */}
+                      <div className="absolute right-[-2px] top-0 bottom-0 left-3 bg-white rounded-l-[1.2rem] z-0 shadow-[-5px_0_15px_rgba(0,0,0,0.03)]" />
+                      {/* Inverted Radius Top */}
+                      <div className="absolute right-[-2px] top-[-10px] w-2.5 h-2.5 bg-white z-0">
+                        <div className="w-full h-full bg-[#EBF5FF] rounded-br-[10px]" />
+                      </div>
+                      {/* Inverted Radius Bottom */}
+                      <div className="absolute right-[-2px] bottom-[-10px] w-2.5 h-2.5 bg-white z-0">
+                        <div className="w-full h-full bg-[#EBF5FF] rounded-tr-[10px]" />
+                      </div>
+                    </>
+                  )}
+                  <div className={`relative z-10 w-9 h-9 rounded-xl flex items-center justify-center transition-all group-active:scale-95 ${activeGroup === "student" ? "opacity-100" : "opacity-70 group-hover:opacity-100"}`}>
+                    <img src="/assets/student.png" alt="Student" className="w-7 h-7 object-contain" />
+                  </div>
                 </div>
-                <span className={`text-[10px] font-bold transition-colors uppercase tracking-tighter ${activeGroup === "student" ? "text-blue-600" : "text-slate-400"}`}>Student</span>
+                <span className={`text-[10px] font-bold transition-colors mt-1 ${activeGroup === "student" ? "text-slate-900" : "text-slate-500"}`}>Student</span>
               </button>
+
               <button
                 onClick={() => setActiveGroup("academic")}
-                className="flex flex-col items-center gap-1 group"
+                className="w-full flex flex-col items-center group py-1"
               >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all group-active:scale-95 ${activeGroup === "academic" ? "bg-blue-50 text-blue-600" : "bg-slate-50 text-slate-400"}`}>
-                  <GraduationCap className="w-5 h-5" />
+                <div className="w-full relative flex flex-col items-center py-1">
+                  {activeGroup === "academic" && (
+                    <>
+                      <div className="absolute right-[-2px] top-0 bottom-0 left-3 bg-white rounded-l-[1.2rem] z-0 shadow-[-5px_0_15px_rgba(0,0,0,0.03)]" />
+                      <div className="absolute right-[-2px] top-[-10px] w-2.5 h-2.5 bg-white z-0">
+                        <div className="w-full h-full bg-[#EBF5FF] rounded-br-[10px]" />
+                      </div>
+                      <div className="absolute right-[-2px] bottom-[-10px] w-2.5 h-2.5 bg-white z-0">
+                        <div className="w-full h-full bg-[#EBF5FF] rounded-tr-[10px]" />
+                      </div>
+                    </>
+                  )}
+                  <div className={`relative z-10 w-9 h-9 rounded-xl flex items-center justify-center transition-all group-active:scale-95 ${activeGroup === "academic" ? "opacity-100" : "opacity-70 group-hover:opacity-100"}`}>
+                    <img src="/assets/academics.png" alt="Academic" className="w-7 h-7 object-contain" />
+                  </div>
                 </div>
-                <span className={`text-[10px] font-bold transition-colors uppercase tracking-tighter ${activeGroup === "academic" ? "text-blue-600" : "text-slate-400"}`}>Academic</span>
+                <span className={`text-[10px] font-bold transition-colors mt-1 ${activeGroup === "academic" ? "text-slate-900" : "text-slate-500"}`}>Academic</span>
               </button>
+
               <button
                 onClick={() => setActiveGroup("campus")}
-                className="flex flex-col items-center gap-1 group"
+                className="w-full flex flex-col items-center group py-1"
               >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all group-active:scale-95 ${activeGroup === "campus" ? "bg-blue-50 text-blue-600" : "bg-slate-50 text-slate-400"}`}>
-                  <Home className="w-5 h-5" />
+                <div className="w-full relative flex flex-col items-center py-1">
+                  {activeGroup === "campus" && (
+                    <>
+                      <div className="absolute right-[-2px] top-0 bottom-0 left-3 bg-white rounded-l-[1.2rem] z-0 shadow-[-5px_0_15px_rgba(0,0,0,0.03)]" />
+                      <div className="absolute right-[-2px] top-[-10px] w-2.5 h-2.5 bg-white z-0">
+                        <div className="w-full h-full bg-[#EBF5FF] rounded-br-[10px]" />
+                      </div>
+                      <div className="absolute right-[-2px] bottom-[-10px] w-2.5 h-2.5 bg-white z-0">
+                        <div className="w-full h-full bg-[#EBF5FF] rounded-tr-[10px]" />
+                      </div>
+                    </>
+                  )}
+                  <div className={`relative z-10 w-9 h-9 rounded-xl flex items-center justify-center transition-all group-active:scale-95 ${activeGroup === "campus" ? "opacity-100" : "opacity-70 group-hover:opacity-100"}`}>
+                    <img src="/assets/campus.png" alt="Campus" className="w-7 h-7 object-contain" />
+                  </div>
                 </div>
-                <span className={`text-[10px] font-bold transition-colors uppercase tracking-tighter ${activeGroup === "campus" ? "text-blue-600" : "text-slate-400"}`}>Campus</span>
+                <span className={`text-[10px] font-bold transition-colors mt-1 ${activeGroup === "campus" ? "text-slate-900" : "text-slate-500"}`}>Campus</span>
               </button>
             </div>
 
-            {/* Bottom Left Actions */}
-            <div className="mt-auto flex flex-col items-center space-y-6">
+            {/* Bottom Left Actions - Aligned with Profile Banner */}
+            <div className="mt-auto flex flex-col items-center space-y-8 pb-5">
               <button
                 onClick={() => { setShowConfirm(true); setIsOpen(false); }}
                 className="text-slate-400 hover:text-red-500 transition-colors"
@@ -280,28 +373,28 @@ export default function Sidebar({ content }: MainContent) {
               >
                 <LogOut className="w-5 h-5" />
               </button>
-              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 p-[2px] shadow-lg shadow-blue-100 overflow-hidden ring-2 ring-blue-50 ring-offset-0">
+              <div className="w-11 h-11 rounded-full bg-white p-[1px] shadow-sm border border-blue-100 overflow-hidden">
                 {userData?.profile_url ? (
                   <img src={userData.profile_url} alt="Profile" className="w-full h-full object-cover rounded-full" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-white font-black text-sm uppercase">
-                    {userData?.name?.charAt(0) || 'S'}
+                  <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-black text-sm uppercase rounded-full">
+                    {/* Character removed as per request */}
                   </div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Right Floating Card Menu */}
-          <div className="flex-1 p-3 overflow-y-auto">
-            <div className="bg-white rounded-[2rem] h-full shadow-[0_10px_40px_rgba(0,0,0,0.05)] border border-white p-4 flex flex-col">
-              {/* Primary Action Button */}
+          {/* Right Floating Card Menu - Optimized Height */}
+          <div className="flex-1 py-3 pr-3 overflow-y-auto flex flex-col">
+            <div className="bg-white rounded-[2rem] h-[87%] shadow-[0_10px_40px_rgba(0,0,0,0.05)] border border-white p-4 flex flex-col relative z-20">
+              {/* Primary Action Button - Unstop style */}
               <button
                 onClick={() => { navigate("/student"); setIsOpen(false); }}
-                className="w-full py-3.5 mb-2 px-6 rounded-full border-2 border-blue-600 text-blue-600 font-black text-[15px] flex items-center justify-center gap-2 hover:bg-blue-50 transition-all active:scale-[0.98]"
+                className="w-full py-2.5 mb-2 px-6 rounded-full bg-[#EBF5FF] border border-blue-400/30 text-blue-800 font-bold text-[16px] flex items-center justify-center gap-2 hover:bg-blue-100 transition-all active:scale-[0.98] shadow-sm"
               >
-                <Plus className="w-4 h-4" />
-                Student Portal
+
+                RGUKT Ongole
               </button>
 
               {/* Navigation List */}
@@ -309,7 +402,7 @@ export default function Sidebar({ content }: MainContent) {
                 {navItems
                   .filter((item) => {
                     if (activeGroup === "student") {
-                      return ["dashboard", "outing", "outpass", "grievance"].includes(item.id);
+                      return ["dashboard", "outing", "outpass", "grievance", "resetpassword"].includes(item.id);
                     }
                     if (activeGroup === "academic") {
                       return ["attendance", "gradehub"].includes(item.id);
@@ -334,8 +427,8 @@ export default function Sidebar({ content }: MainContent) {
                           }
                       `}
                       >
-                        <Icon className={`w-5 h-5 ${isActive ? "text-blue-600" : "text-slate-400"}`} />
-                        <span className={`text-[15px] ${isActive ? "font-black" : "font-semibold"}`}>{item.label}</span>
+                        <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? "text-blue-600" : "text-slate-400"}`} />
+                        <span className={`text-[15px] text-left whitespace-nowrap ${isActive ? "font-black" : "font-semibold"}`}>{item.label}</span>
                         {(item.id === "dashboard" || item.id === "requestOuting") && (
                           <ChevronDown className="w-4 h-4 ml-auto text-slate-300" />
                         )}
@@ -345,17 +438,14 @@ export default function Sidebar({ content }: MainContent) {
 
 
               </div>
+            </div>
+            <div className="mt-auto px-1 pb-4">
+              <div className="rounded-2xl py-3.5 px-3 flex items-center gap-3 relative overflow-hidden">
+                {/* Subtle Pattern Overlay Effect */}
 
-              {/* Profile Bar at the bottom of the card */}
-              <div className="mt-auto pt-4 border-t border-slate-50">
-                <div className="bg-blue-50/50 rounded-2xl p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-black">
-                    {userData?.name?.charAt(0) || 'S'}
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[14px] font-black text-slate-900 leading-tight">{userData?.name || 'Student'}</span>
-                    <span className="text-[11px] font-bold text-blue-600/70 uppercase tracking-tighter">Student Portal</span>
-                  </div>
+                <div className="flex flex-col relative z-10 justify-center">
+                  <span className="text-[18px] font-black text-slate-800 leading-none">{userData?.name || 'Student'}</span>
+                  <span className="text-[11px] font-bold text-blue-500 uppercase tracking-tighter mt-1">Student Portal</span>
                 </div>
               </div>
             </div>
