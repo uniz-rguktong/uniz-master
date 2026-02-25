@@ -25,12 +25,17 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   # Global rebuild detection (if root config files changed or force requested)
   COMMIT_MSG=$(git log -1 --pretty=%B)
   GLOBAL_REBUILD=false
-  if echo "$CHANGED_FILES" | grep -q "^package.json\|^package-lock.json\|^Dockerfile\|^.dockerignore\|^scripts/deploy.sh"; then
-    echo "🚨 Root configuration changed. Triggering global rebuild..."
-    GLOBAL_REBUILD=true
-  elif [[ "$COMMIT_MSG" == *"[force build]"* ]] || [[ "$COMMIT_MSG" == *"[rebuild all]"* ]]; then
-    echo "💪 Force rebuild requested via commit message. Triggering global rebuild..."
-    GLOBAL_REBUILD=true
+  
+  if [ -n "$CHANGED_FILES" ]; then
+    if echo "$CHANGED_FILES" | grep -q "^package.json\|^package-lock.json\|^Dockerfile\|^.dockerignore\|^scripts/deploy.sh"; then
+      echo "🚨 Root configuration changed. Triggering global rebuild..."
+      GLOBAL_REBUILD=true
+    elif [[ "$COMMIT_MSG" == *"[force build]"* ]] || [[ "$COMMIT_MSG" == *"[rebuild all]"* ]]; then
+      echo "💪 Force rebuild requested via commit message. Triggering global rebuild..."
+      GLOBAL_REBUILD=true
+    fi
+  else
+    echo "ℹ️  No new changes detected in Git. GLOBAL_REBUILD suppressed."
   fi
 
   if [ -z "$CHANGED_FILES" ]; then
