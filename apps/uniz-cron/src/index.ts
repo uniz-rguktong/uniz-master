@@ -197,8 +197,8 @@ export const runMaintenance = async () => {
   }
 };
 
-// Job 1: Expire Outpasses (Runs every 5 minutes for better security responsiveness)
-const maintenanceJob = new CronJob("*/5 * * * *", runMaintenance);
+// Job 1: Expire Outpasses (Runs daily at 2:00 AM)
+const maintenanceJob = new CronJob("0 2 * * *", runMaintenance);
 maintenanceJob.start();
 
 // Job 2: Automate Storage Cleanup (Runs every day at 3 AM)
