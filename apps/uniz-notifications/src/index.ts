@@ -814,7 +814,7 @@ const worker = new Worker(
         /*
         const emailResult = await sendEmailUnified(
           {
-            from: '"UniZ Campus" <noreply@uniz.rguktong.in>',
+            from: '"UniZ" <noreplycampusschield@gmail.com>',
             to: rawRecipient,
             subject: subject || "UniZ Notification",
             html:

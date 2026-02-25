@@ -179,7 +179,7 @@ export const sendOtpEmail = async (
 
     const success = await sendEmailUnified(
       {
-        from: '"UniZ Security" <noreply@uniz.rguktong.in>',
+        from: '"UniZ" <noreplycampusschield@gmail.com>',
         to: email,
         subject: "Verification Code: " + otp,
         html: emailTemplate("Password Verification", content),
