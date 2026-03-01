@@ -19,15 +19,23 @@ export default function GrievanceSection() {
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState<any>({ total: 0, totalPages: 0 });
+
   useEffect(() => {
     fetchGrievances();
-  }, []);
+  }, [page]);
 
   const fetchGrievances = async () => {
     setLoading(true);
     const token = localStorage.getItem("admin_token");
     try {
-      const res = await fetch(GET_GRIEVANCES_LIST, {
+      const query = new URLSearchParams({
+        page: String(page),
+        limit: "10",
+      });
+
+      const res = await fetch(`${GET_GRIEVANCES_LIST}?${query.toString()}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${JSON.parse(token || '""')}`,
@@ -35,7 +43,8 @@ export default function GrievanceSection() {
       });
       const data = await res.json();
       if (data.success) {
-        setGrievances(data.grievances || []);
+        setGrievances(data.data || []);
+        setMeta(data.meta || { total: data.data?.length || 0, totalPages: 1 });
       } else {
         toast.error(data.msg || "Failed to fetch grievances");
       }
@@ -164,72 +173,119 @@ export default function GrievanceSection() {
           <p className="font-bold text-slate-400">Loading grievances...</p>
         </div>
       ) : filteredGrievances.length > 0 ? (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          {filteredGrievances.map((grievance) => (
-            <div
-              key={grievance._id}
-              className="bg-white rounded-3xl border border-slate-100 p-6 hover:shadow-xl transition-all group flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-3">
+        <>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {filteredGrievances.map((grievance) => (
+              <div
+                key={grievance.id || grievance._id}
+                className="bg-white rounded-3xl border border-slate-100 p-6 hover:shadow-xl transition-all group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-slate-50 text-slate-400">
+                        <Tag size={16} />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
+                          Category
+                        </p>
+                        <p className="font-black text-slate-900 text-sm">
+                          {grievance.category}
+                        </p>
+                      </div>
+                    </div>
                     <div
-                      className={`p-2 rounded-lg bg-slate-50 text-slate-400`}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-widest ${getStatusStyles(grievance.status)}`}
                     >
-                      <Tag size={16} />
+                      {getStatusIcon(grievance.status)}
+                      {grievance.status || "Pending"}
+                    </div>
+                  </div>
+
+                  <p className="text-slate-700 font-bold leading-relaxed mb-6 line-clamp-3 bg-slate-50/50 p-4 rounded-2xl border border-slate-50">
+                    "{grievance.description}"
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+                      <User size={14} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
-                        Category
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                        Submitted By
                       </p>
-                      <p className="font-black text-slate-900 text-sm">
-                        {grievance.category}
+                      <p className="text-xs font-bold text-slate-900 mt-0.5">
+                        {grievance.isAnonymous
+                          ? "Anonymous Student"
+                          : grievance.studentId || "Unknown ID"}
                       </p>
                     </div>
                   </div>
-                  <div
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-widest ${getStatusStyles(grievance.status)}`}
-                  >
-                    {getStatusIcon(grievance.status)}
-                    {grievance.status || "Pending"}
-                  </div>
-                </div>
-
-                <p className="text-slate-700 font-bold leading-relaxed mb-6 line-clamp-3 bg-slate-50/50 p-4 rounded-2xl border border-slate-50">
-                  "{grievance.description}"
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-                    <User size={14} />
-                  </div>
-                  <div>
+                  <div className="text-right">
                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">
-                      Submitted By
+                      Date
                     </p>
                     <p className="text-xs font-bold text-slate-900 mt-0.5">
-                      {grievance.isAnonymous
-                        ? "Anonymous Student"
-                        : grievance.studentId || "Unknown ID"}
+                      {grievance.createdAt
+                        ? new Date(grievance.createdAt).toLocaleDateString()
+                        : "Recent"}
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">
-                    Date
-                  </p>
-                  <p className="text-xs font-bold text-slate-900 mt-0.5">
-                    {grievance.createdAt
-                      ? new Date(grievance.createdAt).toLocaleDateString()
-                      : "Recent"}
-                  </p>
-                </div>
               </div>
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          {meta.totalPages > 1 && (
+            <div className="flex justify-center items-center gap-4 pt-12">
+              <button
+                disabled={page <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="w-12 h-12 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-95"
+              >
+                <Clock size={18} className="rotate-180" />
+              </button>
+
+              <div className="flex bg-slate-100 p-1.5 rounded-[1.5rem] gap-1">
+                {[...Array(meta.totalPages)].map((_, i) => {
+                  const p = i + 1;
+                  if (
+                    p === 1 ||
+                    p === meta.totalPages ||
+                    (p >= page - 1 && p <= page + 1)
+                  ) {
+                    return (
+                      <button
+                        key={p}
+                        onClick={() => setPage(p)}
+                        className={`w-10 h-10 rounded-xl font-black text-xs transition-all ${
+                          page === p
+                            ? "bg-slate-900 text-white shadow-lg"
+                            : "text-slate-400 hover:bg-white hover:text-slate-900"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+
+              <button
+                disabled={page >= meta.totalPages}
+                onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
+                className="w-12 h-12 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-95"
+              >
+                <Clock size={18} />
+              </button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       ) : (
         <div className="p-20 flex flex-col items-center justify-center text-center opacity-50 space-y-4">
           <div className="p-6 bg-slate-50 rounded-full text-slate-300">

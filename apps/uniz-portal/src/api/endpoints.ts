@@ -134,7 +134,7 @@ export const UPDATE_BANNER_VISIBILITY = (id: string) =>
   `${BASE_URL}/cms/admin/visibility/banner/${id}`;
 
 export const UPDATES_BASE = `${BASE_URL}/cms/admin/updates`;
-// export const TENDERS_BASE = `${BASE_URL}/cms/admin/tenders`;
+// // export const TENDERS_BASE = `${BASE_URL}/cms/admin/tenders`;
 export const GET_NOTIFICATIONS = `${BASE_URL}/cms/notifications`;
 
 // Push Notifications

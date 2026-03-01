@@ -9,7 +9,7 @@ import {
   createUpdate,
   updateUpdate,
   deleteUpdate,
-  createTender,
+  // createTender,
   toggleVisibility,
 } from "../controllers/cms.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
@@ -42,6 +42,7 @@ const UpdateSchema = z.object({
   isVisible: z.boolean().optional(),
 });
 
+/*
 const TenderSchema = z.object({
   title: z.string().min(5),
   description: z.string(),
@@ -49,6 +50,7 @@ const TenderSchema = z.object({
   deadline: z.string().optional().nullable(), // ISO string
   isVisible: z.boolean().optional(),
 });
+*/
 
 const router = Router();
 
@@ -81,12 +83,14 @@ router.post(
 );
 router.put("/admin/updates/:id", authMiddleware, updateUpdate);
 router.delete("/admin/updates/:id", authMiddleware, deleteUpdate);
+/*
 router.post(
   "/admin/tenders",
   authMiddleware,
   validate(TenderSchema),
   createTender,
 );
+*/
 
 // Visibility toggle for all types
 router.post("/admin/visibility/:type/:id", authMiddleware, toggleVisibility);
