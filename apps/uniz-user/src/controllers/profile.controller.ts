@@ -438,7 +438,7 @@ export const createFacultyProfile = async (
         email,
         department,
         designation,
-        role: "teacher",
+        role: req.body.role || "teacher",
       },
     });
     return res
@@ -556,7 +556,7 @@ export const getBulkProfiles = async (req: Request, res: Response) => {
   }
 };
 
-export const toggleStudentSuspension = async (
+export const toggleUserSuspension = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
@@ -628,13 +628,94 @@ export const toggleStudentSuspension = async (
     });
   } catch (e: any) {
     console.error(
-      `[ERROR] toggleStudentSuspension failed for ${targetUsername}:`,
+      `[ERROR] toggleUserSuspension failed for ${targetUsername}:`,
       e,
     );
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to update suspension status",
       details: e.message,
+    });
+  }
+};
+export const searchFaculty = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const adminRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
+  if (!user || !adminRoles.includes(user.role as UserRole)) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  const { query, department, page = 1, limit = 10 } = req.body;
+
+  try {
+    const skip = (Number(page) - 1) * Number(limit);
+    const where: any = {};
+
+    if (query) {
+      where.OR = [
+        { username: { contains: query, mode: "insensitive" } },
+        { name: { contains: query, mode: "insensitive" } },
+        { email: { contains: query, mode: "insensitive" } },
+      ];
+    }
+    if (department) where.department = department;
+
+    const [faculty, total] = await Promise.all([
+      prisma.facultyProfile.findMany({
+        where,
+        skip,
+        take: Number(limit),
+        orderBy: { name: "asc" },
+      }),
+      prisma.facultyProfile.count({ where }),
+    ]);
+
+    return res.json({
+      success: true,
+      faculty: faculty.map(mapFacultyProfile),
+      pagination: {
+        page: Number(page),
+        totalPages: Math.ceil(total / Number(limit)),
+        total,
+      },
+    });
+  } catch (e) {
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Search failed",
+    });
+  }
+};
+
+export const updateFacultyProfile = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const username = req.params.username.toUpperCase();
+  const updates = req.body;
+
+  if (!user || user.role !== UserRole.WEBMASTER) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  try {
+    const updated = await prisma.facultyProfile.update({
+      where: { username },
+      data: updates,
+    });
+    return res.json({ success: true, faculty: mapFacultyProfile(updated) });
+  } catch (e) {
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to update profile",
     });
   }
 };

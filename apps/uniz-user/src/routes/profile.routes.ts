@@ -9,7 +9,9 @@ import {
   createFacultyProfile,
   updateStudentPresence,
   getBulkProfiles,
-  toggleStudentSuspension,
+  toggleUserSuspension,
+  searchFaculty,
+  updateFacultyProfile,
 } from "../controllers/profile.controller";
 
 import multer from "multer";
@@ -183,6 +185,7 @@ const FacultyCreateSchema = z.object({
   email: z.string().email(),
   department: z.string(),
   designation: z.string(),
+  role: z.enum(["teacher", "hod"]).optional(),
 });
 
 router.get("/student/me", authMiddleware, getStudentProfile);
@@ -218,7 +221,7 @@ router.post("/student/search", authMiddleware, searchStudents);
 router.put(
   "/admin/student/:username/suspend",
   authMiddleware,
-  toggleStudentSuspension,
+  toggleUserSuspension,
 );
 
 router.get("/faculty/me", authMiddleware, getFacultyProfile);
@@ -227,6 +230,13 @@ router.post(
   authMiddleware,
   validateRequest(FacultyCreateSchema),
   createFacultyProfile,
+);
+router.post("/faculty/search", authMiddleware, searchFaculty);
+router.put("/admin/faculty/:username", authMiddleware, updateFacultyProfile);
+router.put(
+  "/admin/faculty/:username/suspend",
+  authMiddleware,
+  toggleUserSuspension,
 );
 router.put("/student/status", authMiddleware, updateStudentPresence);
 router.post("/student/status", authMiddleware, updateStudentPresence); // Support legacy POST calls from portal

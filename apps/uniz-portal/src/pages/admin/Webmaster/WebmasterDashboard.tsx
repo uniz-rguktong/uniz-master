@@ -22,6 +22,7 @@ import { clearSession } from "../../../utils/security";
 import StudentDetails from "./StudentDetails";
 import SubjectManagement from "./SubjectManagement";
 import UploadSection from "./UploadSection";
+import FacultyManagement from "./FacultyManagement";
 
 import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";
@@ -48,6 +49,7 @@ export default function WebmasterDashboard() {
     | "notifications"
     | "push_alerts"
     | "grades_mgmt"
+    | "faculty_mgmt"
     | "system_logs"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -69,6 +71,7 @@ export default function WebmasterDashboard() {
     { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
     // { id: "tenders", label: "Tenders", icon: Briefcase },
     { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
+    { id: "faculty_mgmt", label: "Staff Management", icon: Users },
     { id: "system_logs", label: "System & Logs", icon: Activity },
   ];
 
@@ -102,6 +105,8 @@ export default function WebmasterDashboard() {
       //   return <TendersSection />;
       case "grades_mgmt":
         return <GradesSection />;
+      case "faculty_mgmt":
+        return <FacultyManagement />;
       case "system_logs":
         return <SystemLogsSection />;
       default:

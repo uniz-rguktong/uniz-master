@@ -75,6 +75,11 @@ export const DOWNLOAD_ATTENDANCE = (semesterId: string) =>
 export const UPDATE_STUDENT_STATUS = `${BASE_URL}/profile/student/status`;
 export const STUDENT_OUTSIDE_CAMPUS = `${BASE_URL}/requests/outside`;
 export const CREATE_FACULTY = `${BASE_URL}/profile/faculty/create`;
+export const SEARCH_FACULTY = `${BASE_URL}/profile/faculty/search`;
+export const UPDATE_FACULTY = (username: string) =>
+  `${BASE_URL}/profile/admin/faculty/${username}`;
+export const ADMIN_SUSPEND_FACULTY = (username: string) =>
+  `${BASE_URL}/profile/admin/faculty/${username}/suspend`;
 
 // Webmaster / Specialized Admin Endpoints
 export const ADMIN_VIEW_STUDENT = (id: string) =>

@@ -24,11 +24,11 @@ app.get("/health", (req, res) => {
 
 import profileRoutes from "./routes/profile.routes";
 import cmsRoutes from "./routes/cms.routes";
-import botRoutes from "./routes/bot.routes";
+// import botRoutes from "./routes/bot.routes";
 
 app.use("/", profileRoutes);
 app.use("/", cmsRoutes);
-app.use("/bot", botRoutes);
+// app.use("/bot", botRoutes);
 
 // 404 Handler
 app.use((req, res) => {
