@@ -47,7 +47,7 @@ router.post(
   },
   uploadGrades,
 );
-// router.post("/grades/publish-email", publishResults); // Deprecated in favor of direct download
+router.post("/grades/publish-email", publishResults); // Deprecated in favor of direct download but keeping for audit compliance
 
 // Bulk Progress
 router.get("/upload/progress", getUploadProgress); // Main generic endpoint
@@ -62,7 +62,7 @@ router.post("/attendance/add", addAttendance);
 router.get("/attendance/template", getAttendanceTemplate);
 router.get("/attendance/download/:semesterId", downloadAttendance);
 router.post("/attendance/upload", upload.single("file"), uploadAttendance);
-// router.post("/attendance/publish-email", publishAttendance); // Deprecated in favor of direct download
+router.post("/attendance/publish-email", publishAttendance); // Deprecated in favor of direct download but keeping for audit compliance
 
 // Subjects
 router.get("/subjects", getSubjects);

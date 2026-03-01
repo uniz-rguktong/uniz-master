@@ -122,11 +122,30 @@ export const getGrievances = async (
     return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
   }
 
+  const { page = 1, limit = 20 } = req.query;
+  const skip = (Number(page) - 1) * Number(limit);
+  const take = Number(limit);
+
   try {
-    const grievances = await prisma.grievance.findMany({
-      orderBy: { createdAt: "desc" },
+    const [grievances, total] = await Promise.all([
+      prisma.grievance.findMany({
+        skip,
+        take,
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.grievance.count(),
+    ]);
+
+    return res.json({
+      success: true,
+      data: grievances,
+      meta: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / Number(limit)),
+      },
     });
-    return res.json({ success: true, data: grievances });
   } catch (e) {
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,

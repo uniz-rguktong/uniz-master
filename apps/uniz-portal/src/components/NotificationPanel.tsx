@@ -107,7 +107,7 @@ const Scroller = ({
 export function NotificationPanel() {
   const [isAnnouncePaused, setAnnouncePaused] = useState(false);
   const [isNotifyPaused, setNotifyPaused] = useState(false);
-  const [activeTab, setActiveTab] = useState<"tenders" | "careers">("tenders");
+  const [activeTab, setActiveTab] = useState<"tenders" | "careers">("careers");
 
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [tenders, setTenders] = useState<NotificationItem[]>([]);
@@ -271,6 +271,8 @@ export function NotificationPanel() {
 
         {/* Tabs */}
         <div className="flex border-b border-slate-100">
+          {/* Tenders hidden as per request */}
+          {/* 
           <button
             onClick={() => setActiveTab("tenders")}
             className={cn(
@@ -282,6 +284,7 @@ export function NotificationPanel() {
           >
             Tenders
           </button>
+          */}
           <button
             onClick={() => setActiveTab("careers")}
             className={cn(
