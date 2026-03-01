@@ -432,7 +432,37 @@ app.all("/api/v1/:service/:path*", async (req, res) => {
       axiosConfig.data = req.body;
     }
 
-    const response = await axios(axiosConfig);
+    let response;
+    let lastError;
+    let attempts = 0;
+    const maxAttempts = 3;
+
+    while (attempts < maxAttempts) {
+      try {
+        attempts++;
+        response = await axios(axiosConfig);
+        break;
+      } catch (error: any) {
+        lastError = error;
+        const isNetworkError =
+          error.code === "ECONNREFUSED" ||
+          error.code === "ETIMEDOUT" ||
+          error.code === "ENOTFOUND" ||
+          error.message.includes("Network Error");
+
+        if (isNetworkError && attempts < maxAttempts) {
+          console.warn(
+            `[Proxy] Retry ${attempts}/${maxAttempts} for ${targetUrl} (${error.code || error.message})`,
+          );
+          // Wait before retry: 200ms, 600ms
+          await new Promise((resolve) => setTimeout(resolve, attempts * 400));
+          continue;
+        }
+        throw error;
+      }
+    }
+
+    if (!response) throw lastError;
 
     // Pass headers down perfectly, ensuring content-types mismatch don't happen
     Object.entries(response.headers).forEach(([key, value]) => {
@@ -448,6 +478,10 @@ app.all("/api/v1/:service/:path*", async (req, res) => {
     res.status(response.status).send(response.data);
   } catch (error: any) {
     if (!res.headersSent) {
+      console.error(
+        `[Gateway] Final Proxy Error for ${targetUrl}:`,
+        error.message,
+      );
       res.status(500).json({
         error: "Gateway Proxy Error",
         message: error.message,
