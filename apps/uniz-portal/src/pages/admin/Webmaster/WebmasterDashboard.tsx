@@ -9,11 +9,10 @@ import {
   Menu,
   ChevronRight,
   LayoutDashboard,
-  MessageSquare,
   Layout,
   Bell,
   Activity,
-  Briefcase,
+  // Briefcase,
   Mail,
   Smartphone,
 } from "lucide-react";
@@ -23,10 +22,10 @@ import { clearSession } from "../../../utils/security";
 import StudentDetails from "./StudentDetails";
 import SubjectManagement from "./SubjectManagement";
 import UploadSection from "./UploadSection";
-import GrievanceSection from "./GrievanceSection";
+
 import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";
-import TendersSection from "./TendersSection";
+// import TendersSection from "./TendersSection";
 import EmailNotification from "../EmailNotification";
 import PushNotificationSection from "./PushNotificationSection";
 import GradesSection from "./GradesSection";
@@ -43,10 +42,9 @@ export default function WebmasterDashboard() {
     | "subjects"
     | "attendance"
     | "grades"
-    | "grievances"
     | "banners"
     | "updates"
-    | "tenders"
+    // | "tenders"
     | "notifications"
     | "push_alerts"
     | "grades_mgmt"
@@ -65,12 +63,11 @@ export default function WebmasterDashboard() {
     { id: "subjects", label: "Manage Subjects", icon: BookOpen },
     { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
     { id: "grades", label: "Grades Upload", icon: GraduationCap },
-    { id: "grievances", label: "Grievances", icon: MessageSquare },
     { id: "banners", label: "Home Banners", icon: Layout },
     { id: "updates", label: "Campus Updates", icon: Bell },
     { id: "notifications", label: "Email Broadcasts", icon: Mail },
     { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
-    { id: "tenders", label: "Tenders", icon: Briefcase },
+    // { id: "tenders", label: "Tenders", icon: Briefcase },
     { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
     { id: "system_logs", label: "System & Logs", icon: Activity },
   ];
@@ -92,8 +89,7 @@ export default function WebmasterDashboard() {
         return <UploadSection type="attendance" />;
       case "grades":
         return <UploadSection type="grades" />;
-      case "grievances":
-        return <GrievanceSection />;
+
       case "banners":
         return <BannersSection />;
       case "updates":
@@ -102,8 +98,8 @@ export default function WebmasterDashboard() {
         return <EmailNotification />;
       case "push_alerts":
         return <PushNotificationSection />;
-      case "tenders":
-        return <TendersSection />;
+      // case "tenders":
+      //   return <TendersSection />;
       case "grades_mgmt":
         return <GradesSection />;
       case "system_logs":

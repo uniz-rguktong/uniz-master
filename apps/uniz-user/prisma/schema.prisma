@@ -32,6 +32,7 @@ model StudentProfile {
   roomno               String    @default("")
   isPresentInCampus    Boolean   @default(true)
   isApplicationPending Boolean   @default(false)
+  isSuspended          Boolean   @default(false)
   telegramChatId       String?
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt

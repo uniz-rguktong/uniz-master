@@ -13,6 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 import { PUSH_SUBSCRIBERS, PUSH_SEND } from "../../../api/endpoints";
+import { apiClient } from "../../../api/apiClient";
 import { toast } from "react-toastify";
 
 export default function PushNotificationSection() {
@@ -35,30 +36,17 @@ export default function PushNotificationSection() {
     fetchSubscribers();
   }, [page, searchQuery]);
 
-  const getAuthToken = () => {
-    const rawToken = localStorage.getItem("admin_token");
-    if (!rawToken) return "";
-    try {
-      return JSON.parse(rawToken);
-    } catch (e) {
-      return rawToken;
-    }
-  };
-
   const fetchSubscribers = async () => {
     setLoading(true);
-    const token = getAuthToken();
     try {
-      const url = new URL(PUSH_SUBSCRIBERS);
-      url.searchParams.append("prefix", searchQuery);
-      url.searchParams.append("page", page.toString());
-      url.searchParams.append("limit", "50");
-
-      const res = await fetch(url.toString(), {
-        headers: { Authorization: `Bearer ${token}` },
+      const data = await apiClient<any>(PUSH_SUBSCRIBERS, {
+        params: {
+          prefix: searchQuery,
+          page,
+          limit: 50,
+        },
       });
-      const data = await res.json();
-      if (data.success) {
+      if (data) {
         setSubscribers(data.subscribers || []);
       }
     } catch (error) {
@@ -71,26 +59,18 @@ export default function PushNotificationSection() {
   const handleSendBroadcast = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    const token = getAuthToken();
     try {
-      const res = await fetch(PUSH_SEND, {
+      const data = await apiClient<any>(PUSH_SEND, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(broadcast),
       });
-      const data = await res.json();
-      if (data.success) {
+      if (data && data.success) {
         toast.success("Push broadcast delivered!");
         setShowSendModal(false);
         setBroadcast({ target: "all", title: "", body: "", image: "" });
-      } else {
-        toast.error(data.msg || "Delivery failed");
       }
     } catch (error) {
-      toast.error("Error sending push notification");
+      console.error("Error sending push notification:", error);
     } finally {
       setSending(false);
     }

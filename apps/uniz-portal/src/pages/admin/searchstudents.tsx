@@ -45,6 +45,7 @@ interface StudentProps {
   profile_url?: string;
   isPresentInCampus: boolean;
   isApplicationPending: boolean;
+  is_suspended: boolean;
   father_name: string;
   father_phonenumber: string;
   mother_name: string;
@@ -112,6 +113,9 @@ export default function SearchStudents() {
   const [gender, setGender] = useState("");
   const [isPending, setIsPending] = useState<boolean | undefined>(undefined);
   const [isOutside, setIsOutside] = useState<boolean | undefined>(undefined);
+  const [isSuspended, setIsSuspended] = useState<boolean | undefined>(
+    undefined,
+  );
 
   // Paginated History State
   const [history, setHistory] = useState<any[]>([]);
@@ -137,6 +141,7 @@ export default function SearchStudents() {
           gender: gender || undefined,
           isPending,
           isOutside,
+          isSuspended,
           page,
           limit: 10,
         }),
@@ -172,7 +177,7 @@ export default function SearchStudents() {
 
   useEffect(() => {
     fetchStudents(debouncedQuery, 1);
-  }, [debouncedQuery, branch, year, gender, isPending, isOutside]);
+  }, [debouncedQuery, branch, year, gender, isPending, isOutside, isSuspended]);
 
   const fetchHistory = async (studentId: string, page = 1) => {
     try {
@@ -396,6 +401,21 @@ export default function SearchStudents() {
                       >
                         Outside
                       </button>
+                      <button
+                        onClick={() =>
+                          setIsSuspended(
+                            isSuspended === true ? undefined : true,
+                          )
+                        }
+                        className={cn(
+                          "flex-1 h-11 rounded-xl text-[10px] font-black uppercase border shadow-sm transition-all",
+                          isSuspended
+                            ? "bg-red-900 border-red-900 text-white shadow-red-200"
+                            : "bg-white border-slate-200 text-slate-600",
+                        )}
+                      >
+                        Suspended
+                      </button>
                     </div>
                   </div>
                   <div className="flex items-end lg:col-span-2">
@@ -406,6 +426,7 @@ export default function SearchStudents() {
                         setGender("");
                         setIsPending(undefined);
                         setIsOutside(undefined);
+                        setIsSuspended(undefined);
                         setQuery("");
                       }}
                       className="w-full h-11 text-xs font-black text-slate-400 hover:text-slate-900 uppercase tracking-widest transition-all"
@@ -470,13 +491,18 @@ export default function SearchStudents() {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-3 bg-slate-50 rounded-2xl">
+                    <div className="p-3 bg-slate-50 rounded-2xl relative">
                       <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">
                         Branch
                       </p>
                       <p className="text-sm font-bold text-slate-700">
                         {student.branch}
                       </p>
+                      {student.is_suspended && (
+                        <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-red-600 text-white text-[8px] font-black uppercase rounded shadow-lg ring-2 ring-white">
+                          Suspended
+                        </span>
+                      )}
                     </div>
                     <div className="p-3 bg-slate-50 rounded-2xl">
                       <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">
@@ -522,11 +548,15 @@ export default function SearchStudents() {
                     <div
                       className={cn(
                         "absolute -bottom-2 -right-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg border-2 border-black bg-white text-black",
+                        selectedStudent.is_suspended &&
+                          "bg-red-600 border-red-900 text-white",
                       )}
                     >
-                      {selectedStudent.isApplicationPending
-                        ? "Action Required"
-                        : "Identity Verified"}
+                      {selectedStudent.is_suspended
+                        ? "Account Suspended"
+                        : selectedStudent.isApplicationPending
+                          ? "Action Required"
+                          : "Identity Verified"}
                     </div>
                   </div>
 

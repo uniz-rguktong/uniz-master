@@ -1033,11 +1033,9 @@ app.post("/subscribe", requireAuth, async (req, res) => {
       },
     });
 
-    res
-      .status(201)
-      .json({ status: "success", message: "Subscribed successfully" });
+    res.status(201).json({ success: true, message: "Subscribed successfully" });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
@@ -1099,7 +1097,9 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
     }
 
     if (subscriptions.length === 0) {
-      return res.status(200).json({ status: "no_subscribers", sent: 0 });
+      return res
+        .status(200)
+        .json({ success: true, status: "no_subscribers", sent: 0 });
     }
 
     const pushPayload = JSON.stringify({
@@ -1143,6 +1143,7 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       `[Push][Broadcast] target=${target} sent=${succeeded} failed=${failed}`,
     );
     res.json({
+      success: true,
       status: "done",
       sent: succeeded,
       failed,
@@ -1166,57 +1167,34 @@ app.get("/push/subscribers", requireAuth, requireAdmin, async (req, res) => {
     const page = Math.max(1, parseInt((req.query.page as string) || "1", 10));
     const limit = Math.min(
       500,
-      parseInt((req.query.limit as string) || "100", 10),
+      parseInt((req.query.limit as string) || "50", 10),
     );
     const skip = (page - 1) * limit;
 
-    const where = prefix
-      ? {
-          OR: [
-            { username: { startsWith: prefix.toLowerCase() } },
-            { username: { startsWith: prefix.toUpperCase() } },
-            { username: { startsWith: prefix, mode: "insensitive" as any } },
-          ],
-        }
-      : {};
+    const where: any = {};
+    if (prefix) {
+      where.username = { startsWith: prefix, mode: "insensitive" };
+    }
 
-    // Get unique usernames matching the filter
-    const allMatching = await prisma.pushSubscription.findMany({
-      where,
-      select: { username: true },
-      distinct: ["username"],
-    });
-
-    const total_users = allMatching.length;
-
-    // Get paginated results
-    const paginatedUsernames = allMatching
-      .slice(skip, skip + limit)
-      .map((u) => u.username);
-
-    const counts = await prisma.pushSubscription.groupBy({
-      by: ["username"],
-      where: { username: { in: paginatedUsernames } },
-      _count: { endpoint: true },
-    });
-
-    const subscribers = paginatedUsernames.map((uname) => {
-      const c = counts.find((g) => g.username === uname);
-      return {
-        username: uname,
-        devices: c?._count.endpoint || 0,
-      };
-    });
+    const [total, subscribers] = await Promise.all([
+      prisma.pushSubscription.count({ where }),
+      prisma.pushSubscription.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+    ]);
 
     res.json({
-      status: "ok",
-      total_users,
+      success: true,
+      total,
       page,
       limit,
       subscribers,
     });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
