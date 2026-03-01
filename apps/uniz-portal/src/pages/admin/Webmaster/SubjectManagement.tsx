@@ -16,12 +16,21 @@ export default function SubjectManagement() {
   const [subjects, setSubjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+
+  // Pagination & Filtering State
+  const [page, setPage] = useState(1);
+  const [limit] = useState(12);
+  const [search, setSearch] = useState("");
+  const [department, setDepartment] = useState("");
+  const [semester, setSemester] = useState("");
+  const [meta, setMeta] = useState<any>({ total: 0, totalPages: 0 });
+
   const [newSubject, setNewSubject] = useState({
     name: "",
     code: "",
     credits: 4,
     department: "CSE",
-    semester: "SEM-1",
+    semester: "E1-SEM-1", // Changed to canonical format
   });
   const [isAdding, setIsAdding] = useState(false);
 
@@ -29,7 +38,15 @@ export default function SubjectManagement() {
     setLoading(true);
     const token = localStorage.getItem("admin_token");
     try {
-      const res = await fetch(GET_SUBJECTS, {
+      const query = new URLSearchParams({
+        page: String(page),
+        limit: String(limit),
+        search: search || "",
+        department: department || "",
+        semester: semester || "",
+      });
+
+      const res = await fetch(`${GET_SUBJECTS}?${query.toString()}`, {
         headers: {
           Authorization: `Bearer ${JSON.parse(token || '""')}`,
         },
@@ -37,6 +54,7 @@ export default function SubjectManagement() {
       const data = await res.json();
       if (data.success) {
         setSubjects(data.subjects);
+        setMeta(data.meta || { total: data.subjects.length, totalPages: 1 });
       }
     } catch (error) {
       toast.error("Failed to fetch subjects");
@@ -47,7 +65,16 @@ export default function SubjectManagement() {
 
   useEffect(() => {
     fetchSubjects();
-  }, []);
+  }, [page, department, semester]); // Fetch on page/filter change
+
+  // Debounced search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (page !== 1) setPage(1);
+      else fetchSubjects();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const handleAddSubject = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,13 +113,14 @@ export default function SubjectManagement() {
 
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-500">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div className="flex flex-col gap-2">
           <h2 className="text-3xl font-black tracking-tight text-slate-900">
             Academic Subjects
           </h2>
           <p className="text-slate-500 font-medium">
-            Manage the core curriculum and course repository
+            Manage the core curriculum and course repository ({meta.total}{" "}
+            subjects)
           </p>
         </div>
         <button
@@ -103,65 +131,185 @@ export default function SubjectManagement() {
         </button>
       </div>
 
+      {/* Filters Hub */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
+        <div className="relative col-span-1 md:col-span-2">
+          <input
+            type="text"
+            placeholder="Search by name or code..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-sm"
+          />
+          <Plus
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 rotate-45"
+            size={16}
+          />
+        </div>
+
+        <select
+          value={department}
+          onChange={(e) => setDepartment(e.target.value)}
+          className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold text-sm cursor-pointer"
+        >
+          <option value="">All Departments</option>
+          <option value="CSE">CSE</option>
+          <option value="ECE">ECE</option>
+          <option value="EEE">EEE</option>
+          <option value="MECH">MECH</option>
+          <option value="CIVIL">CIVIL</option>
+          <option value="CHEM">CHEMICAL</option>
+          <option value="MME">MME</option>
+        </select>
+
+        <select
+          value={semester}
+          onChange={(e) => setSemester(e.target.value)}
+          className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold text-sm cursor-pointer"
+        >
+          <option value="">All Semesters</option>
+          {["E1", "E2", "E3", "E4"].map((y) => (
+            <React.Fragment key={y}>
+              <option value={`${y}-SEM-1`}>{y} SEM-1</option>
+              <option value={`${y}-SEM-2`}>{y} SEM-2</option>
+            </React.Fragment>
+          ))}
+        </select>
+      </div>
+
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <Loader2 className="animate-spin text-slate-900" size={32} />
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {subjects.map((sub, idx) => (
-            <div
-              key={idx}
-              className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all group overflow-hidden relative"
-            >
-              <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform">
-                <BookOpen size={80} />
-              </div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-slate-50 rounded-xl text-slate-900 border border-slate-100">
-                  <BookText size={20} />
+      ) : subjects.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {subjects.map((sub, idx) => (
+              <div
+                key={idx}
+                className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all group overflow-hidden relative"
+              >
+                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform">
+                  <BookOpen size={80} />
                 </div>
-                <div className="px-3 py-1 bg-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-500">
-                  {sub.code}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 bg-slate-50 rounded-xl text-slate-900 border border-slate-100">
+                    <BookText size={20} />
+                  </div>
+                  <div className="px-3 py-1 bg-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    {sub.code}
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-xl font-black text-slate-900 tracking-tight mb-2">
-                {sub.name}
-              </h3>
+                <h3 className="text-lg font-black text-slate-900 tracking-tight mb-1 leading-tight">
+                  {sub.name}
+                </h3>
 
-              <div className="grid grid-cols-2 gap-4 mt-6">
-                <div className="space-y-1">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                    Department
-                  </p>
-                  <p className="font-bold text-slate-700 text-sm flex items-center gap-1">
-                    <Building2 size={12} /> {sub.department}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                    Semester
-                  </p>
-                  <p className="font-bold text-slate-700 text-sm flex items-center gap-1">
-                    <Calendar size={12} /> {sub.semester}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                    Credits
-                  </p>
-                  <div className="flex gap-1">
-                    {[...Array(sub.credits)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="w-2 h-2 rounded-full bg-slate-900"
-                      />
-                    ))}
+                <div className="grid grid-cols-2 gap-4 mt-6">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      Dept
+                    </p>
+                    <p className="font-bold text-slate-700 text-xs flex items-center gap-1">
+                      <Building2 size={12} /> {sub.department}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      Sem
+                    </p>
+                    <p className="font-bold text-slate-700 text-xs flex items-center gap-1">
+                      <Calendar size={12} /> {sub.semester}
+                    </p>
+                  </div>
+                  <div className="col-span-2 space-y-2">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      Credits: {sub.credits}
+                    </p>
+                    <div className="flex gap-1.5">
+                      {[...Array(Number(sub.credits))].map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-1.5 h-1.5 rounded-full bg-slate-900"
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          {meta.totalPages > 1 && (
+            <div className="flex justify-center items-center gap-4 pt-8">
+              <button
+                disabled={page <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-90"
+              >
+                <Plus size={20} className="rotate-[135deg]" />
+              </button>
+
+              <div className="flex items-center gap-2">
+                {[...Array(meta.totalPages)].map((_, i) => {
+                  const p = i + 1;
+                  // Only show current, 2 before, 2 after
+                  if (
+                    p === 1 ||
+                    p === meta.totalPages ||
+                    (p >= page - 1 && p <= page + 1)
+                  ) {
+                    return (
+                      <button
+                        key={p}
+                        onClick={() => setPage(p)}
+                        className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${
+                          page === p
+                            ? "bg-slate-900 text-white border-slate-900 shadow-lg"
+                            : "bg-white text-slate-400 border-slate-100 hover:border-slate-300"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    );
+                  }
+                  if (p === 2 || p === meta.totalPages - 1) {
+                    return (
+                      <span key={p} className="text-slate-300 font-bold">
+                        ...
+                      </span>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+
+              <button
+                disabled={page >= meta.totalPages}
+                onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
+                className="p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-90"
+              >
+                <Plus size={20} className="rotate-45" />
+              </button>
             </div>
-          ))}
+          )}
+        </>
+      ) : (
+        <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-[40px] border border-dashed border-slate-200">
+          <BookOpen size={48} className="text-slate-300 mb-4" />
+          <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
+            No subjects found matching your criteria
+          </p>
+          <button
+            onClick={() => {
+              setSearch("");
+              setDepartment("");
+              setSemester("");
+            }}
+            className="mt-4 text-slate-900 font-black text-xs uppercase tracking-widest hover:underline"
+          >
+            Clear all filters
+          </button>
         </div>
       )}
 
@@ -269,8 +417,11 @@ export default function SubjectManagement() {
                     }
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold"
                   >
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
-                      <option key={s}>SEM-{s}</option>
+                    {["E1", "E2", "E3", "E4"].map((y) => (
+                      <React.Fragment key={y}>
+                        <option value={`${y}-SEM-1`}>{y} SEM-1</option>
+                        <option value={`${y}-SEM-2`}>{y} SEM-2</option>
+                      </React.Fragment>
                     ))}
                   </select>
                 </div>

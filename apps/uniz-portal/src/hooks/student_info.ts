@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useSetRecoilState } from "recoil";
 import { student } from "../store";
 import { STUDENT_INFO } from "../api/endpoints";
 import { apiClient } from "../api/apiClient";
+import { useSmartPolling } from "./useSmartPolling";
 
 interface StudentData {
   _id: string;
@@ -23,7 +24,9 @@ interface StudentInfoResponse {
 export function useStudentData() {
   const setStudent = useSetRecoilState(student);
 
-  const fetchStudentData = async () => {
+  const fetchStudentData = useCallback(async () => {
+    const token = localStorage.getItem("student_token");
+    if (!token) return;
     try {
       const data = await apiClient<StudentInfoResponse>(STUDENT_INFO);
 
@@ -34,14 +37,16 @@ export function useStudentData() {
     } catch (error) {
       console.error("Error fetching student data:", error);
     }
-  };
+  }, [setStudent]);
 
   useEffect(() => {
-    const token = localStorage.getItem("student_token");
-    if (token) {
-      fetchStudentData();
-    }
-  }, []);
+    fetchStudentData();
+  }, [fetchStudentData]);
+
+  useSmartPolling(fetchStudentData, {
+    activeInterval: 300000,
+    fallbackInterval: 30000,
+  });
 
   return { refetch: fetchStudentData };
 }

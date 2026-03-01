@@ -578,6 +578,7 @@ export const getHistory = async (req: AuthenticatedRequest, res: Response) => {
 
   try {
     const skip = (Number(page) - 1) * Number(limit);
+    const limitNum = Number(limit);
 
     // Fetch both and combine. In a real system you might want a unified view/table if scale is huge.
     const [outpasses, outings, totalOutpasses, totalOutings] =
@@ -585,12 +586,14 @@ export const getHistory = async (req: AuthenticatedRequest, res: Response) => {
         prisma.outpass.findMany({
           where: { studentId: targetId },
           orderBy: { requestedTime: "desc" },
-          take: Number(limit),
+          skip: skip,
+          take: limitNum,
         }),
         prisma.outing.findMany({
           where: { studentId: targetId },
           orderBy: { requestedTime: "desc" },
-          take: Number(limit),
+          skip: skip,
+          take: limitNum,
         }),
         prisma.outpass.count({ where: { studentId: targetId } }),
         prisma.outing.count({ where: { studentId: targetId } }),
@@ -606,7 +609,7 @@ export const getHistory = async (req: AuthenticatedRequest, res: Response) => {
           new Date(b.requestedTime).getTime() -
           new Date(a.requestedTime).getTime(),
       )
-      .slice(0, Number(limit));
+      .slice(0, limitNum);
 
     // Format keys for frontend compatibility
     const history = combined.map((item) => ({
@@ -1012,12 +1015,16 @@ export const getAllOutings = async (
   }
 
   try {
-    const outings = await prisma.outing.findMany({
-      where,
-      skip,
-      take,
-      orderBy: { requestedTime: "desc" },
-    });
+    const [outings, total] = await Promise.all([
+      prisma.outing.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { requestedTime: "desc" },
+      }),
+      prisma.outing.count({ where }),
+    ]);
+
     const mapped = outings.map((o) => ({
       _id: o.id,
       ...o,
@@ -1031,10 +1038,16 @@ export const getAllOutings = async (
       checked_in_time: o.checkedInTime,
       checked_out_time: o.checkedOutTime,
     }));
+
     return res.json({
       success: true,
       outings: mapped,
-      pagination: { page: Number(page), limit: take },
+      pagination: {
+        total,
+        page: Number(page),
+        limit: take,
+        totalPages: Math.ceil(total / take),
+      },
     });
   } catch (e) {
     return res.status(500).json({
@@ -1094,12 +1107,16 @@ export const getAllOutpasses = async (
   }
 
   try {
-    const outpasses = await prisma.outpass.findMany({
-      where,
-      skip,
-      take,
-      orderBy: { requestedTime: "desc" },
-    });
+    const [outpasses, total] = await Promise.all([
+      prisma.outpass.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { requestedTime: "desc" },
+      }),
+      prisma.outpass.count({ where }),
+    ]);
+
     const mapped = outpasses.map((o) => ({
       _id: o.id,
       ...o,
@@ -1113,10 +1130,16 @@ export const getAllOutpasses = async (
       checked_in_time: o.checkedInTime,
       checked_out_time: o.checkedOutTime,
     }));
+
     return res.json({
       success: true,
       outpasses: mapped,
-      pagination: { page: Number(page), limit: take },
+      pagination: {
+        total,
+        page: Number(page),
+        limit: take,
+        totalPages: Math.ceil(total / take),
+      },
     });
   } catch (e) {
     return res.status(500).json({
@@ -1217,6 +1240,7 @@ export const getSecuritySummary = async (
       pagination: {
         page: Number(page),
         limit: limitNum,
+        totalHistory: historyOutings.length + historyOutpasses.length, // approximation or fetch actual total
       },
     });
   } catch (e) {
@@ -1418,28 +1442,61 @@ export const getOutsideStudents = async (
   const user = req.user;
   if (!user) return res.status(401).json({ code: ErrorCode.AUTH_UNAUTHORIZED });
 
+  const { page = 1, limit = 50 } = req.query;
+  const p = Number(page);
+  const l = Number(limit);
+  const skip = (p - 1) * l;
+
   try {
-    // 1. Fetch all active outside records (checked out but not in)
-    const [outpasses, outings] = await Promise.all([
+    // 1. Fetch total unique student IDs who are outside
+    const [outpassIds, outingIds] = await Promise.all([
       prisma.outpass.findMany({
         where: { checkedOutTime: { not: null }, checkedInTime: null },
+        select: { studentId: true },
+        distinct: ["studentId"],
       }),
       prisma.outing.findMany({
         where: { checkedOutTime: { not: null }, checkedInTime: null },
+        select: { studentId: true },
+        distinct: ["studentId"],
       }),
     ]);
 
-    // 2. Identify unique student IDs
-    const studentIds = [
+    const allOutsideStudentIds = [
       ...new Set([
-        ...outpasses.map((o) => o.studentId),
-        ...outings.map((o) => o.studentId),
+        ...outpassIds.map((o) => o.studentId),
+        ...outingIds.map((o) => o.studentId),
       ]),
     ];
 
-    if (studentIds.length === 0) {
-      return res.json({ success: true, students: [] });
+    const totalStudents = allOutsideStudentIds.length;
+    const paginatedStudentIds = allOutsideStudentIds.slice(skip, skip + l);
+
+    if (paginatedStudentIds.length === 0) {
+      return res.json({
+        success: true,
+        students: [],
+        pagination: { total: totalStudents, page: p, limit: l },
+      });
     }
+
+    // 2. Fetch records only for THESE students
+    const [outpasses, outings] = await Promise.all([
+      prisma.outpass.findMany({
+        where: {
+          studentId: { in: paginatedStudentIds },
+          checkedOutTime: { not: null },
+          checkedInTime: null,
+        },
+      }),
+      prisma.outing.findMany({
+        where: {
+          studentId: { in: paginatedStudentIds },
+          checkedOutTime: { not: null },
+          checkedInTime: null,
+        },
+      }),
+    ]);
 
     // 3. Fetch basic profile info from User Service (Batch)
     const GATEWAY = (
@@ -1452,7 +1509,7 @@ export const getOutsideStudents = async (
     const profilesRes = await axios
       .post(
         `${GATEWAY}/profile/internal/bulk-profiles`,
-        { usernames: studentIds },
+        { usernames: paginatedStudentIds },
         { headers: { "x-internal-secret": internalSecret } },
       )
       .catch(() => ({ data: { success: false, students: [] } }));
@@ -1465,7 +1522,7 @@ export const getOutsideStudents = async (
     }
 
     // 4. Group requests by student
-    const result = studentIds.map((sid) => {
+    const result = paginatedStudentIds.map((sid: string) => {
       const sidUpper = sid.toUpperCase();
       const profile = studentsMap.get(sidUpper) || {
         username: sidUpper,
@@ -1513,12 +1570,21 @@ export const getOutsideStudents = async (
       };
     });
 
-    return res.json({ success: true, students: result });
+    return res.json({
+      success: true,
+      students: result,
+      pagination: {
+        total: totalStudents,
+        page: p,
+        limit: l,
+        totalPages: Math.ceil(totalStudents / l),
+      },
+    });
   } catch (e: any) {
-    console.error("Failed to fetch outside students:", e.message);
+    console.error("[OUTPASS] getOutsideStudents Error:", e);
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
-      message: "Failed to fetch outside students list.",
+      message: "Failed to fetch currently outside students list.",
     });
   }
 };

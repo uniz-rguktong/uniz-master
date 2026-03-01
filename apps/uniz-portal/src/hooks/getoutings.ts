@@ -3,21 +3,25 @@ import { useSetRecoilState } from "recoil";
 import { outings } from "../store";
 import { GET_OUTING_REQUESTS } from "../api/endpoints";
 import { useWebSocket } from "./useWebSocket";
+import { useSmartPolling } from "./useSmartPolling";
 
-export function useGetOutings() {
+export function useGetOutings(page = 1, limit = 50) {
   const setOutings = useSetRecoilState(outings);
 
   const getDetails = useCallback(async () => {
     const token = localStorage.getItem("admin_token");
     if (token) {
       try {
-        const res = await fetch(GET_OUTING_REQUESTS, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${JSON.parse(token)}`,
+        const res = await fetch(
+          `${GET_OUTING_REQUESTS}?page=${page}&limit=${limit}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${JSON.parse(token)}`,
+            },
           },
-        });
+        );
         const data = await res.json();
         if (data.success) {
           setOutings(data.outings);
@@ -28,11 +32,16 @@ export function useGetOutings() {
     }
   }, [setOutings]);
 
+  // Initial fetch
   useEffect(() => {
     getDetails();
-    const interval = setInterval(() => getDetails(), 60000);
-    return () => clearInterval(interval);
   }, [getDetails]);
+
+  // Smart Polling
+  useSmartPolling(getDetails, {
+    activeInterval: 300000, // 5m heartbeat
+    fallbackInterval: 30000, // 30s if WS disconnected
+  });
 
   useWebSocket(undefined, (msg) => {
     if (msg.type === "REFRESH_REQUESTS") {

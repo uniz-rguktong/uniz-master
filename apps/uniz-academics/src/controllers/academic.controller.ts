@@ -177,7 +177,17 @@ export const getBatchGrades = async (
       .status(403)
       .json({ success: false, message: "Students cannot access batch grades" });
 
-  const { branch, year, semesterId, failedOnly } = req.query;
+  const {
+    branch,
+    year,
+    semesterId,
+    failedOnly,
+    page = 1,
+    limit = 50,
+  } = req.query;
+  const p = Math.max(1, Number(page));
+  const l = Math.max(1, Math.min(200, Number(limit)));
+  const skip = (p - 1) * l;
 
   try {
     let semesterIdFilter: any = undefined;
@@ -185,8 +195,6 @@ export const getBatchGrades = async (
     const y = year as string;
 
     if (sem && y) {
-      // If input is "SEM-2" and "E3", look for "E3-SEM-2"
-      // If input is already "E3-SEM-2", allow it directly
       if (sem.includes(y)) {
         semesterIdFilter = sem;
       } else {
@@ -200,17 +208,39 @@ export const getBatchGrades = async (
       semesterId: semesterIdFilter || undefined,
       subject: {
         department: (branch as string) || undefined,
-        // Removed strict subject.semester match as it might conflict with canonical semesterId logic
         code: year ? { contains: `-${year}-` } : undefined,
       },
     };
 
     if (failedOnly === "true") {
-      where.grade = { lte: 0 }; // 'R' grade and point 0 are failures
+      where.grade = { lte: 0 };
     }
 
-    const grades = await prisma.grade.findMany({
+    // Step 1: Get total count and paginated students
+    // Optimization: Count distinct students first
+    const counts = await prisma.grade.groupBy({
+      by: ["studentId"],
       where,
+    });
+    const totalStudentsCount = counts.length;
+
+    const studentIdsOnPageResult = await prisma.grade.findMany({
+      where,
+      select: { studentId: true },
+      distinct: ["studentId"],
+      skip,
+      take: l,
+      orderBy: { studentId: "asc" },
+    });
+
+    const studentIds = studentIdsOnPageResult.map((s) => s.studentId);
+
+    // Step 2: Fetch all grades for these specific students on this page/semester
+    const grades = await prisma.grade.findMany({
+      where: {
+        ...where,
+        studentId: { in: studentIds },
+      },
       select: {
         id: true,
         studentId: true,
@@ -227,7 +257,6 @@ export const getBatchGrades = async (
     });
 
     // Fetch student profiles for context
-    const studentIds = [...new Set(grades.map((g) => g.studentId))];
     let studentProfiles: any[] = [];
 
     try {
@@ -239,7 +268,8 @@ export const getBatchGrades = async (
           {
             branch: branch || undefined,
             year: year || undefined,
-            limit: 2000,
+            usernames: studentIds, // Use usernames explicitly
+            limit: l,
           },
           {
             ...getHeaders(req.headers.authorization || ""),
@@ -287,14 +317,22 @@ export const getBatchGrades = async (
     return res.json({
       success: true,
       summary: {
-        totalStudents: studentsList.length,
+        totalStudents: totalStudentsCount,
+        pageCount: studentsList.length,
         totalRecords: grades.length,
         failedRecords: grades.filter((g) => g.grade <= 0).length,
         timestamp: new Date().toISOString(),
       },
+      meta: {
+        total: totalStudentsCount,
+        page: p,
+        limit: l,
+        totalPages: Math.ceil(totalStudentsCount / l),
+      },
       students: studentsList,
     });
   } catch (e: any) {
+    console.error("[Academics] getBatchGrades Error:", e);
     return res.status(500).json({
       success: false,
       message: "Failed to retrieve batch grades at this time.",
@@ -1330,11 +1368,48 @@ export const publishAttendance = async (
 };
 
 export const getSubjects = async (req: AuthenticatedRequest, res: Response) => {
+  const { page = 1, limit = 10, search, department, semester } = req.query;
+  const p = Math.max(1, Number(page));
+  const l = Math.max(1, Math.min(100, Number(limit)));
+  const skip = (p - 1) * l;
+
   try {
-    const subjects = await prisma.subject.findMany();
-    return res.json({ success: true, subjects });
+    const where: any = {};
+    if (search) {
+      where.OR = [
+        { name: { contains: search as string, mode: "insensitive" } },
+        { code: { contains: search as string, mode: "insensitive" } },
+      ];
+    }
+    if (department) where.department = department as string;
+    if (semester)
+      where.semester = { contains: semester as string, mode: "insensitive" };
+
+    const [subjects, total] = await Promise.all([
+      prisma.subject.findMany({
+        where,
+        skip,
+        take: l,
+        orderBy: [{ semester: "asc" }, { code: "asc" }],
+      }),
+      prisma.subject.count({ where }),
+    ]);
+
+    return res.json({
+      success: true,
+      subjects,
+      meta: {
+        total,
+        page: p,
+        limit: l,
+        totalPages: Math.ceil(total / l),
+      },
+    });
   } catch (e) {
-    return res.status(500).json({ success: false });
+    console.error("[Academics] getSubjects Error:", e);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch subjects" });
   }
 };
 export const addSubject = async (req: AuthenticatedRequest, res: Response) => {
