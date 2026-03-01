@@ -9,6 +9,7 @@ import {
   createFacultyProfile,
   updateStudentPresence,
   getBulkProfiles,
+  toggleStudentSuspension,
 } from "../controllers/profile.controller";
 
 import multer from "multer";
@@ -214,6 +215,11 @@ router.put(
   adminUpdateStudentProfile,
 );
 router.post("/student/search", authMiddleware, searchStudents);
+router.put(
+  "/admin/student/:username/suspend",
+  authMiddleware,
+  toggleStudentSuspension,
+);
 
 router.get("/faculty/me", authMiddleware, getFacultyProfile);
 router.post(

@@ -23,7 +23,7 @@ import {
 import {
   ADMIN_VIEW_STUDENT,
   SEARCH_STUDENTS,
-  ADMIN_SUSPEND_ACCOUNT,
+  ADMIN_SUSPEND_STUDENT,
   ADMIN_UPDATE_STUDENT,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
@@ -142,21 +142,20 @@ export default function StudentDetails() {
   const handleToggleSuspension = async (
     e: React.MouseEvent,
     username: string,
-    currentStatus: boolean,
+    currentSuspendedStatus: boolean,
   ) => {
     e.stopPropagation();
     setIsActionLoading(username);
     const token = localStorage.getItem("admin_token");
     try {
-      const res = await fetch(ADMIN_SUSPEND_ACCOUNT, {
-        method: "POST",
+      const res = await fetch(ADMIN_SUSPEND_STUDENT(username), {
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${JSON.parse(token || '""')}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username,
-          suspended: currentStatus,
+          suspended: !currentSuspendedStatus,
         }),
       });
       const data = await res.json();
@@ -164,13 +163,15 @@ export default function StudentDetails() {
         toast.success(`Account status updated`);
         setSearchResults((prev) =>
           prev.map((s) =>
-            s.username === username ? { ...s, is_active: !currentStatus } : s,
+            s.username === username
+              ? { ...s, is_suspended: !currentSuspendedStatus }
+              : s,
           ),
         );
         if (selectedStudent?.username === username) {
           setSelectedStudent((prev: any) => ({
             ...prev,
-            is_active: !currentStatus,
+            is_suspended: !currentSuspendedStatus,
           }));
         }
       } else {
@@ -396,18 +397,18 @@ export default function StudentDetails() {
                         handleToggleSuspension(
                           e,
                           std.username,
-                          std.is_active !== false,
+                          std.is_suspended === true,
                         )
                       }
                       className={`p-3 rounded-xl transition-all border ${
-                        std.is_active !== false
+                        std.is_suspended !== true
                           ? "text-slate-400 hover:text-red-500 hover:bg-red-50 border-transparent hover:border-red-100"
                           : "text-emerald-500 bg-emerald-50 border-emerald-100 hover:bg-emerald-100"
                       }`}
                     >
                       {isActionLoading === std.username ? (
                         <Loader2 size={18} className="animate-spin" />
-                      ) : std.is_active !== false ? (
+                      ) : std.is_suspended !== true ? (
                         <Trash2 size={18} />
                       ) : (
                         <ShieldCheck size={18} />
@@ -479,9 +480,9 @@ export default function StudentDetails() {
                         {selectedStudent.name}
                       </h3>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${selectedStudent.is_active !== false ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"}`}
+                        className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${selectedStudent.is_suspended !== true ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"}`}
                       >
-                        {selectedStudent.is_active !== false
+                        {selectedStudent.is_suspended !== true
                           ? "Active"
                           : "Suspended"}
                       </span>
@@ -661,26 +662,26 @@ export default function StudentDetails() {
                           handleToggleSuspension(
                             e,
                             selectedStudent.username,
-                            selectedStudent.is_active !== false,
+                            selectedStudent.is_suspended === true,
                           )
                         }
                         disabled={isActionLoading === selectedStudent.username}
                         className={`w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all ${
-                          selectedStudent.is_active !== false
-                            ? "bg-red-50 text-red-600 hover:bg-red-600 hover:text-white"
-                            : "bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                          selectedStudent.is_suspended === true
+                            ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                            : "bg-red-50 text-red-600 hover:bg-red-600 hover:text-white"
                         }`}
                       >
                         {isActionLoading === selectedStudent.username ? (
                           <Loader2 size={16} className="animate-spin" />
-                        ) : selectedStudent.is_active !== false ? (
-                          <ShieldAlert size={16} />
-                        ) : (
+                        ) : selectedStudent.is_suspended === true ? (
                           <ShieldCheck size={16} />
+                        ) : (
+                          <ShieldAlert size={16} />
                         )}
-                        {selectedStudent.is_active !== false
-                          ? "Suspend Student Access"
-                          : "Restore Student Access"}
+                        {selectedStudent.is_suspended === true
+                          ? "Restore Student Access"
+                          : "Suspend Student Access"}
                       </button>
                     </div>
                   )}

@@ -100,7 +100,8 @@ export const GET_GRADES_TEMPLATE = (
 ) =>
   `${BASE_URL}/academics/grades/template?branch=${branch}&year=${year}&semesterId=${semesterId}&subjectCode=${subjectCode}&remedialsOnly=${remedialsOnly}`;
 
-export const ADMIN_SUSPEND_ACCOUNT = `${BASE_URL}/auth/admin/suspend`;
+export const ADMIN_SUSPEND_STUDENT = (id: string) =>
+  `${BASE_URL}/profile/admin/student/${id}/suspend`;
 export const ADMIN_UPDATE_STUDENT = (id: string) =>
   `${BASE_URL}/profile/admin/student/${id}`;
 
@@ -133,7 +134,7 @@ export const UPDATE_BANNER_VISIBILITY = (id: string) =>
   `${BASE_URL}/cms/admin/visibility/banner/${id}`;
 
 export const UPDATES_BASE = `${BASE_URL}/cms/admin/updates`;
-export const TENDERS_BASE = `${BASE_URL}/cms/admin/tenders`;
+// export const TENDERS_BASE = `${BASE_URL}/cms/admin/tenders`;
 export const GET_NOTIFICATIONS = `${BASE_URL}/cms/notifications`;
 
 // Push Notifications

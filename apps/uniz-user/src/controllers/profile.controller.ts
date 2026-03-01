@@ -17,6 +17,16 @@ const NOTIFICATION_SERVICE_URL = (
   .trim()
   .replace(/\/health$/, "");
 
+const GATEWAY_URL = (
+  (process.env.DOCKER_ENV === "true"
+    ? "http://uniz-gateway-api:3000/api/v1"
+    : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
+).replace(/\/$/, "");
+
+const AUTH_SERVICE_URL = (
+  process.env.AUTH_SERVICE_URL || `${GATEWAY_URL}/auth`
+).replace(/\/$/, "");
+
 const sendPush = async (username: string, title: string, body: string) => {
   try {
     const url = `${NOTIFICATION_SERVICE_URL}/push/send`;
@@ -56,6 +66,7 @@ const mapStudentProfile = (profile: any) => ({
   roomno: profile.roomno,
   has_pending_requests: profile.isApplicationPending,
   is_in_campus: profile.isPresentInCampus,
+  is_suspended: profile.isSuspended,
   blood_group: profile.bloodGroup,
   phone_number: profile.phone,
   date_of_birth: profile.dateOfBirth,
@@ -131,11 +142,6 @@ export const getStudentProfile = async (
     // 3. Parallel Enrichment
     const token = req.headers.authorization;
     if (token && req.params.username) {
-      const GATEWAY_URL = (
-        (process.env.DOCKER_ENV === "true"
-          ? "http://uniz-gateway-api:3000/api/v1"
-          : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
-      ).trim();
       try {
         const [gradesRes, attendanceRes] = await Promise.all([
           axios
@@ -277,7 +283,15 @@ export const searchStudents = async (
     });
   }
 
-  const { username, branch, year, gender, page = 1, limit = 10 } = req.body;
+  const {
+    username,
+    branch,
+    year,
+    gender,
+    page = 1,
+    limit = 10,
+    isSuspended,
+  } = req.body;
 
   try {
     const skip = (Number(page) - 1) * Number(limit);
@@ -292,6 +306,8 @@ export const searchStudents = async (
     if (branch) where.branch = branch;
     if (year) where.year = year;
     if (gender) where.gender = gender;
+    if (isSuspended !== undefined)
+      where.isSuspended = isSuspended === true || isSuspended === "true";
     if (req.body.isPresentInCampus !== undefined) {
       where.isPresentInCampus = req.body.isPresentInCampus;
     }
@@ -537,5 +553,88 @@ export const getBulkProfiles = async (req: Request, res: Response) => {
     });
   } catch (e) {
     return res.status(500).json({ message: "Bulk fetch failed" });
+  }
+};
+
+export const toggleStudentSuspension = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const targetUsername = req.params.username.toUpperCase();
+  const { suspended } = req.body;
+
+  const allowedRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
+  if (!user || !allowedRoles.includes(user.role as UserRole)) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  if (suspended === undefined) {
+    return res.status(400).json({
+      code: ErrorCode.VALIDATION_ERROR,
+      message: "Suspension status (suspended) is required",
+    });
+  }
+
+  try {
+    // 1. Update User Profile in current service
+    const updated = await prisma.studentProfile.update({
+      where: { username: targetUsername },
+      data: { isSuspended: suspended },
+    });
+
+    // 2. Sync with Auth Service
+    const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+    try {
+      await axios.post(
+        `${AUTH_SERVICE_URL}/admin/suspend`,
+        {
+          username: targetUsername,
+          suspended: suspended,
+        },
+        {
+          headers: { "x-internal-secret": SECRET },
+          timeout: 5000,
+        },
+      );
+    } catch (authError: any) {
+      console.error(
+        `[USER-SERVICE] Failed to sync suspension with Auth Service for ${targetUsername}:`,
+        authError.message,
+      );
+      // We don't necessarily want to fail the whole request if sync fails,
+      // but the user might still be able to login if auth service is not updated.
+      // However, usually it's better to be consistent.
+    }
+
+    // 3. Invalidate Cache
+    await redis.del(`profile:v2:${targetUsername}`);
+
+    // 4. Notify Student
+    sendPush(
+      targetUsername,
+      suspended ? "Account Suspended" : "Account Reinstated",
+      suspended
+        ? "Your account has been suspended by an administrator. Please contact the office for details."
+        : "Your account has been reinstated. You can now use all university services.",
+    );
+
+    return res.json({
+      success: true,
+      message: `Student suspension status updated to ${suspended}`,
+      student: mapStudentProfile(updated),
+    });
+  } catch (e: any) {
+    console.error(
+      `[ERROR] toggleStudentSuspension failed for ${targetUsername}:`,
+      e,
+    );
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to update suspension status",
+      details: e.message,
+    });
   }
 };
