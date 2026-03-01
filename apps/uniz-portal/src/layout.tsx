@@ -12,10 +12,8 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   const location = useLocation();
 
-  // Initialize WebSocket connection for real-time updates
   useWebSocket(undefined, (msg) => {
     console.log("Real-time update signal:", msg);
-    // Future: Trigger SWR revalidation or global state updates here
   });
 
   const shouldHideNavbar =
@@ -24,15 +22,17 @@ export function Layout({ children }: LayoutProps) {
     ["/studyspace", "/campushub"].includes(location.pathname);
 
   if (shouldHideNavbar) {
-    return <>{children}</>;
+    return <div className="min-h-screen bg-slate-50/50">{children}</div>;
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-premium-gradient text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       <Suspense fallback={<LoadingAnim />}>
         <Navbar />
       </Suspense>
-      <main className="flex-grow m-10">{children}</main>
+      <main className="flex-grow flex flex-col max-w-[1600px] w-full mx-auto p-4 sm:p-6 md:p-10 animate-in fade-in duration-500">
+        <div className="flex-grow h-full w-full">{children}</div>
+      </main>
       <Footer />
     </div>
   );
@@ -40,8 +40,11 @@ export function Layout({ children }: LayoutProps) {
 
 const LoadingAnim = () => {
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="w-10 h-10 border-4 border-gray-800 border-t-white rounded-full animate-spin"></div>
+    <div className="flex items-center justify-center h-screen bg-premium-gradient">
+      <div className="relative flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-slate-200 rounded-full"></div>
+        <div className="absolute w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
     </div>
   );
 };

@@ -202,10 +202,10 @@ export default function Sidebar({ content }: MainContent) {
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col md:flex-row min-h-screen bg-premium-gradient text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       {/* Mobile Top Header */}
       <div
-        className={`md:hidden sticky top-0 left-0 right-0 z-30 bg-white/80 backdrop-blur-lg border-b border-slate-200/50 px-6 py-3.5 flex items-center justify-between ${isOpen ? "hidden" : "flex"}`}
+        className={`md:hidden sticky top-0 left-0 right-0 z-30 bg-white/70 backdrop-blur-xl border-b border-white/50 px-6 py-3.5 flex items-center justify-between premium-shadow ${isOpen ? "hidden" : "flex"}`}
       >
         <div className="flex items-center gap-4">
           <button
@@ -292,8 +292,8 @@ export default function Sidebar({ content }: MainContent) {
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           w-full max-w-[320px] md:max-w-none md:w-72
           md:translate-x-0 md:sticky md:top-0 md:z-auto
-          ${isOpen ? "bg-[#EBF5FF] md:bg-white" : "bg-white"}
-          md:border-r md:border-slate-200
+          ${isOpen ? "bg-[#EBF5FF] md:bg-white/70" : "bg-white/70"}
+          md:backdrop-blur-xl md:border-r md:border-white/50 premium-shadow
         `}
       >
         {/* MOBILE VIEW NAVIGATION (Unstop Style) */}
@@ -533,7 +533,7 @@ export default function Sidebar({ content }: MainContent) {
         {/* DESKTOP VIEW SIDEBAR (Existing Classic Design) */}
         <div className="hidden md:flex md:flex-col w-full h-full">
           {/* Header with logo and collapse button */}
-          <div className="flex items-center justify-between p-6 bg-white/50 backdrop-blur-sm">
+          <div className="flex items-center justify-between p-6 bg-transparent">
             <div className="flex items-center space-x-3.5">
               <div className="w-14 h-14 flex items-center justify-center p-1">
                 <img
