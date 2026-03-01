@@ -43,11 +43,11 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   fi
 
   # Service mapping: "folder_name:image_name:deployment_name:container_name"
-  # Note: uniz-gateway is in infra/core-infra/nginx
   ALL_SERVICES=(
     "uniz-academics:uniz-academics-service:uniz-academics-service:academics-service"
     "uniz-auth:uniz-auth-service:uniz-auth-service:auth-service"
     "uniz-cron:uniz-cron-service:uniz-maintenance-job:cron-worker"
+    "uniz-cron:uniz-cron-service:uniz-storage-cleanup-job:storage-cleaner"
     "uniz-files:uniz-files-service:uniz-files-service:files-service"
     "uniz-gateway:uniz-gateway-api:uniz-gateway-api:gateway-api"
     "uniz-mail:uniz-mail-service:uniz-mail-service:mail-service"
@@ -59,13 +59,13 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   )
 
   REBUILT_COUNT=0
+  declare -A BUILT_IMAGES
 
   for s in "${ALL_SERVICES[@]}"; do
     IFS=':' read -r DIR IMG DEP CON <<< "$s"
     echo "🎯 Checking for changes in $DIR..."
     SHOULD_BUILD=false
     
-    # Check if any changed file is within this service directory or its app/ equivalent
     if [ "$GLOBAL_REBUILD" == "true" ]; then
        SHOULD_BUILD=true
     elif echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
@@ -74,36 +74,39 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     fi
 
     if [ "$SHOULD_BUILD" == "true" ]; then
-      echo "🏗️  Rebuilding $IMG..."
-      
-      # Determine build context correctly
-      BUILD_CONTEXT="apps/$DIR"
-      if [[ "$DIR" == *"infra"* ]]; then
-        BUILD_CONTEXT="$DIR"
-      fi
+      if [ -z "${BUILT_IMAGES[$IMG]}" ]; then
+        echo "🏗️  Rebuilding $IMG..."
+        
+        BUILD_CONTEXT="apps/$DIR"
+        if [[ "$DIR" == *"infra"* ]]; then
+          BUILD_CONTEXT="$DIR"
+        fi
 
-      TAG="local-$(date +%s)"
-      docker build --no-cache -t $IMG:$TAG $BUILD_CONTEXT
-      echo "📦 Importing $IMG to K3s..."
-      docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
-      
-      # Verify image exists in K3s
-      if ! k3s crictl images | grep -q "$IMG.*$TAG"; then
-        echo "❌ Failed to import $IMG:$TAG to K3s. Retrying..."
+        TAG="local-$(date +%s)"
+        docker build --no-cache -t $IMG:$TAG $BUILD_CONTEXT
+        echo "📦 Importing $IMG to K3s..."
         docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
+        
+        if ! k3s crictl images | grep -q "$IMG.*$TAG"; then
+          echo "❌ Failed to import $IMG:$TAG to K3s. Retrying..."
+          docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
+        fi
+        BUILT_IMAGES[$IMG]=$TAG
+        ((REBUILT_COUNT++))
+      else
+        TAG=${BUILT_IMAGES[$IMG]}
+        echo "♻️  Using cached image for $IMG with tag $TAG"
       fi
 
       if [[ "$DEP" == *"job"* ]]; then
         echo "🛡️  Updating Kubernetes CronJob $DEP..."
-        kubectl set image cronjob/$DEP cron-worker=docker.io/library/$IMG:$TAG
+        kubectl set image cronjob/$DEP $CON=docker.io/library/$IMG:$TAG
       else
         echo "🛡️  Updating Kubernetes deployment $DEP..."
         kubectl set image deployment/$DEP $CON=docker.io/library/$IMG:$TAG
         kubectl patch deployment $DEP -p '{"spec":{"template":{"spec":{"containers":[{"name":"'$CON'","imagePullPolicy":"IfNotPresent"}]}}}}'
         kubectl rollout restart deployment/$DEP
       fi
-      
-      ((REBUILT_COUNT++))
     else
       echo "⏭️  Skipping $IMG (No changes)."
     fi
