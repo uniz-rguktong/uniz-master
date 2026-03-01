@@ -149,12 +149,12 @@ export default function WebmasterDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 relative overflow-hidden">
+    <div className="flex min-h-screen bg-premium-gradient relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       {/* Sidebar */}
       <aside
-        className={`bg-white border-r border-slate-200 transition-all duration-300 z-50 ${
+        className={`bg-white/90 backdrop-blur-xl border-r border-slate-200/50 transition-all duration-300 z-50 ${
           isSidebarOpen ? "w-72" : "w-20"
-        } hidden md:flex flex-col shadow-xl`}
+        } hidden md:flex flex-col premium-shadow`}
       >
         <div className="p-6 flex items-center gap-3 border-b border-slate-50">
           <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shrink-0 shadow-lg">

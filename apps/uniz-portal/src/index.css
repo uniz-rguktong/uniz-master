@@ -5,27 +5,50 @@
 @layer base {
   body {
     font-family: "Outfit", sans-serif;
+    @apply bg-slate-50 text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900;
   }
 
   html {
     scroll-behavior: smooth;
   }
 
-  /* Hide scrollbar globally */
-  ::-webkit-scrollbar {
-    display: none;
+  /* Refined typography rendering */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Hide scrollbar for IE, Edge and Firefox */
+  /* Sleek minimalist scrollbar */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-200 rounded-full transition-colors duration-300;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-300;
+  }
   * {
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
   }
 }
 
 @layer utilities {
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-sm;
+  }
+
+  .premium-shadow {
+    box-shadow:
+      0 8px 32px -4px rgba(0, 0, 0, 0.04),
+      0 4px 12px -2px rgba(0, 0, 0, 0.02);
+  }
+
   @keyframes marquee {
     0% {
       transform: translateX(100%);
