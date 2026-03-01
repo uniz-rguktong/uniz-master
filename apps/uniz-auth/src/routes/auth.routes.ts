@@ -11,6 +11,7 @@ import {
   toggleSuspension,
   getUserStatus,
   changePassword,
+  adminResetPassword,
 } from "../controllers/auth.controller";
 import { rateLimiter } from "../middlewares/ratelimit.middleware";
 import { authMiddleware } from "../middlewares/auth.middleware";
@@ -42,6 +43,12 @@ const PasswordResetSchema = z.object({
 const PasswordChangeSchema = z.object({
   currentPassword: z.string(),
   newPassword: z.string().min(6),
+});
+
+const AdminResetPasswordSchema = z.object({
+  username: z.string(),
+  password: z.string(),
+  new_password: z.string().min(6),
 });
 
 const SignupSchema = z.object({
@@ -94,6 +101,12 @@ router.post(
   authMiddleware,
   validateRequest(PasswordChangeSchema),
   changePassword,
+);
+router.post(
+  "/admin/reset-password",
+  rateLimiter,
+  validateRequest(AdminResetPasswordSchema),
+  adminResetPassword,
 );
 router.post("/admin/suspend", toggleSuspension);
 

@@ -506,6 +506,55 @@ export const toggleSuspension = async (req: Request, res: Response) => {
   }
 };
 
+export const adminResetPassword = async (req: Request, res: Response) => {
+  const { username, password, new_password } = req.body;
+
+  try {
+    const user = await prisma.authCredential.findFirst({
+      where: { username: { equals: username, mode: "insensitive" } },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        code: ErrorCode.RESOURCE_NOT_FOUND,
+        message: "Account not found.",
+      });
+    }
+
+    // Verify current password
+    const isValid = await comparePassword(password, user.passwordHash);
+    if (!isValid) {
+      return res.status(401).json({
+        code: ErrorCode.AUTH_INVALID_CREDENTIALS,
+        message: "Incorrect current password.",
+      });
+    }
+
+    const hashedPassword = await hashPassword(new_password);
+    await prisma.authCredential.update({
+      where: { id: user.id },
+      data: { passwordHash: hashedPassword },
+    });
+
+    // Send password change notification email as a courtesy
+    if (!username.startsWith("O") && !username.startsWith("o")) {
+      const email = `${user.username.toLowerCase()}@rguktong.ac.in`;
+      sendPasswordChangeNotification(email, user.username).catch(() => {});
+    }
+
+    return res.json({
+      success: true,
+      message: "Admin password updated successfully",
+    });
+  } catch (e) {
+    console.error("[AUTH] Admin Reset Password Error:", e);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to reset password. Please try again.",
+    });
+  }
+};
+
 export const signup = async (req: Request, res: Response) => {
   const { username, password, role, email } = req.body;
   const internalSecret = req.headers["x-internal-secret"];
