@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import {
   ScanLine,
@@ -20,6 +19,7 @@ import {
 } from "../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient } from "../../api/apiClient";
+import { useSmartPolling } from "../../hooks/useSmartPolling";
 
 export default function SecurityPortal() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -42,6 +42,11 @@ export default function SecurityPortal() {
       console.error("Failed to fetch security summary", error);
     }
   };
+
+  useSmartPolling(fetchSummary, {
+    activeInterval: 300000,
+    fallbackInterval: 30000,
+  });
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -154,8 +154,8 @@ export const useWebSocket = (
   };
 
   useEffect(() => {
-    // Connect on mount - DISABLED per user request
-    // connect();
+    // Connect on mount
+    connect();
   }, [connect]);
 
   return {

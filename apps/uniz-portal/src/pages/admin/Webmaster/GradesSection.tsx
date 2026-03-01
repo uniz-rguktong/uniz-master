@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   GraduationCap,
   Search,
@@ -41,6 +41,8 @@ export default function GradesSection() {
   );
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState({ total: 0, totalPages: 1 });
 
   // Form States
   const [bulkJson, setBulkJson] = useState("");
@@ -98,11 +100,11 @@ export default function GradesSection() {
     }
   };
 
-  const fetchBatchGrades = async () => {
+  const fetchBatchGrades = async (p = page) => {
     setLoading(true);
     const token = getAuthToken();
     const { branch, year, failedOnly, semesterId } = batchFilters;
-    const query = `branch=${branch}&year=${year}&failedOnly=${failedOnly}&semesterId=${semesterId}`;
+    const query = `branch=${branch}&year=${year}&failedOnly=${failedOnly}&semesterId=${semesterId}&page=${p}&limit=50`;
     const url = `${GET_BATCH_GRADES}?${query}`;
 
     console.log("GRADES_SYNC: Initiating sync with", url);
@@ -115,46 +117,21 @@ export default function GradesSection() {
         },
       });
       const rawData = await res.json();
-      console.log("GRADES_SYNC: Raw Response Body:", rawData);
 
-      // Robust deep search for any array that looks like grade data
-      const findGradesArray = (obj: any): any[] | null => {
-        if (Array.isArray(obj)) return obj;
-        if (!obj || typeof obj !== "object") return null;
-
-        // Priority keys
-        if (obj.grades && Array.isArray(obj.grades)) return obj.grades;
-        if (obj.data && Array.isArray(obj.data)) return obj.data;
-        if (obj.data && obj.data.grades && Array.isArray(obj.data.grades))
-          return obj.data.grades;
-
-        // Exhaustive recursive search
-        for (const key in obj) {
-          if (Object.prototype.hasOwnProperty.call(obj, key)) {
-            const result = findGradesArray(obj[key]);
-            if (result) return result;
-          }
-        }
-        return null;
-      };
-
-      const finalData = findGradesArray(rawData);
-
-      if (finalData) {
-        console.log(
-          "GRADES_SYNC: Successfully extracted array with",
-          finalData.length,
-          "items.",
+      if (rawData.success) {
+        setData(rawData.students || []);
+        setMeta(
+          rawData.meta || {
+            total: (rawData.students || []).length,
+            totalPages: 1,
+          },
         );
-        setData(finalData);
-        if (finalData.length === 0)
+        if (!rawData.students || rawData.students.length === 0)
           toast.info("No records found in this batch");
       } else {
-        console.error("GRADES_SYNC: No data array found in response structure");
+        console.error("GRADES_SYNC: Error response", rawData);
         setData([]);
-        toast.error(
-          "Format error: Server response did not contain a data list",
-        );
+        toast.error(rawData.message || "Failed to fetch batch grades");
       }
     } catch (error) {
       console.error("GRADES_SYNC: Critical error during fetch/parse:", error);
@@ -164,6 +141,12 @@ export default function GradesSection() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (subTab === "batch") {
+      fetchBatchGrades(page);
+    }
+  }, [page, subTab]);
 
   const handleManualAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -390,7 +373,7 @@ export default function GradesSection() {
                   </div>
                 </div>
                 <button
-                  onClick={fetchBatchGrades}
+                  onClick={() => fetchBatchGrades()}
                   disabled={loading}
                   className="bg-slate-900 text-white px-8 h-[58px] rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-lg flex items-center gap-2 whitespace-nowrap"
                 >
@@ -676,6 +659,71 @@ export default function GradesSection() {
                             </tbody>
                           </table>
                         </div>
+
+                        {/* Pagination */}
+                        {meta.totalPages > 1 && (
+                          <div className="flex justify-center items-center gap-4 pt-4 pb-12">
+                            <button
+                              disabled={page <= 1}
+                              onClick={() => setPage((p) => Math.max(1, p - 1))}
+                              className="p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-90"
+                            >
+                              <Plus
+                                size={20}
+                                className="rotate-[135deg] text-slate-400"
+                              />
+                            </button>
+
+                            <div className="flex items-center gap-2">
+                              {[...Array(meta.totalPages)].map((_, i) => {
+                                const p = i + 1;
+                                if (
+                                  p === 1 ||
+                                  p === meta.totalPages ||
+                                  (p >= page - 1 && p <= page + 1)
+                                ) {
+                                  return (
+                                    <button
+                                      key={p}
+                                      onClick={() => setPage(p)}
+                                      className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${
+                                        page === p
+                                          ? "bg-slate-900 text-white border-slate-900 shadow-lg"
+                                          : "bg-white text-slate-400 border-slate-100 hover:border-slate-300"
+                                      }`}
+                                    >
+                                      {p}
+                                    </button>
+                                  );
+                                }
+                                if (p === 2 || p === meta.totalPages - 1) {
+                                  return (
+                                    <span
+                                      key={p}
+                                      className="text-slate-300 font-bold"
+                                    >
+                                      ...
+                                    </span>
+                                  );
+                                }
+                                return null;
+                              })}
+                            </div>
+
+                            <button
+                              disabled={page >= meta.totalPages}
+                              onClick={() =>
+                                setPage((p) => Math.min(meta.totalPages, p + 1))
+                              }
+                              className="p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-90"
+                            >
+                              <Plus
+                                size={20}
+                                className="rotate-45 text-slate-400"
+                              />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );

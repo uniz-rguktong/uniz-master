@@ -118,13 +118,7 @@ export default function StudentProfilePage() {
     }
   });
 
-  // Polling
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (user?._id) refetch();
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [user]);
+  // Polling removed - now handled centrally in useStudentData hook
 
   // Init Data
   useEffect(() => {

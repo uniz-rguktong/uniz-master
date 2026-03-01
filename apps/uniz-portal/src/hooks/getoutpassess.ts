@@ -3,21 +3,25 @@ import { useSetRecoilState } from "recoil";
 import { outpasses } from "../store";
 import { GET_OUTPASS_REQUESTS } from "../api/endpoints";
 import { useWebSocket } from "./useWebSocket";
+import { useSmartPolling } from "./useSmartPolling";
 
-export function useGetOutpasses() {
+export function useGetOutpasses(page = 1, limit = 50) {
   const setOutpasses = useSetRecoilState(outpasses);
 
   const getDetails = useCallback(async () => {
     const token = localStorage.getItem("admin_token");
     if (token) {
       try {
-        const res = await fetch(GET_OUTPASS_REQUESTS, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${JSON.parse(token)}`,
+        const res = await fetch(
+          `${GET_OUTPASS_REQUESTS}?page=${page}&limit=${limit}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${JSON.parse(token)}`,
+            },
           },
-        });
+        );
         const data = await res.json();
         if (data.success) {
           setOutpasses(data.outpasses);
@@ -30,9 +34,12 @@ export function useGetOutpasses() {
 
   useEffect(() => {
     getDetails();
-    const interval = setInterval(() => getDetails(), 60000);
-    return () => clearInterval(interval);
   }, [getDetails]);
+
+  useSmartPolling(getDetails, {
+    activeInterval: 300000,
+    fallbackInterval: 30000,
+  });
 
   useWebSocket(undefined, (msg) => {
     if (msg.type === "REFRESH_REQUESTS") {
