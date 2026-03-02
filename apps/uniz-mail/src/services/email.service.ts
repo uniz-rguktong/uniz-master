@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import * as SES from "@aws-sdk/client-ses";
+import { SESClient, SendRawEmailCommand } from "@aws-sdk/client-ses";
 import {
   generateResultPdf,
   ResultData,
@@ -18,7 +18,7 @@ let sesTransporter: nodemailer.Transporter | null = null;
 
 if (useSES) {
   try {
-    const ses = new SES.SESClient({
+    const ses = new SESClient({
       region: process.env.AWS_REGION || "ap-south-1",
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
@@ -29,7 +29,7 @@ if (useSES) {
     sesTransporter = nodemailer.createTransport({
       SES: {
         ses,
-        aws: { SendRawEmailCommand: SES.SendRawEmailCommand },
+        aws: { SendRawEmailCommand },
       },
     } as any);
     console.log(
