@@ -27,9 +27,11 @@ if (useSES) {
     });
 
     sesTransporter = nodemailer.createTransport({
-      // @ts-ignore
-      SES: { ses, aws: SES },
-    });
+      SES: {
+        ses,
+        aws: { SendRawEmailCommand: SES.SendRawEmailCommand },
+      },
+    } as any);
     console.log(
       `[MAIL-SES] Production SES Transporter Initialized in ${process.env.AWS_REGION || "ap-south-1"}.`,
     );
