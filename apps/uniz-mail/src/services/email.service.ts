@@ -26,14 +26,24 @@ if (useSES) {
       },
     });
 
+    console.log(
+      `[MAIL-SES] Verifying SDK v3 Commands: SendEmail=${!!sesv2.SendEmailCommand}, SendRawEmail=${!!sesv2.SendRawEmailCommand}`,
+    );
+
     sesTransporter = nodemailer.createTransport({
-      SES: { ses: sesClient, aws: sesv2 },
+      SES: {
+        ses: sesClient,
+        aws: {
+          SendEmailCommand: sesv2.SendEmailCommand,
+          SendRawEmailCommand: sesv2.SendRawEmailCommand,
+        },
+      },
     } as any);
     console.log(
-      `[MAIL-SESv2] Production SES Transporter Initialized in ${process.env.AWS_REGION || "ap-south-1"}.`,
+      `[MAIL-SES] Production SES v3 Transporter Initialized in ${process.env.AWS_REGION || "ap-south-1"}.`,
     );
   } catch (error) {
-    console.error("[MAIL-SESv2] Failed to initialize SES Client:", error);
+    console.error("[MAIL-SES] Failed to initialize SES Client:", error);
   }
 }
 
