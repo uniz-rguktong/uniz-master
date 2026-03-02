@@ -28,7 +28,8 @@ export const InstallPWA = () => {
       console.log("Captured beforeinstallprompt event");
       e.preventDefault();
       setDeferredPrompt(e);
-      if (!isStandaloneMatch) {
+      const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
+      if (!isStandaloneMatch && !isDismissed) {
         setIsVisible(true);
       }
     };
@@ -72,13 +73,14 @@ export const InstallPWA = () => {
     }
   }, [auth.is_authnticated, isStandalone]);
 
-  // 6. Auto-dismiss after 8 seconds of visibility
+  // 6. Auto-dismiss after 5 seconds of visibility
   useEffect(() => {
     let timer: any;
     if (isVisible) {
       timer = setTimeout(() => {
         setIsVisible(false);
-      }, 8000);
+        localStorage.setItem("pwa_prompt_dismissed", "true");
+      }, 5000);
     }
     return () => clearTimeout(timer);
   }, [isVisible]);
