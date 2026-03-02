@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import * as sesv3 from "@aws-sdk/client-ses";
+import * as sesv2 from "@aws-sdk/client-sesv2";
 import {
   generateResultPdf,
   ResultData,
@@ -19,9 +19,9 @@ let sesTransporter: nodemailer.Transporter | null = null;
 if (useSES) {
   try {
     process.stdout.write(
-      "[MAIL-SES] Initializing SES SDK v3 Client (Nodemailer v8)...\n",
+      "[MAIL-SES] Initializing SESv2 Client (Nodemailer VPS Match)...\n",
     );
-    const sesClient = new sesv3.SESClient({
+    const sesClient = new sesv2.SESv2Client({
       region: process.env.AWS_REGION || "ap-south-1",
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
@@ -29,11 +29,18 @@ if (useSES) {
       },
     });
 
+    // Patterns found in node_modules/nodemailer/lib/ses-transport/index.js on server:
+    // It looks for this.ses.sesClient and this.ses.SendEmailCommand
     sesTransporter = nodemailer.createTransport({
-      SES: { ses: sesClient, aws: sesv3 as any },
+      SES: {
+        sesClient: sesClient,
+        SendEmailCommand: sesv2.SendEmailCommand,
+      },
     } as any);
 
-    process.stdout.write("[MAIL-SES] Transporter Initialized Successfully.\n");
+    process.stdout.write(
+      "[MAIL-SES] Transporter Initialized Successfully (VPS Match Pattern).\n",
+    );
   } catch (error) {
     process.stdout.write(`[MAIL-SES] Crash in initialization: ${error}\n`);
   }
