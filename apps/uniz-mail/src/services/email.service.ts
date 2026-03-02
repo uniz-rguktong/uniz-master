@@ -27,10 +27,19 @@ if (useSES) {
       },
     });
 
+    process.stdout.write(
+      `[MAIL-SES] sesv2 keys: ${Object.keys(sesv2)
+        .filter((k) => k.includes("Command"))
+        .slice(0, 3)}\n`,
+    );
+    process.stdout.write(
+      `[MAIL-SES] SendEmailCommand present: ${!!sesv2.SendEmailCommand}\n`,
+    );
+
     sesTransporter = nodemailer.createTransport({
       SES: {
         ses: sesClient,
-        aws: sesv2 as any,
+        aws: { SendEmailCommand: sesv2.SendEmailCommand } as any,
       },
     } as any);
 
