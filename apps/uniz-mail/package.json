@@ -11,7 +11,7 @@
     "redeploy": "bash redeploy.sh"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.1000.0",
+    "@aws-sdk/client-sesv2": "^3.1000.0",
     "axios": "^1.13.4",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
