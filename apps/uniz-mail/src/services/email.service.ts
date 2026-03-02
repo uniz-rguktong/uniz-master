@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import * as SES from "@aws-sdk/client-ses";
 import {
   generateResultPdf,
   ResultData,
@@ -9,6 +10,31 @@ import {
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 
+// --- AWS SES SETUP ---
+const useSES = !!(
+  process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
+);
+let sesTransporter: nodemailer.Transporter | null = null;
+
+if (useSES) {
+  const ses = new SES.SESClient({
+    region: process.env.AWS_REGION || "ap-south-1",
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    },
+  });
+
+  sesTransporter = nodemailer.createTransport({
+    // @ts-ignore
+    SES: { ses, aws: SES },
+  });
+  console.log(
+    `[MAIL] AWS SES Transporter Initialized in ${process.env.AWS_REGION || "ap-south-1"}.`,
+  );
+}
+
+// --- GMAIL POOL SETUP (Fallback/Legacy) ---
 const emailPoolStr = process.env.EMAIL_POOL || ""; // format: "u1:p1,u2:p2"
 const accounts = emailPoolStr
   ? emailPoolStr
@@ -22,8 +48,8 @@ const accounts = emailPoolStr
       ],
     ];
 
-let currentTransporterIndex = 0;
-const transporters = accounts.map(([user, pass]) =>
+let currentGmailIndex = 0;
+const gmailTransporters = accounts.map(([user, pass]) =>
   nodemailer.createTransport({
     service: "gmail",
     pool: true,
@@ -33,18 +59,20 @@ const transporters = accounts.map(([user, pass]) =>
 );
 
 const getTransporter = () => {
-  const transporter = transporters[currentTransporterIndex];
-  currentTransporterIndex = (currentTransporterIndex + 1) % transporters.length;
+  // Always use SES if configured
+  if (sesTransporter) return sesTransporter;
+
+  // Otherwise fallback to Gmail pool
+  const transporter = gmailTransporters[currentGmailIndex];
+  currentGmailIndex = (currentGmailIndex + 1) % gmailTransporters.length;
   return transporter;
 };
 
 console.log(
-  `[MAIL] Transporter Pool Initialized with ${transporters.length} accounts.`,
+  `[MAIL] Gmail Pool Initialized with ${gmailTransporters.length} accounts.`,
 );
 
-console.log(
-  `[MAIL] Transporter Ready: User=${emailUser || "noreplycampusschield@gmail.com"}`,
-);
+console.log(`[MAIL] Active Provider: ${useSES ? "AWS SES" : "Gmail Pool"}`);
 
 // --- RESEND SETUP ---
 // --- EMAIL DELIVERY SETUP ---
@@ -119,7 +147,7 @@ export const sendOtpEmail = async (
     `;
 
     const success = await sendEmailUnified({
-      from: '"UniZ Official" <webadmin@rguktong.ac.in>',
+      from: '"UniZ Official" <mail-service@rguktong.ac.in>',
       to: email,
       subject: "Verification Code: " + otp,
       html: emailTemplate("Password Verification", content),
