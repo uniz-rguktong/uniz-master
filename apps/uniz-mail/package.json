@@ -11,6 +11,7 @@
     "redeploy": "bash redeploy.sh"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.1000.0",
     "@types/nodemailer": "^7.0.9",
     "axios": "^1.13.4",
     "bcryptjs": "^2.4.3",
