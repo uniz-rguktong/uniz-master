@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import * as sesv2 from "@aws-sdk/client-sesv2";
+import * as sesv3 from "@aws-sdk/client-ses";
 import {
   generateResultPdf,
   ResultData,
@@ -18,7 +18,7 @@ let sesTransporter: nodemailer.Transporter | null = null;
 
 if (useSES) {
   try {
-    const sesClient = new sesv2.SESv2Client({
+    const sesClient = new sesv3.SESClient({
       region: process.env.AWS_REGION || "ap-south-1",
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
@@ -26,24 +26,15 @@ if (useSES) {
       },
     });
 
-    console.log(
-      `[MAIL-SES] Verifying SDK v3 Commands: SendEmail=${!!sesv2.SendEmailCommand}, SendRawEmail=${!!sesv2.SendRawEmailCommand}`,
-    );
-
     sesTransporter = nodemailer.createTransport({
-      SES: {
-        ses: sesClient,
-        aws: {
-          SendEmailCommand: sesv2.SendEmailCommand,
-          SendRawEmailCommand: sesv2.SendRawEmailCommand,
-        },
-      },
+      SES: { ses: sesClient, aws: sesv3 },
     } as any);
+
     console.log(
       `[MAIL-SES] Production SES v3 Transporter Initialized in ${process.env.AWS_REGION || "ap-south-1"}.`,
     );
   } catch (error) {
-    console.error("[MAIL-SES] Failed to initialize SES Client:", error);
+    console.error("[MAIL-SES] initialization failed:", error);
   }
 }
 
