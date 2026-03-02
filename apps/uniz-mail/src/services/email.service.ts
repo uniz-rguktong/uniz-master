@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import * as sesv2 from "@aws-sdk/client-sesv2";
+import * as sesv3 from "@aws-sdk/client-ses";
 import {
   generateResultPdf,
   ResultData,
@@ -18,8 +18,10 @@ let sesTransporter: nodemailer.Transporter | null = null;
 
 if (useSES) {
   try {
-    process.stdout.write("[MAIL-SES] Initializing SESv2 Client...\n");
-    const sesClient = new sesv2.SESv2Client({
+    process.stdout.write(
+      "[MAIL-SES] Initializing SES SDK v3 Client (Nodemailer v8)...\n",
+    );
+    const sesClient = new sesv3.SESClient({
       region: process.env.AWS_REGION || "ap-south-1",
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
@@ -27,20 +29,8 @@ if (useSES) {
       },
     });
 
-    process.stdout.write(
-      `[MAIL-SES] sesv2 keys: ${Object.keys(sesv2)
-        .filter((k) => k.includes("Command"))
-        .slice(0, 3)}\n`,
-    );
-    process.stdout.write(
-      `[MAIL-SES] SendEmailCommand present: ${!!sesv2.SendEmailCommand}\n`,
-    );
-
     sesTransporter = nodemailer.createTransport({
-      SES: {
-        ses: sesClient,
-        aws: { SendEmailCommand: sesv2.SendEmailCommand } as any,
-      },
+      SES: { ses: sesClient, aws: sesv3 as any },
     } as any);
 
     process.stdout.write("[MAIL-SES] Transporter Initialized Successfully.\n");
