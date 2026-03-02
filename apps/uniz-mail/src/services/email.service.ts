@@ -10,7 +10,7 @@ import {
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 
-// --- AWS SES SETUP ---
+// --- AWS SES SETUP (Refined 2026) ---
 const useSES = !!(
   process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
 );
