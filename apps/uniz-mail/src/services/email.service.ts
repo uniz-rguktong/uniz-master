@@ -18,9 +18,6 @@ let sesTransporter: nodemailer.Transporter | null = null;
 
 if (useSES) {
   try {
-    process.stdout.write(
-      "[MAIL-SES] Initializing SESv2 Client (Nodemailer VPS Match)...\n",
-    );
     const sesClient = new sesv2.SESv2Client({
       region: process.env.AWS_REGION || "ap-south-1",
       credentials: {
@@ -38,11 +35,11 @@ if (useSES) {
       },
     } as any);
 
-    process.stdout.write(
-      "[MAIL-SES] Transporter Initialized Successfully (VPS Match Pattern).\n",
+    console.log(
+      `[MAIL-SES] Production SES v3 Transporter Initialized in ${process.env.AWS_REGION || "ap-south-1"}.`,
     );
   } catch (error) {
-    process.stdout.write(`[MAIL-SES] Crash in initialization: ${error}\n`);
+    console.error(`[MAIL-SES] initialization failed: ${error}`);
   }
 }
 
