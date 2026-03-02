@@ -83,12 +83,18 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
         fi
 
         TAG="local-$(date +%s)"
-        docker build --no-cache -t $IMG:$TAG $BUILD_CONTEXT
-        echo "📦 Importing $IMG to K3s..."
-        docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
+        echo "🏗️  Rebuilding $IMG:$TAG for linux/amd64..."
+        docker build --no-cache --platform linux/amd64 -t $IMG:$TAG $BUILD_CONTEXT
+        
+        echo "📦 Exporting $IMG to tarball..."
+        docker save $IMG:$TAG -o /tmp/$IMG.tar
+        
+        echo "📥 Importing $IMG to K3s..."
+        k3s ctr -n k8s.io images import /tmp/$IMG.tar
+        rm /tmp/$IMG.tar
         
         if ! k3s crictl images | grep -q "$IMG.*$TAG"; then
-          echo "❌ Failed to import $IMG:$TAG to K3s. Retrying..."
+          echo "❌ Failed to verify $IMG:$TAG in K3s. Trying direct ctr import..."
           docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
         fi
         BUILT_IMAGES[$IMG]=$TAG
