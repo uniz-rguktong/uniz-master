@@ -26,8 +26,17 @@ if (useSES) {
       },
     });
 
+    // Manually satisfy Nodemailer's SDK v3 check
+    const aws = { SendRawEmailCommand: sesv3.SendRawEmailCommand };
+    console.log(
+      `[SES-DEBUG] Command present: ${typeof aws.SendRawEmailCommand}`,
+    );
+
     sesTransporter = nodemailer.createTransport({
-      SES: { ses: sesClient, aws: sesv3 },
+      SES: {
+        ses: sesClient,
+        aws: aws as any,
+      },
     } as any);
 
     console.log(
