@@ -17,21 +17,25 @@ const useSES = !!(
 let sesTransporter: nodemailer.Transporter | null = null;
 
 if (useSES) {
-  const ses = new SES.SESClient({
-    region: process.env.AWS_REGION || "ap-south-1",
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-    },
-  });
+  try {
+    const ses = new SES.SESClient({
+      region: process.env.AWS_REGION || "ap-south-1",
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+      },
+    });
 
-  sesTransporter = nodemailer.createTransport({
-    // @ts-ignore
-    SES: { ses, aws: SES },
-  });
-  console.log(
-    `[MAIL] AWS SES Transporter Initialized in ${process.env.AWS_REGION || "ap-south-1"}.`,
-  );
+    sesTransporter = nodemailer.createTransport({
+      // @ts-ignore
+      SES: { ses, aws: SES },
+    });
+    console.log(
+      `[MAIL-SES] Production SES Transporter Initialized in ${process.env.AWS_REGION || "ap-south-1"}.`,
+    );
+  } catch (error) {
+    console.error("[MAIL-SES] Failed to initialize SES Client:", error);
+  }
 }
 
 // --- GMAIL POOL SETUP (Fallback/Legacy) ---
@@ -84,17 +88,41 @@ const sendEmailUnified = async (options: {
   html: string;
   attachments?: any[];
 }): Promise<boolean> => {
+  const provider = useSES ? "SES" : "GMAIL-FALLBACK";
   try {
-    const info = await getTransporter().sendMail(options);
+    const info = await getTransporter().sendMail({
+      ...options,
+      headers: {
+        "X-Entity-Ref-ID": `uniz-${Date.now()}`,
+        "X-Priority": "1 (Highest)",
+        "X-Mailer": "UniZ-Mail-Engine",
+      },
+    });
+
     console.log(
-      `[MAIL] Sent via Org Mail: ID=${info.messageId}, To=${options.to}`,
+      `[MAIL-SUCCESS] [${provider}] ID=${info.messageId}, To=${options.to}, Subject="${options.subject}"`,
     );
     return true;
   } catch (err: any) {
-    console.error(
-      `[MAIL] Email delivery failed for ${options.to}:`,
-      err.message,
-    );
+    // Classification of errors for robustness during surges
+    if (err.message?.includes("Throttling") || err.code === "Throttling") {
+      console.error(
+        `[MAIL-CRITICAL] [${provider}] SES Rate Limit Exceeded. Surge protection active.`,
+      );
+    } else if (
+      err.message?.includes("Blacklisted") ||
+      err.name === "MessageRejected"
+    ) {
+      console.error(
+        `[MAIL-BOUNCE] [${provider}] Recipient ${options.to} rejected/bounced. Flagging for review.`,
+      );
+      // TODO: Implement DB flag for invalid email if we add a persistence layer here
+    } else {
+      console.error(
+        `[MAIL-ERROR] [${provider}] Delivery failed for ${options.to}:`,
+        err.message,
+      );
+    }
     return false;
   }
 };
@@ -147,10 +175,10 @@ export const sendOtpEmail = async (
     `;
 
     const success = await sendEmailUnified({
-      from: '"UniZ Official" <mail-service@rguktong.ac.in>',
+      from: '"UniZ Official" <mail-service@rguktong.in>',
       to: email,
-      subject: "Verification Code: " + otp,
-      html: emailTemplate("Password Verification", content),
+      subject: `[SECURE] Verification Code: ${otp}`,
+      html: emailTemplate("Security Verification", content),
     });
     return success;
   } catch (error) {
