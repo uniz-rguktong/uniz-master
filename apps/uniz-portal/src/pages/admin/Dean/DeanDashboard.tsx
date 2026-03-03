@@ -10,6 +10,7 @@ import {
   ChevronRight,
   LayoutDashboard,
   Activity,
+  ShieldCheck,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -20,6 +21,7 @@ import UploadSection from "../Webmaster/UploadSection";
 import GradesSection from "../Webmaster/GradesSection";
 import StudentBulkSection from "../Webmaster/StudentBulkSection";
 import SystemLogsSection from "../Webmaster/SystemLogsSection";
+import DeanReview from "./DeanReview";
 
 export default function DeanDashboard() {
   useIsAuth();
@@ -32,6 +34,7 @@ export default function DeanDashboard() {
     | "attendance"
     | "grades"
     | "grades_mgmt"
+    | "dean_review"
     | "system_logs"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -46,6 +49,7 @@ export default function DeanDashboard() {
     { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
     { id: "grades", label: "Grades Upload", icon: GraduationCap },
     { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
+    { id: "dean_review", label: "Course Review", icon: ShieldCheck },
     { id: "system_logs", label: "System & Logs", icon: Activity },
   ];
 
@@ -68,6 +72,8 @@ export default function DeanDashboard() {
         return <UploadSection type="grades" />;
       case "grades_mgmt":
         return <GradesSection />;
+      case "dean_review":
+        return <DeanReview />;
       case "system_logs":
         return <SystemLogsSection />;
       default:
@@ -97,7 +103,9 @@ export default function DeanDashboard() {
                   <div className="p-3 rounded-2xl bg-slate-50 text-slate-900 mb-4 group-hover:bg-slate-900 group-hover:text-white transition-colors inline-block">
                     <item.icon size={24} />
                   </div>
-                  <h3 className="font-semibold text-slate-900 text-lg mb-1">{item.label}</h3>
+                  <h3 className="font-semibold text-slate-900 text-lg mb-1">
+                    {item.label}
+                  </h3>
                   <p className="text-xs text-slate-500 uppercase tracking-widest font-medium">
                     Access Module
                   </p>
@@ -113,8 +121,9 @@ export default function DeanDashboard() {
     <div className="flex min-h-screen bg-slate-50 relative overflow-hidden">
       {/* Sidebar */}
       <aside
-        className={`bg-white border-r border-slate-200 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"
-          } hidden md:flex flex-col shadow-xl`}
+        className={`bg-white border-r border-slate-200 transition-all duration-300 z-50 ${
+          isSidebarOpen ? "w-72" : "w-20"
+        } hidden md:flex flex-col shadow-xl`}
       >
         <div className="p-6 flex items-center gap-3 border-b border-slate-50">
           <div className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center shrink-0 shadow-lg">
@@ -132,14 +141,17 @@ export default function DeanDashboard() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as any)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-200 ${activeTab === item.id
-                ? "bg-slate-900 text-white shadow-md shadow-slate-200"
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-200 ${
+                activeTab === item.id
+                  ? "bg-slate-900 text-white shadow-md shadow-slate-200"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
             >
               <item.icon size={20} className="shrink-0" />
               {isSidebarOpen && (
-                <span className={`text-sm tracking-normal transition-all ${activeTab === item.id ? "font-semibold" : "font-medium"}`}>
+                <span
+                  className={`text-sm tracking-normal transition-all ${activeTab === item.id ? "font-semibold" : "font-medium"}`}
+                >
                   {item.label}
                 </span>
               )}

@@ -8,14 +8,23 @@ import {
   Building2,
   Calendar,
   Trash2,
+  Edit2,
+  Search,
+  X,
 } from "lucide-react";
-import { GET_SUBJECTS, ADD_SUBJECT } from "../../../api/endpoints";
+import {
+  GET_SUBJECTS,
+  ADD_SUBJECT,
+  SUBJECT_BY_ID,
+} from "../../../api/endpoints";
 import { toast } from "react-toastify";
+import { apiClient } from "../../../api/apiClient";
 
 export default function SubjectManagement() {
   const [subjects, setSubjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   // Pagination & Filtering State
   const [page, setPage] = useState(1);
@@ -25,18 +34,18 @@ export default function SubjectManagement() {
   const [semester, setSemester] = useState("");
   const [meta, setMeta] = useState<any>({ total: 0, totalPages: 0 });
 
-  const [newSubject, setNewSubject] = useState({
+  const [formData, setFormData] = useState({
+    id: "",
     name: "",
     code: "",
     credits: 4,
     department: "CSE",
-    semester: "E1-SEM-1", // Changed to canonical format
+    semester: "E1-SEM-1",
   });
-  const [isAdding, setIsAdding] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchSubjects = async () => {
     setLoading(true);
-    const token = localStorage.getItem("admin_token");
     try {
       const query = new URLSearchParams({
         page: String(page),
@@ -46,12 +55,7 @@ export default function SubjectManagement() {
         semester: semester || "",
       });
 
-      const res = await fetch(`${GET_SUBJECTS}?${query.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
-        },
-      });
-      const data = await res.json();
+      const data = await apiClient<any>(`${GET_SUBJECTS}?${query.toString()}`);
       if (data.success) {
         setSubjects(data.subjects);
         setMeta(data.meta || { total: data.subjects.length, totalPages: 1 });
@@ -65,9 +69,8 @@ export default function SubjectManagement() {
 
   useEffect(() => {
     fetchSubjects();
-  }, [page, department, semester]); // Fetch on page/filter change
+  }, [page, department, semester]);
 
-  // Debounced search
   useEffect(() => {
     const timer = setTimeout(() => {
       if (page !== 1) setPage(1);
@@ -76,39 +79,72 @@ export default function SubjectManagement() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const handleAddSubject = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsAdding(true);
-    const token = localStorage.getItem("admin_token");
+    setIsSubmitting(true);
     try {
-      const res = await fetch(ADD_SUBJECT, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newSubject),
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success("Subject added successfully");
-        setShowAddModal(false);
-        fetchSubjects();
-        setNewSubject({
-          name: "",
-          code: "",
-          credits: 4,
-          department: "CSE",
-          semester: "SEM-1",
+      if (editMode) {
+        await apiClient(SUBJECT_BY_ID(formData.id), {
+          method: "PUT",
+          body: JSON.stringify(formData),
         });
+        toast.success("Subject updated successfully");
       } else {
-        toast.error(data.msg || "Failed to add subject");
+        await apiClient(ADD_SUBJECT, {
+          method: "POST",
+          body: JSON.stringify(formData),
+        });
+        toast.success("Subject created successfully");
       }
-    } catch (error) {
-      toast.error("Error adding subject");
+      setShowModal(false);
+      fetchSubjects();
+    } catch (error: any) {
+      toast.error(error.message || "Operation failed");
     } finally {
-      setIsAdding(false);
+      setIsSubmitting(false);
     }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (
+      !window.confirm(
+        "Delete this subject? This might affect existing registrations.",
+      )
+    )
+      return;
+    try {
+      await apiClient(SUBJECT_BY_ID(id), { method: "DELETE" });
+      toast.success("Subject deleted");
+      fetchSubjects();
+    } catch (error: any) {
+      toast.error(error.message || "Delete failed");
+    }
+  };
+
+  const openEdit = (sub: any) => {
+    setFormData({
+      id: sub.id,
+      name: sub.name,
+      code: sub.code,
+      credits: sub.credits,
+      department: sub.department,
+      semester: sub.semester,
+    });
+    setEditMode(true);
+    setShowModal(true);
+  };
+
+  const openAdd = () => {
+    setFormData({
+      id: "",
+      name: "",
+      code: "",
+      credits: 4,
+      department: "CSE",
+      semester: "E1-SEM-1",
+    });
+    setEditMode(false);
+    setShowModal(true);
   };
 
   return (
@@ -124,8 +160,8 @@ export default function SubjectManagement() {
           </p>
         </div>
         <button
-          onClick={() => setShowAddModal(true)}
-          className="uniz-primary-btn px-8 gap-2.5"
+          onClick={openAdd}
+          className="bg-blue-600 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-2.5 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 active:scale-95"
         >
           <Plus size={16} /> New Subject
         </button>
@@ -141,8 +177,8 @@ export default function SubjectManagement() {
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
           />
-          <Plus
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 rotate-45"
+          <Search
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
             size={16}
           />
         </div>
@@ -160,6 +196,7 @@ export default function SubjectManagement() {
           <option value="CIVIL">CIVIL</option>
           <option value="CHEM">CHEMICAL</option>
           <option value="MME">MME</option>
+          <option value="MATHEMATICS">MATHEMATICS</option>
         </select>
 
         <select
@@ -184,20 +221,36 @@ export default function SubjectManagement() {
       ) : subjects.length > 0 ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {subjects.map((sub, idx) => (
+            {subjects.map((sub) => (
               <div
-                key={idx}
+                key={sub.id}
                 className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all group overflow-hidden relative"
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-100">
-                    <BookText size={20} />
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-100">
+                      <BookText size={20} />
+                    </div>
+                    <div className="px-3 py-1 bg-blue-50/50 rounded-full text-[10px] font-black uppercase tracking-widest text-blue-600 border border-blue-100/50">
+                      {sub.code}
+                    </div>
                   </div>
-                  <div className="px-3 py-1 bg-blue-50/50 rounded-full text-[10px] font-black uppercase tracking-widest text-blue-600 border border-blue-100/50">
-                    {sub.code}
+                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all scale-95 group-hover:scale-100">
+                    <button
+                      onClick={() => openEdit(sub)}
+                      className="p-2 hover:bg-blue-50 rounded-lg text-slate-400 hover:text-blue-600 transition-colors"
+                    >
+                      <Edit2 size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(sub.id)}
+                      className="p-2 hover:bg-red-50 rounded-lg text-slate-400 hover:text-red-600 transition-colors"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </div>
-                <h3 className="text-lg font-black text-slate-900 tracking-tight mb-1 leading-tight">
+                <h3 className="text-lg font-black text-slate-900 tracking-tight mb-1 leading-tight min-h-[3rem]">
                   {sub.name}
                 </h3>
 
@@ -242,7 +295,7 @@ export default function SubjectManagement() {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="uniz-primary-btn w-12 h-12 p-0 bg-white text-slate-900 border border-slate-200 shadow-sm"
+                className="w-12 h-12 flex items-center justify-center bg-white text-slate-900 border border-slate-200 shadow-sm rounded-2xl hover:bg-slate-50 transition-all disabled:opacity-50"
               >
                 <Plus size={20} className="rotate-[135deg]" />
               </button>
@@ -250,7 +303,6 @@ export default function SubjectManagement() {
               <div className="flex items-center gap-2">
                 {[...Array(meta.totalPages)].map((_, i) => {
                   const p = i + 1;
-                  // Only show current, 2 before, 2 after
                   if (
                     p === 1 ||
                     p === meta.totalPages ||
@@ -260,10 +312,11 @@ export default function SubjectManagement() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${page === p
-                          ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100"
-                          : "bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:text-blue-600"
-                          }`}
+                        className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${
+                          page === p
+                            ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100"
+                            : "bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:text-blue-600"
+                        }`}
                       >
                         {p}
                       </button>
@@ -283,7 +336,7 @@ export default function SubjectManagement() {
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                className="uniz-primary-btn w-12 h-12 p-0 bg-white text-slate-900 border border-slate-200 shadow-sm"
+                className="w-12 h-12 flex items-center justify-center bg-white text-slate-900 border border-slate-200 shadow-sm rounded-2xl hover:bg-slate-50 transition-all disabled:opacity-50"
               >
                 <Plus size={20} className="rotate-45" />
               </button>
@@ -309,20 +362,26 @@ export default function SubjectManagement() {
         </div>
       )}
 
-      {showAddModal && (
+      {/* Modal */}
+      {showModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl relative animate-in zoom-in-95 duration-300">
             <button
-              onClick={() => setShowAddModal(false)}
-              className="absolute top-6 right-6 p-2 hover:bg-slate-50 rounded-full transition-colors"
+              onClick={() => setShowModal(false)}
+              className="absolute top-8 right-8 p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400"
             >
-              <Trash2 size={20} className="text-slate-400" />
+              <X size={24} />
             </button>
-            <h3 className="text-2xl font-black tracking-tight text-slate-900 mb-6">
-              Create New Subject
+            <h3 className="text-2xl font-black tracking-tight text-slate-900 mb-2">
+              {editMode ? "Update Subject" : "Create New Subject"}
             </h3>
+            <p className="text-slate-400 font-medium text-sm mb-8">
+              {editMode
+                ? "Modify subject parameters"
+                : "Fill details to add to course repository"}
+            </p>
 
-            <form onSubmit={handleAddSubject} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">
                   Subject Name
@@ -331,11 +390,11 @@ export default function SubjectManagement() {
                   <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                   <input
                     required
-                    value={newSubject.name}
+                    value={formData.name}
                     onChange={(e) =>
-                      setNewSubject({ ...newSubject, name: e.target.value })
+                      setFormData({ ...formData, name: e.target.value })
                     }
-                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                     placeholder="e.g. Artificial Intelligence"
                   />
                 </div>
@@ -348,14 +407,14 @@ export default function SubjectManagement() {
                   </label>
                   <input
                     required
-                    value={newSubject.code}
+                    value={formData.code}
                     onChange={(e) =>
-                      setNewSubject({
-                        ...newSubject,
+                      setFormData({
+                        ...formData,
                         code: e.target.value.toUpperCase(),
                       })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                     placeholder="CSE402"
                   />
                 </div>
@@ -368,14 +427,14 @@ export default function SubjectManagement() {
                     type="number"
                     min="1"
                     max="10"
-                    value={newSubject.credits}
+                    value={formData.credits}
                     onChange={(e) =>
-                      setNewSubject({
-                        ...newSubject,
+                      setFormData({
+                        ...formData,
                         credits: parseInt(e.target.value),
                       })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                   />
                 </div>
               </div>
@@ -386,20 +445,23 @@ export default function SubjectManagement() {
                     Department
                   </label>
                   <select
-                    value={newSubject.department}
+                    value={formData.department}
                     onChange={(e) =>
-                      setNewSubject({
-                        ...newSubject,
+                      setFormData({
+                        ...formData,
                         department: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold cursor-pointer"
                   >
                     <option>CSE</option>
                     <option>ECE</option>
                     <option>EEE</option>
                     <option>MECH</option>
                     <option>CIVIL</option>
+                    <option>CHEM</option>
+                    <option>MME</option>
+                    <option>MATHEMATICS</option>
                   </select>
                 </div>
                 <div className="space-y-2">
@@ -407,11 +469,11 @@ export default function SubjectManagement() {
                     Semester
                   </label>
                   <select
-                    value={newSubject.semester}
+                    value={formData.semester}
                     onChange={(e) =>
-                      setNewSubject({ ...newSubject, semester: e.target.value })
+                      setFormData({ ...formData, semester: e.target.value })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold cursor-pointer"
                   >
                     {["E1", "E2", "E3", "E4"].map((y) => (
                       <React.Fragment key={y}>
@@ -426,22 +488,23 @@ export default function SubjectManagement() {
               <div className="pt-4 flex gap-4">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="flex-1 uniz-primary-btn bg-white text-slate-900 border border-slate-200 shadow-sm"
+                  onClick={() => setShowModal(false)}
+                  className="flex-1 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs border border-slate-200 text-slate-400 hover:bg-slate-50 transition-all active:scale-95"
                 >
                   Cancel
                 </button>
                 <button
-                  disabled={isAdding}
+                  disabled={isSubmitting}
                   type="submit"
-                  className="flex-1 uniz-primary-btn"
+                  className="flex-[2] bg-blue-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
                 >
-                  {isAdding ? (
+                  {isSubmitting ? (
                     <Loader2 className="animate-spin w-4 h-4" />
+                  ) : editMode ? (
+                    "Update Subject"
                   ) : (
-                    <Plus size={16} />
+                    "Create Subject"
                   )}
-                  Create Subject
                 </button>
               </div>
             </form>
