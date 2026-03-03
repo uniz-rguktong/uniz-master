@@ -157,3 +157,22 @@ export const ACADEMIC_FACULTY_BY_ID = (id: string) =>
   `${BASE_URL}/academics/faculty/${id}`;
 export const ACADEMIC_FACULTY_ROLE = (id: string) =>
   `${BASE_URL}/academics/faculty/${id}/role`;
+
+// Subject Management (v2)
+export const SUBJECT_BY_ID = (id: string) =>
+  `${BASE_URL}/academics/subjects/${id}`;
+
+// Registration Workflow
+export const SEMESTERS = `${BASE_URL}/academics/semester`;
+export const INIT_SEMESTER = `${BASE_URL}/academics/semester/init`;
+export const UPDATE_SEMESTER_STATUS = (id: string) =>
+  `${BASE_URL}/academics/semester/status/${id}`;
+
+export const DEAN_REVIEW = (branch: string) =>
+  `${BASE_URL}/academics/dean/review/${branch}`;
+export const APPROVE_ALLOCATION = `${BASE_URL}/academics/dean/approve`;
+
+export const GET_AVAILABLE_SUBJECTS = `${BASE_URL}/academics/student/available`;
+export const REGISTER_SUBJECTS = `${BASE_URL}/academics/student/register`;
+export const GET_CURRENT_SUBJECTS = (studentId: string) =>
+  `${BASE_URL}/academics/student/current/${studentId}`;

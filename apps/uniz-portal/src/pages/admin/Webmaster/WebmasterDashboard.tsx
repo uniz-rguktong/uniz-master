@@ -32,6 +32,7 @@ import PushNotificationSection from "./PushNotificationSection";
 import GradesSection from "./GradesSection";
 import StudentBulkSection from "./StudentBulkSection";
 import SystemLogsSection from "./SystemLogsSection";
+import SemesterRegistration from "./SemesterRegistration";
 
 export default function WebmasterDashboard() {
   useIsAuth();
@@ -50,6 +51,7 @@ export default function WebmasterDashboard() {
     | "push_alerts"
     | "grades_mgmt"
     | "faculty_mgmt"
+    | "semester_mgmt"
     | "system_logs"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -72,6 +74,7 @@ export default function WebmasterDashboard() {
     // { id: "tenders", label: "Tenders", icon: Briefcase },
     { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
     { id: "faculty_mgmt", label: "Staff Management", icon: Users },
+    { id: "semester_mgmt", label: "Semester Rollout", icon: CalendarCheck },
     { id: "system_logs", label: "System & Logs", icon: Activity },
   ];
 
@@ -107,6 +110,8 @@ export default function WebmasterDashboard() {
         return <GradesSection />;
       case "faculty_mgmt":
         return <FacultyManagement />;
+      case "semester_mgmt":
+        return <SemesterRegistration />;
       case "system_logs":
         return <SystemLogsSection />;
       default:
@@ -136,7 +141,9 @@ export default function WebmasterDashboard() {
                   <div className="p-3 rounded-2xl bg-blue-50 text-blue-600 mb-4 inline-block">
                     <item.icon size={24} />
                   </div>
-                  <h3 className="font-semibold text-slate-900 text-lg mb-1">{item.label}</h3>
+                  <h3 className="font-semibold text-slate-900 text-lg mb-1">
+                    {item.label}
+                  </h3>
                   <p className="text-xs text-slate-400 uppercase tracking-widest font-medium">
                     Access Module
                   </p>
@@ -187,9 +194,10 @@ export default function WebmasterDashboard() {
                 onClick={() => setActiveTab(item.id as any)}
                 className={`
                   w-full flex items-center space-x-3 px-4 py-3 rounded-full text-left transition-all duration-200 group relative
-                  ${isActive
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  ${
+                    isActive
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }
                 `}
               >
@@ -197,9 +205,10 @@ export default function WebmasterDashboard() {
                   <Icon
                     size={21}
                     className={`shrink-0 transition-transform group-hover:scale-110 duration-200
-                      ${isActive
-                        ? "text-blue-600"
-                        : "text-slate-400 group-hover:text-slate-700"
+                      ${
+                        isActive
+                          ? "text-blue-600"
+                          : "text-slate-400 group-hover:text-slate-700"
                       }`}
                   />
                 </div>
@@ -211,7 +220,6 @@ export default function WebmasterDashboard() {
                     {item.label}
                   </span>
                 )}
-
               </button>
             );
           })}
@@ -241,9 +249,14 @@ export default function WebmasterDashboard() {
             className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-full text-left transition-all duration-200 group text-red-500 hover:bg-red-50"
           >
             <div className="flex items-center justify-center min-w-[24px]">
-              <LogOut size={20} className="shrink-0 transition-transform group-hover:rotate-12" />
+              <LogOut
+                size={20}
+                className="shrink-0 transition-transform group-hover:rotate-12"
+              />
             </div>
-            {isSidebarOpen && <span className="text-[15px] font-semibold">Logout</span>}
+            {isSidebarOpen && (
+              <span className="text-[15px] font-semibold">Logout</span>
+            )}
           </button>
         </div>
       </aside>

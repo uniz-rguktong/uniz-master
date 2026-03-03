@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { apiClient } from "../../../api/apiClient";
+import CourseRegistration from "./CourseRegistration";
 
 interface Subject {
   id: string;
@@ -30,20 +31,22 @@ export default function MySubjects({ studentId }: { studentId: string }) {
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchMySubjects = async () => {
+    setLoading(true);
+    try {
+      const res = await apiClient<{
+        semester: Semester;
+        subjects: Subject[];
+      }>(`/academics/student/current/${studentId}`);
+      setData(res);
+    } catch (error) {
+      // Quietly fail if no semester is active
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchMySubjects = async () => {
-      try {
-        const res = await apiClient<{
-          semester: Semester;
-          subjects: Subject[];
-        }>(`/academics/student/current/${studentId}`);
-        setData(res);
-      } catch (error) {
-        // Quietly fail if no semester is active
-      } finally {
-        setLoading(false);
-      }
-    };
     if (studentId) fetchMySubjects();
   }, [studentId]);
 
@@ -56,22 +59,7 @@ export default function MySubjects({ studentId }: { studentId: string }) {
   }
 
   if (!data || data.subjects.length === 0) {
-    return (
-      <div className="bg-slate-50/50 rounded-3xl p-12 border border-dashed border-slate-200 text-center flex flex-col items-center gap-4">
-        <div className="p-4 bg-white rounded-2xl shadow-sm">
-          <BookOpen className="text-slate-300" size={40} />
-        </div>
-        <div>
-          <h3 className="text-lg font-black text-slate-900 tracking-tight">
-            No Active Registrations
-          </h3>
-          <p className="text-slate-400 font-medium text-sm max-w-xs mx-auto">
-            You are not currently registered for any subjects in the active
-            semester.
-          </p>
-        </div>
-      </div>
-    );
+    return <CourseRegistration onComplete={fetchMySubjects} />;
   }
 
   return (
