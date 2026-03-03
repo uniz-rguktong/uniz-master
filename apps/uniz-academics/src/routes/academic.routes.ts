@@ -19,6 +19,24 @@ import {
   downloadGrades,
   downloadAttendance,
 } from "../controllers/academic.controller";
+import {
+  initSemester,
+  getSemesters,
+  updateSemesterStatus,
+  getDeanAllocations,
+  approveBranchAllocation,
+  getAvailableSubjects,
+  registerSubjects,
+  getCurrentSubjects,
+} from "../controllers/registration.controller";
+import {
+  getFaculties,
+  getFacultyProfile,
+  createFaculty,
+  updateFaculty,
+  deleteFaculty,
+  updateFacultyRole,
+} from "../controllers/faculty.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import multer from "multer";
 
@@ -67,5 +85,25 @@ router.post("/attendance/publish-email", publishAttendance); // Deprecated in fa
 // Subjects
 router.get("/subjects", getSubjects);
 router.post("/subjects/add", addSubject);
+
+// Registration Workflow
+router.get("/semester", getSemesters);
+router.post("/semester/init", initSemester);
+router.patch("/semester/status/:id", updateSemesterStatus);
+
+router.get("/dean/review/:branch", getDeanAllocations);
+router.post("/dean/approve", approveBranchAllocation);
+
+router.get("/student/available", getAvailableSubjects);
+router.post("/student/register", registerSubjects);
+router.get("/student/current/:studentId", getCurrentSubjects);
+
+// Faculty Management
+router.get("/faculty", getFaculties);
+router.get("/faculty/:id", getFacultyProfile);
+router.post("/faculty", createFaculty);
+router.put("/faculty/:id", updateFaculty);
+router.delete("/faculty/:id", deleteFaculty);
+router.patch("/faculty/:id/role", updateFacultyRole);
 
 export default router;
