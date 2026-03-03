@@ -68,8 +68,16 @@ export default function SubjectManagement() {
   };
 
   useEffect(() => {
+    if (page !== 1) {
+      setPage(1);
+    } else {
+      fetchSubjects();
+    }
+  }, [department, semester]);
+
+  useEffect(() => {
     fetchSubjects();
-  }, [page, department, semester]);
+  }, [page]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
