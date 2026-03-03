@@ -242,12 +242,13 @@ export default function Resetpassword() {
                           ></div>
                         </div>
                         <span
-                          className={`text-xs font-bold uppercase tracking-wider w-20 text-right ${passwordStrength.score === 3
-                            ? "text-blue-600"
-                            : passwordStrength.score === 2
-                              ? "text-slate-600"
-                              : "text-slate-400"
-                            }`}
+                          className={`text-xs font-bold uppercase tracking-wider w-20 text-right ${
+                            passwordStrength.score === 3
+                              ? "text-blue-600"
+                              : passwordStrength.score === 2
+                                ? "text-slate-600"
+                                : "text-slate-400"
+                          }`}
                         >
                           {passwordStrength.label}
                         </span>

@@ -1,4 +1,3 @@
-
 import { AlertCircle } from "lucide-react";
 
 interface ConfirmModalProps {
@@ -32,7 +31,9 @@ export function ConfirmModal({
               <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                 Confirm Action
               </h3>
-              <p className="text-[14px] font-medium text-slate-500 mt-1.5 leading-relaxed">{message}</p>
+              <p className="text-[14px] font-medium text-slate-500 mt-1.5 leading-relaxed">
+                {message}
+              </p>
             </div>
           </div>
 

@@ -196,10 +196,11 @@ export default function GradeHub() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-medium transition-colors ${selectedYear === year
-                        ? "bg-blue-600 text-white"
-                        : "hover:bg-slate-50 text-slate-700"
-                        }`}
+                      className={`p-3 cursor-pointer text-sm font-medium transition-colors ${
+                        selectedYear === year
+                          ? "bg-blue-600 text-white"
+                          : "hover:bg-slate-50 text-slate-700"
+                      }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setShowDropdown(false);
@@ -367,10 +368,11 @@ export default function GradeHub() {
                                 </td>
                                 <td className="px-2 py-2.5 text-center">
                                   <span
-                                    className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${item.grade === "Ex"
-                                      ? "bg-blue-600 text-white"
-                                      : "bg-slate-100 text-slate-800"
-                                      }`}
+                                    className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
+                                      item.grade === "Ex"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-slate-100 text-slate-800"
+                                    }`}
                                   >
                                     {item.grade}
                                   </span>
@@ -397,10 +399,11 @@ export default function GradeHub() {
                                   </td>
                                   <td className="px-2 py-2.5 text-center">
                                     <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${grade === "Ex"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-slate-100 text-slate-800"
-                                        }`}
+                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
+                                        grade === "Ex"
+                                          ? "bg-blue-600 text-white"
+                                          : "bg-slate-100 text-slate-800"
+                                      }`}
                                     >
                                       {grade}
                                     </span>
