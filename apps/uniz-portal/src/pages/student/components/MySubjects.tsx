@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   BookOpen,
   GraduationCap,
   CheckCircle2,
-  Clock,
   MapPin,
   User,
   Info,
@@ -11,7 +10,6 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { apiClient } from "../../../api/apiClient";
-import { toast } from "react-toastify";
 
 interface Subject {
   id: string;

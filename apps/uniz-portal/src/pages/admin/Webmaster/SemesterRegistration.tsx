@@ -13,17 +13,11 @@ import {
   ChevronRight,
   ShieldCheck,
   AlertCircle,
-  ArrowRight,
-  Download,
-  FileSpreadsheet,
 } from "lucide-react";
 import {
   SEMESTERS,
   INIT_SEMESTER,
   UPDATE_SEMESTER_STATUS,
-  ACADEMIC_FACULTY,
-  GET_SUBJECTS,
-  EXPORT_ACADEMIC_DATA,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../api/apiClient";
@@ -32,7 +26,6 @@ export default function SemesterRegistration() {
   const [semesters, setSemesters] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showInitModal, setShowInitModal] = useState(false);
-  const [exporting, setExporting] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // For Init Modal
@@ -44,8 +37,6 @@ export default function SemesterRegistration() {
     "MECH",
     "EEE",
   ]);
-  const [facultyData, setFacultyData] = useState<any[]>([]);
-  const [subjectsData, setSubjectsData] = useState<any[]>([]);
 
   const fetchSemesters = async () => {
     setLoading(true);
@@ -59,25 +50,11 @@ export default function SemesterRegistration() {
     }
   };
 
-  const fetchDependencies = async () => {
-    try {
-      const [fac, sub] = await Promise.all([
-        apiClient<any[]>(ACADEMIC_FACULTY),
-        apiClient<any>(`${GET_SUBJECTS}?limit=1000`),
-      ]);
-      setFacultyData(fac || []);
-      setSubjectsData(sub.subjects || []);
-    } catch (error) {
-      console.error("Failed to fetch dependencies", error);
-    }
-  };
-
   useEffect(() => {
     fetchSemesters();
-    fetchDependencies();
   }, []);
 
-  const updateStatus = async (id: string, status: string) => {
+  const handleStatusUpdate = async (id: string, status: string) => {
     try {
       await apiClient(UPDATE_SEMESTER_STATUS(id), {
         method: "PATCH",
@@ -130,33 +107,6 @@ export default function SemesterRegistration() {
         return "bg-purple-50 text-purple-600 border-purple-100";
       default:
         return "bg-slate-100 text-slate-600";
-    }
-  };
-
-  const handleExport = async (semId: string, semName: string) => {
-    setExporting(semId);
-    try {
-      const res = await fetch(
-        `${EXPORT_ACADEMIC_DATA}?type=registrations&semesterId=${semId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
-      );
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Registrations_${semName.replace(/\s+/g, "_")}.xlsx`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      toast.success("Registrations exported");
-    } catch (error) {
-      toast.error("Export failed");
-    } finally {
-      setExporting(null);
     }
   };
 
