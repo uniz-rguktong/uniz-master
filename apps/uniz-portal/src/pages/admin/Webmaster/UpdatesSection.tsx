@@ -156,14 +156,14 @@ export default function UpdatesSection() {
           <button
             onClick={fetchUpdates}
             disabled={loading}
-            className="p-4 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-900 hover:border-slate-300 transition-all shadow-sm"
+            className="p-2 text-slate-400 hover:text-slate-900 transition-all"
             title="Force Refresh"
           >
-            <Loader2 size={24} className={loading ? "animate-spin" : ""} />
+            <Loader2 size={20} className={loading ? "animate-spin" : ""} />
           </button>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-3 bg-slate-900 text-white px-8 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-xl active:scale-95"
+            className="uniz-primary-btn px-8 gap-2.5"
           >
             <Plus size={20} />
             New Update
@@ -173,7 +173,7 @@ export default function UpdatesSection() {
 
       {/* Updates Vertical List */}
       {loading ? (
-        <div className="p-32 flex flex-col items-center justify-center space-y-4 bg-slate-50 rounded-[3rem] border border-dashed border-slate-200">
+        <div className="p-32 flex flex-col items-center justify-center space-y-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
           <Loader2 className="animate-spin w-12 h-12 text-slate-300" />
           <p className="font-bold text-slate-400 uppercase tracking-widest text-[10px]">
             Syncing broadcasts...
@@ -184,26 +184,26 @@ export default function UpdatesSection() {
           {updates.map((update, idx) => (
             <div
               key={update._id || update.id || idx}
-              className="bg-white rounded-[2rem] border border-slate-100 p-8 flex flex-col md:flex-row items-center justify-between gap-8 hover:shadow-2xl hover:shadow-slate-200 transition-all group"
+              className="bg-white rounded-xl border border-slate-100 p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:shadow-xl hover:shadow-slate-100 transition-all group"
             >
-              <div className="flex items-center gap-8 flex-1">
+              <div className="flex items-center gap-6 flex-1">
                 <div
-                  className={`p-5 rounded-2xl shrink-0 ${update.isVisible ? "bg-amber-50 text-amber-600" : "bg-slate-50 text-slate-400"}`}
+                  className={`shrink-0 ${update.isVisible ? "text-blue-600" : "text-slate-300"}`}
                 >
-                  <Bell size={32} />
+                  <Bell size={24} />
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-4">
-                    <h3 className="font-black text-slate-900 text-xl tracking-tight uppercase">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-3">
+                    <h3 className="font-black text-slate-900 text-lg tracking-tight uppercase">
                       {update.title}
                     </h3>
                     <span
-                      className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${update.isVisible ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-slate-500/10 text-slate-500 border-slate-500/20"}`}
+                      className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${update.isVisible ? "bg-emerald-500/10 text-emerald-500" : "bg-slate-500/10 text-slate-500"}`}
                     >
                       {update.isVisible ? "Live" : "Inactive"}
                     </span>
                   </div>
-                  <p className="text-slate-500 font-medium text-sm leading-relaxed max-w-3xl">
+                  <p className="text-slate-500 font-medium text-xs leading-relaxed max-w-2xl">
                     {update.description ||
                       update.content ||
                       "No description provided for this campus update."}
@@ -211,12 +211,12 @@ export default function UpdatesSection() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-8 shrink-0 pl-8 border-l border-slate-50 ml-auto">
+              <div className="flex items-center gap-6 shrink-0 pl-6 border-l border-slate-50 ml-auto">
                 <div className="flex flex-col items-end">
-                  <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                  <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
                     Distributed
                   </p>
-                  <p className="text-xs font-bold text-slate-900">
+                  <p className="text-[10px] font-bold text-slate-900">
                     {update.createdAt
                       ? new Date(update.createdAt).toLocaleDateString()
                       : "Today"}
@@ -228,7 +228,7 @@ export default function UpdatesSection() {
                     href={update.link}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-4 bg-slate-900 text-white rounded-2xl hover:bg-black transition-all shadow-lg active:scale-90"
+                    className="p-2 text-blue-600 hover:text-blue-700 transition-all active:scale-90"
                     title="External Resource"
                   >
                     <ExternalLink size={20} />
@@ -239,8 +239,8 @@ export default function UpdatesSection() {
           ))}
         </div>
       ) : (
-        <div className="p-32 flex flex-col items-center justify-center text-center space-y-6 bg-white rounded-[3rem] border border-slate-50">
-          <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center text-slate-200">
+        <div className="p-32 flex flex-col items-center justify-center text-center space-y-6 bg-white rounded-3xl border border-slate-50">
+          <div className="w-24 h-24 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-200">
             <Bell size={48} strokeWidth={1} />
           </div>
           <div>
@@ -254,7 +254,7 @@ export default function UpdatesSection() {
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all"
+            className="uniz-primary-btn px-8 gap-2.5"
           >
             Create First Update
           </button>
@@ -268,8 +268,8 @@ export default function UpdatesSection() {
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
             onClick={() => setShowAddModal(false)}
           />
-          <div className="bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-            <div className="bg-slate-900 p-8 text-white relative flex items-center gap-4">
+          <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
+            <div className="bg-blue-600 p-8 text-white relative flex items-center gap-4">
               <div className="p-3 bg-white/10 rounded-2xl">
                 <Bell size={24} />
               </div>
@@ -277,7 +277,7 @@ export default function UpdatesSection() {
                 <h3 className="text-2xl font-black tracking-tight">
                   New Broadcast
                 </h3>
-                <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">
+                <p className="text-white/60 text-xs font-bold uppercase tracking-widest mt-1">
                   Publish News to Student Dashboard
                 </p>
               </div>
@@ -304,7 +304,7 @@ export default function UpdatesSection() {
                       setNewUpdate({ ...newUpdate, title: e.target.value })
                     }
                     placeholder="e.g. Semester Registration"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
                   />
                 </div>
 
@@ -337,7 +337,7 @@ export default function UpdatesSection() {
                       setNewUpdate({ ...newUpdate, link: e.target.value })
                     }
                     placeholder="https://..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
                   />
                 </div>
 
@@ -356,7 +356,7 @@ export default function UpdatesSection() {
               <button
                 disabled={!!actionLoading}
                 type="submit"
-                className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-xl shadow-slate-900/10 flex items-center justify-center gap-3 disabled:opacity-50"
+                className="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-3 disabled:opacity-50"
               >
                 {actionLoading === "creating" ? (
                   <Loader2 className="animate-spin w-5 h-5" />

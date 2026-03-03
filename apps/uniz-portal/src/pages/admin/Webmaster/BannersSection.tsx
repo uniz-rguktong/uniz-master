@@ -148,7 +148,7 @@ export default function BannersSection() {
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 bg-slate-900 text-white px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-xl active:scale-95"
+          className="uniz-primary-btn px-8 gap-2.5"
         >
           <Plus size={18} />
           New Banner
@@ -170,10 +170,10 @@ export default function BannersSection() {
             return (
               <div
                 key={bannerId}
-                className="bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-2xl transition-all overflow-hidden flex flex-col group relative"
+                className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col group relative"
               >
                 {/* Preview Image */}
-                <div className="h-48 w-full bg-slate-50 relative overflow-hidden shrink-0 border-b border-slate-50">
+                <div className="h-40 w-full bg-slate-50 relative overflow-hidden shrink-0 border-b border-slate-50">
                   {banner.imageUrl ? (
                     <img
                       src={banner.imageUrl}
@@ -182,29 +182,29 @@ export default function BannersSection() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-300">
-                      <ImageIcon size={48} strokeWidth={1} />
+                      <ImageIcon size={40} strokeWidth={1} />
                     </div>
                   )}
 
                   {/* Status Badge */}
                   <div
-                    className={`absolute top-4 right-4 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 border backdrop-blur-md shadow-sm ${banner.isVisible ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-slate-500/10 text-slate-500 border-slate-500/20"}`}
+                    className={`absolute top-3 right-3 px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest flex items-center gap-1 border backdrop-blur-md shadow-sm ${banner.isVisible ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-slate-500/10 text-slate-500 border-slate-500/20"}`}
                   >
                     {banner.isVisible ? (
-                      <Eye size={12} />
+                      <Eye size={10} />
                     ) : (
-                      <EyeOff size={12} />
+                      <EyeOff size={10} />
                     )}
                     {banner.isVisible ? "Active" : "Hidden"}
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-6 flex flex-col flex-1">
-                  <h3 className="font-black text-slate-900 text-lg leading-tight mb-2 line-clamp-1">
+                <div className="p-5 flex flex-col flex-1">
+                  <h3 className="font-black text-slate-900 text-base leading-tight mb-1 line-clamp-1">
                     {banner.title}
                   </h3>
-                  <p className="text-slate-500 font-medium text-sm line-clamp-2 leading-relaxed mb-6">
+                  <p className="text-slate-500 font-medium text-xs line-clamp-2 leading-relaxed mb-4">
                     {banner.text}
                   </p>
 
@@ -213,14 +213,14 @@ export default function BannersSection() {
                       <button
                         onClick={() => hideBanner(bannerId)}
                         disabled={actionLoading === bannerId}
-                        className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all border bg-slate-50 text-slate-600 border-slate-100 hover:bg-slate-100"
+                        className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-black uppercase tracking-widest text-[9px] transition-all border bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-600 hover:text-white"
                       >
                         {actionLoading === bannerId ? (
-                          <Loader2 size={14} className="animate-spin" />
+                          <Loader2 size={12} className="animate-spin" />
                         ) : (
-                          <EyeOff size={14} />
+                          <EyeOff size={12} />
                         )}
-                        Hide Banner
+                        Hide Spotlight
                       </button>
                     )}
                   </div>
@@ -230,8 +230,8 @@ export default function BannersSection() {
           })}
         </div>
       ) : (
-        <div className="p-32 flex flex-col items-center justify-center text-center space-y-6 bg-white rounded-[3rem] border border-slate-50">
-          <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center text-slate-200">
+        <div className="p-32 flex flex-col items-center justify-center text-center space-y-6 bg-white rounded-3xl border border-slate-50">
+          <div className="w-24 h-24 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-200">
             <ImageIcon size={48} strokeWidth={1} />
           </div>
           <div>
@@ -245,7 +245,7 @@ export default function BannersSection() {
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all"
+            className="uniz-primary-btn px-8"
           >
             Add First Banner
           </button>
@@ -259,8 +259,8 @@ export default function BannersSection() {
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
             onClick={() => setShowAddModal(false)}
           />
-          <div className="bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-            <div className="bg-slate-900 p-8 text-white relative flex items-center gap-4">
+          <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
+            <div className="bg-blue-600 p-8 text-white relative flex items-center gap-4">
               <div className="p-3 bg-white/10 rounded-2xl">
                 <Plus size={24} />
               </div>
@@ -268,7 +268,7 @@ export default function BannersSection() {
                 <h3 className="text-2xl font-black tracking-tight">
                   New Banner
                 </h3>
-                <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">
+                <p className="text-white/60 text-xs font-bold uppercase tracking-widest mt-1">
                   Configure Spotlight Content
                 </p>
               </div>
@@ -295,7 +295,7 @@ export default function BannersSection() {
                       setNewBanner({ ...newBanner, title: e.target.value })
                     }
                     placeholder="e.g. UniZ v2.0 is Live!"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
                   />
                 </div>
 
@@ -329,7 +329,7 @@ export default function BannersSection() {
                       setNewBanner({ ...newBanner, imageUrl: e.target.value })
                     }
                     placeholder="https://images.unsplash.com/..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
                   />
                 </div>
 
@@ -341,8 +341,8 @@ export default function BannersSection() {
                       alt="preview"
                       className="w-full h-full object-cover"
                       onError={(e: any) =>
-                        (e.target.src =
-                          "https://placehold.co/600x400?text=Invalid+Image+URL")
+                      (e.target.src =
+                        "https://placehold.co/600x400?text=Invalid+Image+URL")
                       }
                     />
                   </div>
@@ -352,7 +352,7 @@ export default function BannersSection() {
               <button
                 disabled={!!actionLoading}
                 type="submit"
-                className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-xl shadow-slate-900/10 flex items-center justify-center gap-3 disabled:opacity-50"
+                className="w-full uniz-primary-btn h-[60px]"
               >
                 {actionLoading === "creating" ? (
                   <Loader2 className="animate-spin w-5 h-5" />

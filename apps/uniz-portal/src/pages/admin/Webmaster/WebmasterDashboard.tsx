@@ -112,12 +112,12 @@ export default function WebmasterDashboard() {
       default:
         return (
           <div className="p-8 space-y-8 animate-in fade-in duration-500">
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-10 text-white shadow-2xl shadow-blue-200 relative overflow-hidden">
               <div className="relative z-10">
                 <h1 className="text-4xl font-black tracking-tight mb-2">
                   Welcome, {username}
                 </h1>
-                <p className="text-slate-400 font-medium">
+                <p className="text-blue-100 font-medium opacity-80">
                   Webmaster Control Center
                 </p>
               </div>
@@ -131,13 +131,13 @@ export default function WebmasterDashboard() {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as any)}
-                  className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-slate-200 transition-all group text-left"
+                  className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-left"
                 >
-                  <div className="p-3 rounded-xl bg-slate-50 text-slate-900 mb-4 group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                  <div className="p-3 rounded-xl bg-blue-50 text-blue-600 mb-4">
                     <item.icon size={24} />
                   </div>
                   <h3 className="font-bold text-slate-900">{item.label}</h3>
-                  <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider font-semibold">
+                  <p className="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">
                     Access Module
                   </p>
                 </button>
@@ -149,55 +149,101 @@ export default function WebmasterDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-premium-gradient relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+    <div className="flex min-h-screen bg-slate-50 relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       {/* Sidebar */}
       <aside
-        className={`bg-white/90 backdrop-blur-xl border-r border-slate-200/50 transition-all duration-300 z-50 ${
-          isSidebarOpen ? "w-72" : "w-20"
-        } hidden md:flex flex-col premium-shadow`}
+        className={`bg-white border-r border-slate-100 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"} hidden md:flex flex-col premium-shadow h-screen sticky top-0`}
       >
-        <div className="p-6 flex items-center gap-3 border-b border-slate-50">
-          <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shrink-0 shadow-lg">
-            <span className="text-white font-black">W</span>
+        {/* Header with logo */}
+        <div className="flex items-center space-x-3.5 p-6 bg-transparent shrink-0">
+          <div className="w-14 h-14 flex items-center justify-center p-1 shrink-0">
+            <img
+              src="/assets/ongole_logo.png"
+              className="h-full w-full object-contain"
+              alt="Ongole Logo"
+            />
           </div>
           {isSidebarOpen && (
-            <span className="font-black text-xl tracking-tighter text-slate-900 animate-in fade-in duration-300">
-              Webmaster
-            </span>
+            <div className="flex flex-col animate-in fade-in duration-500">
+              <span className="font-bold text-slate-900 text-[19px] tracking-tight leading-none">
+                Ongole
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-[#6366f1]/80 font-black mt-1.5 px-0.5">
+                WEBMASTER PORTAL
+              </span>
+            </div>
           )}
         </div>
 
-        <nav className="flex-1 p-4 space-y-2 mt-4">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id as any)}
-              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all ${
-                activeTab === item.id
-                  ? "bg-slate-900 text-white shadow-lg translate-x-1"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-              }`}
-            >
-              <item.icon size={20} className="shrink-0" />
-              {isSidebarOpen && (
-                <span className="font-bold text-sm tracking-tight">
-                  {item.label}
-                </span>
-              )}
-              {isSidebarOpen && activeTab === item.id && (
-                <ChevronRight size={14} className="ml-auto opacity-50" />
-              )}
-            </button>
-          ))}
+        {/* Navigation Section */}
+        <nav className="flex-1 px-3 py-2 overflow-y-auto space-y-1 mt-2">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id as any)}
+                className={`
+                  w-full flex items-center space-x-3 px-3 py-3 rounded-xl text-left transition-all duration-200 group relative
+                  ${isActive
+                    ? "bg-blue-50 text-blue-700 shadow-sm"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  }
+                `}
+              >
+                <div className="flex items-center justify-center min-w-[24px]">
+                  <Icon
+                    size={21}
+                    className={`shrink-0 transition-transform group-hover:scale-110 duration-200
+                      ${isActive
+                        ? "text-blue-600"
+                        : "text-slate-400 group-hover:text-slate-700"
+                      }`}
+                  />
+                </div>
+                {isSidebarOpen && (
+                  <span
+                    className={`text-[15px] whitespace-nowrap tracking-tight transition-all
+                      ${isActive ? "font-bold" : "font-semibold"}`}
+                  >
+                    {item.label}
+                  </span>
+                )}
+
+              </button>
+            );
+          })}
         </nav>
 
-        <div className="p-4 border-t border-slate-50">
+        {/* Bottom Section */}
+        <div className="mt-auto px-3 py-4 space-y-1 border-t border-slate-50 shrink-0">
+          {/* Profile Display */}
+          <div className="flex items-center px-3 py-2 group rounded-xl transition-colors">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center border border-blue-200 shadow-sm overflow-hidden shrink-0">
+              <span className="text-blue-700 font-bold text-[11px]">
+                {username[0].toUpperCase()}
+              </span>
+            </div>
+            {isSidebarOpen && (
+              <div className="ml-3 flex-1 min-w-0">
+                <p className="text-[15px] font-bold text-slate-900 truncate tracking-tight">
+                  {username}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Logout Action */}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 p-3 rounded-xl text-red-500 hover:bg-red-50 transition-all font-bold text-sm"
+            className="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-left transition-all duration-200 group text-red-500 hover:bg-red-50"
           >
-            <LogOut size={20} className="shrink-0" />
-            {isSidebarOpen && <span>Sign Out</span>}
+            <div className="flex items-center justify-center min-w-[24px]">
+              <LogOut size={20} className="shrink-0 transition-transform group-hover:rotate-12" />
+            </div>
+            {isSidebarOpen && <span className="text-[15px] font-bold">Logout</span>}
           </button>
         </div>
       </aside>
@@ -207,7 +253,7 @@ export default function WebmasterDashboard() {
         <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-100 p-4 px-8 flex justify-between items-center">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 hover:bg-slate-50 rounded-lg transition-colors md:block hidden"
+            className="p-2 hover:bg-slate-50 rounded-lg transition-colors md:block hidden text-slate-400 hover:text-blue-600"
           >
             {isSidebarOpen ? <Menu size={20} /> : <ChevronRight size={20} />}
           </button>
@@ -220,7 +266,7 @@ export default function WebmasterDashboard() {
                 System Administrator
               </p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-black text-slate-900">
+            <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center font-black text-blue-600">
               {username[0].toUpperCase()}
             </div>
           </div>
