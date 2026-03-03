@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { BASE_URL } from "../../api/endpoints";
 import {
   Send,
@@ -94,7 +95,7 @@ export default function EmailNotification() {
       });
       const data = await res.json();
       if (!data.success) {
-        alert(data.msg || "Failed to start notifications");
+        toast.error(data.msg || "Failed to start notifications");
         setSending(false);
         return;
       }
@@ -146,7 +147,7 @@ export default function EmailNotification() {
       setTarget("all");
     } catch (err) {
       console.error(err);
-      alert("Error sending notifications");
+      toast.error("Error sending notifications");
       setSending(false);
     }
   };
@@ -164,21 +165,21 @@ export default function EmailNotification() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
       {/* Header */}
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
         <button
           onClick={() => navigate("/admin")}
-          className="self-start inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+          className="self-start inline-flex items-center text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors"
         >
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
+          <ArrowLeft className="w-3 h-3 mr-1" /> Back to Dashboard
         </button>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
-              Email Notifications
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+              Email Broadcasts
             </h1>
-            <p className="text-slate-500 mt-1">
-              Broadcast important updates to students securely.
+            <p className="text-slate-500 font-medium text-xs mt-0.5">
+              Communicate with the student body instantly.
             </p>
           </div>
         </div>
@@ -186,29 +187,32 @@ export default function EmailNotification() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Composer */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white border border-slate-200 rounded-xl p-6 lg:p-8 shadow-sm">
-            <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-              <Mail className="w-5 h-5 text-slate-500" /> Compose Email
+        <div className="lg:col-span-2 space-y-4">
+          <div className="bg-white border border-slate-100 rounded-2xl p-6 lg:p-8 shadow-sm">
+            <h2 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-3">
+              <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+                <Mail className="w-5 h-5" />
+              </div>
+              Compose Broadcast
             </h2>
 
-            <div className="space-y-5">
+            <div className="space-y-4">
               <Input
                 value={subject}
                 onchangeFunction={(e: any) => setSubject(e.target.value)}
                 placeholder="Subject Line"
-                className="font-medium"
+                className="font-medium text-sm"
               />
 
-              <div className="space-y-1.5 ml-1">
-                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+              <div className="space-y-1 ml-1">
+                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">
                   Message Body
                 </label>
                 <textarea
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
                   placeholder="Write your message here..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all resize-none h-48"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-5 py-3.5 text-slate-900 text-sm focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 focus:bg-white outline-none transition-all resize-none h-40 font-medium"
                 />
               </div>
 
@@ -216,13 +220,13 @@ export default function EmailNotification() {
                 <Button
                   onclickFunction={sendNotification}
                   loading={sending}
-                  value="Send Broadcast"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  value="Send Email Broadcast"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 h-12 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-blue-100"
                 />
                 {sending && (
                   <button
                     onClick={cancelNotification}
-                    className="px-6 py-2 bg-white border border-red-200 text-red-600 rounded-xl hover:bg-red-50 font-medium transition-colors"
+                    className="px-6 py-2 bg-white border border-red-100 text-red-600 rounded-xl hover:bg-red-50 font-black uppercase tracking-widest text-[10px] transition-all shadow-lg shadow-red-50"
                   >
                     Cancel
                   </button>
@@ -233,9 +237,9 @@ export default function EmailNotification() {
 
           {/* Progress Section */}
           {progress && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm animate-in fade-in slide-in-from-bottom-2">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="font-semibold text-slate-900">Sending Status</h3>
+            <div className="bg-white border border-slate-100 rounded-2xl p-8 shadow-sm animate-in fade-in slide-in-from-bottom-2">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Transmission Status</h3>
                 <span
                   className={cn(
                     "px-2 py-0.5 rounded-md text-xs font-bold uppercase",
@@ -293,8 +297,8 @@ export default function EmailNotification() {
         {/* Sidebar Options */}
         <div className="space-y-6">
           {/* Audience Selector */}
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide mb-4">
+          <div className="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm">
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-6">
               Target Audience
             </h3>
 
@@ -302,7 +306,7 @@ export default function EmailNotification() {
               <select
                 value={target}
                 onChange={(e) => setTarget(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all"
               >
                 <option value="all">All Students</option>
                 <option value="branch">Specific Branch</option>
@@ -313,33 +317,33 @@ export default function EmailNotification() {
               {(target === "branch" ||
                 target === "batch" ||
                 target === "userIds") && (
-                <div className="animate-in fade-in slide-in-from-top-1">
-                  <label className="text-xs font-semibold text-slate-500 mb-1.5 block">
-                    {target === "branch"
-                      ? "Enter Branch Code"
-                      : target === "batch"
-                        ? "Enter Batch Year"
-                        : "Enter IDs (comma separated)"}
-                  </label>
-                  <input
-                    type="text"
-                    value={filterValue}
-                    onChange={(e) => setFilterValue(e.target.value)}
-                    placeholder={
-                      target === "userIds"
-                        ? "e.g. o210001, o210002"
-                        : "e.g. CSE or 2024"
-                    }
-                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                </div>
-              )}
+                  <div className="animate-in fade-in slide-in-from-top-1">
+                    <label className="text-xs font-semibold text-slate-500 mb-1.5 block">
+                      {target === "branch"
+                        ? "Enter Branch Code"
+                        : target === "batch"
+                          ? "Enter Batch Year"
+                          : "Enter IDs (comma separated)"}
+                    </label>
+                    <input
+                      type="text"
+                      value={filterValue}
+                      onChange={(e) => setFilterValue(e.target.value)}
+                      placeholder={
+                        target === "userIds"
+                          ? "e.g. o210001, o210002"
+                          : "e.g. CSE or 2024"
+                      }
+                      className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                    />
+                  </div>
+                )}
             </div>
           </div>
 
           {/* Templates */}
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide mb-4">
+          <div className="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm">
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-6">
               Quick Templates
             </h3>
             <div className="space-y-3">
@@ -349,8 +353,8 @@ export default function EmailNotification() {
                   onClick={() => selectTemplate(t)}
                   className="w-full text-left p-3 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all group"
                 >
-                  <div className="flex items-center gap-3 mb-1">
-                    <div className="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center shrink-0 group-hover:bg-blue-600 transition-colors">
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
                       {t.icon}
                     </div>
                     <span className="font-semibold text-slate-900 text-sm">

@@ -192,7 +192,7 @@ export default function FacultyManagement() {
         </div>
         <button
           onClick={openAdd}
-          className="bg-slate-900 text-white px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-2 hover:bg-black transition-all shadow-lg active:scale-95"
+          className="bg-blue-600 text-white px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 active:scale-95"
         >
           <Plus size={16} /> Add Staff Member
         </button>
@@ -206,7 +206,7 @@ export default function FacultyManagement() {
             placeholder="Search by name, ID or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-sm"
+            className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
           />
           <Search
             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
@@ -217,7 +217,7 @@ export default function FacultyManagement() {
         <select
           value={department}
           onChange={(e) => setDepartment(e.target.value)}
-          className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold text-sm cursor-pointer"
+          className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-sm cursor-pointer"
         >
           <option value="">All Departments</option>
           <option value="CSE">CSE</option>
@@ -238,14 +238,13 @@ export default function FacultyManagement() {
           {faculty.map((member, idx) => (
             <div
               key={idx}
-              className={`bg-white border rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all group relative overflow-hidden ${
-                member.Role === "suspended"
-                  ? "border-red-100 opacity-75"
-                  : "border-slate-100"
-              }`}
+              className={`bg-white border rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all group relative overflow-hidden ${member.Role === "suspended"
+                ? "border-red-100 opacity-75"
+                : "border-slate-100"
+                }`}
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-slate-50 rounded-2xl text-slate-900 border border-slate-100 group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                <div className="p-3 bg-blue-50 rounded-2xl text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                   <ShieldCheck size={24} />
                 </div>
                 <div className="flex gap-2">
@@ -259,11 +258,10 @@ export default function FacultyManagement() {
                     onClick={() =>
                       handleSuspend(member.Username, member.is_suspended)
                     }
-                    className={`p-2 rounded-xl transition-all ${
-                      member.is_suspended
-                        ? "text-green-500 hover:bg-green-50"
-                        : "text-red-500 hover:bg-red-50"
-                    }`}
+                    className={`p-2 rounded-xl transition-all ${member.is_suspended
+                      ? "text-green-500 hover:bg-green-50"
+                      : "text-red-500 hover:bg-red-50"
+                      }`}
                   >
                     {member.is_suspended ? (
                       <Unlock size={16} />
@@ -309,7 +307,7 @@ export default function FacultyManagement() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-[40px] border border-dashed border-slate-200">
+        <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
           <Users size={48} className="text-slate-300 mb-4" />
           <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
             No staff members found matching your criteria
@@ -320,7 +318,7 @@ export default function FacultyManagement() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-lg rounded-[40px] p-8 shadow-2xl relative animate-in zoom-in-95 duration-300">
+          <div className="bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl relative animate-in zoom-in-95 duration-300">
             <button
               onClick={() => setShowModal(false)}
               className="absolute top-8 right-8 p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400"
@@ -352,7 +350,7 @@ export default function FacultyManagement() {
                         username: e.target.value.toUpperCase(),
                       })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold disabled:opacity-50"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold disabled:opacity-50"
                     placeholder="e.g. FAC001"
                   />
                 </div>
@@ -366,7 +364,7 @@ export default function FacultyManagement() {
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                     placeholder="Prof. Surname"
                   />
                 </div>
@@ -383,7 +381,7 @@ export default function FacultyManagement() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold"
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                   placeholder="faculty@rguktong.ac.in"
                 />
               </div>
@@ -398,7 +396,7 @@ export default function FacultyManagement() {
                     onChange={(e) =>
                       setFormData({ ...formData, department: e.target.value })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none font-bold cursor-pointer"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold cursor-pointer"
                   >
                     <option>CSE</option>
                     <option>ECE</option>
@@ -417,7 +415,7 @@ export default function FacultyManagement() {
                     onChange={(e) =>
                       setFormData({ ...formData, role: e.target.value })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none font-bold cursor-pointer"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold cursor-pointer"
                   >
                     <option value="teacher">Teacher</option>
                     <option value="hod">Department Head</option>
@@ -435,7 +433,7 @@ export default function FacultyManagement() {
                   onChange={(e) =>
                     setFormData({ ...formData, designation: e.target.value })
                   }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold"
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                   placeholder="e.g. HOD, Lecturer"
                 />
               </div>
@@ -451,7 +449,7 @@ export default function FacultyManagement() {
                 <button
                   disabled={isSubmitting}
                   type="submit"
-                  className="flex-[2] bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-xl flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+                  className="flex-[2] bg-blue-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <Loader2 className="animate-spin w-4 h-4" />

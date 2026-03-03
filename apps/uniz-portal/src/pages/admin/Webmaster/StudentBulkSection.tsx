@@ -131,27 +131,27 @@ export default function StudentBulkSection() {
   };
 
   return (
-    <div className="p-8 space-y-10 animate-in fade-in duration-700 pb-20 text-slate-900">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-4xl font-black tracking-tight text-slate-900 leading-none">
+    <div className="p-6 space-y-8 animate-in fade-in duration-700 pb-20 text-slate-900">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-3xl font-black tracking-tight text-slate-900 leading-none">
             Student Bulk Operations
           </h2>
-          <p className="text-slate-500 font-medium">
+          <p className="text-slate-500 font-medium text-sm">
             Bulk onboard students or extract batch records to Excel.
           </p>
         </div>
 
-        <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner">
+        <div className="flex bg-blue-50/50 p-1.5 rounded-2xl border border-blue-100/50 shadow-inner">
           <button
             onClick={() => setActiveTab("upload")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === "upload" ? "bg-white text-slate-900 shadow-md" : "text-slate-500 hover:text-slate-700"}`}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === "upload" ? "bg-blue-600 text-white shadow-md shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
           >
             <Upload size={14} /> Bulk Upload
           </button>
           <button
             onClick={() => setActiveTab("export")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === "export" ? "bg-white text-slate-900 shadow-md" : "text-slate-500 hover:text-slate-700"}`}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === "export" ? "bg-blue-600 text-white shadow-md shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
           >
             <Download size={14} /> Batch Export
           </button>
@@ -162,39 +162,39 @@ export default function StudentBulkSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-7 space-y-8">
             {/* Summary Step */}
-            <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-6">
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-slate-900 text-white rounded-2xl">
-                  <FileDown size={24} />
+                <div className="p-2.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-xl">
+                  <FileDown size={20} />
                 </div>
                 <div>
-                  <h3 className="font-black text-xl tracking-tight">
+                  <h3 className="font-black text-lg tracking-tight">
                     Step 1: Get the Framework
                   </h3>
-                  <p className="text-slate-500 text-sm font-medium">
+                  <p className="text-slate-500 text-xs font-medium">
                     Download the standard template to ensure data compatibility.
                   </p>
                 </div>
               </div>
               <button
                 onClick={downloadTemplate}
-                className="w-full flex items-center justify-center gap-3 py-5 bg-slate-50 hover:bg-slate-100 border border-slate-100 rounded-3xl text-slate-900 font-black uppercase tracking-widest text-xs transition-all"
+                className="w-full flex items-center justify-center gap-2 py-4 bg-blue-50/30 hover:bg-blue-50 border border-blue-100/50 rounded-2xl text-blue-600 font-black uppercase tracking-widest text-xs transition-all"
               >
-                <FileSpreadsheet size={18} /> Download Excel Template
+                <FileSpreadsheet size={16} /> Download Excel Template
               </button>
             </div>
 
             {/* Upload Step */}
-            <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-8">
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-slate-900 text-white rounded-2xl text-white">
-                  <Upload size={24} />
+                <div className="p-2.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-xl">
+                  <Upload size={20} />
                 </div>
                 <div>
-                  <h3 className="font-black text-xl tracking-tight">
+                  <h3 className="font-black text-lg tracking-tight">
                     Step 2: Sync Records
                   </h3>
-                  <p className="text-slate-500 text-sm font-medium">
+                  <p className="text-slate-500 text-xs font-medium">
                     Upload your filled records to update or create student
                     profiles.
                   </p>
@@ -203,9 +203,9 @@ export default function StudentBulkSection() {
 
               <div
                 className={`
-                                border-4 border-dashed rounded-[2rem] p-12 text-center transition-all relative
-                                ${file ? "border-slate-900 bg-slate-50" : "border-slate-100 hover:border-slate-200 bg-slate-50/50"}
-                            `}
+                                 border-4 border-dashed rounded-2xl p-8 text-center transition-all relative
+                                 ${file ? "border-blue-600 bg-blue-50/50" : "border-slate-100 hover:border-blue-200 bg-slate-50/30"}
+                             `}
               >
                 <input
                   type="file"
@@ -216,18 +216,18 @@ export default function StudentBulkSection() {
                 />
                 <label
                   htmlFor="bulk-student-file"
-                  className="cursor-pointer flex flex-col items-center gap-4"
+                  className="cursor-pointer flex flex-col items-center gap-3"
                 >
                   <div
-                    className={`p-6 rounded-3xl transition-all ${file ? "bg-slate-900 text-white animate-pulse" : "bg-white text-slate-300 shadow-sm"}`}
+                    className={`p-4 rounded-2xl transition-all ${file ? "bg-blue-600 text-white animate-pulse shadow-lg shadow-blue-200" : "bg-white text-slate-300 shadow-sm"}`}
                   >
-                    <Upload size={32} />
+                    <Upload size={24} />
                   </div>
                   <div>
-                    <p className="text-lg font-black text-slate-900">
+                    <p className="text-base font-black text-slate-900">
                       {file ? file.name : "Choose XLSX File"}
                     </p>
-                    <p className="text-slate-400 font-medium text-xs mt-1">
+                    <p className="text-slate-400 font-medium text-[10px] mt-1">
                       Maximum 5000 records per upload
                     </p>
                   </div>
@@ -235,9 +235,9 @@ export default function StudentBulkSection() {
                 {file && (
                   <button
                     onClick={() => setFile(null)}
-                    className="absolute top-6 right-6 p-2 bg-white rounded-full shadow-lg text-red-500 hover:scale-110 transition-all"
+                    className="absolute top-4 right-4 p-1.5 bg-white rounded-full shadow-lg text-red-500 hover:scale-110 transition-all"
                   >
-                    <X size={16} />
+                    <X size={14} />
                   </button>
                 )}
               </div>
@@ -245,12 +245,12 @@ export default function StudentBulkSection() {
               <button
                 onClick={handleUpload}
                 disabled={!file || loading || !!uploadId}
-                className="w-full bg-slate-900 text-white py-6 rounded-3xl font-black uppercase tracking-widest text-sm hover:bg-black transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
+                className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <Loader2 className="animate-spin" />
+                  <Loader2 className="animate-spin w-4 h-4" />
                 ) : (
-                  <CheckCircle2 size={20} />
+                  <CheckCircle2 size={16} />
                 )}
                 Initiate Bulk Provisioning
               </button>
@@ -260,7 +260,7 @@ export default function StudentBulkSection() {
           <div className="lg:col-span-5 space-y-6">
             <div className="sticky top-24">
               {progress || uploadId ? (
-                <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl space-y-8 animate-in slide-in-from-right-8 duration-500">
+                <div className="bg-blue-600 rounded-3xl p-8 text-white shadow-2xl shadow-blue-200 space-y-8 animate-in slide-in-from-right-8 duration-500">
                   <div className="flex items-center justify-between">
                     <div className="p-3 bg-white/10 rounded-2xl">
                       <History
@@ -285,7 +285,7 @@ export default function StudentBulkSection() {
                         {Math.round(
                           ((progress?.processed || 0) /
                             (progress?.total || 1)) *
-                            100,
+                          100,
                         )}
                         %
                       </span>
@@ -330,7 +330,7 @@ export default function StudentBulkSection() {
                 </div>
               ) : (
                 <div className="bg-white rounded-[2.5rem] border border-slate-100 p-10 text-center space-y-6 flex flex-col items-center justify-center">
-                  <div className="p-8 bg-slate-50 rounded-[2rem] text-slate-200">
+                  <div className="p-8 bg-slate-50 rounded-2xl text-slate-200">
                     <History size={64} strokeWidth={1} />
                   </div>
                   <div>
@@ -348,24 +348,24 @@ export default function StudentBulkSection() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-[2.5rem] border border-slate-100 p-10 text-slate-900 animate-in slide-in-from-right-8 duration-500">
-          <div className="max-w-4xl mx-auto space-y-10">
-            <div className="flex items-center gap-6">
-              <div className="p-5 bg-slate-900 text-white rounded-3xl shadow-xl">
-                <Filter size={32} />
+        <div className="bg-white rounded-2xl border border-slate-100 p-8 text-slate-900 animate-in slide-in-from-right-8 duration-500">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div className="flex items-center gap-5">
+              <div className="p-4 bg-blue-600 text-white rounded-2xl shadow-xl shadow-blue-200">
+                <Filter size={24} />
               </div>
               <div>
-                <h3 className="text-3xl font-black tracking-tight">
+                <h3 className="text-2xl font-black tracking-tight">
                   Filtering Engine
                 </h3>
-                <p className="text-slate-500 font-medium">
+                <p className="text-slate-500 font-medium text-sm">
                   Export selective student cohorts with specific data fields.
                 </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
                   Branch Focus
                 </label>
@@ -374,7 +374,7 @@ export default function StudentBulkSection() {
                   onChange={(e) =>
                     setExportParams({ ...exportParams, branch: e.target.value })
                   }
-                  className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold text-slate-900"
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-sm"
                 >
                   <option value="">All Departments</option>
                   {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
@@ -384,7 +384,7 @@ export default function StudentBulkSection() {
                   )}
                 </select>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
                   Academic Year
                 </label>
@@ -393,7 +393,7 @@ export default function StudentBulkSection() {
                   onChange={(e) =>
                     setExportParams({ ...exportParams, year: e.target.value })
                   }
-                  className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold text-slate-900"
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-sm"
                 >
                   <option value="">All Batches</option>
                   {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
@@ -401,7 +401,7 @@ export default function StudentBulkSection() {
                   ))}
                 </select>
               </div>
-              <div className="md:col-span-2 space-y-3">
+              <div className="md:col-span-2 space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
                   Data Columns (Comma Separated)
                 </label>
@@ -411,25 +411,25 @@ export default function StudentBulkSection() {
                   onChange={(e) =>
                     setExportParams({ ...exportParams, fields: e.target.value })
                   }
-                  className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold text-slate-900"
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-sm"
                 />
               </div>
             </div>
 
-            <div className="pt-6">
+            <div className="pt-4">
               <button
                 onClick={handleExport}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-3 py-6 bg-slate-900 text-white rounded-3xl font-black uppercase tracking-widest text-sm hover:bg-black transition-all shadow-2xl active:scale-[0.98] disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-2xl shadow-blue-200 active:scale-[0.98] disabled:opacity-50"
               >
                 {loading ? (
-                  <Loader2 className="animate-spin" />
+                  <Loader2 className="animate-spin w-4 h-4" />
                 ) : (
-                  <Download size={20} />
+                  <Download size={18} />
                 )}
                 Generate Excel Report
               </button>
-              <p className="text-center text-slate-400 text-xs font-bold uppercase tracking-widest mt-6 italic">
+              <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-4 italic">
                 Secure export. All activity is logged in the system audits.
               </p>
             </div>

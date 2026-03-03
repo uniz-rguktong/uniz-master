@@ -118,7 +118,7 @@ export default function GrievanceSection() {
           label="Total Grievances"
           count={grievances.length}
           icon={MessageSquare}
-          color="bg-slate-900"
+          color="bg-blue-600 shadow-blue-100"
         />
         <StatCard
           label="Pending Review"
@@ -141,7 +141,7 @@ export default function GrievanceSection() {
       </div>
 
       {/* Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-[2rem] border border-slate-100 shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
           <input
@@ -149,7 +149,7 @@ export default function GrievanceSection() {
             placeholder="Search grievances by ID, category or content..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-slate-900/5 outline-none transition-all font-bold text-slate-900"
+            className="w-full pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
           />
         </div>
 
@@ -158,7 +158,7 @@ export default function GrievanceSection() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${filter === f ? "bg-white text-slate-900 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+              className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${filter === f ? "bg-blue-600 text-white shadow-md shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
             >
               {f}
             </button>
@@ -250,7 +250,7 @@ export default function GrievanceSection() {
                 <Clock size={18} className="rotate-180" />
               </button>
 
-              <div className="flex bg-slate-100 p-1.5 rounded-[1.5rem] gap-1">
+              <div className="flex bg-slate-100 p-1.5 rounded-2xl gap-1">
                 {[...Array(meta.totalPages)].map((_, i) => {
                   const p = i + 1;
                   if (
@@ -262,11 +262,10 @@ export default function GrievanceSection() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl font-black text-xs transition-all ${
-                          page === p
-                            ? "bg-slate-900 text-white shadow-lg"
-                            : "text-slate-400 hover:bg-white hover:text-slate-900"
-                        }`}
+                        className={`w-10 h-10 rounded-xl font-black text-xs transition-all ${page === p
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-100"
+                          : "text-slate-400 hover:bg-white hover:text-blue-600"
+                          }`}
                       >
                         {p}
                       </button>
@@ -307,7 +306,7 @@ export default function GrievanceSection() {
 
 function StatCard({ label, count, icon: Icon, color }: any) {
   return (
-    <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-6">
+    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-6">
       <div
         className={`p-4 rounded-2xl text-white ${color} shadow-lg shadow-black/5`}
       >
