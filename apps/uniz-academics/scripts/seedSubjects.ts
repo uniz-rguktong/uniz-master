@@ -6,7 +6,10 @@ const subjectsData: Record<
   string,
   Record<
     string,
-    Record<string, { names: string[]; credits: number[]; hide?: number[] }>
+    Record<
+      string,
+      { names: string[]; credits: number[]; hide?: number[]; show?: number[] }
+    >
   >
 > = {
   E1: {
@@ -22,6 +25,7 @@ const subjectsData: Record<
           "Problem Solving and Programming Through C Lab",
         ],
         credits: [4, 4, 4, 2.5, 2.5, 1.5, 1.5],
+        hide: [8, 9],
       },
       ECE: {
         names: [
@@ -37,6 +41,7 @@ const subjectsData: Record<
           "Biology for Engineers",
         ],
         credits: [4, 4, 1.5, 2.5, 4, 1.5, 1, 3, 1.5, 0],
+        hide: [],
       },
       EEE: {
         names: [
@@ -50,7 +55,7 @@ const subjectsData: Record<
           "Programming & Data Structures",
           "Programming & Data Structures Lab",
         ],
-        credits: [4, 4, 1.5, 2.5, 4, 1.5, 1, 3, 1.5, 0],
+        credits: [4, 4, 1.5, 2.5, 4, 1.5, 1, 3, 1.5],
       },
       CIVIL: {
         names: [
@@ -64,6 +69,7 @@ const subjectsData: Record<
           "Human Values",
         ],
         credits: [3, 4, 4, 2.5, 1.5, 2.5, 1.5, 0],
+        hide: [8, 9],
       },
       MECH: {
         names: [
@@ -77,6 +83,7 @@ const subjectsData: Record<
           "Engineering Physics & Chemistry Lab",
         ],
         credits: [4, 2.5, 4, 4, 3, 1.5, 1.5, 1.5],
+        hide: [9],
       },
     },
     "Sem - 2": {
@@ -92,6 +99,7 @@ const subjectsData: Record<
           "Data Structures Lab",
         ],
         credits: [4, 4, 3, 4, 3, 1.5, 1.5, 1.5],
+        hide: [9],
       },
       ECE: {
         names: [
@@ -106,6 +114,7 @@ const subjectsData: Record<
           "Signals and Systems",
         ],
         credits: [4, 2, 1.5, 1.5, 2.5, 4, 1.5, 4, 4],
+        hide: [9],
       },
       EEE: {
         names: [
@@ -133,6 +142,7 @@ const subjectsData: Record<
           "Environmental Science",
         ],
         credits: [3, 4, 3, 4, 3, 1.5, 1.5, 0],
+        hide: [8, 9],
       },
       MECH: {
         names: [
@@ -145,6 +155,7 @@ const subjectsData: Record<
           "Material Science and Metallurgy Lab",
         ],
         credits: [4, 4, 3, 3, 2.5, 1.5, 1.5],
+        hide: [8, 9],
       },
     },
   },
@@ -162,6 +173,7 @@ const subjectsData: Record<
           "Database Management Systems Lab",
         ],
         credits: [4, 3, 4, 3, 3, 1.5, 1.5, 1.5],
+        hide: [9],
       },
       ECE: {
         names: [
@@ -176,6 +188,7 @@ const subjectsData: Record<
           "Control Systems",
         ],
         credits: [3, 1.5, 4, 1.5, 4, 1.5, 4, 1.5, 3],
+        hide: [9],
       },
       EEE: {
         names: [
@@ -204,6 +217,7 @@ const subjectsData: Record<
           "Indian Constitution",
         ],
         credits: [3, 3, 3, 3, 4, 4, 1.5, 1.5, 0],
+        hide: [9],
       },
       MECH: {
         names: [
@@ -216,6 +230,7 @@ const subjectsData: Record<
           "Computer Aided Machine Drawing",
         ],
         credits: [4, 4, 4, 4, 3, 1.5, 1.5],
+        hide: [8, 9],
       },
     },
     "Sem - 2": {
@@ -231,6 +246,7 @@ const subjectsData: Record<
           "Web Technologies Lab",
         ],
         credits: [3, 3, 3, 3, 3, 1.5, 1.5, 1.5],
+        hide: [9],
       },
       ECE: {
         names: [
@@ -245,6 +261,7 @@ const subjectsData: Record<
           "Foundations to Artificial Intelligence",
         ],
         credits: [2.5, 4, 1.5, 3, 1.5, 4, 1.5, 4, 1],
+        hide: [9],
       },
       EEE: {
         names: [
@@ -272,6 +289,7 @@ const subjectsData: Record<
           "Geotechnical Engineering Lab",
         ],
         credits: [3, 3, 4, 4, 3, 3, 1.5, 1.5],
+        hide: [8, 9],
       },
       MECH: {
         names: [
@@ -284,6 +302,7 @@ const subjectsData: Record<
           "Fluid Mechanics & Hydraulic Machinery Lab",
         ],
         credits: [4, 4, 4, 4, 3, 1.5, 1.5],
+        hide: [8, 9],
       },
     },
   },
@@ -312,11 +331,12 @@ const subjectsData: Record<
           "Communication Systems-2 Lab",
           "Microprocessors Lab",
           "Radio Frequency & Microwave Engg. Lab",
-          "Mini-Project-I",
+          "Mini-Project-I (Socially Relevant Project)",
           "Product Design & Innovation Lab",
           "RF & Microwave Engineering",
         ],
         credits: [3, 3, 1.5, 4, 1.5, 1.5, 1.5, 1, 1, 2],
+        hide: [],
       },
       EEE: {
         names: [
@@ -332,6 +352,7 @@ const subjectsData: Record<
           "Product Design & Innovation Lab",
         ],
         credits: [3, 4, 1.5, 1.5, 3, 1.5, 3, 1.5, 1, 1],
+        show: [10],
       },
       CIVIL: {
         names: [
@@ -346,6 +367,7 @@ const subjectsData: Record<
           "Aptitude & Reasoning",
         ],
         credits: [4, 4, 3, 3, 1.5, 1.5, 1.5, 1.5, 0],
+        hide: [9],
       },
       MECH: {
         names: [
@@ -359,6 +381,7 @@ const subjectsData: Record<
           "English Language Communication Skills Lab-II",
         ],
         credits: [4, 3, 4, 3, 1.5, 1.5, 1.5, 1.5],
+        hide: [9],
       },
     },
     "Sem - 2": {
@@ -374,6 +397,7 @@ const subjectsData: Record<
           "Summer Internship",
         ],
         credits: [4, 4, 3, 3, 3, 1.5, 3, 3],
+        hide: [8],
       },
       ECE: {
         names: [
@@ -387,6 +411,7 @@ const subjectsData: Record<
           "Career Development Course",
         ],
         credits: [1.5, 0, 3, 3, 3, 3, 1.5, 0],
+        hide: [8, 9],
       },
       EEE: {
         names: [
@@ -398,6 +423,7 @@ const subjectsData: Record<
           "Mini Project-II",
         ],
         credits: [1.5, 3, 3, 3, 3, 1],
+        hide: [7, 8, 9],
       },
       CIVIL: {
         names: [
@@ -412,6 +438,7 @@ const subjectsData: Record<
           "Summer Internship",
         ],
         credits: [2.5, 4, 3, 3, 3, 1.5, 1.5, 1.5, 3],
+        hide: [9],
       },
       MECH: {
         names: [
@@ -424,6 +451,7 @@ const subjectsData: Record<
           "English Language Communication Skills Lab-III",
         ],
         credits: [4, 4, 3, 3, 3, 1.5, 1.5],
+        hide: [8, 9],
       },
     },
   },
@@ -438,6 +466,7 @@ const subjectsData: Record<
           "Community Service",
         ],
         credits: [3, 3, 3, 6, 2],
+        hide: [6, 7, 8, 9],
       },
       ECE: {
         names: [
@@ -449,6 +478,7 @@ const subjectsData: Record<
           "Environmental Science",
         ],
         credits: [3, 3, 3, 3, 4, 0],
+        hide: [6, 7, 8, 9],
       },
       EEE: {
         names: [
@@ -459,6 +489,7 @@ const subjectsData: Record<
           "Project-I",
         ],
         credits: [3, 3, 3, 3, 4],
+        hide: [6, 7, 8, 9],
       },
       CIVIL: {
         names: [
@@ -470,6 +501,7 @@ const subjectsData: Record<
           "Seminar",
         ],
         credits: [3, 3, 3, 3, 4, 0],
+        hide: [6, 7, 8, 9],
       },
       MECH: {
         names: [
@@ -479,6 +511,7 @@ const subjectsData: Record<
           "Project",
         ],
         credits: [3, 3, 3, 4.5],
+        hide: [5, 6, 7, 8, 9],
       },
     },
     "Sem - 2": {
@@ -494,6 +527,7 @@ const subjectsData: Record<
           "Data Structures Lab",
         ],
         credits: [4, 4, 3, 4, 3, 1.5, 1.5, 1.5],
+        hide: [6, 7, 8, 9],
       },
       ECE: {
         names: [
@@ -503,6 +537,7 @@ const subjectsData: Record<
           "Project-II & Dissertation",
         ],
         credits: [2, 3, 3, 6],
+        hide: [5, 6, 7, 8, 9],
       },
       EEE: {
         names: [
@@ -512,6 +547,7 @@ const subjectsData: Record<
           "Project-II & Dissertation",
         ],
         credits: [2, 3, 3, 6],
+        hide: [5, 6, 7, 8, 9],
       },
       CIVIL: {
         names: [
@@ -522,6 +558,7 @@ const subjectsData: Record<
           "Community Services",
         ],
         credits: [3, 3, 3, 5, 2],
+        hide: [5, 6, 7, 8, 9],
       },
       MECH: {
         names: [
@@ -532,13 +569,14 @@ const subjectsData: Record<
           "Project",
         ],
         credits: [3, 3, 3, 2, 6],
+        hide: [6, 7, 8, 9],
       },
     },
   },
 };
 
 async function seedSubjects() {
-  console.log("🚀 Starting Subject Seeding...");
+  console.log("🚀 Starting Detailed Subject Seeding...");
 
   for (const year of Object.keys(subjectsData)) {
     for (const semLabel of Object.keys(subjectsData[year])) {
@@ -546,9 +584,11 @@ async function seedSubjects() {
       const semFormatted = `${year}-SEM-${semNumber}`;
 
       for (const branch of Object.keys(subjectsData[year][semLabel])) {
-        const { names, credits } = subjectsData[year][semLabel][branch];
+        const { names, credits, hide } = subjectsData[year][semLabel][branch];
 
         for (let i = 0; i < names.length; i++) {
+          if (hide && hide.includes(i + 1)) continue;
+
           const name = names[i];
           const credit = credits[i];
 
@@ -561,14 +601,14 @@ async function seedSubjects() {
             where: { code },
             update: {
               name,
-              credits: Math.floor(credit), // DB schema might have Int for credits
+              credits: credit, // Assuming credits can be Float or Int. Schema check says Int.
               department: branch,
               semester: semFormatted,
             },
             create: {
               code,
               name,
-              credits: Math.floor(credit),
+              credits: credit,
               department: branch,
               semester: semFormatted,
             },
@@ -578,7 +618,7 @@ async function seedSubjects() {
     }
   }
 
-  console.log("🏁 Subject Seeding Completed!");
+  console.log("🏁 Detailed Subject Seeding Completed!");
 }
 
 seedSubjects()
