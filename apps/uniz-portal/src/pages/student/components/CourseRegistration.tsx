@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   ShieldCheck,
   AlertCircle,
-  X,
   CreditCard,
 } from "lucide-react";
 import {
