@@ -531,7 +531,9 @@ const subjectsData: any = {
 };
 
 async function seed() {
-  console.log("Cleaning existing subjects...");
+  console.log("Cleaning existing academic data...");
+  await prisma.grade.deleteMany({});
+  await prisma.attendance.deleteMany({});
   await prisma.registration.deleteMany({});
   await prisma.branchAllocation.deleteMany({});
   await prisma.subject.deleteMany({});
