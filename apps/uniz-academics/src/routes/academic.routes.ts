@@ -26,10 +26,12 @@ import {
   getSemesters,
   updateSemesterStatus,
   getDeanAllocations,
+  updateAllocation,
   approveBranchAllocation,
   getAvailableSubjects,
   registerSubjects,
   getCurrentSubjects,
+  exportAcademicData,
 } from "../controllers/registration.controller";
 import {
   getFaculties,
@@ -96,11 +98,14 @@ router.post("/semester/init", initSemester);
 router.patch("/semester/status/:id", updateSemesterStatus);
 
 router.get("/dean/review/:branch", getDeanAllocations);
+router.put("/dean/allocation/:id", updateAllocation);
 router.post("/dean/approve", approveBranchAllocation);
 
 router.get("/student/available", getAvailableSubjects);
 router.post("/student/register", registerSubjects);
 router.get("/student/current/:studentId", getCurrentSubjects);
+
+router.get("/export", exportAcademicData);
 
 // Faculty Management
 router.get("/faculty", getFaculties);

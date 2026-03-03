@@ -90,13 +90,15 @@ model Faculty {
 }
 
 model BranchAllocation {
-  id         String           @id @default(uuid())
-  branch     String // e.g. "CSE", "ECE"
-  subjectId  String
-  facultyId  String
-  semesterId String
-  isApproved Boolean          @default(false)
-  subject    Subject          @relation(fields: [subjectId], references: [id])
+  id            String           @id @default(uuid())
+  branch        String // e.g. "CSE", "ECE"
+  subjectId     String
+  facultyId     String
+  semesterId    String
+  customName    String? // For electives (e.g. ELECTIVE (NPTEL Course))
+  customCredits Int? // Ability to override default subject credits
+  isApproved    Boolean          @default(false)
+  subject       Subject          @relation(fields: [subjectId], references: [id])
   semester   AcademicSemester @relation(fields: [semesterId], references: [id])
   faculty    Faculty          @relation(fields: [facultyId], references: [id])
 
