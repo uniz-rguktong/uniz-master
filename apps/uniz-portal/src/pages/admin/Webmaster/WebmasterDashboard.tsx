@@ -112,9 +112,9 @@ export default function WebmasterDashboard() {
       default:
         return (
           <div className="p-8 space-y-8 animate-in fade-in duration-500">
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-10 text-white shadow-2xl shadow-blue-200 relative overflow-hidden">
+            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[28px] p-10 text-white shadow-2xl shadow-blue-200 relative overflow-hidden">
               <div className="relative z-10">
-                <h1 className="text-4xl font-black tracking-tight mb-2">
+                <h1 className="text-4xl font-semibold tracking-[-0.02em] mb-2">
                   Welcome, {username}
                 </h1>
                 <p className="text-blue-100 font-medium opacity-80">
@@ -131,13 +131,13 @@ export default function WebmasterDashboard() {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as any)}
-                  className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-left"
+                  className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm text-left hover:shadow-md transition-shadow"
                 >
-                  <div className="p-3 rounded-xl bg-blue-50 text-blue-600 mb-4">
+                  <div className="p-3 rounded-2xl bg-blue-50 text-blue-600 mb-4 inline-block">
                     <item.icon size={24} />
                   </div>
-                  <h3 className="font-bold text-slate-900">{item.label}</h3>
-                  <p className="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">
+                  <h3 className="font-semibold text-slate-900 text-lg mb-1">{item.label}</h3>
+                  <p className="text-xs text-slate-400 uppercase tracking-widest font-medium">
                     Access Module
                   </p>
                 </button>
@@ -165,10 +165,10 @@ export default function WebmasterDashboard() {
           </div>
           {isSidebarOpen && (
             <div className="flex flex-col animate-in fade-in duration-500">
-              <span className="font-bold text-slate-900 text-[19px] tracking-tight leading-none">
+              <span className="font-semibold text-slate-900 text-[19px] tracking-tight leading-none">
                 Ongole
               </span>
-              <span className="text-[10px] uppercase tracking-[0.2em] text-[#6366f1]/80 font-black mt-1.5 px-0.5">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-[#6366f1]/80 font-semibold mt-1.5 px-0.5">
                 WEBMASTER PORTAL
               </span>
             </div>
@@ -186,9 +186,9 @@ export default function WebmasterDashboard() {
                 key={item.id}
                 onClick={() => setActiveTab(item.id as any)}
                 className={`
-                  w-full flex items-center space-x-3 px-3 py-3 rounded-xl text-left transition-all duration-200 group relative
+                  w-full flex items-center space-x-3 px-4 py-3 rounded-full text-left transition-all duration-200 group relative
                   ${isActive
-                    ? "bg-blue-50 text-blue-700 shadow-sm"
+                    ? "bg-blue-50 text-blue-700"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }
                 `}
@@ -205,8 +205,8 @@ export default function WebmasterDashboard() {
                 </div>
                 {isSidebarOpen && (
                   <span
-                    className={`text-[15px] whitespace-nowrap tracking-tight transition-all
-                      ${isActive ? "font-bold" : "font-semibold"}`}
+                    className={`text-[14px] whitespace-nowrap tracking-normal transition-all
+                      ${isActive ? "font-semibold" : "font-medium"}`}
                   >
                     {item.label}
                   </span>
@@ -220,15 +220,15 @@ export default function WebmasterDashboard() {
         {/* Bottom Section */}
         <div className="mt-auto px-3 py-4 space-y-1 border-t border-slate-50 shrink-0">
           {/* Profile Display */}
-          <div className="flex items-center px-3 py-2 group rounded-xl transition-colors">
+          <div className="flex items-center px-4 py-3 group rounded-full transition-colors">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center border border-blue-200 shadow-sm overflow-hidden shrink-0">
-              <span className="text-blue-700 font-bold text-[11px]">
+              <span className="text-blue-700 font-semibold text-[11px]">
                 {username[0].toUpperCase()}
               </span>
             </div>
             {isSidebarOpen && (
               <div className="ml-3 flex-1 min-w-0">
-                <p className="text-[15px] font-bold text-slate-900 truncate tracking-tight">
+                <p className="text-[15px] font-semibold text-slate-900 truncate tracking-tight">
                   {username}
                 </p>
               </div>
@@ -238,12 +238,12 @@ export default function WebmasterDashboard() {
           {/* Logout Action */}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-left transition-all duration-200 group text-red-500 hover:bg-red-50"
+            className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-full text-left transition-all duration-200 group text-red-500 hover:bg-red-50"
           >
             <div className="flex items-center justify-center min-w-[24px]">
               <LogOut size={20} className="shrink-0 transition-transform group-hover:rotate-12" />
             </div>
-            {isSidebarOpen && <span className="text-[15px] font-bold">Logout</span>}
+            {isSidebarOpen && <span className="text-[15px] font-semibold">Logout</span>}
           </button>
         </div>
       </aside>
@@ -259,14 +259,14 @@ export default function WebmasterDashboard() {
           </button>
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-black text-slate-900 leading-none">
+              <p className="text-sm font-semibold text-slate-900 leading-none">
                 {username}
               </p>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+              <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
                 System Administrator
               </p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center font-black text-blue-600">
+            <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center font-semibold text-blue-600">
               {username[0].toUpperCase()}
             </div>
           </div>

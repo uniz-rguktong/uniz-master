@@ -35,18 +35,18 @@ export { enableOutingsAndOutpasses } from "../pages/student/student";
 
 interface MainContent {
   content:
-    | "outpass"
-    | "outing"
-    | "gradehub"
-    | "resetpassword"
-    | "dashboard"
-    | "requestOuting"
-    | "requestOutpass"
-    | "campushub"
-    | "studyspace"
-    | "attendance"
-    | "grievance"
-    | "error";
+  | "outpass"
+  | "outing"
+  | "gradehub"
+  | "resetpassword"
+  | "dashboard"
+  | "requestOuting"
+  | "requestOutpass"
+  | "campushub"
+  | "studyspace"
+  | "attendance"
+  | "grievance"
+  | "error";
 }
 
 const ContentSkeleton = () => (
@@ -124,21 +124,21 @@ export default function Sidebar({ content }: MainContent) {
     },
     ...(enableOutingsAndOutpasses
       ? [
-          {
-            id: "outing",
-            label: "Outing Requests",
-            href: "/student/outing",
-            content: "outing",
-            icon: Clock,
-          },
-          {
-            id: "outpass",
-            label: "Outpass Requests",
-            href: "/student/outpass",
-            content: "outpass",
-            icon: CalendarDays,
-          },
-        ]
+        {
+          id: "outing",
+          label: "Outing Requests",
+          href: "/student/outing",
+          content: "outing",
+          icon: Clock,
+        },
+        {
+          id: "outpass",
+          label: "Outpass Requests",
+          href: "/student/outpass",
+          content: "outpass",
+          icon: CalendarDays,
+        },
+      ]
       : []),
     {
       id: "gradehub",
@@ -233,7 +233,7 @@ export default function Sidebar({ content }: MainContent) {
                 className="w-full h-full object-cover rounded-full"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-black text-xs uppercase rounded-full">
+              <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-semibold text-xs uppercase rounded-full">
                 {userData?.name?.charAt(0) || "S"}
               </div>
             )}
@@ -248,7 +248,7 @@ export default function Sidebar({ content }: MainContent) {
               />
               <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 p-5 z-50 animate-in fade-in zoom-in duration-200 origin-top-right">
                 <div className="flex flex-col gap-1.5 mb-5">
-                  <span className="text-[17px] font-black text-slate-900 leading-tight">
+                  <span className="text-[17px] font-semibold text-slate-900 leading-tight">
                     {userData?.name || "Student"}
                   </span>
                   <div className="flex flex-col gap-0.5">
@@ -266,7 +266,7 @@ export default function Sidebar({ content }: MainContent) {
                     setShowConfirm(true);
                     setShowProfilePopup(false);
                   }}
-                  className="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-red-50 text-red-600 rounded-xl font-bold text-sm hover:bg-red-100 transition-colors border border-red-100/50"
+                  className="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-red-50 text-red-600 rounded-full font-semibold text-sm hover:bg-red-100 transition-colors border border-red-100/50"
                 >
                   <LogOut className="w-4 h-4" />
                   Logout Account
@@ -488,26 +488,25 @@ export default function Sidebar({ content }: MainContent) {
                           setIsOpen(false);
                         }}
                         className={`
-                        w-full flex items-center gap-4 px-5 py-3 rounded-2xl transition-all
-                        ${
-                          isActive
-                            ? "bg-blue-50 text-blue-700 border border-blue-100"
+                        w-full flex items-center gap-4 px-5 py-3 rounded-full transition-all
+                        ${isActive
+                            ? "bg-blue-50 text-blue-700 shadow-sm"
                             : "text-slate-600 hover:bg-slate-50"
-                        }
+                          }
                       `}
                       >
                         <Icon
                           className={`w-5 h-5 flex-shrink-0 ${isActive ? "text-blue-600" : "text-slate-400"}`}
                         />
                         <span
-                          className={`text-[15px] text-left whitespace-nowrap ${isActive ? "font-black" : "font-semibold"}`}
+                          className={`text-[15px] text-left whitespace-nowrap ${isActive ? "font-semibold" : "font-medium"}`}
                         >
                           {item.label}
                         </span>
                         {(item.id === "dashboard" ||
                           item.id === "requestOuting") && (
-                          <ChevronDown className="w-4 h-4 ml-auto text-slate-300" />
-                        )}
+                            <ChevronDown className="w-4 h-4 ml-auto text-slate-300" />
+                          )}
                       </button>
                     );
                   })}
@@ -568,23 +567,21 @@ export default function Sidebar({ content }: MainContent) {
                         if (window.innerWidth < 768) setIsOpen(false);
                       }}
                       className={`
-                      w-full flex items-center space-x-3 px-3 py-3 rounded-md text-left transition-all duration-200 group relative
-                      ${
-                        isActive
-                          ? "bg-blue-50 text-blue-700 shadow-sm"
+                      w-full flex items-center space-x-3 px-4 py-3 rounded-full text-left transition-all duration-200 group relative
+                      ${isActive
+                          ? "bg-blue-50 text-blue-700 shadow-sm shadow-blue-50"
                           : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                      }
+                        }
                     `}
                     >
                       <div className="flex items-center justify-center min-w-[24px]">
                         <Icon
                           className={`
                           h-[21px] w-[21px] flex-shrink-0
-                          ${
-                            isActive
+                          ${isActive
                               ? "text-blue-600"
                               : "text-slate-400 group-hover:text-slate-700"
-                          }
+                            }
                         `}
                         />
                       </div>
@@ -666,19 +663,17 @@ export default function Sidebar({ content }: MainContent) {
       {/* Mobile Bottom Navigation Bar - Exact Unstop Dimensions */}
       {!isOpen && (
         <div
-          className={`md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[72%] max-w-[280px] transition-all duration-500 ease-in-out ${
-            isVisible
-              ? "translate-y-0 opacity-100"
-              : "translate-y-24 opacity-0 pointer-events-none"
-          }`}
+          className={`md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[72%] max-w-[280px] transition-all duration-500 ease-in-out ${isVisible
+            ? "translate-y-0 opacity-100"
+            : "translate-y-24 opacity-0 pointer-events-none"
+            }`}
         >
           <div className="bg-white/80 backdrop-blur-xl border border-white/40 rounded-[2rem] shadow-[0_12px_40px_rgba(0,0,0,0.12)] px-4 py-3 flex items-center justify-between">
             {/* Outpass Option */}
             <button
               onClick={() => navigate("/student/outpass")}
-              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${
-                content === "outpass" ? "text-blue-600" : "text-slate-400"
-              }`}
+              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${content === "outpass" ? "text-blue-600" : "text-slate-400"
+                }`}
             >
               <CalendarDays className="h-6 w-6" />
               <span className="text-[9px] font-bold uppercase tracking-tight">
@@ -689,9 +684,8 @@ export default function Sidebar({ content }: MainContent) {
             {/* Results Option (Center) */}
             <button
               onClick={() => navigate("/student/gradehub")}
-              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${
-                content === "gradehub" ? "text-blue-600" : "text-slate-400"
-              }`}
+              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${content === "gradehub" ? "text-blue-600" : "text-slate-400"
+                }`}
             >
               <GraduationCap className="h-6 w-6" />
               <span className="text-[9px] font-bold uppercase tracking-tight">
@@ -702,9 +696,8 @@ export default function Sidebar({ content }: MainContent) {
             {/* Settings Option */}
             <button
               onClick={() => navigate("/student/resetpassword")}
-              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${
-                content === "resetpassword" ? "text-blue-600" : "text-slate-400"
-              }`}
+              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${content === "resetpassword" ? "text-blue-600" : "text-slate-400"
+                }`}
             >
               <KeyRound className="h-6 w-6" />
               <span className="text-[9px] font-bold uppercase tracking-tight">
