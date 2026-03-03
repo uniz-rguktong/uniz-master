@@ -196,11 +196,10 @@ export default function GradeHub() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-medium transition-colors ${
-                        selectedYear === year
-                          ? "bg-blue-600 text-white"
-                          : "hover:bg-slate-50 text-slate-700"
-                      }`}
+                      className={`p-3 cursor-pointer text-sm font-medium transition-colors ${selectedYear === year
+                        ? "bg-blue-600 text-white"
+                        : "hover:bg-slate-50 text-slate-700"
+                        }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setShowDropdown(false);
@@ -246,11 +245,7 @@ export default function GradeHub() {
               </label>
               <button
                 onClick={handleFetchResults}
-                className={`w-full h-[46px] flex items-center justify-center font-bold text-sm rounded-lg transition-all duration-300 ${
-                  isLoading
-                    ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                    : "bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-100 hover:shadow-lg hover:shadow-blue-200 hover:-translate-y-0.5"
-                }`}
+                className="w-full uniz-primary-btn"
                 disabled={isLoading || !user?.username}
               >
                 {isLoading ? (
@@ -310,7 +305,7 @@ export default function GradeHub() {
                     { studentId: user.username },
                   );
                 }}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl font-bold text-xs hover:bg-blue-700 transition-all shadow-sm hover:shadow-md"
+                className="uniz-primary-btn h-auto py-2 px-4 shadow-sm"
               >
                 <Download size={16} />
                 Download Report
@@ -372,11 +367,10 @@ export default function GradeHub() {
                                 </td>
                                 <td className="px-2 py-2.5 text-center">
                                   <span
-                                    className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
-                                      item.grade === "Ex"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-slate-100 text-slate-800"
-                                    }`}
+                                    className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${item.grade === "Ex"
+                                      ? "bg-blue-600 text-white"
+                                      : "bg-slate-100 text-slate-800"
+                                      }`}
                                   >
                                     {item.grade}
                                   </span>
@@ -403,11 +397,10 @@ export default function GradeHub() {
                                   </td>
                                   <td className="px-2 py-2.5 text-center">
                                     <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
-                                        grade === "Ex"
-                                          ? "bg-blue-600 text-white"
-                                          : "bg-slate-100 text-slate-800"
-                                      }`}
+                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${grade === "Ex"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-slate-100 text-slate-800"
+                                        }`}
                                     >
                                       {grade}
                                     </span>
@@ -461,7 +454,7 @@ export default function GradeHub() {
               Please sign in to your student account to access your academic
               performance records and grades.
             </p>
-            <button className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 hover:shadow-xl hover:-translate-y-1">
+            <button className="uniz-primary-btn px-8 h-[54px]">
               Sign In to Continue
             </button>
           </div>

@@ -25,9 +25,9 @@ export function OutButton({ request }: requestProps) {
     <div className="flex justify-center items-center w-full md:w-auto mt-4 md:mt-0">
       <button
         onClick={() => navigateTo(`/student/${request}/request${request}`)}
-        className="w-full md:w-auto bg-blue-600 text-white px-6 py-3 rounded-2xl font-black text-[11px] uppercase tracking-[0.15em] shadow-lg shadow-blue-100 hover:bg-blue-700 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+        className="uniz-primary-btn w-full md:w-auto px-6 h-[48px]"
       >
-        <Plus className="w-3.5 h-3.5" />
+        <Plus className="w-4 h-4" />
         <span>New {request.charAt(0).toUpperCase() + request.slice(1)}</span>
       </button>
     </div>

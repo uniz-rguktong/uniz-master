@@ -77,7 +77,7 @@ export default function SystemLogsSection() {
           <button
             onClick={fetchHistory}
             disabled={loading}
-            className="p-4 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-900 hover:border-slate-300 transition-all shadow-sm"
+            className="uniz-primary-btn w-[54px] bg-white text-slate-400 border border-slate-100 shadow-none hover:shadow-none hover:bg-slate-50"
             title="Refresh Logs"
           >
             <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
@@ -85,7 +85,7 @@ export default function SystemLogsSection() {
           <button
             onClick={triggerMaintenance}
             disabled={isMaintenanceLoading}
-            className="flex items-center gap-3 bg-red-50 text-red-600 px-8 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-600 hover:text-white transition-all shadow-lg active:scale-95"
+            className="uniz-primary-btn px-8 bg-red-50 text-red-600 border border-red-100 shadow-none hover:shadow-none hover:bg-red-600 hover:text-white"
           >
             {isMaintenanceLoading ? (
               <Loader2 className="animate-spin" size={16} />
@@ -110,19 +110,19 @@ export default function SystemLogsSection() {
           value="Encrypted"
           color="blue"
         />
-        <StatusCard icon={Clock} label="Uptime" value="99.9%" color="slate" />
+        <StatusCard icon={Clock} label="Uptime" value="99.9%" color="emerald" />
         <StatusCard
           icon={FileText}
           label="Total Logs"
           value={history.length.toString()}
-          color="slate"
+          color="blue"
         />
       </div>
 
-      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden text-slate-900">
         <div className="p-8 border-b border-slate-50 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-slate-900 rounded-2xl text-white">
+            <div className="p-3 bg-blue-600 rounded-2xl text-white shadow-lg shadow-blue-100">
               <Clock size={20} />
             </div>
             <div>
@@ -194,7 +194,7 @@ export default function SystemLogsSection() {
                       </div>
                     </td>
                     <td className="px-8 py-6">
-                      <span className="px-3 py-1 bg-slate-100 rounded-lg text-slate-600 font-black uppercase tracking-widest text-[9px] border border-slate-200">
+                      <span className="px-3 py-1 bg-blue-50 rounded-lg text-blue-600 font-black uppercase tracking-widest text-[9px] border border-blue-100">
                         {log.actionType || "SYNC"}
                       </span>
                     </td>
@@ -260,12 +260,12 @@ function StatusCard({
 }) {
   const colors: any = {
     emerald: "bg-emerald-50 text-emerald-500 border-emerald-100",
-    blue: "bg-blue-50 text-blue-500 border-blue-100",
-    slate: "bg-slate-50 text-slate-500 border-slate-100",
+    blue: "bg-blue-600 text-white border-blue-400 shadow-lg shadow-blue-200",
+    slate: "bg-slate-50 text-slate-400 border-slate-100",
   };
 
   return (
-    <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-6">
+    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-6">
       <div
         className={`p-4 rounded-2xl ${colors[color] || colors.slate} border`}
       >

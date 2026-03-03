@@ -242,7 +242,7 @@ export default function StudentDetails() {
           </p>
         </div>
 
-        <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200">
+        <div className="flex bg-blue-50/50 p-1.5 rounded-2xl border border-blue-100/50">
           <button
             onClick={() => {
               setSearchMode("id");
@@ -250,7 +250,7 @@ export default function StudentDetails() {
               setSelectedStudent(null);
               setIsEditing(false);
             }}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${searchMode === "id" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${searchMode === "id" ? "bg-blue-600 text-white shadow-md shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
           >
             By ID
           </button>
@@ -261,7 +261,7 @@ export default function StudentDetails() {
               setSelectedStudent(null);
               setIsEditing(false);
             }}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${searchMode === "filter" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${searchMode === "filter" ? "bg-blue-600 text-white shadow-md shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
           >
             By Filter
           </button>
@@ -283,13 +283,13 @@ export default function StudentDetails() {
               placeholder="Enter Student ID (e.g. O210329)"
               value={studentId}
               onChange={(e) => setStudentId(e.target.value.toUpperCase())}
-              className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-slate-900 shadow-sm"
+              className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900 shadow-sm"
             />
           </div>
           <button
             disabled={loading}
             type="submit"
-            className="bg-slate-900 text-white px-8 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-black transition-all shadow-lg active:scale-95 disabled:opacity-50 flex items-center gap-2"
+            className="uniz-primary-btn px-8"
           >
             {loading ? (
               <Loader2 className="animate-spin w-4 h-4" />
@@ -308,7 +308,7 @@ export default function StudentDetails() {
             <select
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
-              className="bg-white border border-slate-200 px-6 py-4 rounded-2xl font-bold text-slate-900 outline-none focus:ring-4 focus:ring-slate-900/5 shadow-sm min-w-[150px]"
+              className="bg-white border border-slate-200 px-6 py-4 rounded-2xl font-bold text-slate-900 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 shadow-sm min-w-[150px]"
             >
               {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
                 (b) => (
@@ -324,7 +324,7 @@ export default function StudentDetails() {
             <select
               value={year}
               onChange={(e) => setYear(e.target.value)}
-              className="bg-white border border-slate-200 px-6 py-4 rounded-2xl font-bold text-slate-900 outline-none focus:ring-4 focus:ring-slate-900/5 shadow-sm min-w-[150px]"
+              className="bg-white border border-slate-200 px-6 py-4 rounded-2xl font-bold text-slate-900 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 shadow-sm min-w-[150px]"
             >
               {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
                 <option key={y}>{y}</option>
@@ -334,7 +334,7 @@ export default function StudentDetails() {
           <button
             onClick={handleSearchByFilter}
             disabled={loading}
-            className="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-black transition-all shadow-lg active:scale-95 disabled:opacity-50 flex items-center gap-2"
+            className="uniz-primary-btn px-8"
           >
             {loading ? (
               <Loader2 className="animate-spin w-4 h-4" />
@@ -365,12 +365,12 @@ export default function StudentDetails() {
                 onClick={() => fetchFullDetails(std.username)}
                 className={`
                                     group flex items-center justify-between p-4 px-6 bg-white border rounded-2xl transition-all cursor-pointer hover:shadow-lg
-                                    ${selectedStudent?.username === std.username ? "border-slate-900 ring-2 ring-slate-900/5" : "border-slate-100 hover:border-slate-300"}
+                                    ${selectedStudent?.username === std.username ? "border-blue-600 ring-2 ring-blue-600/5" : "border-slate-100 hover:border-slate-300"}
                                 `}
               >
                 <div className="flex items-center gap-4">
                   <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${selectedStudent?.username === std.username ? "bg-slate-900 text-white" : "bg-slate-50 text-slate-400 group-hover:bg-slate-100"}`}
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${selectedStudent?.username === std.username ? "bg-blue-600 text-white shadow-md shadow-blue-100" : "bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600"}`}
                   >
                     <User size={20} />
                   </div>
@@ -379,11 +379,11 @@ export default function StudentDetails() {
                       {std.name}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
                         {std.username}
                       </span>
-                      <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                      <span className="text-[10px] font-bold text-slate-500 uppercase">
+                      <span className="w-1 h-1 rounded-full bg-slate-200"></span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                         {std.branch}
                       </span>
                     </div>
@@ -400,11 +400,10 @@ export default function StudentDetails() {
                           std.is_suspended === true,
                         )
                       }
-                      className={`p-3 rounded-xl transition-all border ${
-                        std.is_suspended !== true
-                          ? "text-slate-400 hover:text-red-500 hover:bg-red-50 border-transparent hover:border-red-100"
-                          : "text-emerald-500 bg-emerald-50 border-emerald-100 hover:bg-emerald-100"
-                      }`}
+                      className={`p-3 rounded-xl transition-all border ${std.is_suspended !== true
+                        ? "text-slate-400 hover:text-red-500 hover:bg-red-50 border-transparent hover:border-red-100"
+                        : "text-emerald-500 bg-emerald-50 border-emerald-100 hover:bg-emerald-100"
+                        }`}
                     >
                       {isActionLoading === std.username ? (
                         <Loader2 size={18} className="animate-spin" />
@@ -417,7 +416,7 @@ export default function StudentDetails() {
                   )}
                   <ChevronRight
                     size={18}
-                    className={`text-slate-300 transition-transform ${selectedStudent?.username === std.username ? "translate-x-1 text-slate-900" : ""}`}
+                    className={`text-slate-300 transition-transform ${selectedStudent?.username === std.username ? "translate-x-1 text-blue-600" : ""}`}
                   />
                 </div>
               </div>
@@ -438,8 +437,8 @@ export default function StudentDetails() {
 
         {selectedStudent && (
           <div className="lg:col-span-7 animate-in fade-in zoom-in-95 duration-500 sticky top-24 h-fit">
-            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl overflow-hidden">
-              <div className="bg-slate-900 p-8 text-white relative">
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl overflow-hidden">
+              <div className="bg-blue-600 p-8 text-white relative">
                 <div className="absolute top-6 right-6 flex items-center gap-2">
                   {isWebmaster && (
                     <button
@@ -463,7 +462,7 @@ export default function StudentDetails() {
                 </div>
 
                 <div className="flex items-center gap-6">
-                  <div className="w-24 h-24 rounded-3xl border-4 border-white/10 overflow-hidden bg-white/5 flex items-center justify-center shrink-0">
+                  <div className="w-24 h-24 rounded-3xl border-4 border-white/20 overflow-hidden bg-white/10 flex items-center justify-center shrink-0">
                     {selectedStudent.profile_url ? (
                       <img
                         src={selectedStudent.profile_url}
@@ -471,7 +470,7 @@ export default function StudentDetails() {
                         alt=""
                       />
                     ) : (
-                      <User size={48} className="text-white/20" />
+                      <User size={48} className="text-white/40" />
                     )}
                   </div>
                   <div>
@@ -480,14 +479,14 @@ export default function StudentDetails() {
                         {selectedStudent.name}
                       </h3>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${selectedStudent.is_suspended !== true ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"}`}
+                        className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${selectedStudent.is_suspended !== true ? "bg-emerald-400 text-white shadow-md shadow-emerald-200" : "bg-red-400 text-white shadow-md shadow-red-200"}`}
                       >
                         {selectedStudent.is_suspended !== true
                           ? "Active"
                           : "Suspended"}
                       </span>
                     </div>
-                    <p className="text-white/40 font-bold uppercase tracking-[0.2em] text-[10px] mt-1">
+                    <p className="text-blue-100 font-bold uppercase tracking-[0.2em] text-[10px] mt-2 opacity-80">
                       {selectedStudent.username}
                     </p>
                   </div>
@@ -600,14 +599,14 @@ export default function StudentDetails() {
                   <div className="pt-4 flex gap-4">
                     <button
                       onClick={() => setIsEditing(false)}
-                      className="flex-1 py-4 rounded-2xl font-black uppercase tracking-widest text-xs border border-slate-200 text-slate-400"
+                      className="flex-1 uniz-primary-btn bg-white text-slate-900 border border-slate-200 shadow-sm"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleUpdateStudent}
                       disabled={loading}
-                      className="flex-1 bg-slate-900 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black flex items-center justify-center gap-2"
+                      className="flex-1 uniz-primary-btn"
                     >
                       {loading ? (
                         <Loader2 className="animate-spin w-4 h-4" />
@@ -666,11 +665,7 @@ export default function StudentDetails() {
                           )
                         }
                         disabled={isActionLoading === selectedStudent.username}
-                        className={`w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all ${
-                          selectedStudent.is_suspended === true
-                            ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white"
-                            : "bg-red-50 text-red-600 hover:bg-red-600 hover:text-white"
-                        }`}
+                        className={`w-full ${selectedStudent.is_suspended === true ? "uniz-primary-btn bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20 hover:shadow-emerald-600/30" : "uniz-primary-btn bg-red-600 hover:bg-red-700 shadow-red-600/20 hover:shadow-red-600/30"}`}
                       >
                         {isActionLoading === selectedStudent.username ? (
                           <Loader2 size={16} className="animate-spin" />
@@ -691,7 +686,7 @@ export default function StudentDetails() {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 }
 

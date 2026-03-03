@@ -315,13 +315,13 @@ export default function Resetpassword() {
                   <button
                     onClick={sendDataToBackend}
                     disabled={isLoading}
-                    className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2"
+                    className="w-full uniz-primary-btn"
                   >
                     {isLoading ? "Processing..." : "Reset Password"}
                   </button>
                   <button
                     onClick={() => navigateTo("/student")}
-                    className="w-full text-slate-500 hover:text-blue-600 font-bold py-3.5 rounded-xl transition-colors duration-300 flex items-center justify-center gap-2"
+                    className="w-full uniz-primary-btn bg-transparent text-slate-500 hover:text-blue-600 shadow-none hover:shadow-none hover:bg-slate-50"
                     disabled={isLoading}
                   >
                     Back to Dashboard
