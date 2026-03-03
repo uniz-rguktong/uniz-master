@@ -161,8 +161,9 @@ export default function Grievance() {
                 {/* Action Buttons */}
                 <div className="pt-2 md:pt-4 space-y-4">
                   <button
-                    className="w-full bg-blue-600 text-white hover:bg-blue-700 py-3.5 h-auto rounded-xl font-bold shadow-lg shadow-blue-100 transition-all hover:-translate-y-1 flex items-center justify-center gap-2"
+                    className="w-full uniz-primary-btn"
                     onClick={() => handleSubmit()}
+                    disabled={loading}
                   >
                     {loading ? "Submitting..." : "Submit Grievance"}
                   </button>

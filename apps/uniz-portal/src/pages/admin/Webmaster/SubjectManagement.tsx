@@ -125,7 +125,7 @@ export default function SubjectManagement() {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="bg-slate-900 text-white px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-2 hover:bg-black transition-all shadow-lg active:scale-95"
+          className="uniz-primary-btn px-8 gap-2.5"
         >
           <Plus size={16} /> New Subject
         </button>
@@ -139,7 +139,7 @@ export default function SubjectManagement() {
             placeholder="Search by name or code..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-sm"
+            className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
           />
           <Plus
             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 rotate-45"
@@ -179,7 +179,7 @@ export default function SubjectManagement() {
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="animate-spin text-slate-900" size={32} />
+          <Loader2 className="animate-spin text-blue-600" size={32} />
         </div>
       ) : subjects.length > 0 ? (
         <>
@@ -189,14 +189,11 @@ export default function SubjectManagement() {
                 key={idx}
                 className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all group overflow-hidden relative"
               >
-                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform">
-                  <BookOpen size={80} />
-                </div>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 bg-slate-50 rounded-xl text-slate-900 border border-slate-100">
+                  <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-100">
                     <BookText size={20} />
                   </div>
-                  <div className="px-3 py-1 bg-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  <div className="px-3 py-1 bg-blue-50/50 rounded-full text-[10px] font-black uppercase tracking-widest text-blue-600 border border-blue-100/50">
                     {sub.code}
                   </div>
                 </div>
@@ -229,7 +226,7 @@ export default function SubjectManagement() {
                       {[...Array(Number(sub.credits))].map((_, i) => (
                         <div
                           key={i}
-                          className="w-1.5 h-1.5 rounded-full bg-slate-900"
+                          className="w-1.5 h-1.5 rounded-full bg-blue-600"
                         />
                       ))}
                     </div>
@@ -245,7 +242,7 @@ export default function SubjectManagement() {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-90"
+                className="uniz-primary-btn w-12 h-12 p-0 bg-white text-slate-900 border border-slate-200 shadow-sm"
               >
                 <Plus size={20} className="rotate-[135deg]" />
               </button>
@@ -263,11 +260,10 @@ export default function SubjectManagement() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${
-                          page === p
-                            ? "bg-slate-900 text-white border-slate-900 shadow-lg"
-                            : "bg-white text-slate-400 border-slate-100 hover:border-slate-300"
-                        }`}
+                        className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${page === p
+                          ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100"
+                          : "bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:text-blue-600"
+                          }`}
                       >
                         {p}
                       </button>
@@ -287,7 +283,7 @@ export default function SubjectManagement() {
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                className="p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-90"
+                className="uniz-primary-btn w-12 h-12 p-0 bg-white text-slate-900 border border-slate-200 shadow-sm"
               >
                 <Plus size={20} className="rotate-45" />
               </button>
@@ -295,7 +291,7 @@ export default function SubjectManagement() {
           )}
         </>
       ) : (
-        <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-[40px] border border-dashed border-slate-200">
+        <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
           <BookOpen size={48} className="text-slate-300 mb-4" />
           <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
             No subjects found matching your criteria
@@ -339,7 +335,7 @@ export default function SubjectManagement() {
                     onChange={(e) =>
                       setNewSubject({ ...newSubject, name: e.target.value })
                     }
-                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold"
+                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                     placeholder="e.g. Artificial Intelligence"
                   />
                 </div>
@@ -359,7 +355,7 @@ export default function SubjectManagement() {
                         code: e.target.value.toUpperCase(),
                       })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                     placeholder="CSE402"
                   />
                 </div>
@@ -379,7 +375,7 @@ export default function SubjectManagement() {
                         credits: parseInt(e.target.value),
                       })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                   />
                 </div>
               </div>
@@ -397,7 +393,7 @@ export default function SubjectManagement() {
                         department: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                   >
                     <option>CSE</option>
                     <option>ECE</option>
@@ -415,7 +411,7 @@ export default function SubjectManagement() {
                     onChange={(e) =>
                       setNewSubject({ ...newSubject, semester: e.target.value })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                   >
                     {["E1", "E2", "E3", "E4"].map((y) => (
                       <React.Fragment key={y}>
@@ -431,14 +427,14 @@ export default function SubjectManagement() {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs border border-slate-200 text-slate-400 hover:bg-slate-50 transition-all"
+                  className="flex-1 uniz-primary-btn bg-white text-slate-900 border border-slate-200 shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   disabled={isAdding}
                   type="submit"
-                  className="flex-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-lg flex items-center justify-center gap-2"
+                  className="flex-1 uniz-primary-btn"
                 >
                   {isAdding ? (
                     <Loader2 className="animate-spin w-4 h-4" />

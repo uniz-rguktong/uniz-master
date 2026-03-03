@@ -23,18 +23,31 @@
     width: 5px;
     height: 5px;
   }
+
   ::-webkit-scrollbar-track {
     background: transparent;
   }
+
   ::-webkit-scrollbar-thumb {
     @apply bg-slate-200 rounded-full transition-colors duration-300;
   }
+
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-slate-300;
   }
+
   * {
     scrollbar-width: thin;
     scrollbar-color: #e2e8f0 transparent;
+  }
+}
+
+@layer components {
+  .uniz-primary-btn {
+    @apply h-[46px] flex items-center justify-center font-bold text-sm rounded-lg transition-all duration-300;
+    @apply bg-blue-600 text-white shadow-md shadow-blue-100;
+    @apply hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 hover:-translate-y-0.5;
+    @apply disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:shadow-none;
   }
 }
 
@@ -53,6 +66,7 @@
     0% {
       transform: translateX(100%);
     }
+
     100% {
       transform: translateX(-100%);
     }

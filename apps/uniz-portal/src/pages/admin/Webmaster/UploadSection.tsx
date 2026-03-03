@@ -81,12 +81,12 @@ export default function UploadSection({ type }: { type: UploadType }) {
       type === "attendance"
         ? GET_ATTENDANCE_TEMPLATE(branch, year, semester)
         : GET_GRADES_TEMPLATE(
-            branch,
-            year,
-            semester,
-            subjectCode,
-            remedialsOnly,
-          );
+          branch,
+          year,
+          semester,
+          subjectCode,
+          remedialsOnly,
+        );
 
     fetch(url, {
       method: "GET",
@@ -115,7 +115,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
 
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col gap-6 bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm animate-in slide-in-from-top-4 duration-500">
+      <div className="flex flex-col gap-6 bg-white p-8 rounded-2xl border border-slate-100 shadow-sm animate-in slide-in-from-top-4 duration-500">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
@@ -124,7 +124,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
             <select
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-sm"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
             >
               {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
                 (b) => (
@@ -143,7 +143,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
             <select
               value={year}
               onChange={(e) => setYear(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-sm"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
             >
               {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
                 <option key={y} value={y}>
@@ -160,7 +160,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
             <select
               value={semester}
               onChange={(e) => setSemester(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-sm"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
             >
               {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                 <option key={s} value={`SEM-${s}`}>
@@ -184,19 +184,24 @@ export default function UploadSection({ type }: { type: UploadType }) {
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-sm"
                 />
               </div>
-              <div className="flex items-center gap-3 pt-6">
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={remedialsOnly}
-                    onChange={(e) => setRemedialsOnly(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:width-5 after:transition-all peer-checked:bg-slate-900"></div>
-                  <span className="ml-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                    Remedials Only
-                  </span>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                  Scope
                 </label>
+                <div className="flex bg-slate-100 p-1 rounded-xl w-fit border border-slate-200">
+                  <button
+                    onClick={() => setRemedialsOnly(false)}
+                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${!remedialsOnly ? "bg-white text-blue-600 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+                  >
+                    Regular
+                  </button>
+                  <button
+                    onClick={() => setRemedialsOnly(true)}
+                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${remedialsOnly ? "bg-white text-blue-600 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+                  >
+                    Remedial
+                  </button>
+                </div>
               </div>
             </>
           )}
@@ -206,7 +211,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
           <button
             onClick={downloadTemplate}
             disabled={type === "grades" && !subjectCode}
-            className="bg-slate-900 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-2 hover:bg-black transition-all shadow-lg active:scale-95 disabled:opacity-50"
+            className="bg-blue-600 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 active:scale-95 disabled:opacity-50"
           >
             <FileDown size={16} /> Download {type} Template
           </button>
@@ -217,8 +222,8 @@ export default function UploadSection({ type }: { type: UploadType }) {
         <div className="space-y-6">
           <div
             className={`
-            border-4 border-dashed rounded-[2rem] p-12 text-center transition-all relative
-            ${file ? "border-slate-900 bg-slate-50" : "border-slate-100 hover:border-slate-200 bg-white"}
+            border-4 border-dashed rounded-3xl p-12 text-center transition-all relative
+            ${file ? "border-blue-600 bg-blue-50/30" : "border-slate-100 hover:border-blue-200 bg-white"}
           `}
           >
             <input
@@ -233,7 +238,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
               className="cursor-pointer flex flex-col items-center gap-4"
             >
               <div
-                className={`p-6 rounded-3xl transition-colors ${file ? "bg-slate-900 text-white" : "bg-slate-50 text-slate-400"}`}
+                className={`p-6 rounded-3xl transition-colors ${file ? "bg-blue-600 text-white shadow-lg shadow-blue-100" : "bg-slate-50 text-slate-400"}`}
               >
                 <Upload size={40} />
               </div>
@@ -260,7 +265,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
           <button
             disabled={!file || loading}
             onClick={handleUpload}
-            className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-sm hover:bg-black transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+            className="w-full bg-blue-600 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-sm hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
           >
             {loading ? (
               <Loader2 className="animate-spin w-5 h-5" />
@@ -274,11 +279,10 @@ export default function UploadSection({ type }: { type: UploadType }) {
         <div className="space-y-6">
           {result ? (
             <div
-              className={`p-8 rounded-[2rem] border animate-in slide-in-from-right-8 duration-500 h-full ${
-                result.success
-                  ? "bg-emerald-50 border-emerald-100"
-                  : "bg-red-50 border-red-100"
-              }`}
+              className={`p-8 rounded-2xl border animate-in slide-in-from-right-8 duration-500 h-full ${result.success
+                ? "bg-emerald-50 border-emerald-100"
+                : "bg-red-50 border-red-100"
+                }`}
             >
               <div className="flex items-center gap-4 mb-6">
                 <div
@@ -319,7 +323,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
               </div>
             </div>
           ) : (
-            <div className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center h-full">
+            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center h-full">
               <div className="p-4 bg-white rounded-2xl shadow-sm text-slate-300 mb-6">
                 <Info size={32} />
               </div>

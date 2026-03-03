@@ -394,14 +394,14 @@ export default function StudentProfilePage() {
                     setIsEditing(false);
                     refetch();
                   }}
-                  className="px-5 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-sm transition-all shadow-sm"
+                  className="uniz-primary-btn h-auto px-5 py-2 bg-white text-slate-600 border border-slate-200 shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 font-bold text-sm shadow-md transition-all flex items-center gap-2"
+                  className="uniz-primary-btn h-auto px-6 py-2"
                 >
                   {isSubmitting && <Loader2 className="w-3 h-3 animate-spin" />}{" "}
                   Save Changes
@@ -410,7 +410,7 @@ export default function StudentProfilePage() {
             ) : (
               <button
                 onClick={() => setIsEditing(true)}
-                className="hidden md:flex px-6 py-2 rounded-xl bg-white border border-blue-200 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300 font-bold text-sm items-center gap-2"
+                className="hidden md:flex uniz-primary-btn h-auto px-6 py-2 bg-white border border-blue-200 text-blue-600 hover:bg-blue-600 hover:text-white"
               >
                 <Edit2 className="w-4 h-4" /> Edit Profile
               </button>
@@ -432,11 +432,10 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                  className={`pb-3 relative text-[11px] font-black uppercase tracking-[0.2em] transition-all ${
-                    activeTab === tab
+                  className={`pb-3 relative text-[11px] font-black uppercase tracking-[0.2em] transition-all ${activeTab === tab
                       ? "text-blue-600 translate-y-[-1px]"
                       : "text-slate-400 hover:text-slate-600"
-                  }`}
+                    }`}
                 >
                   {tab}
                   {activeTab === tab && (
@@ -787,14 +786,14 @@ export default function StudentProfilePage() {
                     <button
                       type="button"
                       onClick={() => setRequestType(null)}
-                      className="flex-1 py-4 rounded-2xl font-bold text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all"
+                      className="flex-1 uniz-primary-btn bg-white text-slate-400 border border-slate-200 shadow-none hover:shadow-none hover:bg-slate-50 hover:text-slate-600"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={requestLoading}
-                      className="flex-[2] py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2"
+                      className="flex-[2] uniz-primary-btn"
                     >
                       {requestLoading ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
