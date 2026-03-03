@@ -15,6 +15,8 @@ import {
   publishAttendance,
   getSubjects,
   addSubject,
+  updateSubject,
+  deleteSubject,
   publishResults,
   downloadGrades,
   downloadAttendance,
@@ -85,6 +87,8 @@ router.post("/attendance/publish-email", publishAttendance); // Deprecated in fa
 // Subjects
 router.get("/subjects", getSubjects);
 router.post("/subjects/add", addSubject);
+router.put("/subjects/:id", updateSubject);
+router.delete("/subjects/:id", deleteSubject);
 
 // Registration Workflow
 router.get("/semester", getSemesters);
