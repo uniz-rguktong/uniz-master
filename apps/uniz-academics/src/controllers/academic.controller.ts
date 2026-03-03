@@ -1470,6 +1470,68 @@ export const addSubject = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+export const updateSubject = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { id } = req.params;
+  const { code, name, credits, department, semester } = req.body;
+  const user = req.user;
+
+  const allowed = ["webmaster", "dean", "director"];
+  if (!user || !allowed.includes(user.role as string)) {
+    return res.status(403).json({
+      success: false,
+      message: "Only administrators can manage subjects",
+    });
+  }
+
+  try {
+    const subject = await prisma.subject.update({
+      where: { id },
+      data: {
+        code,
+        name,
+        credits: credits ? Number(credits) : undefined,
+        department,
+        semester,
+      },
+    });
+    return res.json({ success: true, subject });
+  } catch (e: any) {
+    console.error("[Academics] updateSubject Error:", e);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to update subject" });
+  }
+};
+
+export const deleteSubject = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { id } = req.params;
+  const user = req.user;
+
+  const allowed = ["webmaster", "dean", "director"];
+  if (!user || !allowed.includes(user.role as string)) {
+    return res.status(403).json({
+      success: false,
+      message: "Only administrators can manage subjects",
+    });
+  }
+
+  try {
+    await prisma.subject.delete({ where: { id } });
+    return res.json({ success: true, message: "Subject deleted successfully" });
+  } catch (e: any) {
+    console.error("[Academics] deleteSubject Error:", e);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to delete subject" });
+  }
+};
+
 // --- EXCEL TEMPLATES & BULK IMPORTS ---
 
 const generateExcel = async (
