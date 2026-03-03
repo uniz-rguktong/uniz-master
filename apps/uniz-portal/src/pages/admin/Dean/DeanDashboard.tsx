@@ -73,12 +73,12 @@ export default function DeanDashboard() {
       default:
         return (
           <div className="p-8 space-y-8 animate-in fade-in duration-500">
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[28px] p-8 text-white shadow-2xl relative overflow-hidden">
               <div className="relative z-10">
-                <h1 className="text-4xl font-black tracking-tight mb-2">
+                <h1 className="text-4xl font-semibold tracking-[-0.02em] mb-2">
                   Welcome, {username}
                 </h1>
-                <p className="text-slate-400 font-medium">
+                <p className="text-slate-400 font-medium opacity-80">
                   Dean Control Center
                 </p>
               </div>
@@ -92,13 +92,13 @@ export default function DeanDashboard() {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as any)}
-                  className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-slate-200 transition-all group text-left"
+                  className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm hover:shadow-xl hover:border-slate-200 transition-all group text-left"
                 >
-                  <div className="p-3 rounded-xl bg-slate-50 text-slate-900 mb-4 group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                  <div className="p-3 rounded-2xl bg-slate-50 text-slate-900 mb-4 group-hover:bg-slate-900 group-hover:text-white transition-colors inline-block">
                     <item.icon size={24} />
                   </div>
-                  <h3 className="font-bold text-slate-900">{item.label}</h3>
-                  <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider font-semibold">
+                  <h3 className="font-semibold text-slate-900 text-lg mb-1">{item.label}</h3>
+                  <p className="text-xs text-slate-500 uppercase tracking-widest font-medium">
                     Access Module
                   </p>
                 </button>
@@ -113,35 +113,33 @@ export default function DeanDashboard() {
     <div className="flex min-h-screen bg-slate-50 relative overflow-hidden">
       {/* Sidebar */}
       <aside
-        className={`bg-white border-r border-slate-200 transition-all duration-300 z-50 ${
-          isSidebarOpen ? "w-72" : "w-20"
-        } hidden md:flex flex-col shadow-xl`}
+        className={`bg-white border-r border-slate-200 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"
+          } hidden md:flex flex-col shadow-xl`}
       >
         <div className="p-6 flex items-center gap-3 border-b border-slate-50">
-          <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shrink-0 shadow-lg">
-            <span className="text-white font-black">D</span>
+          <div className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center shrink-0 shadow-lg">
+            <span className="text-white font-semibold">D</span>
           </div>
           {isSidebarOpen && (
-            <span className="font-black text-xl tracking-tighter text-slate-900 animate-in fade-in duration-300">
+            <span className="font-semibold text-xl tracking-tight text-slate-900 animate-in fade-in duration-300">
               Dean Portal
             </span>
           )}
         </div>
 
-        <nav className="flex-1 p-4 space-y-2 mt-4">
+        <nav className="flex-1 p-4 space-y-1 mt-4">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as any)}
-              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all ${
-                activeTab === item.id
-                  ? "bg-slate-900 text-white shadow-lg translate-x-1"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-              }`}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-200 ${activeTab === item.id
+                ? "bg-slate-900 text-white shadow-md shadow-slate-200"
+                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
             >
               <item.icon size={20} className="shrink-0" />
               {isSidebarOpen && (
-                <span className="font-bold text-sm tracking-tight">
+                <span className={`text-sm tracking-normal transition-all ${activeTab === item.id ? "font-semibold" : "font-medium"}`}>
                   {item.label}
                 </span>
               )}
@@ -155,7 +153,7 @@ export default function DeanDashboard() {
         <div className="p-4 border-t border-slate-50">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 p-3 rounded-xl text-red-500 hover:bg-red-50 transition-all font-bold text-sm"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-full text-red-500 hover:bg-red-50 transition-all font-semibold text-sm"
           >
             <LogOut size={20} className="shrink-0" />
             {isSidebarOpen && <span>Sign Out</span>}
@@ -174,14 +172,14 @@ export default function DeanDashboard() {
           </button>
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-black text-slate-900 leading-none">
+              <p className="text-sm font-semibold text-slate-900 leading-none">
                 {username}
               </p>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+              <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
                 Dean Academics
               </p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-black text-slate-900">
+            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-semibold text-slate-900">
               {username[0].toUpperCase()}
             </div>
           </div>
