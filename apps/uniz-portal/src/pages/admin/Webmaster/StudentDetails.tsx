@@ -15,6 +15,7 @@ import {
   Users,
   X,
   ChevronRight,
+  Filter,
   ShieldAlert,
   ShieldCheck,
   Pencil,
@@ -231,18 +232,18 @@ export default function StudentDetails() {
   };
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-500 pb-20">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-black tracking-tight text-slate-900 leading-tight">
+    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
             Student Explorer
           </h2>
-          <p className="text-slate-500 font-medium">
-            Search, filter, and manage student accounts
+          <p className="text-slate-500 font-medium text-[15px]">
+            Search, filter, and manage institutional student accounts.
           </p>
         </div>
 
-        <div className="flex bg-blue-50/50 p-1.5 rounded-2xl border border-blue-100/50">
+        <div className="flex bg-slate-100/80 p-1 rounded-full border border-slate-200/50 backdrop-blur-sm shadow-inner group">
           <button
             onClick={() => {
               setSearchMode("id");
@@ -250,7 +251,7 @@ export default function StudentDetails() {
               setSelectedStudent(null);
               setIsEditing(false);
             }}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${searchMode === "id" ? "bg-blue-600 text-white shadow-md shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
+            className={`px-8 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] transition-all ${searchMode === "id" ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50" : "text-slate-500 hover:text-blue-600"}`}
           >
             By ID
           </button>
@@ -261,7 +262,7 @@ export default function StudentDetails() {
               setSelectedStudent(null);
               setIsEditing(false);
             }}
-            className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${searchMode === "filter" ? "bg-blue-600 text-white shadow-md shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
+            className={`px-8 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] transition-all ${searchMode === "filter" ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50" : "text-slate-500 hover:text-blue-600"}`}
           >
             By Filter
           </button>
@@ -274,67 +275,69 @@ export default function StudentDetails() {
             e.preventDefault();
             fetchStudentById();
           }}
-          className="flex gap-4 max-w-2xl animate-in fade-in slide-in-from-left-4 duration-300"
+          className="flex items-center gap-3 max-w-2xl animate-in fade-in slide-in-from-left-4 duration-500"
         >
-          <div className="relative flex-1">
-            <Hash className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+          <div className="relative group flex-1">
+            <Hash className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
             <input
               type="text"
-              placeholder="Enter Student ID (e.g. O210329)"
+              placeholder="Search Student ID (e.g. O210329)"
               value={studentId}
               onChange={(e) => setStudentId(e.target.value.toUpperCase())}
-              className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900 shadow-sm"
+              className="w-full h-12 pl-12 pr-5 bg-white border border-slate-200 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 shadow-sm text-sm placeholder:text-slate-400 placeholder:font-medium"
             />
           </div>
           <button
             disabled={loading}
             type="submit"
-            className="uniz-primary-btn px-8"
+            className="h-12 px-8 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="animate-spin w-4 h-4" />
             ) : (
               <Search className="w-4 h-4" />
             )}
-            Find
+            Find Student
           </button>
         </form>
       ) : (
-        <div className="flex flex-wrap gap-4 items-end animate-in fade-in slide-in-from-right-4 duration-300">
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-              Branch
-            </label>
+        <div className="flex flex-wrap gap-4 items-center animate-in fade-in slide-in-from-right-4 duration-300">
+          <div className="relative group">
+            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none" size={14} />
             <select
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
-              className="bg-white border border-slate-200 px-6 py-4 rounded-2xl font-bold text-slate-900 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 shadow-sm min-w-[150px]"
+              className="bg-white border border-slate-100 pl-11 pr-10 h-12 rounded-full font-bold text-[11px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 shadow-sm min-w-[180px] transition-all cursor-pointer appearance-none shadow-slate-100 hover:shadow-md"
             >
+              <option value="">All Branches</option>
               {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
                 (b) => (
                   <option key={b}>{b}</option>
                 ),
               )}
             </select>
+            <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 rotate-90 pointer-events-none" size={14} />
           </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-              Year
-            </label>
+
+          <div className="relative group">
+            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none" size={14} />
             <select
               value={year}
               onChange={(e) => setYear(e.target.value)}
-              className="bg-white border border-slate-200 px-6 py-4 rounded-2xl font-bold text-slate-900 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 shadow-sm min-w-[150px]"
+              className="bg-white border border-slate-100 pl-11 pr-10 h-12 rounded-full font-bold text-[11px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 shadow-sm min-w-[180px] transition-all cursor-pointer appearance-none shadow-slate-100 hover:shadow-md"
             >
+              <option value="">All Batches</option>
               {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
                 <option key={y}>{y}</option>
               ))}
             </select>
+            <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 rotate-90 pointer-events-none" size={14} />
           </div>
+
           <button
             onClick={handleSearchByFilter}
             disabled={loading}
-            className="uniz-primary-btn px-8"
+            className="h-12 px-8 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="animate-spin w-4 h-4" />
@@ -352,7 +355,7 @@ export default function StudentDetails() {
         >
           {searchResults.length > 0 && (
             <div className="flex items-center justify-between px-2">
-              <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">
+              <h4 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
                 Search Results ({searchResults.length})
               </h4>
             </div>
@@ -364,26 +367,26 @@ export default function StudentDetails() {
                 key={std.username}
                 onClick={() => fetchFullDetails(std.username)}
                 className={`
-                                    group flex items-center justify-between p-4 px-6 bg-white border rounded-2xl transition-all cursor-pointer hover:shadow-lg
-                                    ${selectedStudent?.username === std.username ? "border-blue-600 ring-2 ring-blue-600/5" : "border-slate-100 hover:border-slate-300"}
+                                    group flex items-center justify-between p-4 px-6 bg-white border rounded-[28px] transition-all cursor-pointer hover:shadow-xl hover:translate-y-[-2px]
+                                    ${selectedStudent?.username === std.username ? "border-blue-600 ring-4 ring-blue-600/5 shadow-2xl shadow-blue-100" : "border-slate-100 hover:border-blue-100 shadow-sm shadow-slate-50"}
                                 `}
               >
                 <div className="flex items-center gap-4">
                   <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${selectedStudent?.username === std.username ? "bg-blue-600 text-white shadow-md shadow-blue-100" : "bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600"}`}
+                    className={`w-12 h-12 rounded-[18px] flex items-center justify-center transition-colors ${selectedStudent?.username === std.username ? "bg-blue-600 text-white shadow-lg shadow-blue-100" : "bg-slate-50 text-slate-400 group-hover:bg-blue-600 group-hover:text-white"}`}
                   >
-                    <User size={20} />
+                    <User size={22} />
                   </div>
                   <div>
-                    <p className="font-black text-slate-900 tracking-tight text-lg leading-none">
+                    <p className="font-semibold text-slate-900 tracking-tight text-[17px] leading-tight">
                       {std.name}
                     </p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <span className="text-[9px] font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100 leading-none">
                         {std.username}
                       </span>
                       <span className="w-1 h-1 rounded-full bg-slate-200"></span>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest leading-none">
                         {std.branch}
                       </span>
                     </div>
@@ -424,20 +427,23 @@ export default function StudentDetails() {
           </div>
 
           {searchResults.length === 0 && !loading && (
-            <div className="p-20 flex flex-col items-center justify-center text-center opacity-50 space-y-4">
-              <div className="p-6 bg-slate-50 rounded-full">
+            <div className="p-20 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-[28px] border border-slate-100">
+              <div className="p-6 bg-slate-50 rounded-[22px] border border-slate-100 shadow-inner">
                 <Users size={40} className="text-slate-300" />
               </div>
-              <p className="font-bold text-slate-400 italic">
-                No search results to display
-              </p>
+              <div>
+                <p className="font-semibold text-slate-900 text-lg tracking-tight">No results found</p>
+                <p className="text-[13px] font-medium text-slate-400 mt-1 italic leading-relaxed max-w-[200px]">
+                  Adjust your criteria or enter a student ID
+                </p>
+              </div>
             </div>
           )}
         </div>
 
         {selectedStudent && (
           <div className="lg:col-span-7 animate-in fade-in zoom-in-95 duration-500 sticky top-24 h-fit">
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl overflow-hidden">
+            <div className="bg-white rounded-[28px] border border-slate-100 shadow-2xl overflow-hidden">
               <div className="bg-blue-600 p-8 text-white relative">
                 <div className="absolute top-6 right-6 flex items-center gap-2">
                   {isWebmaster && (
@@ -474,19 +480,19 @@ export default function StudentDetails() {
                     )}
                   </div>
                   <div>
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-2xl font-black tracking-tight">
+                    <div className="flex items-center gap-4">
+                      <h3 className="text-2xl font-semibold tracking-[-0.02em]">
                         {selectedStudent.name}
                       </h3>
                       <span
-                        className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${selectedStudent.is_suspended !== true ? "bg-emerald-400 text-white shadow-md shadow-emerald-200" : "bg-red-400 text-white shadow-md shadow-red-200"}`}
+                        className={`px-3.5 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-widest ${selectedStudent.is_suspended !== true ? "bg-emerald-500 text-white shadow-lg shadow-emerald-600/20" : "bg-red-500 text-white shadow-lg shadow-red-600/20"}`}
                       >
                         {selectedStudent.is_suspended !== true
                           ? "Active"
                           : "Suspended"}
                       </span>
                     </div>
-                    <p className="text-blue-100 font-bold uppercase tracking-[0.2em] text-[10px] mt-2 opacity-80">
+                    <p className="text-blue-100 font-semibold uppercase tracking-[0.2em] text-[10px] mt-3 opacity-70">
                       {selectedStudent.username}
                     </p>
                   </div>
@@ -496,8 +502,8 @@ export default function StudentDetails() {
               {isEditing ? (
                 <div className="p-8 space-y-6 bg-white">
                   <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    <div className="space-y-2.5">
+                      <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                         Branch
                       </label>
                       <select
@@ -508,7 +514,7 @@ export default function StudentDetails() {
                             branch: e.target.value,
                           })
                         }
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold"
+                        className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all cursor-pointer"
                       >
                         {[
                           "CSE",
@@ -523,8 +529,8 @@ export default function StudentDetails() {
                         ))}
                       </select>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    <div className="space-y-2.5">
+                      <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                         Year
                       </label>
                       <select
@@ -535,7 +541,7 @@ export default function StudentDetails() {
                             year: e.target.value,
                           })
                         }
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold"
+                        className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all cursor-pointer"
                       >
                         {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
                           <option key={y}>{y}</option>
@@ -544,8 +550,8 @@ export default function StudentDetails() {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    <div className="space-y-2.5">
+                      <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                         Gender
                       </label>
                       <select
@@ -556,15 +562,15 @@ export default function StudentDetails() {
                             gender: e.target.value,
                           })
                         }
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold"
+                        className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all cursor-pointer"
                       >
                         <option value="M">Male</option>
                         <option value="F">Female</option>
                         <option value="O">Other</option>
                       </select>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    <div className="space-y-2.5">
+                      <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                         Phone
                       </label>
                       <input
@@ -576,12 +582,12 @@ export default function StudentDetails() {
                             phone_number: e.target.value,
                           })
                         }
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold"
+                        className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all"
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <div className="space-y-2.5">
+                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                       Room Number
                     </label>
                     <input
@@ -593,25 +599,25 @@ export default function StudentDetails() {
                           room_number: e.target.value,
                         })
                       }
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold"
+                      className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all"
                     />
                   </div>
                   <div className="pt-4 flex gap-4">
                     <button
                       onClick={() => setIsEditing(false)}
-                      className="flex-1 uniz-primary-btn bg-white text-slate-900 border border-slate-200 shadow-sm"
+                      className="flex-1 h-12 flex items-center justify-center rounded-[18px] font-semibold text-sm bg-slate-50 text-slate-600 border border-slate-100 hover:bg-slate-100 transition-all active:scale-[0.98]"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleUpdateStudent}
                       disabled={loading}
-                      className="flex-1 uniz-primary-btn"
+                      className="flex-1 h-12 flex items-center justify-center rounded-[18px] font-semibold text-sm bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all active:scale-[0.98] disabled:opacity-50 gap-2"
                     >
                       {loading ? (
                         <Loader2 className="animate-spin w-4 h-4" />
                       ) : (
-                        <Save size={16} />
+                        <Save size={18} />
                       )}{" "}
                       Save Changes
                     </button>
@@ -700,15 +706,15 @@ function DetailItem({
   value: string;
 }) {
   return (
-    <div className="p-5 rounded-2xl border border-slate-50 bg-slate-50/30 flex items-start gap-4">
-      <div className="p-2 bg-white rounded-lg text-slate-400 border border-slate-100">
-        <Icon size={16} />
+    <div className="p-6 rounded-[22px] border border-slate-100 bg-slate-50/20 flex items-start gap-5 transition-all hover:bg-slate-50">
+      <div className="p-2.5 bg-white rounded-xl text-slate-400 border border-slate-100 shadow-sm">
+        <Icon size={18} />
       </div>
       <div>
-        <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.1em]">
+        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-1.5 leading-none">
           {label}
         </p>
-        <p className="font-bold text-slate-800 text-sm mt-0.5 break-all">
+        <p className="font-semibold text-slate-900 text-[15px] leading-tight break-all">
           {value}
         </p>
       </div>

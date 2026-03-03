@@ -141,125 +141,171 @@ export default function UpdatesSection() {
   };
 
   return (
-    <div className="p-8 space-y-10 animate-in fade-in duration-700 pb-20 text-slate-900">
+    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-4xl font-black tracking-tight text-slate-900 leading-none">
-            Campus Updates
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+            Campus Broadcasts
           </h2>
-          <p className="text-slate-500 font-medium">
-            Broadcast vital news and resources to the student body one by one.
+          <p className="text-slate-500 font-medium text-[15px]">
+            Distribute vital institutional news and media resources.
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             onClick={fetchUpdates}
             disabled={loading}
-            className="p-2 text-slate-400 hover:text-slate-900 transition-all"
-            title="Force Refresh"
+            className="w-11 h-11 flex items-center justify-center bg-slate-100/80 border border-slate-200/50 rounded-full text-slate-400 hover:text-blue-600 transition-all active:scale-95 shadow-inner"
+            title="Refresh Stream"
           >
-            <Loader2 size={20} className={loading ? "animate-spin" : ""} />
+            <Loader2 size={16} className={loading ? "animate-spin" : ""} />
           </button>
           <button
             onClick={() => setShowAddModal(true)}
-            className="uniz-primary-btn px-8 gap-2.5"
+            className="h-11 px-6 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2.5"
           >
-            <Plus size={20} />
-            New Update
+            <Plus size={16} /> New Update
           </button>
         </div>
       </div>
 
-      {/* Updates Vertical List */}
-      {loading ? (
-        <div className="p-32 flex flex-col items-center justify-center space-y-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-          <Loader2 className="animate-spin w-12 h-12 text-slate-300" />
-          <p className="font-bold text-slate-400 uppercase tracking-widest text-[10px]">
-            Syncing broadcasts...
-          </p>
-        </div>
-      ) : updates && updates.length > 0 ? (
-        <div className="flex flex-col gap-6">
-          {updates.map((update, idx) => (
-            <div
-              key={update._id || update.id || idx}
-              className="bg-white rounded-xl border border-slate-100 p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:shadow-xl hover:shadow-slate-100 transition-all group"
-            >
-              <div className="flex items-center gap-6 flex-1">
-                <div
-                  className={`shrink-0 ${update.isVisible ? "text-blue-600" : "text-slate-300"}`}
-                >
-                  <Bell size={24} />
-                </div>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-3">
-                    <h3 className="font-black text-slate-900 text-lg tracking-tight uppercase">
-                      {update.title}
-                    </h3>
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${update.isVisible ? "bg-emerald-500/10 text-emerald-500" : "bg-slate-500/10 text-slate-500"}`}
-                    >
-                      {update.isVisible ? "Live" : "Inactive"}
-                    </span>
-                  </div>
-                  <p className="text-slate-500 font-medium text-xs leading-relaxed max-w-2xl">
-                    {update.description ||
-                      update.content ||
-                      "No description provided for this campus update."}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-6 shrink-0 pl-6 border-l border-slate-50 ml-auto">
-                <div className="flex flex-col items-end">
-                  <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
-                    Distributed
-                  </p>
-                  <p className="text-[10px] font-bold text-slate-900">
-                    {update.createdAt
-                      ? new Date(update.createdAt).toLocaleDateString()
-                      : "Today"}
-                  </p>
-                </div>
-
-                {update.link && (
-                  <a
-                    href={update.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-2 text-blue-600 hover:text-blue-700 transition-all active:scale-90"
-                    title="External Resource"
+      {/* Content Sections */}
+      <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden text-slate-900">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-50">
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                  Broadcast Content
+                </th>
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                  Resource Link
+                </th>
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                  Visibility
+                </th>
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                  Distribution Date
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50/60">
+              {loading ? (
+                Array(6).fill(0).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td colSpan={4} className="px-10 py-8 bg-slate-50/20"></td>
+                  </tr>
+                ))
+              ) : updates && updates.length > 0 ? (
+                updates.map((update, idx) => (
+                  <tr
+                    key={update._id || update.id || idx}
+                    className="hover:bg-slate-50/30 transition-all group"
                   >
-                    <ExternalLink size={20} />
-                  </a>
-                )}
-              </div>
+                    <td className="px-10 py-6">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-200 border-2 border-white ring-1 ring-slate-100 ${update.isVisible ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-400"}`}>
+                          <Bell size={18} />
+                        </div>
+                        <div className="flex flex-col">
+                          <p className="font-bold text-slate-900 tracking-tight leading-none mb-1.5 max-w-[300px] truncate">
+                            {update.title}
+                          </p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[400px] opacity-70">
+                            {update.description || update.content || "No description provided."}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-10 py-6">
+                      {update.link ? (
+                        <a
+                          href={update.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-all group/link"
+                        >
+                          <span className="text-[10px] font-bold uppercase tracking-widest underline decoration-blue-200 group-hover/link:decoration-blue-600">
+                            Visit Link
+                          </span>
+                          <ExternalLink size={12} />
+                        </a>
+                      ) : (
+                        <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                          None
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-10 py-6">
+                      {update.isVisible ? (
+                        <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 w-fit">
+                          <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
+                          <span className="text-[9px] font-bold uppercase tracking-widest">
+                            Live
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5 text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100 w-fit">
+                          <span className="text-[9px] font-bold uppercase tracking-widest">
+                            Draft
+                          </span>
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-10 py-6">
+                      <div className="flex flex-col">
+                        <p className="text-sm font-semibold tracking-tight text-slate-700">
+                          {update.createdAt
+                            ? new Date(update.createdAt).toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' })
+                            : "Today"}
+                        </p>
+                        <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
+                          Publication
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="p-24 text-center">
+                    <div className="flex flex-col items-center gap-5">
+                      <div className="p-6 bg-slate-50 rounded-full border border-slate-100 shadow-inner text-slate-300">
+                        <Bell size={40} />
+                      </div>
+                      <p className="font-semibold text-slate-400 italic text-sm tracking-tight">
+                        No active broadcasts found.
+                      </p>
+                      <button
+                        onClick={() => setShowAddModal(true)}
+                        className="h-10 px-6 bg-slate-900 text-white rounded-full font-bold uppercase tracking-widest text-[9px] shadow-lg shadow-slate-100 hover:bg-slate-800 active:scale-95 transition-all"
+                      >
+                        Create First Update
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Sync Status Footer */}
+        <div className="px-10 py-5 bg-slate-50/30 border-t border-slate-50 flex items-center justify-between">
+          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+            Broadcast Stream Monitor
+          </p>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">
+                CMS Synchronized
+              </span>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="p-32 flex flex-col items-center justify-center text-center space-y-6 bg-white rounded-3xl border border-slate-50">
-          <div className="w-24 h-24 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-200">
-            <Bell size={48} strokeWidth={1} />
           </div>
-          <div>
-            <p className="text-2xl font-black text-slate-900 tracking-tight">
-              No Active Broadcasts
-            </p>
-            <p className="text-slate-400 font-medium mt-2 max-w-sm">
-              Share important news, semester updates, or registration links with
-              the campus community.
-            </p>
-          </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="uniz-primary-btn px-8 gap-2.5"
-          >
-            Create First Update
-          </button>
         </div>
-      )}
+      </div>
 
       {/* Add Update Modal */}
       {showAddModal && (
@@ -269,23 +315,23 @@ export default function UpdatesSection() {
             onClick={() => setShowAddModal(false)}
           />
           <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-            <div className="bg-blue-600 p-8 text-white relative flex items-center gap-4">
-              <div className="p-3 bg-white/10 rounded-2xl">
-                <Bell size={24} />
+            <div className="bg-blue-600 p-8 text-white relative flex items-center gap-5">
+              <div className="p-3.5 bg-white/20 rounded-2xl">
+                <Bell size={26} />
               </div>
               <div>
-                <h3 className="text-2xl font-black tracking-tight">
+                <h3 className="text-2xl font-semibold tracking-[-0.02em]">
                   New Broadcast
                 </h3>
-                <p className="text-white/60 text-xs font-bold uppercase tracking-widest mt-1">
+                <p className="text-white/70 text-[10px] font-semibold uppercase tracking-[0.2em] mt-1.5">
                   Publish News to Student Dashboard
                 </p>
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="absolute top-8 right-8 text-white/40 hover:text-white transition-colors"
+                className="absolute top-8 right-8 text-white/60 hover:text-white transition-colors"
               >
-                <X size={24} />
+                <X size={26} />
               </button>
             </div>
 
@@ -293,8 +339,8 @@ export default function UpdatesSection() {
               <div className="space-y-6">
                 {/* Title */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <Type size={12} /> Update Title
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
+                    <Type size={14} /> Update Title
                   </label>
                   <input
                     required
@@ -304,14 +350,14 @@ export default function UpdatesSection() {
                       setNewUpdate({ ...newUpdate, title: e.target.value })
                     }
                     placeholder="e.g. Semester Registration"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
                   />
                 </div>
 
                 {/* Content */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <AlignLeft size={12} /> Description Content
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
+                    <AlignLeft size={14} /> Description Content
                   </label>
                   <textarea
                     required
@@ -321,14 +367,14 @@ export default function UpdatesSection() {
                       setNewUpdate({ ...newUpdate, content: e.target.value })
                     }
                     placeholder="Detailed information about the update..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-slate-900 resize-none"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-semibold text-slate-900 resize-none"
                   />
                 </div>
 
                 {/* Link */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <LinkIcon size={12} /> Resource Link (Optional)
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
+                    <LinkIcon size={14} /> Resource Link (Optional)
                   </label>
                   <input
                     type="url"
@@ -337,7 +383,7 @@ export default function UpdatesSection() {
                       setNewUpdate({ ...newUpdate, link: e.target.value })
                     }
                     placeholder="https://..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
                   />
                 </div>
 
@@ -356,7 +402,7 @@ export default function UpdatesSection() {
               <button
                 disabled={!!actionLoading}
                 type="submit"
-                className="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-3 disabled:opacity-50"
+                className="w-full bg-blue-600 text-white py-5 rounded-2xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95"
               >
                 {actionLoading === "creating" ? (
                   <Loader2 className="animate-spin w-5 h-5" />
