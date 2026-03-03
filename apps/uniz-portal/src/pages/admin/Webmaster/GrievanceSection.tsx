@@ -92,11 +92,11 @@ export default function GrievanceSection() {
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-500 pb-20">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-black tracking-tight text-slate-900 leading-tight">
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
             Student Grievances
           </h2>
-          <p className="text-slate-500 font-medium">
+          <p className="text-slate-500 font-medium text-[15px]">
             Review and manage student submitted concerns
           </p>
         </div>
@@ -118,7 +118,7 @@ export default function GrievanceSection() {
           label="Total Grievances"
           count={grievances.length}
           icon={MessageSquare}
-          color="bg-blue-600 shadow-blue-100"
+          color="bg-blue-600"
         />
         <StatCard
           label="Pending Review"
@@ -141,7 +141,7 @@ export default function GrievanceSection() {
       </div>
 
       {/* Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-5 rounded-[28px] border border-slate-100 shadow-sm transition-all focus-within:shadow-md">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
           <input
@@ -149,16 +149,16 @@ export default function GrievanceSection() {
             placeholder="Search grievances by ID, category or content..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+            className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
           />
         </div>
 
-        <div className="flex gap-2 p-1 bg-slate-50 rounded-xl shrink-0">
+        <div className="flex gap-2 p-1.5 bg-slate-100/80 rounded-full border border-slate-200/60 backdrop-blur-sm shrink-0">
           {["all", "pending", "resolved"].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${filter === f ? "bg-blue-600 text-white shadow-md shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
+              className={`px-5 py-2 rounded-full text-[10px] font-semibold uppercase tracking-widest transition-all ${filter === f ? "bg-white text-blue-700 shadow-sm border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
             >
               {f}
             </button>
@@ -181,43 +181,43 @@ export default function GrievanceSection() {
                 className="bg-white rounded-3xl border border-slate-100 p-6 hover:shadow-xl transition-all group flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex justify-between items-start mb-4">
+                  <div className="flex justify-between items-start mb-5">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-slate-50 text-slate-400">
+                      <div className="p-2.5 rounded-xl bg-slate-50 text-slate-400 border border-slate-100">
                         <Tag size={16} />
                       </div>
                       <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest leading-none mb-1.5">
                           Category
                         </p>
-                        <p className="font-black text-slate-900 text-sm">
+                        <p className="font-semibold text-slate-900 text-sm">
                           {grievance.category}
                         </p>
                       </div>
                     </div>
                     <div
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-widest ${getStatusStyles(grievance.status)}`}
+                      className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-[10px] font-semibold uppercase tracking-widest ${getStatusStyles(grievance.status)}`}
                     >
                       {getStatusIcon(grievance.status)}
                       {grievance.status || "Pending"}
                     </div>
                   </div>
 
-                  <p className="text-slate-700 font-bold leading-relaxed mb-6 line-clamp-3 bg-slate-50/50 p-4 rounded-2xl border border-slate-50">
+                  <p className="text-slate-700 font-medium leading-relaxed mb-6 line-clamp-3 bg-slate-50/30 p-5 rounded-[22px] border border-slate-100/50 italic text-[14px]">
                     "{grievance.description}"
                   </p>
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-slate-50">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-                      <User size={14} />
+                    <div className="w-9 h-9 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
+                      <User size={16} />
                     </div>
                     <div>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                      <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest leading-none mb-1">
                         Submitted By
                       </p>
-                      <p className="text-xs font-bold text-slate-900 mt-0.5">
+                      <p className="text-xs font-semibold text-slate-900 leading-none">
                         {grievance.isAnonymous
                           ? "Anonymous Student"
                           : grievance.studentId || "Unknown ID"}
@@ -225,10 +225,10 @@ export default function GrievanceSection() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                    <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest leading-none mb-1">
                       Date
                     </p>
-                    <p className="text-xs font-bold text-slate-900 mt-0.5">
+                    <p className="text-xs font-semibold text-slate-900 leading-none">
                       {grievance.createdAt
                         ? new Date(grievance.createdAt).toLocaleDateString()
                         : "Recent"}
@@ -306,17 +306,17 @@ export default function GrievanceSection() {
 
 function StatCard({ label, count, icon: Icon, color }: any) {
   return (
-    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-6">
+    <div className="bg-white p-7 rounded-[28px] border border-slate-100 shadow-sm flex items-center gap-6 transition-all hover:shadow-md">
       <div
-        className={`p-4 rounded-2xl text-white ${color} shadow-lg shadow-black/5`}
+        className={`p-4 rounded-2xl text-white ${color} shadow-inner bg-opacity-90`}
       >
-        <Icon size={24} />
+        <Icon size={26} />
       </div>
       <div>
-        <p className="text-xs font-black text-slate-400 uppercase tracking-widest leading-none mb-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400 leading-none mb-2.5">
           {label}
         </p>
-        <p className="text-3xl font-black text-slate-900 leading-none">
+        <p className="text-3xl font-semibold text-slate-900 leading-none tracking-tight">
           {count}
         </p>
       </div>

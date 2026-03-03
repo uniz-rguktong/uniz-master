@@ -5,9 +5,11 @@ import {
   Plus,
   Loader2,
   BookText,
-  Building2,
   Calendar,
   Trash2,
+  Search,
+  ChevronDown,
+  Filter,
 } from "lucide-react";
 import { GET_SUBJECTS, ADD_SUBJECT } from "../../../api/endpoints";
 import { toast } from "react-toastify";
@@ -112,69 +114,73 @@ export default function SubjectManagement() {
   };
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-black tracking-tight text-slate-900">
+    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
             Academic Subjects
           </h2>
-          <p className="text-slate-500 font-medium">
-            Manage the core curriculum and course repository ({meta.total}{" "}
-            subjects)
+          <p className="text-slate-500 font-medium text-[15px]">
+            Manage the core institutional curriculum ({meta.total} records).
           </p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="uniz-primary-btn px-8 gap-2.5"
+          className="h-11 px-6 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2"
         >
           <Plus size={16} /> New Subject
         </button>
       </div>
 
       {/* Filters Hub */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
-        <div className="relative col-span-1 md:col-span-2">
+      <div className="flex flex-wrap gap-4 items-center">
+        <div className="relative group flex-1 min-w-[300px]">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
           <input
             type="text"
             placeholder="Search by name or code..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
-          />
-          <Plus
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 rotate-45"
-            size={16}
+            className="w-full h-11 pl-12 pr-5 bg-white border border-slate-200 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 shadow-sm text-sm placeholder:text-slate-400 placeholder:font-medium"
           />
         </div>
 
-        <select
-          value={department}
-          onChange={(e) => setDepartment(e.target.value)}
-          className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold text-sm cursor-pointer"
-        >
-          <option value="">All Departments</option>
-          <option value="CSE">CSE</option>
-          <option value="ECE">ECE</option>
-          <option value="EEE">EEE</option>
-          <option value="MECH">MECH</option>
-          <option value="CIVIL">CIVIL</option>
-          <option value="CHEM">CHEMICAL</option>
-          <option value="MME">MME</option>
-        </select>
+        <div className="relative group">
+          <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none" size={14} />
+          <select
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
+            className="bg-white border border-slate-200 pl-11 pr-10 h-11 rounded-full font-bold text-[10px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 shadow-sm min-w-[170px] transition-all cursor-pointer appearance-none hover:shadow-md"
+          >
+            <option value="">All Departments</option>
+            <option value="CSE">CSE</option>
+            <option value="ECE">ECE</option>
+            <option value="EEE">EEE</option>
+            <option value="MECH">MECH</option>
+            <option value="CIVIL">CIVIL</option>
+            <option value="CHEM">CHEMICAL</option>
+            <option value="MME">MME</option>
+          </select>
+          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+        </div>
 
-        <select
-          value={semester}
-          onChange={(e) => setSemester(e.target.value)}
-          className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 outline-none font-bold text-sm cursor-pointer"
-        >
-          <option value="">All Semesters</option>
-          {["E1", "E2", "E3", "E4"].map((y) => (
-            <React.Fragment key={y}>
-              <option value={`${y}-SEM-1`}>{y} SEM-1</option>
-              <option value={`${y}-SEM-2`}>{y} SEM-2</option>
-            </React.Fragment>
-          ))}
-        </select>
+        <div className="relative group">
+          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none" size={14} />
+          <select
+            value={semester}
+            onChange={(e) => setSemester(e.target.value)}
+            className="bg-white border border-slate-200 pl-11 pr-10 h-11 rounded-full font-bold text-[10px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 shadow-sm min-w-[170px] transition-all cursor-pointer appearance-none hover:shadow-md"
+          >
+            <option value="">All Semesters</option>
+            {["E1", "E2", "E3", "E4"].map((y) => (
+              <React.Fragment key={y}>
+                <option value={`${y}-SEM-1`}>{y} SEM-1</option>
+                <option value={`${y}-SEM-2`}>{y} SEM-2</option>
+              </React.Fragment>
+            ))}
+          </select>
+          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+        </div>
       </div>
 
       {loading ? (
@@ -187,47 +193,53 @@ export default function SubjectManagement() {
             {subjects.map((sub, idx) => (
               <div
                 key={idx}
-                className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all group overflow-hidden relative"
+                className="bg-white border border-slate-100 rounded-[28px] p-7 shadow-sm hover:shadow-xl hover:translate-y-[-2px] hover:border-blue-100 transition-all group overflow-hidden relative"
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-100">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-3 bg-blue-50 rounded-[18px] text-blue-600 border border-blue-50 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
                     <BookText size={20} />
                   </div>
-                  <div className="px-3 py-1 bg-blue-50/50 rounded-full text-[10px] font-black uppercase tracking-widest text-blue-600 border border-blue-100/50">
+                  <div className="px-3 py-1.5 bg-slate-50 rounded-full text-[9px] font-semibold uppercase tracking-widest text-slate-400 border border-slate-100">
                     {sub.code}
                   </div>
                 </div>
-                <h3 className="text-lg font-black text-slate-900 tracking-tight mb-1 leading-tight">
+                <h3 className="text-lg font-semibold text-slate-900 tracking-tight mb-2 leading-tight">
                   {sub.name}
                 </h3>
 
-                <div className="grid grid-cols-2 gap-4 mt-6">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <div className="grid grid-cols-2 gap-4 mt-8">
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest leading-none">
                       Dept
                     </p>
-                    <p className="font-bold text-slate-700 text-xs flex items-center gap-1">
-                      <Building2 size={12} /> {sub.department}
+                    <p className="font-semibold text-slate-700 text-xs flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-600/20 group-hover:bg-blue-600 transition-colors"></div>
+                      {sub.department}
                     </p>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                      Sem
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest leading-none">
+                      Term
                     </p>
-                    <p className="font-bold text-slate-700 text-xs flex items-center gap-1">
-                      <Calendar size={12} /> {sub.semester}
+                    <p className="font-semibold text-slate-700 text-xs flex items-center gap-2">
+                      <Calendar size={13} className="text-slate-400" /> {sub.semester}
                     </p>
                   </div>
-                  <div className="col-span-2 space-y-2">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                      Credits: {sub.credits}
-                    </p>
-                    <div className="flex gap-1.5">
+                  <div className="col-span-2 mt-4 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
+                        Credits
+                      </p>
+                      <span className="text-xs font-semibold text-blue-600">{sub.credits} Units</span>
+                    </div>
+                    <div className="flex gap-2">
                       {[...Array(Number(sub.credits))].map((_, i) => (
                         <div
                           key={i}
-                          className="w-1.5 h-1.5 rounded-full bg-blue-600"
-                        />
+                          className="flex-1 h-1 rounded-full bg-slate-100 group-hover:bg-blue-600/10 transition-colors overflow-hidden"
+                        >
+                          <div className="w-full h-full bg-blue-600 translate-x-0 group-hover:translate-x-0 transition-transform duration-500"></div>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -260,9 +272,9 @@ export default function SubjectManagement() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${page === p
+                        className={`w-10 h-10 rounded-xl font-semibold text-xs border transition-all ${page === p
                           ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100"
-                          : "bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:text-blue-600"
+                          : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
                           }`}
                       >
                         {p}
@@ -291,18 +303,25 @@ export default function SubjectManagement() {
           )}
         </>
       ) : (
-        <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-          <BookOpen size={48} className="text-slate-300 mb-4" />
-          <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
-            No subjects found matching your criteria
-          </p>
+        <div className="p-32 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-[28px] border border-slate-100 shadow-sm">
+          <div className="w-24 h-24 bg-slate-50 border border-slate-100 rounded-[24px] flex items-center justify-center text-slate-300 shadow-inner">
+            <BookOpen size={48} strokeWidth={1.5} />
+          </div>
+          <div>
+            <p className="text-2xl font-semibold text-slate-900 tracking-tight">
+              No Subjects Found
+            </p>
+            <p className="text-slate-400 font-medium mt-2 max-w-sm text-[15px]">
+              No subjects found matching your criteria. Try adjusting your filters or search term.
+            </p>
+          </div>
           <button
             onClick={() => {
               setSearch("");
               setDepartment("");
               setSemester("");
             }}
-            className="mt-4 text-slate-900 font-black text-xs uppercase tracking-widest hover:underline"
+            className="text-blue-600 font-semibold text-sm uppercase tracking-widest hover:underline active:scale-95"
           >
             Clear all filters
           </button>
@@ -318,24 +337,24 @@ export default function SubjectManagement() {
             >
               <Trash2 size={20} className="text-slate-400" />
             </button>
-            <h3 className="text-2xl font-black tracking-tight text-slate-900 mb-6">
+            <h3 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 mb-6">
               Create New Subject
             </h3>
 
             <form onSubmit={handleAddSubject} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">
+                <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 ml-1">
                   Subject Name
                 </label>
                 <div className="relative">
-                  <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4" />
                   <input
                     required
                     value={newSubject.name}
                     onChange={(e) =>
                       setNewSubject({ ...newSubject, name: e.target.value })
                     }
-                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                    className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-sm"
                     placeholder="e.g. Artificial Intelligence"
                   />
                 </div>
@@ -343,7 +362,7 @@ export default function SubjectManagement() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                     Code
                   </label>
                   <input
@@ -355,12 +374,12 @@ export default function SubjectManagement() {
                         code: e.target.value.toUpperCase(),
                       })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
                     placeholder="CSE402"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                     Credits
                   </label>
                   <input
@@ -375,14 +394,14 @@ export default function SubjectManagement() {
                         credits: parseInt(e.target.value),
                       })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                     Department
                   </label>
                   <select
@@ -393,7 +412,7 @@ export default function SubjectManagement() {
                         department: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 cursor-pointer"
                   >
                     <option>CSE</option>
                     <option>ECE</option>
@@ -403,7 +422,7 @@ export default function SubjectManagement() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                     Semester
                   </label>
                   <select
@@ -411,7 +430,7 @@ export default function SubjectManagement() {
                     onChange={(e) =>
                       setNewSubject({ ...newSubject, semester: e.target.value })
                     }
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 cursor-pointer"
                   >
                     {["E1", "E2", "E3", "E4"].map((y) => (
                       <React.Fragment key={y}>
@@ -423,11 +442,11 @@ export default function SubjectManagement() {
                 </div>
               </div>
 
-              <div className="pt-4 flex gap-4">
+              <div className="pt-8 flex gap-4">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 uniz-primary-btn bg-white text-slate-900 border border-slate-200 shadow-sm"
+                  className="flex-1 px-8 py-4 rounded-2xl font-semibold uppercase tracking-widest text-[11px] border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all active:scale-95"
                 >
                   Cancel
                 </button>
@@ -437,9 +456,9 @@ export default function SubjectManagement() {
                   className="flex-1 uniz-primary-btn"
                 >
                   {isAdding ? (
-                    <Loader2 className="animate-spin w-4 h-4" />
+                    <Loader2 className="animate-spin w-5 h-5" />
                   ) : (
-                    <Plus size={16} />
+                    <Plus size={18} />
                   )}
                   Create Subject
                 </button>

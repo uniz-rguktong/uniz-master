@@ -12,8 +12,6 @@ import {
   Layout,
   Bell,
   Activity,
-  // Briefcase,
-  Mail,
   Smartphone,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +25,6 @@ import FacultyManagement from "./FacultyManagement";
 import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";
 // import TendersSection from "./TendersSection";
-import EmailNotification from "../EmailNotification";
 import PushNotificationSection from "./PushNotificationSection";
 import GradesSection from "./GradesSection";
 import StudentBulkSection from "./StudentBulkSection";
@@ -46,7 +43,6 @@ export default function WebmasterDashboard() {
     | "banners"
     | "updates"
     // | "tenders"
-    | "notifications"
     | "push_alerts"
     | "grades_mgmt"
     | "faculty_mgmt"
@@ -67,7 +63,6 @@ export default function WebmasterDashboard() {
     { id: "grades", label: "Grades Upload", icon: GraduationCap },
     { id: "banners", label: "Home Banners", icon: Layout },
     { id: "updates", label: "Campus Updates", icon: Bell },
-    { id: "notifications", label: "Email Broadcasts", icon: Mail },
     { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
     // { id: "tenders", label: "Tenders", icon: Briefcase },
     { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
@@ -97,8 +92,6 @@ export default function WebmasterDashboard() {
         return <BannersSection />;
       case "updates":
         return <UpdatesSection />;
-      case "notifications":
-        return <EmailNotification />;
       case "push_alerts":
         return <PushNotificationSection />;
       // case "tenders":
@@ -111,35 +104,49 @@ export default function WebmasterDashboard() {
         return <SystemLogsSection />;
       default:
         return (
-          <div className="p-8 space-y-8 animate-in fade-in duration-500">
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[28px] p-10 text-white shadow-2xl shadow-blue-200 relative overflow-hidden">
-              <div className="relative z-10">
-                <h1 className="text-4xl font-semibold tracking-[-0.02em] mb-2">
-                  Welcome, {username}
-                </h1>
-                <p className="text-blue-100 font-medium opacity-80">
-                  Webmaster Control Center
-                </p>
+          <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
+            <div className="bg-gradient-to-br from-slate-900 to-[#1e293b] rounded-[28px] p-12 text-white shadow-2xl shadow-slate-200 relative overflow-hidden group">
+              <div className="relative z-10 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 backdrop-blur-md">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
+                    System Secure
+                  </span>
+                </div>
+                <div>
+                  <h1 className="text-5xl font-semibold tracking-[-0.03em] mb-3 leading-none">
+                    Welcome, {username}
+                  </h1>
+                  <p className="text-slate-400 font-medium text-lg opacity-90 max-w-lg leading-relaxed">
+                    Institutional Governance Engine. Orchestrate campus
+                    operations with precision through your administrative
+                    terminal.
+                  </p>
+                </div>
               </div>
-              <div className="absolute right-0 bottom-0 opacity-10 translate-x-1/4 translate-y-1/4">
-                <LayoutDashboard size={300} />
+              <div className="absolute right-0 bottom-0 opacity-[0.03] translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform duration-1000">
+                <LayoutDashboard size={400} />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {navItems.slice(1).map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as any)}
-                  className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm text-left hover:shadow-md transition-shadow"
+                  className="bg-white p-7 rounded-[28px] border border-slate-100 shadow-sm text-left hover:shadow-2xl hover:translate-y-[-2px] transition-all group flex flex-col justify-between min-h-[180px]"
                 >
-                  <div className="p-3 rounded-2xl bg-blue-50 text-blue-600 mb-4 inline-block">
-                    <item.icon size={24} />
+                  <div className="p-4 rounded-2xl bg-slate-50 text-slate-400 mb-6 inline-block group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-inner group-hover:shadow-lg group-hover:shadow-blue-200">
+                    <item.icon size={22} />
                   </div>
-                  <h3 className="font-semibold text-slate-900 text-lg mb-1">{item.label}</h3>
-                  <p className="text-xs text-slate-400 uppercase tracking-widest font-medium">
-                    Access Module
-                  </p>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-[15px] mb-1.5 leading-tight group-hover:text-blue-600 transition-colors">
+                      {item.label}
+                    </h3>
+                    <p className="text-[9px] text-slate-400 uppercase tracking-[0.2em] font-black opacity-60">
+                      Initialize Module
+                    </p>
+                  </div>
                 </button>
               ))}
             </div>
@@ -250,12 +257,12 @@ export default function WebmasterDashboard() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto max-h-screen">
-        <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-100 p-4 px-8 flex justify-between items-center">
+        <header className="bg-white/95 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-100/80 p-5 px-8 flex justify-between items-center shadow-sm shadow-slate-50/50">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 hover:bg-slate-50 rounded-lg transition-colors md:block hidden text-slate-400 hover:text-blue-600"
+            className="w-10 h-10 flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full hover:bg-white hover:shadow-lg transition-all md:flex hidden text-slate-400 hover:text-blue-600 active:scale-95"
           >
-            {isSidebarOpen ? <Menu size={20} /> : <ChevronRight size={20} />}
+            {isSidebarOpen ? <Menu size={18} /> : <ChevronRight size={18} />}
           </button>
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
@@ -274,6 +281,6 @@ export default function WebmasterDashboard() {
 
         <div className="max-w-7xl mx-auto">{renderContent()}</div>
       </main>
-    </div>
+    </div >
   );
 }

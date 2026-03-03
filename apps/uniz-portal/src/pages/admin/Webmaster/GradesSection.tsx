@@ -14,6 +14,7 @@ import {
   AlertCircle,
   BarChart3 as BarChartIcon,
   PieChart as PieChartIcon,
+  ChevronDown,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -182,32 +183,32 @@ export default function GradesSection() {
   return (
     <div className="p-6 space-y-8 animate-in fade-in duration-700 pb-20 text-slate-900">
       {/* Header */}
-      <div className="flex flex-col gap-1">
-        <h2 className="text-3xl font-black tracking-tight text-slate-900 leading-none">
+      <div className="flex flex-col gap-1.5">
+        <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
           Grade Repository
         </h2>
-        <p className="text-slate-500 font-medium text-sm">
+        <p className="text-slate-500 font-medium text-[15px]">
           Bulk updates, batch records, and manual performance entry.
         </p>
       </div>
 
       {/* Options Selection (Radio Buttons style as requested) */}
-      <div className="flex flex-wrap gap-4 bg-slate-100 p-1.5 rounded-2xl w-fit border border-slate-200">
+      <div className="flex flex-wrap gap-2.5 bg-slate-100/80 p-1.5 rounded-full w-fit border border-slate-200/60 backdrop-blur-sm">
         <button
           onClick={() => setSubTab("bulk")}
-          className={`px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "bulk" ? "bg-blue-600 text-white shadow-lg shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
+          className={`px-6 py-2.5 rounded-full font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "bulk" ? "bg-white text-blue-700 shadow-sm border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
         >
           <RefreshCw size={14} /> Bulk Update
         </button>
         <button
           onClick={() => setSubTab("batch")}
-          className={`px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "batch" ? "bg-blue-600 text-white shadow-lg shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
+          className={`px-6 py-2.5 rounded-full font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "batch" ? "bg-white text-blue-700 shadow-sm border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
         >
           <Search size={14} /> Batch Grades
         </button>
         <button
           onClick={() => setSubTab("manual")}
-          className={`px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "manual" ? "bg-blue-600 text-white shadow-lg shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
+          className={`px-6 py-2.5 rounded-full font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "manual" ? "bg-white text-blue-700 shadow-sm border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
         >
           <Plus size={14} /> Manual Add
         </button>
@@ -215,64 +216,64 @@ export default function GradesSection() {
 
       {/* Content Area */}
       {!subTab ? (
-        <div className="p-32 flex flex-col items-center justify-center text-center space-y-6 bg-white rounded-3xl border border-slate-50">
-          <div className="w-24 h-24 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-200">
-            <GraduationCap size={48} strokeWidth={1} />
+        <div className="p-32 flex flex-col items-center justify-center text-center space-y-6 bg-white rounded-[28px] border border-slate-50 shadow-sm">
+          <div className="w-24 h-24 bg-blue-50/50 rounded-2xl flex items-center justify-center text-blue-200">
+            <GraduationCap size={48} strokeWidth={1.5} />
           </div>
           <div>
-            <p className="text-2xl font-black text-slate-900 tracking-tight">
+            <p className="text-2xl font-semibold text-slate-900 tracking-tight">
               Select an option to get started
             </p>
             <p className="text-slate-400 font-medium mt-2 max-w-sm">
               Choose between bulk updates, batch retrieval, or manual entry from
-              the options above.
+              the control switcher.
             </p>
           </div>
           <div className="flex gap-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+              <div key={i} className="w-1.5 h-1.5 rounded-full bg-blue-100" />
             ))}
           </div>
         </div>
       ) : (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           {subTab === "bulk" && (
-            <div className="bg-white rounded-2xl border border-slate-100 p-8 space-y-6 shadow-sm">
+            <div className="bg-white rounded-[28px] border border-slate-100 p-10 space-y-6 shadow-sm">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
-                  <RefreshCw size={20} />
+                <div className="p-3.5 bg-blue-50 text-blue-600 rounded-[22px] border border-blue-100 shadow-sm">
+                  <RefreshCw size={22} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black tracking-tight">
+                  <h3 className="text-xl font-semibold tracking-[-0.01em]">
                     Bulk Update
                   </h3>
-                  <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                  <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-widest mt-1">
                     Update multiple student grades via JSON payload
                   </p>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                   JSON Payload Entry
                 </label>
                 <textarea
                   value={bulkJson}
                   onChange={(e) => setBulkJson(e.target.value)}
                   placeholder='{ "updates": [{ "studentId": "O210008", "subjectId": "...", "semesterId": "SEM-1", "grade": "EX" }] }'
-                  className="w-full h-48 px-6 py-6 bg-slate-900 text-emerald-400 font-mono text-xs rounded-2xl border-none outline-none focus:ring-8 focus:ring-slate-900/5 transition-all scrollbar-hide"
+                  className="w-full h-48 px-7 py-7 bg-slate-900 text-emerald-400 font-mono text-xs rounded-[24px] border-none outline-none focus:ring-8 focus:ring-slate-900/5 transition-all scrollbar-hide"
                 />
               </div>
 
               <button
                 onClick={handleBulkUpdate}
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-xl shadow-blue-100"
+                className="w-full bg-blue-600 text-white py-5 rounded-[22px] font-semibold uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-3 shadow-xl shadow-blue-100 active:scale-[0.98]"
               >
                 {loading ? (
-                  <Loader2 className="animate-spin w-4 h-4" />
+                  <Loader2 className="animate-spin w-5 h-5" />
                 ) : (
-                  <Save size={16} />
+                  <Save size={18} />
                 )}
                 Execute Bulk Update
               </button>
@@ -281,76 +282,85 @@ export default function GradesSection() {
 
           {subTab === "batch" && (
             <div className="space-y-8">
-              <div className="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm flex flex-col md:flex-row items-end gap-6">
-                <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-6 w-full text-slate-900 font-bold">
+              <div className="bg-white rounded-[28px] border border-slate-100 p-8 shadow-sm flex flex-col md:flex-row items-center gap-6">
+                <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-6 w-full text-slate-900 font-semibold text-sm">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                       Branch
                     </label>
-                    <select
-                      value={batchFilters.branch}
-                      onChange={(e) =>
-                        setBatchFilters({
-                          ...batchFilters,
-                          branch: e.target.value,
-                        })
-                      }
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all"
-                    >
-                      <option>CSE</option>
-                      <option>ECE</option>
-                      <option>EEE</option>
-                      <option>MECH</option>
-                      <option>CIVIL</option>
-                      <option>CHEM</option>
-                      <option>MET</option>
-                    </select>
+                    <div className="relative group">
+                      <select
+                        value={batchFilters.branch}
+                        onChange={(e) =>
+                          setBatchFilters({
+                            ...batchFilters,
+                            branch: e.target.value,
+                          })
+                        }
+                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                      >
+                        <option>CSE</option>
+                        <option>ECE</option>
+                        <option>EEE</option>
+                        <option>MECH</option>
+                        <option>CIVIL</option>
+                        <option>CHEM</option>
+                        <option>MET</option>
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                       Academic Year
                     </label>
-                    <select
-                      value={batchFilters.year}
-                      onChange={(e) =>
-                        setBatchFilters({
-                          ...batchFilters,
-                          year: e.target.value,
-                        })
-                      }
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all"
-                    >
-                      <option>E1</option>
-                      <option>E2</option>
-                      <option>E3</option>
-                      <option>E4</option>
-                    </select>
+                    <div className="relative group">
+                      <select
+                        value={batchFilters.year}
+                        onChange={(e) =>
+                          setBatchFilters({
+                            ...batchFilters,
+                            year: e.target.value,
+                          })
+                        }
+                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                      >
+                        <option>E1</option>
+                        <option>E2</option>
+                        <option>E3</option>
+                        <option>E4</option>
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                       Semester
                     </label>
-                    <select
-                      value={batchFilters.semesterId}
-                      onChange={(e) =>
-                        setBatchFilters({
-                          ...batchFilters,
-                          semesterId: e.target.value,
-                        })
-                      }
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all"
-                    >
-                      {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
-                        <option key={s}>SEM-{s}</option>
-                      ))}
-                    </select>
+                    <div className="relative group">
+                      <select
+                        value={batchFilters.semesterId}
+                        onChange={(e) =>
+                          setBatchFilters({
+                            ...batchFilters,
+                            semesterId: e.target.value,
+                          })
+                        }
+                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                      >
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                          <option key={s}>SEM-{s}</option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                       Target
                     </label>
                     <div
-                      className="flex items-center gap-3 h-[52px] bg-slate-50 border border-slate-100 rounded-xl px-5 cursor-pointer hover:bg-white hover:border-blue-200 transition-all"
+                      className="flex items-center gap-3 h-[52px] bg-slate-50 border border-slate-100 rounded-2xl px-5 cursor-pointer hover:bg-white hover:border-blue-200 transition-all"
                       onClick={() =>
                         setBatchFilters({
                           ...batchFilters,
@@ -365,7 +375,7 @@ export default function GradesSection() {
                           className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${batchFilters.failedOnly ? "right-1" : "left-1"}`}
                         />
                       </div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                      <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
                         Remedial Only
                       </span>
                     </div>
@@ -374,7 +384,7 @@ export default function GradesSection() {
                 <button
                   onClick={() => fetchBatchGrades()}
                   disabled={loading}
-                  className="bg-blue-600 text-white px-8 h-[58px] rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center gap-2 whitespace-nowrap"
+                  className="h-11 px-8 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2.5"
                 >
                   {loading ? (
                     <Loader2 className="animate-spin w-4 h-4" />
@@ -440,18 +450,18 @@ export default function GradesSection() {
                           ].map((stat, i) => (
                             <div
                               key={i}
-                              className="bg-white p-6 rounded-2xl border border-slate-100 flex items-center gap-5 shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all"
+                              className="bg-white p-7 rounded-[28px] border border-slate-100 flex items-center gap-5 shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all"
                             >
                               <div
-                                className={`p-4 rounded-2xl ${stat.color} shadow-inner`}
+                                className={`p-4 rounded-2xl ${stat.color} shadow-inner bg-opacity-70`}
                               >
-                                <stat.icon size={22} />
+                                <stat.icon size={24} />
                               </div>
                               <div>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] leading-none mb-2">
+                                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.25em] leading-none mb-2.5">
                                   {stat.label}
                                 </p>
-                                <p className="text-3xl font-black text-slate-900 leading-none tracking-tighter">
+                                <p className="text-3xl font-semibold text-slate-900 leading-none tracking-tighter">
                                   {stat.value}
                                 </p>
                               </div>
@@ -460,17 +470,17 @@ export default function GradesSection() {
                         </div>
 
                         {/* Grade Distribution Bar Chart */}
-                        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-100 p-10 shadow-sm space-y-10">
-                          <div className="flex justify-between items-end">
-                            <div>
-                              <h4 className="font-black text-slate-900 uppercase tracking-[0.2em] text-xs">
+                        <div className="lg:col-span-2 bg-white rounded-[32px] border border-slate-100 p-10 shadow-sm space-y-10">
+                          <div className="flex justify-between items-start">
+                            <div className="space-y-1.5">
+                              <h4 className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.25em] leading-none">
                                 Spread Spectrum
                               </h4>
-                              <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">
-                                Volume distribution per grade category
+                              <p className="text-xl font-semibold text-slate-900 tracking-tight">
+                                Grade Distribution
                               </p>
                             </div>
-                            <div className="p-4 bg-slate-50 rounded-2xl text-slate-400">
+                            <div className="p-4 bg-slate-50 rounded-[20px] text-slate-400 border border-slate-100">
                               <BarChartIcon size={20} />
                             </div>
                           </div>
@@ -530,17 +540,17 @@ export default function GradesSection() {
                         </div>
 
                         {/* Pass/Fail Pie Chart */}
-                        <div className="bg-white rounded-3xl border border-slate-100 p-10 shadow-sm space-y-10 flex flex-col">
-                          <div className="flex justify-between items-end">
-                            <div>
-                              <h4 className="font-black text-slate-900 uppercase tracking-[0.2em] text-xs">
+                        <div className="bg-white rounded-[32px] border border-slate-100 p-10 shadow-sm space-y-10 flex flex-col">
+                          <div className="flex justify-between items-start">
+                            <div className="space-y-1.5">
+                              <h4 className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.25em] leading-none">
                                 Status Ratio
                               </h4>
-                              <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">
-                                Composition analysis
+                              <p className="text-xl font-semibold text-slate-900 tracking-tight">
+                                Composition Analysis
                               </p>
                             </div>
-                            <div className="p-4 bg-slate-50 rounded-2xl text-slate-400">
+                            <div className="p-4 bg-slate-50 rounded-[20px] text-slate-400 border border-slate-100">
                               <PieChartIcon size={20} />
                             </div>
                           </div>
@@ -589,10 +599,10 @@ export default function GradesSection() {
                             </ResponsiveContainer>
                             {/* Center Stat */}
                             <div className="absolute top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none mt-[-10px]">
-                              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none mb-2">
+                              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.3em] leading-none mb-3 opacity-70">
                                 Passing
                               </p>
-                              <p className="text-4xl font-black text-slate-900 leading-none tracking-tighter">
+                              <p className="text-4xl font-semibold text-slate-900 leading-none tracking-tighter">
                                 {passRate}%
                               </p>
                             </div>
@@ -612,16 +622,16 @@ export default function GradesSection() {
                           <table className="w-full text-left">
                             <thead>
                               <tr className="bg-slate-50 border-b border-slate-100">
-                                <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
+                                <th className="px-10 py-7 text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-400 leading-none">
                                   Identity Token
                                 </th>
-                                <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
-                                  Curriculum GUID
+                                <th className="px-10 py-7 text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-400 leading-none">
+                                  Curriculum ID
                                 </th>
-                                <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
-                                  Temporal Phase
+                                <th className="px-10 py-7 text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-400 leading-none">
+                                  Term phase
                                 </th>
-                                <th className="px-10 py-7 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">
+                                <th className="px-10 py-7 text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-400 text-right leading-none">
                                   Metric Value
                                 </th>
                               </tr>
@@ -634,20 +644,20 @@ export default function GradesSection() {
                                     key={idx}
                                     className="hover:bg-slate-50/50 transition-colors group"
                                   >
-                                    <td className="px-10 py-7 font-black text-slate-900 tracking-tight">
+                                    <td className="px-10 py-7 font-semibold text-slate-900 tracking-tight">
                                       {grade.studentId}
                                     </td>
-                                    <td className="px-10 py-7 text-slate-500 font-bold">
+                                    <td className="px-10 py-7 text-slate-500 font-semibold">
                                       {grade.subjectId}
                                     </td>
                                     <td className="px-10 py-7">
-                                      <span className="px-4 py-1.5 bg-slate-100 rounded-full text-[10px] font-black text-slate-500 uppercase tracking-[0.15em]">
+                                      <span className="px-4 py-1.5 bg-slate-100 rounded-full text-[10px] font-semibold text-slate-500 uppercase tracking-[0.15em] border border-slate-200/50">
                                         {grade.semesterId}
                                       </span>
                                     </td>
                                     <td className="px-10 py-7 text-right">
                                       <span
-                                        className={`text-xl font-black tracking-tighter ${!passed ? "text-red-500" : "text-slate-900"}`}
+                                        className={`text-xl font-semibold tracking-tighter ${!passed ? "text-red-500" : "text-slate-900"}`}
                                       >
                                         {grade.grade}
                                       </span>
@@ -732,14 +742,14 @@ export default function GradesSection() {
           {subTab === "manual" && (
             <div className="bg-blue-50/20 rounded-3xl border border-blue-100/50 p-8 space-y-8 shadow-sm">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-white text-blue-600 rounded-xl shadow-sm border border-blue-50">
-                  <Plus size={20} />
+                <div className="p-3.5 bg-white text-blue-600 rounded-[20px] shadow-sm border border-blue-50">
+                  <Plus size={22} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black tracking-tight">
+                  <h3 className="text-xl font-semibold tracking-tight">
                     Manual Grade Entry
                   </h3>
-                  <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                  <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-widest mt-1">
                     Rapid individual record provisioning
                   </p>
                 </div>
@@ -749,7 +759,7 @@ export default function GradesSection() {
                 <div className="flex flex-wrap items-end gap-6">
                   {/* Student ID */}
                   <div className="flex-1 min-w-[200px] space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                       Student ID
                     </label>
                     <div className="relative">
@@ -763,7 +773,7 @@ export default function GradesSection() {
                             studentId: e.target.value.toUpperCase(),
                           })
                         }
-                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
+                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
                         placeholder="O210329"
                       />
                     </div>
@@ -771,8 +781,8 @@ export default function GradesSection() {
 
                   {/* Subject ID */}
                   <div className="flex-1 min-w-[200px] space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                      Subject GUID
+                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
+                      Subject ID
                     </label>
                     <div className="relative">
                       <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4" />
@@ -785,7 +795,7 @@ export default function GradesSection() {
                             subjectId: e.target.value,
                           })
                         }
-                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
+                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
                         placeholder="Subject ID"
                       />
                     </div>
@@ -793,8 +803,8 @@ export default function GradesSection() {
 
                   {/* Semester */}
                   <div className="w-40 space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                      Temporal Phase
+                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
+                      Term Phase
                     </label>
                     <select
                       value={manualGrade.semesterId}
@@ -804,7 +814,7 @@ export default function GradesSection() {
                           semesterId: e.target.value,
                         })
                       }
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
+                      className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm cursor-pointer"
                     >
                       {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                         <option key={s}>SEM-{s}</option>
@@ -814,7 +824,7 @@ export default function GradesSection() {
 
                   {/* Grade */}
                   <div className="w-32 space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                       Final Grade
                     </label>
                     <input
@@ -823,7 +833,7 @@ export default function GradesSection() {
                       onChange={(e) =>
                         setManualGrade({ ...manualGrade, grade: e.target.value })
                       }
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
+                      className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
                       placeholder="EX / 9.5"
                     />
                   </div>
@@ -831,12 +841,12 @@ export default function GradesSection() {
                   <button
                     disabled={loading}
                     type="submit"
-                    className="h-[52px] bg-blue-600 text-white px-8 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-xl shadow-blue-100 active:scale-95"
+                    className="uniz-primary-btn h-[56px] px-8 rounded-2xl"
                   >
                     {loading ? (
-                      <Loader2 className="animate-spin w-4 h-4" />
+                      <Loader2 className="animate-spin w-5 h-5" />
                     ) : (
-                      <Save size={16} />
+                      <Save size={18} />
                     )}
                     Commit Grade
                   </button>

@@ -5,14 +5,10 @@ import {
   Plus,
   Loader2,
   Mail,
-  Building2,
-  Contact,
+  RefreshCw,
   Search,
-  Edit2,
-  Lock,
-  Unlock,
+  Filter,
   X,
-  ShieldCheck,
 } from "lucide-react";
 import {
   SEARCH_FACULTY,
@@ -32,8 +28,7 @@ export default function FacultyManagement() {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [search, setSearch] = useState("");
-  const [department, setDepartment] = useState("");
-  const [meta, setMeta] = useState<any>({ total: 0, totalPages: 0 });
+  const [, setMeta] = useState<any>({ total: 0, totalPages: 0 });
 
   const [formData, setFormData] = useState({
     username: "",
@@ -58,7 +53,6 @@ export default function FacultyManagement() {
         },
         body: JSON.stringify({
           query: search,
-          department: department || undefined,
           page,
           limit,
         }),
@@ -79,7 +73,7 @@ export default function FacultyManagement() {
 
   useEffect(() => {
     fetchFaculty();
-  }, [page, department]);
+  }, [page]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -179,153 +173,174 @@ export default function FacultyManagement() {
   };
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-black tracking-tight text-slate-900">
-            Faculty & Staff
+    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+            User Management
           </h2>
-          <p className="text-slate-500 font-medium">
-            Manage administrative and teaching staff accounts ({meta.total}{" "}
-            records)
+          <p className="text-slate-500 font-medium text-[15px]">
+            Manage administrative and teaching staff accounts.
           </p>
         </div>
-        <button
-          onClick={openAdd}
-          className="bg-blue-600 text-white px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 active:scale-95"
-        >
-          <Plus size={16} /> Add Staff Member
-        </button>
-      </div>
 
-      {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
-        <div className="relative col-span-1 md:col-span-2">
-          <input
-            type="text"
-            placeholder="Search by name, ID or email..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
-          />
-          <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-            size={16}
-          />
-        </div>
-
-        <select
-          value={department}
-          onChange={(e) => setDepartment(e.target.value)}
-          className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-sm cursor-pointer"
-        >
-          <option value="">All Departments</option>
-          <option value="CSE">CSE</option>
-          <option value="ECE">ECE</option>
-          <option value="EEE">EEE</option>
-          <option value="MECH">MECH</option>
-          <option value="CIVIL">CIVIL</option>
-          <option value="ADMIN">ADMIN</option>
-        </select>
-      </div>
-
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="animate-spin text-slate-900" size={32} />
-        </div>
-      ) : faculty.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {faculty.map((member, idx) => (
-            <div
-              key={idx}
-              className={`bg-white border rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all group relative overflow-hidden ${member.Role === "suspended"
-                ? "border-red-100 opacity-75"
-                : "border-slate-100"
-                }`}
+        <div className="flex items-center gap-4">
+          <div className="flex bg-slate-100/80 p-1 rounded-full border border-slate-200/50 backdrop-blur-sm shadow-inner">
+            <button className="p-2.5 text-slate-500 hover:text-blue-600 transition-all">
+              <Filter size={18} />
+            </button>
+            <button
+              onClick={fetchFaculty}
+              className={`p-2.5 text-slate-500 hover:text-blue-600 transition-all ${loading ? "animate-spin" : ""}`}
             >
-              <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-blue-50 rounded-2xl text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                  <ShieldCheck size={24} />
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => openEdit(member)}
-                    className="p-2 hover:bg-slate-50 rounded-xl text-slate-400 hover:text-slate-900 transition-all"
-                  >
-                    <Edit2 size={16} />
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleSuspend(member.Username, member.is_suspended)
-                    }
-                    className={`p-2 rounded-xl transition-all ${member.is_suspended
-                      ? "text-green-500 hover:bg-green-50"
-                      : "text-red-500 hover:bg-red-50"
-                      }`}
-                  >
-                    {member.is_suspended ? (
-                      <Unlock size={16} />
-                    ) : (
-                      <Lock size={16} />
-                    )}
-                  </button>
-                </div>
-              </div>
+              <RefreshCw size={18} />
+            </button>
+          </div>
 
-              <div className="space-y-1">
-                <h3 className="text-lg font-black text-slate-900 tracking-tight leading-none">
-                  {member.Name}
-                </h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                  {member.Designation} • {member.Username}
-                </p>
-              </div>
+          <div className="relative group">
+            <Search
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"
+              size={14}
+            />
+            <input
+              type="text"
+              placeholder="System Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10 pr-5 h-11 bg-white border border-slate-200 rounded-full text-[11px] font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[240px] shadow-sm"
+            />
+          </div>
 
-              <div className="mt-6 space-y-3">
-                <div className="flex items-center gap-3 text-sm text-slate-600 font-medium">
-                  <Building2 size={14} className="text-slate-400" />
-                  {member.Department}
-                </div>
-                <div className="flex items-center gap-3 text-sm text-slate-600 font-medium">
-                  <Mail size={14} className="text-slate-400" />
-                  {member.Email}
-                </div>
-                {member.Contact && (
-                  <div className="flex items-center gap-3 text-sm text-slate-600 font-medium">
-                    <Contact size={14} className="text-slate-400" />
-                    {member.Contact}
-                  </div>
-                )}
-              </div>
+          <button
+            onClick={openAdd}
+            className="h-11 px-6 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center gap-2.5"
+          >
+            <Plus size={16} /> Add Staff
+          </button>
+        </div>
+      </div>
 
-              {member.is_suspended && (
-                <div className="absolute inset-x-0 bottom-0 bg-red-500 py-1 text-center font-black text-[10px] text-white uppercase tracking-widest">
-                  Account Suspended
-                </div>
+      <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-50">
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                  User Details
+                </th>
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                  Email Address
+                </th>
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                  Role
+                </th>
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                  Status
+                </th>
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20 text-right">
+                  System Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50/60">
+              {loading ? (
+                Array(6).fill(0).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td colSpan={5} className="px-10 py-8 bg-slate-50/20"></td>
+                  </tr>
+                ))
+              ) : faculty.length > 0 ? (
+                faculty.map((member, idx) => (
+                  <tr key={idx} className="hover:bg-slate-50/30 transition-all group">
+                    <td className="px-10 py-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-11 h-11 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-200 border-2 border-white ring-1 ring-slate-100">
+                          {member.Name?.[0] || member.Username?.[0]}
+                        </div>
+                        <div className="flex flex-col">
+                          <p className="font-bold text-slate-900 tracking-tight leading-none mb-1.5">
+                            {member.Name}
+                          </p>
+                          <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-400 leading-none">
+                            ID: {member.Username}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-10 py-6">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <Mail size={14} className="text-slate-300" />
+                        <span className="text-sm font-medium">{member.Email}</span>
+                      </div>
+                    </td>
+                    <td className="px-10 py-6">
+                      <span className="px-3 py-1 bg-slate-50 rounded-lg text-slate-500 font-semibold uppercase tracking-widest text-[9px] border border-slate-100">
+                        {member.Role?.toUpperCase() || "READ_ONLY"}
+                      </span>
+                    </td>
+                    <td className="px-10 py-6">
+                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full border text-[9px] font-bold uppercase tracking-widest w-fit animate-in fade-in zoom-in-95 duration-300">
+                        {!member.is_suspended ? (
+                          <>
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span className="text-emerald-600">Active</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                            <span className="text-red-500">Suspended</span>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-10 py-6">
+                      <div className="flex items-center justify-end gap-2.5">
+                        <button
+                          onClick={() => openEdit(member)}
+                          className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-600 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all hover:bg-slate-200 active:scale-95 shadow-sm"
+                        >
+                          Modify
+                        </button>
+                        <button
+                          onClick={() => handleSuspend(member.Username, member.is_suspended)}
+                          className={`flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-full text-[9px] font-bold uppercase tracking-widest transition-all hover:bg-slate-800 active:scale-95 shadow-lg shadow-slate-200 ${member.is_suspended ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-100" : ""}`}
+                        >
+                          {member.is_suspended ? "Reinstate" : "Suspend"}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="p-24 text-center">
+                    <div className="flex flex-col items-center gap-5">
+                      <div className="p-6 bg-slate-50 rounded-full border border-slate-100 shadow-inner">
+                        <Users size={40} className="text-slate-300" />
+                      </div>
+                      <p className="font-semibold text-slate-400 italic text-sm tracking-tight">
+                        No staff members matching your current criteria.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
               )}
-            </div>
-          ))}
+            </tbody>
+          </table>
         </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-          <Users size={48} className="text-slate-300 mb-4" />
-          <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
-            No staff members found matching your criteria
-          </p>
-        </div>
-      )}
+      </div>
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl relative animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-lg rounded-[28px] p-10 shadow-2xl relative animate-in zoom-in-95 duration-300 border border-slate-100">
             <button
               onClick={() => setShowModal(false)}
               className="absolute top-8 right-8 p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400"
             >
               <X size={24} />
             </button>
-            <h3 className="text-2xl font-black tracking-tight text-slate-900 mb-2">
+            <h3 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 mb-2">
               {editMode ? "Edit Staff Details" : "Register Staff Member"}
             </h3>
             <p className="text-slate-400 font-medium text-sm mb-8">
@@ -337,7 +352,7 @@ export default function FacultyManagement() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400">
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                     Username / ID
                   </label>
                   <input
@@ -350,7 +365,7 @@ export default function FacultyManagement() {
                         username: e.target.value.toUpperCase(),
                       })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold disabled:opacity-50"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-sm disabled:opacity-50"
                     placeholder="e.g. FAC001"
                   />
                 </div>

@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import {
-  Clock,
   RefreshCw,
-  Activity,
-  ShieldCheck,
+  Search,
   AlertTriangle,
-  Loader2,
-  FileText,
-  Settings,
-  ShieldAlert,
+  AlertCircle,
+  Filter,
+  ChevronDown,
 } from "lucide-react";
 import { ADMIN_UPLOAD_HISTORY, TRIGGER_CRON } from "../../../api/endpoints";
 import { toast } from "react-toastify";
@@ -18,6 +15,10 @@ export default function SystemLogsSection() {
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMaintenanceLoading, setIsMaintenanceLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchHistory();
@@ -61,179 +62,206 @@ export default function SystemLogsSection() {
     }
   };
 
+  // Filter and Paginate logic
+  const filteredHistory = history.filter((log: any) => {
+    const matchesSearch =
+      log.uploadedBy?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.filename?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.type?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesType = filterType === "ALL" || log.type === filterType;
+
+    return matchesSearch && matchesType;
+  });
+
+  const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
+  const paginatedHistory = filteredHistory.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <div className="p-8 space-y-10 animate-in fade-in duration-700 pb-20 text-slate-900">
+    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-4xl font-black tracking-tight text-slate-900 leading-none">
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
             System & Audit Logs
           </h2>
-          <p className="text-slate-500 font-medium">
-            Monitor background events, upload history, and system health.
+          <p className="text-slate-500 font-medium text-[15px]">
+            Institutional data synchronization and event history across all portals.
           </p>
         </div>
 
         <div className="flex items-center gap-4">
-          <button
-            onClick={fetchHistory}
-            disabled={loading}
-            className="uniz-primary-btn w-[54px] bg-white text-slate-400 border border-slate-100 shadow-none hover:shadow-none hover:bg-slate-50"
-            title="Refresh Logs"
-          >
-            <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
-          </button>
-          <button
-            onClick={triggerMaintenance}
-            disabled={isMaintenanceLoading}
-            className="uniz-primary-btn px-8 bg-red-50 text-red-600 border border-red-100 shadow-none hover:shadow-none hover:bg-red-600 hover:text-white"
-          >
-            {isMaintenanceLoading ? (
-              <Loader2 className="animate-spin" size={16} />
-            ) : (
-              <Settings size={16} />
-            )}
-            Trigger System Cron
-          </button>
-        </div>
-      </div>
+          <div className="flex bg-slate-100/80 p-1 rounded-full border border-slate-200/50 backdrop-blur-sm">
+            <button
+              onClick={fetchHistory}
+              title="Refresh Logs"
+              className={`p-2.5 text-slate-500 hover:text-blue-600 transition-all ${loading ? 'animate-spin' : ''}`}
+            >
+              <RefreshCw size={18} />
+            </button>
+            <button
+              onClick={triggerMaintenance}
+              disabled={isMaintenanceLoading}
+              title="Trigger Maintenance"
+              className={`p-2.5 text-slate-500 hover:text-red-600 transition-all ${isMaintenanceLoading ? 'animate-pulse' : ''}`}
+            >
+              <AlertTriangle size={18} />
+            </button>
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <StatusCard
-          icon={Activity}
-          label="System Health"
-          value="Healthy"
-          color="emerald"
-        />
-        <StatusCard
-          icon={ShieldCheck}
-          label="Security Engine"
-          value="Encrypted"
-          color="blue"
-        />
-        <StatusCard icon={Clock} label="Uptime" value="99.9%" color="emerald" />
-        <StatusCard
-          icon={FileText}
-          label="Total Logs"
-          value={history.length.toString()}
-          color="blue"
-        />
-      </div>
+          <div className="relative group">
+            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors pointer-events-none" size={13} />
+            <select
+              value={filterType}
+              onChange={(e) => {
+                setFilterType(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="pl-10 pr-10 h-11 bg-white border border-slate-200 rounded-full text-[10px] font-bold uppercase tracking-[0.1em] outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[160px] shadow-sm hover:shadow-md appearance-none cursor-pointer text-slate-600"
+            >
+              <option value="ALL">All Assets</option>
+              <option value="STUDENTS">Students</option>
+              <option value="ATTENDANCE">Attendance</option>
+              <option value="GRADES">Grades</option>
+            </select>
+            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors pointer-events-none" size={14} />
+          </div>
 
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden text-slate-900">
-        <div className="p-8 border-b border-slate-50 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-600 rounded-2xl text-white shadow-lg shadow-blue-100">
-              <Clock size={20} />
-            </div>
-            <div>
-              <h3 className="font-black text-xl tracking-tight">
-                Recent Synchronization Audit
-              </h3>
-              <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">
-                Immutable Log of all Bulk Accesses
-              </p>
-            </div>
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
+            <input
+              type="text"
+              placeholder="Search history..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="pl-11 pr-5 h-12 bg-white border border-slate-200 rounded-full text-sm font-medium outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[240px] shadow-sm shadow-slate-100 placeholder:text-slate-400"
+            />
           </div>
         </div>
+      </div>
 
+      <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden text-slate-900">
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50/50">
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                  Timestamp
-                </th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+              <tr className="border-b border-slate-50">
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   Operator
                 </th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                  Action Type
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                  Activity & Resource
                 </th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                  Total Records
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                  Data Metrics
                 </th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   Status
+                </th>
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                  Timestamp
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-50/60">
               {loading ? (
-                Array(5)
+                Array(6)
                   .fill(0)
                   .map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td
-                        colSpan={5}
-                        className="px-8 py-6 h-16 bg-slate-50/20"
-                      ></td>
+                      <td colSpan={5} className="px-10 py-8 bg-slate-50/20"></td>
                     </tr>
                   ))
-              ) : history.length > 0 ? (
-                history.map((log, idx) => (
+              ) : paginatedHistory.length > 0 ? (
+                paginatedHistory.map((log: any, idx: number) => (
                   <tr
-                    key={log._id || idx}
-                    className="hover:bg-slate-50/50 transition-colors"
+                    key={log.id || idx}
+                    className="hover:bg-slate-50/30 transition-all group"
                   >
-                    <td className="px-8 py-6">
-                      <p className="font-bold text-slate-900 text-sm">
-                        {new Date(log.createdAt).toLocaleDateString()}
-                      </p>
-                      <p className="text-[10px] font-medium text-slate-400 mt-1">
-                        {new Date(log.createdAt).toLocaleTimeString()}
-                      </p>
-                    </td>
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-black text-[10px] text-slate-600">
-                          {log.operator?.[0] || "W"}
+                    <td className="px-10 py-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-11 h-11 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-200 border-2 border-white ring-1 ring-slate-100 uppercase">
+                          {log.uploadedBy?.[0] || "U"}
                         </div>
-                        <span className="font-bold text-slate-700 text-sm">
-                          {log.operator || "Webmaster"}
+                        <div className="flex flex-col">
+                          <p className="font-semibold text-slate-900 tracking-tight leading-none mb-1">
+                            {log.uploadedBy || "System"}
+                          </p>
+                          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 leading-none">
+                            ID: {log.id?.slice(0, 8) || "AUDIT"}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-10 py-6">
+                      <div className="flex flex-col gap-1">
+                        <p className="text-sm font-semibold text-slate-800 tracking-tight truncate max-w-[200px]" title={log.filename}>
+                          {log.filename || "Automated sync"}
+                        </p>
+                        <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-bold uppercase tracking-wider w-fit border border-blue-100">
+                          {log.type || "NONE"}
                         </span>
                       </div>
                     </td>
-                    <td className="px-8 py-6">
-                      <span className="px-3 py-1 bg-blue-50 rounded-lg text-blue-600 font-black uppercase tracking-widest text-[9px] border border-blue-100">
-                        {log.actionType || "SYNC"}
-                      </span>
+                    <td className="px-10 py-6">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-bold text-slate-900">{log.totalRows || 0}</p>
+                          <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">Rows</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1">
+                            <span className="w-1 h-1 rounded-full bg-emerald-500"></span> {log.successCount || 0}
+                          </span>
+                          <span className="text-[10px] font-bold text-red-400 flex items-center gap-1">
+                            <span className="w-1 h-1 rounded-full bg-red-400"></span> {log.failCount || 0}
+                          </span>
+                        </div>
+                      </div>
                     </td>
-                    <td className="px-8 py-6">
-                      <p className="font-black text-slate-900">
-                        {log.totalRecords || 0}
-                      </p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        Profiles
-                      </p>
-                    </td>
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-2">
-                        {log.status === "completed" ? (
-                          <div className="flex items-center gap-2 text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
-                            <ShieldCheck size={12} />
-                            <span className="text-[9px] font-black uppercase tracking-widest">
-                              Verified
+                    <td className="px-10 py-6">
+                      <div className="w-fit">
+                        {log.status === "COMPLETED" ? (
+                          <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+                            <span className="text-[9px] font-bold uppercase tracking-widest">
+                              Completed
                             </span>
                           </div>
                         ) : (
-                          <div className="flex items-center gap-2 text-red-500 bg-red-50 px-3 py-1 rounded-full border border-red-100">
-                            <ShieldAlert size={12} />
-                            <span className="text-[9px] font-black uppercase tracking-widest">
-                              Concern
+                          <div className="flex items-center gap-1.5 text-blue-500 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+                            <span className="text-[9px] font-bold uppercase tracking-widest">
+                              {log.status || "PROCESSING"}
                             </span>
                           </div>
                         )}
+                      </div>
+                    </td>
+                    <td className="px-10 py-6">
+                      <div className="flex flex-col">
+                        <p className="text-sm font-semibold tracking-tight text-slate-700">
+                          {new Date(log.createdAt).toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </p>
+                        <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
+                          {new Date(log.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
                       </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="p-20 text-center">
-                    <div className="flex flex-col items-center gap-4 opacity-50">
-                      <AlertTriangle size={48} className="text-slate-300" />
-                      <p className="font-bold text-slate-400 italic">
-                        No access logs found in the primary ledger.
+                  <td colSpan={5} className="p-24 text-center">
+                    <div className="flex flex-col items-center gap-5">
+                      <div className="p-6 bg-slate-50 rounded-full border border-slate-100 shadow-inner text-slate-300">
+                        <AlertCircle size={40} />
+                      </div>
+                      <p className="font-semibold text-slate-400 italic text-sm tracking-tight">
+                        No logs found matching your criteria.
                       </p>
                     </div>
                   </td>
@@ -242,43 +270,44 @@ export default function SystemLogsSection() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination bar */}
+        {filteredHistory.length > 0 && (
+          <div className="px-10 py-5 bg-slate-50/30 border-t border-slate-50 flex items-center justify-between">
+            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+              Showing <span className="text-slate-900">{Math.min(filteredHistory.length, (currentPage - 1) * itemsPerPage + 1)}-{Math.min(filteredHistory.length, currentPage * itemsPerPage)}</span> of {filteredHistory.length}
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                className="px-4 py-2 border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all disabled:opacity-30 disabled:pointer-events-none"
+              >
+                Previous
+              </button>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+                  <button
+                    key={num}
+                    onClick={() => setCurrentPage(num)}
+                    className={`w-8 h-8 rounded-lg text-[10px] font-bold transition-all ${currentPage === num ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-100'}`}
+                  >
+                    {num}
+                  </button>
+                )).slice(Math.max(0, currentPage - 3), Math.min(totalPages, currentPage + 2))}
+              </div>
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                className="px-4 py-2 border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all disabled:opacity-30 disabled:pointer-events-none"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-function StatusCard({
-  icon: Icon,
-  label,
-  value,
-  color,
-}: {
-  icon: any;
-  label: string;
-  value: string;
-  color: string;
-}) {
-  const colors: any = {
-    emerald: "bg-emerald-50 text-emerald-500 border-emerald-100",
-    blue: "bg-blue-600 text-white border-blue-400 shadow-lg shadow-blue-200",
-    slate: "bg-slate-50 text-slate-400 border-slate-100",
-  };
-
-  return (
-    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-6">
-      <div
-        className={`p-4 rounded-2xl ${colors[color] || colors.slate} border`}
-      >
-        <Icon size={24} />
-      </div>
-      <div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-none">
-          {label}
-        </p>
-        <p className="text-xl font-black text-slate-900 mt-2 tracking-tight">
-          {value}
-        </p>
-      </div>
-    </div>
-  );
-}
