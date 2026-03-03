@@ -18,7 +18,6 @@ import {
   DEAN_REVIEW,
   APPROVE_ALLOCATION,
   ACADEMIC_FACULTY,
-  EXPORT_ACADEMIC_DATA,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../api/apiClient";
@@ -52,7 +51,6 @@ export default function DeanReview() {
   const [loading, setLoading] = useState(true);
   const [approving, setApproving] = useState<string | null>(null);
   const [editing, setEditing] = useState<Allocation | null>(null);
-  const [exporting, setExporting] = useState(false);
 
   // Get department from localStorage (AdminInfo)
   const adminInfo = (() => {
@@ -64,7 +62,6 @@ export default function DeanReview() {
   })();
 
   const department = adminInfo.department;
-  const isWebmaster = adminInfo.role === "webmaster";
 
   const fetchData = async () => {
     setLoading(true);
@@ -119,33 +116,7 @@ export default function DeanReview() {
   };
 
   const handleExport = async () => {
-    setExporting(true);
-    try {
-      const activeSem = allocations[0]?.semesterId;
-      if (!activeSem) return;
-
-      const res = await fetch(
-        `${EXPORT_ACADEMIC_DATA}?type=allocations&branch=${department}&semesterId=${activeSem}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
-      );
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Allocations_${department}.xlsx`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      toast.success("Excel exported successfully");
-    } catch (error) {
-      toast.error("Export failed");
-    } finally {
-      setExporting(false);
-    }
+    // Disabled until EXPORT_ACADEMIC_DATA is implemented
   };
 
   return (
@@ -163,14 +134,10 @@ export default function DeanReview() {
         <div className="flex items-center gap-4">
           <button
             onClick={handleExport}
-            disabled={exporting || allocations.length === 0}
+            disabled={allocations.length === 0}
             className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-slate-600 font-bold text-xs hover:bg-slate-50 transition-all shadow-sm disabled:opacity-50"
           >
-            {exporting ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <FileSpreadsheet size={16} />
-            )}
+            <FileSpreadsheet size={16} />
             Export XLS
           </button>
           <div className="flex items-center gap-3 px-6 py-3 bg-amber-50 rounded-2xl border border-amber-100">
@@ -357,7 +324,10 @@ export default function DeanReview() {
                     type="number"
                     value={editing.customCredits || editing.subject.credits}
                     onChange={(e) =>
-                      setEditing({ ...editing, customCredits: e.target.value })
+                      setEditing({
+                        ...editing,
+                        customCredits: parseInt(e.target.value) || null,
+                      })
                     }
                     className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 focus:bg-white focus:border-blue-600 outline-none transition-all shadow-sm"
                   />
