@@ -23,7 +23,6 @@ const AddAttendance = lazy(() => import("./pages/attendance/AddAttendance"));
 const Settings = lazy(() => import("./pages/admin/Settings"));
 const RoleManagement = lazy(() => import("./pages/admin/RoleManagement"));
 const BannerManager = lazy(() => import("./pages/admin/BannerManager"));
-const EmailNotification = lazy(() => import("./pages/admin/EmailNotification"));
 const CurriculumManager = lazy(() => import("./pages/admin/Curriculum"));
 const SearchStudents = lazy(() => import("./pages/admin/searchstudents"));
 const UpdateStatus = lazy(() => import("./components/UpdateStudentStatus"));
@@ -472,14 +471,6 @@ export default function App() {
             element={
               <PageTransition>
                 <BannerManager />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/admin/notifications"
-            element={
-              <PageTransition>
-                <EmailNotification />
               </PageTransition>
             }
           />

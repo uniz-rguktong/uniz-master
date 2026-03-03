@@ -20,9 +20,7 @@ export const InfoCard = memo(
         className={`bg-white p-5 rounded-[24px] border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.03)] hover:border-blue-100 transition-all duration-300 ${fullWidth ? "col-span-full" : ""}`}
       >
         <div className="flex items-center gap-2.5 mb-3">
-          <span className="text-blue-500">
-            {icon}
-          </span>
+          <span className="text-blue-500">{icon}</span>
           <span className="text-[11px] font-medium uppercase tracking-[0.1em] text-slate-400">
             {label}
           </span>

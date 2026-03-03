@@ -35,18 +35,18 @@ export { enableOutingsAndOutpasses } from "../pages/student/student";
 
 interface MainContent {
   content:
-  | "outpass"
-  | "outing"
-  | "gradehub"
-  | "resetpassword"
-  | "dashboard"
-  | "requestOuting"
-  | "requestOutpass"
-  | "campushub"
-  | "studyspace"
-  | "attendance"
-  | "grievance"
-  | "error";
+    | "outpass"
+    | "outing"
+    | "gradehub"
+    | "resetpassword"
+    | "dashboard"
+    | "requestOuting"
+    | "requestOutpass"
+    | "campushub"
+    | "studyspace"
+    | "attendance"
+    | "grievance"
+    | "error";
 }
 
 const ContentSkeleton = () => (
@@ -124,21 +124,21 @@ export default function Sidebar({ content }: MainContent) {
     },
     ...(enableOutingsAndOutpasses
       ? [
-        {
-          id: "outing",
-          label: "Outing Requests",
-          href: "/student/outing",
-          content: "outing",
-          icon: Clock,
-        },
-        {
-          id: "outpass",
-          label: "Outpass Requests",
-          href: "/student/outpass",
-          content: "outpass",
-          icon: CalendarDays,
-        },
-      ]
+          {
+            id: "outing",
+            label: "Outing Requests",
+            href: "/student/outing",
+            content: "outing",
+            icon: Clock,
+          },
+          {
+            id: "outpass",
+            label: "Outpass Requests",
+            href: "/student/outpass",
+            content: "outpass",
+            icon: CalendarDays,
+          },
+        ]
       : []),
     {
       id: "gradehub",
@@ -489,10 +489,11 @@ export default function Sidebar({ content }: MainContent) {
                         }}
                         className={`
                         w-full flex items-center gap-4 px-5 py-3 rounded-full transition-all
-                        ${isActive
+                        ${
+                          isActive
                             ? "bg-blue-50 text-blue-700 shadow-sm"
                             : "text-slate-600 hover:bg-slate-50"
-                          }
+                        }
                       `}
                       >
                         <Icon
@@ -505,8 +506,8 @@ export default function Sidebar({ content }: MainContent) {
                         </span>
                         {(item.id === "dashboard" ||
                           item.id === "requestOuting") && (
-                            <ChevronDown className="w-4 h-4 ml-auto text-slate-300" />
-                          )}
+                          <ChevronDown className="w-4 h-4 ml-auto text-slate-300" />
+                        )}
                       </button>
                     );
                   })}
@@ -568,20 +569,22 @@ export default function Sidebar({ content }: MainContent) {
                       }}
                       className={`
                       w-full flex items-center space-x-3 px-4 py-3 rounded-full text-left transition-all duration-200 group relative
-                      ${isActive
+                      ${
+                        isActive
                           ? "bg-blue-50 text-blue-700 shadow-sm shadow-blue-50"
                           : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                        }
+                      }
                     `}
                     >
                       <div className="flex items-center justify-center min-w-[24px]">
                         <Icon
                           className={`
                           h-[21px] w-[21px] flex-shrink-0
-                          ${isActive
+                          ${
+                            isActive
                               ? "text-blue-600"
                               : "text-slate-400 group-hover:text-slate-700"
-                            }
+                          }
                         `}
                         />
                       </div>
@@ -663,17 +666,19 @@ export default function Sidebar({ content }: MainContent) {
       {/* Mobile Bottom Navigation Bar - Exact Unstop Dimensions */}
       {!isOpen && (
         <div
-          className={`md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[72%] max-w-[280px] transition-all duration-500 ease-in-out ${isVisible
-            ? "translate-y-0 opacity-100"
-            : "translate-y-24 opacity-0 pointer-events-none"
-            }`}
+          className={`md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[72%] max-w-[280px] transition-all duration-500 ease-in-out ${
+            isVisible
+              ? "translate-y-0 opacity-100"
+              : "translate-y-24 opacity-0 pointer-events-none"
+          }`}
         >
           <div className="bg-white/80 backdrop-blur-xl border border-white/40 rounded-[2rem] shadow-[0_12px_40px_rgba(0,0,0,0.12)] px-4 py-3 flex items-center justify-between">
             {/* Outpass Option */}
             <button
               onClick={() => navigate("/student/outpass")}
-              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${content === "outpass" ? "text-blue-600" : "text-slate-400"
-                }`}
+              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${
+                content === "outpass" ? "text-blue-600" : "text-slate-400"
+              }`}
             >
               <CalendarDays className="h-6 w-6" />
               <span className="text-[9px] font-bold uppercase tracking-tight">
@@ -684,8 +689,9 @@ export default function Sidebar({ content }: MainContent) {
             {/* Results Option (Center) */}
             <button
               onClick={() => navigate("/student/gradehub")}
-              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${content === "gradehub" ? "text-blue-600" : "text-slate-400"
-                }`}
+              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${
+                content === "gradehub" ? "text-blue-600" : "text-slate-400"
+              }`}
             >
               <GraduationCap className="h-6 w-6" />
               <span className="text-[9px] font-bold uppercase tracking-tight">
@@ -696,8 +702,9 @@ export default function Sidebar({ content }: MainContent) {
             {/* Settings Option */}
             <button
               onClick={() => navigate("/student/resetpassword")}
-              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${content === "resetpassword" ? "text-blue-600" : "text-slate-400"
-                }`}
+              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 ${
+                content === "resetpassword" ? "text-blue-600" : "text-slate-400"
+              }`}
             >
               <KeyRound className="h-6 w-6" />
               <span className="text-[9px] font-bold uppercase tracking-tight">

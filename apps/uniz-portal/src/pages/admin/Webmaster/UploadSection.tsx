@@ -8,6 +8,7 @@ import {
   X,
   Loader2,
   Info,
+  ChevronDown,
 } from "lucide-react";
 import {
   UPLOAD_ATTENDANCE,
@@ -81,12 +82,12 @@ export default function UploadSection({ type }: { type: UploadType }) {
       type === "attendance"
         ? GET_ATTENDANCE_TEMPLATE(branch, year, semester)
         : GET_GRADES_TEMPLATE(
-          branch,
-          year,
-          semester,
-          subjectCode,
-          remedialsOnly,
-        );
+            branch,
+            year,
+            semester,
+            subjectCode,
+            remedialsOnly,
+          );
 
     fetch(url, {
       method: "GET",
@@ -114,66 +115,93 @@ export default function UploadSection({ type }: { type: UploadType }) {
   };
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col gap-6 bg-white p-8 rounded-2xl border border-slate-100 shadow-sm animate-in slide-in-from-top-4 duration-500">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
+      <div className="flex flex-col gap-1.5 mb-2">
+        <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none capitalize">
+          {type} Bulk Management
+        </h2>
+        <p className="text-slate-500 font-medium text-[15px]">
+          Synchronize institutional {type} records with the core system.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-6 bg-white p-7 rounded-[28px] border border-slate-100 shadow-sm animate-in slide-in-from-top-4 duration-500">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
               Branch
             </label>
-            <select
-              value={branch}
-              onChange={(e) => setBranch(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
-            >
-              {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
-                (b) => (
-                  <option key={b} value={b}>
-                    {b}
-                  </option>
-                ),
-              )}
-            </select>
+            <div className="relative group">
+              <select
+                value={branch}
+                onChange={(e) => setBranch(e.target.value)}
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+              >
+                {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
+                  (b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ),
+                )}
+              </select>
+              <ChevronDown
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                size={14}
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
               Year
             </label>
-            <select
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
-            >
-              {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
+            <div className="relative group">
+              <select
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+              >
+                {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                size={14}
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
               Semester
             </label>
-            <select
-              value={semester}
-              onChange={(e) => setSemester(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
-            >
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
-                <option key={s} value={`SEM-${s}`}>
-                  SEM-{s}
-                </option>
-              ))}
-            </select>
+            <div className="relative group">
+              <select
+                value={semester}
+                onChange={(e) => setSemester(e.target.value)}
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+              >
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                  <option key={s} value={`SEM-${s}`}>
+                    SEM-{s}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                size={14}
+              />
+            </div>
           </div>
 
           {type === "grades" && (
             <>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                   Subject Code
                 </label>
                 <input
@@ -181,23 +209,23 @@ export default function UploadSection({ type }: { type: UploadType }) {
                   placeholder="e.g. CS201"
                   value={subjectCode}
                   onChange={(e) => setSubjectCode(e.target.value.toUpperCase())}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-sm"
+                  className="w-full h-11 px-6 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-900 placeholder:text-slate-400"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                   Scope
                 </label>
-                <div className="flex bg-slate-100 p-1 rounded-xl w-fit border border-slate-200">
+                <div className="flex bg-slate-100/80 p-1 rounded-full w-fit border border-slate-200/50 shadow-inner">
                   <button
                     onClick={() => setRemedialsOnly(false)}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${!remedialsOnly ? "bg-white text-blue-600 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+                    className={`px-6 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${!remedialsOnly ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50" : "text-slate-500 hover:text-slate-700"}`}
                   >
                     Regular
                   </button>
                   <button
                     onClick={() => setRemedialsOnly(true)}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${remedialsOnly ? "bg-white text-blue-600 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+                    className={`px-6 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${remedialsOnly ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50" : "text-slate-500 hover:text-slate-700"}`}
                   >
                     Remedial
                   </button>
@@ -207,13 +235,13 @@ export default function UploadSection({ type }: { type: UploadType }) {
           )}
         </div>
 
-        <div className="flex justify-end pt-2">
+        <div className="flex justify-end pt-2 border-t border-slate-50">
           <button
             onClick={downloadTemplate}
             disabled={type === "grades" && !subjectCode}
-            className="bg-blue-600 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 active:scale-95 disabled:opacity-50"
+            className="h-11 px-6 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-full text-blue-700 font-bold uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2.5 active:scale-95 disabled:opacity-50"
           >
-            <FileDown size={16} /> Download {type} Template
+            <FileDown size={14} /> Download {type} Template
           </button>
         </div>
       </div>
@@ -235,18 +263,18 @@ export default function UploadSection({ type }: { type: UploadType }) {
             />
             <label
               htmlFor="file-upload"
-              className="cursor-pointer flex flex-col items-center gap-4"
+              className="cursor-pointer flex flex-col items-center gap-5"
             >
               <div
-                className={`p-6 rounded-3xl transition-colors ${file ? "bg-blue-600 text-white shadow-lg shadow-blue-100" : "bg-slate-50 text-slate-400"}`}
+                className={`p-6 rounded-[28px] transition-all duration-300 ${file ? "bg-blue-600 text-white shadow-xl shadow-blue-200 scale-105" : "bg-slate-50 text-slate-300 group-hover:bg-blue-50 group-hover:text-blue-500"}`}
               >
-                <Upload size={40} />
+                <Upload size={48} />
               </div>
               <div>
-                <p className="text-xl font-black text-slate-900">
+                <p className="text-xl font-semibold text-slate-900 tracking-tight leading-none mb-2">
                   {file ? file.name : `Select ${type} file`}
                 </p>
-                <p className="text-slate-400 font-medium mt-1">
+                <p className="text-slate-400 font-medium text-[15px]">
                   Supports XLSX, XLS or CSV files
                 </p>
               </div>
@@ -265,7 +293,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
           <button
             disabled={!file || loading}
             onClick={handleUpload}
-            className="w-full bg-blue-600 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-sm hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+            className="w-full bg-blue-600 text-white py-5 rounded-[24px] font-semibold uppercase tracking-[0.2em] text-[11px] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 active:scale-95"
           >
             {loading ? (
               <Loader2 className="animate-spin w-5 h-5" />
@@ -279,23 +307,24 @@ export default function UploadSection({ type }: { type: UploadType }) {
         <div className="space-y-6">
           {result ? (
             <div
-              className={`p-8 rounded-2xl border animate-in slide-in-from-right-8 duration-500 h-full ${result.success
-                ? "bg-emerald-50 border-emerald-100"
-                : "bg-red-50 border-red-100"
-                }`}
+              className={`p-8 rounded-2xl border animate-in slide-in-from-right-8 duration-500 h-full ${
+                result.success
+                  ? "bg-emerald-50 border-emerald-100"
+                  : "bg-red-50 border-red-100"
+              }`}
             >
               <div className="flex items-center gap-4 mb-6">
                 <div
-                  className={`p-3 rounded-2xl ${result.success ? "bg-emerald-500 text-white" : "bg-red-500 text-white"}`}
+                  className={`p-3.5 rounded-2xl ${result.success ? "bg-emerald-500 text-white shadow-lg shadow-emerald-200" : "bg-red-500 text-white shadow-lg shadow-red-200"}`}
                 >
                   {result.success ? (
-                    <CheckCircle2 size={24} />
+                    <CheckCircle2 size={26} />
                   ) : (
-                    <AlertCircle size={24} />
+                    <AlertCircle size={26} />
                   )}
                 </div>
                 <h3
-                  className={`text-2xl font-black tracking-tight ${result.success ? "text-emerald-900" : "text-red-900"}`}
+                  className={`text-2xl font-semibold tracking-[-0.02em] ${result.success ? "text-emerald-900" : "text-red-900"}`}
                 >
                   {result.success ? "Sync Completed" : "Sync Failed"}
                 </h3>
@@ -309,10 +338,10 @@ export default function UploadSection({ type }: { type: UploadType }) {
                       into the central database.
                     </p>
                     <div className="p-4 bg-white/50 rounded-2xl border border-emerald-200/50">
-                      <p className="text-xs uppercase font-black text-emerald-600 tracking-widest mb-1">
+                      <p className="text-[10px] uppercase font-semibold text-emerald-600 tracking-widest mb-1.5 leading-none">
                         Status
                       </p>
-                      <p className="text-emerald-900 font-bold">
+                      <p className="text-emerald-900 font-semibold text-[15px] leading-tight">
                         All systems green. Student dashboards updated.
                       </p>
                     </div>
@@ -323,14 +352,14 @@ export default function UploadSection({ type }: { type: UploadType }) {
               </div>
             </div>
           ) : (
-            <div className="p-8 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center h-full">
-              <div className="p-4 bg-white rounded-2xl shadow-sm text-slate-300 mb-6">
+            <div className="p-8 rounded-[28px] bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center h-full shadow-inner">
+              <div className="p-5 bg-white rounded-2xl shadow-sm text-slate-300 mb-8 border border-slate-100">
                 <Info size={32} />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">
+              <h3 className="text-xl font-semibold text-slate-900 mb-2 tracking-tight">
                 Ready for synchronization
               </h3>
-              <p className="text-slate-500 max-w-xs font-medium">
+              <p className="text-slate-400 max-w-[240px] font-medium text-[15px] leading-relaxed">
                 Upload a file to see the system status and processing results
                 here.
               </p>

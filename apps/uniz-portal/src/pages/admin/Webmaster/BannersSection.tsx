@@ -135,23 +135,22 @@ export default function BannersSection() {
   };
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-500 pb-20 text-slate-900">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-black tracking-tight text-slate-900 leading-tight">
+    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
             Banner Management
           </h2>
-          <p className="text-slate-500 font-medium">
-            Create and control featured banners on the student home screen
+          <p className="text-slate-500 font-medium text-[15px]">
+            Create and control featured spotlight content for student portals.
           </p>
         </div>
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="uniz-primary-btn px-8 gap-2.5"
+          className="h-11 px-6 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2"
         >
-          <Plus size={18} />
-          New Banner
+          <Plus size={16} /> New Banner
         </button>
       </div>
 
@@ -170,15 +169,15 @@ export default function BannersSection() {
             return (
               <div
                 key={bannerId}
-                className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col group relative"
+                className="bg-white rounded-[28px] border border-slate-100 shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all overflow-hidden flex flex-col group relative"
               >
                 {/* Preview Image */}
-                <div className="h-40 w-full bg-slate-50 relative overflow-hidden shrink-0 border-b border-slate-50">
+                <div className="h-44 w-full bg-slate-50 relative overflow-hidden shrink-0 border-b border-slate-100">
                   {banner.imageUrl ? (
                     <img
                       src={banner.imageUrl}
                       alt={banner.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-300">
@@ -188,23 +187,23 @@ export default function BannersSection() {
 
                   {/* Status Badge */}
                   <div
-                    className={`absolute top-3 right-3 px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest flex items-center gap-1 border backdrop-blur-md shadow-sm ${banner.isVisible ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-slate-500/10 text-slate-500 border-slate-500/20"}`}
+                    className={`absolute top-4 right-4 px-3 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-widest flex items-center gap-1.5 border backdrop-blur-md shadow-sm ${banner.isVisible ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-slate-50 text-slate-500 border-slate-200"}`}
                   >
                     {banner.isVisible ? (
-                      <Eye size={10} />
+                      <Eye size={12} />
                     ) : (
-                      <EyeOff size={10} />
+                      <EyeOff size={12} />
                     )}
                     {banner.isVisible ? "Active" : "Hidden"}
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-5 flex flex-col flex-1">
-                  <h3 className="font-black text-slate-900 text-base leading-tight mb-1 line-clamp-1">
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="font-semibold text-slate-900 text-[17px] leading-tight mb-2 line-clamp-1">
                     {banner.title}
                   </h3>
-                  <p className="text-slate-500 font-medium text-xs line-clamp-2 leading-relaxed mb-4">
+                  <p className="text-slate-500 font-medium text-[13px] line-clamp-2 leading-relaxed mb-6">
                     {banner.text}
                   </p>
 
@@ -213,12 +212,12 @@ export default function BannersSection() {
                       <button
                         onClick={() => hideBanner(bannerId)}
                         disabled={actionLoading === bannerId}
-                        className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-black uppercase tracking-widest text-[9px] transition-all border bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-600 hover:text-white"
+                        className="flex-1 flex items-center justify-center gap-2.5 py-3 rounded-full font-bold uppercase tracking-widest text-[9px] transition-all border bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white active:scale-95 disabled:opacity-50"
                       >
                         {actionLoading === bannerId ? (
-                          <Loader2 size={12} className="animate-spin" />
+                          <Loader2 size={13} className="animate-spin" />
                         ) : (
-                          <EyeOff size={12} />
+                          <EyeOff size={13} />
                         )}
                         Hide Spotlight
                       </button>
@@ -230,15 +229,15 @@ export default function BannersSection() {
           })}
         </div>
       ) : (
-        <div className="p-32 flex flex-col items-center justify-center text-center space-y-6 bg-white rounded-3xl border border-slate-50">
-          <div className="w-24 h-24 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-200">
-            <ImageIcon size={48} strokeWidth={1} />
+        <div className="p-32 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-[28px] border border-slate-100 shadow-sm">
+          <div className="w-24 h-24 bg-slate-50 border border-slate-100 rounded-[24px] flex items-center justify-center text-slate-300 shadow-inner">
+            <ImageIcon size={48} strokeWidth={1.5} />
           </div>
           <div>
-            <p className="text-2xl font-black text-slate-900 tracking-tight">
+            <p className="text-2xl font-semibold text-slate-900 tracking-tight">
               No Active Banners
             </p>
-            <p className="text-slate-400 font-medium mt-2 max-w-sm">
+            <p className="text-slate-400 font-medium mt-2 max-w-sm text-[15px]">
               Bring your campus to life by creating featured banners for events,
               announcements, or updates.
             </p>
@@ -260,23 +259,23 @@ export default function BannersSection() {
             onClick={() => setShowAddModal(false)}
           />
           <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-            <div className="bg-blue-600 p-8 text-white relative flex items-center gap-4">
-              <div className="p-3 bg-white/10 rounded-2xl">
-                <Plus size={24} />
+            <div className="bg-blue-600 p-8 text-white relative flex items-center gap-5">
+              <div className="p-3.5 bg-white/20 rounded-2xl">
+                <Plus size={26} />
               </div>
               <div>
-                <h3 className="text-2xl font-black tracking-tight">
+                <h3 className="text-2xl font-semibold tracking-[-0.02em]">
                   New Banner
                 </h3>
-                <p className="text-white/60 text-xs font-bold uppercase tracking-widest mt-1">
+                <p className="text-white/70 text-[10px] font-semibold uppercase tracking-[0.2em] mt-1.5">
                   Configure Spotlight Content
                 </p>
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="absolute top-8 right-8 text-white/40 hover:text-white transition-colors"
+                className="absolute top-8 right-8 text-white/60 hover:text-white transition-colors"
               >
-                <X size={24} />
+                <X size={26} />
               </button>
             </div>
 
@@ -284,8 +283,8 @@ export default function BannersSection() {
               <div className="space-y-6">
                 {/* Title */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <Type size={12} /> Banner Title
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
+                    <Type size={14} /> Banner Title
                   </label>
                   <input
                     required
@@ -295,14 +294,14 @@ export default function BannersSection() {
                       setNewBanner({ ...newBanner, title: e.target.value })
                     }
                     placeholder="e.g. UniZ v2.0 is Live!"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
                   />
                 </div>
 
                 {/* Text */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <AlignLeft size={12} /> Body Content
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
+                    <AlignLeft size={14} /> Body Content
                   </label>
                   <textarea
                     required
@@ -312,14 +311,14 @@ export default function BannersSection() {
                       setNewBanner({ ...newBanner, text: e.target.value })
                     }
                     placeholder="Briefly describe what this banner is about..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-bold text-slate-900 resize-none"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-semibold text-slate-900 resize-none"
                   />
                 </div>
 
                 {/* Image URL */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <Link size={12} /> Image URL
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
+                    <Link size={14} /> Image URL
                   </label>
                   <input
                     required
@@ -329,7 +328,7 @@ export default function BannersSection() {
                       setNewBanner({ ...newBanner, imageUrl: e.target.value })
                     }
                     placeholder="https://images.unsplash.com/..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
                   />
                 </div>
 
@@ -341,8 +340,8 @@ export default function BannersSection() {
                       alt="preview"
                       className="w-full h-full object-cover"
                       onError={(e: any) =>
-                      (e.target.src =
-                        "https://placehold.co/600x400?text=Invalid+Image+URL")
+                        (e.target.src =
+                          "https://placehold.co/600x400?text=Invalid+Image+URL")
                       }
                     />
                   </div>
@@ -352,7 +351,7 @@ export default function BannersSection() {
               <button
                 disabled={!!actionLoading}
                 type="submit"
-                className="w-full uniz-primary-btn h-[60px]"
+                className="w-full bg-blue-600 text-white py-5 rounded-2xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95"
               >
                 {actionLoading === "creating" ? (
                   <Loader2 className="animate-spin w-5 h-5" />

@@ -10,6 +10,7 @@ import {
   Filter,
   Download,
   History,
+  ChevronDown,
 } from "lucide-react";
 import {
   ADMIN_STUDENT_UPLOAD,
@@ -131,27 +132,27 @@ export default function StudentBulkSection() {
   };
 
   return (
-    <div className="p-6 space-y-8 animate-in fade-in duration-700 pb-20 text-slate-900">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-3xl font-black tracking-tight text-slate-900 leading-none">
+    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
             Student Bulk Operations
           </h2>
-          <p className="text-slate-500 font-medium text-sm">
+          <p className="text-slate-500 font-medium text-[15px]">
             Bulk onboard students or extract batch records to Excel.
           </p>
         </div>
 
-        <div className="flex bg-blue-50/50 p-1.5 rounded-2xl border border-blue-100/50 shadow-inner">
+        <div className="flex bg-slate-100/80 p-1.5 rounded-full border border-slate-200/60 backdrop-blur-sm shadow-inner">
           <button
             onClick={() => setActiveTab("upload")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === "upload" ? "bg-blue-600 text-white shadow-md shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "upload" ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
           >
             <Upload size={14} /> Bulk Upload
           </button>
           <button
             onClick={() => setActiveTab("export")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all ${activeTab === "export" ? "bg-blue-600 text-white shadow-md shadow-blue-100" : "text-slate-400 hover:text-blue-600"}`}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "export" ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
           >
             <Download size={14} /> Batch Export
           </button>
@@ -159,53 +160,53 @@ export default function StudentBulkSection() {
       </div>
 
       {activeTab === "upload" ? (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          <div className="lg:col-span-7 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-7 space-y-6">
             {/* Summary Step */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+            <div className="bg-white p-7 rounded-[28px] border border-slate-100 shadow-sm space-y-5 transition-all hover:shadow-2xl hover:translate-y-[-2px] group">
               <div className="flex items-center gap-4">
-                <div className="p-2.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-xl">
-                  <FileDown size={20} />
+                <div className="p-4 bg-blue-50 text-blue-600 border border-blue-100 rounded-[22px] shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                  <FileDown size={22} />
                 </div>
                 <div>
-                  <h3 className="font-black text-lg tracking-tight">
+                  <h3 className="font-semibold text-lg tracking-tight">
                     Step 1: Get the Framework
                   </h3>
-                  <p className="text-slate-500 text-xs font-medium">
+                  <p className="text-slate-500 text-[13px] font-medium mt-0.5">
                     Download the standard template to ensure data compatibility.
                   </p>
                 </div>
               </div>
               <button
                 onClick={downloadTemplate}
-                className="w-full flex items-center justify-center gap-2 py-4 bg-blue-50/30 hover:bg-blue-50 border border-blue-100/50 rounded-2xl text-blue-600 font-black uppercase tracking-widest text-xs transition-all"
+                className="w-full h-12 flex items-center justify-center gap-3 bg-slate-50/50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-full text-blue-700 font-bold uppercase tracking-widest text-[10px] transition-all active:scale-[0.98]"
               >
-                <FileSpreadsheet size={16} /> Download Excel Template
+                <FileSpreadsheet size={16} className="opacity-70" /> Download
+                Excel Template
               </button>
             </div>
 
             {/* Upload Step */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6">
+            <div className="bg-white p-8 rounded-[28px] border border-slate-100 shadow-sm space-y-6 transition-all hover:shadow-md">
               <div className="flex items-center gap-4">
-                <div className="p-2.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-xl">
-                  <Upload size={20} />
+                <div className="p-3 bg-blue-50 text-blue-600 border border-blue-100 rounded-2xl">
+                  <Upload size={22} />
                 </div>
                 <div>
-                  <h3 className="font-black text-lg tracking-tight">
+                  <h3 className="font-semibold text-lg tracking-tight">
                     Step 2: Sync Records
                   </h3>
-                  <p className="text-slate-500 text-xs font-medium">
-                    Upload your filled records to update or create student
-                    profiles.
+                  <p className="text-slate-500 text-[13px] font-medium mt-0.5">
+                    Upload your filled records to update student profiles.
                   </p>
                 </div>
               </div>
 
               <div
                 className={`
-                                 border-4 border-dashed rounded-2xl p-8 text-center transition-all relative
-                                 ${file ? "border-blue-600 bg-blue-50/50" : "border-slate-100 hover:border-blue-200 bg-slate-50/30"}
-                             `}
+                                  border-4 border-dashed rounded-[32px] p-12 text-center transition-all relative
+                                  ${file ? "border-blue-600 bg-blue-50/50" : "border-slate-100 hover:border-blue-200 bg-slate-50/30"}
+                              `}
               >
                 <input
                   type="file"
@@ -216,18 +217,18 @@ export default function StudentBulkSection() {
                 />
                 <label
                   htmlFor="bulk-student-file"
-                  className="cursor-pointer flex flex-col items-center gap-3"
+                  className="cursor-pointer flex flex-col items-center gap-4"
                 >
                   <div
-                    className={`p-4 rounded-2xl transition-all ${file ? "bg-blue-600 text-white animate-pulse shadow-lg shadow-blue-200" : "bg-white text-slate-300 shadow-sm"}`}
+                    className={`p-6 rounded-3xl transition-all duration-500 ${file ? "bg-blue-600 text-white animate-pulse shadow-2xl shadow-blue-200" : "bg-white text-slate-300 shadow-inner border border-slate-50"}`}
                   >
-                    <Upload size={24} />
+                    <Upload size={32} />
                   </div>
-                  <div>
-                    <p className="text-base font-black text-slate-900">
+                  <div className="space-y-1.5">
+                    <p className="text-xl font-semibold text-slate-900 tracking-tight">
                       {file ? file.name : "Choose XLSX File"}
                     </p>
-                    <p className="text-slate-400 font-medium text-[10px] mt-1">
+                    <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">
                       Maximum 5000 records per upload
                     </p>
                   </div>
@@ -235,7 +236,7 @@ export default function StudentBulkSection() {
                 {file && (
                   <button
                     onClick={() => setFile(null)}
-                    className="absolute top-4 right-4 p-1.5 bg-white rounded-full shadow-lg text-red-500 hover:scale-110 transition-all"
+                    className="absolute top-6 right-6 p-2 bg-white rounded-full shadow-2xl text-red-500 hover:scale-110 transition-all border border-red-50"
                   >
                     <X size={14} />
                   </button>
@@ -245,12 +246,12 @@ export default function StudentBulkSection() {
               <button
                 onClick={handleUpload}
                 disabled={!file || loading || !!uploadId}
-                className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full h-14 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[11px] shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
               >
                 {loading ? (
-                  <Loader2 className="animate-spin w-4 h-4" />
+                  <Loader2 className="animate-spin w-5 h-5" />
                 ) : (
-                  <CheckCircle2 size={16} />
+                  <CheckCircle2 size={20} />
                 )}
                 Initiate Bulk Provisioning
               </button>
@@ -260,39 +261,42 @@ export default function StudentBulkSection() {
           <div className="lg:col-span-5 space-y-6">
             <div className="sticky top-24">
               {progress || uploadId ? (
-                <div className="bg-blue-600 rounded-3xl p-8 text-white shadow-2xl shadow-blue-200 space-y-8 animate-in slide-in-from-right-8 duration-500">
-                  <div className="flex items-center justify-between">
-                    <div className="p-3 bg-white/10 rounded-2xl">
+                <div className="bg-blue-600 rounded-[32px] p-10 text-white shadow-2xl shadow-blue-200 space-y-10 animate-in slide-in-from-right-8 duration-500 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-12 opacity-5 translate-x-1/4 -translate-y-1/4 pointer-events-none">
+                    <History size={200} />
+                  </div>
+                  <div className="flex items-center justify-between relative z-10">
+                    <div className="p-4 bg-white/10 rounded-[22px] backdrop-blur-md border border-white/20 shadow-xl">
                       <History
-                        size={24}
+                        size={26}
                         className={uploadId ? "animate-spin" : ""}
                       />
                     </div>
-                    <div className="text-right">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-white/40">
-                        Status
+                    <div className="text-right space-y-1">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 leading-none">
+                        Current Status
                       </p>
-                      <p className="font-black text-xl tracking-tight capitalize">
+                      <p className="font-semibold text-3xl tracking-tight capitalize leading-none pt-2">
                         {progress?.status || "Processing"}
                       </p>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="flex justify-between text-xs font-black uppercase tracking-widest text-white/60">
-                      <span>Progress</span>
-                      <span>
+                  <div className="space-y-5 relative z-10">
+                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-white/70">
+                      <span>Sync Progress</span>
+                      <span className="font-black">
                         {Math.round(
                           ((progress?.processed || 0) /
                             (progress?.total || 1)) *
-                          100,
+                            100,
                         )}
                         %
                       </span>
                     </div>
-                    <div className="h-3 bg-white/10 rounded-full overflow-hidden border border-white/5">
+                    <div className="h-4 bg-black/10 rounded-full overflow-hidden border border-white/5 p-1 shadow-inner">
                       <div
-                        className="h-full bg-white transition-all duration-500"
+                        className="h-full bg-white rounded-full transition-all duration-1000 ease-out shadow-[0_0_20px_rgba(255,255,255,0.8)]"
                         style={{
                           width: `${((progress?.processed || 0) / (progress?.total || 1)) * 100}%`,
                         }}
@@ -300,44 +304,44 @@ export default function StudentBulkSection() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 pt-4">
-                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">
+                  <div className="grid grid-cols-2 gap-4 pt-2 relative z-10">
+                    <div className="bg-white/10 p-6 rounded-[28px] border border-white/10 backdrop-blur-md shadow-xl">
+                      <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/50 leading-none mb-4">
                         Processed
                       </p>
-                      <p className="text-2xl font-black mt-1">
+                      <p className="text-4xl font-semibold tracking-tighter leading-none">
                         {progress?.processed || 0}
                       </p>
                     </div>
-                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">
-                        Issues
+                    <div className="bg-white/10 p-6 rounded-[28px] border border-white/10 backdrop-blur-md shadow-xl">
+                      <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/50 leading-none mb-4">
+                        Failed
                       </p>
-                      <p className="text-2xl font-black mt-1 text-red-400">
+                      <p className="text-4xl font-semibold tracking-tighter leading-none text-red-100">
                         {progress?.failed || 0}
                       </p>
                     </div>
                   </div>
 
                   {progress?.status === "completed" && (
-                    <div className="flex items-center gap-3 p-4 bg-emerald-500/20 text-emerald-400 rounded-2xl border border-emerald-500/20">
-                      <CheckCircle2 size={18} />
-                      <p className="text-xs font-bold leading-tight">
+                    <div className="flex items-center gap-3.5 p-5 bg-emerald-500/20 text-emerald-300 rounded-[22px] border border-emerald-500/30 backdrop-blur-sm animate-in zoom-in-95 duration-500 relative z-10">
+                      <CheckCircle2 size={24} className="shrink-0" />
+                      <p className="text-[11px] font-bold leading-relaxed tracking-wide">
                         Database synchronization finalized successfully.
                       </p>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="bg-white rounded-[2.5rem] border border-slate-100 p-10 text-center space-y-6 flex flex-col items-center justify-center">
-                  <div className="p-8 bg-slate-50 rounded-2xl text-slate-200">
-                    <History size={64} strokeWidth={1} />
+                <div className="bg-white rounded-[32px] border border-slate-100 p-12 text-center space-y-7 flex flex-col items-center justify-center shadow-sm">
+                  <div className="p-12 bg-slate-50 rounded-full text-slate-200 border border-slate-50 shadow-inner">
+                    <History size={72} strokeWidth={1} />
                   </div>
-                  <div>
-                    <h4 className="text-xl font-black text-slate-900 tracking-tight">
-                      Active Operation Monitor
+                  <div className="space-y-3">
+                    <h4 className="text-2xl font-semibold text-slate-900 tracking-tight leading-none">
+                      Operation Monitor
                     </h4>
-                    <p className="text-slate-400 text-sm font-medium mt-2 max-w-[240px] mx-auto">
+                    <p className="text-slate-400 text-[15px] font-medium max-w-[260px] mx-auto leading-relaxed">
                       Real-time feedback on your background sync tasks will
                       appear here.
                     </p>
@@ -348,61 +352,76 @@ export default function StudentBulkSection() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-100 p-8 text-slate-900 animate-in slide-in-from-right-8 duration-500">
-          <div className="max-w-4xl mx-auto space-y-8">
-            <div className="flex items-center gap-5">
-              <div className="p-4 bg-blue-600 text-white rounded-2xl shadow-xl shadow-blue-200">
-                <Filter size={24} />
+        <div className="bg-white rounded-[40px] border border-slate-100 p-12 text-slate-900 animate-in slide-in-from-right-8 duration-700 shadow-sm transition-all hover:shadow-2xl">
+          <div className="max-w-4xl mx-auto space-y-12">
+            <div className="flex items-center gap-6">
+              <div className="p-5 bg-blue-600 text-white rounded-[28px] shadow-2xl shadow-blue-200">
+                <Filter size={26} />
               </div>
-              <div>
-                <h3 className="text-2xl font-black tracking-tight">
+              <div className="space-y-1.5">
+                <h3 className="text-3xl font-semibold tracking-tight leading-none">
                   Filtering Engine
                 </h3>
-                <p className="text-slate-500 font-medium text-sm">
+                <p className="text-slate-500 font-medium text-[17px]">
                   Export selective student cohorts with specific data fields.
                 </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
                   Branch Focus
                 </label>
-                <select
-                  value={exportParams.branch}
-                  onChange={(e) =>
-                    setExportParams({ ...exportParams, branch: e.target.value })
-                  }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-sm"
-                >
-                  <option value="">All Departments</option>
-                  {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
-                    (b) => (
-                      <option key={b}>{b}</option>
-                    ),
-                  )}
-                </select>
+                <div className="relative group">
+                  <select
+                    value={exportParams.branch}
+                    onChange={(e) =>
+                      setExportParams({
+                        ...exportParams,
+                        branch: e.target.value,
+                      })
+                    }
+                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-sm appearance-none uppercase tracking-widest"
+                  >
+                    <option value="">All Departments</option>
+                    {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
+                      (b) => (
+                        <option key={b}>{b}</option>
+                      ),
+                    )}
+                  </select>
+                  <ChevronDown
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    size={16}
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
                   Academic Year
                 </label>
-                <select
-                  value={exportParams.year}
-                  onChange={(e) =>
-                    setExportParams({ ...exportParams, year: e.target.value })
-                  }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-sm"
-                >
-                  <option value="">All Batches</option>
-                  {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
-                    <option key={y}>{y}</option>
-                  ))}
-                </select>
+                <div className="relative group">
+                  <select
+                    value={exportParams.year}
+                    onChange={(e) =>
+                      setExportParams({ ...exportParams, year: e.target.value })
+                    }
+                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-sm appearance-none uppercase tracking-widest"
+                  >
+                    <option value="">All Batches</option>
+                    {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
+                      <option key={y}>{y}</option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    size={16}
+                  />
+                </div>
               </div>
-              <div className="md:col-span-2 space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+              <div className="md:col-span-2 space-y-3">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
                   Data Columns (Comma Separated)
                 </label>
                 <input
@@ -411,26 +430,26 @@ export default function StudentBulkSection() {
                   onChange={(e) =>
                     setExportParams({ ...exportParams, fields: e.target.value })
                   }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-sm"
+                  className="w-full h-14 px-8 bg-slate-50/50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] transition-all shadow-sm tracking-wide"
                 />
               </div>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-8 space-y-8">
               <button
                 onClick={handleExport}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-2xl shadow-blue-200 active:scale-[0.98] disabled:opacity-50"
+                className="w-full h-16 flex items-center justify-center gap-3.5 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-2xl shadow-blue-200 active:scale-[0.98] disabled:opacity-50"
               >
                 {loading ? (
-                  <Loader2 className="animate-spin w-4 h-4" />
+                  <Loader2 className="animate-spin w-5 h-5" />
                 ) : (
-                  <Download size={18} />
+                  <Download size={20} />
                 )}
                 Generate Excel Report
               </button>
-              <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-4 italic">
-                Secure export. All activity is logged in the system audits.
+              <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] opacity-60">
+                Secure export protocol active • All access events timestamped
               </p>
             </div>
           </div>

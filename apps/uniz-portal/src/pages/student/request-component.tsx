@@ -38,9 +38,9 @@ export default function RequestComp({ type }: RequestCompProps) {
 
   const handleInputChange =
     (setter: React.Dispatch<React.SetStateAction<any>>) =>
-      (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setter(event.target.value);
-      };
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setter(event.target.value);
+    };
 
   const sendDataToBackend = async () => {
     if (

@@ -13,7 +13,7 @@ import { GET_ATTENDANCE, DOWNLOAD_ATTENDANCE } from "../../api/endpoints";
 import { downloadFile } from "../../api/apiClient";
 
 interface AttendanceRecord {
-  subject: string | { name: string;[key: string]: any };
+  subject: string | { name: string; [key: string]: any };
   totalClasses: number;
   attendedClasses: number;
   percentage: string | number;
@@ -170,10 +170,11 @@ export default function Attendance() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-medium hover:bg-slate-50 transition-colors ${selectedYear === year
-                        ? "bg-blue-600 text-white hover:bg-blue-700"
-                        : "text-slate-600"
-                        }`}
+                      className={`p-3 cursor-pointer text-sm font-medium hover:bg-slate-50 transition-colors ${
+                        selectedYear === year
+                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          : "text-slate-600"
+                      }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setSelectedSemester(
@@ -276,7 +277,8 @@ export default function Attendance() {
                     Attendance For
                   </span>
                   <h2 className="text-xl font-black tracking-tight text-slate-900">
-                    {selectedYear} <span className="text-slate-300">/</span> {selectedSemester}
+                    {selectedYear} <span className="text-slate-300">/</span>{" "}
+                    {selectedSemester}
                   </h2>
                 </div>
                 <button
@@ -301,8 +303,8 @@ export default function Attendance() {
 
               {/* Content */}
               {!attendanceData.attendance ||
-                !Array.isArray(attendanceData.attendance) ||
-                attendanceData.attendance.length === 0 ? (
+              !Array.isArray(attendanceData.attendance) ||
+              attendanceData.attendance.length === 0 ? (
                 <div className="bg-slate-50 rounded-xl p-8 text-center border border-slate-200">
                   <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm border border-slate-100">
                     <AlertCircle size={28} className="text-slate-400" />
@@ -356,15 +358,16 @@ export default function Attendance() {
                                 </td>
                                 <td className="px-4 py-2 text-center">
                                   <span
-                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${parseFloat(String(record.percentage)) >=
+                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                      parseFloat(String(record.percentage)) >=
                                       75
-                                      ? "bg-blue-600 text-white"
-                                      : parseFloat(
-                                        String(record.percentage),
-                                      ) >= 65
-                                        ? "bg-slate-200 text-slate-700"
-                                        : "bg-slate-100 text-slate-400"
-                                      }`}
+                                        ? "bg-blue-600 text-white"
+                                        : parseFloat(
+                                              String(record.percentage),
+                                            ) >= 65
+                                          ? "bg-slate-200 text-slate-700"
+                                          : "bg-slate-100 text-slate-400"
+                                    }`}
                                   >
                                     {record.percentage}%
                                   </span>
