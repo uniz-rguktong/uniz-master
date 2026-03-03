@@ -1,4 +1,5 @@
-import prisma from "../utils/prisma.util";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 const subjectsData: any = {
   E1: {
