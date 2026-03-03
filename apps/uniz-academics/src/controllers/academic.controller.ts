@@ -1381,9 +1381,9 @@ export const getSubjects = async (req: AuthenticatedRequest, res: Response) => {
         { code: { contains: search as string, mode: "insensitive" } },
       ];
     }
-    if (department) where.department = department as string;
-    if (semester)
-      where.semester = { contains: semester as string, mode: "insensitive" };
+    if (department && department !== "ALL")
+      where.department = department as string;
+    if (semester && semester !== "ALL") where.semester = semester as string; // Exact match for year-sem structure
 
     const [subjects, total] = await Promise.all([
       prisma.subject.findMany({
