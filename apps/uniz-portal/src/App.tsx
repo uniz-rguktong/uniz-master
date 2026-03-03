@@ -51,7 +51,7 @@ export const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === "true";
 const LoadingFallback = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4">
     <Loader2 className="w-10 h-10 text-black animate-spin" />
-    <p className="text-black font-black uppercase tracking-widest animate-pulse">
+    <p className="text-black font-semibold uppercase tracking-widest animate-pulse">
       Loading Ongole...
     </p>
   </div>
@@ -65,10 +65,10 @@ export function Error() {
       <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mb-6 text-white">
         <FileQuestion size={32} />
       </div>
-      <h1 className="text-4xl font-black text-black mb-2 uppercase tracking-tighter">
+      <h1 className="text-4xl font-semibold text-black mb-2 uppercase tracking-[-0.02em]">
         Page Not Found
       </h1>
-      <p className="text-slate-500 max-w-md mb-8 font-medium italic">
+      <p className="text-slate-500 max-w-md mb-8 font-medium italic opacity-80">
         The requested resource is unavailable or has been relocated.
       </p>
       <div className="flex gap-4">
@@ -141,7 +141,7 @@ export default function App() {
         draggable={false}
         pauseOnHover
         theme="light"
-        toastClassName="shadow-lg rounded-lg font-medium text-sm"
+        toastClassName="shadow-lg rounded-2xl font-medium text-sm"
       />
 
       <Suspense fallback={<LoadingFallback />}>

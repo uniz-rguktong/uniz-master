@@ -365,21 +365,21 @@ export default function StudentProfilePage() {
             <p className="text-lg md:text-xl font-medium text-slate-400 mb-0.5">
               Welcome back,
             </p>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 mb-2">
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-[-0.02em] text-slate-900 mb-2">
               {user?.name}
             </h1>
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-medium text-slate-500">
               <div className="flex items-center gap-2">
-                <span className="text-blue-600 font-bold uppercase tracking-widest text-[11px] bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md">
+                <span className="text-blue-600 font-semibold uppercase tracking-widest text-[11px] bg-blue-50 border border-blue-100 px-2 py-1 rounded-full">
                   {user?.username}
                 </span>
                 <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                <span className="uppercase tracking-wide font-semibold text-slate-700">
+                <span className="uppercase tracking-wide font-medium text-slate-700">
                   {user?.branch} - {user?.year}
                 </span>
               </div>
               {user?.has_pending_requests && (
-                <span className="text-blue-600 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 animate-pulse ml-1">
+                <span className="text-blue-600 px-3 py-1 bg-blue-50 rounded-full text-[10px] font-semibold uppercase tracking-wider flex items-center gap-1.5 animate-pulse ml-1">
                   <Clock className="w-3 h-3" /> Pending Request
                 </span>
               )}
@@ -432,16 +432,16 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                  className={`pb-3 relative text-[11px] font-black uppercase tracking-[0.2em] transition-all ${activeTab === tab
-                      ? "text-blue-600 translate-y-[-1px]"
-                      : "text-slate-400 hover:text-slate-600"
+                  className={`pb-3 relative text-[11px] font-semibold uppercase tracking-[0.15em] transition-all ${activeTab === tab
+                    ? "text-blue-600"
+                    : "text-slate-400 hover:text-slate-600"
                     }`}
                 >
                   {tab}
                   {activeTab === tab && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-blue-600 rounded-t-full"
                     />
                   )}
                 </button>
@@ -478,7 +478,7 @@ export default function StudentProfilePage() {
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
                     <div className="h-6 w-1.5 bg-blue-600 rounded-full"></div>
-                    <h3 className="text-lg font-black tracking-tighter uppercase text-slate-800">
+                    <h3 className="text-lg font-semibold tracking-tight uppercase text-slate-800">
                       Academic Overview
                     </h3>
                   </div>
@@ -620,7 +620,7 @@ export default function StudentProfilePage() {
                         <Clock className="w-7 h-7" />
                       </div>
                       <div>
-                        <h3 className="text-[17px] font-black text-slate-900 group-hover:text-white mb-1 tracking-tight transition-colors">
+                        <h3 className="text-[17px] font-semibold text-slate-900 group-hover:text-white mb-1 transition-colors">
                           Request Outing
                         </h3>
                         <p className="font-medium text-[13px] text-slate-500 group-hover:text-blue-100 transition-colors">
@@ -639,7 +639,7 @@ export default function StudentProfilePage() {
                         <Calendar className="w-7 h-7" />
                       </div>
                       <div>
-                        <h3 className="text-[17px] font-black text-slate-900 group-hover:text-white mb-1 tracking-tight transition-colors">
+                        <h3 className="text-[17px] font-semibold text-slate-900 group-hover:text-white mb-1 transition-colors">
                           Request Outpass
                         </h3>
                         <p className="font-medium text-[13px] text-slate-500 group-hover:text-blue-100 transition-colors">
@@ -710,7 +710,7 @@ export default function StudentProfilePage() {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-white rounded-[2rem] p-6 md:p-10 max-w-lg w-full shadow-2xl overflow-hidden relative"
+                className="bg-white rounded-[40px] p-6 md:p-10 max-w-lg w-full shadow-2xl overflow-hidden relative"
               >
                 <div className="flex items-center gap-5 mb-8">
                   <div className="text-blue-600">

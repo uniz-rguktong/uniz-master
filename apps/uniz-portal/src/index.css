@@ -4,8 +4,33 @@
 
 @layer base {
   body {
-    font-family: "Outfit", sans-serif;
+    font-family: theme("fontFamily.body");
     @apply bg-slate-50 text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  nav,
+  button {
+    font-family: theme("fontFamily.sans");
+  }
+
+  h1 {
+    @apply text-h1;
+  }
+
+  h2 {
+    @apply text-h2;
+  }
+
+  h3 {
+    @apply text-h3;
+  }
+
+  h4 {
+    @apply text-h4;
   }
 
   html {
@@ -16,6 +41,7 @@
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   /* Sleek minimalist scrollbar */
@@ -44,10 +70,11 @@
 
 @layer components {
   .uniz-primary-btn {
-    @apply h-[46px] flex items-center justify-center font-bold text-sm rounded-lg transition-all duration-300;
-    @apply bg-blue-600 text-white shadow-md shadow-blue-100;
-    @apply hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 hover:-translate-y-0.5;
-    @apply disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:shadow-none;
+    @apply h-10 flex items-center justify-center font-medium text-sm rounded-full transition-all duration-200;
+    @apply bg-blue-600 text-white shadow-none ring-offset-2;
+    @apply hover:bg-blue-600/95 hover:-translate-y-[1px];
+    @apply focus:ring-2 focus:ring-blue-600 focus:outline-none;
+    @apply disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed;
   }
 }
 

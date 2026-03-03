@@ -31,18 +31,18 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const variants = {
       primary:
-        "bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-700 shadow-sm",
-      secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200 shadow-sm",
+        "bg-slate-900 text-white hover:bg-slate-900/95 shadow-none ring-slate-900",
+      secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200/95 shadow-none ring-slate-200",
       outline:
-        "border border-slate-300 bg-transparent hover:bg-slate-50 text-slate-700",
-      danger: "bg-black text-white hover:bg-slate-800 shadow-sm",
-      ghost: "bg-transparent hover:bg-slate-100 text-slate-700",
+        "border border-slate-300 bg-transparent hover:bg-slate-50 text-slate-700 ring-slate-300",
+      danger: "bg-black text-white hover:bg-black/95 shadow-none ring-black",
+      ghost: "bg-transparent hover:bg-slate-100/95 text-slate-700 ring-slate-100",
     };
 
     const sizes = {
-      sm: "h-8 px-3 text-xs",
-      md: "h-10 px-4 py-2 text-sm",
-      lg: "h-12 px-6 text-base",
+      sm: "h-8 px-4 text-[13px]",
+      md: "h-10 px-5 text-[14px]",
+      lg: "h-12 px-6 text-[16px]",
     };
 
     const finalIsLoading = isLoading || loading;
@@ -54,7 +54,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         onClick={finalOnClick}
         disabled={disabled || finalIsLoading}
         className={cn(
-          "inline-flex items-center justify-center rounded-xl font-bold transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]",
+          "inline-flex items-center justify-center rounded-full font-medium transition-all duration-200 ease-smooth focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none hover:-translate-y-[1px]",
           variants[variant],
           sizes[size],
           className,
