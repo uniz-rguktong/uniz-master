@@ -150,3 +150,10 @@ export const PUSH_SEND = `${BASE_URL}/notifications/push/send`;
 export const BULK_UPDATE_GRADES = `${BASE_URL}/academics/grades/bulk-update`;
 export const GET_BATCH_GRADES = `${BASE_URL}/academics/grades/batch`;
 export const ADD_MANUAL_GRADE = `${BASE_URL}/academics/grades/add`;
+
+// Faculty Management (Academics Service)
+export const ACADEMIC_FACULTY = `${BASE_URL}/academics/faculty`;
+export const ACADEMIC_FACULTY_BY_ID = (id: string) =>
+  `${BASE_URL}/academics/faculty/${id}`;
+export const ACADEMIC_FACULTY_ROLE = (id: string) =>
+  `${BASE_URL}/academics/faculty/${id}/role`;

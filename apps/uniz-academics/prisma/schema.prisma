@@ -9,14 +9,16 @@ datasource db {
 }
 
 model Subject {
-  id         String       @id @default(uuid())
-  code       String       @unique
-  name       String
-  credits    Int
-  department String
-  semester   String
-  attendance Attendance[]
-  grades     Grade[]
+  id                String             @id @default(uuid())
+  code              String             @unique
+  name              String
+  credits           Int
+  department        String
+  semester          String
+  attendance        Attendance[]
+  grades            Grade[]
+  branchAllocations BranchAllocation[]
+  registrations     Registration[]
 }
 
 model Grade {
@@ -25,7 +27,7 @@ model Grade {
   subjectId  String
   semesterId String
   grade      Float
-  batch      String?  // e.g. "O21"
+  batch      String? // e.g. "O21"
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   subject    Subject  @relation(fields: [subjectId], references: [id])
@@ -43,7 +45,7 @@ model Attendance {
   semesterId      String
   totalClasses    Int
   attendedClasses Int
-  batch           String?  // e.g. "O21"
+  batch           String? // e.g. "O21"
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   subject         Subject  @relation(fields: [subjectId], references: [id])
@@ -51,5 +53,71 @@ model Attendance {
   @@unique([studentId, subjectId, semesterId])
   @@index([studentId])
   @@index([batch])
+  @@index([semesterId])
+}
+
+enum SemesterStatus {
+  DRAFT
+  DEAN_REVIEW
+  APPROVED
+  REGISTRATION_OPEN
+  REGISTRATION_CLOSED
+}
+
+model AcademicSemester {
+  id                String             @id @default(uuid())
+  name              String // e.g. "AY 2024-25 SEM-II"
+  status            SemesterStatus     @default(DRAFT)
+  branchAllocations BranchAllocation[]
+  registrations     Registration[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model Faculty {
+  id                String             @id @default(uuid())
+  name              String
+  email             String             @unique
+  photo             String?
+  department        String
+  role              String             @default("FACULTY") // "FACULTY", "DEAN", "WEBMASTER"
+  bio               Json?
+  branchAllocations BranchAllocation[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([department])
+}
+
+model BranchAllocation {
+  id         String           @id @default(uuid())
+  branch     String // e.g. "CSE", "ECE"
+  subjectId  String
+  facultyId  String
+  semesterId String
+  isApproved Boolean          @default(false)
+  subject    Subject          @relation(fields: [subjectId], references: [id])
+  semester   AcademicSemester @relation(fields: [semesterId], references: [id])
+  faculty    Faculty          @relation(fields: [facultyId], references: [id])
+
+  @@unique([branch, subjectId, semesterId])
+  @@index([branch])
+  @@index([semesterId])
+  @@index([facultyId])
+}
+
+model Registration {
+  id         String           @id @default(uuid())
+  studentId  String
+  subjectId  String
+  semesterId String
+  status     String           @default("REGISTERED") // "REGISTERED", "DROPPED"
+  subject    Subject          @relation(fields: [subjectId], references: [id])
+  semester   AcademicSemester @relation(fields: [semesterId], references: [id])
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@unique([studentId, subjectId, semesterId])
+  @@index([studentId])
   @@index([semesterId])
 }

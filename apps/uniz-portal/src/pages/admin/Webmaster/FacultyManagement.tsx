@@ -6,21 +6,21 @@ import {
   Loader2,
   Mail,
   Building2,
-  Contact,
   Search,
   Edit2,
-  Lock,
-  Unlock,
+  Trash2,
   X,
   ShieldCheck,
+  UserCheck,
+  Award,
 } from "lucide-react";
 import {
-  SEARCH_FACULTY,
-  CREATE_FACULTY,
-  UPDATE_FACULTY,
-  ADMIN_SUSPEND_FACULTY,
+  ACADEMIC_FACULTY,
+  ACADEMIC_FACULTY_BY_ID,
+  ACADEMIC_FACULTY_ROLE,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
+import { apiClient } from "../../../api/apiClient";
 
 export default function FacultyManagement() {
   const [faculty, setFaculty] = useState<any[]>([]);
@@ -28,48 +28,27 @@ export default function FacultyManagement() {
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
-  // Pagination & Filtering State
-  const [page, setPage] = useState(1);
-  const [limit] = useState(10);
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("");
-  const [meta, setMeta] = useState<any>({ total: 0, totalPages: 0 });
 
   const [formData, setFormData] = useState({
-    username: "",
+    id: "",
     name: "",
     email: "",
     department: "CSE",
-    role: "teacher",
-    designation: "Lecturer",
-    contact: "",
+    role: "FACULTY",
+    photo: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchFaculty = async () => {
     setLoading(true);
-    const token = localStorage.getItem("admin_token");
     try {
-      const res = await fetch(SEARCH_FACULTY, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: search,
-          department: department || undefined,
-          page,
-          limit,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setFaculty(data.faculty);
-        setMeta(
-          data.pagination || { total: data.faculty.length, totalPages: 1 },
-        );
-      }
+      const url = new URL(ACADEMIC_FACULTY, window.location.origin);
+      if (department) url.searchParams.append("department", department);
+
+      const data = await apiClient<any[]>(url.pathname + url.search);
+      setFaculty(data);
     } catch (error) {
       toast.error("Failed to fetch faculty list");
     } finally {
@@ -79,86 +58,73 @@ export default function FacultyManagement() {
 
   useEffect(() => {
     fetchFaculty();
-  }, [page, department]);
+  }, [department]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (page !== 1) setPage(1);
-      else fetchFaculty();
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [search]);
+  const filteredFaculty = faculty.filter(
+    (f) =>
+      f.name.toLowerCase().includes(search.toLowerCase()) ||
+      f.email.toLowerCase().includes(search.toLowerCase()),
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const token = localStorage.getItem("admin_token");
     try {
-      const url = editMode ? UPDATE_FACULTY(formData.username) : CREATE_FACULTY;
-      const method = editMode ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success(
-          `Faculty ${editMode ? "updated" : "created"} successfully`,
-        );
-        setShowModal(false);
-        fetchFaculty();
+      if (editMode) {
+        await apiClient(ACADEMIC_FACULTY_BY_ID(formData.id), {
+          method: "PUT",
+          body: JSON.stringify(formData),
+        });
+        toast.success("Faculty profile updated");
       } else {
-        toast.error(data.message || "Operation failed");
+        await apiClient(ACADEMIC_FACULTY, {
+          method: "POST",
+          body: JSON.stringify(formData),
+        });
+        toast.success("Faculty member created");
       }
-    } catch (error) {
-      toast.error("Error processing request");
+      setShowModal(false);
+      fetchFaculty();
+    } catch (error: any) {
+      toast.error(error.message || "Operation failed");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleSuspend = async (username: string, currentStatus: boolean) => {
-    const token = localStorage.getItem("admin_token");
-    if (
-      !window.confirm(
-        `Are you sure you want to ${currentStatus ? "reinstate" : "suspend"} this user?`,
-      )
-    )
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this faculty member?"))
       return;
-
     try {
-      const res = await fetch(ADMIN_SUSPEND_FACULTY(username), {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ suspended: !currentStatus }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success(`User ${!currentStatus ? "suspended" : "reinstated"}`);
-        fetchFaculty();
-      }
+      await apiClient(ACADEMIC_FACULTY_BY_ID(id), { method: "DELETE" });
+      toast.success("Faculty deleted successfully");
+      fetchFaculty();
     } catch (error) {
-      toast.error("Failed to update status");
+      toast.error("Failed to delete faculty");
+    }
+  };
+
+  const handleRoleUpdate = async (id: string, newRole: string) => {
+    try {
+      await apiClient(ACADEMIC_FACULTY_ROLE(id), {
+        method: "PATCH",
+        body: JSON.stringify({ role: newRole }),
+      });
+      toast.success(`Role updated to ${newRole}`);
+      fetchFaculty();
+    } catch (error) {
+      toast.error("Failed to update role");
     }
   };
 
   const openEdit = (member: any) => {
     setFormData({
-      username: member.Username,
-      name: member.Name,
-      email: member.Email,
-      department: member.Department,
-      role: member.Role || "teacher",
-      designation: member.Designation,
-      contact: member.Contact || "",
+      id: member.id,
+      name: member.name,
+      email: member.email,
+      department: member.department,
+      role: member.role,
+      photo: member.photo || "",
     });
     setEditMode(true);
     setShowModal(true);
@@ -166,27 +132,45 @@ export default function FacultyManagement() {
 
   const openAdd = () => {
     setFormData({
-      username: "",
+      id: "",
       name: "",
       email: "",
       department: "CSE",
-      role: "teacher",
-      designation: "Lecturer",
-      contact: "",
+      role: "FACULTY",
+      photo: "",
     });
     setEditMode(false);
     setShowModal(true);
   };
+
+  const DEPARTMENTS = [
+    "CSE",
+    "CIVIL",
+    "ECE",
+    "EEE",
+    "ME",
+    "MATHEMATICS",
+    "PHYSICS",
+    "CHEMISTRY",
+    "IT",
+    "BIOLOGY",
+    "ENGLISH",
+    "LIB",
+    "MANAGEMENT",
+    "PED",
+    "TELUGU",
+    "YOGA",
+  ];
 
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div className="flex flex-col gap-2">
           <h2 className="text-3xl font-black tracking-tight text-slate-900">
-            Faculty & Staff
+            Faculty Management
           </h2>
           <p className="text-slate-500 font-medium">
-            Manage administrative and teaching staff accounts ({meta.total}{" "}
+            Manage academic profiles, departments, and roles ({faculty.length}{" "}
             records)
           </p>
         </div>
@@ -194,7 +178,7 @@ export default function FacultyManagement() {
           onClick={openAdd}
           className="bg-blue-600 text-white px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 active:scale-95"
         >
-          <Plus size={16} /> Add Staff Member
+          <Plus size={16} /> Add Faculty Member
         </button>
       </div>
 
@@ -203,7 +187,7 @@ export default function FacultyManagement() {
         <div className="relative col-span-1 md:col-span-2">
           <input
             type="text"
-            placeholder="Search by name, ID or email..."
+            placeholder="Search by name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-sm"
@@ -220,12 +204,11 @@ export default function FacultyManagement() {
           className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-sm cursor-pointer"
         >
           <option value="">All Departments</option>
-          <option value="CSE">CSE</option>
-          <option value="ECE">ECE</option>
-          <option value="EEE">EEE</option>
-          <option value="MECH">MECH</option>
-          <option value="CIVIL">CIVIL</option>
-          <option value="ADMIN">ADMIN</option>
+          {DEPARTMENTS.map((dept) => (
+            <option key={dept} value={dept}>
+              {dept}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -233,76 +216,115 @@ export default function FacultyManagement() {
         <div className="flex justify-center items-center h-64">
           <Loader2 className="animate-spin text-slate-900" size={32} />
         </div>
-      ) : faculty.length > 0 ? (
+      ) : filteredFaculty.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {faculty.map((member, idx) => (
+          {filteredFaculty.map((member) => (
             <div
-              key={idx}
-              className={`bg-white border rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all group relative overflow-hidden ${member.Role === "suspended"
-                ? "border-red-100 opacity-75"
-                : "border-slate-100"
-                }`}
+              key={member.id}
+              className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all group relative overflow-hidden"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-blue-50 rounded-2xl text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                  <ShieldCheck size={24} />
+                <div className="relative">
+                  {member.photo ? (
+                    <img
+                      src={member.photo}
+                      alt={member.name}
+                      className="w-16 h-16 rounded-2xl object-cover border-2 border-slate-50 group-hover:border-blue-500 transition-all shadow-md"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                      <Users size={24} />
+                    </div>
+                  )}
+                  <div
+                    className={`absolute -bottom-2 -right-2 p-1.5 rounded-lg border-2 border-white shadow-sm ${
+                      member.role === "DEAN"
+                        ? "bg-amber-500 text-white"
+                        : member.role === "WEBMASTER"
+                          ? "bg-purple-600 text-white"
+                          : "bg-blue-600 text-white"
+                    }`}
+                  >
+                    {member.role === "DEAN" ? (
+                      <Award size={12} />
+                    ) : (
+                      <UserCheck size={12} />
+                    )}
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => openEdit(member)}
-                    className="p-2 hover:bg-slate-50 rounded-xl text-slate-400 hover:text-slate-900 transition-all"
+                    className="p-2 hover:bg-slate-50 rounded-xl text-slate-400 hover:text-blue-600 transition-all"
                   >
                     <Edit2 size={16} />
                   </button>
                   <button
-                    onClick={() =>
-                      handleSuspend(member.Username, member.is_suspended)
-                    }
-                    className={`p-2 rounded-xl transition-all ${member.is_suspended
-                      ? "text-green-500 hover:bg-green-50"
-                      : "text-red-500 hover:bg-red-50"
-                      }`}
+                    onClick={() => handleDelete(member.id)}
+                    className="p-2 hover:bg-red-50 rounded-xl text-slate-400 hover:text-red-600 transition-all"
                   >
-                    {member.is_suspended ? (
-                      <Unlock size={16} />
-                    ) : (
-                      <Lock size={16} />
-                    )}
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </div>
 
               <div className="space-y-1">
-                <h3 className="text-lg font-black text-slate-900 tracking-tight leading-none">
-                  {member.Name}
+                <h3 className="text-lg font-black text-slate-900 tracking-tight leading-tight group-hover:text-blue-600 transition-colors">
+                  {member.name}
                 </h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                  {member.Designation} • {member.Username}
-                </p>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-[10px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-md ${
+                      member.role === "DEAN"
+                        ? "bg-amber-50 text-amber-600"
+                        : member.role === "WEBMASTER"
+                          ? "bg-purple-50 text-purple-600"
+                          : "bg-blue-50 text-blue-600"
+                    }`}
+                  >
+                    {member.role}
+                  </span>
+                  <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    {member.department}
+                  </span>
+                </div>
               </div>
 
-              <div className="mt-6 space-y-3">
-                <div className="flex items-center gap-3 text-sm text-slate-600 font-medium">
-                  <Building2 size={14} className="text-slate-400" />
-                  {member.Department}
+              <div className="mt-6 pt-4 border-t border-slate-50 space-y-3">
+                <div className="flex items-center gap-3 text-xs text-slate-600 font-medium">
+                  <Mail size={12} className="text-slate-400" />
+                  {member.email}
                 </div>
-                <div className="flex items-center gap-3 text-sm text-slate-600 font-medium">
-                  <Mail size={14} className="text-slate-400" />
-                  {member.Email}
+                <div className="flex items-center gap-3 text-xs text-slate-600 font-medium">
+                  <Building2 size={12} className="text-slate-400" />
+                  {member.department} Faculty
                 </div>
-                {member.Contact && (
-                  <div className="flex items-center gap-3 text-sm text-slate-600 font-medium">
-                    <Contact size={14} className="text-slate-400" />
-                    {member.Contact}
-                  </div>
-                )}
               </div>
 
-              {member.is_suspended && (
-                <div className="absolute inset-x-0 bottom-0 bg-red-500 py-1 text-center font-black text-[10px] text-white uppercase tracking-widest">
-                  Account Suspended
-                </div>
-              )}
+              {/* Role Quick Toggle */}
+              <div className="mt-6 flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                <button
+                  onClick={() => handleRoleUpdate(member.id, "FACULTY")}
+                  className={`flex-1 text-[9px] font-black uppercase tracking-tighter px-2 py-1.5 rounded-lg border transition-all ${
+                    member.role === "FACULTY"
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "bg-white text-slate-400 border-slate-100 hover:border-blue-200"
+                  }`}
+                >
+                  Faculty
+                </button>
+                <button
+                  onClick={() => handleRoleUpdate(member.id, "DEAN")}
+                  className={`flex-1 text-[9px] font-black uppercase tracking-tighter px-2 py-1.5 rounded-lg border transition-all ${
+                    member.role === "DEAN"
+                      ? "bg-amber-500 text-white border-amber-500"
+                      : "bg-white text-slate-400 border-slate-100 hover:border-amber-200"
+                  }`}
+                >
+                  Dean
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -310,7 +332,7 @@ export default function FacultyManagement() {
         <div className="flex flex-col items-center justify-center h-64 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
           <Users size={48} className="text-slate-300 mb-4" />
           <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
-            No staff members found matching your criteria
+            No faculty members found matching your criteria
           </p>
         </div>
       )}
@@ -326,48 +348,28 @@ export default function FacultyManagement() {
               <X size={24} />
             </button>
             <h3 className="text-2xl font-black tracking-tight text-slate-900 mb-2">
-              {editMode ? "Edit Staff Details" : "Register Staff Member"}
+              {editMode ? "Edit Profile" : "Add Faculty Member"}
             </h3>
             <p className="text-slate-400 font-medium text-sm mb-8">
               {editMode
-                ? "Update profile information and permissions"
-                : "Create a new faculty or administrative account"}
+                ? "Update faculty details and system permissions"
+                : "Create a new academic faculty profile"}
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400">
-                    Username / ID
-                  </label>
-                  <input
-                    required
-                    disabled={editMode}
-                    value={formData.username}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        username: e.target.value.toUpperCase(),
-                      })
-                    }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold disabled:opacity-50"
-                    placeholder="e.g. FAC001"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400">
-                    Full Name
-                  </label>
-                  <input
-                    required
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
-                    placeholder="Prof. Surname"
-                  />
-                </div>
+              <div className="space-y-2">
+                <label className="text-xs font-black uppercase tracking-widest text-slate-400">
+                  Full Name
+                </label>
+                <input
+                  required
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                  placeholder="Prof. John Doe"
+                />
               </div>
 
               <div className="space-y-2">
@@ -377,11 +379,12 @@ export default function FacultyManagement() {
                 <input
                   required
                   type="email"
+                  disabled={editMode}
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold disabled:opacity-50"
                   placeholder="faculty@rguktong.ac.in"
                 />
               </div>
@@ -398,17 +401,16 @@ export default function FacultyManagement() {
                     }
                     className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold cursor-pointer"
                   >
-                    <option>CSE</option>
-                    <option>ECE</option>
-                    <option>EEE</option>
-                    <option>MECH</option>
-                    <option>CIVIL</option>
-                    <option>ADMIN</option>
+                    {DEPARTMENTS.map((dept) => (
+                      <option key={dept} value={dept}>
+                        {dept}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-black uppercase tracking-widest text-slate-400">
-                    System Role
+                    Role
                   </label>
                   <select
                     value={formData.role}
@@ -417,24 +419,24 @@ export default function FacultyManagement() {
                     }
                     className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold cursor-pointer"
                   >
-                    <option value="teacher">Teacher</option>
-                    <option value="hod">Department Head</option>
+                    <option value="FACULTY">Faculty</option>
+                    <option value="DEAN">Dean</option>
+                    <option value="WEBMASTER">Webmaster</option>
                   </select>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-xs font-black uppercase tracking-widest text-slate-400">
-                  Designation
+                  Photo URL (Optional)
                 </label>
                 <input
-                  required
-                  value={formData.designation}
+                  value={formData.photo}
                   onChange={(e) =>
-                    setFormData({ ...formData, designation: e.target.value })
+                    setFormData({ ...formData, photo: e.target.value })
                   }
                   className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
-                  placeholder="e.g. HOD, Lecturer"
+                  placeholder="https://example.com/photo.jpg"
                 />
               </div>
 
@@ -454,9 +456,9 @@ export default function FacultyManagement() {
                   {isSubmitting ? (
                     <Loader2 className="animate-spin w-4 h-4" />
                   ) : editMode ? (
-                    "Update"
+                    "Update Profile"
                   ) : (
-                    "Register Account"
+                    "Create Faculty"
                   )}
                 </button>
               </div>

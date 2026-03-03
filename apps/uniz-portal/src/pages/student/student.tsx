@@ -35,6 +35,7 @@ import { Pagination } from "../../components/Pagination";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { InfoCard } from "./components/InfoCard";
 import AcademicRecord from "./components/AcademicRecord";
+import MySubjects from "./components/MySubjects";
 import { Student } from "../../types";
 
 export const enableOutingsAndOutpasses = true;
@@ -69,6 +70,9 @@ export default function StudentProfilePage() {
         { replace: true },
       );
     }
+    // Handle tab from query
+    const tabParam = searchParams.get("tab");
+    if (tabParam) setActiveTab(tabParam);
   }, [searchParams, setSearchParams]);
 
   // Request State
@@ -424,6 +428,7 @@ export default function StudentProfilePage() {
             {[
               "personal",
               "academic",
+              "registration",
               "family",
               enableOutingsAndOutpasses ? "permissions" : "",
             ]
@@ -432,10 +437,11 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                  className={`pb-3 relative text-[11px] font-semibold uppercase tracking-[0.15em] transition-all ${activeTab === tab
-                    ? "text-blue-600"
-                    : "text-slate-400 hover:text-slate-600"
-                    }`}
+                  className={`pb-3 relative text-[11px] font-semibold uppercase tracking-[0.15em] transition-all ${
+                    activeTab === tab
+                      ? "text-blue-600"
+                      : "text-slate-400 hover:text-slate-600"
+                  }`}
                 >
                   {tab}
                   {activeTab === tab && (
@@ -500,6 +506,10 @@ export default function StudentProfilePage() {
                   <AcademicRecord student={user} />
                 </div>
               </div>
+            )}
+
+            {activeTab === "registration" && (
+              <MySubjects studentId={user?._id || user?.username} />
             )}
 
             {activeTab === "family" && (
