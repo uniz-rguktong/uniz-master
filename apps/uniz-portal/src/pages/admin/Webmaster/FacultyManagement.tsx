@@ -10,7 +10,6 @@ import {
   Edit2,
   Trash2,
   X,
-  ShieldCheck,
   UserCheck,
   Award,
 } from "lucide-react";
@@ -48,7 +47,7 @@ export default function FacultyManagement() {
       if (department) url.searchParams.append("department", department);
 
       const data = await apiClient<any[]>(url.pathname + url.search);
-      setFaculty(data);
+      setFaculty(data || []);
     } catch (error) {
       toast.error("Failed to fetch faculty list");
     } finally {
