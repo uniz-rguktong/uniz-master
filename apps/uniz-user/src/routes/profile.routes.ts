@@ -98,6 +98,7 @@ const StudentBaseSchema = z.preprocess(
       room_number: z.string().max(20).optional(),
       branch: z.string().max(50).optional(),
       year: z.string().max(10).optional(),
+      semester: z.string().max(10).optional(),
       section: z.string().max(10).optional(),
       isPresentInCampus: z.boolean().optional(),
       is_in_campus: z.boolean().optional(),

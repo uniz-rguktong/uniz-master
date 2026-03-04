@@ -61,6 +61,7 @@ const mapStudentProfile = (profile: any) => ({
   email: profile.email,
   gender: profile.gender,
   year: profile.year,
+  semester: profile.semester,
   branch: profile.branch,
   section: profile.section,
   roomno: profile.roomno,

@@ -370,13 +370,19 @@ export const registerSubjects = async (
 
   if (!user) return res.status(401).json({ error: "Unauthorized" });
 
+  console.log(
+    `[MEGA-DEBUG] registerSubjects user: ${user.username}, subjectIds: ${subjectIds.length}`,
+  );
+
   try {
     // 1. Get current registration-open semester
     const sem = await prisma.academicSemester.findFirst({
       where: { status: "REGISTRATION_OPEN" },
+      orderBy: { createdAt: "desc" },
     });
 
     if (!sem) {
+      console.log(`[MEGA-DEBUG] No open semester found!`);
       return res.status(403).json({ error: "Registration is not open" });
     }
 
@@ -402,21 +408,25 @@ export const registerSubjects = async (
     );
 
     // 3. Update Student Academic Profile in uniz-user service
-    // Get the year/sem info from the first registered subject (assuming they belong to the same year)
     const firstSubject = await prisma.subject.findFirst({
       where: { id: subjectIds[0] },
     });
 
     if (firstSubject) {
+      console.log(
+        `[MEGA-DEBUG] firstSubject semester field: ${firstSubject.semester}`,
+      );
       const match = firstSubject.semester.match(/(E[1-4])-(SEM-[1-2])/i);
       if (match) {
-        try {
-          const academicYear = match[1];
-          const academicSem = match[2];
+        const academicYear = match[1];
+        const academicSem = match[2];
+        console.log(
+          `[MEGA-DEBUG] Match found: ${academicYear}, ${academicSem}`,
+        );
 
+        try {
           const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
-          // Use Admin endpoint to update profile for ANY username (more robust)
-          await axios.put(
+          const updateRes = await axios.put(
             `${GATEWAY_URL}/profile/admin/student/${user.username}`,
             {
               year: academicYear,
@@ -430,11 +440,20 @@ export const registerSubjects = async (
             },
           );
           console.log(
+            `[MEGA-DEBUG] Profile update result: ${JSON.stringify(updateRes.data)}`,
+          );
+          console.log(
             `✅ Student ${user.username} profile updated to ${academicYear} ${academicSem}`,
           );
-        } catch (profileError) {
-          console.warn("User Profile Update Failed:", profileError);
+        } catch (profileError: any) {
+          console.warn(
+            `[MEGA-DEBUG] Profile Update Failed: ${profileError.response?.data ? JSON.stringify(profileError.response.data) : profileError.message}`,
+          );
         }
+      } else {
+        console.log(
+          `[MEGA-DEBUG] Regex FAILED to match ${firstSubject.semester}`,
+        );
       }
     }
 
