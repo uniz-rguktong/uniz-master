@@ -685,20 +685,18 @@ export const exportAcademicData = async (
       worksheet.columns = [
         { header: "Branch", key: "branch" },
         { header: "Subject", key: "subject" },
-        { header: "Faculty", key: "faculty" },
         { header: "Status", key: "approved" },
       ];
 
       const data = await prisma.branchAllocation.findMany({
         where: { semesterId: semesterId as string, branch: branch as string },
-        include: { subject: true, faculty: true },
+        include: { subject: true },
       });
 
       data.forEach((d: any) => {
         worksheet.addRow({
           branch: d.branch,
           subject: d.customName || d.subject.name,
-          faculty: d.faculty?.name || "N/A",
           approved: d.isApproved ? "Approved" : "Pending",
         });
       });
