@@ -490,12 +490,7 @@ export const getCurrentSubjects = async (
 
     res.json({
       semester: activeSem,
-      subjects: registrations.map((r) => ({
-        ...r.subject,
-        // Override with custom values from branch allocation if approved
-        // In a real app, you'd join branchAllocations too, but here we can
-        // rely on the Subject repo as default or fetch allocation specifically.
-      })),
+      subjects: registrations,
     });
   } catch (error) {
     console.error("Get Current Subjects Error:", error);
