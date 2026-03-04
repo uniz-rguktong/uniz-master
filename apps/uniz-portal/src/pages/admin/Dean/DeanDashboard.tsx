@@ -11,9 +11,8 @@ import {
   LayoutDashboard,
   Activity,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../../../hooks/is_authenticated";
-import { clearSession } from "../../../utils/security";
+import { useLogout } from "../../../hooks/useLogout";
 import StudentDetails from "../Webmaster/StudentDetails";
 import SubjectManagement from "../Webmaster/SubjectManagement";
 import UploadSection from "../Webmaster/UploadSection";
@@ -25,7 +24,6 @@ import FacultyManagement from "../Webmaster/FacultyManagement";
 
 export default function DeanDashboard() {
   useIsAuth();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
     | "dashboard"
     | "student"
@@ -66,9 +64,10 @@ export default function DeanDashboard() {
     { id: "system_logs", label: "System & Logs", icon: Activity },
   ];
 
+  const { logout } = useLogout();
+
   const handleLogout = () => {
-    clearSession();
-    navigate("/");
+    logout();
   };
 
   const renderContent = () => {
@@ -110,47 +109,47 @@ export default function DeanDashboard() {
         return <SystemLogsSection />;
       default:
         return (
-          <div className="p-8 space-y-10 animate-in fade-in duration-700">
-            <div className="bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-700 rounded-[32px] p-12 text-white shadow-2xl shadow-blue-200/50 relative overflow-hidden group">
-              <div className="relative z-10 flex flex-col gap-2">
-                <span className="text-blue-100 font-semibold uppercase tracking-[0.25em] text-[10px] opacity-80">
-                  RGUKT Ongole • Academic Portal
-                </span>
-                <h1 className="text-5xl font-semibold tracking-[-0.03em] mb-1 leading-tight">
-                  Welcome back, <br />
-                  <span className="text-white/100">{username}</span>
-                </h1>
-                <p className="text-blue-100/80 font-medium text-lg max-w-md mt-4 leading-relaxed">
-                  Monitor institutional performance and manage academic
-                  operations from your central command.
-                </p>
+          <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
+            <div className="bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-700 rounded-[28px] py-6 px-10 text-white shadow-2xl shadow-blue-200/50 relative overflow-hidden group">
+              <div className="relative z-10 space-y-2.5">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 backdrop-blur-md">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-200 animate-pulse"></span>
+                  <span className="text-[8px] font-bold uppercase tracking-widest text-blue-100">
+                    RGUKT Ongole • Academic Portal
+                  </span>
+                </div>
+                <div>
+                  <h1 className="text-3xl font-semibold tracking-[-0.03em] mb-1.5 leading-none">
+                    Welcome back, {username}
+                  </h1>
+                  <p className="text-blue-100/80 font-medium text-[15px] max-w-lg mt-4 leading-relaxed">
+                    Monitor institutional performance and manage academic
+                    operations from your central command.
+                  </p>
+                </div>
               </div>
-              <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/5 to-transparent pointer-events-none"></div>
-              <div className="absolute right-[-50px] bottom-[-50px] opacity-10 group-hover:rotate-12 transition-transform duration-1000">
-                <LayoutDashboard size={400} />
+              <div className="absolute right-0 bottom-0 opacity-[0.03] translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform duration-1000">
+                <LayoutDashboard size={280} />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {navItems.slice(1).map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as any)}
-                  className="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-2xl hover:translate-y-[-4px] hover:border-blue-100 transition-all group text-left relative overflow-hidden"
+                  className="bg-white p-5 rounded-[28px] border border-slate-100 shadow-sm text-left transition-all group flex flex-col justify-between min-h-[150px]"
                 >
-                  <div className="p-4 rounded-[20px] bg-slate-50 text-slate-400 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 inline-block shadow-inner group-hover:shadow-lg group-hover:shadow-blue-200">
-                    <item.icon size={26} />
+                  <div className="p-3.5 rounded-2xl bg-slate-50 text-slate-400 mb-4 inline-block transition-all duration-300 shadow-inner">
+                    <item.icon size={20} />
                   </div>
-                  <h3 className="font-semibold text-slate-900 text-lg mb-1.5 tracking-tight group-hover:text-blue-700 transition-colors">
-                    {item.label}
-                  </h3>
-                  <p className="text-[10px] text-slate-400 uppercase tracking-[0.15em] font-semibold leading-none">
-                    Access Module
-                  </p>
-                  <div className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                      <ChevronRight size={20} />
-                    </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-[14px] mb-1 leading-tight transition-colors">
+                      {item.label}
+                    </h3>
+                    <p className="text-[8px] text-slate-400 uppercase tracking-[0.2em] font-black opacity-60 group-hover:text-blue-500 transition-colors">
+                      Initialize Module
+                    </p>
                   </div>
                 </button>
               ))}

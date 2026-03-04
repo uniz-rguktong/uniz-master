@@ -18,10 +18,14 @@ import {
   ScanLine,
   LayoutGrid,
 } from "lucide-react";
-import { clearSession } from "../../utils/security";
+import { useLogout } from "../../hooks/useLogout";
 import { motion } from "framer-motion";
 import WebmasterDashboard from "./Webmaster/WebmasterDashboard";
 import DeanDashboard from "./Dean/DeanDashboard";
+import SWODashboard from "./SWO/SWODashboard";
+import CaretakerDashboard from "./Caretaker/CaretakerDashboard";
+import WardenDashboard from "./Warden/WardenDashboard";
+import SecurityPortal from "./SecurityPortal";
 
 const QuickActionButton = ({
   onClick,
@@ -73,9 +77,26 @@ export default function Admin() {
     return <DeanDashboard />;
   }
 
+  if (role === "swo" || role === "dsw") {
+    return <SWODashboard />;
+  }
+
+  if (role === "caretaker_male" || role === "caretaker_female") {
+    return <CaretakerDashboard />;
+  }
+
+  if (role === "warden_male" || role === "warden_female" || role === "warden") {
+    return <WardenDashboard />;
+  }
+
+  if (role === "security") {
+    return <SecurityPortal />;
+  }
+
+  const { logout } = useLogout();
+
   const handleLogout = () => {
-    clearSession();
-    navigate("/");
+    logout();
   };
 
   const isDirector = role === "director" || role === "webmaster";
@@ -144,39 +165,39 @@ export default function Admin() {
       items: [
         ...(isDean
           ? [
-              {
-                onClick: () => navigate("/admin/addfaculty"),
-                title: "Faculty",
-                subtitle: "Manage Staff",
-                Icon: UserPlus,
-              },
-              {
-                onClick: () => navigate("/admin/addstudents"),
-                title: "Students",
-                subtitle: "Import CSV",
-                Icon: UserPlus,
-              },
-            ]
+            {
+              onClick: () => navigate("/admin/addfaculty"),
+              title: "Faculty",
+              subtitle: "Manage Staff",
+              Icon: UserPlus,
+            },
+            {
+              onClick: () => navigate("/admin/addstudents"),
+              title: "Students",
+              subtitle: "Import CSV",
+              Icon: UserPlus,
+            },
+          ]
           : []),
         ...(isDirector
           ? [
-              {
-                onClick: () => navigate("/admin/roles"),
-                title: "Roles",
-                subtitle: "Permissions",
-                Icon: UserCog,
-              },
-            ]
+            {
+              onClick: () => navigate("/admin/roles"),
+              title: "Roles",
+              subtitle: "Permissions",
+              Icon: UserCog,
+            },
+          ]
           : []),
         ...(isSecurity
           ? [
-              {
-                onClick: () => navigate("/admin/searchstudents"),
-                title: "Search",
-                subtitle: "Find Students",
-                Icon: Search,
-              },
-            ]
+            {
+              onClick: () => navigate("/admin/searchstudents"),
+              title: "Search",
+              subtitle: "Find Students",
+              Icon: Search,
+            },
+          ]
           : []),
       ],
     },
@@ -192,13 +213,13 @@ export default function Admin() {
         },
         ...(isDean
           ? [
-              {
-                onClick: () => navigate("/admin/banners"),
-                title: "Banners",
-                subtitle: "Site Visuals",
-                Icon: ImageIcon,
-              },
-            ]
+            {
+              onClick: () => navigate("/admin/banners"),
+              title: "Banners",
+              subtitle: "Site Visuals",
+              Icon: ImageIcon,
+            },
+          ]
           : []),
       ],
     },

@@ -52,7 +52,12 @@ export default function Signin({ type }: SigninProps) {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (authState.is_authnticated) {
+    // Only redirect if a token is actually present in storage
+    const hasToken = localStorage.getItem("student_token") ||
+      localStorage.getItem("admin_token") ||
+      localStorage.getItem("faculty_token");
+
+    if (authState.is_authnticated && hasToken) {
       const redirectPath =
         authState.type === "student"
           ? "/student"
@@ -61,7 +66,17 @@ export default function Signin({ type }: SigninProps) {
             : "/faculty";
       navigate(redirectPath, { replace: true });
     }
-  }, [authState, navigate]);
+  }, [authState, navigate, type]);
+
+  // Force reset state when switching between login modes (student/admin/faculty)
+  useEffect(() => {
+    setUsername("");
+    setPassword("");
+    setOtp("");
+    setNewPassword("");
+    setStep("signin");
+    setIsLoading(false);
+  }, [type]);
 
   const sendDataToBackend = async () => {
     if (username.trim() === "" || password.trim() === "") {
@@ -86,10 +101,7 @@ export default function Signin({ type }: SigninProps) {
       const data = await apiClient<SigninResponse>(SIGNIN(type), {
         method: "POST",
         body: JSON.stringify({
-          username:
-            type === "student"
-              ? username.trim().toUpperCase()
-              : username.trim().toLowerCase(),
+          username: username.trim().toUpperCase(),
           password: password.trim(),
         }),
       });
@@ -314,7 +326,9 @@ export default function Signin({ type }: SigninProps) {
                 label="Username"
                 icon={<User className="w-4 h-4" />}
                 value={username}
-                onChange={(e) => setUsername(e.target.value.toUpperCase())}
+                onChange={(e) =>
+                  setUsername(e.target.value.toUpperCase())
+                }
                 placeholder={
                   type === "student"
                     ? "University ID"
@@ -322,6 +336,10 @@ export default function Signin({ type }: SigninProps) {
                       ? "Staff ID / Email"
                       : "Admin ID"
                 }
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                autoComplete="off"
               />
               <Input
                 label="Password"
@@ -336,7 +354,7 @@ export default function Signin({ type }: SigninProps) {
                   className="w-full"
                   size="lg"
                   isLoading={isLoading}
-                  onClick={sendDataToBackend}
+                  type="submit"
                 >
                   Sign In
                 </Button>
@@ -377,12 +395,12 @@ export default function Signin({ type }: SigninProps) {
                 icon={<User className="w-4 h-4" />}
                 value={username}
                 onChange={(e) =>
-                  setUsername(
-                    type === "student"
-                      ? e.target.value.toUpperCase()
-                      : e.target.value.toLowerCase(),
-                  )
+                  setUsername(e.target.value.toUpperCase())
                 }
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                autoComplete="off"
                 placeholder="Enter your ID"
               />
               <div className="pt-2">
