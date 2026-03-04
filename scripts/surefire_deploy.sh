@@ -10,7 +10,6 @@ git push origin main
 # 2. Remote Deployment
 echo "🌐 Starting VPS Deployment (Surefire Mode)..."
 ssh -o StrictHostKeyChecking=no root@76.13.241.174 "/bin/bash -s" << 'EOF'
-  set -e
   cd /root/uniz-master
   
   echo "📥 Updating local repository on VPS..."
@@ -60,46 +59,48 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 "/bin/bash -s" << 'EOF'
 
     if [ "$SHOULD_BUILD" = true ]; then
       if [ -z "${BUILT[$IMG]}" ]; then
-        TAG="prod-$(date +%s)"
+        TAG="stage-$(date +%s)"
         CONTEXT="apps/$DIR"
         [[ "$DIR" == *"infra"* ]] && CONTEXT="$DIR"
 
-        echo "🏗️  System Building $IMG:$TAG..."
-        docker build --no-cache --platform linux/amd64 -t $IMG:$TAG $CONTEXT
+        echo "🏗️ Building $IMG:$TAG..."
+        docker build --no-cache --platform linux/amd64 -t $IMG:$TAG $CONTEXT || { echo "❌ Failed to build $IMG"; continue; }
         
         echo "📦 Exporting $IMG to tarball..."
-        docker save $IMG:$TAG -o /tmp/$IMG.tar
+        docker save $IMG:$TAG -o /tmp/$IMG.tar || { echo "❌ Failed to save $IMG"; continue; }
         
         echo "📥 Importing $IMG to K3s..."
+        # We ignore errors on import if it says it already exists or has metadata issues but still succeeds
         k3s ctr -n k8s.io images import /tmp/$IMG.tar
-        rm /tmp/$IMG.tar
+        rm -f /tmp/$IMG.tar
         
         BUILT[$IMG]=$TAG
         ((REDEPLOYED++))
       else
         TAG=${BUILT[$IMG]}
-        echo "♻️  Reusing built image $IMG:$TAG"
+        echo "♻️ Reusing $IMG:$TAG"
       fi
 
-      echo "🛡️  Updating $DEP ($CON) -> $TAG..."
+      echo "🛡️ Deploying $IMG:$TAG to $DEP..."
       if [[ "$DEP" == *"job"* ]]; then
-        kubectl set image cronjob/$DEP $CON=docker.io/library/$IMG:$TAG
+        kubectl set image cronjob/$DEP $CON=docker.io/library/$IMG:$TAG || echo "⚠️ Warning: Failed to set image for cronjob $DEP"
       else
-        kubectl set image deployment/$DEP $CON=docker.io/library/$IMG:$TAG
-        kubectl rollout restart deployment/$DEP
+        kubectl set image deployment/$DEP $CON=docker.io/library/$IMG:$TAG || echo "⚠️ Warning: Failed to set image for deployment $DEP"
+        kubectl rollout restart deployment/$DEP || echo "⚠️ Warning: Failed to rollout restart $DEP"
       fi
+    else
+      echo "⏭️ Skipping $IMG"
     fi
   done
 
-  echo "🧹 Cleaning up old Docker images..."
+  echo "🧹 Cleaning up..."
   docker image prune -f
   
-  echo "✅ Redeployed $REDEPLOYED microservices."
-  echo "⌛ Stabilization 20s..."
-  sleep 20
+  echo "✅ Finished. $REDEPLOYED services touched."
+  sleep 10
   kubectl get pods
 EOF
 
-echo "🚀 Quick check on Platform Status..."
-curl -K -s -o /dev/null -w "API Status: %{http_code}\n" https://api.uniz.rguktong.in/api/v1/system/health || true
-echo "✅ Surefire Deployment Complete!"
+echo "🚀 Check..."
+curl -s -o /dev/null -w "Status: %{http_code}\n" https://api.uniz.rguktong.in/api/v1/system/health || true
+echo "✅ Done!"
