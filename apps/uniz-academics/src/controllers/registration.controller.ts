@@ -100,7 +100,7 @@ export const initSemester = async (
           {
             target: "dean", // Targeted to Dean
             title: "Action Required: Subject Review 🎓",
-            body: `Webmaster has initialized ${academicSemester}. Please review and approve subject allocations for all branches and years.`,
+            body: `Hello {{name}}, Webmaster has initialized ${academicSemester}. Please review and approve subject allocations for all branches and years.`,
           },
           { headers, timeout: 5000 },
         )
@@ -379,13 +379,13 @@ export const approveBranchAllocation = async (
     if (user?.role === "dean" || user?.role === "webmaster") {
       nextStatus = "HOD_REVIEW";
       title = "Course List Approved by Dean 🏛️";
-      message = `Subject structure for ${branch || "all branches"} has been approved by Dean. Please review and finalize.`;
+      message = `Hello {{name}}, the subject structure for ${branch || "all branches"} has been approved by Dean. Please review and finalize.`;
       target = "hod"; // Targeted to HODs
       targetBranch = branch;
     } else if (user?.role === "hod") {
       nextStatus = "APPROVED";
       title = "Semester Registration is LIVE! 🎓";
-      message = `Your course registration for ${year || "upcoming semester"} is now open. Register before the deadline.`;
+      message = `Hello {{name}}, your course registration for ${year || "upcoming semester"} is now open. Register before the deadline.`;
       target = "students"; // Targeted to students
       targetBranch = branch || user.username.split("_")[1]?.toUpperCase();
       targetYear = year;
