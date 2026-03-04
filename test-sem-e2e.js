@@ -67,7 +67,7 @@ async function runTest() {
 
   // 3. DEAN: Login and Approve webmaster request
   console.log("\n[3] Dean Login and global review...");
-  const deanAuth = await loginUser("dean_academic", "dean@uniz", "admin");
+  const deanAuth = await loginUser("dean", "dean@uniz", "admin");
   const deanToken = deanAuth.token;
 
   console.log("  ✅ Dean pushing status to REGISTRATION_OPEN...");
@@ -77,15 +77,44 @@ async function runTest() {
     body: JSON.stringify({ status: "REGISTRATION_OPEN" }), // Bypassing straight to open for this test
   });
 
-  // 4. HODS: Login, Assign Faculty, and Approve
+  // 4. HODS: Login (or Create then Login), Assign Faculty, and Approve
   for (const branch of branches) {
     console.log(`\n[4] Handling HOD for ${branch}...`);
     const hodUsername = `hod_${branch.toLowerCase()}`;
-    const hodAuth = await loginUser(
-      hodUsername,
-      `${hodUsername}@uniz`,
-      "admin",
-    );
+
+    let hodAuth = await loginUser(hodUsername, `${hodUsername}@uniz`, "admin");
+
+    if (!hodAuth) {
+      console.log(`  ➕ HOD ${hodUsername} not found. Creating...`);
+      const createRes = await makeRequest(
+        `${BASE_URL}/profile/faculty/create`,
+        {
+          method: "POST",
+          headers: authHeader(wmToken),
+          body: JSON.stringify({
+            username: hodUsername,
+            name: `${branch} HOD`,
+            email: `${hodUsername}@uniz.com`,
+            department: branch,
+            role: "hod",
+            designation: "Head of Department",
+          }),
+        },
+      );
+
+      if (createRes) {
+        console.log(`  ✅ HOD ${hodUsername} profile created. Logging in...`);
+        hodAuth = await loginUser(hodUsername, `${hodUsername}@uniz`, "admin");
+      }
+    }
+
+    if (!hodAuth) {
+      console.log(
+        `  ❌ Failed to ensure HOD ${hodUsername}, skipping ${branch}.`,
+      );
+      continue;
+    }
+
     const hodToken = hodAuth.token;
 
     // Get courses for branch
@@ -98,34 +127,54 @@ async function runTest() {
     console.log(`  📋 ${branch} has ${allocs.length} subjects.`);
 
     if (allocs.length > 0) {
-      // Get Faculty
-      const facRes = await makeRequest(`${BASE_URL}/profile/faculty/search`, {
-        method: "POST",
-        headers: authHeader(hodToken),
-        body: JSON.stringify({ department: branch }),
-      });
+      // Get Faculty from ACADEMICS service
+      let faculties = await makeRequest(
+        `${BASE_URL}/academics/faculty?department=${branch}`,
+        {
+          headers: authHeader(hodToken),
+        },
+      );
 
-      const faculties = facRes?.faculty || [];
-      if (faculties.length > 0) {
+      // If no faculty in academics, create a dummy one for the test
+      if (!faculties || faculties.length === 0) {
+        console.log(
+          `  ⚠️ No faculty in Academics for ${branch}. Creating dummy...`,
+        );
+        const dummyFac = await makeRequest(`${BASE_URL}/academics/faculty`, {
+          method: "POST",
+          headers: authHeader(wmToken),
+          body: JSON.stringify({
+            name: `${branch} Test Faculty`,
+            email: `test_fac_${branch.toLowerCase()}@uniz.com`,
+            department: branch,
+            designation: "Associate Professor",
+            role: "FACULTY",
+          }),
+        });
+        if (dummyFac) faculties = [dummyFac];
+      }
+
+      if (faculties && faculties.length > 0) {
         // Assign to first 3 subjects to simulate work
         for (let i = 0; i < Math.min(3, allocs.length); i++) {
           const fac = faculties[i % faculties.length];
           const alloc = allocs[i];
           console.log(`  👤 Assigning ${fac.name} to ${alloc.subject.name}`);
-          await makeRequest(`${BASE_URL}/academics/allocation/${alloc.id}`, {
-            method: "PUT",
-            headers: authHeader(hodToken),
-            body: JSON.stringify({ facultyId: fac.id }),
-          });
+          await makeRequest(
+            `${BASE_URL}/academics/dean/allocation/${alloc.id}`,
+            {
+              method: "PUT",
+              headers: authHeader(hodToken),
+              body: JSON.stringify({ facultyId: fac.id }),
+            },
+          );
         }
       } else {
-        console.log(`  ⚠️ No faculty found for ${branch}`);
+        console.log(`  ❌ Could not ensure faculty for ${branch}`);
       }
 
       // Approve allocations
       console.log(`  ✅ ${branch} HOD Approving...`);
-      // Note: We simulate approval even if not all faculty are assigned for test script robustness,
-      // The UI prevents this but the API currently allows it if called directly.
       await makeRequest(`${BASE_URL}/academics/dean/approve`, {
         method: "POST",
         headers: authHeader(hodToken),
@@ -138,13 +187,16 @@ async function runTest() {
   console.log("\n[5] Simulating Student Registrations...");
   // Mapping of sample students to branches
   const sampleStudents = [
-    { id: "N220102", branch: "CSE" }, // Add valid student IDs here
-    // You would add ECE, EEE etc valid students here
+    { id: "O200258", branch: "CSE", year: "E4" },
+    { id: "O200039", branch: "ECE", year: "E4" },
+    { id: "O210055", branch: "EEE", year: "E3" },
+    { id: "O210070", branch: "MECH", year: "E3" },
+    { id: "O200679", branch: "CIVIL", year: "E4" },
   ];
 
   for (const student of sampleStudents) {
     console.log(
-      `\n  🧑‍🎓 Student ${student.id} (${student.branch}) logging in...`,
+      `\n  🧑‍🎓 Student ${student.id} (${student.branch}, ${student.year}) logging in...`,
     );
     const sAuth = await loginUser(student.id, `${student.id}@rguktong`);
     if (!sAuth) {
@@ -154,7 +206,7 @@ async function runTest() {
     const sToken = sAuth.token;
 
     const availRes = await makeRequest(
-      `${BASE_URL}/academics/student/available?branch=${student.branch}&year=E2`,
+      `${BASE_URL}/academics/student/available?branch=${student.branch}&year=${student.year}`,
       {
         headers: authHeader(sToken),
       },
@@ -177,6 +229,30 @@ async function runTest() {
     } else {
       console.log(`  ⚠️ Registration state:`, availRes);
     }
+  }
+
+  // 6. ADMINISTRATIVE VERIFICATION: Check registrations as Webmaster
+  console.log(
+    "\n[6] Verification: Checking global registrations as Webmaster...",
+  );
+  const regs = await makeRequest(
+    `${BASE_URL}/academics/registrations?semesterId=${activeSemId}&branch=all`,
+    {
+      headers: authHeader(wmToken),
+    },
+  );
+
+  if (regs && Array.isArray(regs)) {
+    console.log(`  📊 Total Registrations found: ${regs.length}`);
+    if (regs.length > 0) {
+      console.log(
+        `  ✅ First Registration Entry: Student ${regs[0].studentId} for ${regs[0].subject?.name}`,
+      );
+    } else {
+      console.log("  ❌ No registrations found in administrative view!");
+    }
+  } else {
+    console.log("  ❌ Failed to fetch registrations for verification.");
   }
 
   console.log("\n=== PIPELINE TEST COMPLETE ===");

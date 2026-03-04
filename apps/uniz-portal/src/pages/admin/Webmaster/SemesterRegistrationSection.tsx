@@ -146,7 +146,7 @@ export default function SemesterRegistrationSection({
   const updateStatus = async (id: string, status: string) => {
     try {
       const res = await apiClient(UPDATE_SEMESTER_STATUS(id), {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify({ status }),
       });
       if (res) {
@@ -247,7 +247,7 @@ export default function SemesterRegistrationSection({
     if (!editingAllocation) return;
     setLoading(true);
     try {
-      await apiClient(`/academics/allocation/${editingAllocation.id}`, {
+      await apiClient(`/academics/dean/allocation/${editingAllocation.id}`, {
         method: "PUT",
         body: JSON.stringify(editFormData),
       });

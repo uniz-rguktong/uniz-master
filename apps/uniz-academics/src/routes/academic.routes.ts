@@ -98,6 +98,7 @@ router.delete("/subjects/:id", deleteSubject);
 router.get("/semester", getSemesters);
 router.post("/semester/init", initSemester);
 router.patch("/semester/status/:id", updateSemesterStatus);
+router.put("/semester/status/:id", updateSemesterStatus);
 router.delete("/semester/:id", deleteSemester);
 
 router.get("/dean/review/:branch", getDeanAllocations);
