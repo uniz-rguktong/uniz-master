@@ -131,22 +131,22 @@ export default function Attendance() {
   // Skeleton Loader Component
   return (
     <div className="font-sans text-slate-900">
-      <div className="max-w-6xl mx-auto px-4 pt-8 pb-4">
-        <h1 className="text-3xl font-black tracking-tighter text-slate-900 mb-2">
-          Attendance
-        </h1>
-        <p className="text-slate-500 font-medium text-sm">
-          Track your daily attendance and semester progress.
-        </p>
-      </div>
-      <div className="max-w-6xl mx-auto px-4 py-4">
+      <div className="max-w-6xl mx-auto px-4 pb-10">
+        <div className="flex flex-col gap-1.5 mb-8">
+          <p className="text-slate-500 font-medium text-[13px]">
+            Institutional Attendance Terminal
+          </p>
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+            Attendance Tracking
+          </h1>
+        </div>
         {/* Selection Criteria */}
-        <div className="mb-8 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-          <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
-            <div className="p-1.5 bg-blue-600 rounded-md text-white shadow-sm shadow-blue-100">
+        <div className="mb-8 bg-white p-6 rounded-xl border border-slate-100 shadow-sm transition-all duration-300">
+          <h2 className="text-[15px] font-semibold tracking-tight text-slate-700 mb-6 flex items-center gap-2">
+            <div className="p-1.5 bg-blue-500 rounded-lg text-white shadow-sm shadow-blue-50">
               <CheckCircle size={16} />
             </div>
-            Select Criteria
+            Select Tracking Criteria
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -166,13 +166,13 @@ export default function Attendance() {
               </div>
 
               {showDropdown && (
-                <div className="absolute z-20 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute z-20 mt-1 w-full bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-medium hover:bg-slate-50 transition-colors ${
+                      className={`p-3 cursor-pointer text-sm font-semibold hover:bg-slate-50 transition-colors ${
                         selectedYear === year
-                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          ? "bg-slate-950 text-white"
                           : "text-slate-600"
                       }`}
                       onClick={() => {
@@ -223,17 +223,15 @@ export default function Attendance() {
             <div className="flex items-end">
               <button
                 onClick={handleFetchAttendance}
-                className="w-full uniz-primary-btn"
+                className="w-full h-[46px] bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm flex items-center justify-center"
                 disabled={isLoading || !user?.username}
               >
                 {isLoading ? (
-                  <span className="flex items-center gap-1.5 text-sm">
-                    Fetching...
+                  <span className="flex items-center gap-1.5 text-sm uppercase tracking-widest">
+                    Syncing...
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1.5">
-                    View Attendance
-                  </span>
+                  <span className="flex items-center gap-1.5">View Matrix</span>
                 )}
               </button>
             </div>
@@ -249,18 +247,20 @@ export default function Attendance() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center animate-in fade-in zoom-in-95 duration-300">
-            <div className="w-24 h-24 mx-auto mb-6 bg-white rounded-full p-4 border border-slate-100 shadow-sm flex items-center justify-center">
+          <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-10 text-center animate-pulse">
+            <div className="w-16 h-16 mx-auto mb-4 bg-white/50 rounded-full flex items-center justify-center">
               <img
                 src={PIKACHU_IMAGE}
                 alt="Pikachu"
-                className="w-full h-full object-contain animate-bounce"
+                className="w-12 h-12 object-contain grayscale opacity-30"
               />
             </div>
-            <h3 className="text-2xl font-black mb-3">
-              Pikachu is on the case!
+            <h3 className="text-base font-semibold text-slate-600 mb-1">
+              Terminal Synchronization
             </h3>
-            <p className="text-slate-500 font-medium">{loadingMessage}</p>
+            <p className="text-slate-400 text-xs font-medium">
+              {loadingMessage}
+            </p>
           </div>
         )}
 
@@ -271,13 +271,14 @@ export default function Attendance() {
           !isLoading && (
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-500">
               {/* Header */}
-              <div className="flex items-end justify-between border-b pb-2 border-slate-200">
+              <div className="flex items-end justify-between border-b pb-4 border-slate-100">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-0.5">
-                    Attendance For
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">
+                    Matrix Snapshot
                   </span>
-                  <h2 className="text-xl font-black tracking-tight text-slate-900">
-                    {selectedYear} <span className="text-slate-300">/</span>{" "}
+                  <h2 className="text-[17px] font-semibold tracking-tight text-slate-900">
+                    {selectedYear}{" "}
+                    <span className="text-slate-300 mx-1">/</span>{" "}
                     {selectedSemester}
                   </h2>
                 </div>
@@ -294,10 +295,10 @@ export default function Attendance() {
                       { studentId: user.username },
                     );
                   }}
-                  className="uniz-primary-btn h-auto py-2 px-4 shadow-sm ml-auto"
+                  className="h-10 px-4 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-slate-100"
                 >
-                  <Download size={16} />
-                  Download Report
+                  <Download size={14} />
+                  Export PDF
                 </button>
               </div>
 
@@ -318,7 +319,7 @@ export default function Attendance() {
                   </p>
                 </div>
               ) : (
-                <div className="glass-panel rounded-xl overflow-hidden border border-slate-200 shadow-sm mt-4">
+                <div className="bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm mt-4">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
@@ -379,20 +380,20 @@ export default function Attendance() {
                     </table>
                   </div>
 
-                  <div className="px-6 py-4 bg-blue-600 text-white mt-0 shadow-inner">
+                  <div className="px-6 py-8 bg-slate-950 text-white mt-0 shadow-inner">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                       <div>
-                        <h3 className="text-lg font-black">
-                          Overall Attendance
+                        <h3 className="text-base font-semibold tracking-tight">
+                          Aggregate Attendance
                         </h3>
                       </div>
                       {/* Summary calculation if available, or just a placeholder */}
                       <div className="flex items-center gap-6">
-                        <div className="text-right flex items-center gap-2">
+                        <div className="text-right flex items-center gap-3">
                           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">
-                            Calculated Avg :
+                            Semester Avg :
                           </p>
-                          <p className="text-2xl font-black text-white">
+                          <p className="text-3xl font-semibold text-white tracking-tighter">
                             {(
                               attendanceData.attendance.reduce(
                                 (acc, curr: any) =>
@@ -414,16 +415,18 @@ export default function Attendance() {
 
         {/* Not Logged In State */}
         {!user?.username && !isLoading && !resultsFetched && (
-          <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center">
-            <div className="bg-white w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
-              <AlertCircle size={40} className="text-blue-600" />
+          <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-12 text-center">
+            <div className="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-50">
+              <AlertCircle size={32} className="text-slate-300" />
             </div>
-            <h3 className="text-2xl font-black mb-3">Sign In Required</h3>
-            <p className="text-slate-500 mb-8 max-w-md mx-auto font-medium">
-              Please sign in to your student account to view your attendance
-              records.
+            <h3 className="text-lg font-semibold mb-2 text-slate-800">
+              Authorization Required
+            </h3>
+            <p className="text-slate-500 mb-8 max-w-xs mx-auto text-xs font-medium leading-relaxed">
+              Please authenticate to access your institutional attendance
+              terminal.
             </p>
-            <button className="uniz-primary-btn px-8 h-[54px] text-xs">
+            <button className="h-[46px] px-8 bg-slate-950 text-white rounded-xl font-bold text-sm transition-all hover:bg-black active:scale-[0.98]">
               Sign In to Continue
             </button>
           </div>
@@ -431,14 +434,16 @@ export default function Attendance() {
 
         {/* Empty State */}
         {user?.username && !isLoading && !resultsFetched && !error && (
-          <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center">
-            <div className="bg-white w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
-              <Award size={40} className="text-blue-600" />
+          <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-12 text-center">
+            <div className="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-50">
+              <Award size={32} className="text-slate-300" />
             </div>
-            <h3 className="text-2xl font-black mb-3">No Attendance Selected</h3>
-            <p className="text-slate-500 mb-6 max-w-sm mx-auto font-medium">
-              Select an academic year and semester above, then click "View
-              Attendance" to see your complete records.
+            <h3 className="text-base font-semibold mb-2 text-slate-800">
+              No Snapshot Selected
+            </h3>
+            <p className="text-slate-500 mb-6 max-w-xs mx-auto font-medium text-xs leading-relaxed">
+              Specify an academic year and semester to generate your attendance
+              matrix.
             </p>
           </div>
         )}

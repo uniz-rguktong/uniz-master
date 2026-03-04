@@ -32,67 +32,68 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
   if (semesters.length === 0) return null;
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {semesters.map((sem) => (
-        <div key={sem} className="space-y-4">
+        <div key={sem} className="space-y-6">
           <div className="flex items-center gap-3">
-            <div className="h-7 w-1.5 bg-blue-600 rounded-full"></div>
-            <h2 className="text-xl font-black tracking-tighter uppercase text-slate-900">
-              {sem}
+            <div className="h-6 w-1.5 bg-blue-600 rounded-full"></div>
+            <h2 className="text-[17px] font-semibold tracking-tight text-slate-900">
+              {sem} Terminal Records
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-8">
             {/* Grades Table */}
             {gradesBySemester[sem] && (
-              <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-                <div className="bg-slate-50/50 px-5 py-3 border-b border-slate-100 flex items-center justify-between">
-                  <h3 className="font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 text-slate-400">
-                    <Award className="w-4 h-4 text-blue-600" /> Grades
+              <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+                <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                  <h3 className="font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 text-slate-400">
+                    <Award size={14} className="text-blue-500" /> Subject Performance
                   </h3>
-                  {/* Calculate GPA if needed */}
-                  <div className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                     CGPA: 0.00
                   </div>
                 </div>
-                <table className="w-full text-sm text-left table-fixed">
-                  <thead className="bg-white text-slate-400 border-b border-slate-50 text-[10px] uppercase tracking-[0.2em] font-black">
-                    <tr>
-                      <th className="px-3 py-3 w-[60%]">Subject</th>
-                      <th className="px-3 py-3 text-center w-[20%]">Cr</th>
-                      <th className="px-3 py-3 text-right w-[20%]">Gr</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-50">
-                    {gradesBySemester[sem].map((g: Grade) => (
-                      <tr
-                        key={g.id}
-                        className="hover:bg-slate-50/50 transition-colors"
-                      >
-                        <td className="px-3 py-3.5 font-bold text-[14px] text-slate-900 leading-tight">
-                          {g.subject.name}
-                        </td>
-                        <td className="px-3 py-3.5 text-center text-slate-500 font-semibold text-xs">
-                          {g.subject.credits}
-                        </td>
-                        <td className="px-3 py-3.5 text-right">
-                          <span className="inline-block px-2 py-1 bg-blue-50 text-blue-600 rounded-lg text-[11px] font-black">
-                            {g.grade}
-                          </span>
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left table-fixed">
+                    <thead className="bg-white text-slate-400 border-b border-slate-50 text-[10px] uppercase tracking-widest font-bold">
+                      <tr>
+                        <th className="px-5 py-3 w-[60%]">Descriptor</th>
+                        <th className="px-3 py-3 text-center w-[20%]">Cr</th>
+                        <th className="px-5 py-3 text-right w-[20%]">Gr</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      {gradesBySemester[sem].map((g: Grade) => (
+                        <tr
+                          key={g.id}
+                          className="hover:bg-slate-50/50 transition-colors"
+                        >
+                          <td className="px-5 py-4 font-semibold text-[14px] text-slate-900 leading-tight">
+                            {g.subject.name}
+                          </td>
+                          <td className="px-3 py-4 text-center text-slate-400 font-bold text-[11px]">
+                            {g.subject.credits}
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            <span className="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[11px] font-bold border border-blue-100/50">
+                              {g.grade}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
 
             {/* Attendance List */}
             {attendanceBySemester[sem] && (
-              <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm h-fit">
-                <div className="bg-slate-50/50 px-5 py-3 border-b border-slate-100">
-                  <h3 className="font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 text-slate-400">
-                    <Percent className="w-4 h-4 text-blue-600" /> Attendance
+              <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm h-fit">
+                <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100">
+                  <h3 className="font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 text-slate-400">
+                    <Percent size={14} className="text-blue-500" /> Attendance Matrix
                   </h3>
                 </div>
                 <div className="divide-y divide-slate-50">
@@ -100,32 +101,32 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                     const percentage =
                       att.totalClasses > 0
                         ? (
-                            (att.attendedClasses / att.totalClasses) *
-                            100
-                          ).toFixed(1)
+                          (att.attendedClasses / att.totalClasses) *
+                          100
+                        ).toFixed(1)
                         : "0.0";
                     const isLow = parseFloat(percentage) < 75;
                     return (
                       <div
                         key={att.id}
-                        className="px-5 py-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors group"
+                        className="px-5 py-5 flex items-center justify-between hover:bg-slate-50/50 transition-colors group"
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                           <div
-                            className={`w-1.5 h-1.5 rounded-full ${isLow ? "bg-red-500 animate-pulse" : "bg-green-500"}`}
+                            className={`w-1.5 h-1.5 rounded-full ${isLow ? "bg-red-500" : "bg-emerald-500"}`}
                           ></div>
-                          <span className="font-bold text-[15px] text-slate-900">
+                          <span className="font-semibold text-[14px] text-slate-800">
                             {att.subject.name}
                           </span>
                         </div>
                         <div className="text-right">
                           <span
-                            className={`font-black text-[15px] block leading-none ${isLow ? "text-red-600" : "text-slate-900"}`}
+                            className={`font-semibold text-[15px] block leading-none ${isLow ? "text-red-500" : "text-slate-900"}`}
                           >
                             {percentage}%
                           </span>
-                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                            {att.attendedClasses}/{att.totalClasses} Classes
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 block">
+                            {att.attendedClasses} / {att.totalClasses} Units
                           </span>
                         </div>
                       </div>
