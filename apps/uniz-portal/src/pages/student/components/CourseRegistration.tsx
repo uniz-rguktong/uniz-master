@@ -247,6 +247,11 @@ export default function CourseRegistration({
                 >
                   {sub.subject?.name}
                 </h4>
+                {sub.faculty && (
+                  <p className="text-[10px] text-slate-400 font-bold italic">
+                    By {sub.faculty.name}
+                  </p>
+                )}
               </div>
 
               {isSelected && (
