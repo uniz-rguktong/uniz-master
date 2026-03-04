@@ -38,7 +38,7 @@ export default function GrievanceSection() {
       const res = await fetch(`${GET_GRIEVANCES_LIST}?${query.toString()}`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
         },
       });
       const data = await res.json();
@@ -262,10 +262,11 @@ export default function GrievanceSection() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl font-black text-xs transition-all ${page === p
-                          ? "bg-blue-600 text-white shadow-lg shadow-blue-100"
-                          : "text-slate-400 hover:bg-white hover:text-blue-600"
-                          }`}
+                        className={`w-10 h-10 rounded-xl font-black text-xs transition-all ${
+                          page === p
+                            ? "bg-blue-600 text-white shadow-lg shadow-blue-100"
+                            : "text-slate-400 hover:bg-white hover:text-blue-600"
+                        }`}
                       >
                         {p}
                       </button>

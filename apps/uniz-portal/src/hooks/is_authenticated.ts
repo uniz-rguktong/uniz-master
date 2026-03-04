@@ -22,9 +22,13 @@ export function useIsAuth() {
       const stored = localStorage.getItem(key);
       if (!stored) return null;
       try {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        // If it was a quoted string in storage, returning the parsed version is correct.
+        // If it was a raw string that happens to be valid JSON (rare for tokens), we might get here.
+        return typeof parsed === "string" ? parsed : stored;
       } catch (e) {
-        return "MALFORMED";
+        // If it's not JSON, it's a raw string (which is what we want now)
+        return stored;
       }
     };
 

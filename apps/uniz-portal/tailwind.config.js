@@ -7,9 +7,18 @@ module.exports = {
         body: ['"Google Sans Text"', "Inter", "system-ui", "sans-serif"],
       },
       fontSize: {
-        h1: ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "600" }],
-        h2: ["36px", { lineHeight: "44px", letterSpacing: "-0.01em", fontWeight: "600" }],
-        h3: ["28px", { lineHeight: "36px", letterSpacing: "-0.01em", fontWeight: "600" }],
+        h1: [
+          "48px",
+          { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "600" },
+        ],
+        h2: [
+          "36px",
+          { lineHeight: "44px", letterSpacing: "-0.01em", fontWeight: "600" },
+        ],
+        h3: [
+          "28px",
+          { lineHeight: "36px", letterSpacing: "-0.01em", fontWeight: "600" },
+        ],
         h4: ["22px", { lineHeight: "30px", fontWeight: "500" }],
         base: ["16px", { lineHeight: "24px", fontWeight: "400" }],
         small: ["14px", { lineHeight: "20px", fontWeight: "400" }],

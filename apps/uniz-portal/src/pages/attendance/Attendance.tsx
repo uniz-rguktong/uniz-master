@@ -13,7 +13,7 @@ import { GET_ATTENDANCE, DOWNLOAD_ATTENDANCE } from "../../api/endpoints";
 import { downloadFile } from "../../api/apiClient";
 
 interface AttendanceRecord {
-  subject: string | { name: string;[key: string]: any };
+  subject: string | { name: string; [key: string]: any };
   totalClasses: number;
   attendedClasses: number;
   percentage: string | number;
@@ -170,10 +170,11 @@ export default function Attendance() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-semibold hover:bg-slate-50 transition-colors ${selectedYear === year
-                        ? "bg-slate-950 text-white"
-                        : "text-slate-600"
-                        }`}
+                      className={`p-3 cursor-pointer text-sm font-semibold hover:bg-slate-50 transition-colors ${
+                        selectedYear === year
+                          ? "bg-slate-950 text-white"
+                          : "text-slate-600"
+                      }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setSelectedSemester(
@@ -230,9 +231,7 @@ export default function Attendance() {
                     Syncing...
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1.5">
-                    View Matrix
-                  </span>
+                  <span className="flex items-center gap-1.5">View Matrix</span>
                 )}
               </button>
             </div>
@@ -259,7 +258,9 @@ export default function Attendance() {
             <h3 className="text-base font-semibold text-slate-600 mb-1">
               Terminal Synchronization
             </h3>
-            <p className="text-slate-400 text-xs font-medium">{loadingMessage}</p>
+            <p className="text-slate-400 text-xs font-medium">
+              {loadingMessage}
+            </p>
           </div>
         )}
 
@@ -276,7 +277,9 @@ export default function Attendance() {
                     Matrix Snapshot
                   </span>
                   <h2 className="text-[17px] font-semibold tracking-tight text-slate-900">
-                    {selectedYear} <span className="text-slate-300 mx-1">/</span> {selectedSemester}
+                    {selectedYear}{" "}
+                    <span className="text-slate-300 mx-1">/</span>{" "}
+                    {selectedSemester}
                   </h2>
                 </div>
                 <button
@@ -301,8 +304,8 @@ export default function Attendance() {
 
               {/* Content */}
               {!attendanceData.attendance ||
-                !Array.isArray(attendanceData.attendance) ||
-                attendanceData.attendance.length === 0 ? (
+              !Array.isArray(attendanceData.attendance) ||
+              attendanceData.attendance.length === 0 ? (
                 <div className="bg-slate-50 rounded-xl p-8 text-center border border-slate-200">
                   <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm border border-slate-100">
                     <AlertCircle size={28} className="text-slate-400" />
@@ -356,15 +359,16 @@ export default function Attendance() {
                                 </td>
                                 <td className="px-4 py-2 text-center">
                                   <span
-                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${parseFloat(String(record.percentage)) >=
+                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                      parseFloat(String(record.percentage)) >=
                                       75
-                                      ? "bg-blue-600 text-white"
-                                      : parseFloat(
-                                        String(record.percentage),
-                                      ) >= 65
-                                        ? "bg-slate-200 text-slate-700"
-                                        : "bg-slate-100 text-slate-400"
-                                      }`}
+                                        ? "bg-blue-600 text-white"
+                                        : parseFloat(
+                                              String(record.percentage),
+                                            ) >= 65
+                                          ? "bg-slate-200 text-slate-700"
+                                          : "bg-slate-100 text-slate-400"
+                                    }`}
                                   >
                                     {record.percentage}%
                                   </span>
@@ -415,9 +419,12 @@ export default function Attendance() {
             <div className="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-50">
               <AlertCircle size={32} className="text-slate-300" />
             </div>
-            <h3 className="text-lg font-semibold mb-2 text-slate-800">Authorization Required</h3>
+            <h3 className="text-lg font-semibold mb-2 text-slate-800">
+              Authorization Required
+            </h3>
             <p className="text-slate-500 mb-8 max-w-xs mx-auto text-xs font-medium leading-relaxed">
-              Please authenticate to access your institutional attendance terminal.
+              Please authenticate to access your institutional attendance
+              terminal.
             </p>
             <button className="h-[46px] px-8 bg-slate-950 text-white rounded-xl font-bold text-sm transition-all hover:bg-black active:scale-[0.98]">
               Sign In to Continue
@@ -431,9 +438,12 @@ export default function Attendance() {
             <div className="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-50">
               <Award size={32} className="text-slate-300" />
             </div>
-            <h3 className="text-base font-semibold mb-2 text-slate-800">No Snapshot Selected</h3>
+            <h3 className="text-base font-semibold mb-2 text-slate-800">
+              No Snapshot Selected
+            </h3>
             <p className="text-slate-500 mb-6 max-w-xs mx-auto font-medium text-xs leading-relaxed">
-              Specify an academic year and semester to generate your attendance matrix.
+              Specify an academic year and semester to generate your attendance
+              matrix.
             </p>
           </div>
         )}

@@ -27,6 +27,7 @@ model StudentProfile {
   dateOfBirth          DateTime?
   profileUrl           String    @default("")
   year                 String    @default("")
+  semester             String    @default("")
   branch               String    @default("")
   section              String    @default("")
   roomno               String    @default("")

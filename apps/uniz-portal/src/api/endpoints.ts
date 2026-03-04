@@ -150,3 +150,34 @@ export const PUSH_SEND = `${BASE_URL}/notifications/push/send`;
 export const BULK_UPDATE_GRADES = `${BASE_URL}/academics/grades/bulk-update`;
 export const GET_BATCH_GRADES = `${BASE_URL}/academics/grades/batch`;
 export const ADD_MANUAL_GRADE = `${BASE_URL}/academics/grades/add`;
+
+// Faculty Management (Academics Service)
+export const ACADEMIC_FACULTY = `${BASE_URL}/academics/faculty`;
+export const ACADEMIC_FACULTY_BY_ID = (id: string) =>
+  `${BASE_URL}/academics/faculty/${id}`;
+export const ACADEMIC_FACULTY_ROLE = (id: string) =>
+  `${BASE_URL}/academics/faculty/${id}/role`;
+
+// Subject Management (v2)
+export const SUBJECT_BY_ID = (id: string) =>
+  `${BASE_URL}/academics/subjects/${id}`;
+
+// Registration Workflow
+export const SEMESTERS = `${BASE_URL}/academics/semester`;
+export const INIT_SEMESTER = `${BASE_URL}/academics/semester/init`;
+export const UPDATE_SEMESTER_STATUS = (id: string) =>
+  `${BASE_URL}/academics/semester/status/${id}`;
+export const DELETE_SEMESTER = (id: string) =>
+  `${BASE_URL}/academics/semester/${id}`;
+
+export const DEAN_REVIEW = (branch: string) =>
+  `${BASE_URL}/academics/dean/review/${branch}`;
+export const APPROVE_ALLOCATION = `${BASE_URL}/academics/dean/approve`;
+export const DEAN_APPROVE = APPROVE_ALLOCATION;
+
+export const GET_AVAILABLE_SUBJECTS = (branch: string, year: string) =>
+  `${BASE_URL}/academics/student/available?branch=${branch}&year=${year}`;
+export const REGISTER_SUBJECTS = `${BASE_URL}/academics/student/register`;
+export const GET_CURRENT_SUBJECTS = (studentId: string) =>
+  `${BASE_URL}/academics/student/current/${studentId}`;
+export const GET_REGISTRATIONS = `${BASE_URL}/academics/registrations`;
