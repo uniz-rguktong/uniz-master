@@ -30,6 +30,8 @@ export default function CourseRegistration({
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+  const [semesterName, setSemesterName] = useState("");
 
   const fetchAvailable = async () => {
     setLoading(true);
@@ -37,6 +39,8 @@ export default function CourseRegistration({
       const data = await apiClient<any>(GET_AVAILABLE_SUBJECTS(branch, year));
       setAvailable(data.subjects || []);
       setAlreadyRegistered(data.alreadyRegistered || false);
+      setIsOpen(data.isOpen ?? true);
+      setSemesterName(data.semester?.name || "");
       // Pre-select all by default if mandatory? Actually let user choose
     } catch (error) {
       toast.error("Failed to fetch available subjects");
@@ -113,6 +117,24 @@ export default function CourseRegistration({
     );
   }
 
+  if (!isOpen) {
+    return (
+      <div className="bg-white rounded-[40px] p-12 text-center border-2 border-dashed border-slate-100 max-w-2xl mx-auto shadow-xl">
+        <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center text-blue-600 mx-auto mb-6">
+          <ShieldCheck size={40} />
+        </div>
+        <h3 className="text-2xl font-black text-slate-900 mb-2">
+          Registration Pending
+        </h3>
+        <p className="text-slate-500 font-medium font-outfit mb-8 leading-relaxed px-10">
+          The semester <strong>{semesterName}</strong> is currently being
+          reviewed. Registration will open once the department approves the
+          course list.
+        </p>
+      </div>
+    );
+  }
+
   if (available.length === 0) {
     return (
       <div className="bg-white rounded-[40px] p-12 text-center border-2 border-dashed border-slate-100 max-w-2xl mx-auto shadow-xl">
@@ -120,11 +142,11 @@ export default function CourseRegistration({
           <AlertCircle size={40} />
         </div>
         <h3 className="text-2xl font-black text-slate-900 mb-2">
-          Registration Not Available
+          Hooray! No courses found
         </h3>
         <p className="text-slate-500 font-medium font-outfit mb-8 leading-relaxed px-10">
-          The registration window for your branch is either closed or your
-          department has not yet published the course list.
+          Either the registration window for your branch is closed or your
+          department has not yet published the course list for this semester.
         </p>
       </div>
     );

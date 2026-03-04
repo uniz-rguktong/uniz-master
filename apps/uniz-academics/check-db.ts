@@ -2,22 +2,21 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const sem = await prisma.academicSemester.findFirst({
-    orderBy: { createdAt: "desc" },
+  const semesters = await prisma.academicSemester.findMany();
+  console.log("Semesters:", semesters);
+
+  const allocations = await prisma.branchAllocation.findMany({
+    include: { subject: true },
   });
-  console.log("Latest Semester:", JSON.stringify(sem, null, 2));
-
-  if (sem) {
-    const allocations = await prisma.branchAllocation.count({
-      where: { semesterId: sem.id },
-    });
-    console.log("Allocations for this semester:", allocations);
-
-    const registrations = await prisma.registration.count({
-      where: { semesterId: sem.id },
-    });
-    console.log("Registrations for this semester:", registrations);
-  }
+  console.log("Allocations count:", allocations.length);
+  const cseAllocations = allocations.filter((a) => a.branch === "CSE");
+  console.log(
+    "CSE Allocations:",
+    cseAllocations.map((a) => ({
+      code: a.subject.code,
+      approved: a.isApproved,
+    })),
+  );
 }
 
 main()
