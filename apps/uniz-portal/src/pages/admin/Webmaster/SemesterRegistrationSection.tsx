@@ -274,6 +274,7 @@ export default function SemesterRegistrationSection({
             </button>
             {(isAdmin ||
               (branchFilter !== "all" && !isAdmin) ||
+              // @ts-ignore
               (branchFilter === "all" && !isAdmin && role === "dean")) && (
               <button
                 onClick={approveAllocation}
