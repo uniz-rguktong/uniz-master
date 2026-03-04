@@ -317,6 +317,7 @@ export const getAvailableSubjects = async (
   try {
     const openSem = await prisma.academicSemester.findFirst({
       where: { status: "REGISTRATION_OPEN" },
+      orderBy: { createdAt: "desc" },
     });
 
     if (!openSem) {
@@ -414,8 +415,9 @@ export const registerSubjects = async (
           const academicSem = match[2];
 
           const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
+          // Use Admin endpoint to update profile for ANY username (more robust)
           await axios.put(
-            `${GATEWAY_URL}/profile/student/update`,
+            `${GATEWAY_URL}/profile/admin/student/${user.username}`,
             {
               year: academicYear,
               semester: academicSem,
