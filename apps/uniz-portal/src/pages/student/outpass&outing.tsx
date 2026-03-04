@@ -1,5 +1,5 @@
-import { useRecoilValue } from "recoil";
-import { student } from "../../store";
+// import { useRecoilValue } from "recoil";
+// import { student } from "../../store";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { STUDENT_HISTORY } from "../../api/endpoints";
@@ -8,7 +8,7 @@ import { apiClient } from "../../api/apiClient";
 import {
   Clock,
   Calendar,
-  AlertCircle,
+
   Plus,
   CheckCircle,
   XCircle,
@@ -22,10 +22,10 @@ type requestProps = {
 export function OutButton({ request }: requestProps) {
   const navigateTo = useNavigate();
   return (
-    <div className="flex justify-center items-center w-full md:w-auto mt-4 md:mt-0">
+    <div className="flex justify-center items-center w-full md:w-auto mt-2 md:mt-0">
       <button
         onClick={() => navigateTo(`/student/${request}/request${request}`)}
-        className="uniz-primary-btn w-full md:w-auto px-6 h-[48px]"
+        className="w-full md:w-auto px-10 h-[48px] bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-md shadow-indigo-100 flex items-center justify-center gap-2"
       >
         <Plus className="w-4 h-4" />
         <span>New {request.charAt(0).toUpperCase() + request.slice(1)}</span>
@@ -35,7 +35,7 @@ export function OutButton({ request }: requestProps) {
 }
 
 export default function Outpass_Outing({ request }: requestProps) {
-  const Student = useRecoilValue(student);
+  // const Student = useRecoilValue(student);
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -106,170 +106,218 @@ export default function Outpass_Outing({ request }: requestProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-10 pb-12">
+    <div className="max-w-7xl mx-auto px-4 md:px-10 pb-24 md:pb-12">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6 mb-8 mt-2 md:mt-6">
-        <div className="flex-1 text-center md:text-left">
-          <p className="text-lg md:text-xl font-medium text-slate-400 mb-1">
-            Permission Records
+      <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-6 mb-10 mt-4 md:mt-0">
+        <div className="flex flex-col gap-1.5 text-center md:text-left">
+          <p className="text-slate-400 font-medium text-[12px] uppercase tracking-widest leading-none mb-1">
+            Institutional Permission Records
           </p>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 mb-3">
-            {request === "outing" ? "Outing" : "Outpass"} Logs
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+            {request === "outing" ? "Outing" : "Outpass"} Logs & History
           </h1>
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-4">
             {pendingCount > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[11px] font-black uppercase tracking-widest border border-blue-100/50 shadow-sm transition-all animate-in fade-in slide-in-from-left-2">
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-bold uppercase tracking-widest border border-amber-100/50">
                 <Clock className="w-3 h-3 animate-pulse" />
-                {pendingCount} Pending
+                {pendingCount} Pending Requests
               </span>
             )}
           </div>
         </div>
-        <div className="shrink-0 mb-1">
+        <div className="shrink-0 w-full md:w-auto">
           <OutButton request={request} />
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl md:rounded-[2.5rem] p-6 md:p-10 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-10 transition-all">
-        <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
-          <div className="flex items-center gap-5">
-            <div className="text-blue-600 flex-shrink-0">
-              <AlertCircle className="w-8 h-8" />
-            </div>
-            <div className="space-y-0.5">
-              <p className="font-black text-slate-900 text-lg uppercase tracking-tight">
-                Notification Channel
-              </p>
-              <p className="text-slate-500 font-medium text-[14px]">
-                Updates for all requests are sent to{" "}
-                <span className="text-blue-600 font-black">
-                  {Student?.email}
-                </span>
-              </p>
-            </div>
-          </div>
-          <div className="bg-slate-50 px-6 py-4 rounded-2xl border border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
-            Status Sync: Real-time
-          </div>
-        </div>
-      </div>
+
 
       {/* Main Content */}
       <div className="space-y-6">
         {requests.length === 0 ? (
-          <div className="text-center py-24 bg-slate-50/20 rounded-[3rem] border border-slate-100 border-dashed">
-            <div className="mx-auto h-24 w-24 bg-white rounded-3xl flex items-center justify-center mb-6 border border-slate-100/50 shadow-sm">
-              <Clock className="h-10 w-10 text-slate-100" />
+          <div className="text-center py-20 bg-slate-50/30 rounded-xl border border-slate-100 border-dashed">
+            <div className="mx-auto h-20 w-20 bg-white rounded-xl flex items-center justify-center mb-6 border border-slate-50 shadow-sm">
+              <Clock className="h-8 w-8 text-slate-100" />
             </div>
-            <h3 className="text-2xl font-black text-slate-800 mb-3 tracking-tighter">
+            <h3 className="text-lg font-semibold text-slate-800 mb-2 tracking-tight">
               No History Found
             </h3>
-            <p className="text-slate-400 font-bold text-sm max-w-[280px] mx-auto opacity-80 tracking-tight leading-relaxed">
+            <p className="text-slate-400 font-medium text-[13px] max-w-[240px] mx-auto leading-relaxed">
               Your past {request} requests will be archived here once you start.
             </p>
           </div>
         ) : (
           <>
-            <div className="grid gap-6 md:grid-cols-2">
+            {/* Desktop Table View */}
+            <div className="hidden md:block bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden mb-10">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-50">
+                      <th className="px-8 py-5 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                        Request Detail
+                      </th>
+                      <th className="px-8 py-5 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                        Period & Interval
+                      </th>
+                      <th className="px-8 py-5 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                        Reason for Leave
+                      </th>
+                      <th className="px-8 py-5 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20 text-right">
+                        Status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50/60">
+                    {requests.map((req: any) => {
+                      const status = getStatusParams(req);
+                      const startDate = new Date(request === "outing" ? req.fromTime : req.fromDay);
+                      const endDate = new Date(request === "outing" ? req.toTime : req.toDay);
+
+                      let durationText = "";
+                      if (request === "outing") {
+                        durationText = req.hours ? `${req.hours}hr` : "";
+                        if (!durationText) {
+                          const diff = endDate.getTime() - startDate.getTime();
+                          const h = Math.ceil(diff / (1000 * 60 * 60));
+                          durationText = `${h}hr`;
+                        }
+                      } else {
+                        durationText = req.days ? `${req.days}d` : "";
+                        if (!durationText) {
+                          const diff = endDate.getTime() - startDate.getTime();
+                          const d = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                          durationText = `${d}d`;
+                        }
+                      }
+
+                      const dateStr = startDate.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+                      const timeRange = request === "outing"
+                        ? `${startDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${endDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                        : `${startDate.toLocaleDateString("en-GB", { day: "numeric", month: "short" })} - ${endDate.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`;
+
+                      return (
+                        <tr key={req._id} className="hover:bg-slate-50/30 transition-all group">
+                          <td className="px-8 py-5 text-nowrap">
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
+                                {request === "outing" ? <Clock size={16} /> : <Calendar size={16} />}
+                              </div>
+                              <div className="flex flex-col">
+                                <p className="font-bold text-slate-900 tracking-tight leading-none mb-1.5 capitalize text-[15px]">
+                                  {request} Protocol
+                                </p>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 leading-none">
+                                  ID: {req._id?.slice(-8).toUpperCase() || "N/A"}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-8 py-5 text-nowrap">
+                            <div className="flex flex-col gap-1.5">
+                              <p className="text-[14px] font-bold text-slate-800 tracking-tight">
+                                {timeRange}
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{dateStr}</span>
+                                <span className="px-1.5 py-0.5 bg-slate-900 text-white rounded text-[9px] font-bold uppercase tracking-wider">
+                                  {durationText}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-8 py-5">
+                            <p className="text-[13px] font-medium text-slate-500 italic line-clamp-1 max-w-[200px]" title={req.reason}>
+                              "{req.reason}"
+                            </p>
+                          </td>
+                          <td className="px-8 py-5 text-right">
+                            <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border border-current opacity-80 ${status.color.includes('bg-blue-600') ? 'text-indigo-600 bg-indigo-50 border-indigo-100' : status.color.includes('bg-white border border-red-50') ? 'text-red-500 bg-red-50 border-red-100' : 'text-slate-400 bg-slate-50 border-slate-100'}`}>
+                              {status.label}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4">
               {requests.map((req: any) => {
                 const status = getStatusParams(req);
-
-                const startDate = new Date(
-                  request === "outing" ? req.fromTime : req.fromDay,
-                );
-                const endDate = new Date(
-                  request === "outing" ? req.toTime : req.toDay,
-                );
+                const startDate = new Date(request === "outing" ? req.fromTime : req.fromDay);
+                const endDate = new Date(request === "outing" ? req.toTime : req.toDay);
 
                 let durationText = "";
                 if (request === "outing") {
-                  durationText = req.hours ? `${req.hours}hr` : "";
-                  if (!durationText) {
-                    const diff = endDate.getTime() - startDate.getTime();
-                    const h = Math.ceil(diff / (1000 * 60 * 60));
-                    durationText = `${h}hr`;
-                  }
+                  const diff = endDate.getTime() - startDate.getTime();
+                  const h = Math.ceil(diff / (1000 * 60 * 60));
+                  durationText = `${h}hr`;
                 } else {
-                  durationText = req.days ? `${req.days}d` : "";
-                  if (!durationText) {
-                    const diff = endDate.getTime() - startDate.getTime();
-                    const d = Math.ceil(diff / (1000 * 60 * 60 * 24));
-                    durationText = `${d}d`;
-                  }
+                  const diff = endDate.getTime() - startDate.getTime();
+                  const d = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                  durationText = `${d}d`;
                 }
 
-                const dateStr = startDate.toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "short",
-                });
-                const timeRange =
-                  request === "outing"
-                    ? `${startDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${endDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
-                    : `${startDate.toLocaleDateString("en-GB", { day: "numeric", month: "short" })} - ${endDate.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`;
+                const dateStr = startDate.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+                const timeRange = request === "outing"
+                  ? `${startDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${endDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                  : `${startDate.toLocaleDateString("en-GB", { day: "numeric", month: "short" })} - ${endDate.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`;
 
                 return (
-                  <div
-                    key={req._id}
-                    className="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] hover:shadow-xl hover:border-blue-100 transition-all duration-300 group"
-                  >
-                    <div className="flex items-start justify-between mb-4">
+                  <div key={req._id} className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm active:scale-[0.99] transition-all">
+                    <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="text-blue-600 group-hover:scale-110 transition-all duration-300">
-                          {request === "outing" ? (
-                            <Clock className="w-6 h-6" />
-                          ) : (
-                            <Calendar className="w-6 h-6" />
-                          )}
+                        <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center">
+                          {request === "outing" ? <Clock size={18} /> : <Calendar size={18} />}
                         </div>
                         <div>
-                          <h5 className="font-bold text-slate-800 text-base leading-tight tracking-tight">
-                            {request === "outing" ? "Outing" : "Outpass"}
-                          </h5>
-                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1 flex items-center gap-1.5 opacity-70">
-                            <span>ID: {req.studentId?.slice(-6) || "N/A"}</span>
-                            <span className="w-0.5 h-0.5 rounded-full bg-slate-200"></span>
-                            <span>{dateStr}</span>
+                          <p className="font-bold text-slate-900 capitalize text-[15px] tracking-tight">
+                            {request} Protocol
+                          </p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                            ID: {req._id?.slice(-8).toUpperCase()}
                           </p>
                         </div>
                       </div>
-                      <div
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${status.color}`}
-                      >
-                        {status.icon}
+                      <div className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest border border-current ${status.color.includes('bg-blue-600') ? 'text-indigo-600 bg-indigo-50 border-indigo-100' : status.color.includes('bg-white border border-red-50') ? 'text-red-500 bg-red-50 border-red-100' : 'text-slate-400 bg-slate-50 border-slate-100'}`}>
                         {status.label}
                       </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 bg-slate-50/50 p-3 rounded-xl border border-slate-50/50">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] mb-1">
-                            Period
+                    <div className="space-y-3 pt-3 border-t border-slate-50">
+                      <div className="flex justify-between items-end">
+                        <div className="space-y-1">
+                          <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest leading-none">
+                            Interval Period
                           </p>
-                          <p className="font-bold text-slate-700 text-[13px] tracking-tight truncate">
+                          <p className="text-[14px] font-bold text-slate-800 tracking-tight">
                             {timeRange}
                           </p>
                         </div>
-                        {durationText && (
-                          <div className="text-right border-l border-slate-100 pl-3 min-w-[50px]">
-                            <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] mb-1">
-                              Net
-                            </p>
-                            <p className="font-black text-blue-600 text-sm tracking-tighter uppercase">
-                              {durationText}
-                            </p>
-                          </div>
-                        )}
+                        <div className="text-right">
+                          <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest leading-none mb-1">
+                            {dateStr}
+                          </p>
+                          <span className="px-2 py-0.5 bg-slate-900 text-white rounded text-[9px] font-bold uppercase tracking-wider">
+                            {durationText}
+                          </span>
+                        </div>
                       </div>
 
-                      <div className="px-0.5">
-                        <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] mb-1">
-                          Reason
-                        </p>
-                        <p className="text-sm font-medium text-slate-500 line-clamp-1 italic px-1">
-                          "{req.reason}"
-                        </p>
-                      </div>
+                      {req.reason && (
+                        <div className="bg-slate-50/50 p-3 rounded-lg border border-slate-50">
+                          <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mb-1">
+                            Reason Statement
+                          </p>
+                          <p className="text-[13px] font-medium text-slate-600 italic leading-relaxed">
+                            "{req.reason}"
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );

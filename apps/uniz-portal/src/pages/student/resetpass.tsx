@@ -159,18 +159,18 @@ export default function Resetpassword() {
 
   return (
     <div className="font-sans text-slate-900">
-      <div className="max-w-6xl mx-auto px-4 pt-12 pb-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-black tracking-tighter text-slate-900 mb-2">
-            Security
-          </h1>
-          <p className="text-slate-500 font-medium text-sm">
-            Manage your account security and password preferences.
+      <div className="max-w-6xl mx-auto px-4 pb-10">
+        <div className="flex flex-col gap-1.5 mb-8">
+          <p className="text-slate-500 font-medium text-[13px]">
+            Account Security Terminal
           </p>
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+            Reset Password
+          </h1>
         </div>
 
         {/* Main Content */}
-        <div className="bg-white rounded-3xl md:rounded-[2.5rem] overflow-hidden border border-slate-200 shadow-sm">
+        <div className="bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm">
           <div className="md:flex">
             {/* Form Section */}
             {/* Form Section */}
@@ -192,11 +192,11 @@ export default function Resetpassword() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
-                    Change Password
+                  <h3 className="text-[17px] font-semibold text-slate-900 tracking-tight">
+                    Credential Update
                   </h3>
-                  <p className="text-sm font-medium text-slate-500">
-                    Enter your details to update your password
+                  <p className="text-[13px] font-medium text-slate-400">
+                    Verify and update your access terminal credentials
                   </p>
                 </div>
               </div>
@@ -315,23 +315,23 @@ export default function Resetpassword() {
                   <button
                     onClick={sendDataToBackend}
                     disabled={isLoading}
-                    className="w-full uniz-primary-btn"
+                    className="w-full h-[46px] bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm"
                   >
-                    {isLoading ? "Processing..." : "Reset Password"}
+                    {isLoading ? "Processing..." : "Update Credentials"}
                   </button>
                   <button
                     onClick={() => navigateTo("/student")}
-                    className="w-full uniz-primary-btn bg-transparent text-slate-500 hover:text-blue-600 shadow-none hover:shadow-none hover:bg-slate-50"
+                    className="w-full h-[46px] text-slate-500 hover:text-slate-900 font-bold text-sm transition-colors"
                     disabled={isLoading}
                   >
-                    Back to Dashboard
+                    Back to Terminal
                   </button>
                 </div>
               </div>
             </div>
 
             {/* Info Section */}
-            <div className="md:w-1/3 bg-slate-50/50 p-6 md:p-8 border-l border-slate-100 flex flex-col justify-between">
+            <div className="hidden md:flex md:w-1/3 bg-slate-50/50 p-6 md:p-8 border-l border-slate-100 flex-col justify-between">
               <div>
                 <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
                   Password Strength
@@ -415,10 +415,10 @@ export default function Resetpassword() {
                 </div>
               </div>
 
-              <div className="mt-8 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+              <div className="mt-8 p-6 bg-slate-50/50 rounded-xl border border-slate-100 hidden md:block">
                 <div className="flex items-start gap-3">
                   <svg
-                    className="h-5 w-5 text-blue-600 mt-0.5"
+                    className="h-5 w-5 text-blue-500 mt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -430,9 +430,8 @@ export default function Resetpassword() {
                       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                     />
                   </svg>
-                  <p className="text-xs font-medium text-slate-600 leading-relaxed">
-                    For your security, you will be automatically logged out from
-                    all devices after successfully changing your password.
+                  <p className="text-[11px] font-medium text-slate-400 leading-relaxed uppercase tracking-wider">
+                    Terminal security protocol will automatically log out all sessions after successful credential update.
                   </p>
                 </div>
               </div>
