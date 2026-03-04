@@ -58,13 +58,13 @@ export const initSemester = async (
               ? b.toUpperCase()
               : b.branchName?.toUpperCase();
           if (!branchName) continue;
+
+          // Match subjects by base semester (SEM-1/2) and filter by year from code
           const subjects = await prisma.subject.findMany({
             where: {
-              OR: [
-                { semester: { contains: semesterKey, mode: "insensitive" } },
-                { semester: { contains: romanKey, mode: "insensitive" } },
-              ],
+              semester: { equals: semSuffix, mode: "insensitive" },
               department: { equals: branchName, mode: "insensitive" },
+              code: { contains: `-${yearSuffix}-`, mode: "insensitive" },
             },
           });
 
