@@ -333,11 +333,22 @@ export const getAvailableSubjects = async (
       isApproved: true,
     };
 
-    // If year is provided (e.g. E3), filter subjects that belong to E3-SEM-X
+    // If year is provided (e.g. E3), calculate target year
     if (year) {
+      const semName = openSem.name.toUpperCase();
+      const isNewYear = semName.includes("SEM-1");
+
+      let targetYear = year as string;
+      if (isNewYear) {
+        const currentYearNum = parseInt((year as string).replace("E", ""));
+        if (!isNaN(currentYearNum) && currentYearNum < 4) {
+          targetYear = `E${currentYearNum + 1}`;
+        }
+      }
+
       where.subject = {
         semester: {
-          startsWith: year as string,
+          startsWith: targetYear,
         },
       };
     }
@@ -480,7 +491,7 @@ export const getCurrentSubjects = async (
     });
 
     if (!activeSem) {
-      return res.json([]);
+      return res.json({ semester: null, subjects: [] });
     }
 
     // 2. Fetch registrations for this student in this semester
