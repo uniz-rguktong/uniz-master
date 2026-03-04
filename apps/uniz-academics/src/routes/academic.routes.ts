@@ -26,6 +26,7 @@ import {
   getSemesters,
   updateSemesterStatus,
   getDeanAllocations,
+  createAllocation,
   updateAllocation,
   approveBranchAllocation,
   getAvailableSubjects,
@@ -33,6 +34,7 @@ import {
   getCurrentSubjects,
   exportAcademicData,
   deleteSemester,
+  deleteAllocation,
   getRegistrations,
 } from "../controllers/registration.controller";
 import {
@@ -102,9 +104,11 @@ router.put("/semester/status/:id", updateSemesterStatus);
 router.delete("/semester/:id", deleteSemester);
 
 router.get("/dean/review/:branch", getDeanAllocations);
+router.post("/dean/allocation", createAllocation);
 router.put("/dean/allocation/:id", updateAllocation);
 router.put("/allocation/:id", updateAllocation);
 router.post("/dean/approve", approveBranchAllocation);
+router.delete("/dean/allocation/:id", deleteAllocation);
 
 router.get("/student/available", getAvailableSubjects);
 router.post("/student/register", registerSubjects);
