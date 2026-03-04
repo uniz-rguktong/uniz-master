@@ -86,7 +86,11 @@ export default function DeanDashboard() {
         return (
           <SemesterRegistrationSection
             isAdmin={false}
-            branch={localStorage.getItem("department") || "CSE"}
+            branch={
+              role === "dean"
+                ? "all"
+                : localStorage.getItem("department") || "CSE"
+            }
           />
         );
       case "system_logs":
@@ -231,11 +235,11 @@ export default function DeanDashboard() {
                 {username}
               </p>
               <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-widest mt-1.5 opacity-70">
-                Dean of Academics
+                {roleLabel}
               </p>
             </div>
             <div className="w-11 h-11 rounded-[14px] bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center font-semibold text-blue-700 shadow-inner group transition-all hover:scale-105 cursor-pointer">
-              {username[0].toUpperCase()}
+              {(username || "D")[0].toUpperCase()}
             </div>
           </div>
         </header>
