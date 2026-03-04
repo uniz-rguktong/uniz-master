@@ -13,6 +13,7 @@ import {
   searchFaculty,
   updateFacultyProfile,
   deleteFacultyProfile,
+  getTargetingData,
 } from "../controllers/profile.controller";
 
 import multer from "multer";
@@ -205,6 +206,7 @@ router.get("/admin/student/export", authMiddleware, exportStudentsSelective);
 router.get("/admin/upload-history", authMiddleware, getUploadHistory);
 router.post("/internal/upload-history", recordExternalUpload);
 router.post("/internal/bulk-profiles", getBulkProfiles);
+router.post("/internal/targeting", getTargetingData);
 
 router.get("/admin/student/:username", authMiddleware, getStudentProfile);
 router.put(

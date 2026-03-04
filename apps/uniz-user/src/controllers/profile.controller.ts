@@ -594,6 +594,52 @@ export const getBulkProfiles = async (req: Request, res: Response) => {
   }
 };
 
+export const getTargetingData = async (req: Request, res: Response) => {
+  const secret = req.headers["x-internal-secret"];
+  const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+
+  if (secret !== INTERNAL_SECRET) {
+    return res.status(401).json({ message: "Internal secret mismatch" });
+  }
+
+  const { target, branch, year } = req.body;
+
+  try {
+    let users: any[] = [];
+    if (target === "dean") {
+      users = await prisma.adminProfile.findMany({
+        where: { role: { equals: "dean", mode: "insensitive" } },
+        select: { username: true },
+      });
+    } else if (target === "hod") {
+      const where: any = { role: { equals: "hod", mode: "insensitive" } };
+      if (branch && branch.toLowerCase() !== "all") {
+        where.department = { equals: branch, mode: "insensitive" };
+      }
+      users = await prisma.facultyProfile.findMany({
+        where,
+        select: { username: true, name: true },
+      });
+    } else if (target === "students") {
+      const where: any = {};
+      if (branch && branch.toLowerCase() !== "all") {
+        where.branch = { equals: branch, mode: "insensitive" };
+      }
+      if (year && year.toLowerCase() !== "all") {
+        where.year = { equals: year, mode: "insensitive" };
+      }
+      users = await prisma.studentProfile.findMany({
+        where,
+        select: { username: true, name: true },
+      });
+    }
+
+    return res.json({ success: true, users });
+  } catch (e) {
+    return res.status(500).json({ message: "Targeting fetch failed" });
+  }
+};
+
 export const toggleUserSuspension = async (
   req: AuthenticatedRequest,
   res: Response,
