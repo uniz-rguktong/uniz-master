@@ -269,19 +269,25 @@ export const approveBranchAllocation = async (
   const { branch, semesterId, allocationId } = req.body;
 
   try {
-    const branchUpper = branch.toUpperCase();
-
     if (allocationId) {
       await prisma.branchAllocation.update({
         where: { id: allocationId },
         data: { isApproved: true },
       });
     } else {
-      const result = await prisma.branchAllocation.updateMany({
-        where: {
-          branch: { equals: branchUpper, mode: "insensitive" },
-          semesterId,
-        },
+      if (!branch || !semesterId) {
+        return res.status(400).json({ error: "Missing branch or semesterId" });
+      }
+
+      const branchUpper = branch === "all" ? undefined : branch.toUpperCase();
+
+      const whereClause: any = { semesterId };
+      if (branchUpper) {
+        whereClause.branch = { equals: branchUpper, mode: "insensitive" };
+      }
+
+      await prisma.branchAllocation.updateMany({
+        where: whereClause,
         data: { isApproved: true },
       });
     }
