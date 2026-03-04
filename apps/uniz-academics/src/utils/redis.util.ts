@@ -33,8 +33,13 @@ export const redis = redisUrl
 // Reuse Redis connection config but ensure compatibility with BullMQ
 export const notificationQueue = new Queue("notification-queue", {
   connection: redisUrl
-    ? new Redis(redisUrl, { maxRetriesPerRequest: null })
-    : new Redis({ maxRetriesPerRequest: null }),
+    ? {
+        host: new URL(redisUrl).hostname,
+        port: Number(new URL(redisUrl).port),
+        password: new URL(redisUrl).password,
+        maxRetriesPerRequest: null,
+      }
+    : { host: "localhost", port: 6379, maxRetriesPerRequest: null },
 });
 
 redis.on("error", (err) => {
