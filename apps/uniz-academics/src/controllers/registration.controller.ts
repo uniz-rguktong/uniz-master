@@ -209,11 +209,15 @@ export const getDeanAllocations = async (
       return res.status(404).json({ error: "No active semester found" });
     }
 
+    const whereClause: any = {
+      semesterId: activeSem.id,
+    };
+    if (branch !== "all") {
+      whereClause.branch = branch;
+    }
+
     const allocations = await prisma.branchAllocation.findMany({
-      where: {
-        semesterId: activeSem.id,
-        branch: branch,
-      },
+      where: whereClause,
       include: {
         subject: true,
         faculty: true,
