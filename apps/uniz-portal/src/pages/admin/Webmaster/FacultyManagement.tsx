@@ -9,12 +9,14 @@ import {
   Search,
   Filter,
   X,
+  Trash2,
 } from "lucide-react";
 import {
   SEARCH_FACULTY,
   CREATE_FACULTY,
   UPDATE_FACULTY,
   ADMIN_SUSPEND_FACULTY,
+  BASE_URL,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 
@@ -144,6 +146,34 @@ export default function FacultyManagement() {
     }
   };
 
+  const handleDelete = async (username: string) => {
+    const token = localStorage.getItem("admin_token");
+    if (
+      !window.confirm(
+        `CRITICAL: Are you sure you want to PERMANENTLY DELETE this faculty profile? This cannot be undone.`,
+      )
+    )
+      return;
+
+    try {
+      const res = await fetch(`${BASE_URL}/profile/admin/faculty/${username}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Profile deleted");
+        fetchFaculty();
+      } else {
+        toast.error(data.message || "Failed to delete");
+      }
+    } catch (error) {
+      toast.error("Network error during deletion");
+    }
+  };
+
   const openEdit = (member: any) => {
     setFormData({
       username: member.Username,
@@ -229,7 +259,7 @@ export default function FacultyManagement() {
                   User Details
                 </th>
                 <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
-                  Email Address
+                  Designation
                 </th>
                 <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   Role
@@ -269,23 +299,26 @@ export default function FacultyManagement() {
                           <p className="font-bold text-slate-900 tracking-tight leading-none mb-1.5">
                             {member.Name}
                           </p>
-                          <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-400 leading-none">
-                            ID: {member.Username}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <Mail size={10} className="text-slate-300" />
+                            <p className="text-[10px] font-medium text-slate-400 leading-none">
+                              {member.Email}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-10 py-6">
-                      <div className="flex items-center gap-3 text-slate-600">
-                        <Mail size={14} className="text-slate-300" />
-                        <span className="text-sm font-medium">
-                          {member.Email}
-                        </span>
-                      </div>
+                      <p className="text-xs font-black text-slate-600 uppercase tracking-wide">
+                        {member.Designation || "Lecturer"}
+                      </p>
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                        {member.Department}
+                      </p>
                     </td>
                     <td className="px-10 py-6">
                       <span className="px-3 py-1 bg-slate-50 rounded-lg text-slate-500 font-semibold uppercase tracking-widest text-[9px] border border-slate-100">
-                        {member.Role?.toUpperCase() || "READ_ONLY"}
+                        {member.Role?.toUpperCase() || "FACULTY"}
                       </span>
                     </td>
                     <td className="px-10 py-6">
@@ -318,6 +351,13 @@ export default function FacultyManagement() {
                           className={`flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-full text-[9px] font-bold uppercase tracking-widest transition-all hover:bg-slate-800 active:scale-95 shadow-lg shadow-slate-200 ${member.is_suspended ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-100" : ""}`}
                         >
                           {member.is_suspended ? "Reinstate" : "Suspend"}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(member.Username)}
+                          className="p-2.5 bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all active:scale-90 border border-red-100"
+                          title="Delete Faculty"
+                        >
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </td>

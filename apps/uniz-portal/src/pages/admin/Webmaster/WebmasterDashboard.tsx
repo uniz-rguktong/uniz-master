@@ -21,7 +21,7 @@ import StudentDetails from "./StudentDetails";
 import SubjectManagement from "./SubjectManagement";
 import UploadSection from "./UploadSection";
 import FacultyManagement from "./FacultyManagement";
-import SemesterRegistration from "./SemesterRegistration";
+import SemesterRegistration from "./SemesterRegistrationSection";
 
 import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";

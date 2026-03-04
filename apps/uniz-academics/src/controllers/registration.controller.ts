@@ -10,7 +10,7 @@ import * as ExcelJS from "exceljs";
  * @access Webmaster
  */
 const GATEWAY_URL =
-  process.env.GATEWAY_URL || "http://uniz-gateway:3000/api/v1";
+  process.env.GATEWAY_URL || "http://uniz-gateway-api:3000/api/v1";
 
 export const initSemester = async (
   req: AuthenticatedRequest,
@@ -20,6 +20,18 @@ export const initSemester = async (
   const user = req.user;
 
   try {
+    // 0. Check if semester already exists to prevent duplicates
+    const existing = await prisma.academicSemester.findFirst({
+      where: { name: academicSemester },
+    });
+
+    if (existing) {
+      return res.status(400).json({
+        error: "A semester with this label already exists.",
+        code: ErrorCode.RESOURCE_ALREADY_EXISTS,
+      });
+    }
+
     // 1. Create Academic Semester record
     const semester = await prisma.academicSemester.create({
       data: {
@@ -28,77 +40,82 @@ export const initSemester = async (
       },
     });
 
-    // 2. Extract the semester key (e.g. E1-SEM-1) from the label
-    // If the label contains E1-SEM-1, use that.
-    const semesterKey = academicSemester.match(/E[1-4]-SEM-[1-2]/)?.[0];
+    // 2. Extract the semester suffix (SEM-1 or SEM-2) from the label
+    const suffixMatch = academicSemester.match(/SEM-[1-2]/i);
+    const semSuffix = suffixMatch ? suffixMatch[0].toUpperCase() : null;
 
-    if (semesterKey) {
-      // 3. Auto-populate allocations for each selected branch
-      for (const b of branches) {
-        const branchName = b.branchName;
-        // Find subjects for this branch and semester
-        const subjects = await prisma.subject.findMany({
-          where: {
-            semester: semesterKey,
-            department: branchName,
-          },
-        });
+    console.log(`[MEGA-DEBUG] academicSemester: ${academicSemester}`);
+    console.log(`[MEGA-DEBUG] semSuffix: ${semSuffix}`);
+    console.log(`[MEGA-DEBUG] branches: ${JSON.stringify(branches)}`);
 
-        if (subjects.length > 0) {
-          await prisma.branchAllocation.createMany({
-            data: subjects.map((s) => ({
-              branch: branchName,
-              subjectId: s.id,
-              facultyId: "", // To be assigned by HOD (Dean review)
-              semesterId: semester.id,
-              isApproved: false,
-            })),
+    if (semSuffix) {
+      const years = ["E1", "E2", "E3", "E4"];
+
+      for (const yearSuffix of years) {
+        const semesterKey = `${yearSuffix}-${semSuffix}`;
+        console.log(`[MEGA-DEBUG] 🔍 Looking for ${semesterKey}...`);
+
+        for (const b of branches) {
+          const branchName = b.branchName.toUpperCase();
+          const subjects = await prisma.subject.findMany({
+            where: {
+              semester: { contains: semesterKey, mode: "insensitive" },
+              department: { equals: branchName, mode: "insensitive" },
+            },
           });
+          console.log(
+            `[MEGA-DEBUG]   Found ${subjects.length} subjects for ${branchName} ${semesterKey}`,
+          );
+
+          if (subjects.length > 0) {
+            console.log(
+              `      ✅ Found ${subjects.length} subjects for ${branchName} ${semesterKey}`,
+            );
+            await prisma.branchAllocation.createMany({
+              data: subjects.map((s) => ({
+                branch: branchName,
+                subjectId: s.id,
+                facultyId: null,
+                semesterId: semester.id,
+                isApproved: false,
+              })),
+              skipDuplicates: true, // Safety check
+            });
+          }
         }
       }
     }
 
     // 4. Trigger Notifications (Ads/Campaign)
-    // - Push Notification to all students
-    // - Banner Ad in student portal
     try {
       const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
       const headers = { "x-internal-secret": INTERNAL_SECRET };
+      const NOTIFY_URL = "http://uniz-gateway-api:3000/api/v1";
 
       // Push Notification
-      axios.post(
-        `${GATEWAY_URL}/notifications/push/send`,
-        {
-          title: "Registration Open!",
-          body: `Enrollment for ${academicSemester} has started. Visit the Academics portal.`,
-          topic: "STUDENTS",
-        },
-        { headers },
-      );
+      await axios
+        .post(
+          `${NOTIFY_URL}/notifications/push/send`,
+          {
+            target: "all",
+            title: "Registration Open! 🎓",
+            body: `Enrollment for ${academicSemester} has started. Visit the Academics portal to select your courses.`,
+          },
+          { headers, timeout: 5000 },
+        )
+        .catch((e) => console.error("Notification failed:", e.message));
 
-      // Banner/Ad Campaign
-      axios.post(
-        `${GATEWAY_URL}/cms/admin/banners`,
-        {
-          title: `Active Enrolment: ${academicSemester}`,
-          text: "Double check your subject allocations and NPTEL electives before finalizing. Registrations are monitored by respective HODs.",
-          imageUrl:
-            "https://rguktong.ac.in/assets/images/academic_calendar.jpg",
-          isVisible: true,
-        },
-        { headers },
-      );
-
-      // Public Notification
-      axios.post(
-        `${GATEWAY_URL}/cms/notifications`,
-        {
-          title: `Semester Registration: ${academicSemester}`,
-          content: `All branches (${branches.map((b: any) => b.branchName).join(", ")}) are requested to review and submit their course registrations.`,
-          isVisible: true,
-        },
-        { headers },
-      );
+      // Public Notification/Banner
+      await axios
+        .post(
+          `${NOTIFY_URL}/profile/internal/upload-history`, // Using existing internal route for verification or logging
+          {
+            title: `Active Enrolment: ${academicSemester}`,
+            text: "Registrations are live.",
+          },
+          { headers, timeout: 5000 },
+        )
+        .catch((e) => console.error("Banner failed:", e.message));
     } catch (notifError) {
       console.warn("Notification Trigger Failed:", notifError);
     }
@@ -132,6 +149,31 @@ export const updateSemesterStatus = async (
     res.json(semester);
   } catch (error) {
     res.status(500).json({ error: "Failed to update status" });
+  }
+};
+
+/**
+ * @desc Delete a semester
+ * @access Webmaster
+ */
+export const deleteSemester = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { id } = req.params;
+
+  try {
+    // 1. Delete associated registrations and allocations first (Cascade)
+    await prisma.registration.deleteMany({ where: { semesterId: id } });
+    await prisma.branchAllocation.deleteMany({ where: { semesterId: id } });
+
+    // 2. Delete the semester record
+    await prisma.academicSemester.delete({ where: { id } });
+
+    res.json({ success: true, message: "Semester deleted successfully" });
+  } catch (error) {
+    console.error("Delete Semester Error:", error);
+    res.status(500).json({ error: "Failed to delete semester" });
   }
 };
 
@@ -204,7 +246,7 @@ export const updateAllocation = async (
   const { facultyId, customName, customCredits, isApproved } = req.body;
 
   try {
-    const allocation = await prisma.branchAllocation.update({
+    const allocation = await (prisma.branchAllocation as any).update({
       where: { id },
       data: {
         facultyId,
@@ -256,7 +298,7 @@ export const getAvailableSubjects = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { branch } = req.query;
+  const { branch, year } = req.query;
 
   try {
     const openSem = await prisma.academicSemester.findFirst({
@@ -267,12 +309,23 @@ export const getAvailableSubjects = async (
       return res.status(404).json({ error: "Registration is not open" });
     }
 
+    const where: any = {
+      semesterId: openSem.id,
+      branch: branch as string,
+      isApproved: true,
+    };
+
+    // If year is provided (e.g. E3), filter subjects that belong to E3-SEM-X
+    if (year) {
+      where.subject = {
+        semester: {
+          startsWith: year as string,
+        },
+      };
+    }
+
     const subjects = await prisma.branchAllocation.findMany({
-      where: {
-        semesterId: openSem.id,
-        branch: branch as string,
-        isApproved: true,
-      },
+      where,
       include: {
         subject: true,
       },
@@ -329,33 +382,38 @@ export const registerSubjects = async (
     );
 
     // 3. Update Student Academic Profile in uniz-user service
-    // Extract year and sem from active semester name (e.g. "AY 2024-25 E1-S1")
-    const match =
-      sem.name.match(/E([1-4])-S([1-2])/i) ||
-      sem.name.match(/E([1-4])-SEM-([1-2])/i);
+    // Get the year/sem info from the first registered subject (assuming they belong to the same year)
+    const firstSubject = await prisma.subject.findFirst({
+      where: { id: subjectIds[0] },
+    });
 
-    if (match) {
-      try {
-        const yearInt = parseInt(match[1]);
-        const semInt = parseInt(match[2]);
+    if (firstSubject) {
+      const match = firstSubject.semester.match(/(E[1-4])-(SEM-[1-2])/i);
+      if (match) {
+        try {
+          const academicYear = match[1];
+          const academicSem = match[2];
 
-        const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
-        await axios.put(
-          `${GATEWAY_URL}/profile/student/update`,
-          {
-            year: `E${yearInt}`,
-            semester: `SEM-${semInt}`,
-            // Optionally update other details if passed
-          },
-          {
-            headers: {
-              Authorization: req.headers.authorization,
-              "x-internal-secret": INTERNAL_SECRET,
+          const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
+          await axios.put(
+            `${GATEWAY_URL}/profile/student/update`,
+            {
+              year: academicYear,
+              semester: academicSem,
             },
-          },
-        );
-      } catch (profileError) {
-        console.warn("User Profile Update Failed:", profileError);
+            {
+              headers: {
+                Authorization: req.headers.authorization,
+                "x-internal-secret": INTERNAL_SECRET,
+              },
+            },
+          );
+          console.log(
+            `✅ Student ${user.username} profile updated to ${academicYear} ${academicSem}`,
+          );
+        } catch (profileError) {
+          console.warn("User Profile Update Failed:", profileError);
+        }
       }
     }
 
@@ -471,7 +529,7 @@ export const exportAcademicData = async (
         include: { subject: true, faculty: true },
       });
 
-      data.forEach((d) => {
+      data.forEach((d: any) => {
         worksheet.addRow({
           branch: d.branch,
           subject: d.customName || d.subject.name,
