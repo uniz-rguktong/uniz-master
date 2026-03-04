@@ -53,7 +53,11 @@ export const initSemester = async (
           .replace("-SEM-2", "-SEM-II");
 
         for (const b of branches) {
-          const branchName = b.branchName.toUpperCase();
+          const branchName =
+            typeof b === "string"
+              ? b.toUpperCase()
+              : b.branchName?.toUpperCase();
+          if (!branchName) continue;
           const subjects = await prisma.subject.findMany({
             where: {
               OR: [
