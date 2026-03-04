@@ -22,6 +22,7 @@ import {
   DEAN_REVIEW,
   DEAN_APPROVE,
   GET_REGISTRATIONS,
+  ACADEMIC_FACULTY,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 
@@ -43,6 +44,7 @@ interface Allocation {
   branch: string;
   subject: { name: string; code: string; credits: number };
   faculty?: { name: string; username: string };
+  facultyId?: string;
   isApproved: boolean;
   customName?: string;
   customCredits?: number;
@@ -73,6 +75,7 @@ export default function SemesterRegistrationSection({
   >("allocations");
   const [registeredStudents, setRegisteredStudents] = useState<any[]>([]);
   const [branchFilter, setBranchFilter] = useState(branch || "all");
+  const [faculties, setFaculties] = useState<any[]>([]);
 
   // For New Semester Modal
   const [showNewModal, setShowNewModal] = useState(false);
@@ -206,13 +209,28 @@ export default function SemesterRegistrationSection({
     }
   };
 
+  const fetchFaculties = async (dept?: string) => {
+    try {
+      const url =
+        dept && dept !== "all"
+          ? `${ACADEMIC_FACULTY}?department=${dept}`
+          : ACADEMIC_FACULTY;
+      const res = await apiClient<any[]>(url);
+      if (res) setFaculties(res);
+    } catch (err) {
+      console.error("Failed to fetch faculties");
+    }
+  };
+
   const openEditModal = (item: Allocation) => {
     setEditingAllocation(item);
     setEditFormData({
       customName: item.customName || item.subject.name,
       customCredits: item.customCredits || item.subject.credits,
-      facultyId: item.faculty?.username || "",
+      facultyId: item.facultyId || "",
     });
+    // Fetch faculties for the relevant branch
+    fetchFaculties(item.branch);
   };
 
   const saveAllocation = async () => {
@@ -749,11 +767,9 @@ export default function SemesterRegistrationSection({
                   </div>
                   <div>
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">
-                      Faculty ID
+                      Assigned Faculty
                     </label>
-                    <input
-                      type="text"
-                      placeholder="Optional"
+                    <select
                       value={editFormData.facultyId}
                       onChange={(e) =>
                         setEditFormData({
@@ -761,8 +777,15 @@ export default function SemesterRegistrationSection({
                           facultyId: e.target.value,
                         })
                       }
-                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all px-6 py-4"
-                    />
+                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all px-6 py-4 appearance-none"
+                    >
+                      <option value="">Select Faculty (Optional)</option>
+                      {faculties.map((f) => (
+                        <option key={f.id} value={f.id}>
+                          {f.name} ({f.designation})
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
