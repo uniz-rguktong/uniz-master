@@ -1,7 +1,6 @@
-import { Queue, Worker } from "bullmq";
+import { Queue, Worker, Job } from "bullmq";
 import IORedis from "ioredis";
 import dotenv from "dotenv";
-import nodemailer from "nodemailer";
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -512,56 +511,8 @@ const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 const connection = new IORedis(REDIS_URL, { maxRetriesPerRequest: null });
 connection.on("error", (err) => console.error("Redis connection error:", err));
 
-const emailPoolStr = process.env.EMAIL_POOL || "";
-const accounts = emailPoolStr
-  ? emailPoolStr
-      .split(",")
-      .map((a) => a.split(":"))
-      .filter((a) => a.length === 2)
-  : [
-      [
-        process.env.EMAIL_USER || "noreply.uniz@gmail.com",
-        process.env.EMAIL_PASS || "pdke hcfz fltp qagc",
-      ],
-    ];
-
-let currentTransporterIndex = 0;
-const transporters = accounts.map(([user, pass]) =>
-  nodemailer.createTransport({
-    service: "gmail",
-    auth: { user, pass },
-  }),
-);
-
-const getTransporter = () => {
-  const transporter = transporters[currentTransporterIndex];
-  currentTransporterIndex = (currentTransporterIndex + 1) % transporters.length;
-  return transporter;
-};
-
-// --- EMAIL DELIVERY SETUP ---
-const sendEmailUnified = async (options: {
-  from: string;
-  to: string;
-  subject: string;
-  html: string;
-  attachments?: any[];
-}): Promise<{ success: boolean; id?: string }> => {
-  // Direct to Gmail Pool (Organization Account)
-  try {
-    const info = await getTransporter().sendMail(options);
-    console.log(
-      `[NotificationWorker] Sent via Org Mail: ID=${info.messageId}, To=${options.to}`,
-    );
-    return { success: true, id: info.messageId };
-  } catch (err: any) {
-    console.error(
-      `[NotificationWorker] Email delivery failed for ${options.to}:`,
-      err.message,
-    );
-    return { success: false };
-  }
-};
+// --- EMAIL DELIVERY REMOVED (Policy: OTP Only) ---
+// Notifications now only use Targeted Web Push.
 // --- END EMAIL DELIVERY SETUP ---
 
 // --- WEB PUSH SETUP ---
@@ -581,7 +532,7 @@ webpush.setVapidDetails(
 const sendWebPush = async (
   username: string,
   payload: { title: string; body: string; data?: any },
-) => {
+): Promise<number> => {
   try {
     // Only send to the 3 most recently active devices to prevent "noise" on old devices
     // and focus on the devices the user is currently using.
@@ -593,7 +544,7 @@ const sendWebPush = async (
 
     if (subscriptions.length === 0) {
       console.log(`[Push] No subscriptions found for user: ${username}`);
-      return;
+      return 0;
     }
 
     const pushPayload = JSON.stringify({
@@ -625,13 +576,9 @@ const sendWebPush = async (
             console.warn(
               `[Push] Subscription expired (${statusCode}) for user ${username}. Deleting endpoint: ${sub.endpoint.slice(-30)}`,
             );
-            await prisma.pushSubscription
-              .delete({ where: { endpoint: sub.endpoint } })
-              .catch((e: any) =>
-                console.error(
-                  `[Push] Failed to delete stale sub: ${e.message}`,
-                ),
-              );
+            await prisma.pushSubscription.delete({
+              where: { endpoint: sub.endpoint },
+            });
           } else {
             console.error(
               `[Push] Push failed for user ${username} (status=${statusCode}): ${pushErr.message}`,
@@ -642,66 +589,32 @@ const sendWebPush = async (
       }),
     );
 
-    const succeeded = results.filter((r) => r.status === "fulfilled").length;
-    const failed = results.filter((r) => r.status === "rejected").length;
+    const succeededCount = results.filter(
+      (r) => r.status === "fulfilled",
+    ).length;
     console.log(
-      `[Push] Sent to ${subscriptions.length} device(s) for user: ${username} (ok=${succeeded} fail=${failed})`,
+      `[Push] User=${username}: reached ${succeededCount}/${subscriptions.length} devices.`,
     );
+    return succeededCount;
   } catch (err: any) {
     console.error(`[Push] Error in sendWebPush: ${err.message}`);
+    return 0;
   }
 };
 // --- END WEB PUSH SETUP ---
 
-// Verify transporter pool at startup (non-blocking)
-console.log(
-  `[NotificationWorker] Verifying SMTP pool with ${transporters.length} accounts...`,
-);
-transporters[0]
-  .verify()
-  .then(() => {
-    console.log("[NotificationWorker] Primary transporter is ready");
-  })
-  .catch((err) => {
-    console.error(
-      "[NotificationWorker] Primary transporter verification failed:",
-      err.message,
-    );
-  });
+// Email transporter logic removed.
+// Policy: No active emails from notification service.
+// Primary email provider (SES) is in uniz-mail for OTPs.
 
 // Queue handle used by HTTP test endpoint to enqueue test jobs
 const notificationQueue = new Queue("notification-queue", {
   connection,
 });
 
-const emailTemplate = (title: string, content: string) => `
-  <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; color: #1a1a1b; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #eeeeee; border-radius: 8px;">
-    <!-- Minimal Header -->
-    <div style="margin-bottom: 30px; border-bottom: 2px solid #cc0000; padding-bottom: 15px;">
-      <h1 style="font-size: 20px; font-weight: 700; margin: 0; color: #cc0000; letter-spacing: -0.5px;">UniZ Academics</h1>
-    </div>
-    
-    <!-- Body -->
-    <div style="padding: 10px 0;">
-      <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 20px; color: #000000;">${title}</h2>
-      <div style="font-size: 15px; color: #374151;">
-        ${content}
-      </div>
-    </div>
-    
-    <!-- Footer -->
-    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #f3f4f6;">
-      <p style="font-size: 13px; color: #6b7280; margin: 0;">
-        Regards,<br>
-        <strong>Office of Academic Affairs</strong><br>
-        Rajiv Gandhi University of Knowledge Technologies - AP
-      </p>
-      <p style="font-size: 11px; color: #9ca3af; margin-top: 20px;">
-        This is an official automated notification. Please do not reply directly to this email.
-      </p>
-    </div>
-  </div>
-`;
+// Email templates removed. Policy: Only PUSH notifications.
+// Result PDFs are still generated and can be downloaded from portal.
+// --- END TEMPLATES ---
 
 // NOTE: Jobs are enqueued with their BullMQ job name used as the "type"
 // (e.g. "EMAIL", "RESULTS", "ATTENDANCE_REPORT"). The original implementation
@@ -748,60 +661,17 @@ const worker = new Worker(
 
     try {
       if (jobType === "EMAIL") {
-        console.log(
-          `${logPrefix} Attempting EMAIL send`,
-          JSON.stringify({
-            to: rawRecipient,
-            subject,
-          }),
-        );
-
-        // Generic EMAIL jobs are disabled per user policy
-        console.log(
-          `[NotificationWorker] Generic email suppressed for ${rawRecipient}`,
-        );
-        /*
-        const emailResult = await sendEmailUnified(
-          {
-            from: '"UniZ Official" <webadmin@rguktong.ac.in>',
-            to: rawRecipient,
-            subject: subject || "UniZ Notification",
-            html:
-              html ||
-              emailTemplate(subject || "Notification", `<p>${body}</p>`),
-          },
-          false,
-        ); // Notification worker jobs are never high priority for Resend
-        */
-        const emailResult = { success: true, id: "SUPPRESSED" }; // Mock result for suppressed email
-
-        // Trigger Targeted Web Push for outpass/outing/profile notifications
-        const pushSubjects = [
-          "outpass",
-          "outing",
-          "profile",
-          "security alert",
-          "login",
-        ];
-        const subjectLower = (subject || "").toLowerCase();
-        const shouldPush = pushSubjects.some((k) => subjectLower.includes(k));
-        if (shouldPush) {
-          const pushUsername =
-            (job.data as any).username || rawRecipient.split("@")[0];
-          await sendWebPush(pushUsername, {
-            title: subject || "UniZ Notification",
-            body: body || "You have a new update on UniZ.",
-            data: { type: "GENERIC" },
-          });
-        }
+        // Targeted Web Push Only
+        const pushUsername =
+          (job.data as any).username || rawRecipient.split("@")[0];
+        const pushSentCount = await sendWebPush(pushUsername, {
+          title: subject || "UniZ Notification",
+          body: body || "You have a new update on UniZ.",
+          data: { type: "GENERIC" },
+        });
 
         console.log(
-          `${logPrefix} EMAIL send result`,
-          JSON.stringify({
-            to: rawRecipient,
-            success: emailResult.success,
-            id: emailResult.id,
-          }),
+          `${logPrefix} Targeted push reached ${pushSentCount} devices. Email suppressed per policy.`,
         );
       } else if (jobType === "RESULTS") {
         const { semesterId } = job.data as any;
@@ -822,57 +692,21 @@ const worker = new Worker(
           );
         }
 
-        console.log(
-          `${logPrefix} Sending RESULTS email`,
-          JSON.stringify({
-            to: rawRecipient,
-            semesterId,
-            withAttachment: !!pdfBuffer,
-          }),
-        );
-
-        // RESULTS email jobs are disabled per user policy
-        console.log(
-          `[NotificationWorker] Results email suppressed for ${rawRecipient}`,
-        );
-        /*
-        const emailResult = await sendEmailUnified(
-          {
-            from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
-            to: rawRecipient,
-            subject: `Result Declaration: ${semesterId}`,
-            html: emailTemplate(
-              `Result Declaration: ${semesterId}`,
-              `<p>Dear Student,<br><br>The results for <strong>${semesterId}</strong> have been published.${
-                pdfBuffer
-                  ? "<br>Please find the detailed grade report attached."
-                  : "<br>(Note: PDF generation is currently unavailable; this email has no attachment.)"
-              }</p>`,
-            ),
-            attachments: pdfBuffer
-              ? [
-                  {
-                    filename: `ACADEMIC_REPORT_${(job.data as any).username}_${semesterId}.pdf`,
-                    content: pdfBuffer,
-                    contentType: "application/pdf",
-                  },
-                ]
-              : [],
-          },
-          false,
-        ); // Results are NOT high priority for Resend
-        */
-        const emailResult = { success: true, id: "SUPPRESSED" }; // Mock result for suppressed email
+        // Targeted Push Notice Only
+        const pushUsername = (job.data as any).username;
+        const pushSentCount = await sendWebPush(pushUsername, {
+          title: "Results Published",
+          body: `Official results for ${semesterId} are now available.`,
+          data: { type: "RESULTS", semesterId },
+        });
 
         console.log(
-          `${logPrefix} RESULTS email sent`,
-          JSON.stringify({
-            to: rawRecipient,
-            success: emailResult.success,
-            id: emailResult.id,
-          }),
+          `${logPrefix} Targeted push reached ${pushSentCount} devices. Results email suppressed.`,
         );
-        // Results are email-only, no push notification
+
+        console.log(
+          `${logPrefix} RESULTS processing complete for ${rawRecipient}`,
+        );
       } else if (jobType === "ATTENDANCE_REPORT") {
         const { semesterId } = job.data as any;
         console.log(
@@ -892,57 +726,21 @@ const worker = new Worker(
           );
         }
 
-        console.log(
-          `${logPrefix} Sending ATTENDANCE_REPORT email`,
-          JSON.stringify({
-            to: rawRecipient,
-            semesterId,
-            withAttachment: !!pdfBuffer,
-          }),
-        );
-
-        // ATTENDANCE email jobs are disabled per user policy
-        console.log(
-          `[NotificationWorker] Attendance email suppressed for ${rawRecipient}`,
-        );
-        /*
-        const emailResult = await sendEmailUnified(
-          {
-            from: '"UniZ Academics" <noreply@uniz.rguktong.in>',
-            to: rawRecipient,
-            subject: `Attendance Report: ${semesterId}`,
-            html: emailTemplate(
-              `Attendance Report: ${semesterId}`,
-              `<p>Dear Student,<br><br>The attendance report for <strong>${semesterId}</strong> is now available.${
-                pdfBuffer
-                  ? "<br>Please find your detailed attendance record attached."
-                  : "<br>(Note: PDF generation is currently unavailable; this email has no attachment.)"
-              }</p>`,
-            ),
-            attachments: pdfBuffer
-              ? [
-                  {
-                    filename: `${(job.data as any).username.toUpperCase()}_Attendance_${semesterId}.pdf`,
-                    content: pdfBuffer,
-                    contentType: "application/pdf",
-                  },
-                ]
-              : [],
-          },
-          false,
-        ); // Attendance is NOT high priority for Resend
-        */
-        const emailResult = { success: true, id: "SUPPRESSED" }; // Mock result for suppressed email
+        // PRIORITY 1: Push Notice
+        const pushUsername = (job.data as any).username;
+        const pushSentCount = await sendWebPush(pushUsername, {
+          title: "Attendance Report Published",
+          body: `The attendance record for ${semesterId} is now available.`,
+          data: { type: "ATTENDANCE", semesterId },
+        });
 
         console.log(
-          `${logPrefix} ATTENDANCE_REPORT email sent`,
-          JSON.stringify({
-            to: rawRecipient,
-            success: emailResult.success,
-            id: emailResult.id,
-          }),
+          `${logPrefix} Targeted push reached ${pushSentCount} devices. Attendance email suppressed.`,
         );
-        // Attendance is email-only, no push notification
+
+        console.log(
+          `${logPrefix} ATTENDANCE_REPORT processing complete for ${rawRecipient}`,
+        );
       } else {
         console.warn(
           `${logPrefix} Unknown job type; skipping processing.`,
@@ -957,7 +755,12 @@ const worker = new Worker(
       throw err;
     }
   },
-  { connection, concurrency: 5 }, // Process 5 jobs at once for throughput
+  {
+    connection,
+    concurrency: 10,
+    removeOnComplete: { count: 100 },
+    removeOnFail: { count: 500 },
+  },
 );
 
 worker.on("completed", (job) => {
