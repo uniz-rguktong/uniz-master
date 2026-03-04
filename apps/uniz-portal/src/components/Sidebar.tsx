@@ -1,7 +1,8 @@
-import { useRecoilState, useRecoilValue } from "recoil";
-import { is_authenticated, student } from "../store";
+import { useRecoilValue } from "recoil";
+import { student } from "../store";
 import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../hooks/is_authenticated";
+import { useLogout } from "../hooks/useLogout";
 import { useState, lazy, Suspense, useEffect } from "react";
 import { enableOutingsAndOutpasses } from "../pages/student/student";
 import {
@@ -17,6 +18,7 @@ import {
   AlertCircle,
   Menu,
   ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -59,7 +61,7 @@ export default function Sidebar({ content }: MainContent) {
   useIsAuth();
   const userData = useRecoilValue<any>(student);
   const navigate = useNavigate();
-  const [_isAuth, setAuth] = useRecoilState(is_authenticated);
+
 
   const [isOpen, setIsOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -103,15 +105,10 @@ export default function Sidebar({ content }: MainContent) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const { logout } = useLogout();
+
   const handleLogout = () => {
-    localStorage.removeItem("student_token");
-    localStorage.removeItem("username");
-    localStorage.removeItem("admin_token");
-    setAuth({
-      is_authnticated: false,
-      type: "",
-    });
-    navigate("/");
+    logout();
   };
 
   const navItems = [
@@ -290,7 +287,7 @@ export default function Sidebar({ content }: MainContent) {
         className={`
           fixed top-0 left-0 h-screen z-40 transition-all duration-300 ease-in-out flex
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
-          w-full max-w-[320px] md:max-w-none md:w-72
+          w-full max-w-[320px] md:max-w-none ${isOpen ? "md:w-72" : "md:w-20"}
           md:translate-x-0 md:sticky md:top-0 md:z-auto
           ${isOpen ? "bg-[#EBF5FF] md:bg-white/70" : "bg-white/70"}
           md:backdrop-blur-xl md:border-r md:border-white/50 premium-shadow
@@ -542,14 +539,16 @@ export default function Sidebar({ content }: MainContent) {
                   alt="Ongole Logo"
                 />
               </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-slate-900 text-[19px] tracking-tight leading-none">
-                  Ongole
-                </span>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-blue-600/70 font-bold mt-1.5 px-0.5">
-                  Student Portal
-                </span>
-              </div>
+              {isOpen && (
+                <div className="flex flex-col animate-in fade-in duration-500">
+                  <span className="font-bold text-slate-900 text-[19px] tracking-tight leading-none">
+                    Ongole
+                  </span>
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-blue-600/70 font-bold mt-1.5 px-0.5">
+                    Student Portal
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -589,13 +588,15 @@ export default function Sidebar({ content }: MainContent) {
                         />
                       </div>
 
-                      <div className="flex items-center justify-between w-full">
-                        <span
-                          className={`text-[15px] ${isActive ? "font-semibold" : "font-medium"}`}
-                        >
-                          {item.label}
-                        </span>
-                      </div>
+                      {isOpen && (
+                        <div className="flex items-center justify-between w-full animate-in fade-in duration-500">
+                          <span
+                            className={`text-[15px] ${isActive ? "font-semibold" : "font-medium"}`}
+                          >
+                            {item.label}
+                          </span>
+                        </div>
+                      )}
                     </button>
                   </li>
                 );
@@ -623,11 +624,13 @@ export default function Sidebar({ content }: MainContent) {
                     )}
                   </div>
                 </div>
-                <div className="flex-1 min-w-0 ml-3">
-                  <p className="text-[15px] font-semibold text-slate-900 truncate tracking-tight">
-                    {userData?.name || "Student"}
-                  </p>
-                </div>
+                {isOpen && (
+                  <div className="flex-1 min-w-0 ml-3 animate-in fade-in duration-500">
+                    <p className="text-[15px] font-semibold text-slate-900 truncate tracking-tight">
+                      {userData?.name || "Student"}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -640,7 +643,7 @@ export default function Sidebar({ content }: MainContent) {
                 <div className="flex items-center justify-center min-w-[24px]">
                   <LogOut className="h-[20px] w-[20px] flex-shrink-0 group-hover:text-red-600" />
                 </div>
-                <span className="text-[15px] font-semibold">Logout</span>
+                {isOpen && <span className="text-[15px] font-semibold animate-in fade-in duration-500">Logout</span>}
               </button>
             </div>
           </div>
@@ -648,7 +651,38 @@ export default function Sidebar({ content }: MainContent) {
       </div>
 
       {/* Main Content Area */}
-      <main className="flex-1 transition-all duration-300 ease-in-out">
+      <main className="flex-1 md:overflow-y-auto md:max-h-screen transition-all duration-300 ease-in-out">
+        {/* Desktop Header */}
+        <header className="bg-white/95 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-100/80 p-5 px-8 flex justify-between items-center shadow-sm shadow-slate-50/50 hidden md:flex">
+          <button
+            onClick={toggleSidebar}
+            className="w-10 h-10 flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full hover:bg-white hover:shadow-lg transition-all text-slate-400 hover:text-blue-600 active:scale-95"
+          >
+            {isOpen ? <Menu size={18} /> : <ChevronRight size={18} />}
+          </button>
+          <div className="flex items-center gap-4">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-semibold text-slate-900 leading-none">
+                {userData?.name || "Student"}
+              </p>
+              <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
+                University Student
+              </p>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center font-semibold text-blue-600 overflow-hidden shadow-inner">
+              {userData?.profile_url ? (
+                <img
+                  src={userData.profile_url}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                userData?.name?.charAt(0) || "S"
+              )}
+            </div>
+          </div>
+        </header>
+
         <div className="p-4 pb-32 md:p-10 min-h-full">
           <Suspense fallback={<ContentSkeleton />}>
             {contentMap[content] || <Error />}
