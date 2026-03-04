@@ -13,7 +13,11 @@ import {
   changePassword,
   adminResetPassword,
 } from "../controllers/auth.controller";
-import { rateLimiter } from "../middlewares/ratelimit.middleware";
+import {
+  rateLimiter,
+  otpMinuteLimiter,
+  otpHourLimiter,
+} from "../middlewares/ratelimit.middleware";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { validateRequest } from "../middlewares/validation.middleware";
 import { z } from "zod";
@@ -74,13 +78,15 @@ router.post(
 router.post("/signup", validateRequest(SignupSchema), signup);
 router.post(
   "/otp/request",
-  rateLimiter,
+  otpHourLimiter,
+  otpMinuteLimiter,
   validateRequest(OtpRequestSchema),
   requestOtp,
 );
 router.post(
   "/otp/request-email",
-  rateLimiter,
+  otpHourLimiter,
+  otpMinuteLimiter,
   validateRequest(OtpRequestSchema),
   requestOtpEmail,
 );
