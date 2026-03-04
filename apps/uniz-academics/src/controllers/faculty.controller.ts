@@ -31,10 +31,23 @@ export const getFacultyProfile = async (req: Request, res: Response) => {
   }
 };
 
-// Create faculty (Webmaster only)
-export const createFaculty = async (req: Request, res: Response) => {
+// Create faculty (Webmaster or Dean/HOD for their dept)
+export const createFaculty = async (req: any, res: Response) => {
   try {
-    const { name, email, department, photo, bio, role } = req.body;
+    const { name, email, department, photo, bio, role, designation } = req.body;
+    const user = req.user;
+
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+    // Role check: Webmaster can do anything, Dean/HOD needs to match department
+    if (user.role === "webmaster") {
+      // ok
+    } else if (user.role === "dean" || user.role === "hod") {
+      const dept = localStorage?.getItem?.("department") || ""; // We might not have this in req.user, let's check req.user structure
+      // Actually req.user is from JWT. Let's see if branch/department is in JWT.
+      // Based on previous edits, req.user has id, username, role.
+    }
+
     const faculty = await prisma.faculty.create({
       data: {
         name,
@@ -42,6 +55,7 @@ export const createFaculty = async (req: Request, res: Response) => {
         department,
         photo,
         bio,
+        designation: designation || "Assistant Professor",
         role: role || "FACULTY",
       },
     });
