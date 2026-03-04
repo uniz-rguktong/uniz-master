@@ -157,7 +157,7 @@ export default function SemesterRegistrationSection({
     try {
       const res = await apiClient(DEAN_APPROVE, {
         method: "POST",
-        body: JSON.stringify({ branch }),
+        body: JSON.stringify({ branch, semesterId: selectedSem?.id }),
       });
       if (res) {
         toast.success("Review Completed Successfully");
