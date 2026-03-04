@@ -20,6 +20,7 @@ import UploadSection from "../Webmaster/UploadSection";
 import GradesSection from "../Webmaster/GradesSection";
 import StudentBulkSection from "../Webmaster/StudentBulkSection";
 import SystemLogsSection from "../Webmaster/SystemLogsSection";
+import SemesterRegistrationSection from "../Webmaster/SemesterRegistrationSection";
 
 export default function DeanDashboard() {
   useIsAuth();
@@ -32,6 +33,7 @@ export default function DeanDashboard() {
     | "attendance"
     | "grades"
     | "grades_mgmt"
+    | "semester_review"
     | "system_logs"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -46,6 +48,7 @@ export default function DeanDashboard() {
     { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
     { id: "grades", label: "Grades Upload", icon: GraduationCap },
     { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
+    { id: "semester_review", label: "Course Review", icon: CalendarCheck },
     { id: "system_logs", label: "System & Logs", icon: Activity },
   ];
 
@@ -68,6 +71,13 @@ export default function DeanDashboard() {
         return <UploadSection type="grades" />;
       case "grades_mgmt":
         return <GradesSection />;
+      case "semester_review":
+        return (
+          <SemesterRegistrationSection
+            isAdmin={false}
+            branch={JSON.parse(localStorage.getItem("department") || '"CSE"')}
+          />
+        );
       case "system_logs":
         return <SystemLogsSection />;
       default:

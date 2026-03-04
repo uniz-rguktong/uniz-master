@@ -241,9 +241,14 @@ export const adminUpdateStudentProfile = async (
   }
 
   try {
-    const updated = await prisma.studentProfile.update({
+    const updated = await prisma.studentProfile.upsert({
       where: { username },
-      data: updates,
+      update: updates,
+      create: {
+        id: randomUUID(),
+        username,
+        ...updates,
+      },
     });
 
     // Invalidate profile cache to prevent stale data
@@ -716,6 +721,33 @@ export const updateFacultyProfile = async (
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to update profile",
+    });
+  }
+};
+
+export const deleteFacultyProfile = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const username = req.params.username.toUpperCase();
+
+  if (!user || user.role !== UserRole.WEBMASTER) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  try {
+    await prisma.facultyProfile.delete({
+      where: { username },
+    });
+    return res.json({ success: true, message: "Faculty profile deleted" });
+  } catch (e) {
+    console.error("Delete Faculty Error:", e);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to delete profile",
     });
   }
 };

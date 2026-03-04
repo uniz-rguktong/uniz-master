@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ShieldCheck,
   AlertCircle,
+  Trash2,
 } from "lucide-react";
 import {
   SEMESTERS,
@@ -67,6 +68,22 @@ export default function SemesterRegistration() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (
+      !window.confirm("Are you sure you want to delete this semester session?")
+    )
+      return;
+    try {
+      await apiClient(`${SEMESTERS}/${id}`, {
+        method: "DELETE",
+      });
+      toast.success("Semester deleted successfully");
+      fetchSemesters();
+    } catch (error: any) {
+      toast.error(error.message || "Delete failed");
+    }
+  };
+
   const handleInitSemester = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -99,7 +116,10 @@ export default function SemesterRegistration() {
     switch (status) {
       case "UPCOMING":
         return "bg-slate-100 text-slate-600 border-slate-200";
+      case "DEAN_REVIEW":
+        return "bg-amber-50 text-amber-600 border-amber-100";
       case "REGISTRATION":
+      case "REGISTRATION_OPEN":
         return "bg-blue-50 text-blue-600 border-blue-100";
       case "ONGOING":
         return "bg-emerald-50 text-emerald-600 border-emerald-100";
@@ -162,7 +182,7 @@ export default function SemesterRegistration() {
                       <span
                         className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${getStatusColor(sem.status)}`}
                       >
-                        {sem.status}
+                        {sem.status.replace("_", " ")}
                       </span>
                       <span className="text-slate-300 font-bold">•</span>
                       <p className="text-xs font-bold text-slate-400 font-outfit tracking-wide">
@@ -178,15 +198,19 @@ export default function SemesterRegistration() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4">
-                  {sem.status === "UPCOMING" && (
+                  {(sem.status === "DEAN_REVIEW" ||
+                    sem.status === "UPCOMING") && (
                     <button
-                      onClick={() => handleStatusUpdate(sem.id, "REGISTRATION")}
+                      onClick={() =>
+                        handleStatusUpdate(sem.id, "REGISTRATION_OPEN")
+                      }
                       className="px-6 py-3 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
                     >
                       <Play size={14} fill="currentColor" /> Open Registration
                     </button>
                   )}
-                  {sem.status === "REGISTRATION" && (
+                  {(sem.status === "REGISTRATION" ||
+                    sem.status === "REGISTRATION_OPEN") && (
                     <button
                       onClick={() => handleStatusUpdate(sem.id, "ONGOING")}
                       className="px-6 py-3 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100"
@@ -202,6 +226,14 @@ export default function SemesterRegistration() {
                       <CheckCircle2 size={14} /> Close Semester
                     </button>
                   )}
+
+                  <button
+                    onClick={() => handleDelete(sem.id)}
+                    className="p-3 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all shadow-sm border border-red-100 active:scale-90"
+                    title="Delete Session"
+                  >
+                    <Trash2 size={16} />
+                  </button>
 
                   <div className="h-10 w-[1px] bg-slate-100 hidden lg:block mx-2" />
 

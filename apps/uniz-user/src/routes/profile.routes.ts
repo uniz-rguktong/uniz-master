@@ -12,6 +12,7 @@ import {
   toggleUserSuspension,
   searchFaculty,
   updateFacultyProfile,
+  deleteFacultyProfile,
 } from "../controllers/profile.controller";
 
 import multer from "multer";
@@ -233,6 +234,7 @@ router.post(
 );
 router.post("/faculty/search", authMiddleware, searchFaculty);
 router.put("/admin/faculty/:username", authMiddleware, updateFacultyProfile);
+router.delete("/admin/faculty/:username", authMiddleware, deleteFacultyProfile);
 router.put(
   "/admin/faculty/:username/suspend",
   authMiddleware,
