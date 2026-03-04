@@ -429,7 +429,12 @@ export const createFacultyProfile = async (
   const username = String(req.body.username || "").toLowerCase();
 
   // Admin role check
-  const adminRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
+  const adminRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.HOD,
+  ];
   if (!user || !adminRoles.includes(user.role as UserRole)) {
     return res
       .status(403)
@@ -738,7 +743,13 @@ export const updateFacultyProfile = async (
   const username = req.params.username.toUpperCase();
   const updates = req.body;
 
-  if (!user || user.role !== UserRole.WEBMASTER) {
+  const adminRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.HOD,
+  ];
+  if (!user || !adminRoles.includes(user.role as UserRole)) {
     return res
       .status(403)
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
@@ -813,7 +824,13 @@ export const deleteFacultyProfile = async (
   const user = req.user;
   const username = req.params.username.toLowerCase();
 
-  if (!user || user.role !== UserRole.WEBMASTER) {
+  const adminRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.HOD,
+  ];
+  if (!user || !adminRoles.includes(user.role as UserRole)) {
     return res
       .status(403)
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });

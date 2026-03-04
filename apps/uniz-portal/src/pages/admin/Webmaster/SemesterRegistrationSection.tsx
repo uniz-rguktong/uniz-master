@@ -191,12 +191,22 @@ export default function SemesterRegistrationSection({
   };
 
   const approveAllocation = async () => {
+    const unassignedCount = allocations.filter(
+      (a) => !a.facultyId && !a.faculty,
+    ).length;
+    if (unassignedCount > 0) {
+      toast.error(
+        `Cannot approve: ${unassignedCount} subjects are missing faculty assignments.`,
+      );
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await apiClient(DEAN_APPROVE, {
         method: "POST",
         body: JSON.stringify({
-          branch: branchFilter === "all" ? "all" : branchFilter,
+          branch: branchFilter,
           semesterId: selectedSem?.id,
         }),
       });
@@ -502,6 +512,100 @@ export default function SemesterRegistrationSection({
             </table>
           </div>
         )}
+
+        {/* Edit Allocation Modal (Moved here so it mounts when in details view) */}
+        {editingAllocation && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+              <div className="p-10 space-y-8">
+                <div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">
+                    Edit Allocation
+                  </h3>
+                  <p className="text-slate-400 text-sm font-medium italic">
+                    Apply custom overrides for {editingAllocation.subject.code}
+                  </p>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">
+                      Display Name
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.customName}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          customName: e.target.value,
+                        })
+                      }
+                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">
+                        Credits
+                      </label>
+                      <input
+                        type="number"
+                        value={editFormData.customCredits}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            customCredits: parseInt(e.target.value),
+                          })
+                        }
+                        className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">
+                        Assigned Faculty
+                      </label>
+                      <select
+                        value={editFormData.facultyId}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            facultyId: e.target.value,
+                          })
+                        }
+                        className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all px-6 py-4 appearance-none"
+                      >
+                        <option value="">Select Faculty (Optional)</option>
+                        {faculties.map((f) => (
+                          <option key={f.id} value={f.id}>
+                            {f.name} ({f.designation})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    onClick={() => setEditingAllocation(null)}
+                    className="flex-1 py-4 bg-slate-50 text-slate-500 rounded-2xl font-bold"
+                  >
+                    Discard
+                  </button>
+                  <button
+                    onClick={saveAllocation}
+                    disabled={loading}
+                    className="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-xl shadow-blue-100"
+                  >
+                    {loading ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -709,100 +813,6 @@ export default function SemesterRegistrationSection({
                   className="flex-2 px-10 py-5 bg-slate-900 text-white rounded-[24px] font-bold shadow-xl shadow-slate-200 disabled:opacity-50"
                 >
                   {loading ? "Initializing..." : "Launch Event 🚀"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Allocation Modal */}
-      {editingAllocation && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
-            <div className="p-10 space-y-8">
-              <div>
-                <h3 className="text-2xl font-black text-slate-900 mb-2">
-                  Edit Allocation
-                </h3>
-                <p className="text-slate-400 text-sm font-medium italic">
-                  Apply custom overrides for {editingAllocation.subject.code}
-                </p>
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">
-                    Display Name
-                  </label>
-                  <input
-                    type="text"
-                    value={editFormData.customName}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        customName: e.target.value,
-                      })
-                    }
-                    className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">
-                      Credits
-                    </label>
-                    <input
-                      type="number"
-                      value={editFormData.customCredits}
-                      onChange={(e) =>
-                        setEditFormData({
-                          ...editFormData,
-                          customCredits: parseInt(e.target.value),
-                        })
-                      }
-                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">
-                      Assigned Faculty
-                    </label>
-                    <select
-                      value={editFormData.facultyId}
-                      onChange={(e) =>
-                        setEditFormData({
-                          ...editFormData,
-                          facultyId: e.target.value,
-                        })
-                      }
-                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all px-6 py-4 appearance-none"
-                    >
-                      <option value="">Select Faculty (Optional)</option>
-                      {faculties.map((f) => (
-                        <option key={f.id} value={f.id}>
-                          {f.name} ({f.designation})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-4 pt-4">
-                <button
-                  onClick={() => setEditingAllocation(null)}
-                  className="flex-1 py-4 bg-slate-50 text-slate-500 rounded-2xl font-bold"
-                >
-                  Discard
-                </button>
-                <button
-                  onClick={saveAllocation}
-                  disabled={loading}
-                  className="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-xl shadow-blue-100"
-                >
-                  {loading ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             </div>
