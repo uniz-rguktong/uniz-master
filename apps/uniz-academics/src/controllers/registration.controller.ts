@@ -323,12 +323,23 @@ export const getAvailableSubjects = async (
 
   try {
     const openSem = await prisma.academicSemester.findFirst({
-      where: { status: "REGISTRATION_OPEN" },
+      where: {
+        status: { in: ["REGISTRATION_OPEN", "DEAN_REVIEW", "APPROVED"] },
+      },
       orderBy: { createdAt: "desc" },
     });
 
     if (!openSem) {
-      return res.status(404).json({ error: "Registration is not open" });
+      return res.status(404).json({ error: "No active semester found" });
+    }
+
+    if (openSem.status !== "REGISTRATION_OPEN") {
+      return res.status(200).json({
+        semester: openSem,
+        subjects: [],
+        alreadyRegistered: false,
+        isOpen: false,
+      });
     }
 
     const branchUpper = (branch as string)?.toUpperCase();
@@ -379,6 +390,7 @@ export const getAvailableSubjects = async (
       semester: openSem,
       subjects,
       alreadyRegistered: registrationCount > 0,
+      isOpen: true,
     });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch subjects" });
@@ -389,6 +401,7 @@ export const getAvailableSubjects = async (
  * @desc Bulk register subjects
  * @access Student
  */
+
 export const registerSubjects = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -490,7 +503,12 @@ export const getCurrentSubjects = async (
     const activeSem = await prisma.academicSemester.findFirst({
       where: {
         status: {
-          in: ["REGISTRATION_OPEN", "REGISTRATION_CLOSED", "APPROVED"],
+          in: [
+            "DEAN_REVIEW",
+            "REGISTRATION_OPEN",
+            "REGISTRATION_CLOSED",
+            "APPROVED",
+          ],
         },
       },
       orderBy: { createdAt: "desc" },

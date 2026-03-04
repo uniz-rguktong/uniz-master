@@ -60,6 +60,14 @@ export default function SemesterRegistrationSection({
   const [selectedSem, setSelectedSem] = useState<Semester | null>(null);
   const [allocations, setAllocations] = useState<Allocation[]>([]);
   const [loading, setLoading] = useState(false);
+  const [editingAllocation, setEditingAllocation] = useState<Allocation | null>(
+    null,
+  );
+  const [editFormData, setEditFormData] = useState({
+    customName: "",
+    customCredits: 0,
+    facultyId: "",
+  });
   const [activeViewTab, setActiveViewTab] = useState<
     "allocations" | "registrations"
   >("allocations");
@@ -81,6 +89,16 @@ export default function SemesterRegistrationSection({
   useEffect(() => {
     fetchSemesters();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === "details" && selectedSem) {
+      if (activeViewTab === "allocations") {
+        fetchAllocations();
+      } else {
+        fetchRegistrations();
+      }
+    }
+  }, [activeTab, branchFilter, selectedSem?.id, activeViewTab]);
 
   const fetchSemesters = async () => {
     try {
@@ -140,7 +158,6 @@ export default function SemesterRegistrationSection({
   const viewDetails = async (sem: Semester) => {
     setSelectedSem(sem);
     setActiveTab("details");
-    fetchAllocations();
   };
 
   const fetchRegistrations = async () => {
@@ -189,9 +206,36 @@ export default function SemesterRegistrationSection({
     }
   };
 
+  const openEditModal = (item: Allocation) => {
+    setEditingAllocation(item);
+    setEditFormData({
+      customName: item.customName || item.subject.name,
+      customCredits: item.customCredits || item.subject.credits,
+      facultyId: item.faculty?.username || "",
+    });
+  };
+
+  const saveAllocation = async () => {
+    if (!editingAllocation) return;
+    setLoading(true);
+    try {
+      await apiClient(`/academics/allocation/${editingAllocation.id}`, {
+        method: "PUT",
+        body: JSON.stringify(editFormData),
+      });
+      toast.success("Allocation Updated");
+      setEditingAllocation(null);
+      fetchAllocations();
+    } catch (err) {
+      toast.error("Failed to save changes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const downloadExport = async (type: string) => {
     if (!selectedSem) return;
-    const url = `/api/v1/academics/export`; // This matches common pattern, check if exact endpoint needed
+    const url = `/academics/export`;
     await downloadFile(url, `${selectedSem.name}_${type}.xlsx`, {
       type,
       semesterId: selectedSem.id,
@@ -228,13 +272,15 @@ export default function SemesterRegistrationSection({
               <Download size={18} />
               Export XLSX
             </button>
-            {(isAdmin || branchFilter !== "all") && (
+            {(isAdmin ||
+              (branchFilter !== "all" && !isAdmin) ||
+              (branchFilter === "all" && !isAdmin && role === "dean")) && (
               <button
                 onClick={approveAllocation}
                 className={`flex items-center gap-3 px-8 py-4 ${branchFilter === "all" ? "bg-slate-900 border border-slate-700" : "bg-blue-600 shadow-blue-100"} text-white rounded-[20px] font-bold text-sm hover:opacity-90 transition-all shadow-xl`}
               >
                 <ShieldCheck size={18} />
-                {isAdmin && branchFilter === "all"
+                {branchFilter === "all"
                   ? "Global Approval Override"
                   : "Approve Course List"}
               </button>
@@ -346,7 +392,10 @@ export default function SemesterRegistrationSection({
                       )}
                     </td>
                     <td className="px-8 py-6 text-right">
-                      <button className="p-2 text-slate-400 hover:text-blue-600 transition-all bg-slate-50 rounded-xl border border-transparent hover:border-blue-100">
+                      <button
+                        onClick={() => openEditModal(item)}
+                        className="p-2 text-slate-400 hover:text-blue-600 transition-all bg-slate-50 rounded-xl border border-transparent hover:border-blue-100"
+                      >
                         <Edit3 size={18} />
                       </button>
                     </td>
@@ -641,6 +690,95 @@ export default function SemesterRegistrationSection({
                   className="flex-2 px-10 py-5 bg-slate-900 text-white rounded-[24px] font-bold shadow-xl shadow-slate-200 disabled:opacity-50"
                 >
                   {loading ? "Initializing..." : "Launch Event 🚀"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Allocation Modal */}
+      {editingAllocation && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="p-10 space-y-8">
+              <div>
+                <h3 className="text-2xl font-black text-slate-900 mb-2">
+                  Edit Allocation
+                </h3>
+                <p className="text-slate-400 text-sm font-medium italic">
+                  Apply custom overrides for {editingAllocation.subject.code}
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">
+                    Display Name
+                  </label>
+                  <input
+                    type="text"
+                    value={editFormData.customName}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        customName: e.target.value,
+                      })
+                    }
+                    className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">
+                      Credits
+                    </label>
+                    <input
+                      type="number"
+                      value={editFormData.customCredits}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          customCredits: parseInt(e.target.value),
+                        })
+                      }
+                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">
+                      Faculty ID
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Optional"
+                      value={editFormData.facultyId}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          facultyId: e.target.value,
+                        })
+                      }
+                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all px-6 py-4"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <button
+                  onClick={() => setEditingAllocation(null)}
+                  className="flex-1 py-4 bg-slate-50 text-slate-500 rounded-2xl font-bold"
+                >
+                  Discard
+                </button>
+                <button
+                  onClick={saveAllocation}
+                  disabled={loading}
+                  className="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-xl shadow-blue-100"
+                >
+                  {loading ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             </div>
