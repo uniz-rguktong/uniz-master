@@ -116,7 +116,7 @@ export default function Admin() {
   const sections = [
     {
       title: "Academic Management",
-      show: isDean,
+      show: isDean || isHOD,
       items: [
         {
           onClick: () => navigate("/admin/addgrades"),
