@@ -33,7 +33,15 @@ interface CurrentSubjectsResponse {
 
 import CourseRegistration from "./CourseRegistration";
 
-export default function MySubjects({ studentId }: { studentId: string }) {
+export default function MySubjects({
+  studentId,
+  branch,
+  year,
+}: {
+  studentId: string;
+  branch: string;
+  year: string;
+}) {
   const [data, setData] = useState<CurrentSubjectsResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -64,7 +72,13 @@ export default function MySubjects({ studentId }: { studentId: string }) {
   }
 
   if (!data || data.subjects.length === 0) {
-    return <CourseRegistration onComplete={fetchSubjects} />;
+    return (
+      <CourseRegistration
+        branch={branch}
+        year={year}
+        onComplete={fetchSubjects}
+      />
+    );
   }
 
   return (

@@ -17,8 +17,12 @@ import { toast } from "react-toastify";
 import { apiClient } from "../../../api/apiClient";
 
 export default function CourseRegistration({
+  branch,
+  year,
   onComplete,
 }: {
+  branch: string;
+  year: string;
   onComplete: () => void;
 }) {
   const [available, setAvailable] = useState<any[]>([]);
@@ -29,8 +33,8 @@ export default function CourseRegistration({
   const fetchAvailable = async () => {
     setLoading(true);
     try {
-      const data = await apiClient<any[]>(GET_AVAILABLE_SUBJECTS);
-      setAvailable(data || []);
+      const data = await apiClient<any>(GET_AVAILABLE_SUBJECTS(branch, year));
+      setAvailable(data.subjects || []);
       // Pre-select all by default if mandatory? Actually let user choose
     } catch (error) {
       toast.error("Failed to fetch available subjects");
