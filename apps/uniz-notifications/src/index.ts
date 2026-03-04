@@ -9,6 +9,10 @@ import prisma from "./utils/prisma.util";
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
 import { requireAuth, requireAdmin } from "./middlewares/auth.middleware";
 import PDFDocument, { info } from "pdfkit";
+import axios from "axios";
+
+const USER_SERVICE_URL =
+  process.env.USER_SERVICE_URL || "http://uniz-user-service:3002";
 
 // --- PDF UTILS (pure Node, styled like official result sheets) ---
 const PAGE_MARGIN = 40;
@@ -859,79 +863,104 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       return res.status(400).json({ error: "title and body are required" });
     }
 
-    let subscriptions: {
-      endpoint: string;
-      p256dh: string;
-      auth: string;
-      username: string;
-    }[] = [];
+    let targetUsers: Array<{ username: string; name?: string }> = [];
 
     if (target === "user") {
       if (!username)
         return res
           .status(400)
           .json({ error: "username required for target=user" });
-      subscriptions = await prisma.pushSubscription.findMany({
-        where: { username },
-      });
+      targetUsers = [{ username }];
     } else if (target === "batch") {
       if (!batch)
         return res
           .status(400)
           .json({ error: "batch required for target=batch (e.g. o21, o22)" });
-      subscriptions = await prisma.pushSubscription.findMany({
-        where: { username: { startsWith: batch, mode: "insensitive" } },
-      });
+      // For batch/year/all, we still need to fetch from user service to get NAMES for personalization
+      // But for bulk, we might just query subscriptions if we don't care about personalization for ALL users
+      // However, the user asked for personalization, so we fetch.
+      try {
+        const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+        const response = await axios.post(
+          `${USER_SERVICE_URL}/internal/targeting`,
+          { target: "students", branch: "all", year: "all" },
+          { headers: { "x-internal-secret": SECRET }, timeout: 10000 },
+        );
+        if (response.data.success) {
+          targetUsers = response.data.users.filter((u: any) =>
+            u.username.toLowerCase().startsWith(batch.toLowerCase()),
+          );
+        }
+      } catch (e: any) {
+        console.error(`[Push] User Service fetch failed: ${e.message}`);
+      }
     } else if (target === "year") {
       if (!year)
         return res.status(400).json({
           error: "year required for target=year (e.g. E1,E2,E3,E4,P1...)",
         });
-      subscriptions = await prisma.pushSubscription.findMany({
-        where: { username: { startsWith: year, mode: "insensitive" } },
-      });
-    } else if (target === "dean") {
-      const deans = await prisma.adminProfile.findMany({
-        where: { role: { equals: "dean", mode: "insensitive" } },
-      });
-      const usernames = deans.map((d) => d.username);
-      console.log(
-        `[Push] Found ${usernames.length} Deans: ${usernames.join(", ")}`,
-      );
-      subscriptions = await prisma.pushSubscription.findMany({
-        where: { username: { in: usernames } },
-      });
-    } else if (target === "hod") {
-      const where: any = { role: { equals: "hod", mode: "insensitive" } };
-      if (branch && branch.toLowerCase() !== "all") {
-        where.department = { equals: branch, mode: "insensitive" };
+      try {
+        const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+        const response = await axios.post(
+          `${USER_SERVICE_URL}/internal/targeting`,
+          { target: "students", branch: "all", year: year },
+          { headers: { "x-internal-secret": SECRET }, timeout: 10000 },
+        );
+        if (response.data.success) {
+          targetUsers = response.data.users;
+        }
+      } catch (e: any) {
+        console.error(`[Push] User Service fetch failed: ${e.message}`);
       }
-      const hods = await prisma.facultyProfile.findMany({ where });
-      const usernames = hods.map((h) => h.username);
-      console.log(
-        `[Push] Found ${usernames.length} HODs for branch=${branch}: ${usernames.join(", ")}`,
-      );
-      subscriptions = await prisma.pushSubscription.findMany({
-        where: { username: { in: usernames } },
-      });
-    } else if (target === "students") {
-      const where: any = {};
-      if (branch && branch.toLowerCase() !== "all") {
-        where.branch = { equals: branch, mode: "insensitive" };
+    } else if (target === "dean" || target === "hod" || target === "students") {
+      try {
+        const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+        const response = await axios.post(
+          `${USER_SERVICE_URL}/internal/targeting`,
+          { target, branch, year },
+          { headers: { "x-internal-secret": SECRET }, timeout: 10000 },
+        );
+        if (response.data.success) {
+          targetUsers = response.data.users;
+        }
+      } catch (e: any) {
+        console.error(`[Push] User Service fetch failed: ${e.message}`);
       }
-      if (year && year.toLowerCase() !== "all") {
-        where.year = { equals: year, mode: "insensitive" };
-      }
-      const students = await prisma.studentProfile.findMany({ where });
-      const usernames = students.map((s) => s.username);
-      console.log(
-        `[Push] Found ${usernames.length} Students for branch=${branch}, year=${year}`,
-      );
-      subscriptions = await prisma.pushSubscription.findMany({
-        where: { username: { in: usernames } },
-      });
     } else if (target === "all") {
-      subscriptions = await prisma.pushSubscription.findMany();
+      // Fetch all for personalization
+      try {
+        const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+        const [students, faculty, deans] = await Promise.all([
+          axios
+            .post(
+              `${USER_SERVICE_URL}/internal/targeting`,
+              { target: "students" },
+              { headers: { "x-internal-secret": SECRET }, timeout: 10000 },
+            )
+            .catch(() => ({ data: { users: [] } })),
+          axios
+            .post(
+              `${USER_SERVICE_URL}/internal/targeting`,
+              { target: "hod" },
+              { headers: { "x-internal-secret": SECRET }, timeout: 10000 },
+            )
+            .catch(() => ({ data: { users: [] } })),
+          axios
+            .post(
+              `${USER_SERVICE_URL}/internal/targeting`,
+              { target: "dean" },
+              { headers: { "x-internal-secret": SECRET }, timeout: 10000 },
+            )
+            .catch(() => ({ data: { users: [] } })),
+        ]);
+        targetUsers = [
+          ...students.data.users,
+          ...faculty.data.users,
+          ...deans.data.users,
+        ];
+      } catch (e: any) {
+        console.warn("[Push] Global fetch partially failed");
+      }
     } else {
       return res.status(400).json({
         error:
@@ -939,8 +968,13 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       });
     }
 
+    const targetUsernames = targetUsers.map((u) => u.username);
+    const subscriptions = await prisma.pushSubscription.findMany({
+      where: { username: { in: targetUsernames } },
+    });
+
     console.log(
-      `[Push] Total subscriptions found for target=${target}: ${subscriptions.length}`,
+      `[Push] TargetUsers: ${targetUsers.length}, Subscriptions: ${subscriptions.length} for target=${target}`,
     );
 
     if (subscriptions.length === 0) {
@@ -949,37 +983,49 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
         .json({ success: true, status: "no_subscribers", sent: 0 });
     }
 
-    const pushPayload = JSON.stringify({
-      title,
-      body,
-      image,
-      icon: "/assets/ongole_logo.png",
-      badge: "/assets/ongole_logo.png",
-      tag: `uniz-broadcast-${Date.now()}`,
-      data: { type: "BROADCAST" },
-    });
-
     const results = await Promise.allSettled(
-      subscriptions.map(async (sub) => {
-        try {
-          await webpush.sendNotification(
-            {
-              endpoint: sub.endpoint,
-              keys: { p256dh: sub.p256dh, auth: sub.auth },
-            },
-            pushPayload,
-            { TTL: 86400, urgency: "high" },
-          );
-        } catch (pushErr: any) {
-          const statusCode = pushErr.statusCode || pushErr.status;
-          if (statusCode === 410 || statusCode === 404) {
-            await prisma.pushSubscription
-              .delete({ where: { endpoint: sub.endpoint } })
-              .catch(() => {});
-          } else {
-            throw pushErr;
+      targetUsers.flatMap((u) => {
+        const userSubs = subscriptions.filter(
+          (s) => s.username.toUpperCase() === u.username.toUpperCase(),
+        );
+        const personalizedBody = body
+          .replace(/{{name}}/g, u.name || u.username)
+          .replace(/{{username}}/g, u.username);
+        const personalizedTitle = title
+          .replace(/{{name}}/g, u.name || u.username)
+          .replace(/{{username}}/g, u.username);
+
+        const pushPayload = JSON.stringify({
+          title: personalizedTitle,
+          body: personalizedBody,
+          image,
+          icon: "/assets/ongole_logo.png",
+          badge: "/assets/ongole_logo.png",
+          tag: `uniz-broadcast-${Date.now()}`,
+          data: { type: "BROADCAST" },
+        });
+
+        return userSubs.map(async (sub) => {
+          try {
+            await webpush.sendNotification(
+              {
+                endpoint: sub.endpoint,
+                keys: { p256dh: sub.p256dh, auth: sub.auth },
+              },
+              pushPayload,
+              { TTL: 86400, urgency: "high" },
+            );
+          } catch (pushErr: any) {
+            const statusCode = pushErr.statusCode || pushErr.status;
+            if (statusCode === 410 || statusCode === 404) {
+              await prisma.pushSubscription
+                .delete({ where: { endpoint: sub.endpoint } })
+                .catch(() => {});
+            } else {
+              throw pushErr;
+            }
           }
-        }
+        });
       }),
     );
 
