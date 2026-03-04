@@ -15,7 +15,7 @@ export function useOutsideCampus() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${JSON.parse(token)}`,
+            Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
           },
         });
         const data = await res.json();

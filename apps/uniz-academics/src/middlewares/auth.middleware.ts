@@ -41,10 +41,13 @@ export const authMiddleware = async (
   const internalSecret = req.headers["x-internal-secret"];
 
   if (!authHeader && internalSecret && internalSecret === INTERNAL_SECRET) {
+    const overrideUsername = req.headers["x-override-username"];
+    const overrideRole = req.headers["x-override-role"];
+
     (req as AuthenticatedRequest).user = {
       id: "internal",
-      username: "internal-service",
-      role: "webmaster" as any,
+      username: (overrideUsername as string) || "internal-service",
+      role: (overrideRole as any) || ("webmaster" as any),
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 3600,
     };

@@ -39,7 +39,7 @@ export default function StudentBulkSection() {
     const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(ADMIN_STUDENT_TEMPLATE, {
-        headers: { Authorization: `Bearer ${JSON.parse(token || '""')}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
       });
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
@@ -63,7 +63,7 @@ export default function StudentBulkSection() {
     try {
       const res = await fetch(ADMIN_STUDENT_UPLOAD, {
         method: "POST",
-        headers: { Authorization: `Bearer ${JSON.parse(token || '""')}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
         body: formData,
       });
       const data = await res.json();
@@ -88,7 +88,7 @@ export default function StudentBulkSection() {
         const token = localStorage.getItem("admin_token");
         try {
           const res = await fetch(ADMIN_STUDENT_PROGRESS, {
-            headers: { Authorization: `Bearer ${JSON.parse(token || '""')}` },
+            headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
           });
           const data = await res.json();
           setProgress(data);
@@ -115,7 +115,7 @@ export default function StudentBulkSection() {
     );
     try {
       const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${JSON.parse(token || '""')}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
       });
       const blob = await res.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
@@ -181,7 +181,8 @@ export default function StudentBulkSection() {
                 onClick={downloadTemplate}
                 className="w-full h-12 flex items-center justify-center gap-3 bg-slate-50/50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-full text-blue-700 font-bold uppercase tracking-widest text-[10px] transition-all active:scale-[0.98]"
               >
-                <FileSpreadsheet size={16} className="opacity-70" /> Download Excel Template
+                <FileSpreadsheet size={16} className="opacity-70" /> Download
+                Excel Template
               </button>
             </div>
 
@@ -288,7 +289,7 @@ export default function StudentBulkSection() {
                         {Math.round(
                           ((progress?.processed || 0) /
                             (progress?.total || 1)) *
-                          100,
+                            100,
                         )}
                         %
                       </span>
@@ -376,7 +377,10 @@ export default function StudentBulkSection() {
                   <select
                     value={exportParams.branch}
                     onChange={(e) =>
-                      setExportParams({ ...exportParams, branch: e.target.value })
+                      setExportParams({
+                        ...exportParams,
+                        branch: e.target.value,
+                      })
                     }
                     className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-sm appearance-none uppercase tracking-widest"
                   >
@@ -387,7 +391,10 @@ export default function StudentBulkSection() {
                       ),
                     )}
                   </select>
-                  <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                  <ChevronDown
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    size={16}
+                  />
                 </div>
               </div>
               <div className="space-y-3">
@@ -407,7 +414,10 @@ export default function StudentBulkSection() {
                       <option key={y}>{y}</option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                  <ChevronDown
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    size={16}
+                  />
                 </div>
               </div>
               <div className="md:col-span-2 space-y-3">

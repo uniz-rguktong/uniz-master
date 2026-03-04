@@ -34,7 +34,7 @@
   "overrides": {
     "undici": "^6.21.0",
     "path-to-regexp": "^6.3.0",
-    "minimatch": "^10.2.1",
+    "minimatch": "^10.2.3",
     "glob": "^10.3.10"
   }
 }

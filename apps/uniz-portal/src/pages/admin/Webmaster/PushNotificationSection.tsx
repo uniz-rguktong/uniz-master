@@ -134,11 +134,16 @@ export default function PushNotificationSection() {
             </thead>
             <tbody className="divide-y divide-slate-50/60">
               {loading ? (
-                Array(6).fill(0).map((_, i) => (
-                  <tr key={i} className="animate-pulse">
-                    <td colSpan={4} className="px-10 py-8 bg-slate-50/20"></td>
-                  </tr>
-                ))
+                Array(6)
+                  .fill(0)
+                  .map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td
+                        colSpan={4}
+                        className="px-10 py-8 bg-slate-50/20"
+                      ></td>
+                    </tr>
+                  ))
               ) : subscribers.length > 0 ? (
                 subscribers.map((sub, idx) => (
                   <tr
@@ -156,7 +161,10 @@ export default function PushNotificationSection() {
                       </div>
                     </td>
                     <td className="px-10 py-6">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[300px] opacity-70" title={sub.endpoint}>
+                      <p
+                        className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[300px] opacity-70"
+                        title={sub.endpoint}
+                      >
                         {sub.endpoint}
                       </p>
                     </td>
@@ -171,7 +179,11 @@ export default function PushNotificationSection() {
                     <td className="px-10 py-6">
                       <div className="flex flex-col">
                         <p className="text-sm font-semibold tracking-tight text-slate-700">
-                          {new Date(sub.createdAt).toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' })}
+                          {new Date(sub.createdAt).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
                         </p>
                         <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
                           Registered

@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://res.cloudinary.com/dy2fjgt46/image/upload/v1771604895/rguktongole_logo_kbpaui.jpg" alt="UniZ Logo" width="120" />
+  <!-- <img src="https://res.cloudinary.com/dy2fjgt46/image/upload/v1771604895/rguktongole_logo_kbpaui.jpg" alt="UniZ Logo" width="120" /> -->
 
 # UniZ
 

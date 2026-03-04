@@ -61,6 +61,7 @@ const mapStudentProfile = (profile: any) => ({
   email: profile.email,
   gender: profile.gender,
   year: profile.year,
+  semester: profile.semester,
   branch: profile.branch,
   section: profile.section,
   roomno: profile.roomno,
@@ -241,9 +242,14 @@ export const adminUpdateStudentProfile = async (
   }
 
   try {
-    const updated = await prisma.studentProfile.update({
+    const updated = await prisma.studentProfile.upsert({
       where: { username },
-      data: updates,
+      update: updates,
+      create: {
+        id: randomUUID(),
+        username,
+        ...updates,
+      },
     });
 
     // Invalidate profile cache to prevent stale data
@@ -419,10 +425,16 @@ export const createFacultyProfile = async (
   res: Response,
 ) => {
   const user = req.user;
-  const { username, name, email, department, designation } = req.body;
+  const { name, email, department, designation } = req.body;
+  const username = String(req.body.username || "").toLowerCase();
 
   // Admin role check
-  const adminRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
+  const adminRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.HOD,
+  ];
   if (!user || !adminRoles.includes(user.role as UserRole)) {
     return res
       .status(403)
@@ -441,6 +453,32 @@ export const createFacultyProfile = async (
         role: req.body.role || "teacher",
       },
     });
+    // Sync with Auth Service
+    const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+    const defaultPassword = `${username.toLowerCase()}@uniz`;
+
+    try {
+      await axios.post(
+        `${AUTH_SERVICE_URL}/signup`,
+        {
+          username: username,
+          password: defaultPassword,
+          role: req.body.role || "teacher",
+          email: email,
+        },
+        {
+          headers: { "x-internal-secret": SECRET },
+          timeout: 5000,
+        },
+      );
+      console.log(`[USER] Successfully synced auth for faculty: ${username}`);
+    } catch (authErr: any) {
+      console.error(
+        `[USER][ERROR] Failed to sync auth for faculty ${username}:`,
+        authErr.message,
+      );
+    }
+
     return res
       .status(201)
       .json({ success: true, faculty: mapFacultyProfile(profile) });
@@ -643,7 +681,12 @@ export const searchFaculty = async (
   res: Response,
 ) => {
   const user = req.user;
-  const adminRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
+  const adminRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.HOD,
+  ];
   if (!user || !adminRoles.includes(user.role as UserRole)) {
     return res
       .status(403)
@@ -700,22 +743,118 @@ export const updateFacultyProfile = async (
   const username = req.params.username.toUpperCase();
   const updates = req.body;
 
-  if (!user || user.role !== UserRole.WEBMASTER) {
+  const adminRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.HOD,
+  ];
+  if (!user || !adminRoles.includes(user.role as UserRole)) {
     return res
       .status(403)
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
   }
 
   try {
-    const updated = await prisma.facultyProfile.update({
-      where: { username },
-      data: updates,
+    // Find the record to update (case-insensitive search for safety during migration)
+    const existingFaculty = await prisma.facultyProfile.findFirst({
+      where: { username: { equals: req.params.username, mode: "insensitive" } },
     });
+
+    if (!existingFaculty) {
+      return res.status(404).json({ message: "Faculty profile not found" });
+    }
+
+    const targetUsername = (
+      updates.username || existingFaculty.username
+    ).toLowerCase();
+
+    const updated = await prisma.facultyProfile.update({
+      where: { id: existingFaculty.id },
+      data: {
+        ...updates,
+        username: targetUsername,
+      },
+    });
+
+    // Sync with Auth Service (Upsert behavior)
+    if (updates.role || updates.email || updates.username || true) {
+      // Always sync to fix existing
+      const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+      const defaultPassword = `${targetUsername}@uniz`;
+
+      try {
+        await axios.post(
+          `${AUTH_SERVICE_URL}/signup`,
+          {
+            username: targetUsername,
+            password: defaultPassword,
+            role: updates.role || updated.role,
+            email: updates.email || updated.email,
+          },
+          {
+            headers: { "x-internal-secret": SECRET },
+            timeout: 5000,
+          },
+        );
+        console.log(
+          `[USER] Successfully synced auth update for faculty: ${targetUsername} with password: ${defaultPassword}`,
+        );
+      } catch (authErr: any) {
+        console.error(
+          `[USER][ERROR] Failed to sync auth update for faculty ${targetUsername}:`,
+          authErr.message,
+        );
+      }
+    }
+
     return res.json({ success: true, faculty: mapFacultyProfile(updated) });
   } catch (e) {
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to update profile",
+    });
+  }
+};
+
+export const deleteFacultyProfile = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const username = req.params.username.toLowerCase();
+
+  const adminRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.HOD,
+  ];
+  if (!user || !adminRoles.includes(user.role as UserRole)) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  try {
+    // Try to find by exact case first, or insensitive if that fails
+    const target = await prisma.facultyProfile.findFirst({
+      where: { username: { equals: username, mode: "insensitive" } },
+    });
+
+    if (!target) {
+      return res.status(404).json({ message: "Faculty profile not found" });
+    }
+
+    await prisma.facultyProfile.delete({
+      where: { id: target.id },
+    });
+    return res.json({ success: true, message: "Faculty profile deleted" });
+  } catch (e) {
+    console.error("Delete Faculty Error:", e);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to delete profile",
     });
   }
 };

@@ -116,7 +116,7 @@ export default function Settings() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${JSON.parse(token)}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
         },
         body: bodyData,
         signal: controller.signal,

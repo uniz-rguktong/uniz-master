@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { GET_SUBJECTS, ADD_SUBJECT } from "../../../api/endpoints";
 import { toast } from "react-toastify";
+import { apiClient } from "../../../api/apiClient";
 
 export default function SubjectManagement() {
   const [subjects, setSubjects] = useState<any[]>([]);
@@ -32,31 +33,25 @@ export default function SubjectManagement() {
     code: "",
     credits: 4,
     department: "CSE",
-    semester: "E1-SEM-1", // Changed to canonical format
+    semester: "E1-SEM-1",
   });
   const [isAdding, setIsAdding] = useState(false);
 
   const fetchSubjects = async () => {
     setLoading(true);
-    const token = localStorage.getItem("admin_token");
     try {
-      const query = new URLSearchParams({
-        page: String(page),
-        limit: String(limit),
-        search: search || "",
-        department: department || "",
-        semester: semester || "",
-      });
-
-      const res = await fetch(`${GET_SUBJECTS}?${query.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+      const res = await apiClient<any>(GET_SUBJECTS, {
+        params: {
+          page,
+          limit,
+          search,
+          department,
+          semester,
         },
       });
-      const data = await res.json();
-      if (data.success) {
-        setSubjects(data.subjects);
-        setMeta(data.meta || { total: data.subjects.length, totalPages: 1 });
+      if (res && res.success) {
+        setSubjects(res.subjects);
+        setMeta(res.meta || { total: res.subjects.length, totalPages: 1 });
       }
     } catch (error) {
       toast.error("Failed to fetch subjects");
@@ -67,9 +62,8 @@ export default function SubjectManagement() {
 
   useEffect(() => {
     fetchSubjects();
-  }, [page, department, semester]); // Fetch on page/filter change
+  }, [page, department, semester]);
 
-  // Debounced search
   useEffect(() => {
     const timer = setTimeout(() => {
       if (page !== 1) setPage(1);
@@ -81,18 +75,12 @@ export default function SubjectManagement() {
   const handleAddSubject = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsAdding(true);
-    const token = localStorage.getItem("admin_token");
     try {
-      const res = await fetch(ADD_SUBJECT, {
+      const res = await apiClient<any>(ADD_SUBJECT, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(newSubject),
       });
-      const data = await res.json();
-      if (data.success) {
+      if (res && res.success) {
         toast.success("Subject added successfully");
         setShowAddModal(false);
         fetchSubjects();
@@ -101,13 +89,9 @@ export default function SubjectManagement() {
           code: "",
           credits: 4,
           department: "CSE",
-          semester: "SEM-1",
+          semester: "E1-SEM-1",
         });
-      } else {
-        toast.error(data.msg || "Failed to add subject");
       }
-    } catch (error) {
-      toast.error("Error adding subject");
     } finally {
       setIsAdding(false);
     }
@@ -132,10 +116,12 @@ export default function SubjectManagement() {
         </button>
       </div>
 
-      {/* Filters Hub */}
       <div className="flex flex-wrap gap-4 items-center">
         <div className="relative group flex-1 min-w-[300px]">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
+          <Search
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"
+            size={16}
+          />
           <input
             type="text"
             placeholder="Search by name or code..."
@@ -146,7 +132,10 @@ export default function SubjectManagement() {
         </div>
 
         <div className="relative group">
-          <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none" size={14} />
+          <Filter
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none"
+            size={14}
+          />
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
@@ -161,11 +150,17 @@ export default function SubjectManagement() {
             <option value="CHEM">CHEMICAL</option>
             <option value="MME">MME</option>
           </select>
-          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+          <ChevronDown
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+            size={14}
+          />
         </div>
 
         <div className="relative group">
-          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none" size={14} />
+          <Calendar
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none"
+            size={14}
+          />
           <select
             value={semester}
             onChange={(e) => setSemester(e.target.value)}
@@ -179,7 +174,10 @@ export default function SubjectManagement() {
               </React.Fragment>
             ))}
           </select>
-          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+          <ChevronDown
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+            size={14}
+          />
         </div>
       </div>
 
@@ -222,7 +220,8 @@ export default function SubjectManagement() {
                       Term
                     </p>
                     <p className="font-semibold text-slate-700 text-xs flex items-center gap-2">
-                      <Calendar size={13} className="text-slate-400" /> {sub.semester}
+                      <Calendar size={13} className="text-slate-400" />{" "}
+                      {sub.semester}
                     </p>
                   </div>
                   <div className="col-span-2 mt-4 space-y-2.5">
@@ -230,7 +229,9 @@ export default function SubjectManagement() {
                       <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
                         Credits
                       </p>
-                      <span className="text-xs font-semibold text-blue-600">{sub.credits} Units</span>
+                      <span className="text-xs font-semibold text-blue-600">
+                        {sub.credits} Units
+                      </span>
                     </div>
                     <div className="flex gap-2">
                       {[...Array(Number(sub.credits))].map((_, i) => (
@@ -248,7 +249,6 @@ export default function SubjectManagement() {
             ))}
           </div>
 
-          {/* Pagination Controls */}
           {meta.totalPages > 1 && (
             <div className="flex justify-center items-center gap-4 pt-8">
               <button
@@ -262,7 +262,6 @@ export default function SubjectManagement() {
               <div className="flex items-center gap-2">
                 {[...Array(meta.totalPages)].map((_, i) => {
                   const p = i + 1;
-                  // Only show current, 2 before, 2 after
                   if (
                     p === 1 ||
                     p === meta.totalPages ||
@@ -272,10 +271,11 @@ export default function SubjectManagement() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl font-semibold text-xs border transition-all ${page === p
-                          ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100"
-                          : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
-                          }`}
+                        className={`w-10 h-10 rounded-xl font-semibold text-xs border transition-all ${
+                          page === p
+                            ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100"
+                            : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
+                        }`}
                       >
                         {p}
                       </button>
@@ -312,7 +312,8 @@ export default function SubjectManagement() {
               No Subjects Found
             </p>
             <p className="text-slate-400 font-medium mt-2 max-w-sm text-[15px]">
-              No subjects found matching your criteria. Try adjusting your filters or search term.
+              No subjects found matching your criteria. Try adjusting your
+              filters or search term.
             </p>
           </div>
           <button
