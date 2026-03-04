@@ -447,6 +447,32 @@ export const createFacultyProfile = async (
         role: req.body.role || "teacher",
       },
     });
+    // Sync with Auth Service
+    const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+    const defaultPassword = `${username.toLowerCase()}@uniz`;
+
+    try {
+      await axios.post(
+        `${AUTH_SERVICE_URL}/signup`,
+        {
+          username: username,
+          password: defaultPassword,
+          role: req.body.role || "teacher",
+          email: email,
+        },
+        {
+          headers: { "x-internal-secret": SECRET },
+          timeout: 5000,
+        },
+      );
+      console.log(`[USER] Successfully synced auth for faculty: ${username}`);
+    } catch (authErr: any) {
+      console.error(
+        `[USER][ERROR] Failed to sync auth for faculty ${username}:`,
+        authErr.message,
+      );
+    }
+
     return res
       .status(201)
       .json({ success: true, faculty: mapFacultyProfile(profile) });
@@ -717,6 +743,38 @@ export const updateFacultyProfile = async (
       where: { username },
       data: updates,
     });
+
+    // Sync with Auth Service (Upsert behavior)
+    if (updates.role || updates.email || updates.username) {
+      const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+      const syncUsername = updates.username || username;
+      const defaultPassword = `${syncUsername.toLowerCase()}@uniz`;
+
+      try {
+        await axios.post(
+          `${AUTH_SERVICE_URL}/signup`,
+          {
+            username: syncUsername,
+            password: defaultPassword,
+            role: updates.role || updated.role,
+            email: updates.email || updated.email,
+          },
+          {
+            headers: { "x-internal-secret": SECRET },
+            timeout: 5000,
+          },
+        );
+        console.log(
+          `[USER] Successfully synced auth update for faculty: ${syncUsername}`,
+        );
+      } catch (authErr: any) {
+        console.error(
+          `[USER][ERROR] Failed to sync auth update for faculty ${syncUsername}:`,
+          authErr.message,
+        );
+      }
+    }
+
     return res.json({ success: true, faculty: mapFacultyProfile(updated) });
   } catch (e) {
     return res.status(500).json({
