@@ -103,6 +103,7 @@ router.delete("/semester/:id", deleteSemester);
 
 router.get("/dean/review/:branch", getDeanAllocations);
 router.put("/dean/allocation/:id", updateAllocation);
+router.put("/allocation/:id", updateAllocation);
 router.post("/dean/approve", approveBranchAllocation);
 
 router.get("/student/available", getAvailableSubjects);
