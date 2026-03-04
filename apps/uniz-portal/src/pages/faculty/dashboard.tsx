@@ -10,7 +10,7 @@ import {
   GraduationCap,
   LayoutGrid,
 } from "lucide-react";
-import { clearSession } from "../../utils/security";
+import { useLogout } from "../../hooks/useLogout";
 import { motion } from "framer-motion";
 import { BASE_URL } from "../../api/endpoints";
 
@@ -49,9 +49,10 @@ export default function FacultyDashboard() {
     fetchProfile();
   }, [navigate]);
 
+  const { logout } = useLogout();
+
   const handleLogout = () => {
-    clearSession();
-    navigate("/");
+    logout();
   };
 
   const ActionCard = ({ title, subtitle, icon: Icon, onClick }: any) => (
@@ -121,19 +122,19 @@ export default function FacultyDashboard() {
               title="My Courses"
               subtitle="Manage subjects & syllabus"
               icon={BookOpen}
-              onClick={() => {}}
+              onClick={() => { }}
             />
             <ActionCard
               title="Student Attendance"
               subtitle="Mark daily attendance"
               icon={User}
-              onClick={() => {}}
+              onClick={() => { }}
             />
             <ActionCard
               title="Research Profile"
               subtitle="Update portfolio"
               icon={GraduationCap}
-              onClick={() => {}}
+              onClick={() => { }}
             />
           </div>
         </motion.div>
