@@ -247,10 +247,13 @@ export default function SemesterRegistrationSection({
     if (!editingAllocation) return;
     setLoading(true);
     try {
-      await apiClient(`/academics/dean/allocation/${editingAllocation.id}`, {
-        method: "PUT",
-        body: JSON.stringify(editFormData),
-      });
+      await apiClient(
+        `/api/v1/academics/dean/allocation/${editingAllocation.id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(editFormData),
+        },
+      );
       toast.success("Allocation Updated");
       setEditingAllocation(null);
       fetchAllocations();
@@ -263,7 +266,7 @@ export default function SemesterRegistrationSection({
 
   const downloadExport = async (type: string) => {
     if (!selectedSem) return;
-    const url = `/academics/export`;
+    const url = `/api/v1/academics/export`;
     await downloadFile(url, `${selectedSem.name}_${type}.xlsx`, {
       type,
       semesterId: selectedSem.id,
