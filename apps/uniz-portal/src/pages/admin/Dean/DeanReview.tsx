@@ -55,9 +55,12 @@ export default function DeanReview() {
   // Get department from localStorage (AdminInfo)
   const adminInfo = (() => {
     try {
-      return JSON.parse(localStorage.getItem("admin_info") || "{}");
+      const stored = localStorage.getItem("admin_info");
+      if (!stored) return {};
+      const parsed = JSON.parse(stored);
+      return typeof parsed === "string" ? { department: parsed } : parsed;
     } catch {
-      return {};
+      return { department: localStorage.getItem("department") || "CSE" };
     }
   })();
 
