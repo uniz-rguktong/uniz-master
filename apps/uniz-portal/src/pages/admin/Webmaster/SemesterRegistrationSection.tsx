@@ -157,12 +157,20 @@ export default function SemesterRegistrationSection({
 
   const fetchAllocations = async () => {
     if (!branch && isAdmin) {
-      if (activeViewTab === "registrations") fetchRegistrations();
-      return;
+      if (activeViewTab === "registrations") {
+        fetchRegistrations();
+        return;
+      }
+      // If we are in allocations tab and no branch is selected, fetch "all"
     }
+
+    if (!selectedSem) return;
+
     setLoading(true);
     try {
-      const res = await apiClient<any>(DEAN_REVIEW(branch || "CSE"));
+      const res = await apiClient<any>(
+        `${DEAN_REVIEW(branch || "all")}?semesterId=${selectedSem.id}`,
+      );
       if (res) setAllocations(res);
     } finally {
       setLoading(false);

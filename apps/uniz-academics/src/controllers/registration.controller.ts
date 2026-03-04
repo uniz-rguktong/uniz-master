@@ -198,19 +198,26 @@ export const getDeanAllocations = async (
   const { branch } = req.params;
 
   try {
-    const activeSem = await prisma.academicSemester.findFirst({
-      where: {
-        status: { in: ["DEAN_REVIEW", "REGISTRATION_OPEN", "APPROVED"] },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    const { semesterId } = req.query;
 
-    if (!activeSem) {
-      return res.status(404).json({ error: "No active semester found" });
+    let targetSemId;
+    if (semesterId) {
+      targetSemId = semesterId as string;
+    } else {
+      const activeSem = await prisma.academicSemester.findFirst({
+        where: {
+          status: { in: ["DEAN_REVIEW", "REGISTRATION_OPEN", "APPROVED"] },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      if (!activeSem) {
+        return res.status(404).json({ error: "No active semester found" });
+      }
+      targetSemId = activeSem.id;
     }
 
     const whereClause: any = {
-      semesterId: activeSem.id,
+      semesterId: targetSemId,
     };
     if (branch !== "all") {
       whereClause.branch = branch;
