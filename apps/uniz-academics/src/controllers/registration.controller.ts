@@ -84,41 +84,24 @@ export const initSemester = async (
       }
     }
 
-    // 4. Trigger Notifications (Ads/Campaign)
+    // 4. Trigger Notification to Dean
     try {
       const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
       const headers = { "x-internal-secret": INTERNAL_SECRET };
-      const NOTIFY_URL = "http://uniz-gateway-api:3000/api/v1";
+      const NOTIFY_URL =
+        process.env.NOTIFY_URL || "http://uniz-gateway-api:3000/api/v1";
 
-      // Push Notification
       await axios
         .post(
           `${NOTIFY_URL}/notifications/push/send`,
           {
-            target: "all",
-            title: "Registration Open! 🎓",
-            body: `Enrollment for ${academicSemester} has started. Visit the Academics portal to select your courses.`,
+            target: "all", // Or target=dean if implemented
+            title: "Action Required: Subject Review 🎓",
+            body: `Webmaster has initialized ${academicSemester}. Please review and approve subject allocations for all branches and years.`,
           },
           { headers, timeout: 5000 },
         )
-        .catch((e) => console.error("Notification failed:", e.message));
-
-      // Public Notification/Banner
-      await axios
-        .post(
-          `${NOTIFY_URL}/profile/internal/upload-history`,
-          {
-            type: "SEMESTER_INIT",
-            filename: academicSemester,
-            uploadedBy: "system",
-            totalRows: 0,
-            successCount: 1,
-            failCount: 0,
-            status: "COMPLETED",
-          },
-          { headers, timeout: 5000 },
-        )
-        .catch((e) => console.error("Banner failed:", e.message));
+        .catch((e) => console.error("Dean Notification failed:", e.message));
     } catch (notifError) {
       console.warn("Notification Trigger Failed:", notifError);
     }
@@ -208,7 +191,7 @@ export const getDeanAllocations = async (
   const { branch } = req.params;
 
   try {
-    const { semesterId } = req.query;
+    const { semesterId, year } = req.query;
 
     let targetSemId;
     if (semesterId) {
@@ -230,7 +213,13 @@ export const getDeanAllocations = async (
       semesterId: targetSemId,
     };
     if (branch !== "all") {
-      whereClause.branch = branch;
+      whereClause.branch = { equals: branch, mode: "insensitive" };
+    }
+
+    if (year) {
+      whereClause.subject = {
+        semester: { startsWith: year as string, mode: "insensitive" },
+      };
     }
 
     const allocations = await prisma.branchAllocation.findMany({
@@ -260,13 +249,13 @@ export const updateAllocation = async (
   const { facultyId, customName, customCredits, isApproved } = req.body;
 
   try {
-    const allocation = await (prisma.branchAllocation as any).update({
+    const allocation = await prisma.branchAllocation.update({
       where: { id },
       data: {
         facultyId,
         customName,
         customCredits: customCredits ? Number(customCredits) : undefined,
-        isApproved,
+        isApproved: isApproved !== undefined ? isApproved : undefined,
       },
     });
     res.json({ success: true, allocation });
@@ -283,34 +272,89 @@ export const approveBranchAllocation = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { branch, semesterId, allocationId } = req.body;
+  const { branch, semesterId, allocationId, year } = req.body;
+  const user = req.user;
 
   try {
+    const whereClause: any = { semesterId };
+
     if (allocationId) {
-      await prisma.branchAllocation.update({
-        where: { id: allocationId },
-        data: { isApproved: true },
-      });
+      whereClause.id = allocationId;
     } else {
       if (!branch || !semesterId) {
         return res.status(400).json({ error: "Missing branch or semesterId" });
       }
-
-      const branchUpper = branch === "all" ? undefined : branch.toUpperCase();
-
-      const whereClause: any = { semesterId };
-      if (branchUpper) {
-        whereClause.branch = { equals: branchUpper, mode: "insensitive" };
+      if (branch !== "all") {
+        whereClause.branch = { equals: branch, mode: "insensitive" };
       }
-
-      await prisma.branchAllocation.updateMany({
-        where: whereClause,
-        data: { isApproved: true },
-      });
+      if (year) {
+        whereClause.subject = {
+          semester: { startsWith: year, mode: "insensitive" },
+        };
+      }
     }
 
-    res.json({ success: true, message: "Approved successfully" });
+    // Role-based status progression
+    let nextStatus: "HOD_REVIEW" | "APPROVED" = "HOD_REVIEW";
+    let title = "";
+    let message = "";
+    let target = "all";
+    let targetBranch = "";
+    let targetYear = "";
+
+    if (user?.role === "dean" || user?.role === "webmaster") {
+      nextStatus = "HOD_REVIEW";
+      title = "Course List Approved by Dean 🏛️";
+      message = `Subject structure for ${branch || "all branches"} ${year || ""} has been approved by Dean. Please review and finalize.`;
+      target = "all"; // In practice, webmaster/dean would notify all relevant HODs
+    } else if (user?.role === "hod") {
+      nextStatus = "APPROVED";
+      title = "Semester Registration is LIVE! 🎓";
+      message = `Your course registration for ${year || "upcoming semester"} is now open. Register before the deadline.`;
+      target = "year"; // Target students of specific batch
+      targetBranch = branch;
+      targetYear = year;
+    }
+
+    await prisma.branchAllocation.updateMany({
+      where: whereClause,
+      data: {
+        status: nextStatus,
+        isApproved: nextStatus === "APPROVED",
+      },
+    });
+
+    // Send targeted notification
+    try {
+      const NOTIFY_URL =
+        process.env.NOTIFY_URL || "http://uniz-gateway-api:3000/api/v1";
+      const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
+
+      await axios.post(
+        `${NOTIFY_URL}/notifications/push/send`,
+        {
+          target: target,
+          // If target is year, we might need to derive the batch prefix (e.g. E3 -> o22)
+          // For simplicity, we use the year provided if students use it as username prefix
+          year: targetYear,
+          title,
+          body: message,
+        },
+        {
+          headers: { "x-internal-secret": INTERNAL_SECRET },
+          timeout: 5000,
+        },
+      );
+    } catch (e) {
+      console.warn("Approval notification failed");
+    }
+
+    res.json({
+      success: true,
+      message: `Progressed to ${nextStatus}`,
+    });
   } catch (error) {
+    console.error("Approval failed:", error);
     res.status(500).json({ error: "Approval failed" });
   }
 };
@@ -351,6 +395,7 @@ export const getAvailableSubjects = async (
     const where: any = {
       semesterId: openSem.id,
       branch: { equals: branchUpper, mode: "insensitive" },
+      status: "APPROVED",
       isApproved: true,
     };
 

@@ -75,6 +75,7 @@ export default function SemesterRegistrationSection({
   >("allocations");
   const [registeredStudents, setRegisteredStudents] = useState<any[]>([]);
   const [branchFilter, setBranchFilter] = useState(branch || "all");
+  const [yearFilter, setYearFilter] = useState("all");
   const [faculties, setFaculties] = useState<any[]>([]);
 
   const role = (() => {
@@ -111,7 +112,7 @@ export default function SemesterRegistrationSection({
         fetchRegistrations();
       }
     }
-  }, [activeTab, branchFilter, selectedSem?.id, activeViewTab]);
+  }, [activeTab, branchFilter, yearFilter, selectedSem?.id, activeViewTab]);
 
   const fetchSemesters = async () => {
     try {
@@ -191,8 +192,9 @@ export default function SemesterRegistrationSection({
 
     setLoading(true);
     try {
+      const yearQuery = yearFilter !== "all" ? `&year=${yearFilter}` : "";
       const res = await apiClient<any>(
-        `${DEAN_REVIEW(branchFilter)}?semesterId=${selectedSem.id}`,
+        `${DEAN_REVIEW(branchFilter)}?semesterId=${selectedSem.id}${yearQuery}`,
       );
       if (res) setAllocations(res);
     } finally {
@@ -201,16 +203,6 @@ export default function SemesterRegistrationSection({
   };
 
   const approveAllocation = async () => {
-    const unassignedCount = allocations.filter(
-      (a) => !a.facultyId && !a.faculty,
-    ).length;
-    if (unassignedCount > 0) {
-      toast.error(
-        `Cannot approve: ${unassignedCount} subjects are missing faculty assignments.`,
-      );
-      return;
-    }
-
     setLoading(true);
     try {
       const res = await apiClient(DEAN_APPROVE, {
@@ -218,10 +210,15 @@ export default function SemesterRegistrationSection({
         body: JSON.stringify({
           branch: branchFilter,
           semesterId: selectedSem?.id,
+          year: yearFilter !== "all" ? yearFilter : undefined,
         }),
       });
       if (res) {
-        toast.success("Review Completed Successfully");
+        toast.success(
+          role === "dean"
+            ? "Approved for HOD review"
+            : "Final approval complete",
+        );
         fetchAllocations();
       }
     } finally {
@@ -297,7 +294,8 @@ export default function SemesterRegistrationSection({
             </button>
             <div>
               <p className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mb-1 opacity-70">
-                Department Review • {branch || "ALL BRANCHES"}
+                Department Review • {branchFilter || "ALL"} •{" "}
+                {yearFilter !== "all" ? yearFilter : "ALL YEARS"}
               </p>
               <h1 className="text-3xl font-black text-slate-900 tracking-tight">
                 {selectedSem.name}
@@ -308,23 +306,23 @@ export default function SemesterRegistrationSection({
           <div className="flex items-center gap-4">
             <button
               onClick={() => downloadExport("allocations")}
-              className="flex items-center gap-3 px-6 py-4 bg-slate-900 text-white rounded-[20px] font-bold text-sm hover:bg-slate-800 transition-all shadow-xl shadow-slate-200"
+              className="flex items-center gap-3 px-6 py-4 bg-slate-100 text-slate-600 rounded-[20px] font-bold text-sm hover:bg-slate-200 transition-all"
             >
               <Download size={18} />
-              Export XLSX
+              Export
             </button>
-            {(isAdmin ||
-              (branchFilter !== "all" && !isAdmin) ||
-              // @ts-ignore
-              (branchFilter === "all" && !isAdmin && role === "dean")) && (
+            {(role === "webmaster" || role === "dean" || role === "hod") && (
               <button
                 onClick={approveAllocation}
-                className={`flex items-center gap-3 px-8 py-4 ${branchFilter === "all" ? "bg-slate-900 border border-slate-700" : "bg-blue-600 shadow-blue-100"} text-white rounded-[20px] font-bold text-sm hover:opacity-90 transition-all shadow-xl`}
+                disabled={loading}
+                className={`flex items-center gap-3 px-8 py-4 ${role === "dean" ? "bg-slate-900" : "bg-blue-600 shadow-blue-100"} text-white rounded-[20px] font-extrabold text-sm hover:opacity-90 transition-all shadow-xl`}
               >
                 <ShieldCheck size={18} />
-                {branchFilter === "all"
-                  ? "Global Approval Override"
-                  : "Approve Course List"}
+                {role === "dean"
+                  ? "Approve for HOD Review"
+                  : role === "hod"
+                    ? "Confirm and Open Registration"
+                    : "Global Approval Override"}
               </button>
             )}
           </div>
@@ -349,28 +347,35 @@ export default function SemesterRegistrationSection({
             </button>
           </div>
 
-          {isAdmin && (
+          <div className="flex gap-2">
             <select
-              value={branchFilter}
-              onChange={(e) => {
-                setBranchFilter(e.target.value);
-                // Trigger fresh fetch
-                if (activeViewTab === "allocations") {
-                  setTimeout(() => fetchAllocations(), 10);
-                } else {
-                  setTimeout(() => fetchRegistrations(), 10);
-                }
-              }}
-              className="bg-white border border-slate-100 rounded-full px-4 py-2 text-sm font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+              value={yearFilter}
+              onChange={(e) => setYearFilter(e.target.value)}
+              className="bg-white border border-slate-100 rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
             >
-              <option value="all">Every Branch</option>
-              {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
-                <option key={b} value={b}>
-                  {b} Department
+              <option value="all">Every Year</option>
+              {["E1", "E2", "E3", "E4"].map((y) => (
+                <option key={y} value={y}>
+                  {y} Engineering
                 </option>
               ))}
             </select>
-          )}
+
+            {isAdmin && (
+              <select
+                value={branchFilter}
+                onChange={(e) => setBranchFilter(e.target.value)}
+                className="bg-white border border-slate-100 rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+              >
+                <option value="all">Every Branch</option>
+                {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
+                  <option key={b} value={b}>
+                    {b} Branch
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
         </div>
 
         {activeViewTab === "allocations" ? (
@@ -425,11 +430,22 @@ export default function SemesterRegistrationSection({
                     <td className="px-8 py-6">
                       {item.isApproved ? (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[9px] border border-emerald-100 uppercase">
-                          <CheckCircle2 size={10} /> Verified
+                          <CheckCircle2 size={10} /> Live
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[9px] border border-amber-100 uppercase">
-                          <Clock size={10} /> Pending Review
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] border uppercase ${
+                            // @ts-ignore
+                            item.status === "HOD_REVIEW"
+                              ? "bg-blue-50 text-blue-600 border-blue-100"
+                              : "bg-amber-50 text-amber-600 border-amber-100"
+                          }`}
+                        >
+                          <Clock size={10} />{" "}
+                          {
+                            // @ts-ignore
+                            item.status?.replace("_", " ") || "Dean Review"
+                          }
                         </span>
                       )}
                     </td>
