@@ -14,9 +14,9 @@ import {
   Activity,
   Smartphone,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+// removed useNavigate
 import { useIsAuth } from "../../../hooks/is_authenticated";
-import { clearSession } from "../../../utils/security";
+import { useLogout } from "../../../hooks/useLogout";
 import StudentDetails from "./StudentDetails";
 import SubjectManagement from "./SubjectManagement";
 import UploadSection from "./UploadSection";
@@ -32,7 +32,6 @@ import SystemLogsSection from "./SystemLogsSection";
 
 export default function WebmasterDashboard() {
   useIsAuth();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
     | "dashboard"
     | "student"
@@ -70,9 +69,10 @@ export default function WebmasterDashboard() {
     { id: "system_logs", label: "System & Logs", icon: Activity },
   ];
 
+  const { logout } = useLogout();
+
   const handleLogout = () => {
-    clearSession();
-    navigate("/");
+    logout();
   };
 
   const renderContent = () => {
@@ -105,19 +105,19 @@ export default function WebmasterDashboard() {
       default:
         return (
           <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
-            <div className="bg-gradient-to-br from-slate-900 to-[#1e293b] rounded-[28px] p-12 text-white shadow-2xl shadow-slate-200 relative overflow-hidden group">
-              <div className="relative z-10 space-y-4">
+            <div className="bg-gradient-to-br from-slate-900 to-[#1e293b] rounded-[28px] py-6 px-10 text-white shadow-2xl shadow-slate-200 relative overflow-hidden group">
+              <div className="relative z-10 space-y-2.5">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 backdrop-blur-md">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
+                  <span className="text-[8px] font-bold uppercase tracking-widest text-emerald-400">
                     System Secure
                   </span>
                 </div>
                 <div>
-                  <h1 className="text-5xl font-semibold tracking-[-0.03em] mb-3 leading-none">
+                  <h1 className="text-3xl font-semibold tracking-[-0.03em] mb-1.5 leading-none">
                     Welcome, {username}
                   </h1>
-                  <p className="text-slate-400 font-medium text-lg opacity-90 max-w-lg leading-relaxed">
+                  <p className="text-slate-400 font-medium text-[15px] opacity-90 max-w-lg leading-relaxed">
                     Institutional Governance Engine. Orchestrate campus
                     operations with precision through your administrative
                     terminal.
@@ -125,7 +125,7 @@ export default function WebmasterDashboard() {
                 </div>
               </div>
               <div className="absolute right-0 bottom-0 opacity-[0.03] translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform duration-1000">
-                <LayoutDashboard size={400} />
+                <LayoutDashboard size={280} />
               </div>
             </div>
 
@@ -134,16 +134,16 @@ export default function WebmasterDashboard() {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as any)}
-                  className="bg-white p-7 rounded-[28px] border border-slate-100 shadow-sm text-left hover:shadow-2xl hover:translate-y-[-2px] transition-all group flex flex-col justify-between min-h-[180px]"
+                  className="bg-white p-5 rounded-[28px] border border-slate-100 shadow-sm text-left transition-all group flex flex-col justify-between min-h-[150px]"
                 >
-                  <div className="p-4 rounded-2xl bg-slate-50 text-slate-400 mb-6 inline-block group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-inner group-hover:shadow-lg group-hover:shadow-blue-200">
-                    <item.icon size={22} />
+                  <div className="p-3.5 rounded-2xl bg-slate-50 text-slate-400 mb-4 inline-block transition-all duration-300 shadow-inner">
+                    <item.icon size={20} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 text-[15px] mb-1.5 leading-tight group-hover:text-blue-600 transition-colors">
+                    <h3 className="font-bold text-slate-900 text-[14px] mb-1 leading-tight transition-colors">
                       {item.label}
                     </h3>
-                    <p className="text-[9px] text-slate-400 uppercase tracking-[0.2em] font-black opacity-60">
+                    <p className="text-[8px] text-slate-400 uppercase tracking-[0.2em] font-black opacity-60 group-hover:text-blue-500 transition-colors">
                       Initialize Module
                     </p>
                   </div>
@@ -212,8 +212,8 @@ export default function WebmasterDashboard() {
                 </div>
                 {isSidebarOpen && (
                   <span
-                    className={`text-[14px] whitespace-nowrap tracking-normal transition-all
-                      ${isActive ? "font-semibold" : "font-medium"}`}
+                    className={`text-[13px] whitespace-nowrap tracking-tight transition-all
+                      ${isActive ? "font-bold" : "font-semibold text-slate-500 group-hover:text-blue-600"}`}
                   >
                     {item.label}
                   </span>
