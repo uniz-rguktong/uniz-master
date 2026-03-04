@@ -64,6 +64,7 @@ export default function SemesterRegistrationSection({
     "allocations" | "registrations"
   >("allocations");
   const [registeredStudents, setRegisteredStudents] = useState<any[]>([]);
+  const [branchFilter, setBranchFilter] = useState(branch || "all");
 
   // For New Semester Modal
   const [showNewModal, setShowNewModal] = useState(false);
@@ -147,7 +148,7 @@ export default function SemesterRegistrationSection({
     setLoading(true);
     try {
       const res = await apiClient<any[]>(
-        `${GET_REGISTRATIONS}?semesterId=${selectedSem.id}&branch=${branch}`,
+        `${GET_REGISTRATIONS}?semesterId=${selectedSem.id}&branch=${branchFilter}`,
       );
       if (res) setRegisteredStudents(res);
     } finally {
@@ -156,20 +157,12 @@ export default function SemesterRegistrationSection({
   };
 
   const fetchAllocations = async () => {
-    if (!branch && isAdmin) {
-      if (activeViewTab === "registrations") {
-        fetchRegistrations();
-        return;
-      }
-      // If we are in allocations tab and no branch is selected, fetch "all"
-    }
-
     if (!selectedSem) return;
 
     setLoading(true);
     try {
       const res = await apiClient<any>(
-        `${DEAN_REVIEW(branch || "all")}?semesterId=${selectedSem.id}`,
+        `${DEAN_REVIEW(branchFilter)}?semesterId=${selectedSem.id}`,
       );
       if (res) setAllocations(res);
     } finally {
@@ -182,7 +175,10 @@ export default function SemesterRegistrationSection({
     try {
       const res = await apiClient(DEAN_APPROVE, {
         method: "POST",
-        body: JSON.stringify({ branch, semesterId: selectedSem?.id }),
+        body: JSON.stringify({
+          branch: branchFilter === "all" ? "all" : branchFilter,
+          semesterId: selectedSem?.id,
+        }),
       });
       if (res) {
         toast.success("Review Completed Successfully");
@@ -199,7 +195,7 @@ export default function SemesterRegistrationSection({
     await downloadFile(url, `${selectedSem.name}_${type}.xlsx`, {
       type,
       semesterId: selectedSem.id,
-      branch: branch || "CSE",
+      branch: branchFilter,
     });
   };
 
@@ -232,34 +228,61 @@ export default function SemesterRegistrationSection({
               <Download size={18} />
               Export XLSX
             </button>
-            {(!isAdmin || branch) && (
+            {(isAdmin || branchFilter !== "all") && (
               <button
                 onClick={approveAllocation}
-                className="flex items-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-[20px] font-bold text-sm hover:bg-blue-700 transition-all shadow-xl shadow-blue-100"
+                className={`flex items-center gap-3 px-8 py-4 ${branchFilter === "all" ? "bg-slate-900 border border-slate-700" : "bg-blue-600 shadow-blue-100"} text-white rounded-[20px] font-bold text-sm hover:opacity-90 transition-all shadow-xl`}
               >
                 <ShieldCheck size={18} />
-                Approve Course List
+                {isAdmin && branchFilter === "all"
+                  ? "Global Approval Override"
+                  : "Approve Course List"}
               </button>
             )}
           </div>
         </div>
 
-        <div className="flex gap-4 mb-4">
-          <button
-            onClick={() => setActiveViewTab("allocations")}
-            className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${activeViewTab === "allocations" ? "bg-blue-600 text-white shadow-lg" : "bg-white text-slate-400 border border-slate-100"}`}
-          >
-            Subject Allocations
-          </button>
-          <button
-            onClick={() => {
-              setActiveViewTab("registrations");
-              fetchRegistrations();
-            }}
-            className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${activeViewTab === "registrations" ? "bg-blue-600 text-white shadow-lg" : "bg-white text-slate-400 border border-slate-100"}`}
-          >
-            Registered Students
-          </button>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex gap-4">
+            <button
+              onClick={() => setActiveViewTab("allocations")}
+              className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${activeViewTab === "allocations" ? "bg-blue-600 text-white shadow-lg" : "bg-white text-slate-400 border border-slate-100"}`}
+            >
+              Subject Allocations
+            </button>
+            <button
+              onClick={() => {
+                setActiveViewTab("registrations");
+                fetchRegistrations();
+              }}
+              className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${activeViewTab === "registrations" ? "bg-blue-600 text-white shadow-lg" : "bg-white text-slate-400 border border-slate-100"}`}
+            >
+              Registered Students
+            </button>
+          </div>
+
+          {isAdmin && (
+            <select
+              value={branchFilter}
+              onChange={(e) => {
+                setBranchFilter(e.target.value);
+                // Trigger fresh fetch
+                if (activeViewTab === "allocations") {
+                  setTimeout(() => fetchAllocations(), 10);
+                } else {
+                  setTimeout(() => fetchRegistrations(), 10);
+                }
+              }}
+              className="bg-white border border-slate-100 rounded-full px-4 py-2 text-sm font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+            >
+              <option value="all">Every Branch</option>
+              {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
+                <option key={b} value={b}>
+                  {b} Department
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
         {activeViewTab === "allocations" ? (
