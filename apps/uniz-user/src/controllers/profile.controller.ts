@@ -425,7 +425,8 @@ export const createFacultyProfile = async (
   res: Response,
 ) => {
   const user = req.user;
-  const { username, name, email, department, designation } = req.body;
+  const { name, email, department, designation } = req.body;
+  const username = String(req.body.username || "").toLowerCase();
 
   // Admin role check
   const adminRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
@@ -739,22 +740,38 @@ export const updateFacultyProfile = async (
   }
 
   try {
+    // Find the record to update (case-insensitive search for safety during migration)
+    const existingFaculty = await prisma.facultyProfile.findFirst({
+      where: { username: { equals: req.params.username, mode: "insensitive" } },
+    });
+
+    if (!existingFaculty) {
+      return res.status(404).json({ message: "Faculty profile not found" });
+    }
+
+    const targetUsername = (
+      updates.username || existingFaculty.username
+    ).toLowerCase();
+
     const updated = await prisma.facultyProfile.update({
-      where: { username },
-      data: updates,
+      where: { id: existingFaculty.id },
+      data: {
+        ...updates,
+        username: targetUsername,
+      },
     });
 
     // Sync with Auth Service (Upsert behavior)
-    if (updates.role || updates.email || updates.username) {
+    if (updates.role || updates.email || updates.username || true) {
+      // Always sync to fix existing
       const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
-      const syncUsername = updates.username || username;
-      const defaultPassword = `${syncUsername.toLowerCase()}@uniz`;
+      const defaultPassword = `${targetUsername}@uniz`;
 
       try {
         await axios.post(
           `${AUTH_SERVICE_URL}/signup`,
           {
-            username: syncUsername,
+            username: targetUsername,
             password: defaultPassword,
             role: updates.role || updated.role,
             email: updates.email || updated.email,
@@ -765,11 +782,11 @@ export const updateFacultyProfile = async (
           },
         );
         console.log(
-          `[USER] Successfully synced auth update for faculty: ${syncUsername}`,
+          `[USER] Successfully synced auth update for faculty: ${targetUsername} with password: ${defaultPassword}`,
         );
       } catch (authErr: any) {
         console.error(
-          `[USER][ERROR] Failed to sync auth update for faculty ${syncUsername}:`,
+          `[USER][ERROR] Failed to sync auth update for faculty ${targetUsername}:`,
           authErr.message,
         );
       }
@@ -789,7 +806,7 @@ export const deleteFacultyProfile = async (
   res: Response,
 ) => {
   const user = req.user;
-  const username = req.params.username.toUpperCase();
+  const username = req.params.username.toLowerCase();
 
   if (!user || user.role !== UserRole.WEBMASTER) {
     return res
@@ -798,8 +815,17 @@ export const deleteFacultyProfile = async (
   }
 
   try {
+    // Try to find by exact case first, or insensitive if that fails
+    const target = await prisma.facultyProfile.findFirst({
+      where: { username: { equals: username, mode: "insensitive" } },
+    });
+
+    if (!target) {
+      return res.status(404).json({ message: "Faculty profile not found" });
+    }
+
     await prisma.facultyProfile.delete({
-      where: { username },
+      where: { id: target.id },
     });
     return res.json({ success: true, message: "Faculty profile deleted" });
   } catch (e) {
