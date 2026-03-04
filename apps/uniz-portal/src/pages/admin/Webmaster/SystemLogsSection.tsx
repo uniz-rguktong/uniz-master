@@ -29,7 +29,7 @@ export default function SystemLogsSection() {
     const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(ADMIN_UPLOAD_HISTORY, {
-        headers: { Authorization: `Bearer ${JSON.parse(token || '""')}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
       });
       const data = await res.json();
       if (data.success) {
@@ -47,7 +47,7 @@ export default function SystemLogsSection() {
     const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(TRIGGER_CRON, {
-        headers: { Authorization: `Bearer ${JSON.parse(token || '""')}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
       });
       const data = await res.json();
       if (data.success) {

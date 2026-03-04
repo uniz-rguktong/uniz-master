@@ -39,7 +39,7 @@ export default function StudentBulkSection() {
     const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(ADMIN_STUDENT_TEMPLATE, {
-        headers: { Authorization: `Bearer ${JSON.parse(token || '""')}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
       });
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
@@ -63,7 +63,7 @@ export default function StudentBulkSection() {
     try {
       const res = await fetch(ADMIN_STUDENT_UPLOAD, {
         method: "POST",
-        headers: { Authorization: `Bearer ${JSON.parse(token || '""')}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
         body: formData,
       });
       const data = await res.json();
@@ -88,7 +88,7 @@ export default function StudentBulkSection() {
         const token = localStorage.getItem("admin_token");
         try {
           const res = await fetch(ADMIN_STUDENT_PROGRESS, {
-            headers: { Authorization: `Bearer ${JSON.parse(token || '""')}` },
+            headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
           });
           const data = await res.json();
           setProgress(data);
@@ -115,7 +115,7 @@ export default function StudentBulkSection() {
     );
     try {
       const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${JSON.parse(token || '""')}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
       });
       const blob = await res.blob();
       const downloadUrl = window.URL.createObjectURL(blob);

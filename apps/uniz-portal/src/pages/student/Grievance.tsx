@@ -26,7 +26,7 @@ export default function Grievance() {
     }
 
     const myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${JSON.parse(token)}`);
+    myHeaders.append("Authorization", `Bearer ${(token || '').replace(/"/g, '')}`);
     myHeaders.append("Content-Type", "application/json");
 
     const raw = JSON.stringify({

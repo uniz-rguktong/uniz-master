@@ -67,7 +67,7 @@ export default function StudentDetails() {
       const res = await fetch(ADMIN_VIEW_STUDENT(id), {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
         },
       });
 
@@ -93,7 +93,7 @@ export default function StudentDetails() {
       const res = await fetch(SEARCH_STUDENTS, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -124,7 +124,7 @@ export default function StudentDetails() {
       const res = await fetch(ADMIN_VIEW_STUDENT(username.toUpperCase()), {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
         },
       });
       const data = await res.json();
@@ -152,7 +152,7 @@ export default function StudentDetails() {
       const res = await fetch(ADMIN_SUSPEND_STUDENT(username), {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -193,7 +193,7 @@ export default function StudentDetails() {
       const res = await fetch(ADMIN_UPDATE_STUDENT(selectedStudent.username), {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(editFormData),

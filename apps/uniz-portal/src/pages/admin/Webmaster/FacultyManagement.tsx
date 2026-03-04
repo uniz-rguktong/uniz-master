@@ -50,7 +50,7 @@ export default function FacultyManagement() {
       const res = await fetch(SEARCH_FACULTY, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -96,7 +96,7 @@ export default function FacultyManagement() {
       const res = await fetch(url, {
         method,
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
@@ -131,7 +131,7 @@ export default function FacultyManagement() {
       const res = await fetch(ADMIN_SUSPEND_FACULTY(username), {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ suspended: !currentStatus }),
@@ -159,7 +159,7 @@ export default function FacultyManagement() {
       const res = await fetch(`${BASE_URL}/profile/admin/faculty/${username}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
         },
       });
       const data = await res.json();

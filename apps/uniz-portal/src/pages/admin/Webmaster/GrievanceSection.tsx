@@ -38,7 +38,7 @@ export default function GrievanceSection() {
       const res = await fetch(`${GET_GRIEVANCES_LIST}?${query.toString()}`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
         },
       });
       const data = await res.json();
