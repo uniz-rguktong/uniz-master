@@ -29,12 +29,14 @@ export default function CourseRegistration({
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
 
   const fetchAvailable = async () => {
     setLoading(true);
     try {
       const data = await apiClient<any>(GET_AVAILABLE_SUBJECTS(branch, year));
       setAvailable(data.subjects || []);
+      setAlreadyRegistered(data.alreadyRegistered || false);
       // Pre-select all by default if mandatory? Actually let user choose
     } catch (error) {
       toast.error("Failed to fetch available subjects");
@@ -84,6 +86,29 @@ export default function CourseRegistration({
         <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">
           Fetching available courses...
         </p>
+      </div>
+    );
+  }
+
+  if (alreadyRegistered) {
+    return (
+      <div className="bg-emerald-50 rounded-[40px] p-12 text-center border-2 border-emerald-100 max-w-2xl mx-auto shadow-xl">
+        <div className="w-20 h-20 bg-emerald-100 rounded-3xl flex items-center justify-center text-emerald-600 mx-auto mb-6">
+          <CheckCircle2 size={40} />
+        </div>
+        <h3 className="text-2xl font-black text-emerald-900 mb-2">
+          Registration Already Completed
+        </h3>
+        <p className="text-emerald-700 font-medium font-outfit mb-8 leading-relaxed px-10">
+          You have already registered for subjects this semester. Your details
+          have been successfully recorded and are currently being processed.
+        </p>
+        <button
+          onClick={onComplete}
+          className="px-8 py-4 bg-emerald-600 text-white rounded-[20px] font-bold shadow-lg"
+        >
+          View Registered Subjects
+        </button>
       </div>
     );
   }
