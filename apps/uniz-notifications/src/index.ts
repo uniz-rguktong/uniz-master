@@ -853,7 +853,8 @@ app.post("/subscribe", requireAuth, async (req, res) => {
  */
 app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
   try {
-    const { target, username, batch, year, title, body, image } = req.body;
+    const { target, username, batch, year, branch, title, body, image } =
+      req.body;
     if (!title || !body) {
       return res.status(400).json({ error: "title and body are required" });
     }
@@ -886,17 +887,41 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
         return res.status(400).json({
           error: "year required for target=year (e.g. E1,E2,E3,E4,P1...)",
         });
-      // Match usernames that contain the year pattern — stored in profile, filter by batch prefix
-      // e.g year=o21 sends to all o21* users
       subscriptions = await prisma.pushSubscription.findMany({
         where: { username: { startsWith: year, mode: "insensitive" } },
+      });
+    } else if (target === "dean") {
+      const deans = await prisma.adminProfile.findMany({
+        where: { role: { equals: "dean", mode: "insensitive" } },
+      });
+      const usernames = deans.map((d) => d.username);
+      subscriptions = await prisma.pushSubscription.findMany({
+        where: { username: { in: usernames } },
+      });
+    } else if (target === "hod") {
+      const where: any = { role: { equals: "hod", mode: "insensitive" } };
+      if (branch) where.department = { equals: branch, mode: "insensitive" };
+      const hods = await prisma.facultyProfile.findMany({ where });
+      const usernames = hods.map((h) => h.username);
+      subscriptions = await prisma.pushSubscription.findMany({
+        where: { username: { in: usernames } },
+      });
+    } else if (target === "students") {
+      const where: any = {};
+      if (branch) where.branch = { equals: branch, mode: "insensitive" };
+      if (year) where.year = { equals: year, mode: "insensitive" };
+      const students = await prisma.studentProfile.findMany({ where });
+      const usernames = students.map((s) => s.username);
+      subscriptions = await prisma.pushSubscription.findMany({
+        where: { username: { in: usernames } },
       });
     } else if (target === "all") {
       subscriptions = await prisma.pushSubscription.findMany();
     } else {
-      return res
-        .status(400)
-        .json({ error: "target must be one of: user, batch, year, all" });
+      return res.status(400).json({
+        error:
+          "target must be one of: user, batch, year, all, dean, hod, students",
+      });
     }
 
     if (subscriptions.length === 0) {

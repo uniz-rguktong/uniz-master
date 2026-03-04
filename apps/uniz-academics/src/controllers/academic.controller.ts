@@ -1416,13 +1416,24 @@ export const addSubject = async (req: AuthenticatedRequest, res: Response) => {
   const { code, name, credits, department, semester } = req.body;
   const user = req.user;
 
-  // Only Webmaster or Dean/Director can add/update subjects
-  const allowed = ["webmaster", "dean", "director"];
+  // Only Webmaster, Dean/Director or HOD can add/update subjects
+  const allowed = ["webmaster", "dean", "director", "hod"];
   if (!user || !allowed.includes(user.role as string)) {
     return res.status(403).json({
       success: false,
-      message: "Only administrators can manage subjects",
+      message: "Required role: Dean or HOD",
     });
+  }
+
+  // Branch check for HOD
+  if (user?.role === "hod") {
+    const hodBranch = user.username.split("_")[1]?.toUpperCase();
+    if (department.toUpperCase() !== hodBranch) {
+      return res.status(403).json({
+        success: false,
+        message: "HODs can only manage subjects for their own department",
+      });
+    }
   }
 
   if (!code || !name || !credits || !department || !semester) {
@@ -1478,12 +1489,31 @@ export const updateSubject = async (
   const { code, name, credits, department, semester } = req.body;
   const user = req.user;
 
-  const allowed = ["webmaster", "dean", "director"];
+  const allowed = ["webmaster", "dean", "director", "hod"];
   if (!user || !allowed.includes(user.role as string)) {
     return res.status(403).json({
       success: false,
       message: "Only administrators can manage subjects",
     });
+  }
+
+  // Branch check for HOD
+  if (user?.role === "hod") {
+    const hodBranch = user.username.split("_")[1]?.toUpperCase();
+    if (department && department.toUpperCase() !== hodBranch) {
+      return res.status(403).json({
+        success: false,
+        message: "HODs can only manage subjects for their own department",
+      });
+    }
+    // Also verify the existing subject belongs to this HOD's department
+    const existing = await prisma.subject.findUnique({ where: { id } });
+    if (existing?.department.toUpperCase() !== hodBranch) {
+      return res.status(403).json({
+        success: false,
+        message: "HODs can only manage subjects for their own department",
+      });
+    }
   }
 
   try {
@@ -1513,7 +1543,7 @@ export const deleteSubject = async (
   const { id } = req.params;
   const user = req.user;
 
-  const allowed = ["webmaster", "dean", "director"];
+  const allowed = ["webmaster", "dean", "director", "hod"];
   if (!user || !allowed.includes(user.role as string)) {
     return res.status(403).json({
       success: false,
@@ -1522,7 +1552,20 @@ export const deleteSubject = async (
   }
 
   try {
-    await prisma.subject.delete({ where: { id } });
+    const existing = await prisma.subject.findUnique({ where: { id } });
+    if (!existing)
+      return res.status(404).json({ message: "Subject not found" });
+
+    // Branch check for HOD
+    if (user?.role === "hod") {
+      const hodBranch = user.username.split("_")[1]?.toUpperCase();
+      if (existing.department.toUpperCase() !== hodBranch) {
+        return res.status(403).json({
+          success: false,
+          message: "HODs can only manage subjects for their own department",
+        });
+      }
+    }
     return res.json({ success: true, message: "Subject deleted successfully" });
   } catch (e: any) {
     console.error("[Academics] deleteSubject Error:", e);

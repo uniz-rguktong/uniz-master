@@ -98,7 +98,7 @@ export const initSemester = async (
         .post(
           `${NOTIFY_URL}/notifications/push/send`,
           {
-            target: "all", // Or target=dean if implemented
+            target: "dean", // Targeted to Dean
             title: "Action Required: Subject Review 🎓",
             body: `Webmaster has initialized ${academicSemester}. Please review and approve subject allocations for all branches and years.`,
           },
@@ -175,12 +175,22 @@ export const createAllocation = async (
   res: Response,
 ) => {
   const { semesterId, branch, subjectId, academicYear } = req.body;
+  const user = req.user;
 
   try {
+    // Role Check
+    if (user?.role === "hod") {
+      // derive branch from username e.g. hod_cse -> CSE
+      const hodBranch = user.username.split("_")[1]?.toUpperCase();
+      if (branch.toUpperCase() !== hodBranch) {
+        return res.status(403).json({ error: "Unauthorized for this branch" });
+      }
+    }
+
     const allocation = await prisma.branchAllocation.create({
       data: {
         semesterId,
-        branch,
+        branch: branch.toUpperCase(),
         subjectId,
         academicYear: academicYear || "E4", // Default or derived
         status: "DEAN_PENDING",
@@ -205,8 +215,20 @@ export const deleteAllocation = async (
   res: Response,
 ) => {
   const { id } = req.params;
+  const user = req.user;
 
   try {
+    const target = await prisma.branchAllocation.findUnique({ where: { id } });
+    if (!target) return res.status(404).json({ error: "Not found" });
+
+    // Role Check
+    if (user?.role === "hod") {
+      const hodBranch = user.username.split("_")[1]?.toUpperCase();
+      if (target.branch.toUpperCase() !== hodBranch) {
+        return res.status(403).json({ error: "Unauthorized for this branch" });
+      }
+    }
+
     await prisma.branchAllocation.delete({
       where: { id },
     });
@@ -357,14 +379,15 @@ export const approveBranchAllocation = async (
     if (user?.role === "dean" || user?.role === "webmaster") {
       nextStatus = "HOD_REVIEW";
       title = "Course List Approved by Dean 🏛️";
-      message = `Subject structure for ${branch || "all branches"} ${year || ""} has been approved by Dean. Please review and finalize.`;
-      target = "all"; // In practice, webmaster/dean would notify all relevant HODs
+      message = `Subject structure for ${branch || "all branches"} has been approved by Dean. Please review and finalize.`;
+      target = "hod"; // Targeted to HODs
+      targetBranch = branch;
     } else if (user?.role === "hod") {
       nextStatus = "APPROVED";
       title = "Semester Registration is LIVE! 🎓";
       message = `Your course registration for ${year || "upcoming semester"} is now open. Register before the deadline.`;
-      target = "year"; // Target students of specific batch
-      targetBranch = branch;
+      target = "students"; // Targeted to students
+      targetBranch = branch || user.username.split("_")[1]?.toUpperCase();
       targetYear = year;
     }
 
@@ -386,8 +409,7 @@ export const approveBranchAllocation = async (
         `${NOTIFY_URL}/notifications/push/send`,
         {
           target: target,
-          // If target is year, we might need to derive the batch prefix (e.g. E3 -> o22)
-          // For simplicity, we use the year provided if students use it as username prefix
+          branch: targetBranch,
           year: targetYear,
           title,
           body: message,
@@ -451,24 +473,9 @@ export const getAvailableSubjects = async (
       isApproved: true,
     };
 
-    // If year is provided (e.g. E3), calculate target year
+    // If year is provided (e.g. E3), filter by academicYear field strictly
     if (year) {
-      const semName = openSem.name.toUpperCase();
-      const isNewYear = semName.includes("SEM-1");
-
-      let targetYear = year as string;
-      if (isNewYear) {
-        const currentYearNum = parseInt((year as string).replace("E", ""));
-        if (!isNaN(currentYearNum) && currentYearNum < 4) {
-          targetYear = `E${currentYearNum + 1}`;
-        }
-      }
-
-      where.subject = {
-        semester: {
-          startsWith: targetYear,
-        },
-      };
+      where.academicYear = { equals: year as string, mode: "insensitive" };
     }
 
     const subjects = await prisma.branchAllocation.findMany({
