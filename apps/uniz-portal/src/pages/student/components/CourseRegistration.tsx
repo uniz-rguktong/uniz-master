@@ -150,11 +150,11 @@ export default function CourseRegistration({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {available.map((sub) => {
-          const isSelected = selectedIds.includes(sub.id);
+          const isSelected = selectedIds.includes(sub.subject?.id);
           return (
             <button
-              key={sub.id}
-              onClick={() => toggleSubject(sub.id)}
+              key={sub.subject?.id}
+              onClick={() => toggleSubject(sub.subject?.id)}
               className={`p-6 rounded-[32px] border-2 transition-all flex items-start gap-4 text-left group overflow-hidden relative ${
                 isSelected
                   ? "bg-white border-blue-600 shadow-xl shadow-blue-50"
