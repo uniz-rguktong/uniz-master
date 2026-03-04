@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { toast } from "react-toastify";
 import { AlertCircle, Send } from "lucide-react";
 import { BASE_URL } from "../../api/endpoints";
@@ -63,46 +62,46 @@ export default function Grievance() {
 
   return (
     <div className="font-sans text-slate-900">
-      <div className="max-w-6xl mx-auto px-4 pt-2 md:pt-12 pb-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-black tracking-tighter text-slate-900 mb-2">
-            Grievance
-          </h1>
-          <p className="text-slate-500 font-medium text-sm">
-            Submit your grievances and track their status.
+      <div className="max-w-6xl mx-auto px-4 pb-10">
+        <div className="flex flex-col gap-1.5 mb-6">
+          <p className="text-slate-500 font-medium text-[13px]">
+            Institutional Support Terminal
           </p>
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+            Grievance Redressal System
+          </h1>
         </div>
 
         {/* Main Content */}
-        <div className="bg-white rounded-3xl md:rounded-[2.5rem] overflow-hidden border border-slate-200 shadow-sm">
+        <div className="bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm">
           <div className="md:flex">
             {/* Form Section */}
-            <div className="md:w-2/3 p-6 md:p-8 md:px-10">
-              <div className="flex items-center gap-5 mb-10">
-                <div className="text-blue-600">
-                  <AlertCircle className="w-8 h-8" />
+            <div className="md:w-2/3 p-6 md:p-10 border-r border-slate-50">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="text-blue-500">
+                  <AlertCircle size={24} />
                 </div>
                 <div>
-                  <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
-                    New Grievance
+                  <h3 className="text-[17px] font-semibold text-slate-900 tracking-tight">
+                    Initialize New Grievance
                   </h3>
-                  <p className="text-sm font-medium text-slate-500">
-                    Describe your issue in detail
+                  <p className="text-[13px] font-medium text-slate-400">
+                    Document your concerns following official protocols
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-6 md:space-y-8">
+              <div className="space-y-6">
                 {/* Category */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 block ml-1">
                     Category
                   </label>
                   <div className="relative group">
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 font-bold text-[15px] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all appearance-none text-slate-900"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 font-semibold text-[15px] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all appearance-none text-slate-900"
                     >
                       <option value="Hostel">Hostel</option>
                       <option value="Mess">Mess</option>
@@ -130,19 +129,19 @@ export default function Grievance() {
 
                 {/* Description */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 block ml-1">
                     Description
                   </label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Provide detailed information about your grievance..."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-5 font-bold text-[15px] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all min-h-[180px] resize-none text-slate-900 placeholder:text-slate-300 placeholder:font-normal"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-5 font-semibold text-[15px] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all min-h-[160px] resize-none text-slate-900 placeholder:text-slate-300 placeholder:font-normal"
                   />
                 </div>
 
                 {/* Anonymous Toggle */}
-                <div className="flex items-center gap-3 ml-1">
+                <div className="flex items-center gap-3 ml-1 bg-slate-50/50 p-3 rounded-xl border border-slate-100/50">
                   <input
                     type="checkbox"
                     id="anonymous"
@@ -152,66 +151,66 @@ export default function Grievance() {
                   />
                   <label
                     htmlFor="anonymous"
-                    className="text-sm font-bold text-slate-700 cursor-pointer select-none"
+                    className="text-sm font-semibold text-slate-700 cursor-pointer select-none"
                   >
-                    Submit Anonymously
+                    Submit Anonymously (Identity Protected)
                   </label>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="pt-2 md:pt-4 space-y-4">
+                <div className="pt-4">
                   <button
-                    className="w-full uniz-primary-btn"
+                    className="w-full py-4 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-lg shadow-slate-200"
                     onClick={() => handleSubmit()}
                     disabled={loading}
                   >
-                    {loading ? "Submitting..." : "Submit Grievance"}
+                    {loading ? "Processing..." : "Submit Official Grievance"}
                   </button>
                 </div>
               </div>
             </div>
 
             {/* Info Section - Hidden on Mobile */}
-            <div className="hidden md:flex md:w-1/3 bg-slate-50/50 p-6 md:p-8 border-l border-slate-100 flex-col justify-between">
+            <div className="hidden md:flex md:w-1/3 bg-slate-50/30 p-8 flex-col justify-between">
               <div>
-                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                  Guidelines
+                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                  Official Guidelines
                 </h3>
 
                 <div className="space-y-6">
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-900 font-bold text-xs shrink-0">
-                      1
+                  <div className="flex items-start gap-4">
+                    <div className="w-6 h-6 rounded-lg flex items-center justify-center bg-white border border-slate-100 text-slate-900 font-bold text-[10px] shrink-0 shadow-sm">
+                      01
                     </div>
-                    <p className="font-medium text-sm text-slate-600">
+                    <p className="font-medium text-[13px] text-slate-500 leading-relaxed">
                       Be clear and concise about the issue you are facing.
                     </p>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-900 font-bold text-xs shrink-0">
-                      2
+                  <div className="flex items-start gap-4">
+                    <div className="w-6 h-6 rounded-lg flex items-center justify-center bg-white border border-slate-100 text-slate-900 font-bold text-[10px] shrink-0 shadow-sm">
+                      02
                     </div>
-                    <p className="font-medium text-sm text-slate-600">
+                    <p className="font-medium text-[13px] text-slate-500 leading-relaxed">
                       Provide relevant dates, times, and names if applicable.
                     </p>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-900 font-bold text-xs shrink-0">
-                      3
+                  <div className="flex items-start gap-4">
+                    <div className="w-6 h-6 rounded-lg flex items-center justify-center bg-white border border-slate-100 text-slate-900 font-bold text-[10px] shrink-0 shadow-sm">
+                      03
                     </div>
-                    <p className="font-medium text-sm text-slate-600">
+                    <p className="font-medium text-[13px] text-slate-500 leading-relaxed">
                       Avoid using abusive or offensive language.
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-12 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+              <div className="mt-12 p-5 bg-white rounded-xl border border-slate-100 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <Send className="h-5 w-5 text-slate-900 mt-0.5" />
-                  <p className="text-xs font-medium text-slate-600 leading-relaxed">
-                    Once submitted, your grievance will be reviewed by the
-                    administration. You will be notified of any updates.
+                  <Send size={16} className="text-slate-900 mt-0.5" />
+                  <p className="text-[11px] font-medium text-slate-500 leading-relaxed">
+                    Submission initializes an audit trail. Once submitted, your grievance will be reviewed by the
+                    administration and status updates will be delivered via your portal.
                   </p>
                 </div>
               </div>

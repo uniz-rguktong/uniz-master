@@ -153,25 +153,25 @@ export default function GradeHub() {
 
   return (
     <div className="font-sans text-slate-900">
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto px-4 pb-10">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-black tracking-tighter text-slate-900 mb-2">
-            Results
-          </h1>
-          <p className="text-slate-500 font-medium text-sm">
-            Track your academic performance across semesters.
+        <div className="flex flex-col gap-1.5 mb-8">
+          <p className="text-slate-500 font-medium text-[13px]">
+            Academic Performance Terminal
           </p>
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+            Results & Transcripts
+          </h1>
         </div>
 
         {/* Selection Criteria */}
-        <div className="mb-8 bg-white p-6 rounded-3xl border border-slate-200">
+        <div className="mb-8 bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
           <div className="flex items-center gap-2 mb-6">
-            <div className="bg-blue-600 text-white p-1.5 rounded-md shadow-sm shadow-blue-100">
+            <div className="bg-blue-500 text-white p-1.5 rounded-lg shadow-sm shadow-blue-50">
               <Award size={16} />
             </div>
-            <h2 className="text-lg font-bold tracking-tight">
-              Select Criteria
+            <h2 className="text-[15px] font-semibold tracking-tight text-slate-700">
+              Select Recording Criteria
             </h2>
           </div>
 
@@ -192,14 +192,14 @@ export default function GradeHub() {
               </div>
 
               {showDropdown && (
-                <div className="absolute z-50 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden">
+                <div className="absolute z-50 mt-1 w-full bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden">
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-medium transition-colors ${
+                      className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${
                         selectedYear === year
-                          ? "bg-blue-600 text-white"
-                          : "hover:bg-slate-50 text-slate-700"
+                          ? "bg-slate-950 text-white"
+                          : "hover:bg-slate-50 text-slate-600"
                       }`}
                       onClick={() => {
                         setSelectedYear(year);
@@ -246,13 +246,15 @@ export default function GradeHub() {
               </label>
               <button
                 onClick={handleFetchResults}
-                className="w-full uniz-primary-btn"
+                className="w-full h-[46px] bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm"
                 disabled={isLoading || !user?.username}
               >
                 {isLoading ? (
-                  <span className="flex items-center gap-1.5">Loading...</span>
+                  <span className="flex items-center gap-1.5 justify-center">
+                    Processing...
+                  </span>
                 ) : (
-                  <span>View Results</span>
+                  <span>View Records</span>
                 )}
               </button>
             </div>
@@ -268,30 +270,32 @@ export default function GradeHub() {
 
         {/* Loading State in Display Section */}
         {isLoading && (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+          <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-10 text-center animate-pulse">
             <img
               src={PIKACHU_IMAGE}
               alt="Pikachu"
-              className="w-24 h-24 mx-auto mb-4 animate-bounce"
+              className="w-16 h-16 mx-auto mb-4 opacity-50 contrast-50 grayscale"
             />
-            <h3 className="text-xl font-semibold mb-2">
-              Pikachu is on the case!
+            <h3 className="text-base font-semibold text-slate-600 mb-1">
+              Synchronizing Terminal Data
             </h3>
-            <p className="text-gray-600">{loadingMessage}</p>
+            <p className="text-slate-400 text-xs font-medium">
+              {loadingMessage}
+            </p>
           </div>
         )}
 
         {/* Results Section */}
         {resultsFetched && grades && grades.success && !isLoading && (
-          <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden">
+          <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
             {/* Results Header */}
-            <div className="bg-white border-b border-slate-100 px-6 py-4 flex justify-between items-center">
+            <div className="bg-white border-b border-slate-50 px-6 py-5 flex justify-between items-center">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-0.5">
-                  Results For
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">
+                  Transcript For
                 </span>
-                <h2 className="text-xl font-black text-slate-900">
-                  {grades.year} <span className="text-slate-300">/</span>{" "}
+                <h2 className="text-[17px] font-semibold text-slate-900 tracking-tight">
+                  {grades.year} <span className="text-slate-300 mx-1">/</span>{" "}
                   {grades.semester}
                 </h2>
               </div>
@@ -306,10 +310,10 @@ export default function GradeHub() {
                     { studentId: user.username },
                   );
                 }}
-                className="uniz-primary-btn h-auto py-2 px-4 shadow-sm"
+                className="h-10 px-4 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-slate-100"
               >
-                <Download size={16} />
-                Download Report
+                <Download size={14} />
+                Export PDF
               </button>
             </div>
 
@@ -332,8 +336,9 @@ export default function GradeHub() {
                 <div className="px-6 py-4 space-y-6">
                   {/* Grades Section */}
                   <div>
-                    <h3 className="text-base font-bold mb-3 flex items-center gap-2">
-                      <div className="w-1 h-4 bg-blue-600"></div> Grades
+                    <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <div className="w-1 h-3 bg-blue-500 rounded-full"></div>{" "}
+                      Detailed Grades
                     </h3>
                     <div className="rounded-xl border border-slate-200 bg-white">
                       <table className="w-full text-sm table-fixed">
@@ -421,12 +426,12 @@ export default function GradeHub() {
                 </div>
 
                 {/* GPA Display - Centered below table */}
-                <div className="px-6 pb-6 bg-white flex flex-col items-center justify-center border-t border-slate-100 pt-6">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-slate-600 uppercase tracking-widest">
-                      Your SGPA IS :
+                <div className="px-6 py-8 bg-slate-50/30 flex flex-col items-center justify-center border-t border-slate-50">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                      Semester GPA :
                     </span>
-                    <span className="text-2xl font-black text-blue-600">
+                    <span className="text-3xl font-semibold text-slate-900 tracking-tighter">
                       {grades.gpa !== null && grades.gpa !== undefined
                         ? Number(grades.gpa).toFixed(2)
                         : "N/A"}

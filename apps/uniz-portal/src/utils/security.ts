@@ -43,9 +43,14 @@ export const isTokenValid = (token: string | null): boolean => {
 };
 
 export const clearSession = () => {
-  localStorage.removeItem("student_token");
-  localStorage.removeItem("admin_token");
-  localStorage.removeItem("admin_role");
-  localStorage.removeItem("username");
-  localStorage.removeItem("admin_username");
+  // Clear all localStorage and sessionStorage
+  localStorage.clear();
+  sessionStorage.clear();
+
+  // Clear all cookies
+  document.cookie.split(";").forEach((c) => {
+    document.cookie = c
+      .replace(/^ +/, "")
+      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+  });
 };
