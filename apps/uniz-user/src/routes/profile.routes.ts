@@ -12,6 +12,7 @@ import {
   toggleUserSuspension,
   searchFaculty,
   updateFacultyProfile,
+  deleteFacultyProfile,
 } from "../controllers/profile.controller";
 
 import multer from "multer";
@@ -97,6 +98,7 @@ const StudentBaseSchema = z.preprocess(
       room_number: z.string().max(20).optional(),
       branch: z.string().max(50).optional(),
       year: z.string().max(10).optional(),
+      semester: z.string().max(10).optional(),
       section: z.string().max(10).optional(),
       isPresentInCampus: z.boolean().optional(),
       is_in_campus: z.boolean().optional(),
@@ -233,6 +235,7 @@ router.post(
 );
 router.post("/faculty/search", authMiddleware, searchFaculty);
 router.put("/admin/faculty/:username", authMiddleware, updateFacultyProfile);
+router.delete("/admin/faculty/:username", authMiddleware, deleteFacultyProfile);
 router.put(
   "/admin/faculty/:username/suspend",
   authMiddleware,

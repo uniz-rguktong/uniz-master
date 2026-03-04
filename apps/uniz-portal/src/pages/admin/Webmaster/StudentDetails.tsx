@@ -67,7 +67,7 @@ export default function StudentDetails() {
       const res = await fetch(ADMIN_VIEW_STUDENT(id), {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
         },
       });
 
@@ -93,7 +93,7 @@ export default function StudentDetails() {
       const res = await fetch(SEARCH_STUDENTS, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -124,7 +124,7 @@ export default function StudentDetails() {
       const res = await fetch(ADMIN_VIEW_STUDENT(username.toUpperCase()), {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
         },
       });
       const data = await res.json();
@@ -152,7 +152,7 @@ export default function StudentDetails() {
       const res = await fetch(ADMIN_SUSPEND_STUDENT(username), {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -193,7 +193,7 @@ export default function StudentDetails() {
       const res = await fetch(ADMIN_UPDATE_STUDENT(selectedStudent.username), {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(editFormData),
@@ -278,7 +278,10 @@ export default function StudentDetails() {
           className="flex items-center gap-3 max-w-2xl animate-in fade-in slide-in-from-left-4 duration-500"
         >
           <div className="relative group flex-1">
-            <Hash className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
+            <Hash
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"
+              size={16}
+            />
             <input
               type="text"
               placeholder="Search Student ID (e.g. O210329)"
@@ -303,7 +306,10 @@ export default function StudentDetails() {
       ) : (
         <div className="flex flex-wrap gap-4 items-center animate-in fade-in slide-in-from-right-4 duration-300">
           <div className="relative group">
-            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none" size={14} />
+            <Filter
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none"
+              size={14}
+            />
             <select
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
@@ -316,11 +322,17 @@ export default function StudentDetails() {
                 ),
               )}
             </select>
-            <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 rotate-90 pointer-events-none" size={14} />
+            <ChevronRight
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 rotate-90 pointer-events-none"
+              size={14}
+            />
           </div>
 
           <div className="relative group">
-            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none" size={14} />
+            <Calendar
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none"
+              size={14}
+            />
             <select
               value={year}
               onChange={(e) => setYear(e.target.value)}
@@ -331,7 +343,10 @@ export default function StudentDetails() {
                 <option key={y}>{y}</option>
               ))}
             </select>
-            <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 rotate-90 pointer-events-none" size={14} />
+            <ChevronRight
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 rotate-90 pointer-events-none"
+              size={14}
+            />
           </div>
 
           <button
@@ -403,10 +418,11 @@ export default function StudentDetails() {
                           std.is_suspended === true,
                         )
                       }
-                      className={`p-3 rounded-xl transition-all border ${std.is_suspended !== true
-                        ? "text-slate-400 hover:text-red-500 hover:bg-red-50 border-transparent hover:border-red-100"
-                        : "text-emerald-500 bg-emerald-50 border-emerald-100 hover:bg-emerald-100"
-                        }`}
+                      className={`p-3 rounded-xl transition-all border ${
+                        std.is_suspended !== true
+                          ? "text-slate-400 hover:text-red-500 hover:bg-red-50 border-transparent hover:border-red-100"
+                          : "text-emerald-500 bg-emerald-50 border-emerald-100 hover:bg-emerald-100"
+                      }`}
                     >
                       {isActionLoading === std.username ? (
                         <Loader2 size={18} className="animate-spin" />
@@ -432,7 +448,9 @@ export default function StudentDetails() {
                 <Users size={40} className="text-slate-300" />
               </div>
               <div>
-                <p className="font-semibold text-slate-900 text-lg tracking-tight">No results found</p>
+                <p className="font-semibold text-slate-900 text-lg tracking-tight">
+                  No results found
+                </p>
                 <p className="text-[13px] font-medium text-slate-400 mt-1 italic leading-relaxed max-w-[200px]">
                   Adjust your criteria or enter a student ID
                 </p>
@@ -692,7 +710,7 @@ export default function StudentDetails() {
           </div>
         )}
       </div>
-    </div >
+    </div>
   );
 }
 

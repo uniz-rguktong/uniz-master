@@ -1381,9 +1381,9 @@ export const getSubjects = async (req: AuthenticatedRequest, res: Response) => {
         { code: { contains: search as string, mode: "insensitive" } },
       ];
     }
-    if (department) where.department = department as string;
-    if (semester)
-      where.semester = { contains: semester as string, mode: "insensitive" };
+    if (department && department !== "ALL")
+      where.department = department as string;
+    if (semester && semester !== "ALL") where.semester = semester as string; // Exact match for year-sem structure
 
     const [subjects, total] = await Promise.all([
       prisma.subject.findMany({
@@ -1467,6 +1467,68 @@ export const addSubject = async (req: AuthenticatedRequest, res: Response) => {
       success: false,
       message: "Unable to add or update the subject at this moment.",
     });
+  }
+};
+
+export const updateSubject = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { id } = req.params;
+  const { code, name, credits, department, semester } = req.body;
+  const user = req.user;
+
+  const allowed = ["webmaster", "dean", "director"];
+  if (!user || !allowed.includes(user.role as string)) {
+    return res.status(403).json({
+      success: false,
+      message: "Only administrators can manage subjects",
+    });
+  }
+
+  try {
+    const subject = await prisma.subject.update({
+      where: { id },
+      data: {
+        code,
+        name,
+        credits: credits ? Number(credits) : undefined,
+        department,
+        semester,
+      },
+    });
+    return res.json({ success: true, subject });
+  } catch (e: any) {
+    console.error("[Academics] updateSubject Error:", e);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to update subject" });
+  }
+};
+
+export const deleteSubject = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { id } = req.params;
+  const user = req.user;
+
+  const allowed = ["webmaster", "dean", "director"];
+  if (!user || !allowed.includes(user.role as string)) {
+    return res.status(403).json({
+      success: false,
+      message: "Only administrators can manage subjects",
+    });
+  }
+
+  try {
+    await prisma.subject.delete({ where: { id } });
+    return res.json({ success: true, message: "Subject deleted successfully" });
+  } catch (e: any) {
+    console.error("[Academics] deleteSubject Error:", e);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to delete subject" });
   }
 };
 

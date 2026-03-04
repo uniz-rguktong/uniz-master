@@ -63,7 +63,7 @@ export default function Admin() {
   useIsAuth();
   useAdminname();
   const navigate = useNavigate();
-  const username = JSON.parse(localStorage.getItem("username") || `"Admin"`);
+  const username = localStorage.getItem("username") || "Admin";
   const role = (localStorage.getItem("admin_role") || "admin").replace(
     /"/g,
     "",
@@ -73,7 +73,7 @@ export default function Admin() {
     return <WebmasterDashboard />;
   }
 
-  if (role === "dean") {
+  if (role === "dean" || role === "hod" || role === "swo" || role === "dsw") {
     return <DeanDashboard />;
   }
 
@@ -101,6 +101,7 @@ export default function Admin() {
 
   const isDirector = role === "director" || role === "webmaster";
   const isDean = role === "dean" || isDirector;
+  const isHOD = role === "hod" || isDean;
   const isDSW = role === "dsw" || role === "swo" || isDean;
   const isWarden = role === "warden" || role.includes("warden") || isDSW;
   const isCaretaker =
@@ -136,7 +137,7 @@ export default function Admin() {
   const sections = [
     {
       title: "Academic Management",
-      show: isDean,
+      show: isDean || isHOD,
       items: [
         {
           onClick: () => navigate("/admin/addgrades"),

@@ -55,7 +55,7 @@ export default function AddFaculty() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${JSON.parse(token)}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
         },
         body: JSON.stringify(formData),
       });

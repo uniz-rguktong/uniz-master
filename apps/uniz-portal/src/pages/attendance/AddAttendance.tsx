@@ -49,7 +49,7 @@ export default function AddAttendance() {
       const res = await fetch(`${BASE_URL}/academics/attendance/upload`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token!)}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
         },
         body: formData,
       });

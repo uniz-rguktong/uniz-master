@@ -29,7 +29,7 @@ export default function SystemLogsSection() {
     const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(ADMIN_UPLOAD_HISTORY, {
-        headers: { Authorization: `Bearer ${JSON.parse(token || '""')}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
       });
       const data = await res.json();
       if (data.success) {
@@ -47,7 +47,7 @@ export default function SystemLogsSection() {
     const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(TRIGGER_CRON, {
-        headers: { Authorization: `Bearer ${JSON.parse(token || '""')}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
       });
       const data = await res.json();
       if (data.success) {
@@ -78,7 +78,7 @@ export default function SystemLogsSection() {
   const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
   const paginatedHistory = filteredHistory.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   return (
@@ -89,7 +89,8 @@ export default function SystemLogsSection() {
             System & Audit Logs
           </h2>
           <p className="text-slate-500 font-medium text-[15px]">
-            Institutional data synchronization and event history across all portals.
+            Institutional data synchronization and event history across all
+            portals.
           </p>
         </div>
 
@@ -98,7 +99,7 @@ export default function SystemLogsSection() {
             <button
               onClick={fetchHistory}
               title="Refresh Logs"
-              className={`p-2.5 text-slate-500 hover:text-blue-600 transition-all ${loading ? 'animate-spin' : ''}`}
+              className={`p-2.5 text-slate-500 hover:text-blue-600 transition-all ${loading ? "animate-spin" : ""}`}
             >
               <RefreshCw size={18} />
             </button>
@@ -106,14 +107,17 @@ export default function SystemLogsSection() {
               onClick={triggerMaintenance}
               disabled={isMaintenanceLoading}
               title="Trigger Maintenance"
-              className={`p-2.5 text-slate-500 hover:text-red-600 transition-all ${isMaintenanceLoading ? 'animate-pulse' : ''}`}
+              className={`p-2.5 text-slate-500 hover:text-red-600 transition-all ${isMaintenanceLoading ? "animate-pulse" : ""}`}
             >
               <AlertTriangle size={18} />
             </button>
           </div>
 
           <div className="relative group">
-            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors pointer-events-none" size={13} />
+            <Filter
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors pointer-events-none"
+              size={13}
+            />
             <select
               value={filterType}
               onChange={(e) => {
@@ -127,11 +131,17 @@ export default function SystemLogsSection() {
               <option value="ATTENDANCE">Attendance</option>
               <option value="GRADES">Grades</option>
             </select>
-            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors pointer-events-none" size={14} />
+            <ChevronDown
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors pointer-events-none"
+              size={14}
+            />
           </div>
 
           <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
+            <Search
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"
+              size={16}
+            />
             <input
               type="text"
               placeholder="Search history..."
@@ -174,7 +184,10 @@ export default function SystemLogsSection() {
                   .fill(0)
                   .map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td colSpan={5} className="px-10 py-8 bg-slate-50/20"></td>
+                      <td
+                        colSpan={5}
+                        className="px-10 py-8 bg-slate-50/20"
+                      ></td>
                     </tr>
                   ))
               ) : paginatedHistory.length > 0 ? (
@@ -200,7 +213,10 @@ export default function SystemLogsSection() {
                     </td>
                     <td className="px-10 py-6">
                       <div className="flex flex-col gap-1">
-                        <p className="text-sm font-semibold text-slate-800 tracking-tight truncate max-w-[200px]" title={log.filename}>
+                        <p
+                          className="text-sm font-semibold text-slate-800 tracking-tight truncate max-w-[200px]"
+                          title={log.filename}
+                        >
                           {log.filename || "Automated sync"}
                         </p>
                         <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-bold uppercase tracking-wider w-fit border border-blue-100">
@@ -211,15 +227,21 @@ export default function SystemLogsSection() {
                     <td className="px-10 py-6">
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-bold text-slate-900">{log.totalRows || 0}</p>
-                          <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">Rows</span>
+                          <p className="text-sm font-bold text-slate-900">
+                            {log.totalRows || 0}
+                          </p>
+                          <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">
+                            Rows
+                          </span>
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1">
-                            <span className="w-1 h-1 rounded-full bg-emerald-500"></span> {log.successCount || 0}
+                            <span className="w-1 h-1 rounded-full bg-emerald-500"></span>{" "}
+                            {log.successCount || 0}
                           </span>
                           <span className="text-[10px] font-bold text-red-400 flex items-center gap-1">
-                            <span className="w-1 h-1 rounded-full bg-red-400"></span> {log.failCount || 0}
+                            <span className="w-1 h-1 rounded-full bg-red-400"></span>{" "}
+                            {log.failCount || 0}
                           </span>
                         </div>
                       </div>
@@ -244,10 +266,17 @@ export default function SystemLogsSection() {
                     <td className="px-10 py-6">
                       <div className="flex flex-col">
                         <p className="text-sm font-semibold tracking-tight text-slate-700">
-                          {new Date(log.createdAt).toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' })}
+                          {new Date(log.createdAt).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
                         </p>
                         <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
-                          {new Date(log.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(log.createdAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </p>
                       </div>
                     </td>
@@ -275,30 +304,45 @@ export default function SystemLogsSection() {
         {filteredHistory.length > 0 && (
           <div className="px-10 py-5 bg-slate-50/30 border-t border-slate-50 flex items-center justify-between">
             <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-              Showing <span className="text-slate-900">{Math.min(filteredHistory.length, (currentPage - 1) * itemsPerPage + 1)}-{Math.min(filteredHistory.length, currentPage * itemsPerPage)}</span> of {filteredHistory.length}
+              Showing{" "}
+              <span className="text-slate-900">
+                {Math.min(
+                  filteredHistory.length,
+                  (currentPage - 1) * itemsPerPage + 1,
+                )}
+                -{Math.min(filteredHistory.length, currentPage * itemsPerPage)}
+              </span>{" "}
+              of {filteredHistory.length}
             </p>
             <div className="flex items-center gap-2">
               <button
                 disabled={currentPage === 1}
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 className="px-4 py-2 border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all disabled:opacity-30 disabled:pointer-events-none"
               >
                 Previous
               </button>
               <div className="flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
-                  <button
-                    key={num}
-                    onClick={() => setCurrentPage(num)}
-                    className={`w-8 h-8 rounded-lg text-[10px] font-bold transition-all ${currentPage === num ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-100'}`}
-                  >
-                    {num}
-                  </button>
-                )).slice(Math.max(0, currentPage - 3), Math.min(totalPages, currentPage + 2))}
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .map((num) => (
+                    <button
+                      key={num}
+                      onClick={() => setCurrentPage(num)}
+                      className={`w-8 h-8 rounded-lg text-[10px] font-bold transition-all ${currentPage === num ? "bg-slate-900 text-white shadow-lg" : "text-slate-500 hover:bg-slate-100"}`}
+                    >
+                      {num}
+                    </button>
+                  ))
+                  .slice(
+                    Math.max(0, currentPage - 3),
+                    Math.min(totalPages, currentPage + 2),
+                  )}
               </div>
               <button
                 disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 className="px-4 py-2 border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all disabled:opacity-30 disabled:pointer-events-none"
               >
                 Next
@@ -310,4 +354,3 @@ export default function SystemLogsSection() {
     </div>
   );
 }
-

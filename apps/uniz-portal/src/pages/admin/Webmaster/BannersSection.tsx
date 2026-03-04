@@ -340,8 +340,8 @@ export default function BannersSection() {
                       alt="preview"
                       className="w-full h-full object-cover"
                       onError={(e: any) =>
-                      (e.target.src =
-                        "https://placehold.co/600x400?text=Invalid+Image+URL")
+                        (e.target.src =
+                          "https://placehold.co/600x400?text=Invalid+Image+URL")
                       }
                     />
                   </div>

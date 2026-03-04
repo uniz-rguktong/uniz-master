@@ -19,6 +19,8 @@ import UploadSection from "../Webmaster/UploadSection";
 import GradesSection from "../Webmaster/GradesSection";
 import StudentBulkSection from "../Webmaster/StudentBulkSection";
 import SystemLogsSection from "../Webmaster/SystemLogsSection";
+import SemesterRegistrationSection from "../Webmaster/SemesterRegistrationSection";
+import FacultyManagement from "../Webmaster/FacultyManagement";
 
 export default function DeanDashboard() {
   useIsAuth();
@@ -30,11 +32,24 @@ export default function DeanDashboard() {
     | "attendance"
     | "grades"
     | "grades_mgmt"
+    | "semester_review"
+    | "faculty"
     | "system_logs"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const username = JSON.parse(localStorage.getItem("username") || '"Dean"');
+  const username = localStorage.getItem("username") || "Dean";
+
+  const role = (localStorage.getItem("admin_role") || "admin").replace(
+    /"/g,
+    "",
+  );
+  const roleLabel =
+    role === "hod"
+      ? "HOD Portal"
+      : role === "swo" || role === "dsw"
+        ? "SWO Portal"
+        : "Dean Portal";
 
   const navItems = [
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
@@ -44,6 +59,8 @@ export default function DeanDashboard() {
     { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
     { id: "grades", label: "Grades Upload", icon: GraduationCap },
     { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
+    { id: "semester_review", label: "Course Review", icon: CalendarCheck },
+    { id: "faculty", label: "Faculty Management", icon: Users },
     { id: "system_logs", label: "System & Logs", icon: Activity },
   ];
 
@@ -67,6 +84,27 @@ export default function DeanDashboard() {
         return <UploadSection type="grades" />;
       case "grades_mgmt":
         return <GradesSection />;
+      case "semester_review":
+        return (
+          <SemesterRegistrationSection
+            isAdmin={role === "webmaster"}
+            branch={
+              role === "dean"
+                ? "all"
+                : localStorage.getItem("department") || "CSE"
+            }
+          />
+        );
+      case "faculty":
+        return (
+          <FacultyManagement
+            deptRestrict={
+              role === "hod"
+                ? localStorage.getItem("department") || "CSE"
+                : undefined
+            }
+          />
+        );
       case "system_logs":
         return <SystemLogsSection />;
       default:
@@ -85,7 +123,8 @@ export default function DeanDashboard() {
                     Welcome back, {username}
                   </h1>
                   <p className="text-blue-100/80 font-medium text-[15px] max-w-lg mt-4 leading-relaxed">
-                    Monitor institutional performance and manage academic operations from your central command.
+                    Monitor institutional performance and manage academic
+                    operations from your central command.
                   </p>
                 </div>
               </div>
@@ -124,12 +163,15 @@ export default function DeanDashboard() {
     <div className="flex min-h-screen bg-[#F8FAFC] relative overflow-hidden selection:bg-blue-100 selection:text-blue-900">
       {/* Sidebar */}
       <aside
-        className={`bg-white border-r border-slate-100 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"
-          } hidden md:flex flex-col premium-shadow h-screen sticky top-0`}
+        className={`bg-white border-r border-slate-100 transition-all duration-300 z-50 ${
+          isSidebarOpen ? "w-72" : "w-20"
+        } hidden md:flex flex-col premium-shadow h-screen sticky top-0`}
       >
         <div className="p-6 flex items-center gap-4 border-b border-slate-50 shrink-0">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[14px] flex items-center justify-center shrink-0 shadow-lg shadow-blue-100 border-2 border-white rotate-[-3deg]">
-            <span className="text-white font-semibold text-xl rotate-[3deg]">D</span>
+            <span className="text-white font-semibold text-xl rotate-[3deg]">
+              {roleLabel[0]}
+            </span>
           </div>
           {isSidebarOpen && (
             <div className="flex flex-col animate-in fade-in slide-in-from-left-2 duration-300">
@@ -148,17 +190,20 @@ export default function DeanDashboard() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as any)}
-              className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-[20px] transition-all duration-300 group ${activeTab === item.id
-                ? "bg-blue-600 text-white shadow-xl shadow-blue-100"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-                }`}
+              className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-[20px] transition-all duration-300 group ${
+                activeTab === item.id
+                  ? "bg-blue-600 text-white shadow-xl shadow-blue-100"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+              }`}
             >
               <item.icon
                 size={20}
                 className={`shrink-0 transition-transform group-hover:scale-110 ${activeTab === item.id ? "text-white" : "text-slate-400"}`}
               />
               {isSidebarOpen && (
-                <span className={`text-[14px] tracking-tight transition-all ${activeTab === item.id ? "font-semibold" : "font-medium"}`}>
+                <span
+                  className={`text-[14px] tracking-tight transition-all ${activeTab === item.id ? "font-semibold" : "font-medium"}`}
+                >
                   {item.label}
                 </span>
               )}
@@ -175,9 +220,14 @@ export default function DeanDashboard() {
             className="w-full flex items-center gap-3.5 px-4 py-3 rounded-full text-red-500 hover:bg-red-50 transition-all group"
           >
             <div className="min-w-[20px] flex justify-center">
-              <LogOut size={20} className="shrink-0 transition-transform group-hover:rotate-12" />
+              <LogOut
+                size={20}
+                className="shrink-0 transition-transform group-hover:rotate-12"
+              />
             </div>
-            {isSidebarOpen && <span className="text-[14px] font-semibold">Sign Out</span>}
+            {isSidebarOpen && (
+              <span className="text-[14px] font-semibold">Sign Out</span>
+            )}
           </button>
         </div>
       </aside>
@@ -197,11 +247,11 @@ export default function DeanDashboard() {
                 {username}
               </p>
               <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-widest mt-1.5 opacity-70">
-                Dean of Academics
+                {roleLabel}
               </p>
             </div>
             <div className="w-11 h-11 rounded-[14px] bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center font-semibold text-blue-700 shadow-inner group transition-all hover:scale-105 cursor-pointer">
-              {username[0].toUpperCase()}
+              {(username || "D")[0].toUpperCase()}
             </div>
           </div>
         </header>
