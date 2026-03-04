@@ -33,6 +33,7 @@ import {
   getCurrentSubjects,
   exportAcademicData,
   deleteSemester,
+  getRegistrations,
 } from "../controllers/registration.controller";
 import {
   getFaculties,
@@ -108,6 +109,7 @@ router.post("/student/register", registerSubjects);
 router.get("/student/current/:studentId", getCurrentSubjects);
 
 router.get("/export", exportAcademicData);
+router.get("/registrations", getRegistrations);
 
 // Faculty Management
 router.get("/faculty", getFaculties);

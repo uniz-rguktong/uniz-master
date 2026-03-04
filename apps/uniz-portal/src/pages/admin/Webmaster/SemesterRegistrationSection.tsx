@@ -21,6 +21,7 @@ import {
   DELETE_SEMESTER,
   DEAN_REVIEW,
   DEAN_APPROVE,
+  GET_REGISTRATIONS,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 
@@ -59,6 +60,10 @@ export default function SemesterRegistrationSection({
   const [selectedSem, setSelectedSem] = useState<Semester | null>(null);
   const [allocations, setAllocations] = useState<Allocation[]>([]);
   const [loading, setLoading] = useState(false);
+  const [activeViewTab, setActiveViewTab] = useState<
+    "allocations" | "registrations"
+  >("allocations");
+  const [registeredStudents, setRegisteredStudents] = useState<any[]>([]);
 
   // For New Semester Modal
   const [showNewModal, setShowNewModal] = useState(false);
@@ -137,10 +142,22 @@ export default function SemesterRegistrationSection({
     fetchAllocations();
   };
 
+  const fetchRegistrations = async () => {
+    if (!selectedSem) return;
+    setLoading(true);
+    try {
+      const res = await apiClient<any[]>(
+        `${GET_REGISTRATIONS}?semesterId=${selectedSem.id}&branch=${branch}`,
+      );
+      if (res) setRegisteredStudents(res);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchAllocations = async () => {
     if (!branch && isAdmin) {
-      // If webmaster, they might see all but let's stick to a default or selected branch logic if needed
-      // For now, if branch is empty strings, we don't fetch specific dean allocations unless requested
+      if (activeViewTab === "registrations") fetchRegistrations();
       return;
     }
     setLoading(true);
@@ -219,85 +236,173 @@ export default function SemesterRegistrationSection({
           </div>
         </div>
 
-        <div className="bg-white rounded-[40px] border border-slate-100 overflow-hidden shadow-2xl shadow-slate-100/50">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-slate-50 bg-slate-50/30">
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                  Subject Details
-                </th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                  Assignment
-                </th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                  Status
-                </th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50 uppercase">
-              {allocations.map((item) => (
-                <tr
-                  key={item.id}
-                  className="hover:bg-slate-50/50 transition-all group font-bold"
-                >
-                  <td className="px-8 py-6">
-                    <div className="flex items-center gap-5">
-                      <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600 transition-all">
-                        <BookOpen size={20} />
-                      </div>
-                      <div>
-                        <p className="text-slate-900 text-[13px] tracking-tight">
-                          {item.customName || item.subject.name}
-                        </p>
-                        <p className="text-[9px] text-slate-400 tracking-widest">
-                          {item.subject.code} •{" "}
-                          {item.customCredits || item.subject.credits} CREDITS
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-8 py-6">
-                    <div className="flex items-center gap-3">
-                      <Users size={14} className="text-slate-300" />
-                      <span className="text-[12px] text-slate-500">
-                        {item.faculty?.name || "NOT ASSIGNED"}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-8 py-6">
-                    {item.isApproved ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[9px] border border-emerald-100 uppercase">
-                        <CheckCircle2 size={10} /> Verified
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[9px] border border-amber-100 uppercase">
-                        <Clock size={10} /> Pending Review
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-8 py-6 text-right">
-                    <button className="p-2 text-slate-400 hover:text-blue-600 transition-all bg-slate-50 rounded-xl border border-transparent hover:border-blue-100">
-                      <Edit3 size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {allocations.length === 0 && (
-            <div className="p-20 text-center">
-              <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <AlertCircle size={32} className="text-slate-300" />
-              </div>
-              <p className="text-slate-400 text-sm font-medium">
-                No subjects allocated yet for this branch.
-              </p>
-            </div>
-          )}
+        <div className="flex gap-4 mb-4">
+          <button
+            onClick={() => setActiveViewTab("allocations")}
+            className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${activeViewTab === "allocations" ? "bg-blue-600 text-white shadow-lg" : "bg-white text-slate-400 border border-slate-100"}`}
+          >
+            Subject Allocations
+          </button>
+          <button
+            onClick={() => {
+              setActiveViewTab("registrations");
+              fetchRegistrations();
+            }}
+            className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${activeViewTab === "registrations" ? "bg-blue-600 text-white shadow-lg" : "bg-white text-slate-400 border border-slate-100"}`}
+          >
+            Registered Students
+          </button>
         </div>
+
+        {activeViewTab === "allocations" ? (
+          <div className="bg-white rounded-[40px] border border-slate-100 overflow-hidden shadow-2xl shadow-slate-100/50">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-slate-50 bg-slate-50/30">
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Subject Details
+                  </th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Assignment
+                  </th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Status
+                  </th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50 uppercase">
+                {allocations.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="hover:bg-slate-50/50 transition-all group font-bold"
+                  >
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-5">
+                        <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600 transition-all">
+                          <BookOpen size={20} />
+                        </div>
+                        <div>
+                          <p className="text-slate-900 text-[13px] tracking-tight">
+                            {item.customName || item.subject.name}
+                          </p>
+                          <p className="text-[9px] text-slate-400 tracking-widest">
+                            {item.subject.code} •{" "}
+                            {item.customCredits || item.subject.credits} CREDITS
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-3">
+                        <Users size={14} className="text-slate-300" />
+                        <span className="text-[12px] text-slate-500">
+                          {item.faculty?.name || "NOT ASSIGNED"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      {item.isApproved ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[9px] border border-emerald-100 uppercase">
+                          <CheckCircle2 size={10} /> Verified
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[9px] border border-amber-100 uppercase">
+                          <Clock size={10} /> Pending Review
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-8 py-6 text-right">
+                      <button className="p-2 text-slate-400 hover:text-blue-600 transition-all bg-slate-50 rounded-xl border border-transparent hover:border-blue-100">
+                        <Edit3 size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {allocations.length === 0 && (
+              <div className="p-20 text-center">
+                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <AlertCircle size={32} className="text-slate-300" />
+                </div>
+                <p className="text-slate-400 text-sm font-medium">
+                  No subjects allocated yet for this branch.
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="bg-white rounded-[40px] border border-slate-100 overflow-hidden shadow-2xl shadow-slate-100/50">
+            <table className="w-full text-left font-bold">
+              <thead>
+                <tr className="border-b border-slate-50 bg-slate-50/30">
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Student ID
+                  </th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Subject
+                  </th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Status
+                  </th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Date
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50 uppercase">
+                {registeredStudents.map((reg) => (
+                  <tr
+                    key={reg.id}
+                    className="hover:bg-slate-50/50 transition-all"
+                  >
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                          <Users size={18} />
+                        </div>
+                        <span className="text-slate-900">{reg.studentId}</span>
+                      </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      <div className="space-y-1">
+                        <p className="text-sm text-slate-900 leading-tight">
+                          {reg.subject?.name}
+                        </p>
+                        <p className="text-[10px] text-slate-400">
+                          {reg.subject?.code}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      <span
+                        className={`px-3 py-1 rounded-full text-[10px] ${reg.status === "REGISTERED" ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-400"}`}
+                      >
+                        {reg.status}
+                      </span>
+                    </td>
+                    <td className="px-8 py-6 text-slate-400 text-xs">
+                      {new Date(reg.createdAt).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+                {registeredStudents.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="px-8 py-20 text-center text-slate-400 italic"
+                    >
+                      No registrations found yet
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     );
   }

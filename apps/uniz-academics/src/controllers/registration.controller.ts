@@ -342,7 +342,20 @@ export const getAvailableSubjects = async (
       },
     });
 
-    res.json({ semester: openSem, subjects });
+    // 3. Check if current student has registrations for this semester
+    const registrationCount = await prisma.registration.count({
+      where: {
+        studentId: req.user?.username,
+        semesterId: openSem.id,
+        status: "REGISTERED",
+      },
+    });
+
+    res.json({
+      semester: openSem,
+      subjects,
+      alreadyRegistered: registrationCount > 0,
+    });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch subjects" });
   }
@@ -566,5 +579,53 @@ export const exportAcademicData = async (
     res.end();
   } catch (error) {
     res.status(500).json({ error: "Export failed" });
+  }
+};
+/**
+ * @desc Get all registered students and their subjects
+ * @access Dean, Webmaster
+ */
+export const getRegistrations = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { branch, semesterId } = req.query;
+
+  try {
+    const where: any = {};
+    if (semesterId) {
+      where.semesterId = semesterId as string;
+    } else {
+      // Default to latest active semester
+      const activeSem = await prisma.academicSemester.findFirst({
+        where: {
+          status: {
+            in: ["REGISTRATION_OPEN", "REGISTRATION_CLOSED", "APPROVED"],
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      if (activeSem) where.semesterId = activeSem.id;
+    }
+
+    if (branch && branch !== "all") {
+      where.subject = {
+        department: { equals: branch as string, mode: "insensitive" },
+      };
+    }
+
+    const registrations = await prisma.registration.findMany({
+      where,
+      include: {
+        subject: true,
+        semester: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json(registrations);
+  } catch (error) {
+    console.error("Get Registrations Error:", error);
+    res.status(500).json({ error: "Failed to fetch registrations" });
   }
 };
