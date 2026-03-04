@@ -77,6 +77,16 @@ export default function SemesterRegistrationSection({
   const [branchFilter, setBranchFilter] = useState(branch || "all");
   const [faculties, setFaculties] = useState<any[]>([]);
 
+  const role = (() => {
+    try {
+      const stored = localStorage.getItem("admin_role");
+      if (!stored) return "";
+      return stored.replace(/"/g, "");
+    } catch {
+      return "";
+    }
+  })();
+
   // For New Semester Modal
   const [showNewModal, setShowNewModal] = useState(false);
   const [newName, setNewName] = useState("AY 2024-25 SEM-2");
