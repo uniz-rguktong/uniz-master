@@ -863,15 +863,16 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       return res.status(400).json({ error: "title and body are required" });
     }
 
+    const t = target?.toLowerCase();
     let targetUsers: Array<{ username: string; name?: string }> = [];
 
-    if (target === "user") {
+    if (t === "user") {
       if (!username)
         return res
           .status(400)
           .json({ error: "username required for target=user" });
       targetUsers = [{ username }];
-    } else if (target === "batch") {
+    } else if (t === "batch") {
       if (!batch)
         return res
           .status(400)
@@ -894,7 +895,7 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       } catch (e: any) {
         console.error(`[Push] User Service fetch failed: ${e.message}`);
       }
-    } else if (target === "year") {
+    } else if (t === "year") {
       if (!year)
         return res.status(400).json({
           error: "year required for target=year (e.g. E1,E2,E3,E4,P1...)",
@@ -912,12 +913,12 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       } catch (e: any) {
         console.error(`[Push] User Service fetch failed: ${e.message}`);
       }
-    } else if (target === "dean" || target === "hod" || target === "students") {
+    } else if (t === "dean" || t === "hod" || t === "students") {
       try {
         const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
         const response = await axios.post(
           `${USER_SERVICE_URL}/internal/targeting`,
-          { target, branch, year },
+          { target: t, branch, year },
           { headers: { "x-internal-secret": SECRET }, timeout: 10000 },
         );
         if (response.data.success) {
@@ -926,7 +927,7 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       } catch (e: any) {
         console.error(`[Push] User Service fetch failed: ${e.message}`);
       }
-    } else if (target === "all") {
+    } else if (t === "all") {
       // Fetch all for personalization
       try {
         const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
@@ -974,7 +975,7 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
     });
 
     console.log(
-      `[Push] TargetUsers: ${targetUsers.length}, Subscriptions: ${subscriptions.length} for target=${target}`,
+      `[Push] TargetUsers: ${targetUsers.length}, Subscriptions: ${subscriptions.length} for target=${t}`,
     );
 
     if (subscriptions.length === 0) {
