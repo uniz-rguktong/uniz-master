@@ -40,20 +40,14 @@ export const initSemester = async (
       },
     });
 
-    // 2. Extract the semester suffix (SEM-1 or SEM-2) from the label
     const suffixMatch = academicSemester.match(/SEM-[1-2]/i);
     const semSuffix = suffixMatch ? suffixMatch[0].toUpperCase() : null;
-
-    console.log(`[MEGA-DEBUG] academicSemester: ${academicSemester}`);
-    console.log(`[MEGA-DEBUG] semSuffix: ${semSuffix}`);
-    console.log(`[MEGA-DEBUG] branches: ${JSON.stringify(branches)}`);
 
     if (semSuffix) {
       const years = ["E1", "E2", "E3", "E4"];
 
       for (const yearSuffix of years) {
         const semesterKey = `${yearSuffix}-${semSuffix}`;
-        console.log(`[MEGA-DEBUG] 🔍 Looking for ${semesterKey}...`);
 
         for (const b of branches) {
           const branchName = b.branchName.toUpperCase();
@@ -63,14 +57,8 @@ export const initSemester = async (
               department: { equals: branchName, mode: "insensitive" },
             },
           });
-          console.log(
-            `[MEGA-DEBUG]   Found ${subjects.length} subjects for ${branchName} ${semesterKey}`,
-          );
 
           if (subjects.length > 0) {
-            console.log(
-              `      ✅ Found ${subjects.length} subjects for ${branchName} ${semesterKey}`,
-            );
             await prisma.branchAllocation.createMany({
               data: subjects.map((s) => ({
                 branch: branchName,
@@ -278,9 +266,6 @@ export const approveBranchAllocation = async (
 
   try {
     const branchUpper = branch.toUpperCase();
-    console.log(
-      `[MEGA-DEBUG] Approving for branch: ${branchUpper}, sem: ${semesterId}`,
-    );
 
     if (allocationId) {
       await prisma.branchAllocation.update({
@@ -295,7 +280,6 @@ export const approveBranchAllocation = async (
         },
         data: { isApproved: true },
       });
-      console.log(`[MEGA-DEBUG]   Approved ${result.count} allocations.`);
     }
 
     res.json({ success: true, message: "Approved successfully" });
@@ -325,9 +309,6 @@ export const getAvailableSubjects = async (
     }
 
     const branchUpper = (branch as string)?.toUpperCase();
-    console.log(
-      `[MEGA-DEBUG] Fetching available for ${branchUpper}, year ${year}, sem ${openSem.id}`,
-    );
 
     const where: any = {
       semesterId: openSem.id,
@@ -370,10 +351,6 @@ export const registerSubjects = async (
 
   if (!user) return res.status(401).json({ error: "Unauthorized" });
 
-  console.log(
-    `[MEGA-DEBUG] registerSubjects user: ${user.username}, subjectIds: ${subjectIds.length}`,
-  );
-
   try {
     // 1. Get current registration-open semester
     const sem = await prisma.academicSemester.findFirst({
@@ -382,7 +359,6 @@ export const registerSubjects = async (
     });
 
     if (!sem) {
-      console.log(`[MEGA-DEBUG] No open semester found!`);
       return res.status(403).json({ error: "Registration is not open" });
     }
 
@@ -413,9 +389,6 @@ export const registerSubjects = async (
     });
 
     if (firstSubject) {
-      console.log(
-        `[MEGA-DEBUG] firstSubject semester field: ${firstSubject.semester}`,
-      );
       const match = firstSubject.semester.match(/(E[1-4])-(SEM-[1-2])/i);
       if (match) {
         const academicYear = match[1];
@@ -440,20 +413,11 @@ export const registerSubjects = async (
             },
           );
           console.log(
-            `[MEGA-DEBUG] Profile update result: ${JSON.stringify(updateRes.data)}`,
-          );
-          console.log(
             `✅ Student ${user.username} profile updated to ${academicYear} ${academicSem}`,
           );
         } catch (profileError: any) {
-          console.warn(
-            `[MEGA-DEBUG] Profile Update Failed: ${profileError.response?.data ? JSON.stringify(profileError.response.data) : profileError.message}`,
-          );
+          console.warn("User Profile Update Failed:", profileError.message);
         }
-      } else {
-        console.log(
-          `[MEGA-DEBUG] Regex FAILED to match ${firstSubject.semester}`,
-        );
       }
     }
 
