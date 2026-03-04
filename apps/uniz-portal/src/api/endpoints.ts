@@ -175,7 +175,8 @@ export const DEAN_REVIEW = (branch: string) =>
 export const APPROVE_ALLOCATION = `${BASE_URL}/academics/dean/approve`;
 export const DEAN_APPROVE = APPROVE_ALLOCATION;
 
-export const GET_AVAILABLE_SUBJECTS = `${BASE_URL}/academics/student/available`;
+export const GET_AVAILABLE_SUBJECTS = (branch: string, year: string) =>
+  `${BASE_URL}/academics/student/available?branch=${branch}&year=${year}`;
 export const REGISTER_SUBJECTS = `${BASE_URL}/academics/student/register`;
 export const GET_CURRENT_SUBJECTS = (studentId: string) =>
   `${BASE_URL}/academics/student/current/${studentId}`;

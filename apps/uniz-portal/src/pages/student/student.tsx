@@ -509,7 +509,11 @@ export default function StudentProfilePage() {
             )}
 
             {activeTab === "registration" && (
-              <MySubjects studentId={user?._id || user?.username} />
+              <MySubjects
+                studentId={user?._id || user?.username}
+                branch={user?.branch}
+                year={user?.year}
+              />
             )}
 
             {activeTab === "family" && (
