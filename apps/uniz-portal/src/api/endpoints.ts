@@ -167,10 +167,13 @@ export const SEMESTERS = `${BASE_URL}/academics/semester`;
 export const INIT_SEMESTER = `${BASE_URL}/academics/semester/init`;
 export const UPDATE_SEMESTER_STATUS = (id: string) =>
   `${BASE_URL}/academics/semester/status/${id}`;
+export const DELETE_SEMESTER = (id: string) =>
+  `${BASE_URL}/academics/semester/${id}`;
 
 export const DEAN_REVIEW = (branch: string) =>
   `${BASE_URL}/academics/dean/review/${branch}`;
 export const APPROVE_ALLOCATION = `${BASE_URL}/academics/dean/approve`;
+export const DEAN_APPROVE = APPROVE_ALLOCATION;
 
 export const GET_AVAILABLE_SUBJECTS = `${BASE_URL}/academics/student/available`;
 export const REGISTER_SUBJECTS = `${BASE_URL}/academics/student/register`;
