@@ -31,23 +31,27 @@ interface CurrentSubjectsResponse {
   subjects: Subject[];
 }
 
+import CourseRegistration from "./CourseRegistration";
+
 export default function MySubjects({ studentId }: { studentId: string }) {
   const [data, setData] = useState<CurrentSubjectsResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchSubjects = async () => {
+    try {
+      setLoading(true);
+      const res = await apiClient<CurrentSubjectsResponse>(
+        `/academics/student/current/${studentId}`,
+      );
+      setData(res);
+    } catch (err) {
+      console.error("Failed to fetch subjects:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchSubjects = async () => {
-      try {
-        const res = await apiClient<CurrentSubjectsResponse>(
-          `/academic/student/current/${studentId}`,
-        );
-        setData(res);
-      } catch (err) {
-        console.error("Failed to fetch subjects:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     if (studentId) fetchSubjects();
   }, [studentId]);
 
@@ -60,19 +64,7 @@ export default function MySubjects({ studentId }: { studentId: string }) {
   }
 
   if (!data || data.subjects.length === 0) {
-    return (
-      <div className="bg-slate-50 border border-slate-200 rounded-[32px] p-12 text-center">
-        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-          <BookOpen className="w-8 h-8 text-slate-300" />
-        </div>
-        <h3 className="text-xl font-bold text-slate-800 mb-2">
-          No Registered Subjects
-        </h3>
-        <p className="text-slate-500 max-w-sm mx-auto">
-          You haven't registered for any subjects in the current semester yet.
-        </p>
-      </div>
-    );
+    return <CourseRegistration onComplete={fetchSubjects} />;
   }
 
   return (
