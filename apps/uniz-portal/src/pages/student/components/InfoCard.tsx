@@ -17,13 +17,13 @@ export const InfoCard = memo(
 
     return (
       <div
-        className={`bg-white p-5 rounded-[24px] border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.03)] hover:border-blue-100 transition-all duration-300 ${fullWidth ? "col-span-full" : ""}`}
+        className={`bg-white p-5 rounded-xl border border-slate-100 shadow-sm hover:border-blue-100 transition-all duration-300 ${fullWidth ? "col-span-full" : ""}`}
       >
-        <div className="flex items-center gap-2.5 mb-3">
+        <div className="flex items-center gap-2 mb-3">
           <span className="text-blue-500">
             {icon}
           </span>
-          <span className="text-[11px] font-medium uppercase tracking-[0.1em] text-slate-400">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             {label}
           </span>
         </div>
@@ -36,7 +36,7 @@ export const InfoCard = memo(
             name={name}
             value={value}
             onChange={handleChange}
-            className="w-full bg-slate-50 text-slate-900 text-[15px] font-medium p-3 rounded-2xl border border-slate-100 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition-all placeholder:text-slate-400 placeholder:font-normal"
+            className="w-full bg-slate-50 text-slate-900 text-[15px] font-semibold p-3 rounded-xl border border-slate-100 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition-all placeholder:text-slate-400 placeholder:font-normal"
             autoComplete="off"
             placeholder={`Enter ${label.toLowerCase()}`}
           />

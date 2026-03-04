@@ -356,31 +356,31 @@ export default function StudentProfilePage() {
 
   return (
     <div className="font-sans text-slate-900">
-      <div className="container mx-auto px-4 max-w-5xl relative z-10">
+      <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2">
         {/* Profile Header */}
-        <div className="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6 mb-4 md:mb-6">
+        <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-4 md:gap-6 mb-8">
           {/* Profile Photo Removed */}
 
           <div className="flex-1 mb-0 md:mb-2 text-center md:text-left w-full md:w-auto">
-            <p className="text-lg md:text-xl font-medium text-slate-400 mb-0.5">
-              Welcome back,
+            <p className="text-slate-400 font-medium text-[13px] mb-1.5 px-0.5 uppercase tracking-widest leading-none">
+              Institutional Student Terminal
             </p>
-            <h1 className="text-3xl md:text-4xl font-semibold tracking-[-0.02em] text-slate-900 mb-2">
+            <h1 className="text-2xl font-semibold tracking-[-0.02em] text-cyan-950 leading-none mb-3">
               {user?.name}
             </h1>
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-medium text-slate-500">
               <div className="flex items-center gap-2">
-                <span className="text-blue-600 font-semibold uppercase tracking-widest text-[11px] bg-blue-50 border border-blue-100 px-2 py-1 rounded-full">
+                <span className="text-indigo-600 font-bold uppercase tracking-widest text-[10px] bg-indigo-50 border border-indigo-100 px-2 py-1 rounded">
                   {user?.username}
                 </span>
                 <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                <span className="uppercase tracking-wide font-medium text-slate-700">
-                  {user?.branch} - {user?.year}
+                <span className="uppercase tracking-wide font-bold text-slate-600 text-[10px] md:text-xs">
+                  {user?.branch} • {user?.year}
                 </span>
               </div>
               {user?.has_pending_requests && (
-                <span className="text-blue-600 px-3 py-1 bg-blue-50 rounded-full text-[10px] font-semibold uppercase tracking-wider flex items-center gap-1.5 animate-pulse ml-1">
-                  <Clock className="w-3 h-3" /> Pending Request
+                <span className="text-amber-600 px-3 py-1 bg-amber-50 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 animate-pulse ml-0 md:ml-1">
+                  <Clock className="w-3 h-3" /> PENDING ACTION
                 </span>
               )}
             </div>
@@ -410,9 +410,9 @@ export default function StudentProfilePage() {
             ) : (
               <button
                 onClick={() => setIsEditing(true)}
-                className="hidden md:flex uniz-primary-btn h-auto px-6 py-2 bg-white border border-blue-200 text-blue-600 hover:bg-blue-600 hover:text-white"
+                className="flex uniz-primary-btn h-auto px-6 py-2 bg-indigo-600 border border-indigo-600 text-white hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
               >
-                <Edit2 className="w-4 h-4" /> Edit Profile
+                <Edit2 className="w-4 h-4" /> <span className="hidden sm:inline">Edit Profile</span>
               </button>
             )}
           </div>
@@ -432,8 +432,8 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                  className={`pb-3 relative text-[11px] font-semibold uppercase tracking-[0.15em] transition-all ${activeTab === tab
-                    ? "text-blue-600"
+                  className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${activeTab === tab
+                    ? "text-cyan-900"
                     : "text-slate-400 hover:text-slate-600"
                     }`}
                 >
@@ -441,7 +441,7 @@ export default function StudentProfilePage() {
                   {activeTab === tab && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-blue-600 rounded-t-full"
+                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-cyan-900 rounded-t-full"
                     />
                   )}
                 </button>
@@ -478,7 +478,7 @@ export default function StudentProfilePage() {
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
                     <div className="h-6 w-1.5 bg-blue-600 rounded-full"></div>
-                    <h3 className="text-lg font-semibold tracking-tight uppercase text-slate-800">
+                    <h3 className="text-[17px] font-semibold tracking-tight text-slate-900">
                       Academic Overview
                     </h3>
                   </div>
@@ -506,7 +506,7 @@ export default function StudentProfilePage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-                    <h3 className="text-lg font-bold text-slate-800">
+                    <h3 className="text-[17px] font-semibold tracking-tight text-slate-900">
                       Father's Details
                     </h3>
                   </div>
@@ -556,7 +556,7 @@ export default function StudentProfilePage() {
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-                    <h3 className="text-lg font-bold text-slate-800">
+                    <h3 className="text-[17px] font-semibold tracking-tight text-slate-900">
                       Mother's Details
                     </h3>
                   </div>
@@ -608,23 +608,23 @@ export default function StudentProfilePage() {
             )}
 
             {activeTab === "permissions" && (
-              <div className="space-y-8">
-                <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+              <div className="space-y-8 pb-24 md:pb-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <button
                     onClick={() => setRequestType("outing")}
                     disabled={user.has_pending_requests}
-                    className="group relative overflow-hidden bg-white hover:bg-blue-600 rounded-2xl p-6 transition-all duration-300 border border-slate-100 hover:border-blue-600 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-xl"
+                    className="group relative overflow-hidden bg-white hover:bg-slate-900 rounded-xl p-6 transition-all duration-300 border border-slate-100 hover:border-slate-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md h-[120px] md:h-auto"
                   >
                     <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
-                      <div className="text-blue-500 group-hover:text-white transition-colors duration-300">
-                        <Clock className="w-7 h-7" />
+                      <div className="text-indigo-600 group-hover:text-white transition-colors duration-300">
+                        <Clock size={22} />
                       </div>
                       <div>
-                        <h3 className="text-[17px] font-semibold text-slate-900 group-hover:text-white mb-1 transition-colors">
+                        <h3 className="text-[16px] font-bold text-slate-900 group-hover:text-white mb-1 transition-colors leading-none">
                           Request Outing
                         </h3>
-                        <p className="font-medium text-[13px] text-slate-500 group-hover:text-blue-100 transition-colors">
-                          Short duration leaves (few hours)
+                        <p className="font-medium text-[12px] text-slate-400 group-hover:text-slate-500 transition-colors">
+                          Short duration leaves
                         </p>
                       </div>
                     </div>
@@ -632,18 +632,18 @@ export default function StudentProfilePage() {
                   <button
                     onClick={() => setRequestType("outpass")}
                     disabled={user.has_pending_requests}
-                    className="group relative overflow-hidden bg-white hover:bg-blue-600 rounded-2xl p-6 transition-all duration-300 border border-slate-100 hover:border-blue-600 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-xl"
+                    className="group relative overflow-hidden bg-white hover:bg-slate-900 rounded-xl p-6 transition-all duration-300 border border-slate-100 hover:border-slate-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md h-[120px] md:h-auto"
                   >
                     <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
-                      <div className="text-blue-500 group-hover:text-white transition-colors duration-300">
-                        <Calendar className="w-7 h-7" />
+                      <div className="text-indigo-600 group-hover:text-white transition-colors duration-300">
+                        <Calendar size={22} />
                       </div>
                       <div>
-                        <h3 className="text-[17px] font-semibold text-slate-900 group-hover:text-white mb-1 transition-colors">
+                        <h3 className="text-[16px] font-bold text-slate-900 group-hover:text-white mb-1 transition-colors leading-none">
                           Request Outpass
                         </h3>
-                        <p className="font-medium text-[13px] text-slate-500 group-hover:text-blue-100 transition-colors">
-                          Long duration leaves (overnight/days)
+                        <p className="font-medium text-[12px] text-slate-400 group-hover:text-slate-500 transition-colors">
+                          Overnight/Multi-day leaves
                         </p>
                       </div>
                     </div>
@@ -651,50 +651,48 @@ export default function StudentProfilePage() {
                 </div>
 
                 <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="text-blue-600">
-                      <History className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-lg font-black text-slate-800 tracking-tight">
-                      Request History
-                    </h3>
+                  <div className="text-slate-900">
+                    <History size={18} />
                   </div>
+                  <h3 className="text-[17px] font-semibold text-slate-900 tracking-tight">
+                    Request History Audit
+                  </h3>
+                </div>
 
-                  <div className="space-y-3">
-                    {isHistoryLoading ? (
-                      <div className="text-center py-10 text-slate-300 text-[10px] font-bold uppercase tracking-[0.2em] animate-pulse">
-                        Fetching Records...
-                      </div>
-                    ) : history.length > 0 ? (
-                      <>
-                        {history.map((req) => (
-                          <RequestCard
-                            key={req._id}
-                            request={req}
-                            type={req.type}
-                          />
-                        ))}
-                        <Pagination
-                          currentPage={historyPagination.page}
-                          totalPages={historyPagination.totalPages}
-                          onPageChange={(p) => fetchHistory(p)}
-                          className="mt-6"
+                <div className="space-y-3">
+                  {isHistoryLoading ? (
+                    <div className="text-center py-10 text-slate-300 text-[10px] font-bold uppercase tracking-[0.2em] animate-pulse">
+                      Fetching Records...
+                    </div>
+                  ) : history.length > 0 ? (
+                    <>
+                      {history.map((req) => (
+                        <RequestCard
+                          key={req._id}
+                          request={req}
+                          type={req.type}
                         />
-                      </>
-                    ) : (
-                      <div className="text-center py-10 bg-slate-50/50 rounded-2xl border border-slate-100">
-                        <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 border border-slate-100 shadow-sm">
-                          <History className="w-5 h-5 text-slate-200" />
-                        </div>
-                        <p className="text-slate-900 font-black text-sm uppercase tracking-wider">
-                          No history found
-                        </p>
-                        <p className="text-slate-400 text-xs mt-1 font-medium">
-                          Your past requests will appear here
-                        </p>
+                      ))}
+                      <Pagination
+                        currentPage={historyPagination.page}
+                        totalPages={historyPagination.totalPages}
+                        onPageChange={(p) => fetchHistory(p)}
+                        className="mt-6"
+                      />
+                    </>
+                  ) : (
+                    <div className="text-center py-10 bg-slate-50/50 rounded-xl border border-slate-100">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 border border-slate-100 shadow-sm">
+                        <History className="w-5 h-5 text-slate-200" />
                       </div>
-                    )}
-                  </div>
+                      <p className="text-slate-900 font-semibold text-sm uppercase tracking-wider">
+                        No history found
+                      </p>
+                      <p className="text-slate-400 text-xs mt-1 font-medium">
+                        Your past requests will appear here
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -710,10 +708,10 @@ export default function StudentProfilePage() {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-white rounded-[40px] p-6 md:p-10 max-w-lg w-full shadow-2xl overflow-hidden relative"
+                className="bg-white rounded-xl p-6 md:p-10 max-w-lg w-full shadow-2xl overflow-hidden relative"
               >
                 <div className="flex items-center gap-5 mb-8">
-                  <div className="text-blue-600">
+                  <div className="text-cyan-900">
                     {requestType === "outpass" ? (
                       <Calendar className="w-8 h-8" />
                     ) : (
@@ -721,11 +719,11 @@ export default function StudentProfilePage() {
                     )}
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black capitalize tracking-tight text-slate-900">
-                      New {requestType}
+                    <h2 className="text-xl font-semibold capitalize tracking-tight text-slate-900">
+                      New {requestType} Snapshot
                     </h2>
-                    <p className="text-sm font-medium text-slate-500">
-                      Submit your request details below.
+                    <p className="text-[13px] font-medium text-slate-400">
+                      Submit your leave authorization details
                     </p>
                   </div>
                 </div>
@@ -756,7 +754,7 @@ export default function StudentProfilePage() {
                       </label>
                       <input
                         type={requestType === "outpass" ? "date" : "time"}
-                        className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-lg text-slate-900 transition-all"
+                        className="w-full bg-slate-50 p-4 rounded-xl border border-slate-100 focus:border-cyan-800 focus:ring-1 focus:ring-cyan-800 focus:outline-none font-semibold text-lg text-slate-900 transition-all"
                         value={requestForm.from}
                         onChange={(e) =>
                           setRequestForm({
@@ -773,7 +771,7 @@ export default function StudentProfilePage() {
                       </label>
                       <input
                         type={requestType === "outpass" ? "date" : "time"}
-                        className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none font-bold text-lg text-slate-900 transition-all"
+                        className="w-full bg-slate-50 p-4 rounded-xl border border-slate-100 focus:border-cyan-800 focus:ring-1 focus:ring-cyan-800 focus:outline-none font-semibold text-lg text-slate-900 transition-all"
                         value={requestForm.to}
                         onChange={(e) =>
                           setRequestForm({ ...requestForm, to: e.target.value })
@@ -786,19 +784,19 @@ export default function StudentProfilePage() {
                     <button
                       type="button"
                       onClick={() => setRequestType(null)}
-                      className="flex-1 uniz-primary-btn bg-white text-slate-400 border border-slate-200 shadow-none hover:shadow-none hover:bg-slate-50 hover:text-slate-600"
+                      className="flex-1 h-[52px] font-bold text-sm text-slate-400 hover:text-slate-600 transition-all"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={requestLoading}
-                      className="flex-[2] uniz-primary-btn"
+                      className="flex-[2] h-[52px] bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all shadow-lg active:scale-[0.98]"
                     >
                       {requestLoading ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                       ) : (
-                        "Submit Request"
+                        `Request ${requestType}`
                       )}
                     </button>
                   </div>
@@ -810,6 +808,6 @@ export default function StudentProfilePage() {
 
         {/* Closing divs for the standard layout */}
       </div>
-    </div>
+    </div >
   );
 }

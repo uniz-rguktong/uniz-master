@@ -140,13 +140,13 @@ export default function CampusHub() {
             >
               <a
                 href="https://srees-campushub.vercel.app"
-                className="px-8 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition-colors flex items-center justify-center"
+                className="px-8 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-black transition-all flex items-center justify-center shadow-sm"
               >
                 Explore Events <ArrowRight size={16} className="ml-2" />
               </a>
               <a
                 href="https://srees-campushub.vercel.app"
-                className="px-8 py-3 border-2 border-black text-black font-medium rounded-md hover:bg-gray-50 transition-colors flex items-center justify-center"
+                className="px-8 py-3 border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center justify-center"
               >
                 Learn More
               </a>
@@ -296,7 +296,7 @@ export default function CampusHub() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                className="bg-white p-8 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start">
                   <div className="flex-shrink-0 mr-4">
@@ -386,7 +386,7 @@ export default function CampusHub() {
               >
                 <a
                   href="https://srees-campushub.vercel.app"
-                  className="inline-flex items-center px-6 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition-colors"
+                  className="inline-flex items-center px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-black transition-all shadow-sm"
                 >
                   Browse Events <ArrowRight size={16} className="ml-2" />
                 </a>
@@ -895,7 +895,7 @@ export default function CampusHub() {
               >
                 <a
                   href="https://srees-campushub.vercel.app"
-                  className="inline-flex items-center px-6 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition-colors"
+                  className="inline-flex items-center px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-black transition-all shadow-sm"
                 >
                   Create an Event <ArrowRight size={16} className="ml-2" />
                 </a>

@@ -500,7 +500,7 @@ export default function StudySpace() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-white p-8 rounded-lg shadow-sm border border-gray-100"
+                className="bg-white p-8 rounded-xl shadow-sm border border-slate-100"
               >
                 <svg
                   width="40"
@@ -555,7 +555,7 @@ export default function StudySpace() {
             >
               <a
                 href="https://studyspace-exp.vercel.app/"
-                className="px-8 py-4 bg-white text-black font-medium rounded-md hover:bg-gray-100 transition-colors inline-flex items-center"
+                className="px-8 py-4 bg-white text-slate-950 font-bold rounded-xl hover:bg-slate-50 transition-all inline-flex items-center shadow-lg"
               >
                 Get Started <ArrowRight size={16} className="ml-2" />
               </a>
