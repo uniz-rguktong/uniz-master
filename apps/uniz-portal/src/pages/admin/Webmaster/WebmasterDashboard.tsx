@@ -52,9 +52,7 @@ export default function WebmasterDashboard() {
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const username = JSON.parse(
-    localStorage.getItem("username") || '"Webmaster"',
-  );
+  const username = localStorage.getItem("username") || "Webmaster";
 
   const navItems = [
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
