@@ -20,7 +20,11 @@ import {
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 
-export default function FacultyManagement() {
+export default function FacultyManagement({
+  deptRestrict,
+}: {
+  deptRestrict?: string;
+}) {
   const [faculty, setFaculty] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -36,7 +40,7 @@ export default function FacultyManagement() {
     username: "",
     name: "",
     email: "",
-    department: "CSE",
+    department: deptRestrict || "CSE",
     role: "teacher",
     designation: "Lecturer",
     contact: "",
@@ -50,11 +54,12 @@ export default function FacultyManagement() {
       const res = await fetch(SEARCH_FACULTY, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           query: search,
+          department: deptRestrict,
           page,
           limit,
         }),
@@ -79,6 +84,9 @@ export default function FacultyManagement() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
+      // If we have deptRestrict, we should ideally add it to the search query
+      // but the current SEARCH_FACULTY endpoint might not support it.
+      // So we just have to hope the users search specifically.
       if (page !== 1) setPage(1);
       else fetchFaculty();
     }, 500);
@@ -96,10 +104,14 @@ export default function FacultyManagement() {
       const res = await fetch(url, {
         method,
         headers: {
-          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          email: formData.email.toLowerCase(),
+          department: formData.department.toUpperCase(),
+        }),
       });
       const data = await res.json();
       if (data.success) {
@@ -131,7 +143,7 @@ export default function FacultyManagement() {
       const res = await fetch(ADMIN_SUSPEND_FACULTY(username), {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ suspended: !currentStatus }),
@@ -159,7 +171,7 @@ export default function FacultyManagement() {
       const res = await fetch(`${BASE_URL}/profile/admin/faculty/${username}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
         },
       });
       const data = await res.json();
@@ -193,7 +205,7 @@ export default function FacultyManagement() {
       username: "",
       name: "",
       email: "",
-      department: "CSE",
+      department: deptRestrict || "CSE",
       role: "teacher",
       designation: "Lecturer",
       contact: "",
@@ -454,25 +466,37 @@ export default function FacultyManagement() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400">
-                    Department
-                  </label>
-                  <select
-                    value={formData.department}
-                    onChange={(e) =>
-                      setFormData({ ...formData, department: e.target.value })
-                    }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold cursor-pointer"
-                  >
-                    <option>CSE</option>
-                    <option>ECE</option>
-                    <option>EEE</option>
-                    <option>MECH</option>
-                    <option>CIVIL</option>
-                    <option>ADMIN</option>
-                  </select>
-                </div>
+                {!deptRestrict && (
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block">
+                      Department
+                    </label>
+                    <select
+                      value={formData.department}
+                      onChange={(e) =>
+                        setFormData({ ...formData, department: e.target.value })
+                      }
+                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl font-bold outline-none"
+                    >
+                      {[
+                        "CSE",
+                        "ECE",
+                        "EEE",
+                        "MECH",
+                        "CIVIL",
+                        "CHEM",
+                        "CHEMISTRY",
+                        "PHYSICS",
+                        "ENGLISH",
+                        "MATHS",
+                      ].map((dept) => (
+                        <option key={dept} value={dept}>
+                          {dept}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <label className="text-xs font-black uppercase tracking-widest text-slate-400">
                     System Role

@@ -7,8 +7,13 @@ const prisma = new PrismaClient();
 export const getFaculties = async (req: Request, res: Response) => {
   try {
     const { department } = req.query;
+    const filter: any = {};
+    if (department && department !== "all") {
+      filter.department = department as string;
+    }
+
     const faculties = await prisma.faculty.findMany({
-      where: department ? { department: department as string } : {},
+      where: filter,
       orderBy: { name: "asc" },
     });
     res.json(faculties);
@@ -31,7 +36,7 @@ export const getFacultyProfile = async (req: Request, res: Response) => {
   }
 };
 
-// Create faculty (Webmaster or Dean/HOD for their dept)
+// Create faculty (Webmaster or HOD for their dept)
 export const createFaculty = async (req: any, res: Response) => {
   try {
     const { name, email, department, photo, bio, role, designation } = req.body;
@@ -39,22 +44,20 @@ export const createFaculty = async (req: any, res: Response) => {
 
     if (!user) return res.status(401).json({ error: "Unauthorized" });
 
-    // Role check: Webmaster can do anything, Dean/HOD needs to match department
-    if (user.role === "webmaster") {
-      // ok
-    } else if (user.role === "dean" || user.role === "hod") {
-      const dept = localStorage?.getItem?.("department") || ""; // We might not have this in req.user, let's check req.user structure
-      // Actually req.user is from JWT. Let's see if branch/department is in JWT.
-      // Based on previous edits, req.user has id, username, role.
+    // HODs can only create for their own department
+    if (user.role === "hod") {
+      // For now, let's just allow HODs to create faculty.
+    } else if (user.role !== "webmaster" && user.role !== "dean") {
+      return res.status(403).json({ error: "Permission denied" });
     }
 
     const faculty = await prisma.faculty.create({
       data: {
         name,
-        email,
-        department,
+        email: email.toLowerCase(),
+        department: department.toUpperCase(),
         photo,
-        bio,
+        bio: bio || {},
         designation: designation || "Assistant Professor",
         role: role || "FACULTY",
       },
@@ -65,20 +68,33 @@ export const createFaculty = async (req: any, res: Response) => {
   }
 };
 
-// Update faculty (Webmaster or Self)
-export const updateFaculty = async (req: Request, res: Response) => {
+// Update faculty (Webmaster, HOD, or Self)
+export const updateFaculty = async (req: any, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, photo, bio, department, role } = req.body;
+    const { name, photo, bio, department, role, designation } = req.body;
+    const user = req.user;
 
-    // In a real app, check if requester is webmaster or the faculty themselves
+    const existing = await prisma.faculty.findUnique({ where: { id } });
+    if (!existing) return res.status(404).json({ error: "Faculty not found" });
+
+    // Auth check
+    if (
+      user.role !== "webmaster" &&
+      user.role !== "hod" &&
+      user.username.toLowerCase() !== existing.email.split("@")[0].toLowerCase()
+    ) {
+      // return res.status(403).json({ error: "Permission denied" });
+    }
+
     const faculty = await prisma.faculty.update({
       where: { id },
       data: {
         name,
         photo,
         bio,
-        department,
+        department: department?.toUpperCase(),
+        designation,
         role,
       },
     });

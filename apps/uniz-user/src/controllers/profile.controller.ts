@@ -676,7 +676,12 @@ export const searchFaculty = async (
   res: Response,
 ) => {
   const user = req.user;
-  const adminRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
+  const adminRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.HOD,
+  ];
   if (!user || !adminRoles.includes(user.role as UserRole)) {
     return res
       .status(403)
