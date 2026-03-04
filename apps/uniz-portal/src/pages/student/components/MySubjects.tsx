@@ -35,6 +35,7 @@ interface CurrentSubjectsResponse {
   subjects: Subject[];
 }
 
+import { GET_CURRENT_SUBJECTS } from "../../../api/endpoints";
 import CourseRegistration from "./CourseRegistration";
 
 export default function MySubjects({
@@ -53,7 +54,7 @@ export default function MySubjects({
     try {
       setLoading(true);
       const res = await apiClient<CurrentSubjectsResponse>(
-        `/academics/student/current/${studentId}`,
+        GET_CURRENT_SUBJECTS(studentId),
       );
       setData(res);
     } catch (err) {
