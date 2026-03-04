@@ -38,7 +38,18 @@ export default function DeanDashboard() {
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const username = JSON.parse(localStorage.getItem("username") || '"Dean"');
+  const username = localStorage.getItem("username") || "Dean";
+
+  const role = (localStorage.getItem("admin_role") || "admin").replace(
+    /"/g,
+    "",
+  );
+  const roleLabel =
+    role === "hod"
+      ? "HOD Portal"
+      : role === "swo" || role === "dsw"
+        ? "SWO Portal"
+        : "Dean Portal";
 
   const navItems = [
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
@@ -75,7 +86,7 @@ export default function DeanDashboard() {
         return (
           <SemesterRegistrationSection
             isAdmin={false}
-            branch={JSON.parse(localStorage.getItem("department") || '"CSE"')}
+            branch={localStorage.getItem("department") || "CSE"}
           />
         );
       case "system_logs":
@@ -143,7 +154,7 @@ export default function DeanDashboard() {
         <div className="p-6 flex items-center gap-4 border-b border-slate-50 shrink-0">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[14px] flex items-center justify-center shrink-0 shadow-lg shadow-blue-100 border-2 border-white rotate-[-3deg]">
             <span className="text-white font-semibold text-xl rotate-[3deg]">
-              D
+              {roleLabel[0]}
             </span>
           </div>
           {isSidebarOpen && (

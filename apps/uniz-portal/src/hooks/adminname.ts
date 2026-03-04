@@ -9,9 +9,10 @@ export function useAdminname() {
     const stored = localStorage.getItem("username");
     if (stored) {
       try {
-        setadminname(JSON.parse(stored)); // handles "\"SreeCharan\"" properly
+        const parsed = JSON.parse(stored);
+        setadminname(typeof parsed === "string" ? parsed : stored);
       } catch {
-        setadminname(stored); // fallback if not JSON
+        setadminname(stored);
       }
     }
   }, []);
