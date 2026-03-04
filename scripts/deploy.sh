@@ -9,39 +9,25 @@ git push origin main
 # 2. Deploy to VPS
 echo "🌐 Starting VPS Deployment..."
 ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
+  set -e
   cd /root/uniz-master
   
-  ORIG_HEAD=$(git rev-parse HEAD)
-  echo "📥 Force pulling latest code..."
+  echo "📥 Fetching latest code..."
   git fetch origin main
-  # Stash any local changes (like .env files if they are accidentally tracked) to avoid merge conflicts
-  git stash
   git reset --hard origin/main
   NEW_HEAD=$(git rev-parse HEAD)
+  echo "✅ Latest Commit: $(git log -1 --format='%h - %s')"
 
-  # Detect changed files
-  CHANGED_FILES=$(git diff --name-only $ORIG_HEAD $NEW_HEAD)
-  
-  # Global rebuild detection (if root config files changed or force requested)
-  COMMIT_MSG=$(git log -1 --pretty=%B)
-  GLOBAL_REBUILD=false
-  
-  if [ -n "$CHANGED_FILES" ]; then
-    if echo "$CHANGED_FILES" | grep -q "^package.json\|^package-lock.json\|^Dockerfile\|^.dockerignore\|^scripts/deploy.sh"; then
-      echo "🚨 Root configuration changed. Triggering global rebuild..."
-      GLOBAL_REBUILD=true
-    elif [[ "$COMMIT_MSG" == *"[force build]"* ]] || [[ "$COMMIT_MSG" == *"[rebuild all]"* ]]; then
-      echo "💪 Force rebuild requested via commit message. Triggering global rebuild..."
-      GLOBAL_REBUILD=true
-    fi
-  else
-    echo "ℹ️  No new changes detected in Git. GLOBAL_REBUILD suppressed."
+  # Force rebuild all if requested
+  FORCE_ALL=false
+  if [[ "$(git log -1 --pretty=%B)" == *"[rebuild all]"* ]] || [[ "$(git log -1 --pretty=%B)" == *"[force build]"* ]]; then
+    echo "� Force rebuild all requested via commit message."
+    FORCE_ALL=true
   fi
 
-  if [ -z "$CHANGED_FILES" ]; then
-    echo "ℹ️  No changes detected in Git. Skipping builds."
-  fi
-
+  # Detect changed files relative to last successful build
+  CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD || git show --name-only --format="")
+  
   # Service mapping: "folder_name:image_name:deployment_name:container_name"
   ALL_SERVICES=(
     "uniz-academics:uniz-academics-service:uniz-academics-service:academics-service"
@@ -63,10 +49,9 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
 
   for s in "${ALL_SERVICES[@]}"; do
     IFS=':' read -r DIR IMG DEP CON <<< "$s"
-    echo "🎯 Checking for changes in $DIR..."
     SHOULD_BUILD=false
     
-    if [ "$GLOBAL_REBUILD" == "true" ]; then
+    if [ "$FORCE_ALL" == "true" ]; then
        SHOULD_BUILD=true
     elif echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
       echo "🎯 Change detected in $DIR"
@@ -75,70 +60,44 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
 
     if [ "$SHOULD_BUILD" == "true" ]; then
       if [ -z "${BUILT_IMAGES[$IMG]}" ]; then
-        echo "🏗️  Rebuilding $IMG..."
-        
         BUILD_CONTEXT="apps/$DIR"
-        if [[ "$DIR" == *"infra"* ]]; then
-          BUILD_CONTEXT="$DIR"
-        fi
+        [[ "$DIR" == *"infra"* ]] && BUILD_CONTEXT="$DIR"
 
         TAG="local-$(date +%s)"
-        echo "🏗️  Rebuilding $IMG:$TAG for linux/amd64..."
+        echo "🏗️  Rebuilding $IMG:$TAG..."
         docker build --no-cache --platform linux/amd64 -t $IMG:$TAG $BUILD_CONTEXT
         
-        echo "📦 Exporting $IMG to tarball..."
-        docker save $IMG:$TAG -o /tmp/$IMG.tar
+        echo "📥 Importing $IMG:$TAG to K3s..."
+        docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
         
-        echo "📥 Importing $IMG to K3s..."
-        k3s ctr -n k8s.io images import /tmp/$IMG.tar
-        rm /tmp/$IMG.tar
-        
-        if ! k3s crictl images | grep -q "$IMG.*$TAG"; then
-          echo "❌ Failed to verify $IMG:$TAG in K3s. Trying direct ctr import..."
-          docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
-        fi
         BUILT_IMAGES[$IMG]=$TAG
         ((REBUILT_COUNT++))
       else
         TAG=${BUILT_IMAGES[$IMG]}
-        echo "♻️  Using cached image for $IMG with tag $TAG"
+        echo "♻️  Using built image for $IMG with tag $TAG"
       fi
 
+      echo "🛡️  Deploying $IMG:$TAG to $DEP..."
       if [[ "$DEP" == *"job"* ]]; then
-        echo "🛡️  Updating Kubernetes CronJob $DEP..."
         kubectl set image cronjob/$DEP $CON=docker.io/library/$IMG:$TAG
       else
-        echo "🛡️  Updating Kubernetes deployment $DEP..."
         kubectl set image deployment/$DEP $CON=docker.io/library/$IMG:$TAG
-        kubectl patch deployment $DEP -p '{"spec":{"template":{"spec":{"containers":[{"name":"'$CON'","imagePullPolicy":"IfNotPresent"}]}}}}'
+        # Force a fresh pod creation
         kubectl rollout restart deployment/$DEP
       fi
-    else
-      echo "⏭️  Skipping $IMG (No changes)."
     fi
   done
 
   if [ $REBUILT_COUNT -gt 0 ]; then
-    echo "✅ Successfully redeployed $REBUILT_COUNT services."
+    echo "✅ Redeployed $REBUILT_COUNT services."
+    docker image prune -f
   else
-    echo "✨ Everything is up to date."
+    echo "✨ No services needed updating."
   fi
   
-  echo "⌛ Waiting for deployments to stabilize (60s)..."
-  sleep 60
+  echo "⌛ Stabilization (30s)..."
+  sleep 30
   kubectl get pods
-
-  # 3. Clean up storage to prevent build-up
-  if [ $REBUILT_COUNT -gt 0 ]; then
-    echo "🧹 Final Cleanup: Removing old build cache..."
-    # Remove dangling images from Docker
-    docker image prune -f
-    # DO NOT prune k3s images here as it might delete newly imported images before they are fully used
-    # k3s crictl rmi --prune 
-    # Optional: Clear buildx cache if used
-    docker builder prune -f --filter "until=24h"
-    echo "✨ Storage cleaned."
-  fi
 EOF
 
 echo "🚀 Quick check on API health..."
