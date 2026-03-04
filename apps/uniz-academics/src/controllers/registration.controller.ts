@@ -48,12 +48,18 @@ export const initSemester = async (
 
       for (const yearSuffix of years) {
         const semesterKey = `${yearSuffix}-${semSuffix}`;
+        const romanKey = semesterKey
+          .replace("-SEM-1", "-SEM-I")
+          .replace("-SEM-2", "-SEM-II");
 
         for (const b of branches) {
           const branchName = b.branchName.toUpperCase();
           const subjects = await prisma.subject.findMany({
             where: {
-              semester: { contains: semesterKey, mode: "insensitive" },
+              OR: [
+                { semester: { contains: semesterKey, mode: "insensitive" } },
+                { semester: { contains: romanKey, mode: "insensitive" } },
+              ],
               department: { equals: branchName, mode: "insensitive" },
             },
           });
