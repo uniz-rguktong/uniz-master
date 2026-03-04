@@ -5,7 +5,6 @@ import {
   Eye,
   Loader2,
   AlertCircle,
-  Users,
   BookOpen,
   ArrowRight,
   ShieldCheck,
@@ -13,12 +12,11 @@ import {
   Edit,
   Download,
   FileSpreadsheet,
+  Plus,
+  Trash2,
+  X,
 } from "lucide-react";
-import {
-  DEAN_REVIEW,
-  APPROVE_ALLOCATION,
-  ACADEMIC_FACULTY,
-} from "../../../api/endpoints";
+import { DEAN_REVIEW, APPROVE_ALLOCATION } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../api/apiClient";
 
@@ -39,18 +37,19 @@ interface Allocation {
     department: string;
     semester: string;
   };
-  faculty?: {
-    id: string;
-    name: string;
-  };
 }
 
 export default function DeanReview() {
   const [allocations, setAllocations] = useState<Allocation[]>([]);
-  const [faculties, setFaculties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [approving, setApproving] = useState<string | null>(null);
   const [editing, setEditing] = useState<Allocation | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [allSubjects, setAllSubjects] = useState<any[]>([]);
+  const [newAllocData, setNewAllocData] = useState({
+    subjectId: "",
+    academicYear: "E4",
+  });
 
   // Get department from localStorage (AdminInfo)
   const adminInfo = (() => {
@@ -69,14 +68,14 @@ export default function DeanReview() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [allocData, facData] = await Promise.all([
+      const [allocData, subjectsData] = await Promise.all([
         apiClient<any[]>(DEAN_REVIEW(department)),
-        apiClient<any[]>(ACADEMIC_FACULTY),
+        apiClient<any[]>("/api/v1/academics/subjects"),
       ]);
       setAllocations(allocData || []);
-      setFaculties(facData || []);
+      setAllSubjects(subjectsData || []);
     } catch (error) {
-      toast.error("Failed to fetch branch allocations");
+      toast.error("Failed to fetch data");
     } finally {
       setLoading(false);
     }
@@ -101,7 +100,7 @@ export default function DeanReview() {
       setApproving(null);
     }
   };
-  
+
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editing) return;
@@ -118,6 +117,47 @@ export default function DeanReview() {
     }
   };
 
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAllocData.subjectId) return;
+
+    // Find active semester
+    const activeSem = allocations[0]?.semesterId;
+    if (!activeSem) {
+      toast.error("No active semester group found. Cannot add manually.");
+      return;
+    }
+
+    try {
+      await apiClient("/api/v1/academics/dean/allocation", {
+        method: "POST",
+        body: JSON.stringify({
+          ...newAllocData,
+          semesterId: activeSem,
+          branch: department,
+        }),
+      });
+      toast.success("Subject added to rollout");
+      setShowAddModal(false);
+      fetchData();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to add subject");
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Remove this subject from registration?")) return;
+    try {
+      await apiClient(`/api/v1/academics/dean/allocation/${id}`, {
+        method: "DELETE",
+      });
+      toast.success("Subject removed");
+      fetchData();
+    } catch (error: any) {
+      toast.error("Deletion failed");
+    }
+  };
+
   const handleExport = async () => {
     // Disabled until EXPORT_ACADEMIC_DATA is implemented
   };
@@ -130,8 +170,8 @@ export default function DeanReview() {
             {department} Branch Review
           </h2>
           <p className="text-slate-500 font-medium">
-            Review and finalize subject-faculty mappings for the current
-            semester
+            Review and finalize subjects for the current semester registration
+            rollout.
           </p>
         </div>
         <div className="flex items-center gap-4">
@@ -142,6 +182,13 @@ export default function DeanReview() {
           >
             <FileSpreadsheet size={16} />
             Export XLS
+          </button>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold text-xs hover:bg-blue-700 transition-all shadow-xl"
+          >
+            <Plus size={16} />
+            Add Subject
           </button>
           <div className="flex items-center gap-3 px-6 py-3 bg-amber-50 rounded-2xl border border-amber-100">
             <AlertCircle className="text-amber-500" size={18} />
@@ -196,29 +243,22 @@ export default function DeanReview() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-8">
-                  <div className="flex items-center gap-4 bg-slate-50 px-6 py-3 rounded-2xl border border-slate-100">
-                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 shadow-sm">
-                      <Users size={20} />
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em]">
-                        Assigned Faculty
-                      </p>
-                      <p className="font-bold text-slate-700 text-sm">
-                        {alloc.faculty?.name || "None Assigned"}
-                      </p>
-                    </div>
-                  </div>
-
+                <div className="flex items-center gap-3">
                   {!alloc.isApproved ? (
-                    <div className="flex items-center gap-3">
+                    <>
                       <button
                         onClick={() => setEditing(alloc)}
                         className="p-3.5 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-900 hover:text-white transition-all shadow-sm"
-                        title="Edit Subject (Electives)"
+                        title="Edit Subject"
                       >
                         <Edit size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(alloc.id)}
+                        className="p-3.5 bg-red-50 text-red-400 rounded-2xl hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                        title="Delete"
+                      >
+                        <Trash2 size={18} />
                       </button>
                       <button
                         disabled={approving === alloc.id}
@@ -232,7 +272,7 @@ export default function DeanReview() {
                         )}
                         Approve
                       </button>
-                    </div>
+                    </>
                   ) : (
                     <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center border-2 border-emerald-100">
                       <ShieldCheck size={24} />
@@ -275,11 +315,11 @@ export default function DeanReview() {
           </div>
           <h3 className="text-xl font-black text-slate-900">All caught up!</h3>
           <p className="text-slate-400 font-medium max-w-sm font-outfit mt-2">
-            No subject-faculty allocations are pending for your branch review at
-            this time.
+            No subjects are pending for your branch review at this time.
           </p>
         </div>
       )}
+
       {editing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white rounded-[40px] w-full max-w-xl p-10 shadow-2xl space-y-8 animate-in zoom-in-95 duration-300">
@@ -292,7 +332,7 @@ export default function DeanReview() {
                   Adjust Allocation
                 </h3>
                 <p className="text-slate-400 font-medium text-sm">
-                  Update elective details or reassign faculty
+                  Update elective details or credit values
                 </p>
               </div>
               <button
@@ -318,44 +358,21 @@ export default function DeanReview() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                    Credits
-                  </label>
-                  <input
-                    type="number"
-                    value={editing.customCredits || editing.subject.credits}
-                    onChange={(e) =>
-                      setEditing({
-                        ...editing,
-                        customCredits: parseInt(e.target.value) || null,
-                      })
-                    }
-                    className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 focus:bg-white focus:border-blue-600 outline-none transition-all shadow-sm"
-                  />
-                </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                    Assign Faculty
-                  </label>
-                  <select
-                    value={editing.facultyId || ""}
-                    onChange={(e) =>
-                      setEditing({ ...editing, facultyId: e.target.value })
-                    }
-                    className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 appearance-none focus:bg-white focus:border-blue-600 outline-none transition-all shadow-sm"
-                  >
-                    <option value="">Select Faculty</option>
-                    {faculties
-                      .filter((f) => f.department === department)
-                      .map((f) => (
-                        <option key={f.id} value={f.id}>
-                          {f.name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
+                  Credits
+                </label>
+                <input
+                  type="number"
+                  value={editing.customCredits || editing.subject.credits}
+                  onChange={(e) =>
+                    setEditing({
+                      ...editing,
+                      customCredits: parseInt(e.target.value) || null,
+                    })
+                  }
+                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 focus:bg-white focus:border-blue-600 outline-none transition-all shadow-sm"
+                />
               </div>
 
               <div className="pt-6 flex gap-4">
@@ -371,6 +388,93 @@ export default function DeanReview() {
                   className="flex-2 bg-blue-600 text-white px-12 py-5 rounded-[24px] font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 active:scale-95"
                 >
                   Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-[40px] w-full max-w-xl p-10 shadow-2xl space-y-8 animate-in zoom-in-95 duration-300">
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <h3 className="text-3xl font-black text-slate-900 italic">
+                  Manual Allocation
+                </h3>
+                <p className="text-slate-400 font-medium text-sm">
+                  Add a subject from the curriculum to this rollout
+                </p>
+              </div>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="p-3 hover:bg-slate-50 rounded-2xl transition-all"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreate} className="grid grid-cols-1 gap-6">
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
+                  Select Subject
+                </label>
+                <select
+                  required
+                  value={newAllocData.subjectId}
+                  onChange={(e) =>
+                    setNewAllocData({
+                      ...newAllocData,
+                      subjectId: e.target.value,
+                    })
+                  }
+                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 appearance-none focus:bg-white focus:border-blue-600 outline-none transition-all shadow-sm"
+                >
+                  <option value="">Choose a subject...</option>
+                  {allSubjects.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      [{s.code}] {s.name} ({s.credits} Credits)
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
+                  Academic Year
+                </label>
+                <select
+                  value={newAllocData.academicYear}
+                  onChange={(e) =>
+                    setNewAllocData({
+                      ...newAllocData,
+                      academicYear: e.target.value,
+                    })
+                  }
+                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 appearance-none focus:bg-white focus:border-blue-600 outline-none transition-all shadow-sm"
+                >
+                  {["E1", "E2", "E3", "E4"].map((y) => (
+                    <option key={y} value={y}>
+                      {y} Engineering
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="pt-6 flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="flex-1 bg-slate-100 text-slate-500 py-5 rounded-[24px] font-black uppercase tracking-widest text-xs hover:bg-slate-200 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-2 bg-blue-600 text-white px-12 py-5 rounded-[24px] font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 active:scale-95"
+                >
+                  Deploy Subject
                 </button>
               </div>
             </form>

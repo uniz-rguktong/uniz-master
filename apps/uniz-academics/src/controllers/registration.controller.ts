@@ -70,13 +70,16 @@ export const initSemester = async (
 
           if (subjects.length > 0) {
             await prisma.branchAllocation.createMany({
-              data: subjects.map((s) => ({
-                branch: branchName,
-                subjectId: s.id,
-                facultyId: null,
-                semesterId: semester.id,
-                isApproved: false,
-              })),
+              data: subjects.map(
+                (s) =>
+                  ({
+                    branch: branchName,
+                    subjectId: s.id,
+                    semesterId: semester.id,
+                    academicYear: yearSuffix,
+                    isApproved: false,
+                  }) as any,
+              ),
               skipDuplicates: true, // Safety check
             });
           }
@@ -164,6 +167,56 @@ export const deleteSemester = async (
 };
 
 /**
+ * @desc Create a manual allocation
+ * @access Webmaster, Dean, HOD
+ */
+export const createAllocation = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { semesterId, branch, subjectId, academicYear } = req.body;
+
+  try {
+    const allocation = await prisma.branchAllocation.create({
+      data: {
+        semesterId,
+        branch,
+        subjectId,
+        academicYear: academicYear || "E4", // Default or derived
+        status: "DEAN_PENDING",
+      } as any,
+      include: {
+        subject: true,
+      },
+    });
+    res.json(allocation);
+  } catch (error) {
+    console.error("Create Allocation Error:", error);
+    res.status(500).json({ error: "Failed to create allocation" });
+  }
+};
+
+/**
+ * @desc Delete a specific allocation
+ * @access Webmaster, Dean
+ */
+export const deleteAllocation = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.branchAllocation.delete({
+      where: { id },
+    });
+    res.json({ success: true, message: "Allocation deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete allocation" });
+  }
+};
+
+/**
  * @desc Get all semesters
  */
 export const getSemesters = async (
@@ -217,8 +270,9 @@ export const getDeanAllocations = async (
     }
 
     if (year) {
-      whereClause.subject = {
-        semester: { startsWith: year as string, mode: "insensitive" },
+      whereClause.academicYear = {
+        equals: year as string,
+        mode: "insensitive",
       };
     }
 
@@ -226,7 +280,6 @@ export const getDeanAllocations = async (
       where: whereClause,
       include: {
         subject: true,
-        faculty: true,
       },
       orderBy: { subject: { code: "asc" } },
     });
@@ -246,13 +299,12 @@ export const updateAllocation = async (
   res: Response,
 ) => {
   const { id } = req.params;
-  const { facultyId, customName, customCredits, isApproved } = req.body;
+  const { customName, customCredits, isApproved } = req.body;
 
   try {
     const allocation = await prisma.branchAllocation.update({
       where: { id },
       data: {
-        facultyId,
         customName,
         customCredits: customCredits ? Number(customCredits) : undefined,
         isApproved: isApproved !== undefined ? isApproved : undefined,

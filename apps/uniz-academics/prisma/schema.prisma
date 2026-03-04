@@ -75,17 +75,16 @@ model AcademicSemester {
 }
 
 model Faculty {
-  id                String             @id @default(uuid())
-  name              String
-  email             String             @unique
-  photo             String?
-  department        String
-  designation       String?            @default("Assistant Professor")
-  role              String             @default("FACULTY") // "FACULTY", "HOD", "DEAN", "WEBMASTER"
-  bio               Json?
-  branchAllocations BranchAllocation[]
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  photo       String?
+  department  String
+  designation String?  @default("Assistant Professor")
+  role        String   @default("FACULTY") // "FACULTY", "HOD", "DEAN", "WEBMASTER"
+  bio         Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([department])
 }
@@ -99,8 +98,8 @@ enum AllocationStatus {
 model BranchAllocation {
   id            String           @id @default(uuid())
   branch        String // e.g. "CSE", "ECE"
+  academicYear  String?          @default("E4") // e.g. "E1", "E2", "E3", "E4"
   subjectId     String
-  facultyId     String?
   semesterId    String
   customName    String? // For electives (e.g. ELECTIVE (NPTEL Course))
   customCredits Int? // Ability to override default subject credits
@@ -108,12 +107,11 @@ model BranchAllocation {
   isApproved    Boolean          @default(false)
   subject       Subject          @relation(fields: [subjectId], references: [id])
   semester      AcademicSemester @relation(fields: [semesterId], references: [id])
-  faculty       Faculty?         @relation(fields: [facultyId], references: [id])
 
   @@unique([branch, subjectId, semesterId])
   @@index([branch])
   @@index([semesterId])
-  @@index([facultyId])
+  @@index([academicYear])
 }
 
 model Registration {
