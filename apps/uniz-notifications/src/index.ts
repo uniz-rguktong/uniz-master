@@ -895,23 +895,38 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
         where: { role: { equals: "dean", mode: "insensitive" } },
       });
       const usernames = deans.map((d) => d.username);
+      console.log(
+        `[Push] Found ${usernames.length} Deans: ${usernames.join(", ")}`,
+      );
       subscriptions = await prisma.pushSubscription.findMany({
         where: { username: { in: usernames } },
       });
     } else if (target === "hod") {
       const where: any = { role: { equals: "hod", mode: "insensitive" } };
-      if (branch) where.department = { equals: branch, mode: "insensitive" };
+      if (branch && branch.toLowerCase() !== "all") {
+        where.department = { equals: branch, mode: "insensitive" };
+      }
       const hods = await prisma.facultyProfile.findMany({ where });
       const usernames = hods.map((h) => h.username);
+      console.log(
+        `[Push] Found ${usernames.length} HODs for branch=${branch}: ${usernames.join(", ")}`,
+      );
       subscriptions = await prisma.pushSubscription.findMany({
         where: { username: { in: usernames } },
       });
     } else if (target === "students") {
       const where: any = {};
-      if (branch) where.branch = { equals: branch, mode: "insensitive" };
-      if (year) where.year = { equals: year, mode: "insensitive" };
+      if (branch && branch.toLowerCase() !== "all") {
+        where.branch = { equals: branch, mode: "insensitive" };
+      }
+      if (year && year.toLowerCase() !== "all") {
+        where.year = { equals: year, mode: "insensitive" };
+      }
       const students = await prisma.studentProfile.findMany({ where });
       const usernames = students.map((s) => s.username);
+      console.log(
+        `[Push] Found ${usernames.length} Students for branch=${branch}, year=${year}`,
+      );
       subscriptions = await prisma.pushSubscription.findMany({
         where: { username: { in: usernames } },
       });
@@ -923,6 +938,10 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
           "target must be one of: user, batch, year, all, dean, hod, students",
       });
     }
+
+    console.log(
+      `[Push] Total subscriptions found for target=${target}: ${subscriptions.length}`,
+    );
 
     if (subscriptions.length === 0) {
       return res
