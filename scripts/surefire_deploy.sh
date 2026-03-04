@@ -4,12 +4,12 @@ set -e
 # 1. Sync with GitHub
 echo "🚀 Syncing local changes to GitHub..."
 git add .
-git commit -m "chore: trigger surefire deployment [force build] $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+git commit -m "chore: surefire deployment [force build] $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
 git push origin main
 
 # 2. Remote Deployment
 echo "🌐 Starting VPS Deployment (Surefire Mode)..."
-ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
+ssh -o StrictHostKeyChecking=no root@76.13.241.174 "/bin/bash -s" << 'EOF'
   set -e
   cd /root/uniz-master
   
@@ -19,19 +19,17 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   
   CURRENT_COMMIT=$(git rev-parse --short HEAD)
   COMMIT_MSG=$(git log -1 --pretty=%B)
-  echo "✅ Current Deployment Commit: $CURRENT_COMMIT - $COMMIT_MSG"
+  echo "✅ Current Deployment Commit: $CURRENT_COMMIT"
 
   # Force rebuild all?
   FORCE_ALL=false
   if [[ "$COMMIT_MSG" == *"[force build]"* ]] || [[ "$COMMIT_MSG" == *"[rebuild all]"* ]]; then
-    echo "🚨 FORCE BUILD detected. Rebuilding all services."
     FORCE_ALL=true
   fi
 
-  # Changed files in this push (last commit)
+  # Changed files in last commit
   CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD || git show --name-only --format="")
 
-  # Mapping: folder:image:deployment:container
   SERVICES=(
     "uniz-academics:uniz-academics-service:uniz-academics-service:academics-service"
     "uniz-auth:uniz-auth-service:uniz-auth-service:auth-service"
@@ -57,7 +55,6 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     if [ "$FORCE_ALL" = true ]; then
       SHOULD_BUILD=true
     elif echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
-      echo "🎯 Changes detected in $DIR"
       SHOULD_BUILD=true
     fi
 
@@ -67,17 +64,21 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
         CONTEXT="apps/$DIR"
         [[ "$DIR" == *"infra"* ]] && CONTEXT="$DIR"
 
-        echo "🏗️  Building $IMG:$TAG..."
+        echo "🏗️  System Building $IMG:$TAG..."
         docker build --no-cache --platform linux/amd64 -t $IMG:$TAG $CONTEXT
         
-        echo "📥 Importing $IMG:$TAG to K3s..."
-        docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
+        echo "📦 Exporting $IMG to tarball..."
+        docker save $IMG:$TAG -o /tmp/$IMG.tar
+        
+        echo "📥 Importing $IMG to K3s..."
+        k3s ctr -n k8s.io images import /tmp/$IMG.tar
+        rm /tmp/$IMG.tar
         
         BUILT[$IMG]=$TAG
         ((REDEPLOYED++))
       else
         TAG=${BUILT[$IMG]}
-        echo "♻️  Reusing image $IMG:$TAG"
+        echo "♻️  Reusing built image $IMG:$TAG"
       fi
 
       echo "🛡️  Updating $DEP ($CON) -> $TAG..."
@@ -87,20 +88,18 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
         kubectl set image deployment/$DEP $CON=docker.io/library/$IMG:$TAG
         kubectl rollout restart deployment/$DEP
       fi
-    else
-      echo "⏭️  Skipping $IMG (no changes)"
     fi
   done
 
   echo "🧹 Cleaning up old Docker images..."
   docker image prune -f
   
-  echo "✅ Deployment finished. Redeployed $REDEPLOYED images."
-  echo "⌛ Waiting 30s for K8s stabilization..."
-  sleep 30
+  echo "✅ Redeployed $REDEPLOYED microservices."
+  echo "⌛ Stabilization 20s..."
+  sleep 20
   kubectl get pods
 EOF
 
 echo "🚀 Quick check on Platform Status..."
-curl -s -o /dev/null -w "API Status: %{http_code}\n" https://api.uniz.rguktong.in/api/v1/system/health || true
+curl -K -s -o /dev/null -w "API Status: %{http_code}\n" https://api.uniz.rguktong.in/api/v1/system/health || true
 echo "✅ Surefire Deployment Complete!"
