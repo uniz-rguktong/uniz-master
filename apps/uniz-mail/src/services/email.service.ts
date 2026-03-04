@@ -136,32 +136,60 @@ const sendEmailUnified = async (options: {
 
 // Minimalist professional email template
 const emailTemplate = (title: string, content: string) => `
-  <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; color: #1a1a1b; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #eeeeee; border-radius: 8px;">
-    <!-- Minimal Header -->
-    <div style="margin-bottom: 30px; border-bottom: 2px solid #cc0000; padding-bottom: 15px;">
-      <h1 style="font-size: 20px; font-weight: 700; margin: 0; color: #cc0000; letter-spacing: -0.5px;">UniZ Portal</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0;">
+    <!-- Premium Header -->
+    <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 40px; text-align: center;">
+      <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.025em; font-family: 'Outfit', sans-serif;">
+        UniZ <span style="color: #60a5fa;">Portal</span>
+      </h1>
+      <p style="margin: 8px 0 0 0; color: #94a3b8; font-size: 13px; font-weight: 500; text-transform: uppercase; tracking-widest: 0.1em;">
+        Official Academic System
+      </p>
     </div>
     
-    <!-- Body -->
-    <div style="padding: 10px 0;">
-      <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 20px; color: #000000;">${title}</h2>
-      <div style="font-size: 15px; color: #374151;">
+    <!-- Content Body -->
+    <div style="padding: 48px; background-color: #ffffff;">
+      <h2 style="margin: 0 0 24px 0; color: #0f172a; font-size: 20px; font-weight: 700; letter-spacing: -0.01em;">
+        ${title}
+      </h2>
+      <div style="color: #475569; font-size: 16px; line-height: 1.7; font-weight: 400;">
         ${content}
       </div>
     </div>
     
-    <!-- Footer -->
-    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #f3f4f6;">
-      <p style="font-size: 13px; color: #6b7280; margin: 0;">
-        Best Regards,<br>
-        <strong>Office of Student Affairs</strong><br>
-        Rajiv Gandhi University of Knowledge Technologies
-      </p>
-      <p style="font-size: 11px; color: #9ca3af; margin-top: 20px;">
-        Official transaction email from RGUKT Ongole Campus.
-      </p>
+    <!-- Professional Footer -->
+    <div style="padding: 48px; background-color: #f1f5f9; border-top: 1px solid #e2e8f0;">
+      <div style="display: flex; align-items: start; gap: 16px;">
+        <div style="flex: 1;">
+          <p style="margin: 0; color: #64748b; font-size: 13px; line-height: 1.6;">
+            Best Regards,<br>
+            <strong style="color: #1e293b;">Office of Student Affairs</strong><br>
+            Rajiv Gandhi University of Knowledge Technologies
+          </p>
+          <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #cbd5e1;">
+            <p style="margin: 0; color: #94a3b8; font-size: 11px; font-weight: 500; text-transform: uppercase;">
+              Security Notice
+            </p>
+            <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 11px; line-height: 1.5;">
+              This is an automated transaction email from the RGUKT Ongole Campus. If you believe this email was sent in error, please contact IT support.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+  <div style="text-align: center; padding: 20px;">
+    <p style="color: #94a3b8; font-size: 12px;">&copy; 2026 UniZ. All rights reserved.</p>
+  </div>
+</body>
+</html>
 `;
 
 export const sendOtpEmail = async (
@@ -171,18 +199,18 @@ export const sendOtpEmail = async (
 ): Promise<boolean> => {
   try {
     const content = `
-      <p>Dear <strong>${username}</strong>,</p>
-      <p>Please use the verification code below to complete your password reset request:</p>
-      <div style="background-color: #f8fafc; border: 1px dashed #cbd5e0; padding: 20px; text-align: center; margin: 25px 0; border-radius: 8px;">
-        <span style="font-size: 32px; font-weight: 700; letter-spacing: 5px; color: #cc0000;">${otp}</span>
+      <p style="margin: 0;">Hello <strong>${username}</strong>,</p>
+      <p style="margin: 16px 0 0 0;">Verify your identity to complete the security process. Use the following one-time passcode:</p>
+      <div style="background-color: #f1f5f9; border: 2px solid #e2e8f0; padding: 32px; text-align: center; margin: 32px 0; border-radius: 12px;">
+        <span style="font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #1e293b; font-family: monospace;">${otp}</span>
       </div>
-      <p style="font-size: 13px; color: #718096;">This code is valid for 10 minutes. If you did not request this, please ignore this email.</p>
+      <p style="margin: 0; font-size: 14px; color: #64748b;">This code expires in 10 minutes. If you didn't request this, you can safely ignore this message.</p>
     `;
 
     const success = await sendEmailUnified({
-      from: '"UniZ Official" <mail-service@rguktong.in>',
+      from: '"UniZ Official" <no-reply@rguktong.in>',
       to: email,
-      subject: `[SECURE] Verification Code: ${otp}`,
+      subject: `[SECURE] ${otp} is your verification code`,
       html: emailTemplate("Security Verification", content),
     });
     return success;
