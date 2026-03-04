@@ -13,15 +13,16 @@ import {
   AlertCircle,
   BookOpen,
 } from "lucide-react";
-import axios from "axios";
+import { apiClient, downloadFile } from "../../../api/apiClient";
 import {
   SEMESTERS,
   INIT_SEMESTER,
   UPDATE_SEMESTER_STATUS,
+  DELETE_SEMESTER,
   DEAN_REVIEW,
-  APPROVE_ALLOCATION,
-  BASE_URL,
+  DEAN_APPROVE,
 } from "../../../api/endpoints";
+import { toast } from "react-toastify";
 
 interface Semester {
   id: string;
@@ -71,17 +72,14 @@ export default function SemesterRegistrationSection({
     "CHEM",
   ]);
 
-  const token = localStorage.getItem("token");
-  const authHeaders = { Authorization: `Bearer ${token}` };
-
   useEffect(() => {
     fetchSemesters();
   }, []);
 
   const fetchSemesters = async () => {
     try {
-      const res = await axios.get(SEMESTERS, { headers: authHeaders });
-      setSemesters(res.data);
+      const res = await apiClient<any[]>(SEMESTERS);
+      if (res) setSemesters(res);
     } catch (err) {
       console.error("Failed to fetch semesters");
     }
@@ -90,49 +88,46 @@ export default function SemesterRegistrationSection({
   const initSemester = async () => {
     setLoading(true);
     try {
-      await axios.post(
-        INIT_SEMESTER,
-        {
+      const res = await apiClient(INIT_SEMESTER, {
+        method: "POST",
+        body: JSON.stringify({
           academicSemester: newName,
           branches: selectedBranches.map((b) => ({ branchName: b })),
-        },
-        { headers: authHeaders },
-      );
-      setShowNewModal(false);
-      fetchSemesters();
-      alert("Registration Event Initialized & Notifications Sent!");
-    } catch (err: any) {
-      alert(err.response?.data?.error || "Failed to initialize");
+        }),
+      });
+      if (res) {
+        toast.success("Semester Initialized Successfully");
+        setShowNewModal(false);
+        fetchSemesters();
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const deleteSemester = async (id: string) => {
-    if (
-      !window.confirm(
-        "Are you sure? This will delete all allocations and registrations for this event.",
-      )
-    )
-      return;
+    if (!window.confirm("Are you sure? This is IRREVERSIBLE.")) return;
     try {
-      await axios.delete(`${SEMESTERS}/${id}`, { headers: authHeaders });
+      await apiClient(DELETE_SEMESTER(id), { method: "DELETE" });
+      toast.success("Semester Deleted");
       fetchSemesters();
     } catch (err) {
-      alert("Failed to delete");
+      toast.error("Deletion Failed");
     }
   };
 
   const updateStatus = async (id: string, status: string) => {
     try {
-      await axios.patch(
-        UPDATE_SEMESTER_STATUS(id),
-        { status },
-        { headers: authHeaders },
-      );
-      fetchSemesters();
+      const res = await apiClient(UPDATE_SEMESTER_STATUS(id), {
+        method: "PUT",
+        body: JSON.stringify({ status }),
+      });
+      if (res) {
+        toast.success("Status Updated");
+        fetchSemesters();
+      }
     } catch (err) {
-      alert("Status update failed");
+      toast.error("Update Failed");
     }
   };
 
@@ -143,56 +138,44 @@ export default function SemesterRegistrationSection({
   };
 
   const fetchAllocations = async () => {
+    if (!branch && isAdmin) {
+      // If webmaster, they might see all but let's stick to a default or selected branch logic if needed
+      // For now, if branch is empty strings, we don't fetch specific dean allocations unless requested
+      return;
+    }
     setLoading(true);
     try {
-      const targetBranch = branch || "CSE";
-      const res = await axios.get(DEAN_REVIEW(targetBranch), {
-        headers: authHeaders,
-      });
-      setAllocations(res.data);
-    } catch (err) {
-      console.error("Failed to fetch allocations");
+      const res = await apiClient<any>(DEAN_REVIEW(branch || "CSE"));
+      if (res) setAllocations(res);
     } finally {
       setLoading(false);
     }
   };
 
-  const approveAll = async () => {
-    if (!selectedSem) return;
+  const approveAllocation = async () => {
+    setLoading(true);
     try {
-      await axios.post(
-        APPROVE_ALLOCATION,
-        {
-          branch: branch || "CSE",
-          semesterId: selectedSem.id,
-        },
-        { headers: authHeaders },
-      );
-      fetchAllocations();
-    } catch (err) {
-      alert("Approval failed");
+      const res = await apiClient(DEAN_APPROVE, {
+        method: "POST",
+        body: JSON.stringify({ branch }),
+      });
+      if (res) {
+        toast.success("Review Completed Successfully");
+        fetchAllocations();
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   const downloadExport = async (type: string) => {
     if (!selectedSem) return;
-    try {
-      const res = await axios.get(
-        `${BASE_URL}/academics/export?type=${type}&semesterId=${selectedSem.id}&branch=${branch || "CSE"}`,
-        {
-          headers: authHeaders,
-          responseType: "blob",
-        },
-      );
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${selectedSem.name}_${type}.xlsx`);
-      document.body.appendChild(link);
-      link.click();
-    } catch (err) {
-      alert("Export failed");
-    }
+    const url = `/api/v1/academics/export`; // This matches common pattern, check if exact endpoint needed
+    await downloadFile(url, `${selectedSem.name}_${type}.xlsx`, {
+      type,
+      semesterId: selectedSem.id,
+      branch: branch || "CSE",
+    });
   };
 
   if (activeTab === "details" && selectedSem) {
@@ -226,7 +209,7 @@ export default function SemesterRegistrationSection({
             </button>
             {(!isAdmin || branch) && (
               <button
-                onClick={approveAll}
+                onClick={approveAllocation}
                 className="flex items-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-[20px] font-bold text-sm hover:bg-blue-700 transition-all shadow-xl shadow-blue-100"
               >
                 <ShieldCheck size={18} />

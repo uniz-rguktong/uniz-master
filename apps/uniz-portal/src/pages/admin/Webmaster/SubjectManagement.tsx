@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { GET_SUBJECTS, ADD_SUBJECT } from "../../../api/endpoints";
 import { toast } from "react-toastify";
+import { apiClient } from "../../../api/apiClient";
 
 export default function SubjectManagement() {
   const [subjects, setSubjects] = useState<any[]>([]);
@@ -32,31 +33,25 @@ export default function SubjectManagement() {
     code: "",
     credits: 4,
     department: "CSE",
-    semester: "E1-SEM-1", // Changed to canonical format
+    semester: "E1-SEM-1",
   });
   const [isAdding, setIsAdding] = useState(false);
 
   const fetchSubjects = async () => {
     setLoading(true);
-    const token = localStorage.getItem("admin_token");
     try {
-      const query = new URLSearchParams({
-        page: String(page),
-        limit: String(limit),
-        search: search || "",
-        department: department || "",
-        semester: semester || "",
-      });
-
-      const res = await fetch(`${GET_SUBJECTS}?${query.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+      const res = await apiClient<any>(GET_SUBJECTS, {
+        params: {
+          page,
+          limit,
+          search,
+          department,
+          semester,
         },
       });
-      const data = await res.json();
-      if (data.success) {
-        setSubjects(data.subjects);
-        setMeta(data.meta || { total: data.subjects.length, totalPages: 1 });
+      if (res && res.success) {
+        setSubjects(res.subjects);
+        setMeta(res.meta || { total: res.subjects.length, totalPages: 1 });
       }
     } catch (error) {
       toast.error("Failed to fetch subjects");
@@ -67,9 +62,8 @@ export default function SubjectManagement() {
 
   useEffect(() => {
     fetchSubjects();
-  }, [page, department, semester]); // Fetch on page/filter change
+  }, [page, department, semester]);
 
-  // Debounced search
   useEffect(() => {
     const timer = setTimeout(() => {
       if (page !== 1) setPage(1);
@@ -81,18 +75,12 @@ export default function SubjectManagement() {
   const handleAddSubject = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsAdding(true);
-    const token = localStorage.getItem("admin_token");
     try {
-      const res = await fetch(ADD_SUBJECT, {
+      const res = await apiClient<any>(ADD_SUBJECT, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(newSubject),
       });
-      const data = await res.json();
-      if (data.success) {
+      if (res && res.success) {
         toast.success("Subject added successfully");
         setShowAddModal(false);
         fetchSubjects();
@@ -101,13 +89,9 @@ export default function SubjectManagement() {
           code: "",
           credits: 4,
           department: "CSE",
-          semester: "SEM-1",
+          semester: "E1-SEM-1",
         });
-      } else {
-        toast.error(data.msg || "Failed to add subject");
       }
-    } catch (error) {
-      toast.error("Error adding subject");
     } finally {
       setIsAdding(false);
     }
@@ -132,7 +116,6 @@ export default function SubjectManagement() {
         </button>
       </div>
 
-      {/* Filters Hub */}
       <div className="flex flex-wrap gap-4 items-center">
         <div className="relative group flex-1 min-w-[300px]">
           <Search
@@ -266,7 +249,6 @@ export default function SubjectManagement() {
             ))}
           </div>
 
-          {/* Pagination Controls */}
           {meta.totalPages > 1 && (
             <div className="flex justify-center items-center gap-4 pt-8">
               <button
@@ -280,7 +262,6 @@ export default function SubjectManagement() {
               <div className="flex items-center gap-2">
                 {[...Array(meta.totalPages)].map((_, i) => {
                   const p = i + 1;
-                  // Only show current, 2 before, 2 after
                   if (
                     p === 1 ||
                     p === meta.totalPages ||

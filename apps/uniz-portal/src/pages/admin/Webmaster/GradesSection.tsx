@@ -12,6 +12,7 @@ import {
   Table,
   CheckCircle2,
   AlertCircle,
+  Calendar,
   BarChart3 as BarChartIcon,
   PieChart as PieChartIcon,
   ChevronDown,
@@ -34,6 +35,7 @@ import {
   ADD_MANUAL_GRADE,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
+import { apiClient } from "../../../api/apiClient";
 
 export default function GradesSection() {
   const [subTab, setSubTab] = useState<"bulk" | "batch" | "manual" | null>(
@@ -59,39 +61,21 @@ export default function GradesSection() {
     grade: "",
   });
 
-  const getAuthToken = () => {
-    const rawToken = localStorage.getItem("admin_token");
-    if (!rawToken) return "";
-    try {
-      return JSON.parse(rawToken);
-    } catch (e) {
-      return rawToken;
-    }
-  };
-
   const handleBulkUpdate = async () => {
     if (!bulkJson) {
       toast.error("Please provide JSON data");
       return;
     }
     setLoading(true);
-    const token = getAuthToken();
     try {
       const payload = JSON.parse(bulkJson);
-      const res = await fetch(BULK_UPDATE_GRADES, {
+      const res = await apiClient<any>(BULK_UPDATE_GRADES, {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
-      if (data.success) {
+      if (res && res.success) {
         toast.success("Bulk grades updated successfully");
         setBulkJson("");
-      } else {
-        toast.error(data.msg || "Bulk update failed");
       }
     } catch (error) {
       toast.error("Invalid JSON or server error");
@@ -102,41 +86,34 @@ export default function GradesSection() {
 
   const fetchBatchGrades = async (p = page) => {
     setLoading(true);
-    const token = getAuthToken();
     const { branch, year, failedOnly, semesterId } = batchFilters;
-    const query = `branch=${branch}&year=${year}&failedOnly=${failedOnly}&semesterId=${semesterId}&page=${p}&limit=50`;
-    const url = `${GET_BATCH_GRADES}?${query}`;
-
-    console.log("GRADES_SYNC: Initiating sync with", url);
 
     try {
-      const res = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await apiClient<any>(GET_BATCH_GRADES, {
+        params: {
+          branch,
+          year,
+          failedOnly,
+          semesterId,
+          page: p,
+          limit: 50,
         },
       });
-      const rawData = await res.json();
 
-      if (rawData.success) {
-        setData(rawData.students || []);
+      if (res && res.success) {
+        setData(res.students || []);
         setMeta(
-          rawData.meta || {
-            total: (rawData.students || []).length,
+          res.meta || {
+            total: (res.students || []).length,
             totalPages: 1,
           },
         );
-        if (!rawData.students || rawData.students.length === 0)
+        if (!res.students || res.students.length === 0)
           toast.info("No records found in this batch");
-      } else {
-        console.error("GRADES_SYNC: Error response", rawData);
-        setData([]);
-        toast.error(rawData.message || "Failed to fetch batch grades");
       }
     } catch (error) {
-      console.error("GRADES_SYNC: Critical error during fetch/parse:", error);
-      toast.error("Synchronization failure. Check console for details.");
-      setData([]);
+      console.error("GRADES_SYNC: Critical error:", error);
+      toast.error("Synchronization failure.");
     } finally {
       setLoading(false);
     }
@@ -151,18 +128,12 @@ export default function GradesSection() {
   const handleManualAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const token = getAuthToken();
     try {
-      const res = await fetch(ADD_MANUAL_GRADE, {
+      const res = await apiClient<any>(ADD_MANUAL_GRADE, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(manualGrade),
       });
-      const data = await res.json();
-      if (data.success) {
+      if (res && res.success) {
         toast.success("Grade added successfully");
         setManualGrade({
           studentId: "",
@@ -170,11 +141,7 @@ export default function GradesSection() {
           semesterId: "SEM-1",
           grade: "",
         });
-      } else {
-        toast.error(data.msg || "Failed to add grade");
       }
-    } catch (error) {
-      toast.error("Server error adding grade");
     } finally {
       setLoading(false);
     }
@@ -182,7 +149,6 @@ export default function GradesSection() {
 
   return (
     <div className="p-6 space-y-8 animate-in fade-in duration-700 pb-20 text-slate-900">
-      {/* Header */}
       <div className="flex flex-col gap-1.5">
         <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
           Grade Repository
@@ -192,7 +158,6 @@ export default function GradesSection() {
         </p>
       </div>
 
-      {/* Options Selection (Radio Buttons style as requested) */}
       <div className="flex flex-wrap gap-2.5 bg-slate-100/80 p-1.5 rounded-full w-fit border border-slate-200/60 backdrop-blur-sm">
         <button
           onClick={() => setSubTab("bulk")}
@@ -214,7 +179,6 @@ export default function GradesSection() {
         </button>
       </div>
 
-      {/* Content Area */}
       {!subTab ? (
         <div className="p-32 flex flex-col items-center justify-center text-center space-y-6 bg-white rounded-[28px] border border-slate-50 shadow-sm">
           <div className="w-24 h-24 bg-blue-50/50 rounded-2xl flex items-center justify-center text-blue-200">
@@ -404,10 +368,8 @@ export default function GradesSection() {
                 </button>
               </div>
 
-              {/* Analytics Dashboard */}
               {data.length > 0 &&
                 (() => {
-                  // Robust polymorphic grade validator
                   const isPass = (g: any) => {
                     if (g === undefined || g === null) return false;
                     const val = String(g).toUpperCase().trim();
@@ -415,7 +377,7 @@ export default function GradesSection() {
                       return false;
                     const num = parseFloat(val);
                     if (!isNaN(num)) return num >= 4.0;
-                    return true; // Assume codes like EX, O, A, B, C, P are passes
+                    return true;
                   };
 
                   const passedCount = data.filter((d) =>
@@ -429,7 +391,6 @@ export default function GradesSection() {
                   return (
                     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
                       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* KPI Stats */}
                         <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-6">
                           {[
                             {
@@ -478,7 +439,6 @@ export default function GradesSection() {
                           ))}
                         </div>
 
-                        {/* Grade Distribution Bar Chart */}
                         <div className="lg:col-span-2 bg-white rounded-[32px] border border-slate-100 p-10 shadow-sm space-y-10">
                           <div className="flex justify-between items-start">
                             <div className="space-y-1.5">
@@ -548,7 +508,6 @@ export default function GradesSection() {
                           </div>
                         </div>
 
-                        {/* Pass/Fail Pie Chart */}
                         <div className="bg-white rounded-[32px] border border-slate-100 p-10 shadow-sm space-y-10 flex flex-col">
                           <div className="flex justify-between items-start">
                             <div className="space-y-1.5">
@@ -606,7 +565,6 @@ export default function GradesSection() {
                                 />
                               </PieChart>
                             </ResponsiveContainer>
-                            {/* Center Stat */}
                             <div className="absolute top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none mt-[-10px]">
                               <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.3em] leading-none mb-3 opacity-70">
                                 Passing
@@ -619,7 +577,6 @@ export default function GradesSection() {
                         </div>
                       </div>
 
-                      {/* Raw Records Table */}
                       <div className="space-y-6">
                         <div className="flex items-center gap-3 ml-6">
                           <div className="w-1.5 h-1.5 rounded-full bg-blue-600" />
@@ -678,7 +635,6 @@ export default function GradesSection() {
                           </table>
                         </div>
 
-                        {/* Pagination */}
                         {meta.totalPages > 1 && (
                           <div className="flex justify-center items-center gap-4 pt-4 pb-12">
                             <button
@@ -767,7 +723,6 @@ export default function GradesSection() {
 
               <form onSubmit={handleManualAdd} className="space-y-8">
                 <div className="flex flex-wrap items-end gap-6">
-                  {/* Student ID */}
                   <div className="flex-1 min-w-[200px] space-y-2">
                     <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
                       Student ID
@@ -789,10 +744,9 @@ export default function GradesSection() {
                     </div>
                   </div>
 
-                  {/* Subject ID */}
                   <div className="flex-1 min-w-[200px] space-y-2">
                     <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                      Subject ID
+                      Subject Code
                     </label>
                     <div className="relative">
                       <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4" />
@@ -802,68 +756,76 @@ export default function GradesSection() {
                         onChange={(e) =>
                           setManualGrade({
                             ...manualGrade,
-                            subjectId: e.target.value,
+                            subjectId: e.target.value.toUpperCase(),
                           })
                         }
                         className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
-                        placeholder="Subject ID"
+                        placeholder="CS101"
                       />
                     </div>
                   </div>
 
-                  {/* Semester */}
-                  <div className="w-40 space-y-2">
+                  <div className="flex-1 min-w-[200px] space-y-2">
                     <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                      Term Phase
+                      Semester
                     </label>
-                    <select
-                      value={manualGrade.semesterId}
-                      onChange={(e) =>
-                        setManualGrade({
-                          ...manualGrade,
-                          semesterId: e.target.value,
-                        })
-                      }
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm cursor-pointer"
-                    >
-                      {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
-                        <option key={s}>SEM-{s}</option>
-                      ))}
-                    </select>
+                    <div className="relative">
+                      <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4" />
+                      <select
+                        value={manualGrade.semesterId}
+                        onChange={(e) =>
+                          setManualGrade({
+                            ...manualGrade,
+                            semesterId: e.target.value,
+                          })
+                        }
+                        className="w-full pl-12 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                      >
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                          <option key={s}>SEM-{s}</option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                        size={14}
+                      />
+                    </div>
                   </div>
 
-                  {/* Grade */}
-                  <div className="w-32 space-y-2">
+                  <div className="flex-1 min-w-[200px] space-y-2">
                     <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                      Final Grade
+                      Grade
                     </label>
-                    <input
-                      required
-                      value={manualGrade.grade}
-                      onChange={(e) =>
-                        setManualGrade({
-                          ...manualGrade,
-                          grade: e.target.value,
-                        })
-                      }
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
-                      placeholder="EX / 9.5"
-                    />
+                    <div className="relative">
+                      <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4" />
+                      <input
+                        required
+                        value={manualGrade.grade}
+                        onChange={(e) =>
+                          setManualGrade({
+                            ...manualGrade,
+                            grade: e.target.value.toUpperCase(),
+                          })
+                        }
+                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
+                        placeholder="EX, A, B..."
+                      />
+                    </div>
                   </div>
-
-                  <button
-                    disabled={loading}
-                    type="submit"
-                    className="uniz-primary-btn h-[56px] px-8 rounded-2xl"
-                  >
-                    {loading ? (
-                      <Loader2 className="animate-spin w-5 h-5" />
-                    ) : (
-                      <Save size={18} />
-                    )}
-                    Commit Grade
-                  </button>
                 </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-blue-600 text-white py-5 rounded-[22px] font-semibold uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-3 shadow-xl shadow-blue-100 active:scale-[0.98]"
+                >
+                  {loading ? (
+                    <Loader2 className="animate-spin w-5 h-5" />
+                  ) : (
+                    <Plus size={18} />
+                  )}
+                  Add Record to Batch
+                </button>
               </form>
             </div>
           )}
