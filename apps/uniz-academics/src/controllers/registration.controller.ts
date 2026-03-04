@@ -108,10 +108,15 @@ export const initSemester = async (
       // Public Notification/Banner
       await axios
         .post(
-          `${NOTIFY_URL}/profile/internal/upload-history`, // Using existing internal route for verification or logging
+          `${NOTIFY_URL}/profile/internal/upload-history`,
           {
-            title: `Active Enrolment: ${academicSemester}`,
-            text: "Registrations are live.",
+            type: "SEMESTER_INIT",
+            filename: academicSemester,
+            uploadedBy: "system",
+            totalRows: 0,
+            successCount: 1,
+            failCount: 0,
+            status: "COMPLETED",
           },
           { headers, timeout: 5000 },
         )
@@ -272,16 +277,25 @@ export const approveBranchAllocation = async (
   const { branch, semesterId, allocationId } = req.body;
 
   try {
+    const branchUpper = branch.toUpperCase();
+    console.log(
+      `[MEGA-DEBUG] Approving for branch: ${branchUpper}, sem: ${semesterId}`,
+    );
+
     if (allocationId) {
       await prisma.branchAllocation.update({
         where: { id: allocationId },
         data: { isApproved: true },
       });
     } else {
-      await prisma.branchAllocation.updateMany({
-        where: { branch, semesterId },
+      const result = await prisma.branchAllocation.updateMany({
+        where: {
+          branch: { equals: branchUpper, mode: "insensitive" },
+          semesterId,
+        },
         data: { isApproved: true },
       });
+      console.log(`[MEGA-DEBUG]   Approved ${result.count} allocations.`);
     }
 
     res.json({ success: true, message: "Approved successfully" });
@@ -309,9 +323,14 @@ export const getAvailableSubjects = async (
       return res.status(404).json({ error: "Registration is not open" });
     }
 
+    const branchUpper = (branch as string)?.toUpperCase();
+    console.log(
+      `[MEGA-DEBUG] Fetching available for ${branchUpper}, year ${year}, sem ${openSem.id}`,
+    );
+
     const where: any = {
       semesterId: openSem.id,
-      branch: branch as string,
+      branch: { equals: branchUpper, mode: "insensitive" },
       isApproved: true,
     };
 
