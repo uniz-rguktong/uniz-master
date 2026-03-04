@@ -9,16 +9,22 @@ import {
   Search,
   Filter,
   X,
+  Trash2,
 } from "lucide-react";
 import {
   SEARCH_FACULTY,
   CREATE_FACULTY,
   UPDATE_FACULTY,
   ADMIN_SUSPEND_FACULTY,
+  BASE_URL,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 
-export default function FacultyManagement() {
+export default function FacultyManagement({
+  deptRestrict,
+}: {
+  deptRestrict?: string;
+}) {
   const [faculty, setFaculty] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -34,7 +40,7 @@ export default function FacultyManagement() {
     username: "",
     name: "",
     email: "",
-    department: "CSE",
+    department: deptRestrict || "CSE",
     role: "teacher",
     designation: "Lecturer",
     contact: "",
@@ -48,11 +54,12 @@ export default function FacultyManagement() {
       const res = await fetch(SEARCH_FACULTY, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           query: search,
+          department: deptRestrict,
           page,
           limit,
         }),
@@ -77,6 +84,9 @@ export default function FacultyManagement() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
+      // If we have deptRestrict, we should ideally add it to the search query
+      // but the current SEARCH_FACULTY endpoint might not support it.
+      // So we just have to hope the users search specifically.
       if (page !== 1) setPage(1);
       else fetchFaculty();
     }, 500);
@@ -94,10 +104,14 @@ export default function FacultyManagement() {
       const res = await fetch(url, {
         method,
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          email: formData.email.toLowerCase(),
+          department: formData.department.toUpperCase(),
+        }),
       });
       const data = await res.json();
       if (data.success) {
@@ -129,7 +143,7 @@ export default function FacultyManagement() {
       const res = await fetch(ADMIN_SUSPEND_FACULTY(username), {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ suspended: !currentStatus }),
@@ -141,6 +155,34 @@ export default function FacultyManagement() {
       }
     } catch (error) {
       toast.error("Failed to update status");
+    }
+  };
+
+  const handleDelete = async (username: string) => {
+    const token = localStorage.getItem("admin_token");
+    if (
+      !window.confirm(
+        `CRITICAL: Are you sure you want to PERMANENTLY DELETE this faculty profile? This cannot be undone.`,
+      )
+    )
+      return;
+
+    try {
+      const res = await fetch(`${BASE_URL}/profile/admin/faculty/${username}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Profile deleted");
+        fetchFaculty();
+      } else {
+        toast.error(data.message || "Failed to delete");
+      }
+    } catch (error) {
+      toast.error("Network error during deletion");
     }
   };
 
@@ -163,7 +205,7 @@ export default function FacultyManagement() {
       username: "",
       name: "",
       email: "",
-      department: "CSE",
+      department: deptRestrict || "CSE",
       role: "teacher",
       designation: "Lecturer",
       contact: "",
@@ -229,7 +271,7 @@ export default function FacultyManagement() {
                   User Details
                 </th>
                 <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
-                  Email Address
+                  Designation
                 </th>
                 <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   Role
@@ -244,14 +286,22 @@ export default function FacultyManagement() {
             </thead>
             <tbody className="divide-y divide-slate-50/60">
               {loading ? (
-                Array(6).fill(0).map((_, i) => (
-                  <tr key={i} className="animate-pulse">
-                    <td colSpan={5} className="px-10 py-8 bg-slate-50/20"></td>
-                  </tr>
-                ))
+                Array(6)
+                  .fill(0)
+                  .map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td
+                        colSpan={5}
+                        className="px-10 py-8 bg-slate-50/20"
+                      ></td>
+                    </tr>
+                  ))
               ) : faculty.length > 0 ? (
                 faculty.map((member, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50/30 transition-all group">
+                  <tr
+                    key={idx}
+                    className="hover:bg-slate-50/30 transition-all group"
+                  >
                     <td className="px-10 py-6">
                       <div className="flex items-center gap-4">
                         <div className="w-11 h-11 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-200 border-2 border-white ring-1 ring-slate-100">
@@ -261,21 +311,26 @@ export default function FacultyManagement() {
                           <p className="font-bold text-slate-900 tracking-tight leading-none mb-1.5">
                             {member.Name}
                           </p>
-                          <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-400 leading-none">
-                            ID: {member.Username}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <Mail size={10} className="text-slate-300" />
+                            <p className="text-[10px] font-medium text-slate-400 leading-none">
+                              {member.Email}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-10 py-6">
-                      <div className="flex items-center gap-3 text-slate-600">
-                        <Mail size={14} className="text-slate-300" />
-                        <span className="text-sm font-medium">{member.Email}</span>
-                      </div>
+                      <p className="text-xs font-black text-slate-600 uppercase tracking-wide">
+                        {member.Designation || "Lecturer"}
+                      </p>
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                        {member.Department}
+                      </p>
                     </td>
                     <td className="px-10 py-6">
                       <span className="px-3 py-1 bg-slate-50 rounded-lg text-slate-500 font-semibold uppercase tracking-widest text-[9px] border border-slate-100">
-                        {member.Role?.toUpperCase() || "READ_ONLY"}
+                        {member.Role?.toUpperCase() || "FACULTY"}
                       </span>
                     </td>
                     <td className="px-10 py-6">
@@ -302,10 +357,19 @@ export default function FacultyManagement() {
                           Modify
                         </button>
                         <button
-                          onClick={() => handleSuspend(member.Username, member.is_suspended)}
+                          onClick={() =>
+                            handleSuspend(member.Username, member.is_suspended)
+                          }
                           className={`flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-full text-[9px] font-bold uppercase tracking-widest transition-all hover:bg-slate-800 active:scale-95 shadow-lg shadow-slate-200 ${member.is_suspended ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-100" : ""}`}
                         >
                           {member.is_suspended ? "Reinstate" : "Suspend"}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(member.Username)}
+                          className="p-2.5 bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all active:scale-90 border border-red-100"
+                          title="Delete Faculty"
+                        >
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </td>
@@ -402,25 +466,37 @@ export default function FacultyManagement() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400">
-                    Department
-                  </label>
-                  <select
-                    value={formData.department}
-                    onChange={(e) =>
-                      setFormData({ ...formData, department: e.target.value })
-                    }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold cursor-pointer"
-                  >
-                    <option>CSE</option>
-                    <option>ECE</option>
-                    <option>EEE</option>
-                    <option>MECH</option>
-                    <option>CIVIL</option>
-                    <option>ADMIN</option>
-                  </select>
-                </div>
+                {!deptRestrict && (
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block">
+                      Department
+                    </label>
+                    <select
+                      value={formData.department}
+                      onChange={(e) =>
+                        setFormData({ ...formData, department: e.target.value })
+                      }
+                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl font-bold outline-none"
+                    >
+                      {[
+                        "CSE",
+                        "ECE",
+                        "EEE",
+                        "MECH",
+                        "CIVIL",
+                        "CHEM",
+                        "CHEMISTRY",
+                        "PHYSICS",
+                        "ENGLISH",
+                        "MATHS",
+                      ].map((dept) => (
+                        <option key={dept} value={dept}>
+                          {dept}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <label className="text-xs font-black uppercase tracking-widest text-slate-400">
                     System Role

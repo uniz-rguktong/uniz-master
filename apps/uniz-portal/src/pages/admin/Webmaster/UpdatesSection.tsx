@@ -192,11 +192,16 @@ export default function UpdatesSection() {
             </thead>
             <tbody className="divide-y divide-slate-50/60">
               {loading ? (
-                Array(6).fill(0).map((_, i) => (
-                  <tr key={i} className="animate-pulse">
-                    <td colSpan={4} className="px-10 py-8 bg-slate-50/20"></td>
-                  </tr>
-                ))
+                Array(6)
+                  .fill(0)
+                  .map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td
+                        colSpan={4}
+                        className="px-10 py-8 bg-slate-50/20"
+                      ></td>
+                    </tr>
+                  ))
               ) : updates && updates.length > 0 ? (
                 updates.map((update, idx) => (
                   <tr
@@ -205,7 +210,9 @@ export default function UpdatesSection() {
                   >
                     <td className="px-10 py-6">
                       <div className="flex items-center gap-4">
-                        <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-200 border-2 border-white ring-1 ring-slate-100 ${update.isVisible ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-400"}`}>
+                        <div
+                          className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-200 border-2 border-white ring-1 ring-slate-100 ${update.isVisible ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-400"}`}
+                        >
                           <Bell size={18} />
                         </div>
                         <div className="flex flex-col">
@@ -213,7 +220,9 @@ export default function UpdatesSection() {
                             {update.title}
                           </p>
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[400px] opacity-70">
-                            {update.description || update.content || "No description provided."}
+                            {update.description ||
+                              update.content ||
+                              "No description provided."}
                           </p>
                         </div>
                       </div>
@@ -257,7 +266,14 @@ export default function UpdatesSection() {
                       <div className="flex flex-col">
                         <p className="text-sm font-semibold tracking-tight text-slate-700">
                           {update.createdAt
-                            ? new Date(update.createdAt).toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' })
+                            ? new Date(update.createdAt).toLocaleDateString(
+                                "en-GB",
+                                {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                },
+                              )
                             : "Today"}
                         </p>
                         <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">

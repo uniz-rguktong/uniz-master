@@ -83,7 +83,7 @@
   "author": "",
   "license": "ISC",
   "overrides": {
-    "minimatch": "^10.2.1",
+    "minimatch": "^10.2.3",
     "glob": "^10.3.10"
   }
 }

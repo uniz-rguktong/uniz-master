@@ -11,6 +11,7 @@
     "redeploy": "bash redeploy.sh"
   },
   "dependencies": {
+    "@aws-sdk/client-sesv2": "^3.1001.0",
     "bullmq": "^5.12.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -39,7 +40,7 @@
     "typescript": "^5.5.3"
   },
   "overrides": {
-    "minimatch": "^10.2.1",
+    "minimatch": "^10.2.3",
     "glob": "^10.3.10"
   }
 }

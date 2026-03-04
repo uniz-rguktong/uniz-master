@@ -21,6 +21,7 @@ import StudentDetails from "./StudentDetails";
 import SubjectManagement from "./SubjectManagement";
 import UploadSection from "./UploadSection";
 import FacultyManagement from "./FacultyManagement";
+import SemesterRegistration from "./SemesterRegistrationSection";
 
 import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";
@@ -45,13 +46,12 @@ export default function WebmasterDashboard() {
     | "push_alerts"
     | "grades_mgmt"
     | "faculty_mgmt"
+    | "semester_mgmt"
     | "system_logs"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const username = JSON.parse(
-    localStorage.getItem("username") || '"Webmaster"',
-  );
+  const username = localStorage.getItem("username") || "Webmaster";
 
   const navItems = [
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
@@ -66,6 +66,7 @@ export default function WebmasterDashboard() {
     // { id: "tenders", label: "Tenders", icon: Briefcase },
     { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
     { id: "faculty_mgmt", label: "Staff Management", icon: Users },
+    { id: "semester_mgmt", label: "Semester Rollout", icon: Layout },
     { id: "system_logs", label: "System & Logs", icon: Activity },
   ];
 
@@ -100,6 +101,8 @@ export default function WebmasterDashboard() {
         return <GradesSection />;
       case "faculty_mgmt":
         return <FacultyManagement />;
+      case "semester_mgmt":
+        return <SemesterRegistration />;
       case "system_logs":
         return <SystemLogsSection />;
       default:
@@ -194,9 +197,10 @@ export default function WebmasterDashboard() {
                 onClick={() => setActiveTab(item.id as any)}
                 className={`
                   w-full flex items-center space-x-3 px-4 py-3 rounded-full text-left transition-all duration-200 group relative
-                  ${isActive
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  ${
+                    isActive
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }
                 `}
               >
@@ -204,9 +208,10 @@ export default function WebmasterDashboard() {
                   <Icon
                     size={21}
                     className={`shrink-0 transition-transform group-hover:scale-110 duration-200
-                      ${isActive
-                        ? "text-blue-600"
-                        : "text-slate-400 group-hover:text-slate-700"
+                      ${
+                        isActive
+                          ? "text-blue-600"
+                          : "text-slate-400 group-hover:text-slate-700"
                       }`}
                   />
                 </div>
@@ -218,7 +223,6 @@ export default function WebmasterDashboard() {
                     {item.label}
                   </span>
                 )}
-
               </button>
             );
           })}
@@ -248,9 +252,14 @@ export default function WebmasterDashboard() {
             className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-full text-left transition-all duration-200 group text-red-500 hover:bg-red-50"
           >
             <div className="flex items-center justify-center min-w-[24px]">
-              <LogOut size={20} className="shrink-0 transition-transform group-hover:rotate-12" />
+              <LogOut
+                size={20}
+                className="shrink-0 transition-transform group-hover:rotate-12"
+              />
             </div>
-            {isSidebarOpen && <span className="text-[15px] font-semibold">Logout</span>}
+            {isSidebarOpen && (
+              <span className="text-[15px] font-semibold">Logout</span>
+            )}
           </button>
         </div>
       </aside>
@@ -281,6 +290,6 @@ export default function WebmasterDashboard() {
 
         <div className="max-w-7xl mx-auto">{renderContent()}</div>
       </main>
-    </div >
+    </div>
   );
 }

@@ -17,6 +17,7 @@ import {
   GET_GRADES_TEMPLATE,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
+import { apiClient, downloadFile } from "../../../api/apiClient";
 
 type UploadType = "attendance" | "grades";
 
@@ -44,30 +45,30 @@ export default function UploadSection({ type }: { type: UploadType }) {
     if (!file) return;
 
     setLoading(true);
-    const token = localStorage.getItem("admin_token");
     const endpoint = type === "attendance" ? UPLOAD_ATTENDANCE : UPLOAD_GRADES;
 
     try {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch(endpoint, {
+      // Using raw fetch here because apiClient defaults to JSON content-type
+      // but we need to pass the token still. We can enhance apiClient or do it manually.
+      // Let's use apiClient with null headers to let browser set boundary
+      const res = await apiClient<any>(endpoint, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token || '""')}`,
+          // "Content-Type" will be overridden or excluded to allow FormData boundary
         },
-        body: formData,
+        body: formData as any,
       });
 
-      const data = await res.json();
-      if (data.success) {
-        setResult({ success: true, ...data });
+      if (res && res.success) {
+        setResult({ success: true, ...res });
         toast.success(
           `${type === "attendance" ? "Attendance" : "Grades"} uploaded successfully`,
         );
-      } else {
-        setResult({ success: false, msg: data.msg || "Upload failed" });
-        toast.error(data.msg || "Upload failed");
+      } else if (res) {
+        setResult({ success: false, msg: res.msg || "Upload failed" });
       }
     } catch (error) {
       toast.error(`Error uploading ${type}`);
@@ -76,42 +77,19 @@ export default function UploadSection({ type }: { type: UploadType }) {
     }
   };
 
-  const downloadTemplate = () => {
-    const token = localStorage.getItem("admin_token");
+  const downloadTemplate = async () => {
     const url =
       type === "attendance"
         ? GET_ATTENDANCE_TEMPLATE(branch, year, semester)
         : GET_GRADES_TEMPLATE(
-          branch,
-          year,
-          semester,
-          subjectCode,
-          remedialsOnly,
-        );
-
-    fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${JSON.parse(token || '""')}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error("Network response was not ok");
-        return response.blob();
-      })
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${type}_${branch}_${year}_${semester}_template.xlsx`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-      })
-      .catch((error) => {
-        console.error("Download error:", error);
-        toast.error("Failed to download template");
-      });
+            branch,
+            year,
+            semester,
+            subjectCode,
+            remedialsOnly,
+          );
+    const fileName = `${type}_${branch}_${year}_${semester}_template.xlsx`;
+    await downloadFile(url, fileName);
   };
 
   return (
@@ -145,7 +123,10 @@ export default function UploadSection({ type }: { type: UploadType }) {
                   ),
                 )}
               </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+              <ChevronDown
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                size={14}
+              />
             </div>
           </div>
 
@@ -165,7 +146,10 @@ export default function UploadSection({ type }: { type: UploadType }) {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+              <ChevronDown
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                size={14}
+              />
             </div>
           </div>
 
@@ -185,7 +169,10 @@ export default function UploadSection({ type }: { type: UploadType }) {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+              <ChevronDown
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                size={14}
+              />
             </div>
           </div>
 
@@ -298,10 +285,11 @@ export default function UploadSection({ type }: { type: UploadType }) {
         <div className="space-y-6">
           {result ? (
             <div
-              className={`p-8 rounded-2xl border animate-in slide-in-from-right-8 duration-500 h-full ${result.success
-                ? "bg-emerald-50 border-emerald-100"
-                : "bg-red-50 border-red-100"
-                }`}
+              className={`p-8 rounded-2xl border animate-in slide-in-from-right-8 duration-500 h-full ${
+                result.success
+                  ? "bg-emerald-50 border-emerald-100"
+                  : "bg-red-50 border-red-100"
+              }`}
             >
               <div className="flex items-center gap-4 mb-6">
                 <div

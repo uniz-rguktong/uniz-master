@@ -20,11 +20,19 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 function getStoredToken(): string | undefined {
   try {
     const raw =
+      localStorage.getItem("admin_token") ||
       localStorage.getItem("student_token") ||
-      localStorage.getItem("admin_token");
+      localStorage.getItem("faculty_token");
     if (!raw) return undefined;
-    const parsed = JSON.parse(raw);
-    return typeof parsed === "string" ? parsed : undefined;
+
+    // Try parsing as JSON first (handles quoted strings from JSON.stringify)
+    try {
+      const parsed = JSON.parse(raw);
+      if (typeof parsed === "string") return parsed;
+    } catch {
+      // Fallback for raw strings
+    }
+    return raw;
   } catch {
     return undefined;
   }

@@ -18,7 +18,7 @@ export function useGetOutpasses(page = 1, limit = 50) {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${JSON.parse(token)}`,
+              Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
             },
           },
         );

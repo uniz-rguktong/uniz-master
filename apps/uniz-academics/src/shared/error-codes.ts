@@ -19,4 +19,5 @@ export enum ErrorCode {
   // Domain Specific
   OUTPASS_EXPIRED = "OUTPASS_EXPIRED",
   OUTPASS_ALREADY_APPROVED = "OUTPASS_ALREADY_APPROVED",
+  
 }

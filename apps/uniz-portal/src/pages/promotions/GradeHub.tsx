@@ -196,10 +196,11 @@ export default function GradeHub() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${selectedYear === year
-                        ? "bg-slate-950 text-white"
-                        : "hover:bg-slate-50 text-slate-600"
-                        }`}
+                      className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${
+                        selectedYear === year
+                          ? "bg-slate-950 text-white"
+                          : "hover:bg-slate-50 text-slate-600"
+                      }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setShowDropdown(false);
@@ -249,7 +250,9 @@ export default function GradeHub() {
                 disabled={isLoading || !user?.username}
               >
                 {isLoading ? (
-                  <span className="flex items-center gap-1.5 justify-center">Processing...</span>
+                  <span className="flex items-center gap-1.5 justify-center">
+                    Processing...
+                  </span>
                 ) : (
                   <span>View Records</span>
                 )}
@@ -276,7 +279,9 @@ export default function GradeHub() {
             <h3 className="text-base font-semibold text-slate-600 mb-1">
               Synchronizing Terminal Data
             </h3>
-            <p className="text-slate-400 text-xs font-medium">{loadingMessage}</p>
+            <p className="text-slate-400 text-xs font-medium">
+              {loadingMessage}
+            </p>
           </div>
         )}
 
@@ -290,7 +295,8 @@ export default function GradeHub() {
                   Transcript For
                 </span>
                 <h2 className="text-[17px] font-semibold text-slate-900 tracking-tight">
-                  {grades.year} <span className="text-slate-300 mx-1">/</span> {grades.semester}
+                  {grades.year} <span className="text-slate-300 mx-1">/</span>{" "}
+                  {grades.semester}
                 </h2>
               </div>
               <button
@@ -331,7 +337,8 @@ export default function GradeHub() {
                   {/* Grades Section */}
                   <div>
                     <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                      <div className="w-1 h-3 bg-blue-500 rounded-full"></div> Detailed Grades
+                      <div className="w-1 h-3 bg-blue-500 rounded-full"></div>{" "}
+                      Detailed Grades
                     </h3>
                     <div className="rounded-xl border border-slate-200 bg-white">
                       <table className="w-full text-sm table-fixed">
@@ -366,10 +373,11 @@ export default function GradeHub() {
                                 </td>
                                 <td className="px-2 py-2.5 text-center">
                                   <span
-                                    className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${item.grade === "Ex"
-                                      ? "bg-blue-600 text-white"
-                                      : "bg-slate-100 text-slate-800"
-                                      }`}
+                                    className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
+                                      item.grade === "Ex"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-slate-100 text-slate-800"
+                                    }`}
                                   >
                                     {item.grade}
                                   </span>
@@ -396,10 +404,11 @@ export default function GradeHub() {
                                   </td>
                                   <td className="px-2 py-2.5 text-center">
                                     <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${grade === "Ex"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-slate-100 text-slate-800"
-                                        }`}
+                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
+                                        grade === "Ex"
+                                          ? "bg-blue-600 text-white"
+                                          : "bg-slate-100 text-slate-800"
+                                      }`}
                                     >
                                       {grade}
                                     </span>
