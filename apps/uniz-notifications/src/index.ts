@@ -877,9 +877,6 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
         return res
           .status(400)
           .json({ error: "batch required for target=batch (e.g. o21, o22)" });
-      // For batch/year/all, we still need to fetch from user service to get NAMES for personalization
-      // But for bulk, we might just query subscriptions if we don't care about personalization for ALL users
-      // However, the user asked for personalization, so we fetch.
       try {
         const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
         const response = await axios.post(
