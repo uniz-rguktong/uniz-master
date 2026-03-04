@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-sesv2": "^3.1001.0",
+    "axios": "^1.13.6",
     "bullmq": "^5.12.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
