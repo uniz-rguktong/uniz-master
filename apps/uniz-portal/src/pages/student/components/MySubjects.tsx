@@ -13,11 +13,15 @@ import { apiClient } from "../../../api/apiClient";
 
 interface Subject {
   id: string;
-  code: string;
-  name: string;
-  credits: number;
-  department: string;
-  faculty?: string;
+  subject: {
+    code: string;
+    name: string;
+    credits: number;
+    department: string;
+  };
+  faculty?: {
+    name: string;
+  };
 }
 
 interface Semester {
@@ -100,7 +104,10 @@ export default function MySubjects({
               </span>
               <span className="flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">
                 <GraduationCap className="w-3 h-3" /> Total Credits:{" "}
-                {data.subjects.reduce((acc, curr) => acc + curr.credits, 0)}
+                {data.subjects.reduce(
+                  (acc, curr) => acc + (curr.subject?.credits || 0),
+                  0,
+                )}
               </span>
             </div>
           </div>
@@ -129,10 +136,10 @@ export default function MySubjects({
               <div className="flex items-start justify-between gap-2">
                 <div className="space-y-1">
                   <span className="text-blue-600 text-[10px] font-black uppercase tracking-[0.15em] py-0.5 px-2 bg-blue-50 rounded-md">
-                    {subject.code}
+                    {subject.subject?.code}
                   </span>
                   <h3 className="text-lg font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition-colors">
-                    {subject.name}
+                    {subject.subject?.name}
                   </h3>
                 </div>
                 <div className="text-center bg-slate-50 rounded-xl px-3 py-2 border border-slate-100 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors">
@@ -140,7 +147,7 @@ export default function MySubjects({
                     Credits
                   </span>
                   <span className="text-lg font-black text-slate-800 group-hover:text-blue-600 leading-none">
-                    {subject.credits}
+                    {subject.subject?.credits}
                   </span>
                 </div>
               </div>
@@ -151,7 +158,7 @@ export default function MySubjects({
                     <MapPin className="w-3 h-3" />
                   </div>
                   <span className="text-[11px] font-semibold uppercase tracking-wider">
-                    {subject.department}
+                    {subject.subject?.department}
                   </span>
                 </div>
                 {subject.faculty && (
@@ -160,7 +167,7 @@ export default function MySubjects({
                       <User className="w-3 h-3" />
                     </div>
                     <span className="text-[11px] font-semibold uppercase tracking-wider truncate">
-                      {subject.faculty}
+                      {subject.faculty?.name || "Not Assigned"}
                     </span>
                   </div>
                 )}

@@ -75,7 +75,7 @@ export default function CourseRegistration({
 
   const totalCredits = available
     .filter((s) => selectedIds.includes(s.id))
-    .reduce((acc, s) => acc + s.credits, 0);
+    .reduce((acc, s) => acc + (s.subject?.credits || 0), 0);
 
   if (loading) {
     return (
@@ -178,7 +178,7 @@ export default function CourseRegistration({
                       isSelected ? "text-blue-600" : "text-slate-300"
                     }`}
                   >
-                    {sub.code}
+                    {sub.subject?.code}
                   </span>
                   <div
                     className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${
@@ -189,7 +189,7 @@ export default function CourseRegistration({
                   >
                     <CreditCard size={10} />
                     <span className="text-[10px] font-black">
-                      {sub.credits}C
+                      {sub.subject?.credits}C
                     </span>
                   </div>
                 </div>
@@ -198,7 +198,7 @@ export default function CourseRegistration({
                     isSelected ? "text-slate-900" : "text-slate-400"
                   }`}
                 >
-                  {sub.name}
+                  {sub.subject?.name}
                 </h4>
               </div>
 
