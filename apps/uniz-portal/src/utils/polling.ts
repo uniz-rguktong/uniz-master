@@ -8,7 +8,7 @@ export const pollProgress = async (
   const interval = setInterval(async () => {
     try {
       const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${JSON.parse(token)}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
       });
       const data = await res.json();
       if (data.success) {

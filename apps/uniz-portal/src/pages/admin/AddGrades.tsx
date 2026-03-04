@@ -51,7 +51,7 @@ export default function AddGrades() {
       const res = await fetch(`${BASE_URL}/academics/grades/upload`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token!)}`,
+          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
         },
         body: formData,
       });
