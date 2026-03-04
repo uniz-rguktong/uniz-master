@@ -101,12 +101,12 @@ export default function DeanReview() {
       setApproving(null);
     }
   };
-
+  
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editing) return;
     try {
-      await apiClient(`/academics/dean/allocation/${editing.id}`, {
+      await apiClient(`/api/v1/academics/dean/allocation/${editing.id}`, {
         method: "PUT",
         body: JSON.stringify(editing),
       });
