@@ -48,7 +48,10 @@ import {
 import { authMiddleware } from "../middlewares/auth.middleware";
 import multer from "multer";
 
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+});
 const router = Router();
 
 router.use(authMiddleware);
