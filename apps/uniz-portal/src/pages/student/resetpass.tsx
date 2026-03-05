@@ -5,12 +5,20 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { is_authenticated, student } from "../../store";
 import { useStudentData } from "../../hooks/student_info";
 import { toast } from "react-toastify";
-import { BASE_URL } from "../../api/endpoints";
+import {
+  FORGOT_PASS_ENDPOINT,
+  VERIFY_OTP_ENDPOINT,
+  SET_NEW_PASS_ENDPOINT
+} from "../../api/endpoints";
+import { apiClient } from "../../api/apiClient";
+import { RefreshCw, ShieldCheck, KeyRound, ArrowRight } from "lucide-react";
 
 export default function Resetpassword() {
-  const [oldPassword, setOldPassword] = useState("");
+  const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
   const [repassword, setRePassword] = useState("");
+  const [step, setStep] = useState<"request" | "verify" | "reset">("request");
+  const [resetToken, setResetToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigateTo = useNavigate();
@@ -59,98 +67,92 @@ export default function Resetpassword() {
     setPasswordStrength(validatePassword(password));
   }, [password, validatePassword]);
 
-  // Handle form submission
-  const sendDataToBackend = async () => {
-    // Input validation
-    if (!oldPassword || !password || !repassword) {
-      toast.error("Please fill in all fields.");
+  // Step 1: Request OTP
+  const handleRequestOtp = async () => {
+    if (!Student?.username) {
+      toast.error("User context missing. Please refresh.");
       return;
     }
+    setIsLoading(true);
+    try {
+      const data = await apiClient<{ success: boolean; message?: string }>(
+        FORGOT_PASS_ENDPOINT,
+        {
+          method: "POST",
+          body: JSON.stringify({ username: Student.username }),
+        }
+      );
+      if (data?.success) {
+        toast.success("OTP sent to your registered devices");
+        setStep("verify");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Step 2: Verify OTP
+  const handleVerifyOtp = async () => {
+    if (otp.length !== 6) {
+      toast.error("Please enter a valid 6-digit OTP");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const data = await apiClient<{
+        success: boolean;
+        resetToken?: string;
+        message?: string
+      }>(VERIFY_OTP_ENDPOINT, {
+        method: "POST",
+        body: JSON.stringify({
+          username: Student.username,
+          otp: otp.trim()
+        }),
+      });
+
+      if (data?.success && data.resetToken) {
+        setResetToken(data.resetToken);
+        setStep("reset");
+        toast.success("Verification successful");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Step 3: Reset Password (The one requested by user)
+  const handleResetPassword = async () => {
     if (password !== repassword) {
-      toast.error("New passwords do not match.");
+      toast.error("Passwords do not match");
       return;
     }
     if (passwordStrength.score < 3) {
-      toast.error(
-        "Password must be at least 8 characters long, include a number, and a special character.",
-      );
-      return;
-    }
-    if (!Student?.username) {
-      toast.error("User data not available. Please try again.");
+      toast.error("Password is too weak");
       return;
     }
 
     setIsLoading(true);
-    const token = localStorage.getItem("student_token");
-
-    if (!token) {
-      toast.error("Authentication token missing. Please sign in again.");
-      setIsLoading(false);
-      navigateTo("/student/signin");
-      return;
-    }
-
-    const tokenValue = JSON.parse(token);
-
-    const bodyData = JSON.stringify({
-      username: Student.username,
-      resetToken: tokenValue,
-      currentPassword: oldPassword,
-      newPassword: password,
-    });
-
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+      const data = await apiClient<{ success: boolean; message?: string }>(
+        SET_NEW_PASS_ENDPOINT,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            username: Student.username,
+            resetToken: resetToken,
+            newPassword: password,
+          }),
+        }
+      );
 
-      const res = await fetch(`${BASE_URL}/auth/password/change`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${tokenValue}`,
-        },
-        body: bodyData,
-        signal: controller.signal,
-      });
+      if (data?.success) {
+        toast.success("Password updated successfully across all systems");
 
-      clearTimeout(timeoutId);
-
-      const responseText = await res.text();
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (e) {
-        // If response is plain text, wrap it or handle accordingly
-        data = { success: res.ok, msg: responseText };
-      }
-
-      if (res.ok) {
-        toast.success("Password reset successfully!");
-
-        // Signout implementation
-        localStorage.removeItem("student_token");
-        localStorage.removeItem("username");
-        localStorage.removeItem("admin_token");
-
-        setAuth({
-          is_authnticated: false,
-          type: "",
-        });
-
-        setTimeout(() => {
-          navigateTo("/student/signin");
-        }, 2000);
-      } else {
-        // Handle error based on parsed data or status
-        toast.error(data.msg || data.message || "Failed to reset password.");
-      }
-    } catch (error: any) {
-      if (error.name === "AbortError") {
-        toast.error("Request timed out. Please try again.");
-      } else {
-        console.error("Error resetting password:", error);
-        toast.error("An error occurred. Please try again later.");
+        // Log out for security
+        localStorage.clear();
+        setAuth({ is_authnticated: false, type: "" });
+        navigateTo("/student/signin", { replace: true });
       }
     } finally {
       setIsLoading(false);
@@ -202,132 +204,125 @@ export default function Resetpassword() {
               </div>
 
               <div className="space-y-4 md:space-y-6">
-                {/* Current Password */}
-                <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
-                    Current Password
-                  </label>
-                  <div className="relative group">
-                    <Input
-                      type="password"
-                      onchangeFunction={handleInputChange(setOldPassword)}
-                      placeholder="Enter current password"
-                      className="focus:border-blue-600 focus:ring-blue-600"
-                    />
-                  </div>
-                </div>
-
-                {/* New Password */}
-                <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
-                    New Password
-                  </label>
-                  <div className="relative group">
-                    <Input
-                      type="password"
-                      onchangeFunction={handleInputChange(setPassword)}
-                      placeholder="Enter new password"
-                      className="focus:border-blue-600 focus:ring-blue-600"
-                    />
-                  </div>
-                  {password && (
-                    <div className="mt-3">
-                      <div className="flex items-center gap-3">
-                        <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full transition-all duration-500 ${passwordStrength.color}`}
-                            style={{
-                              width: `${(passwordStrength.score / 3) * 100}%`,
-                            }}
-                          ></div>
-                        </div>
-                        <span
-                          className={`text-xs font-bold uppercase tracking-wider w-20 text-right ${
-                            passwordStrength.score === 3
-                              ? "text-blue-600"
-                              : passwordStrength.score === 2
-                                ? "text-slate-600"
-                                : "text-slate-400"
-                          }`}
-                        >
-                          {passwordStrength.label}
-                        </span>
-                      </div>
+                {step === "request" && (
+                  <div className="py-6 text-center space-y-4">
+                    <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <RefreshCw className={`w-8 h-8 ${isLoading ? 'animate-spin' : ''}`} />
                     </div>
-                  )}
-                </div>
-
-                {/* Confirm New Password */}
-                <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
-                    Confirm Password
-                  </label>
-                  <div className="relative group">
-                    <Input
-                      type="password"
-                      onchangeFunction={handleInputChange(setRePassword)}
-                      placeholder="Confirm new password"
-                      className="focus:border-blue-600 focus:ring-blue-600"
-                    />
+                    <p className="text-slate-600 max-w-xs mx-auto text-sm leading-relaxed">
+                      For your security, we'll send a verification code to your registered university email to authorize this change.
+                    </p>
+                    <button
+                      onClick={handleRequestOtp}
+                      disabled={isLoading}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3.5 font-bold transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2"
+                    >
+                      {isLoading ? "Sending..." : "Send Verification OTP"}
+                      {!isLoading && <ArrowRight size={18} />}
+                    </button>
                   </div>
-                  {password && repassword && (
-                    <div className="mt-2 ml-1">
-                      {password === repassword ? (
-                        <p className="text-xs font-bold text-blue-600 flex items-center gap-1.5 uppercase tracking-wide">
-                          <svg
-                            className="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="3"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                          Passwords match
-                        </p>
-                      ) : (
-                        <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5 uppercase tracking-wide">
-                          <svg
-                            className="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="3"
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                          Passwords do not match
-                        </p>
+                )}
+
+                {step === "verify" && (
+                  <div className="space-y-6">
+                    <div>
+                      <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
+                        One-Time Password
+                      </label>
+                      <Input
+                        type="text"
+                        onchangeFunction={handleInputChange(setOtp)}
+                        placeholder="Enter 6-digit code"
+                        className="text-center text-xl tracking-[0.5em] font-mono"
+                        maxLength={6}
+                      />
+                    </div>
+                    <button
+                      onClick={handleVerifyOtp}
+                      disabled={isLoading}
+                      className="w-full bg-slate-900 hover:bg-black text-white rounded-xl py-3.5 font-bold transition-all flex items-center justify-center gap-2"
+                    >
+                      {isLoading ? "Verifying..." : "Verify & Continue"}
+                      {!isLoading && <ShieldCheck size={18} />}
+                    </button>
+                    <button
+                      onClick={() => setStep("request")}
+                      className="w-full text-slate-400 font-bold text-xs uppercase tracking-widest hover:text-slate-600"
+                    >
+                      Resend Code
+                    </button>
+                  </div>
+                )}
+
+                {step === "reset" && (
+                  <div className="space-y-4 md:space-y-6">
+                    {/* New Password */}
+                    <div>
+                      <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
+                        New Password
+                      </label>
+                      <div className="relative group">
+                        <Input
+                          type="password"
+                          onchangeFunction={handleInputChange(setPassword)}
+                          placeholder="Enter new password"
+                          className="focus:border-blue-600 focus:ring-blue-600"
+                        />
+                      </div>
+                      {password && (
+                        <div className="mt-3">
+                          <div className="flex items-center gap-3">
+                            <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full transition-all duration-500 ${passwordStrength.color}`}
+                                style={{
+                                  width: `${(passwordStrength.score / 3) * 100}%`,
+                                }}
+                              ></div>
+                            </div>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                              {passwordStrength.label}
+                            </span>
+                          </div>
+                        </div>
                       )}
                     </div>
-                  )}
-                </div>
 
-                {/* Action Buttons */}
-                <div className="pt-2 md:pt-4 space-y-3">
-                  <button
-                    onClick={sendDataToBackend}
-                    disabled={isLoading}
-                    className="w-full h-[46px] bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm"
-                  >
-                    {isLoading ? "Processing..." : "Update Credentials"}
-                  </button>
+                    {/* Confirm New Password */}
+                    <div>
+                      <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
+                        Confirm Password
+                      </label>
+                      <div className="relative group">
+                        <Input
+                          type="password"
+                          onchangeFunction={handleInputChange(setRePassword)}
+                          placeholder="Repeat new password"
+                          className="focus:border-blue-600 focus:ring-blue-600"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handleResetPassword}
+                      disabled={isLoading}
+                      className="w-full h-[50px] bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2"
+                    >
+                      {isLoading ? "Updating..." : "Update Password"}
+                      {!isLoading && <KeyRound size={18} />}
+                    </button>
+                  </div>
+                )}
+
+                {step !== "reset" && (
                   <button
                     onClick={() => navigateTo("/student")}
                     className="w-full h-[46px] text-slate-500 hover:text-slate-900 font-bold text-sm transition-colors"
                     disabled={isLoading}
                   >
-                    Back to Terminal
+                    Cancel & Return
                   </button>
-                </div>
+                )}
               </div>
             </div>
 

@@ -7,15 +7,17 @@ import {
   Menu,
   ChevronRight,
   LayoutDashboard,
+  MessageSquare,
 } from "lucide-react";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import RequestManagement from "./RequestManagement";
+import GrievanceList from "./GrievanceList";
 
 export default function SWODashboard() {
   useIsAuth();
   const [activeTab, setActiveTab] = useState<
-    "dashboard" | "outing" | "outpass"
+    "dashboard" | "outing" | "outpass" | "grievance"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -25,6 +27,7 @@ export default function SWODashboard() {
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
     { id: "outing", label: "Outing Requests", icon: Clock },
     { id: "outpass", label: "Outpass Requests", icon: CalendarDays },
+    { id: "grievance", label: "Grievances", icon: MessageSquare },
   ];
 
   const { logout } = useLogout();
@@ -39,6 +42,8 @@ export default function SWODashboard() {
         return <RequestManagement type="outing" />;
       case "outpass":
         return <RequestManagement type="outpass" />;
+      case "grievance":
+        return <GrievanceList />;
       default:
         return (
           <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
