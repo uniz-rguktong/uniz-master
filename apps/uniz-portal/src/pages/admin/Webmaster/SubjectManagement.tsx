@@ -11,9 +11,14 @@ import {
   ChevronDown,
   Filter,
 } from "lucide-react";
-import { GET_SUBJECTS, ADD_SUBJECT } from "../../../api/endpoints";
+import {
+  GET_SUBJECTS,
+  ADD_SUBJECT,
+  SUBJECT_BY_ID,
+} from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../api/apiClient";
+import { Edit2 } from "lucide-react";
 
 export default function SubjectManagement() {
   const [subjects, setSubjects] = useState<any[]>([]);
@@ -28,6 +33,8 @@ export default function SubjectManagement() {
   const [semester, setSemester] = useState("");
   const [meta, setMeta] = useState<any>({ total: 0, totalPages: 0 });
 
+  const [isAdding, setIsAdding] = useState(false);
+  const [editingSubject, setEditingSubject] = useState<any>(null);
   const [newSubject, setNewSubject] = useState({
     name: "",
     code: "",
@@ -35,7 +42,6 @@ export default function SubjectManagement() {
     department: "CSE",
     semester: "E1-SEM-1",
   });
-  const [isAdding, setIsAdding] = useState(false);
 
   const fetchSubjects = async () => {
     setLoading(true);
@@ -72,28 +78,72 @@ export default function SubjectManagement() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const handleAddSubject = async (e: React.FormEvent) => {
+  const handleSaveSubject = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsAdding(true);
     try {
-      const res = await apiClient<any>(ADD_SUBJECT, {
-        method: "POST",
-        body: JSON.stringify(newSubject),
-      });
-      if (res && res.success) {
-        toast.success("Subject added successfully");
-        setShowAddModal(false);
-        fetchSubjects();
-        setNewSubject({
-          name: "",
-          code: "",
-          credits: 4,
-          department: "CSE",
-          semester: "E1-SEM-1",
+      if (editingSubject) {
+        // Update
+        const res = await apiClient<any>(SUBJECT_BY_ID(editingSubject.id), {
+          method: "PUT",
+          body: JSON.stringify(newSubject),
         });
+        if (res && res.success) {
+          toast.success("Subject updated successfully");
+          setShowAddModal(false);
+          setEditingSubject(null);
+          fetchSubjects();
+        }
+      } else {
+        // Create
+        const res = await apiClient<any>(ADD_SUBJECT, {
+          method: "POST",
+          body: JSON.stringify(newSubject),
+        });
+        if (res && res.success) {
+          toast.success("Subject added successfully");
+          setShowAddModal(false);
+          fetchSubjects();
+          setNewSubject({
+            name: "",
+            code: "",
+            credits: 4,
+            department: "CSE",
+            semester: "E1-SEM-1",
+          });
+        }
       }
     } finally {
       setIsAdding(false);
+    }
+  };
+
+  const handleEditClick = (sub: any) => {
+    setEditingSubject(sub);
+    setNewSubject({
+      name: sub.name,
+      code: sub.code,
+      credits: sub.credits,
+      department: sub.department,
+      semester: sub.semester,
+    });
+    setShowAddModal(true);
+  };
+
+  const handleDeleteSubject = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this subject?"))
+      return;
+
+    try {
+      const res = await apiClient<any>(SUBJECT_BY_ID(id), {
+        method: "DELETE",
+      });
+      if (res && res.success) {
+        toast.success("Subject deleted successfully");
+        fetchSubjects();
+      }
+    } catch (error) {
+      toast.error("Failed to delete subject");
     }
   };
 
@@ -199,6 +249,20 @@ export default function SubjectManagement() {
                   </div>
                   <div className="px-3 py-1.5 bg-slate-50 rounded-full text-[9px] font-semibold uppercase tracking-widest text-slate-400 border border-slate-100">
                     {sub.code}
+                  </div>
+                  <div className="ml-auto flex gap-1 transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                    <button
+                      onClick={() => handleEditClick(sub)}
+                      className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                    >
+                      <Edit2 size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteSubject(sub.id)}
+                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </div>
                 <h3 className="text-lg font-semibold text-slate-900 tracking-tight mb-2 leading-tight">
@@ -339,10 +403,10 @@ export default function SubjectManagement() {
               <Trash2 size={20} className="text-slate-400" />
             </button>
             <h3 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 mb-6">
-              Create New Subject
+              {editingSubject ? "Edit Subject" : "Create New Subject"}
             </h3>
 
-            <form onSubmit={handleAddSubject} className="space-y-6">
+            <form onSubmit={handleSaveSubject} className="space-y-6">
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 ml-1">
                   Subject Name
@@ -454,14 +518,16 @@ export default function SubjectManagement() {
                 <button
                   disabled={isAdding}
                   type="submit"
-                  className="flex-1 uniz-primary-btn"
+                  className={`flex-1 uniz-primary-btn ${editingSubject ? "bg-slate-900 hover:bg-black shadow-slate-200" : ""}`}
                 >
                   {isAdding ? (
                     <Loader2 className="animate-spin w-5 h-5" />
+                  ) : editingSubject ? (
+                    <Edit2 size={18} />
                   ) : (
                     <Plus size={18} />
                   )}
-                  Create Subject
+                  {editingSubject ? "Update Subject" : "Create Subject"}
                 </button>
               </div>
             </form>
