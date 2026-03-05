@@ -9,6 +9,7 @@ import {
   Loader2,
   Info,
   ChevronDown,
+  History as HistoryIcon,
 } from "lucide-react";
 import {
   UPLOAD_ATTENDANCE,
@@ -25,6 +26,8 @@ type UploadType = "attendance" | "grades";
 export default function UploadSection({ type }: { type: UploadType }) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploadId, setUploadId] = useState<string | null>(null);
+  const [progress, setProgress] = useState<any>(null);
   const [result, setResult] = useState<any>(null);
 
   // Template Parameters
@@ -101,17 +104,20 @@ export default function UploadSection({ type }: { type: UploadType }) {
       // Let's use apiClient with null headers to let browser set boundary
       const res = await apiClient<any>(endpoint, {
         method: "POST",
-        headers: {
-          // "Content-Type" will be overridden or excluded to allow FormData boundary
-        },
+        headers: {},
         body: formData as any,
       });
 
       if (res && res.success) {
-        setResult({ success: true, ...res });
-        toast.success(
-          `${type === "attendance" ? "Attendance" : "Grades"} uploaded successfully`,
-        );
+        if (res.uploadId) {
+          setUploadId(res.uploadId);
+          toast.info("Upload started. Monitoring progress...");
+        } else {
+          setResult({ success: true, ...res });
+          toast.success(
+            `${type === "attendance" ? "Attendance" : "Grades"} uploaded successfully`,
+          );
+        }
       } else if (res) {
         setResult({ success: false, msg: res.msg || "Upload failed" });
       }
@@ -121,6 +127,49 @@ export default function UploadSection({ type }: { type: UploadType }) {
       setLoading(false);
     }
   };
+
+  // Progress Polling
+  useEffect(() => {
+    let interval: any;
+    if (uploadId) {
+      interval = setInterval(async () => {
+        try {
+          const res = await apiClient<any>(
+            `/academics/upload/progress?uploadId=${uploadId}`,
+            { showToast: false } as any,
+          );
+          if (res && res.success && res.progress) {
+            setProgress(res.progress);
+            if (
+              res.progress.status === "completed" ||
+              res.progress.status === "error" ||
+              res.progress.status === "failed"
+            ) {
+              setUploadId(null);
+              clearInterval(interval);
+              if (res.progress.status === "completed") {
+                setResult({
+                  success: true,
+                  processed: res.progress.processed,
+                  total: res.progress.total,
+                });
+                toast.success("Synchronization completed successfully");
+              } else {
+                setResult({
+                  success: false,
+                  msg: res.progress.message || "Synchronization failed",
+                });
+                toast.error("Synchronization failed");
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Progress poll error", e);
+        }
+      }, 2000);
+    }
+    return () => clearInterval(interval);
+  }, [uploadId]);
 
   const downloadTemplate = async () => {
     const url =
@@ -376,29 +425,143 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 <h3
                   className={`text-2xl font-semibold tracking-[-0.02em] ${result.success ? "text-emerald-900" : "text-red-900"}`}
                 >
-                  {result.success ? "Sync Completed" : "Sync Failed"}
+                  {progress?.status ||
+                    (result?.success ? "Sync Completed" : "Sync Failed")}
                 </h3>
               </div>
 
-              <div className="space-y-4">
-                {result.success ? (
-                  <>
-                    <p className="text-emerald-800 font-medium">
-                      Successfully processed {result.processed || 0} records
-                      into the central database.
-                    </p>
-                    <div className="p-4 bg-white/50 rounded-2xl border border-emerald-200/50">
-                      <p className="text-[10px] uppercase font-semibold text-emerald-600 tracking-widest mb-1.5 leading-none">
-                        Status
+              {progress ? (
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest text-slate-500">
+                      <span>Sync Progress</span>
+                      <span className="text-blue-600 font-black">
+                        {Math.round(
+                          ((progress.processed || 0) / (progress.total || 1)) *
+                            100,
+                        )}
+                        %
+                      </span>
+                    </div>
+                    <div className="h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50 p-1 shadow-inner">
+                      <div
+                        className="h-full bg-blue-600 rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(37,99,235,0.4)]"
+                        style={{
+                          width: `${((progress.processed || 0) / (progress.total || 1)) * 100}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white p-5 rounded-[22px] border border-slate-100 shadow-sm">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                        Success
                       </p>
-                      <p className="text-emerald-900 font-semibold text-[15px] leading-tight">
-                        All systems green. Student dashboards updated.
+                      <p className="text-3xl font-bold text-slate-900 leading-none">
+                        {progress.success || progress.processed || 0}
                       </p>
                     </div>
-                  </>
-                ) : (
-                  <p className="text-red-800 font-medium">{result.msg}</p>
-                )}
+                    <div className="bg-white p-5 rounded-[22px] border border-red-50 shadow-sm">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                        Failed
+                      </p>
+                      <p className="text-3xl font-bold text-red-600 leading-none">
+                        {progress.fail || progress.failed || 0}
+                      </p>
+                    </div>
+                  </div>
+
+                  {progress.status === "processing" &&
+                    progress.etaSeconds > 0 && (
+                      <div className="flex items-center gap-2 p-4 bg-blue-50/50 rounded-2xl border border-blue-100/30">
+                        <Loader2
+                          size={14}
+                          className="animate-spin text-blue-600"
+                        />
+                        <p className="text-[11px] text-blue-800 font-medium">
+                          Estimated time remaining: ~{progress.etaSeconds}s
+                        </p>
+                      </div>
+                    )}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {result.success ? (
+                    <>
+                      <p className="text-emerald-800 font-medium">
+                        Successfully processed {result.processed || 0} records
+                        into the central database.
+                      </p>
+                      <div className="p-4 bg-white/50 rounded-2xl border border-emerald-200/50">
+                        <p className="text-[10px] uppercase font-semibold text-emerald-600 tracking-widest mb-1.5 leading-none">
+                          Status
+                        </p>
+                        <p className="text-emerald-900 font-semibold text-[15px] leading-tight">
+                          All systems green. Student dashboards updated.
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-red-800 font-medium">{result.msg}</p>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : uploadId ? (
+            <div className="bg-blue-600 rounded-[32px] p-10 text-white shadow-2xl shadow-blue-200 space-y-10 animate-in slide-in-from-right-8 duration-500 relative overflow-hidden">
+              <div className="flex items-center justify-between relative z-10">
+                <div className="p-4 bg-white/10 rounded-[22px] backdrop-blur-md border border-white/20 shadow-xl">
+                  <HistoryIcon size={26} className="animate-spin" />
+                </div>
+                <div className="text-right space-y-1">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 leading-none">
+                    Sync Status
+                  </p>
+                  <p className="font-semibold text-3xl tracking-tight capitalize leading-none pt-2">
+                    {progress?.status || "Queued"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-5 relative z-10">
+                <div className="flex justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-white/70">
+                  <span>Progress</span>
+                  <span className="font-black">
+                    {Math.round(
+                      ((progress?.processed || 0) / (progress?.total || 1)) *
+                        100,
+                    )}
+                    %
+                  </span>
+                </div>
+                <div className="h-4 bg-black/10 rounded-full overflow-hidden border border-white/5 p-1 shadow-inner">
+                  <div
+                    className="h-full bg-white rounded-full transition-all duration-1000 ease-out shadow-[0_0_20px_rgba(255,255,255,0.8)]"
+                    style={{
+                      width: `${((progress?.processed || 0) / (progress?.total || 1)) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 relative z-10">
+                <div className="bg-white/10 p-6 rounded-[28px] border border-white/10 backdrop-blur-md shadow-xl">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/50 leading-none mb-4">
+                    Processed
+                  </p>
+                  <p className="text-4xl font-semibold tracking-tighter leading-none">
+                    {progress?.processed || 0}
+                  </p>
+                </div>
+                <div className="bg-white/10 p-6 rounded-[28px] border border-white/10 backdrop-blur-md shadow-xl">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/50 leading-none mb-4">
+                    Total
+                  </p>
+                  <p className="text-4xl font-semibold tracking-tighter leading-none">
+                    {progress?.total || 0}
+                  </p>
+                </div>
               </div>
             </div>
           ) : (
