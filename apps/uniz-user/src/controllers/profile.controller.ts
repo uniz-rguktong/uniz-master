@@ -626,6 +626,11 @@ export const getTargetingData = async (req: Request, res: Response) => {
         where: { role: { equals: "dean", mode: "insensitive" } },
         select: { username: true },
       });
+    } else if (target === "webmaster") {
+      users = await prisma.adminProfile.findMany({
+        where: { role: { equals: "webmaster", mode: "insensitive" } },
+        select: { username: true },
+      });
     } else if (target === "hod") {
       const where: any = { role: { equals: "hod", mode: "insensitive" } };
       if (branch && branch.toLowerCase() !== "all") {
@@ -647,6 +652,24 @@ export const getTargetingData = async (req: Request, res: Response) => {
         where,
         select: { username: true, name: true },
       });
+    } else if (target === "faculty") {
+      users = await prisma.facultyProfile.findMany({
+        select: { username: true, name: true },
+      });
+    } else if (target === "all") {
+      // When target is 'all', gather everyone
+      const [allStudents, allFaculty, allAdmins] = await Promise.all([
+        prisma.studentProfile.findMany({
+          select: { username: true, name: true },
+        }),
+        prisma.facultyProfile.findMany({
+          select: { username: true, name: true },
+        }),
+        prisma.adminProfile.findMany({
+          select: { username: true },
+        }),
+      ]);
+      users = [...allStudents, ...allFaculty, ...allAdmins];
     }
 
     return res.json({ success: true, users });

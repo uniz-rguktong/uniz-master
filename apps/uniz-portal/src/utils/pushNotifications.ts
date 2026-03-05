@@ -88,8 +88,20 @@ export async function initPushNotifications(
       const existingSub = await existingReg.pushManager.getSubscription();
       if (existingSub && lastSyncUser === username) {
         console.log(
-          "[Push] ✅ Active subscription found for this user. Skipping setup.",
+          "[Push] Active subscription found locally. Silently syncing to backend to ensure DB state.",
         );
+        const tok = getStoredToken();
+        try {
+          // Fire and forget sync to heal from lost database data silently
+          await syncSubscriptionToBackend(
+            existingSub,
+            username,
+            notificationServiceUrl,
+            tok,
+          );
+        } catch (e: any) {
+          console.warn("[Push] Silent background sync failed:", e.message);
+        }
         return;
       }
 

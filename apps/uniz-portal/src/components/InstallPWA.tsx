@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, X, Smartphone, Share } from "lucide-react";
+import { X, Smartphone, Share } from "lucide-react";
 import { useRecoilValue } from "recoil";
 import { is_authenticated } from "../store";
 
@@ -115,63 +115,94 @@ export const InstallPWA = () => {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ y: 200, opacity: 0, scale: 0.9 }}
-        animate={{ y: 0, opacity: 1, scale: 1 }}
-        exit={{ y: 200, opacity: 0, scale: 0.9 }}
-        transition={{ type: "spring", damping: 20, stiffness: 200, delay: 0.2 }}
-        className="fixed bottom-6 left-4 right-4 z-[99999] md:left-auto md:right-6 md:max-w-[380px]"
+        initial={{ y: 0, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 0, opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 z-[99999] bg-[#312e2b] flex flex-col font-sans"
       >
-        <div className="relative bg-white/95 backdrop-blur-2xl border border-white shadow-[0_30px_70px_-10px_rgba(0,0,0,0.3)] rounded-[2.5rem] p-6 overflow-hidden">
-          <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#800000]/5 rounded-full blur-[40px]" />
-          <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/5 rounded-full blur-[40px]" />
-
+        {/* Top App Banner */}
+        <div className="flex items-center px-4 py-3 bg-[#262421] border-b border-white/5">
           <button
             onClick={handleDismiss}
-            className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-all active:scale-90"
+            className="text-slate-400 hover:text-white p-1 -ml-1 mr-2"
           >
-            <X size={16} />
+            <X size={20} />
           </button>
-
-          <div className="relative">
-            <div className="flex items-center gap-5 mb-5">
-              <div className="relative">
-                <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-slate-900/30 relative z-10">
-                  <Smartphone size={28} strokeWidth={1.5} />
-                </div>
-                <div className="absolute -inset-2 bg-slate-900/10 blur-xl rounded-2xl" />
-              </div>
-              <div>
-                <h3 className="text-lg font-black text-slate-900 tracking-tight leading-none uppercase italic">
-                  UniZ On Mobile
-                </h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1.5">
-                  Beta Experience
-                </p>
-              </div>
-            </div>
-
-            <p className="text-slate-600 text-sm font-semibold leading-snug mb-6 pr-4">
-              Access your grades and outpass
-              <span className="text-slate-900 font-bold"> seamlessly</span>.
-              Install the app for the best experience and real-time updates.
+          <div className="w-10 h-10 bg-white rounded-lg p-1 flex items-center justify-center shrink-0">
+            <img
+              src="/assets/ongole_logo.png"
+              alt="UniZ Logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div className="ml-3 flex-1 overflow-hidden">
+            <h4 className="text-white text-[15px] font-bold leading-tight">
+              UniZ App
+            </h4>
+            <p className="text-slate-400 text-[12px] leading-tight truncate mt-0.5">
+              Access grades, outpass & more!
             </p>
+          </div>
+          <button
+            onClick={handleInstallClick}
+            className="bg-[#81b64c] hover:bg-[#a3d160] text-white font-bold text-[14px] px-4 py-1.5 rounded-md shadow-sm transition-colors shrink-0"
+          >
+            Install
+          </button>
+        </div>
 
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={handleInstallClick}
-                className="w-full bg-[#800000] text-white font-black uppercase tracking-widest text-[11px] py-4 px-6 rounded-2xl flex items-center justify-center gap-3 hover:bg-[#600000] transition-all shadow-xl shadow-[#800000]/20 active:scale-[0.97]"
-              >
-                <Download size={16} />
-                {isIOS ? "Show Instructions" : "Install UniZ Now"}
-              </button>
+        {/* Main Content Body */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-20 overflow-y-auto">
+          <div className="w-16 h-16 bg-white rounded-2xl p-2 shadow-2xl mb-6">
+            <img
+              src="/assets/ongole_logo.png"
+              alt="UniZ Logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
 
-              {isIOS && (
-                <p className="text-[10px] text-center text-slate-400 font-bold uppercase tracking-tight mt-1 flex items-center justify-center gap-1">
-                  <Share size={10} className="text-blue-500" /> Tap Share then
-                  'Add to Home Screen'
-                </p>
-              )}
+          <h1 className="text-white text-3xl font-black text-center mb-8 px-4 leading-[1.1] tracking-tight">
+            Install the UniZ App
+          </h1>
+
+          <div className="w-40 h-40 mb-10 opacity-90 drop-shadow-2xl">
+            {/* Using a large central icon representing the app installation */}
+            <Smartphone
+              className="w-full h-full text-[#81b64c]"
+              strokeWidth={1}
+            />
+          </div>
+
+          <div className="w-full max-w-[340px] flex flex-col gap-4">
+            <button
+              onClick={handleInstallClick}
+              className="w-full bg-[#81b64c] hover:bg-[#a3d160] text-white font-bold text-lg py-4 rounded-xl shadow-[0_4px_0_rgba(0,0,0,0.2)] transition-all active:translate-y-1 active:shadow-none"
+            >
+              {isIOS ? "Show Instructions" : "Install App"}
+            </button>
+
+            <div className="flex items-center gap-3 my-2 opacity-50">
+              <div className="flex-1 h-px bg-white/20" />
+              <span className="text-white/60 text-xs font-bold uppercase tracking-wider">
+                OR
+              </span>
+              <div className="flex-1 h-px bg-white/20" />
             </div>
+
+            <button
+              onClick={handleDismiss}
+              className="w-full bg-[#45423f] hover:bg-[#524f4c] border border-white/5 text-white/90 font-bold text-base py-3.5 rounded-xl transition-all shadow-[0_3px_0_rgba(0,0,0,0.1)] active:translate-y-1 active:shadow-none"
+            >
+              Continue in Browser
+            </button>
+
+            {isIOS && (
+              <p className="text-[11px] text-center text-white/40 font-semibold uppercase tracking-wide mt-4 flex items-center justify-center gap-1.5">
+                <Share size={12} className="text-white/60" /> Tap Share then
+                'Add to Home Screen'
+              </p>
+            )}
           </div>
         </div>
       </motion.div>
