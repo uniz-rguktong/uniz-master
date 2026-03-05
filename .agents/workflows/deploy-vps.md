@@ -13,21 +13,13 @@ git add . && git commit -m "deploy: automated update" && git push origin main &&
 ssh -o StrictHostKeyChecking=no root@76.13.241.174 "cd /root/uniz-master && git pull origin main"
 ```
 
-### 2. Build & Inject Image (K3s containerd)
-
-Build the Docker image locally on the VPS and manually import it into the K3s logic.
-Replace `<SERVICE_IMAGE>` (e.g., `uniz-user-service`) and `<SOURCE_DIR>` (e.g., `uniz-user`).
-
 ```bash
-ssh -o StrictHostKeyChecking=no root@76.13.241.174 "cd /root/uniz-master && docker build --no-cache -t <SERVICE_IMAGE>:local apps/<SOURCE_DIR> && docker save <SERVICE_IMAGE>:local | /usr/local/bin/k3s ctr images import -"
-```
-
-### 3. Restart K8s Deployment
-
-Force Kubernetes to pick up the new image.
-
-```bash
-ssh -o StrictHostKeyChecking=no root@76.13.241.174 "kubectl rollout restart deployment <DEPLOYMENT_NAME>"
+# Recommended: Deploy with unique tags to bypass containerd caching
+TAG=local-$(date +%s)
+ssh -o StrictHostKeyChecking=no root@76.13.241.174 "cd /root/uniz-master && \
+docker build --no-cache -t <SERVICE_IMAGE>:$TAG apps/<SOURCE_DIR> && \
+docker save <SERVICE_IMAGE>:$TAG | /usr/local/bin/k3s ctr images import - && \
+kubectl set image deployment/<DEPLOYMENT_NAME> <CONTAINER_NAME>=<SERVICE_IMAGE>:$TAG"
 ```
 
 ### 4. Verify System Health

@@ -53,8 +53,8 @@ The system is a **microservices-based monorepo** using a centralized API Gateway
 | **API Gateway**          | `uniz-gateway-api`          | 3000          | 3       | **Primary Router**, Request Validation, Rate Limiting, CORS, Aggregation.   |
 | **Auth Service**         | `uniz-auth-service`         | 3001          | 1       | User Authentication, JWT Issuance, Session Management.                      |
 | **User Service**         | `uniz-user-service`         | 3002          | 1       | User Profiles, **CMS (Banners/Content)**.                                   |
-| **Outpass Service**      | `uniz-outpass-service`      | 3003          | 1       | Student Outpasses, Grievances, Requests workflow.                           |
-| **Academics Service**    | `uniz-academics-service`    | 3004          | 1       | Grades, Attendance, Curriculum Management.                                  |
+| **Outpass Service**      | `uniz-outpass-service`      | 3003          | 1       | Student Outpasses, **SWO Grievances**, Requests workflow.                   |
+| **Academics Service**    | `uniz-academics-service`    | 3004          | 1       | Grades, Attendance, Curriculum Management, **Bulk Excel Ingestion**.        |
 | **Files Service**        | `uniz-files-service`        | 3005          | 1       | S3-compatible file storage interface.                                       |
 | **Mail Service**         | `uniz-mail-service`         | 3006          | 1       | Email dispatch (SendGrid/SMTP).                                             |
 | **Notification Service** | `uniz-notification-service` | 3007          | 1       | Push Notifications (Web/App), In-app alerts, **Support for Image Banners**. |
@@ -157,6 +157,12 @@ _(This section to be expanded as APIs are indexed)_
 9.  **Timezone Format Inconsistencies**:
     - **Cause**: Standard Node.js `toLocaleTimeString("en-IN")` doesn't strictly guarantee 12-hour AM/PM formatting uniformly across all OS language packs.
     - **Fix**: Used the `en-US` locale explicitly combined with `timeZone: "Asia/Kolkata"` and `hour12: true` options to strictly enforce Indian Standard Time format exactly as required by the mobile UI.
+10. **Excel Ingestion Header Mismatch**:
+    - **Cause**: Administrators using custom Excel layouts or legacy CSVs that don't match the strictly validated `uniz-academics` header requirements ("Student ID", "Subject Code", etc.).
+    - **Fix**: Implemented a **Template Generator** in the portal that pre-populates valid headers and student keys, ensuring a "Download-Fill-Upload" workflow that guarantees validation success.
+11. **Grievance Push Notification delivery**:
+    - **Cause**: Push alerts sent without recipient names were appearing generic ("Dear User").
+    - **Fix**: Updated `uniz-notifications` worker to fetch names and inject "Dear {Name}" greetings for a professional notification tone.
 
 ### Scaling Constraints
 
@@ -168,7 +174,13 @@ _(This section to be expanded as APIs are indexed)_
 ## 7. Deployment Layer
 
 - **Registry**: Docker Hub (`desusreecharan/uniz-*`)
-- **Pipeline**: GitHub Actions -> Docker Build -> Push to Hub -> SSH to VPS -> `docker compose pull && up -d`.
+- **Pipeline**:
+
+```bash
+TAG=local-$(date +%s)
+ssh -o StrictHostKeyChecking=no root@76.13.241.174 "cd /root/uniz-master && docker build --no-cache -t <SERVICE_IMAGE>:$TAG apps/<SOURCE_DIR> && docker save <SERVICE_IMAGE>:$TAG | /usr/local/bin/k3s ctr images import - && kubectl set image deployment/<DEPLOYMENT_NAME> <CONTAINER_NAME>=<SERVICE_IMAGE>:$TAG"
+```
+
 - **Hotfix Workflow**:
   1.  Create local patch file (`gateway_patch.ts`).
   2.  `cat patch | ssh root@host "cat > ..."`
@@ -177,4 +189,4 @@ _(This section to be expanded as APIs are indexed)_
 
 ---
 
-**Last Updated**: 2026-02-21
+**Last Updated**: 2026-03-05
