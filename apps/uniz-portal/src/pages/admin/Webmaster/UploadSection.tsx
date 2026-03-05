@@ -142,12 +142,16 @@ export default function UploadSection({ type }: { type: UploadType }) {
             setProgress(res.progress);
             if (
               res.progress.status === "completed" ||
+              res.progress.status === "done" ||
               res.progress.status === "error" ||
               res.progress.status === "failed"
             ) {
               setUploadId(null);
               clearInterval(interval);
-              if (res.progress.status === "completed") {
+              if (
+                res.progress.status === "completed" ||
+                res.progress.status === "done"
+              ) {
                 setResult({
                   success: true,
                   processed: res.progress.processed,
