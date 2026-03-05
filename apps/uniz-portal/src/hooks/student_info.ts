@@ -1,9 +1,14 @@
 import { useEffect, useCallback } from "react";
 import { useSetRecoilState } from "recoil";
-import { student } from "../store";
+import { student, studentAuthLoading } from "../store";
 import { STUDENT_INFO } from "../api/endpoints";
 import { apiClient } from "../api/apiClient";
-import { useSmartPolling } from "./useSmartPolling";
+
+let lastFetchTime = 0;
+let fetchPromise: Promise<any> | null = null;
+let globalSetStudent: any = null;
+let globalSetAuthLoading: any = null;
+let isPollingStarted = false;
 
 interface StudentData {
   _id: string;
@@ -23,30 +28,77 @@ interface StudentInfoResponse {
 
 export function useStudentData() {
   const setStudent = useSetRecoilState(student);
+  const setAuthLoading = useSetRecoilState(studentAuthLoading);
 
-  const fetchStudentData = useCallback(async () => {
+  // Keep references to the latest setters for the global interval
+  useEffect(() => {
+    globalSetStudent = setStudent;
+    globalSetAuthLoading = setAuthLoading;
+  }, [setStudent, setAuthLoading]);
+
+  const fetchStudentData = useCallback(async (force = false) => {
     const token = localStorage.getItem("student_token");
-    if (!token) return;
-    try {
-      const data = await apiClient<StudentInfoResponse>(STUDENT_INFO);
-
-      if (data && data.success && data.student) {
-        //@ts-ignore
-        setStudent(data.student);
-      }
-    } catch (error) {
-      console.error("Error fetching student data:", error);
+    if (!token) {
+      // No token – nothing to wait for, stop loading immediately
+      setAuthLoading(false);
+      return;
     }
-  }, [setStudent]);
+
+    const now = Date.now();
+    // Prevent duplicate calls. If not forced, skip if less than 60s since last fetch
+    if (!force && now - lastFetchTime < 60000) {
+      return fetchPromise;
+    }
+
+    if (fetchPromise) return fetchPromise;
+
+    fetchPromise = apiClient<StudentInfoResponse>(STUDENT_INFO, {}, false)
+      .then((data) => {
+        if (data && data.success && data.student) {
+          lastFetchTime = Date.now();
+          if (globalSetStudent) {
+            globalSetStudent(data.student);
+          } else {
+            //@ts-ignore
+            setStudent(data.student);
+          }
+        }
+      })
+      .catch((error) => console.error("Error fetching student data:", error))
+      .finally(() => {
+        fetchPromise = null;
+        // Mark auth loading as done — the /me call has resolved (success or fail)
+        if (globalSetAuthLoading) {
+          globalSetAuthLoading(false);
+        } else {
+          setAuthLoading(false);
+        }
+      });
+
+    return fetchPromise;
+  }, [setStudent, setAuthLoading]);
 
   useEffect(() => {
     fetchStudentData();
+
+    if (!isPollingStarted) {
+      isPollingStarted = true;
+      // Start global polling exactly every 1 minute
+      setInterval(() => {
+        const token = localStorage.getItem("student_token");
+        if (token && globalSetStudent) {
+          apiClient<StudentInfoResponse>(STUDENT_INFO, {}, false)
+            .then((data) => {
+              if (data && data.success && data.student) {
+                lastFetchTime = Date.now();
+                globalSetStudent(data.student);
+              }
+            })
+            .catch(console.error);
+        }
+      }, 60000);
+    }
   }, [fetchStudentData]);
 
-  useSmartPolling(fetchStudentData, {
-    activeInterval: 300000,
-    fallbackInterval: 30000,
-  });
-
-  return { refetch: fetchStudentData };
+  return { refetch: () => fetchStudentData(true) };
 }

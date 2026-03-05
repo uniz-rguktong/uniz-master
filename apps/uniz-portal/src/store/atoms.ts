@@ -1,6 +1,13 @@
 import { atom } from "recoil";
 import { Student } from "../types";
 
+// True while the initial /me fetch has not yet resolved.
+// Initialised from localStorage so we know a token exists and the call is in flight.
+export const studentAuthLoading = atom<boolean>({
+  key: "studentAuthLoading",
+  default: !!localStorage.getItem("student_token"),
+});
+
 export const is_authenticated = atom({
   key: "is_authenticated",
   default: {
