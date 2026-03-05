@@ -139,12 +139,12 @@ export default function Signin({ type }: SigninProps) {
         navigate("/student", { replace: true });
       } else if (
         type === "admin" &&
-        data.role === "teacher" &&
+        (data.role === "teacher" || data.role === "faculty") &&
         (token || data.success)
       ) {
-        localStorage.setItem("faculty_token", token);
+        localStorage.setItem("faculty_token", token || "");
         localStorage.setItem("username", username.trim());
-        localStorage.setItem("role", "teacher");
+        localStorage.setItem("role", data.role || "teacher");
         setAuth({ is_authnticated: true, type: "faculty" });
         toast.success(`Welcome Professor ${username.trim()}!`);
         navigate("/faculty", { replace: true });

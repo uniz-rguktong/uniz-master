@@ -3,6 +3,7 @@ export enum UserRole {
 
   // Faculty Roles
   TEACHER = "teacher",
+  FACULTY = "faculty",
   HOD = "hod",
 
   // Admin Roles

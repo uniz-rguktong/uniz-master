@@ -19,6 +19,7 @@ const ADMIN_ROLES = [
   "dsw",
   "hod",
   "faculty",
+  "teacher",
 ];
 
 export interface AuthenticatedRequest extends Request {
