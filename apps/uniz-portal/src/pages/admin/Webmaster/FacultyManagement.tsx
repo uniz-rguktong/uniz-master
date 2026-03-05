@@ -34,7 +34,7 @@ export default function FacultyManagement({
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [search, setSearch] = useState("");
-  const [, setMeta] = useState<any>({ total: 0, totalPages: 0 });
+  const [meta, setMeta] = useState<any>({ total: 0, totalPages: 1 });
 
   const [formData, setFormData] = useState({
     username: "",
@@ -297,9 +297,9 @@ export default function FacultyManagement({
                     </tr>
                   ))
               ) : faculty.length > 0 ? (
-                faculty.map((member, idx) => (
+                faculty.map((member) => (
                   <tr
-                    key={idx}
+                    key={member.id}
                     className="hover:bg-slate-50/30 transition-all group"
                   >
                     <td className="px-10 py-6">
@@ -392,6 +392,47 @@ export default function FacultyManagement({
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {meta.totalPages > 1 && (
+          <div className="flex items-center justify-between px-10 py-6 bg-slate-50/50 border-t border-slate-100">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              Showing page {page} of {meta.totalPages} • Total {meta.total}{" "}
+              staff
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-50 transition-all shadow-sm"
+              >
+                Previous
+              </button>
+              <div className="flex gap-1.5">
+                {[...Array(meta.totalPages)].map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setPage(i + 1)}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold transition-all ${
+                      page === i + 1
+                        ? "bg-blue-600 text-white shadow-lg shadow-blue-100"
+                        : "bg-white border border-slate-200 text-slate-400 hover:border-blue-400 hover:text-blue-500"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+              <button
+                disabled={page >= meta.totalPages}
+                onClick={() => setPage((p) => p + 1)}
+                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-50 transition-all shadow-sm"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Modal */}
