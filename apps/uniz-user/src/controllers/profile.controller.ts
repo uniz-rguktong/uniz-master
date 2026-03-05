@@ -97,6 +97,18 @@ const mapFacultyProfile = (profile: any) => ({
   is_suspended: profile.isSuspended || false,
 });
 
+const mapAdminProfile = (profile: any) => ({
+  id: profile.id,
+  username: profile.username,
+  name: profile.name,
+  email: profile.email,
+  contact: profile.contact,
+  profile_url: profile.profileUrl,
+  role: profile.role,
+  created_at: profile.createdAt,
+  updated_at: profile.updatedAt,
+});
+
 export const getStudentProfile = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -426,7 +438,10 @@ export const getAdminProfile = async (
     const profile = await prisma.adminProfile.findUnique({
       where: { username: user.username },
     });
-    return res.json({ success: true, data: profile });
+    return res.json({
+      success: true,
+      data: profile ? mapAdminProfile(profile) : null,
+    });
   } catch (e) {
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
@@ -954,6 +969,77 @@ export const deleteFacultyProfile = async (
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to delete profile",
+    });
+  }
+};
+export const updateFacultyProfileSelf = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const updates = req.body;
+
+  if (!user || (user.role !== UserRole.TEACHER && user.role !== UserRole.HOD)) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  try {
+    const updated = await prisma.facultyProfile.update({
+      where: { username: user.username },
+      data: updates,
+    });
+
+    return res.json({ success: true, faculty: mapFacultyProfile(updated) });
+  } catch (e) {
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to update profile",
+    });
+  }
+};
+
+export const updateAdminProfile = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const updates = req.body;
+
+  const adminRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.SWO,
+    UserRole.WARDEN_MALE,
+    UserRole.WARDEN_FEMALE,
+    UserRole.CARETAKER_MALE,
+    UserRole.CARETAKER_FEMALE,
+    UserRole.SECURITY,
+    UserRole.LIBRARIAN,
+    UserRole.DSW,
+    UserRole.WARDEN,
+    UserRole.CARETAKER,
+  ];
+
+  if (!user || !adminRoles.includes(user.role as UserRole)) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  try {
+    const updated = await prisma.adminProfile.update({
+      where: { username: user.username },
+      data: updates,
+    });
+
+    return res.json({ success: true, data: mapAdminProfile(updated) });
+  } catch (e) {
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to update profile",
     });
   }
 };

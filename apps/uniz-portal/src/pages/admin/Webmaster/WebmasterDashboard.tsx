@@ -13,8 +13,10 @@ import {
   Bell,
   Activity,
   Smartphone,
+  UserCircle,
+  Settings,
 } from "lucide-react";
-// removed useNavigate
+import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import StudentDetails from "./StudentDetails";
@@ -52,6 +54,7 @@ export default function WebmasterDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const username = localStorage.getItem("username") || "Webmaster";
+  const navigate = useNavigate();
 
   const navItems = [
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
@@ -273,7 +276,7 @@ export default function WebmasterDashboard() {
           >
             {isSidebarOpen ? <Menu size={18} /> : <ChevronRight size={18} />}
           </button>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-semibold text-slate-900 leading-none">
                 {username}
@@ -282,7 +285,25 @@ export default function WebmasterDashboard() {
                 System Administrator
               </p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center font-semibold text-blue-600">
+            <button
+              onClick={() => navigate("/admin/profile")}
+              title="My Profile"
+              className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-blue-600 transition-colors"
+            >
+              <UserCircle size={22} />
+            </button>
+            <button
+              onClick={() => navigate("/admin/settings")}
+              title="Security Settings"
+              className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-blue-600 transition-colors"
+            >
+              <Settings size={20} />
+            </button>
+            <div
+              onClick={() => navigate("/admin/profile")}
+              className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center font-semibold text-blue-600 cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
+              title="Go to Profile"
+            >
               {username[0].toUpperCase()}
             </div>
           </div>

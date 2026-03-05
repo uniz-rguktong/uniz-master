@@ -25,11 +25,15 @@ const NOTIFICATION_SERVICE_URL = (
   .trim()
   .replace(/\/health$/, "");
 
-const sendPush = async (username: string, title: string, body: string) => {
-  if (process.env.SKIP_PUSH === "true") return;
+const sendPush = async (
+  username: string,
+  title: string,
+  body: string,
+): Promise<number> => {
+  if (process.env.SKIP_PUSH === "true") return 0;
   try {
     const url = `${NOTIFICATION_SERVICE_URL}/push/send`;
-    await axios.post(
+    const res = await axios.post(
       url,
       {
         target: "user",
@@ -42,20 +46,25 @@ const sendPush = async (username: string, title: string, body: string) => {
         timeout: 5000,
       },
     );
-    console.log(`[AUTH] Successfully sent push notification to: ${username}`);
+    const sentCount = res.data?.sent || 0;
+    console.log(
+      `[AUTH] Push notification to ${username} reached ${sentCount} devices.`,
+    );
+    return sentCount;
   } catch (e: any) {
     console.error(
       `[AUTH] Failed to send push notification to ${username}:`,
       e.message,
     );
+    return 0;
   }
 };
 
 export const sendOtpPush = async (
   username: string,
   otp: string,
-): Promise<void> => {
-  await sendPush(
+): Promise<number> => {
+  return await sendPush(
     username,
     "UniZ Authentication OTP",
     `Your verification code is ${otp}. It expires in 10 minutes.`,
