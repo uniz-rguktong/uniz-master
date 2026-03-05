@@ -94,7 +94,9 @@ const mapFacultyProfile = (profile: any) => ({
   Role: profile.role,
   Contact: profile.contact,
   ProfileUrl: profile.profileUrl,
+  Bio: profile.bio || {},
   is_suspended: profile.isSuspended || false,
+  CreatedAt: profile.createdAt,
 });
 
 const mapAdminProfile = (profile: any) => ({
@@ -239,8 +241,8 @@ export const updateStudentProfile = async (
     // Notify student (Backgrounded for latency optimization)
     sendPush(
       user.username,
-      "Profile Updated",
-      `Your profile has been updated. Changed fields: ${Object.keys(updates).join(", ")}.`,
+      "Profile Information Updated",
+      `This notification is to confirm that adjustments have been made to your student profile. The modified information includes: ${Object.keys(updates).join(", ")}.`,
     );
 
     return res.json({ success: true, student: mapStudentProfile(updated) });
@@ -285,8 +287,8 @@ export const adminUpdateStudentProfile = async (
     // Notify student (Backgrounded for latency optimization)
     sendPush(
       username,
-      "Profile Updated",
-      `Your profile has been updated by an administrator. Changed fields: ${Object.keys(updates).join(", ")}.`,
+      "Administrative Profile Modification",
+      `We are writing to inform you that your academic profile information has been modified by the university administration. Updated fields: ${Object.keys(updates).join(", ")}.`,
     );
 
     return res.json({ success: true, student: mapStudentProfile(updated) });
@@ -382,7 +384,12 @@ export const getFacultyProfile = async (
   res: Response,
 ) => {
   const user = req.user;
-  if (!user || (user.role !== UserRole.TEACHER && user.role !== UserRole.HOD)) {
+  if (
+    !user ||
+    ![UserRole.TEACHER, UserRole.HOD, UserRole.FACULTY].includes(
+      user.role as UserRole,
+    )
+  ) {
     return res
       .status(403)
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
@@ -792,10 +799,12 @@ export const toggleUserSuspension = async (
     // 4. Notify User
     sendPush(
       targetUsername,
-      suspended ? "Account Suspended" : "Account Reinstated",
       suspended
-        ? "Your account has been suspended by an administrator. Please contact the office for details."
-        : "Your account has been reinstated. You can now use all university services.",
+        ? "Official Notice: Account Suspended"
+        : "Account Access Reinstated",
+      suspended
+        ? "We regret to inform you that your academic account access has been suspended by the university administration. For further clarification and to discuss the restoration of your services, please contact the administrative office at your earliest convenience."
+        : "We are pleased to inform you that your UniZ account access has been fully reinstated. You may now resume using all university digital services and portals.",
     );
 
     return res.json({
@@ -1006,16 +1015,31 @@ export const updateFacultyProfileSelf = async (
   const user = req.user;
   const updates = req.body;
 
-  if (!user || (user.role !== UserRole.TEACHER && user.role !== UserRole.HOD)) {
+  if (
+    !user ||
+    ![UserRole.TEACHER, UserRole.HOD, UserRole.FACULTY].includes(
+      user.role as UserRole,
+    )
+  ) {
     return res
       .status(403)
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
   }
 
   try {
+    const cleanUpdates: any = {};
+    if (updates.name) cleanUpdates.name = updates.name;
+    if (updates.email) cleanUpdates.email = updates.email;
+    if (updates.contact) cleanUpdates.contact = updates.contact;
+    if (updates.designation) cleanUpdates.designation = updates.designation;
+    if (updates.profileUrl || updates.profile_url)
+      cleanUpdates.profileUrl = updates.profileUrl || updates.profile_url;
+    if (updates.bio || updates.Bio)
+      cleanUpdates.bio = updates.bio || updates.Bio;
+
     const updated = await prisma.facultyProfile.update({
       where: { username: user.username },
-      data: updates,
+      data: cleanUpdates,
     });
 
     return res.json({ success: true, faculty: mapFacultyProfile(updated) });
@@ -1072,10 +1096,13 @@ export const updateAdminProfile = async (
       if (updates.name) facultyData.name = updates.name;
       if (updates.email) facultyData.email = updates.email;
       if (updates.contact) facultyData.contact = updates.contact;
+      if (updates.designation) facultyData.designation = updates.designation;
       if (updates.profileUrl) facultyData.profileUrl = updates.profileUrl;
       if (updates.profile_url) facultyData.profileUrl = updates.profile_url;
+      if (updates.bio || updates.Bio)
+        facultyData.bio = updates.bio || updates.Bio;
 
-      const updated = await prisma.facultyProfile.update({
+      const updated: any = await prisma.facultyProfile.update({
         where: { username: user.username },
         data: facultyData,
       });
@@ -1092,6 +1119,7 @@ export const updateAdminProfile = async (
           role: updated.role,
           department: updated.department,
           designation: updated.designation,
+          bio: updated.bio,
         },
       });
     }

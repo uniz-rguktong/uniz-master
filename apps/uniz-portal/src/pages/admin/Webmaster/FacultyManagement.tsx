@@ -18,7 +18,12 @@ import {
   CheckCircle2,
   ChevronDown,
   Layers,
+  FileSpreadsheet,
+  Eye,
+  BookOpen,
+  Calendar,
 } from "lucide-react";
+import Papa from "papaparse";
 import {
   SEARCH_FACULTY,
   CREATE_FACULTY,
@@ -102,6 +107,8 @@ export default function FacultyManagement({
   const [bulkResult, setBulkResult] = useState<any>(null);
   const [bulkLoading, setBulkLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedFaculty, setSelectedFaculty] = useState<any>(null);
 
   /* ─── Fetch ─── */
   const fetchFaculty = async () => {
@@ -517,17 +524,67 @@ export default function FacultyManagement({
                 </button>
               </div>
 
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-2">
-                  CSV Data
-                </label>
-                <textarea
-                  value={csvText}
-                  onChange={(e) => setCsvText(e.target.value)}
-                  rows={8}
-                  className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-mono text-xs outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all resize-none"
-                  placeholder={`username,name,email,department,designation,role\nktejokiran,K Tejo Kiran,ktejokiran@rguktong.ac.in,CSE,Lecturer,teacher\nnewfaculty,New Faculty,new@rguktong.ac.in,ECE,HOD,hod`}
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-2">
+                    Upload CSV/Excel File
+                  </label>
+                  <label className="flex flex-col items-center justify-center w-full h-48 bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl cursor-pointer hover:bg-slate-100/50 hover:border-blue-400 transition-all group">
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <div className="p-4 bg-white rounded-2xl shadow-sm mb-3 group-hover:scale-110 transition-transform">
+                        <FileSpreadsheet className="w-8 h-8 text-blue-600" />
+                      </div>
+                      <p className="mb-2 text-sm text-slate-600 font-bold">
+                        Click to upload or drag and drop
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        CSV or Excel files only
+                      </p>
+                    </div>
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept=".csv,.xlsx,.xls"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          Papa.parse(file, {
+                            header: true,
+                            skipEmptyLines: true,
+                            complete: (results) => {
+                              if (results.data && results.data.length > 0) {
+                                // Convert back to CSV string for the textarea preview
+                                const csv = Papa.unparse(results.data);
+                                setCsvText(csv);
+                                toast.success(
+                                  `Successfully parsed ${results.data.length} rows`,
+                                );
+                              }
+                            },
+                            error: (err) => {
+                              toast.error(
+                                "Failed to parse file: " + err.message,
+                              );
+                            },
+                          });
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-2">
+                    Manual CSV Input (Preview)
+                  </label>
+                  <textarea
+                    value={csvText}
+                    onChange={(e) => setCsvText(e.target.value)}
+                    rows={8}
+                    className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-mono text-xs outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all resize-none"
+                    placeholder={`username,name,email,department,designation,role\nktejokiran,K Tejo Kiran,ktejokiran@rguktong.ac.in,CSE,Lecturer,teacher`}
+                  />
+                </div>
               </div>
 
               <button
@@ -890,9 +947,17 @@ export default function FacultyManagement({
                       <td className="px-10 py-6">
                         <div className="flex items-center gap-4">
                           <div
-                            className={`w-11 h-11 rounded-full text-white flex items-center justify-center font-bold text-sm shadow-lg border-2 border-white ring-1 ring-slate-100 ${isSelected ? "bg-blue-600" : "bg-slate-900"}`}
+                            className={`w-11 h-11 rounded-full text-white flex items-center justify-center font-bold text-sm shadow-lg border-2 border-white ring-1 ring-slate-100 overflow-hidden ${isSelected ? "bg-blue-600" : "bg-slate-900"}`}
                           >
-                            {member.Name?.[0] || member.Username?.[0]}
+                            {member.ProfileUrl ? (
+                              <img
+                                src={member.ProfileUrl}
+                                alt={member.Name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              member.Name?.[0] || member.Username?.[0]
+                            )}
                           </div>
                           <div className="flex flex-col">
                             <p className="font-bold text-slate-900 tracking-tight leading-none mb-1.5">
@@ -936,6 +1001,16 @@ export default function FacultyManagement({
                       {mode === "single" && (
                         <td className="px-10 py-6">
                           <div className="flex items-center justify-end gap-2.5">
+                            <button
+                              onClick={() => {
+                                setSelectedFaculty(member);
+                                setShowViewModal(true);
+                              }}
+                              className="p-2.5 bg-slate-100 text-slate-600 rounded-full hover:bg-blue-600 hover:text-white transition-all active:scale-95 shadow-sm"
+                              title="View Details"
+                            >
+                              <Eye size={16} />
+                            </button>
                             <button
                               onClick={() => openEdit(member)}
                               className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-600 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-slate-200 active:scale-95 transition-all shadow-sm"
@@ -1168,6 +1243,142 @@ export default function FacultyManagement({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* ─── Bio View Modal ─── */}
+      {showViewModal && selectedFaculty && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-[32px] overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-300 border border-white/20">
+            {/* Modal Header/Profile Panel */}
+            <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-10 text-white relative">
+              <button
+                onClick={() => setShowViewModal(false)}
+                className="absolute top-8 right-8 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-all text-white/50 hover:text-white"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="flex items-center gap-6">
+                <div className="w-24 h-24 rounded-3xl bg-white/10 border-4 border-white/10 overflow-hidden shadow-2xl shrink-0">
+                  {selectedFaculty.ProfileUrl ? (
+                    <img
+                      src={selectedFaculty.ProfileUrl}
+                      alt={selectedFaculty.Name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-3xl font-black bg-blue-600">
+                      {selectedFaculty.Name?.[0]}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-3xl font-black tracking-tight leading-none mb-2">
+                    {selectedFaculty.Name}
+                  </h3>
+                  <p className="text-blue-400 font-black uppercase tracking-widest text-[10px] flex items-center gap-2">
+                    <span className="px-2 py-0.5 bg-blue-500/20 rounded">
+                      {selectedFaculty.Designation || "Lecturer"}
+                    </span>
+                    <span className="text-slate-500">•</span>
+                    <span>{selectedFaculty.Department} Department</span>
+                  </p>
+                  <div className="flex items-center gap-4 mt-4 text-slate-400 text-xs">
+                    <div className="flex items-center gap-1.5">
+                      <Mail size={12} className="text-blue-400" />
+                      {selectedFaculty.Email}
+                    </div>
+                    {selectedFaculty.Contact && (
+                      <div className="flex items-center gap-1.5">
+                        <Plus size={12} className="text-emerald-400" />
+                        {selectedFaculty.Contact}
+                      </div>
+                    )}
+                    {selectedFaculty.CreatedAt && (
+                      <div className="flex items-center gap-1.5">
+                        <Calendar size={12} className="text-amber-400" />
+                        Joined{" "}
+                        {new Date(
+                          selectedFaculty.CreatedAt,
+                        ).toLocaleDateString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bio Content */}
+            <div className="p-10 max-h-[60vh] overflow-y-auto bg-slate-50/50">
+              <div className="space-y-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <BookOpen size={20} className="text-slate-400" />
+                  <h4 className="text-lg font-black text-slate-900 uppercase tracking-tight">
+                    Professional Biography
+                  </h4>
+                </div>
+
+                {selectedFaculty.Bio &&
+                Object.keys(selectedFaculty.Bio).length > 0 ? (
+                  <div className="grid grid-cols-1 gap-6">
+                    {Object.entries(selectedFaculty.Bio).map(
+                      ([key, val]: any) => {
+                        if (!val || (Array.isArray(val) && val.length === 0))
+                          return null;
+                        return (
+                          <div
+                            key={key}
+                            className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm"
+                          >
+                            <label className="text-[10px] font-black uppercase tracking-widest text-blue-600 block mb-3">
+                              {key.replace(/_/g, " ")}
+                            </label>
+                            {Array.isArray(val) ? (
+                              <ul className="space-y-2">
+                                {val.map((item: string, i: number) => (
+                                  <li
+                                    key={i}
+                                    className="text-sm text-slate-600 font-medium flex items-start gap-2 leading-relaxed"
+                                  >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-200 mt-2 shrink-0" />
+                                    {item}
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                                {val}
+                              </p>
+                            )}
+                          </div>
+                        );
+                      },
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 bg-white rounded-3xl border border-slate-100 border-dashed">
+                    <BookOpen
+                      size={40}
+                      className="mx-auto text-slate-200 mb-4"
+                    />
+                    <p className="text-slate-400 font-bold italic text-sm">
+                      No biographical data available for this member.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-8 bg-white border-t border-slate-100 flex justify-end gap-3">
+              <button
+                onClick={() => setShowViewModal(false)}
+                className="px-8 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg active:scale-95"
+              >
+                Close Profile
+              </button>
+            </div>
           </div>
         </div>
       )}

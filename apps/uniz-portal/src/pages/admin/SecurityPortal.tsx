@@ -30,7 +30,9 @@ import SearchStudents from "./searchstudents";
 export default function SecurityPortal() {
   useIsAuth();
   const { logout } = useLogout();
-  const [activeTab, setActiveTab] = useState<"dashboard" | "logs" | "search">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "logs" | "search">(
+    "dashboard",
+  );
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,7 +41,8 @@ export default function SecurityPortal() {
   const [searching, setSearching] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
 
-  const username = JSON.parse(localStorage.getItem("username") || '"Security"');
+  const username =
+    localStorage.getItem("username")?.replace(/"/g, "") || "Security";
 
   const navItems = [
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
@@ -384,9 +387,10 @@ export default function SecurityPortal() {
                 onClick={() => setActiveTab(item.id as any)}
                 className={`
                   w-full flex items-center space-x-3 px-4 py-3 rounded-full text-left transition-all duration-200 group relative
-                  ${isActive
-                    ? "bg-emerald-50 text-emerald-700"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  ${
+                    isActive
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }
                 `}
               >
@@ -394,9 +398,10 @@ export default function SecurityPortal() {
                   <Icon
                     size={21}
                     className={`shrink-0 transition-transform group-hover:scale-110 duration-200
-                      ${isActive
-                        ? "text-emerald-600"
-                        : "text-slate-400 group-hover:text-slate-700"
+                      ${
+                        isActive
+                          ? "text-emerald-600"
+                          : "text-slate-400 group-hover:text-slate-700"
                       }`}
                   />
                 </div>
@@ -435,9 +440,14 @@ export default function SecurityPortal() {
             className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-full text-left transition-all duration-200 group text-red-500 hover:bg-red-50"
           >
             <div className="flex items-center justify-center min-w-[24px]">
-              <LogOut size={20} className="shrink-0 transition-transform group-hover:rotate-12" />
+              <LogOut
+                size={20}
+                className="shrink-0 transition-transform group-hover:rotate-12"
+              />
             </div>
-            {isSidebarOpen && <span className="text-[15px] font-semibold">Logout</span>}
+            {isSidebarOpen && (
+              <span className="text-[15px] font-semibold">Logout</span>
+            )}
           </button>
         </div>
       </aside>

@@ -51,6 +51,7 @@ interface FacultyProfile {
   Role: string;
   Contact?: string;
   ProfileUrl?: string;
+  Bio?: Record<string, string[]>;
 }
 
 interface Student {
@@ -102,9 +103,8 @@ export default function FacultyDashboard() {
   const [profile, setProfile] = useState<FacultyProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
 
-  const username = JSON.parse(
-    localStorage.getItem("username") || `"Professor"`,
-  );
+  const username =
+    localStorage.getItem("username")?.replace(/"/g, "") || "Professor";
   const isHOD = (profile?.Role || "").toLowerCase() === "hod";
 
   /* ── Fetch profile ── */
@@ -256,8 +256,16 @@ export default function FacultyDashboard() {
                 {profile?.Department}
               </p>
             </div>
-            <div className="w-11 h-11 rounded-[14px] bg-black flex items-center justify-center font-bold text-white shadow-sm">
-              {(profile?.Name || username || "F")[0].toUpperCase()}
+            <div className="w-11 h-11 rounded-[14px] bg-black flex items-center justify-center font-bold text-white shadow-sm overflow-hidden">
+              {profile?.ProfileUrl ? (
+                <img
+                  src={profile.ProfileUrl}
+                  alt={profile.Name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                (profile?.Name || username || "F")[0].toUpperCase()
+              )}
             </div>
           </div>
         </header>
@@ -408,13 +416,22 @@ function ProfileSection({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ contact: "", designation: "" });
+  const [form, setForm] = useState({
+    name: "",
+    contact: "",
+    designation: "",
+    profileUrl: "",
+    bio: {} as Record<string, string[]>,
+  });
 
   useEffect(() => {
     if (profile) {
       setForm({
+        name: profile.Name || "",
         contact: profile.Contact || "",
         designation: profile.Designation || "",
+        profileUrl: profile.ProfileUrl || "",
+        bio: profile.Bio || {},
       });
     }
   }, [profile]);
@@ -423,17 +440,17 @@ function ProfileSection({
     if (!profile) return;
     setSaving(true);
     try {
-      const res = await fetch(
-        `${BASE_URL}/profile/admin/faculty/${profile.Username}`,
-        {
-          method: "PUT",
-          headers: { ...authHeader(), "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contact: form.contact,
-            designation: form.designation,
-          }),
-        },
-      );
+      const res = await fetch(`${BASE_URL}/profile/faculty/me/update`, {
+        method: "PUT",
+        headers: { ...authHeader(), "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          contact: form.contact,
+          designation: form.designation,
+          profileUrl: form.profileUrl,
+          bio: form.bio,
+        }),
+      });
       const data = await res.json();
       if (data.success) {
         toast.success("Profile updated!");
@@ -511,8 +528,16 @@ function ProfileSection({
       <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
         {/* Profile header */}
         <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 p-8 flex items-center gap-6">
-          <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-white font-bold text-3xl border-2 border-white/20">
-            {profile.Name[0]}
+          <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-white font-bold text-3xl border-2 border-white/20 overflow-hidden shrink-0">
+            {profile.ProfileUrl ? (
+              <img
+                src={profile.ProfileUrl}
+                alt={profile.Name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              profile.Name[0]
+            )}
           </div>
           <div>
             <h3 className="text-2xl font-bold text-white">{profile.Name}</h3>
@@ -535,7 +560,6 @@ function ProfileSection({
               value: profile.Username,
               editable: false,
             },
-            { label: "Full Name", value: profile.Name, editable: false },
             { label: "Email Address", value: profile.Email, editable: false },
             { label: "Department", value: profile.Department, editable: false },
             {
@@ -553,6 +577,24 @@ function ProfileSection({
               </p>
             </div>
           ))}
+
+          {/* Editable: Full Name */}
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+              Full Name
+            </label>
+            {isEditing ? (
+              <input
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl font-semibold text-neutral-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all"
+              />
+            ) : (
+              <p className="font-semibold text-neutral-900 text-base">
+                {profile.Name || "Not set"}
+              </p>
+            )}
+          </div>
 
           {/* Editable: Designation */}
           <div className="space-y-2">
@@ -593,6 +635,96 @@ function ProfileSection({
               </p>
             )}
           </div>
+
+          {/* Editable: Profile URL */}
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+              Profile Photo URL
+            </label>
+            {isEditing ? (
+              <input
+                type="url"
+                value={form.profileUrl}
+                onChange={(e) =>
+                  setForm({ ...form, profileUrl: e.target.value })
+                }
+                placeholder="https://example.com/photo.jpg"
+                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl font-semibold text-neutral-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all"
+              />
+            ) : (
+              <p className="font-semibold text-neutral-900 text-base truncate">
+                {profile.ProfileUrl || "No photo set"}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Bio / Professional Details */}
+      <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden p-8 space-y-8">
+        <div className="flex items-center gap-3">
+          <BookOpen className="w-5 h-5 text-neutral-400" />
+          <h3 className="text-lg font-bold text-neutral-900">
+            Professional Information
+          </h3>
+        </div>
+
+        <div className="space-y-8">
+          {[
+            "Specialization",
+            "Research Areas",
+            "Experience",
+            "Subjects Taught",
+            "Additional Responsibilities",
+            "Administrative Experience",
+            "Publications",
+            "Faculty Dev Program",
+            "Seminar Conference",
+            "Workshops",
+            "Any Other",
+          ].map((key) => {
+            const values = (form.bio as any)[key] || [];
+            return (
+              <div key={key} className="space-y-3">
+                <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest block">
+                  {key}
+                </label>
+                {isEditing ? (
+                  <textarea
+                    value={values.join("\n")}
+                    onChange={(e) => {
+                      const newVals = e.target.value
+                        .split("\n")
+                        .filter((v: string) => v.trim() !== "");
+                      setForm({
+                        ...form,
+                        bio: { ...form.bio, [key]: newVals },
+                      });
+                    }}
+                    placeholder={`Enter ${key} (one per line)`}
+                    rows={4}
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl font-medium text-neutral-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all text-sm leading-relaxed"
+                  />
+                ) : values.length > 0 ? (
+                  <ul className="space-y-2">
+                    {values.map((v: string, i: number) => (
+                      <li
+                        key={i}
+                        className="text-neutral-600 text-sm flex items-start gap-2 leading-relaxed"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-neutral-300 mt-2 shrink-0" />
+                        {v}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-neutral-400 text-sm italic">
+                    No information provided
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -996,7 +1128,7 @@ type PwdStep = "current" | "otp" | "new";
 function PasswordSection() {
   const [step, setStep] = useState<PwdStep>("current");
   const [username] = useState(
-    () => JSON.parse(localStorage.getItem("username") || `""`) || "",
+    () => localStorage.getItem("username")?.replace(/"/g, "") || "",
   );
   const [currentPassword, setCurrentPassword] = useState("");
   const [otp, setOtp] = useState("");
