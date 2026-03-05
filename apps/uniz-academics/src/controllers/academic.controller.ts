@@ -1746,6 +1746,16 @@ export const getGradesTemplate = async (
 
 export const uploadGrades = async (req: any, res: Response) => {
   const user = req.user;
+  console.log(`[Academics] Upload Grades Request from ${user.username}`);
+  console.log(`[Academics] req.file present: ${!!req.file}`);
+  if (req.file) {
+    console.log(`[Academics] req.file.originalname: ${req.file.originalname}`);
+    console.log(`[Academics] req.file.size: ${req.file.size}`);
+    console.log(
+      `[Academics] req.file.buffer length: ${req.file.buffer?.length || 0}`,
+    );
+  }
+
   if (!req.file)
     return res.status(400).json({ message: "Excel file required" });
 
@@ -1753,7 +1763,11 @@ export const uploadGrades = async (req: any, res: Response) => {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(req.file.buffer);
     const worksheet = workbook.getWorksheet(1);
-    if (!worksheet) return res.status(400).json({ message: "Empty file" });
+    console.log(`[Academics] Worksheets found: ${workbook.worksheets.length}`);
+    if (!worksheet) {
+      console.warn(`[Academics] No worksheet found at index 1`);
+      return res.status(400).json({ message: "Empty file" });
+    }
 
     const rows: any[] = [];
     const headerRow = worksheet.getRow(1);
