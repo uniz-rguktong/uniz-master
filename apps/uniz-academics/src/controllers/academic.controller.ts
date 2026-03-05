@@ -1588,6 +1588,8 @@ export const deleteSubject = async (
         });
       }
     }
+
+    await prisma.subject.delete({ where: { id } });
     return res.json({ success: true, message: "Subject deleted successfully" });
   } catch (e: any) {
     console.error("[Academics] deleteSubject Error:", e);
