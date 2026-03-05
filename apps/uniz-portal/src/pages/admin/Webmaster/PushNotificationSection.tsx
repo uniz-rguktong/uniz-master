@@ -25,7 +25,7 @@ export default function PushNotificationSection() {
 
   // Broadcast Form State
   const [broadcast, setBroadcast] = useState({
-    target: "all", // all, student, batch, year
+    target: "all", // all, students, year, batch, hod, dean, user
     title: "",
     body: "",
     image: "",
@@ -321,11 +321,82 @@ export default function PushNotificationSection() {
                     }
                     className="w-full bg-slate-50 border border-slate-100 px-5 py-3.5 rounded-2xl font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all cursor-pointer"
                   >
-                    <option value="all">All Students</option>
-                    <option value="student">Individuals</option>
-                    <option value="batch">Year Batch</option>
+                    <option value="all">
+                      All (Students + Faculty + Deans)
+                    </option>
+                    <option value="students">All Students</option>
+                    <option value="year">By Academic Year (E1/E2/E3/E4)</option>
+                    <option value="batch">By Batch Prefix (e.g. O21)</option>
+                    <option value="user">Single User</option>
+                    <option value="hod">HODs Only</option>
+                    <option value="dean">Deans Only</option>
                   </select>
                 </div>
+
+                {/* Conditional extra field based on target */}
+                {broadcast.target === "user" && (
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      Username
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      value={(broadcast as any).username || ""}
+                      onChange={(e) =>
+                        setBroadcast({
+                          ...broadcast,
+                          username: e.target.value.toUpperCase(),
+                        } as any)
+                      }
+                      placeholder="e.g. O210193"
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+                    />
+                  </div>
+                )}
+                {broadcast.target === "batch" && (
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      Batch Prefix
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      value={(broadcast as any).batch || ""}
+                      onChange={(e) =>
+                        setBroadcast({
+                          ...broadcast,
+                          batch: e.target.value.toLowerCase(),
+                        } as any)
+                      }
+                      placeholder="e.g. o21  (2021 batch)"
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+                    />
+                  </div>
+                )}
+                {broadcast.target === "year" && (
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      Academic Year
+                    </label>
+                    <select
+                      value={(broadcast as any).year || "E1"}
+                      onChange={(e) =>
+                        setBroadcast({
+                          ...broadcast,
+                          year: e.target.value,
+                        } as any)
+                      }
+                      className="w-full bg-slate-50 border border-slate-100 px-5 py-3.5 rounded-2xl font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all cursor-pointer"
+                    >
+                      {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
                 {/* Title */}
                 <div className="space-y-2">
