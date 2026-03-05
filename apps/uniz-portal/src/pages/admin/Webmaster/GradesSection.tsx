@@ -80,14 +80,19 @@ export default function GradesSection() {
           /"/g,
           "",
         );
-        const url = `${GET_SUBJECTS}?department=${manualDept}&semester=${encodeURIComponent(`${manualYear}-${manualGrade.semesterId}`)}&limit=100`;
+        const url = `${GET_SUBJECTS}?department=${manualDept}&semester=${encodeURIComponent(manualGrade.semesterId)}&limit=100`;
         const res = await fetch(url, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
         if (data.success && data.subjects) {
+          // Year is encoded in subject code (e.g. CSE-E2-SEM-1-01)
+          // Filter client-side by checking the selected year is in the code
+          const filtered = data.subjects.filter((s: any) =>
+            s.code.toUpperCase().includes(`-${manualYear}-`),
+          );
           setManualSubjects(
-            data.subjects.map((s: any) => ({ code: s.code, name: s.name })),
+            filtered.map((s: any) => ({ code: s.code, name: s.name })),
           );
         } else {
           setManualSubjects([]);
