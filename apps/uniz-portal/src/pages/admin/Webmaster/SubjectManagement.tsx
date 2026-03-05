@@ -18,7 +18,7 @@ import {
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../api/apiClient";
-import { Edit2 } from "lucide-react";
+import { Edit3 } from "lucide-react";
 
 export default function SubjectManagement() {
   const [subjects, setSubjects] = useState<any[]>([]);
@@ -255,7 +255,7 @@ export default function SubjectManagement() {
                       onClick={() => handleEditClick(sub)}
                       className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
                     >
-                      <Edit2 size={14} />
+                      <Edit3 size={14} />
                     </button>
                     <button
                       onClick={() => handleDeleteSubject(sub.id)}
@@ -523,7 +523,7 @@ export default function SubjectManagement() {
                   {isAdding ? (
                     <Loader2 className="animate-spin w-5 h-5" />
                   ) : editingSubject ? (
-                    <Edit2 size={18} />
+                    <Edit3 size={18} />
                   ) : (
                     <Plus size={18} />
                   )}

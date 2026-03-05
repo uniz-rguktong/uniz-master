@@ -11,6 +11,8 @@ import {
   Link,
   CheckCircle2,
   X,
+  Edit3,
+  Trash2,
 } from "lucide-react";
 import { BANNERS_BASE, UPDATE_BANNER_VISIBILITY } from "../../../api/endpoints";
 import { toast } from "react-toastify";
@@ -28,6 +30,7 @@ export default function BannersSection() {
     imageUrl: "",
     isVisible: true,
   });
+  const [editingBanner, setEditingBanner] = useState<any>(null);
 
   useEffect(() => {
     fetchBanners();
@@ -66,13 +69,18 @@ export default function BannersSection() {
     }
   };
 
-  const handleCreateBanner = async (e: React.FormEvent) => {
+  const handleSaveBanner = async (e: React.FormEvent) => {
     e.preventDefault();
-    setActionLoading("creating");
+    setActionLoading(editingBanner ? "updating" : "creating");
     const token = getAuthToken();
     try {
-      const res = await fetch(BANNERS_BASE, {
-        method: "POST",
+      const url = editingBanner
+        ? `${BANNERS_BASE}/${editingBanner.id || editingBanner._id}`
+        : BANNERS_BASE;
+      const method = editingBanner ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -81,28 +89,73 @@ export default function BannersSection() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success("Banner created successfully");
+        toast.success(
+          editingBanner
+            ? "Banner updated successfully"
+            : "Banner created successfully",
+        );
         setShowAddModal(false);
+        setEditingBanner(null);
         setNewBanner({ title: "", text: "", imageUrl: "", isVisible: true });
         fetchBanners();
       } else {
-        toast.error(data.msg || "Creation failed");
+        toast.error(data.msg || "Operation failed");
       }
     } catch (error) {
-      toast.error("Error creating banner");
+      toast.error("Error saving banner");
     } finally {
       setActionLoading(null);
     }
   };
 
-  const hideBanner = async (id: string) => {
-    if (!id) {
-      toast.error("Invalid Banner ID");
+  const handleEditClick = (banner: any) => {
+    setEditingBanner(banner);
+    setNewBanner({
+      title: banner.title,
+      text: banner.text,
+      imageUrl: banner.imageUrl,
+      isVisible: banner.isVisible,
+    });
+    setShowAddModal(true);
+  };
+
+  const deleteBanner = async (id: string) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this banner permanently?",
+      )
+    )
       return;
-    }
     setActionLoading(id);
     const token = getAuthToken();
-    console.log(`Setting visibility to hidden for Banner ${id}`);
+    try {
+      const res = await fetch(`${BANNERS_BASE}/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Banner deleted successfully");
+        setBanners((prev) =>
+          prev.filter((b) => (b.id || b._id || b.uuid) !== id),
+        );
+      } else {
+        toast.error(data.msg || "Deletion failed");
+      }
+    } catch (error) {
+      toast.error("Error deleting banner");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const toggleVisibilityAction = async (banner: any) => {
+    const id = banner.id || banner._id || banner.uuid;
+    const newVisibility = !banner.isVisible;
+    setActionLoading(id);
+    const token = getAuthToken();
     try {
       const res = await fetch(UPDATE_BANNER_VISIBILITY(id), {
         method: "POST",
@@ -110,24 +163,26 @@ export default function BannersSection() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ isVisible: false }),
+        body: JSON.stringify({ isVisible: newVisibility }),
       });
       const data = await res.json();
       if (data.success) {
-        toast.success("Banner hidden successfully");
+        toast.success(
+          newVisibility
+            ? "Banner is now visible"
+            : "Banner hidden successfully",
+        );
         setBanners((prev) =>
           prev.map((b) =>
             b.id === id || b._id === id || b.uuid === id
-              ? { ...b, isVisible: false }
+              ? { ...b, isVisible: newVisibility }
               : b,
           ),
         );
       } else {
-        console.error("Hide banner failed:", data);
-        toast.error(data.msg || "Failed to hide banner");
+        toast.error(data.msg || "Failed to update visibility");
       }
     } catch (error) {
-      console.error("Network error hiding banner:", error);
       toast.error("Error connecting to visibility service");
     } finally {
       setActionLoading(null);
@@ -207,21 +262,38 @@ export default function BannersSection() {
                     {banner.text}
                   </p>
 
-                  <div className="mt-auto flex items-center gap-3">
-                    {banner.isVisible && (
-                      <button
-                        onClick={() => hideBanner(bannerId)}
-                        disabled={actionLoading === bannerId}
-                        className="flex-1 flex items-center justify-center gap-2.5 py-3 rounded-full font-bold uppercase tracking-widest text-[9px] transition-all border bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white active:scale-95 disabled:opacity-50"
-                      >
-                        {actionLoading === bannerId ? (
-                          <Loader2 size={13} className="animate-spin" />
-                        ) : (
-                          <EyeOff size={13} />
-                        )}
-                        Hide Spotlight
-                      </button>
-                    )}
+                  <div className="mt-auto flex items-center gap-2">
+                    <button
+                      onClick={() => toggleVisibilityAction(banner)}
+                      disabled={actionLoading === bannerId}
+                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-bold uppercase tracking-widest text-[9px] transition-all border ${
+                        banner.isVisible
+                          ? "bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white"
+                          : "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white"
+                      } active:scale-95 disabled:opacity-50`}
+                    >
+                      {actionLoading === bannerId ? (
+                        <Loader2 size={13} className="animate-spin" />
+                      ) : banner.isVisible ? (
+                        <EyeOff size={13} />
+                      ) : (
+                        <Eye size={13} />
+                      )}
+                      {banner.isVisible ? "Hide" : "Show"}
+                    </button>
+                    <button
+                      onClick={() => handleEditClick(banner)}
+                      className="p-3 bg-slate-50 text-slate-400 rounded-full hover:bg-blue-50 hover:text-blue-600 border border-slate-100 transition-all active:scale-95"
+                    >
+                      <Edit3 size={14} />
+                    </button>
+                    <button
+                      onClick={() => deleteBanner(bannerId)}
+                      disabled={actionLoading === bannerId}
+                      className="p-3 bg-slate-50 text-slate-400 rounded-full hover:bg-red-50 hover:text-red-600 border border-slate-100 transition-all active:scale-95"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -256,30 +328,50 @@ export default function BannersSection() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
           <div
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
-            onClick={() => setShowAddModal(false)}
+            onClick={() => {
+              setShowAddModal(false);
+              setEditingBanner(null);
+              setNewBanner({
+                title: "",
+                text: "",
+                imageUrl: "",
+                isVisible: true,
+              });
+            }}
           />
           <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-            <div className="bg-blue-600 p-8 text-white relative flex items-center gap-5">
+            <div
+              className={`${editingBanner ? "bg-slate-900" : "bg-blue-600"} p-8 text-white relative flex items-center gap-5 transition-colors duration-500`}
+            >
               <div className="p-3.5 bg-white/20 rounded-2xl">
-                <Plus size={26} />
+                {editingBanner ? <Edit3 size={26} /> : <Plus size={26} />}
               </div>
               <div>
                 <h3 className="text-2xl font-semibold tracking-[-0.02em]">
-                  New Banner
+                  {editingBanner ? "Edit Banner" : "New Banner"}
                 </h3>
                 <p className="text-white/70 text-[10px] font-semibold uppercase tracking-[0.2em] mt-1.5">
                   Configure Spotlight Content
                 </p>
               </div>
               <button
-                onClick={() => setShowAddModal(false)}
+                onClick={() => {
+                  setShowAddModal(false);
+                  setEditingBanner(null);
+                  setNewBanner({
+                    title: "",
+                    text: "",
+                    imageUrl: "",
+                    isVisible: true,
+                  });
+                }}
                 className="absolute top-8 right-8 text-white/60 hover:text-white transition-colors"
               >
                 <X size={26} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateBanner} className="p-10 space-y-8">
+            <form onSubmit={handleSaveBanner} className="p-10 space-y-8">
               <div className="space-y-6">
                 {/* Title */}
                 <div className="space-y-2">
@@ -351,14 +443,17 @@ export default function BannersSection() {
               <button
                 disabled={!!actionLoading}
                 type="submit"
-                className="w-full bg-blue-600 text-white py-5 rounded-2xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95"
+                className={`w-full ${editingBanner ? "bg-slate-900 shadow-slate-200" : "bg-blue-600 shadow-blue-200"} text-white py-5 rounded-2xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:opacity-90 transition-all shadow-xl flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95`}
               >
-                {actionLoading === "creating" ? (
+                {actionLoading === "creating" ||
+                actionLoading === "updating" ? (
                   <Loader2 className="animate-spin w-5 h-5" />
-                ) : (
+                ) : editingBanner ? (
                   <CheckCircle2 size={18} />
+                ) : (
+                  <Plus size={18} />
                 )}
-                Launch Banner
+                {editingBanner ? "Update Banner" : "Launch Banner"}
               </button>
             </form>
           </div>
