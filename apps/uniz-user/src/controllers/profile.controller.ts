@@ -423,10 +423,10 @@ export const getAdminProfile = async (
     UserRole.CARETAKER_FEMALE,
     UserRole.SECURITY,
     UserRole.LIBRARIAN,
-    // Legacy support
-    UserRole.DSW,
-    UserRole.WARDEN,
     UserRole.CARETAKER,
+    UserRole.TEACHER,
+    UserRole.FACULTY,
+    UserRole.HOD,
   ];
   if (!user || !adminRoles.includes(user.role as UserRole)) {
     return res
@@ -435,7 +435,34 @@ export const getAdminProfile = async (
   }
 
   try {
-    const profile = await prisma.adminProfile.findUnique({
+    let profile;
+    if (
+      user.role === UserRole.TEACHER ||
+      user.role === UserRole.FACULTY ||
+      user.role === UserRole.HOD
+    ) {
+      profile = await prisma.facultyProfile.findUnique({
+        where: { username: user.username },
+      });
+      return res.json({
+        success: true,
+        data: profile
+          ? {
+              id: profile.id,
+              username: profile.username,
+              name: profile.name,
+              email: profile.email,
+              contact: profile.contact,
+              profile_url: profile.profileUrl,
+              role: profile.role,
+              department: profile.department,
+              designation: profile.designation,
+            }
+          : null,
+      });
+    }
+
+    profile = await prisma.adminProfile.findUnique({
       where: { username: user.username },
     });
     return res.json({
@@ -1021,6 +1048,9 @@ export const updateAdminProfile = async (
     UserRole.DSW,
     UserRole.WARDEN,
     UserRole.CARETAKER,
+    UserRole.TEACHER,
+    UserRole.FACULTY,
+    UserRole.HOD,
   ];
 
   if (!user || !adminRoles.includes(user.role as UserRole)) {
@@ -1030,6 +1060,42 @@ export const updateAdminProfile = async (
   }
 
   try {
+    if (
+      user.role === UserRole.TEACHER ||
+      user.role === UserRole.FACULTY ||
+      user.role === UserRole.HOD
+    ) {
+      // Map frontend fields (profile_url, etc.) to prisma fields (profileUrl, etc.) if needed
+      // Actually standard update body might work if keys match.
+      // Lets be explicit for safety.
+      const facultyData: any = {};
+      if (updates.name) facultyData.name = updates.name;
+      if (updates.email) facultyData.email = updates.email;
+      if (updates.contact) facultyData.contact = updates.contact;
+      if (updates.profileUrl) facultyData.profileUrl = updates.profileUrl;
+      if (updates.profile_url) facultyData.profileUrl = updates.profile_url;
+
+      const updated = await prisma.facultyProfile.update({
+        where: { username: user.username },
+        data: facultyData,
+      });
+
+      return res.json({
+        success: true,
+        data: {
+          id: updated.id,
+          username: updated.username,
+          name: updated.name,
+          email: updated.email,
+          contact: updated.contact,
+          profile_url: updated.profileUrl,
+          role: updated.role,
+          department: updated.department,
+          designation: updated.designation,
+        },
+      });
+    }
+
     const updated = await prisma.adminProfile.update({
       where: { username: user.username },
       data: updates,
@@ -1037,6 +1103,7 @@ export const updateAdminProfile = async (
 
     return res.json({ success: true, data: mapAdminProfile(updated) });
   } catch (e) {
+    console.error("Update Admin Profile Error:", e);
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to update profile",
