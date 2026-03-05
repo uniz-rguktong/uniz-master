@@ -244,7 +244,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                         ? "Loading subjects..."
                         : subjects.length === 0
                           ? "No subjects found"
-                          : "Select Subject"}
+                          : "ALL SUBJECTS (BULK)"}
                     </option>
                     {subjects.map((s) => (
                       <option key={s.code} value={s.code}>
@@ -289,8 +289,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
         <div className="flex justify-end pt-2 border-t border-slate-50">
           <button
             onClick={downloadTemplate}
-            disabled={type === "grades" && !subjectCode}
-            className="h-11 px-6 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-full text-blue-700 font-bold uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2.5 active:scale-95 disabled:opacity-50"
+            className="h-11 px-6 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-full text-blue-700 font-bold uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2.5 active:scale-95"
           >
             <FileDown size={14} /> Download {type} Template
           </button>
