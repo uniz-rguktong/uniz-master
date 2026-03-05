@@ -240,8 +240,8 @@ export const updateStudentProfile = async (
     // Notify student (Backgrounded for latency optimization)
     sendPush(
       user.username,
-      "Profile Updated",
-      `Your profile has been updated. Changed fields: ${Object.keys(updates).join(", ")}.`,
+      "Profile Information Updated",
+      `This notification is to confirm that adjustments have been made to your student profile. The modified information includes: ${Object.keys(updates).join(", ")}.`,
     );
 
     return res.json({ success: true, student: mapStudentProfile(updated) });
@@ -286,8 +286,8 @@ export const adminUpdateStudentProfile = async (
     // Notify student (Backgrounded for latency optimization)
     sendPush(
       username,
-      "Profile Updated",
-      `Your profile has been updated by an administrator. Changed fields: ${Object.keys(updates).join(", ")}.`,
+      "Administrative Profile Modification",
+      `We are writing to inform you that your academic profile information has been modified by the university administration. Updated fields: ${Object.keys(updates).join(", ")}.`,
     );
 
     return res.json({ success: true, student: mapStudentProfile(updated) });
@@ -798,10 +798,12 @@ export const toggleUserSuspension = async (
     // 4. Notify User
     sendPush(
       targetUsername,
-      suspended ? "Account Suspended" : "Account Reinstated",
       suspended
-        ? "Your account has been suspended by an administrator. Please contact the office for details."
-        : "Your account has been reinstated. You can now use all university services.",
+        ? "Official Notice: Account Suspended"
+        : "Account Access Reinstated",
+      suspended
+        ? "We regret to inform you that your academic account access has been suspended by the university administration. For further clarification and to discuss the restoration of your services, please contact the administrative office at your earliest convenience."
+        : "We are pleased to inform you that your UniZ account access has been fully reinstated. You may now resume using all university digital services and portals.",
     );
 
     return res.json({
@@ -1099,7 +1101,7 @@ export const updateAdminProfile = async (
       if (updates.bio || updates.Bio)
         facultyData.bio = updates.bio || updates.Bio;
 
-      const updated = await prisma.facultyProfile.update({
+      const updated: any = await prisma.facultyProfile.update({
         where: { username: user.username },
         data: facultyData,
       });

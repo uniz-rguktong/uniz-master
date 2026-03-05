@@ -66,8 +66,8 @@ export const sendOtpPush = async (
 ): Promise<number> => {
   return await sendPush(
     username,
-    "UniZ Authentication OTP",
-    `Your verification code is ${otp}. It expires in 10 minutes.`,
+    "UniZ Security Authentication",
+    `Your secure verification code is ${otp}. To maintain account security, this code will remain valid for exactly 10 minutes.`,
   );
 };
 
@@ -117,8 +117,8 @@ export const sendLoginNotification = async (
       : "";
   await sendPush(
     username,
-    "New Login Detected",
-    `A new login was detected${deviceStr}. If this wasn't you, please secure your account immediately.`,
+    "Security Alert: New Login Detected",
+    `An access attempt has been successfully identified on your UniZ account${deviceStr}. If you did not authorize this login, please take immediate action to secure your account by reviewing your active sessions and updating your password.`,
   );
   return true;
 };
@@ -129,8 +129,8 @@ export const sendPasswordChangeNotification = async (
 ): Promise<boolean> => {
   await sendPush(
     username,
-    "Password Changed",
-    "Your account password was successfully updated. If you did not perform this action, contact support immediately.",
+    "Account Security: Password Updated",
+    "We are writing to confirm that the password for your UniZ account has been successfully modified. If you did not initiate this change, please contact our administrative support team immediately to report unauthorized activity.",
   );
   return true;
 };
@@ -142,8 +142,8 @@ export const sendProfileUpdateNotification = async (
 ): Promise<boolean> => {
   await sendPush(
     username,
-    "Profile Updated",
-    `Your profile has been updated. Changed fields: ${updatedFields.join(", ")}.`,
+    "Profile Information Updated",
+    `This notification is to confirm that adjustments have been made to your professional profile. The modified fields include: ${updatedFields.join(", ")}.`,
   );
   return true;
 };
