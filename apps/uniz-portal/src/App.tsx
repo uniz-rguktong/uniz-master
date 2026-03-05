@@ -26,7 +26,7 @@ const BannerManager = lazy(() => import("./pages/admin/BannerManager"));
 const CurriculumManager = lazy(() => import("./pages/admin/Curriculum"));
 const SearchStudents = lazy(() => import("./pages/admin/searchstudents"));
 const UpdateStatus = lazy(() => import("./components/UpdateStudentStatus"));
-const ApproveComp = lazy(() => import("./pages/admin/approve-comp"));
+// const ApproveComp = lazy(() => import("./pages/admin/approve-comp"));
 const AddFaculty = lazy(() => import("./pages/admin/AddFaculty"));
 const SecurityPortal = lazy(() => import("./pages/admin/SecurityPortal"));
 const ContactUs = lazy(() => import("./pages/ContactUs"));
@@ -130,7 +130,7 @@ export default function App() {
     <>
       <InstallPWA />
       <ToastContainer
-        position="top-center"
+        position="top-right"
         autoClose={3000}
         hideProgressBar
         newestOnTop
@@ -308,6 +308,7 @@ export default function App() {
               </MaintenanceGuard>
             }
           />
+          {/*
           <Route
             path="/student/outpass"
             element={
@@ -348,6 +349,7 @@ export default function App() {
               </MaintenanceGuard>
             }
           />
+          */}
           <Route
             path="/student/resetpassword"
             element={
@@ -358,6 +360,7 @@ export default function App() {
               </MaintenanceGuard>
             }
           />
+          {/*
           <Route
             path="/studyspace"
             element={
@@ -378,6 +381,7 @@ export default function App() {
               </MaintenanceGuard>
             }
           />
+          */}
           <Route
             path="/student/attendance"
             element={
@@ -474,6 +478,7 @@ export default function App() {
               </PageTransition>
             }
           />
+          {/*
           <Route
             path="/admin/approveouting"
             element={
@@ -490,6 +495,7 @@ export default function App() {
               </PageTransition>
             }
           />
+          */}
           <Route
             path="/admin/updatestudentstatus"
             element={

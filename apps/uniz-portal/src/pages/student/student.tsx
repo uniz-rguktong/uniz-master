@@ -1,14 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRecoilValue } from "recoil";
 import { useSearchParams } from "react-router-dom";
 import {
   User,
   Droplets,
   Phone,
-  Edit2,
   GraduationCap,
   IdCard,
-  History,
+  History as HistoryIcon,
   Clock,
   Calendar,
   MapPin,
@@ -17,6 +16,9 @@ import {
   Award,
   LayoutGrid,
   Loader2,
+  Camera,
+  Pencil,
+  BadgeCheck,
 } from "lucide-react";
 import { student } from "../../store";
 import { useIsAuth } from "../../hooks/is_authenticated";
@@ -38,7 +40,7 @@ import AcademicRecord from "./components/AcademicRecord";
 import MySubjects from "./components/MySubjects";
 import { Student } from "../../types";
 
-export const enableOutingsAndOutpasses = true;
+export const enableOutingsAndOutpasses = false;
 
 //
 //
@@ -124,29 +126,32 @@ export default function StudentProfilePage() {
 
   // Polling removed - now handled centrally in useStudentData hook
 
+  // Helper to derive initial fields from user user object
+  const getInitialFields = (userData: any) => ({
+    name: userData?.name || "",
+    gender: userData?.gender || "",
+    address: userData?.address || userData?.Address || "", // Handle different casing if any
+    bloodGroup: userData?.blood_group || userData?.BloodGroup || "",
+    phoneNumber: userData?.phone_number || userData?.PhoneNumber || "",
+    dateOfBirth: userData?.date_of_birth
+      ? new Date(userData.date_of_birth).toISOString().split("T")[0]
+      : "",
+    fatherName: userData?.father_name || "",
+    motherName: userData?.mother_name || "",
+    fatherOccupation: userData?.father_occupation || "",
+    motherOccupation: userData?.mother_occupation || "",
+    fatherEmail: userData?.father_email || "",
+    motherEmail: userData?.mother_email || "",
+    fatherAddress: userData?.father_address || "",
+    motherAddress: userData?.mother_address || "",
+    fatherPhoneNumber: userData?.father_phonenumber || "",
+    motherPhoneNumber: userData?.mother_phonenumber || "",
+  });
+
   // Init Data
   useEffect(() => {
     if (user && Object.keys(user).length > 0) {
-      setFields({
-        name: user.name || "",
-        gender: user.gender || "",
-        address: user.address || user.Address || "", // Handle different casing if any
-        bloodGroup: user.blood_group || user.BloodGroup || "",
-        phoneNumber: user.phone_number || user.PhoneNumber || "",
-        dateOfBirth: user.date_of_birth
-          ? new Date(user.date_of_birth).toISOString().split("T")[0]
-          : "",
-        fatherName: user.father_name || "",
-        motherName: user.mother_name || "",
-        fatherOccupation: user.father_occupation || "",
-        motherOccupation: user.mother_occupation || "",
-        fatherEmail: user.father_email || "",
-        motherEmail: user.mother_email || "",
-        fatherAddress: user.father_address || "",
-        motherAddress: user.mother_address || "",
-        fatherPhoneNumber: user.father_phonenumber || "",
-        motherPhoneNumber: user.mother_phonenumber || "",
-      });
+      setFields(getInitialFields(user));
       setIsLoading(false);
     }
   }, [user]);
@@ -177,17 +182,81 @@ export default function StudentProfilePage() {
   }, [activeTab]);
 
   // Handlers
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploadingImage(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append(
+        "upload_preset",
+        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || "uniz_upload",
+      );
+
+      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        { method: "POST", body: formData }
+      );
+      const data = await res.json();
+
+      if (data.secure_url) {
+        const updateRes = await apiClient<any>(UPDATE_DETAILS, {
+          method: "PUT",
+          body: JSON.stringify({ ...fields, profile_url: data.secure_url }),
+        });
+        if (updateRes && updateRes.success) {
+          toast.success("Profile photo updated successfully!");
+          await refetch();
+        } else {
+          toast.error("Failed to update profile.");
+        }
+      } else {
+        toast.error("Upload failed.");
+      }
+    } catch (err) {
+      toast.error("Failed to upload image.");
+      console.error(err);
+    } finally {
+      setIsUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   const handleFieldChange = useCallback((name: string, value: any) => {
     setFields((prev: any) => ({ ...prev, [name]: value }));
   }, []);
 
   const handleSubmit = async (e: any) => {
     if (e) e.preventDefault();
+
+    const initialFields = getInitialFields(user);
+    const updatedFields: Record<string, any> = {};
+
+    Object.keys(fields).forEach((key) => {
+      const typedKey = key as keyof typeof fields;
+      // Compare current field value with initial value
+      if (fields[typedKey] !== initialFields[typedKey as keyof typeof initialFields]) {
+        updatedFields[key] = fields[typedKey];
+      }
+    });
+
+    if (Object.keys(updatedFields).length === 0) {
+      toast.info("No modifications were made.");
+      setIsEditing(false);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const data = await apiClient<any>(UPDATE_DETAILS, {
         method: "PUT",
-        body: JSON.stringify({ ...fields }),
+        body: JSON.stringify(updatedFields),
       });
       if (data && data.success) {
         await refetch();
@@ -297,13 +366,7 @@ export default function StudentProfilePage() {
       name: "gender",
       editable: true,
     },
-    {
-      icon: <MapPin className="w-4 h-4" />,
-      label: "Address",
-      name: "address",
-      editable: true,
-      fullWidth: true,
-    },
+
     {
       icon: <Droplets className="w-4 h-4" />,
       label: "Blood Group",
@@ -362,64 +425,112 @@ export default function StudentProfilePage() {
     <div className="font-sans text-slate-900">
       <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2">
         {/* Profile Header */}
-        <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-4 md:gap-6 mb-8">
-          {/* Profile Photo Removed */}
-
-          <div className="flex-1 mb-0 md:mb-2 text-center md:text-left w-full md:w-auto">
-            <p className="text-slate-400 font-medium text-[13px] mb-1.5 px-0.5 uppercase tracking-widest leading-none">
-              Institutional Student Terminal
-            </p>
-            <h1 className="text-2xl font-semibold tracking-[-0.02em] text-cyan-950 leading-none mb-3">
-              {user?.name}
-            </h1>
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-xs md:text-sm font-medium text-slate-500">
-              <div className="flex items-center gap-2">
-                <span className="text-indigo-600 font-bold uppercase tracking-widest text-[10px] bg-indigo-50 border border-indigo-100 px-2 py-1 rounded">
-                  {user?.username}
-                </span>
-                <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                <span className="uppercase tracking-wide font-bold text-slate-600 text-[10px] md:text-xs">
-                  {user?.branch} • {user?.year}
-                </span>
-              </div>
-              {user?.has_pending_requests && (
-                <span className="text-amber-600 px-3 py-1 bg-amber-50 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 animate-pulse ml-0 md:ml-1">
-                  <Clock className="w-3 h-3" /> PENDING ACTION
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex gap-2 mb-0 md:mb-2 shrink-0">
-            {isEditing ? (
+        <div className="flex flex-col items-center justify-center relative mb-8">
+          {/* Actions - Top Right Absolute Position */}
+          <div className="absolute top-0 right-0 flex gap-2 shrink-0 z-20">
+            {isEditing && (
               <>
                 <button
                   onClick={() => {
                     setIsEditing(false);
                     refetch();
                   }}
-                  className="uniz-primary-btn h-auto px-5 py-2 bg-white text-slate-600 border border-slate-200 shadow-sm"
+                  className="uniz-primary-btn h-auto px-4 py-1.5 bg-white text-slate-600 border border-slate-200 shadow-sm text-xs"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="uniz-primary-btn h-auto px-6 py-2"
+                  className="uniz-primary-btn h-auto px-4 py-1.5 text-xs inline-flex items-center"
                 >
-                  {isSubmitting && <Loader2 className="w-3 h-3 animate-spin" />}{" "}
-                  Save Changes
+                  {isSubmitting && <Loader2 className="w-3 h-3 animate-spin mr-1" />}{" "}
+                  Save
                 </button>
               </>
-            ) : (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="flex uniz-primary-btn h-auto px-6 py-2 bg-indigo-600 border border-indigo-600 text-white hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
-              >
-                <Edit2 className="w-4 h-4" />{" "}
-                <span className="hidden sm:inline">Edit Profile</span>
-              </button>
             )}
+          </div>
+
+          {/* Centered Avatar and Info */}
+          <div className="flex flex-col items-center mt-4">
+            {/* The Verified Status Ring */}
+            <div className="relative p-[4px] md:p-[5px] rounded-full mb-4"
+              style={{
+                background: "#2ebd59",
+                boxShadow: "0 0 0 1px rgba(46, 189, 89, 0.1)"
+              }}
+            >
+              <div className="relative bg-slate-50 p-[3px] rounded-full">
+                <div className="w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-[#004e43] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
+                  {user?.profile_url ? (
+                    <img src={user.profile_url} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    user?.name ? user.name.charAt(0).toUpperCase() : "S"
+                  )}
+                  {isUploadingImage && (
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm z-10">
+                      <Loader2 className="w-8 h-8 text-white animate-spin" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Camera Icon Button */}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploadingImage}
+                className="absolute bottom-[-1px] right-2 w-8 h-8 bg-[#e8f0fe] border-[1.5px] border-[#4285f4] rounded-full flex items-center justify-center text-[#174ea6] hover:bg-blue-100 transition-colors z-20 cursor-pointer"
+                title="Update Profile Photo"
+              >
+                <Camera className="w-[18px] h-[18px] overflow-hidden" strokeWidth={2.5} />
+              </button>
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
+            </div>
+
+            <div className="flex items-center justify-center gap-2 mb-1.5 mt-1">
+              <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em] text-[#1f2122] leading-none text-center">
+                {user?.name}
+              </h1>
+              {!isEditing && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center justify-center w-8 h-8 rounded-full bg-transparent text-slate-400 hover:bg-slate-100 hover:text-[#5455ea] transition-all"
+                  title="Edit Profile"
+                >
+                  <Pencil className="w-[18px] h-[18px] shrink-0" strokeWidth={2} />
+                </button>
+              )}
+            </div>
+            <p className="text-[#3c4043] font-medium text-[13px] tracking-tight text-center relative mb-3.5 flex items-center justify-center gap-1">
+              {user?.email || (user?.username + "@rguktong.ac.in")}
+              <BadgeCheck className="w-[15px] h-[15px] text-[#2ebd59]" fill="#2ebd59" fillOpacity={0.15} strokeWidth={2.5} />
+            </p>
+
+            {/* Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] md:text-xs font-medium text-slate-500 mt-1">
+              <span className="text-indigo-600 font-bold uppercase tracking-widest px-2 py-1 bg-indigo-50 border border-indigo-100 rounded">
+                {user?.username}
+              </span>
+              <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+              <span className="uppercase tracking-wide font-bold text-slate-600">
+                {user?.branch} • {user?.year}
+              </span>
+              {user?.has_pending_requests && (
+                <>
+                  <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                  <span className="text-amber-600 px-2 py-1 bg-amber-50 border border-amber-100 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 animate-pulse">
+                    <Clock className="w-3 h-3" /> PENDING ACTION
+                  </span>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
@@ -438,11 +549,10 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                  className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${
-                    activeTab === tab
-                      ? "text-cyan-900"
-                      : "text-slate-400 hover:text-slate-600"
-                  }`}
+                  className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${activeTab === tab
+                    ? "text-cyan-900"
+                    : "text-slate-400 hover:text-slate-600"
+                    }`}
                 >
                   {tab}
                   {activeTab === tab && (
@@ -546,16 +656,7 @@ export default function StudentProfilePage() {
                       onValueChange={handleFieldChange}
                       editable
                     />
-                    <InfoCard
-                      key="fatherPhoneNumber"
-                      label="Phone"
-                      name="fatherPhoneNumber"
-                      icon={<Phone className="w-3 h-3" />}
-                      value={fields.fatherPhoneNumber}
-                      isEditing={isEditing}
-                      onValueChange={handleFieldChange}
-                      editable
-                    />
+
                     <InfoCard
                       key="fatherEmail"
                       label="Email"
@@ -596,16 +697,7 @@ export default function StudentProfilePage() {
                       onValueChange={handleFieldChange}
                       editable
                     />
-                    <InfoCard
-                      key="motherPhoneNumber"
-                      label="Phone"
-                      name="motherPhoneNumber"
-                      icon={<Phone className="w-3 h-3" />}
-                      value={fields.motherPhoneNumber}
-                      isEditing={isEditing}
-                      onValueChange={handleFieldChange}
-                      editable
-                    />
+
                     <InfoCard
                       key="motherEmail"
                       label="Email"
@@ -667,7 +759,7 @@ export default function StudentProfilePage() {
 
                 <div>
                   <div className="text-slate-900">
-                    <History size={18} />
+                    <HistoryIcon size={18} />
                   </div>
                   <h3 className="text-[17px] font-semibold text-slate-900 tracking-tight">
                     Request History Audit
@@ -698,7 +790,7 @@ export default function StudentProfilePage() {
                   ) : (
                     <div className="text-center py-10 bg-slate-50/50 rounded-xl border border-slate-100">
                       <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 border border-slate-100 shadow-sm">
-                        <History className="w-5 h-5 text-slate-200" />
+                        <HistoryIcon className="w-5 h-5 text-slate-200" />
                       </div>
                       <p className="text-slate-900 font-semibold text-sm uppercase tracking-wider">
                         No history found
