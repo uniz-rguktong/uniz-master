@@ -40,10 +40,15 @@ export async function apiClient<T = any>(
     localStorage.getItem("faculty_token");
   const cleanToken = token ? token.replace(/^"|"$/g, "") : null;
 
-  const defaultHeaders = {
-    "Content-Type": "application/json",
+  const isFormData = options.body instanceof FormData;
+
+  const defaultHeaders: Record<string, string> = {
     ...(cleanToken ? { Authorization: `Bearer ${cleanToken}` } : {}),
   };
+
+  if (!isFormData) {
+    defaultHeaders["Content-Type"] = "application/json";
+  }
 
   // Handle Query Parameters
   let url = endpoint;
