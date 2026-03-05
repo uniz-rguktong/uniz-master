@@ -9,7 +9,6 @@ git push origin main
 # 2. Deploy to VPS
 echo "🌐 Starting VPS Deployment..."
 ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
-  set -e
   cd /root/uniz-master
   
   echo "📥 Fetching latest code..."
@@ -20,8 +19,9 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
 
   # Force rebuild all if requested
   FORCE_ALL=false
-  if [[ "$(git log -1 --pretty=%B)" == *"[rebuild all]"* ]] || [[ "$(git log -1 --pretty=%B)" == *"[force build]"* ]]; then
-    echo "� Force rebuild all requested via commit message."
+  COMMIT_MSG=$(git log -1 --pretty=%B)
+  if [[ "$COMMIT_MSG" == *"[rebuild all]"* ]] || [[ "$COMMIT_MSG" == *"[force build]"* ]]; then
+    echo "🏗️  Force rebuild all requested via commit message."
     FORCE_ALL=true
   fi
 
@@ -64,14 +64,16 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
         [[ "$DIR" == *"infra"* ]] && BUILD_CONTEXT="$DIR"
 
         TAG="local-$(date +%s)"
-        echo "🏗️  Rebuilding $IMG:$TAG..."
-        docker build --no-cache --platform linux/amd64 -t $IMG:$TAG $BUILD_CONTEXT
-        
-        echo "📥 Importing $IMG:$TAG to K3s..."
-        docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
-        
-        BUILT_IMAGES[$IMG]=$TAG
-        ((REBUILT_COUNT++))
+        echo "🏗️  Rebuilding $IMG:$TAG in context $BUILD_CONTEXT..."
+        if docker build --no-cache --platform linux/amd64 -t $IMG:$TAG $BUILD_CONTEXT; then
+          echo "📥 Importing $IMG:$TAG to K3s..."
+          docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
+          BUILT_IMAGES[$IMG]=$TAG
+          ((REBUILT_COUNT++))
+        else
+          echo "❌ Build failed for $IMG, skipping deployment."
+          continue
+        fi
       else
         TAG=${BUILT_IMAGES[$IMG]}
         echo "♻️  Using built image for $IMG with tag $TAG"
@@ -79,11 +81,13 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
 
       echo "🛡️  Deploying $IMG:$TAG to $DEP..."
       if [[ "$DEP" == *"job"* ]]; then
-        kubectl set image cronjob/$DEP $CON=docker.io/library/$IMG:$TAG
+        kubectl set image "cronjob/$DEP" "$CON=docker.io/library/$IMG:$TAG"
       else
-        kubectl set image deployment/$DEP $CON=docker.io/library/$IMG:$TAG
-        # Force a fresh pod creation
-        kubectl rollout restart deployment/$DEP
+        if kubectl set image "deployment/$DEP" "$CON=docker.io/library/$IMG:$TAG"; then
+          kubectl rollout restart "deployment/$DEP"
+        else
+          echo "⚠️  Deployment upgrade failed for $DEP, check container name $CON"
+        fi
       fi
     fi
   done
@@ -110,7 +114,9 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   
   echo "⌛ Stabilization & Health Check..."
   for i in {1..6}; do
-    echo "Check $i/6: $(kubectl get pods --no-headers | grep -v 'Running\|Completed' | wc -l | xargs) pods still initializing..."
+    INIT_COUNT=$(kubectl get pods --no-headers | grep -v 'Running\|Completed' | wc -l | xargs)
+    echo "Check $i/6: $INIT_COUNT pods still initializing..."
+    if [ "$INIT_COUNT" == "0" ]; then break; fi
     sleep 10
   done
   kubectl get pods
