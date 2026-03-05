@@ -62,6 +62,7 @@ export default function GradesSection() {
     grade: "",
   });
   const [manualDept, setManualDept] = useState("CSE");
+  const [manualYear, setManualYear] = useState("E1");
 
   // Dynamic subjects for manual entry
   const [manualSubjects, setManualSubjects] = useState<
@@ -79,7 +80,7 @@ export default function GradesSection() {
           /"/g,
           "",
         );
-        const url = `${GET_SUBJECTS}?department=${manualDept}&semester=${encodeURIComponent(manualGrade.semesterId)}&limit=100`;
+        const url = `${GET_SUBJECTS}?department=${manualDept}&semester=${encodeURIComponent(`${manualYear}-${manualGrade.semesterId}`)}&limit=100`;
         const res = await fetch(url, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -98,7 +99,7 @@ export default function GradesSection() {
       }
     };
     fetchManualSubjects();
-  }, [manualDept, manualGrade.semesterId, subTab]);
+  }, [manualDept, manualYear, manualGrade.semesterId, subTab]);
 
   const handleBulkUpdate = async () => {
     if (!bulkJson) {
@@ -807,6 +808,29 @@ export default function GradesSection() {
                         ].map((d) => (
                           <option key={d} value={d}>
                             {d}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                        size={14}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex-1 min-w-[200px] space-y-2">
+                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
+                      Year
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={manualYear}
+                        onChange={(e) => setManualYear(e.target.value)}
+                        className="w-full pl-5 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                      >
+                        {["E1", "E2", "E3", "E4"].map((y) => (
+                          <option key={y} value={y}>
+                            {y}
                           </option>
                         ))}
                       </select>
