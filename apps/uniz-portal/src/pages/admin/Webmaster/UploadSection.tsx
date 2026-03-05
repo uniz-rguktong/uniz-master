@@ -17,6 +17,7 @@ import {
   GET_ATTENDANCE_TEMPLATE,
   GET_GRADES_TEMPLATE,
   GET_SUBJECTS,
+  ACADEMICS_PROGRESS,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient, downloadFile } from "../../../api/apiClient";
@@ -134,10 +135,9 @@ export default function UploadSection({ type }: { type: UploadType }) {
     if (uploadId) {
       interval = setInterval(async () => {
         try {
-          const res = await apiClient<any>(
-            `/academics/upload/progress?uploadId=${uploadId}`,
-            { showToast: false } as any,
-          );
+          const res = await apiClient<any>(ACADEMICS_PROGRESS(uploadId), {
+            showToast: false,
+          } as any);
           if (res && res.success && res.progress) {
             setProgress(res.progress);
             if (
