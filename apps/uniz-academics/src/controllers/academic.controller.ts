@@ -1960,12 +1960,19 @@ export const getAttendanceTemplate = async (
 
     students.forEach((s: any) => {
       subjects.forEach((sub) => {
+        const rowSemId = (semesterId as string) || sub.semester;
+        // Standardize to YEAR-SEM-ID if not already prefixed
+        const finalSemId =
+          rowSemId && year && !rowSemId.includes(String(year).toUpperCase())
+            ? `${String(year).toUpperCase()}-${rowSemId.toUpperCase()}`
+            : rowSemId;
+
         headers.push([
           s.username,
           s.name,
           sub.code,
           sub.name,
-          (semesterId as string) || sub.semester,
+          finalSemId,
           "",
           "",
         ]);
