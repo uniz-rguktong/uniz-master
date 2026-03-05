@@ -44,6 +44,9 @@ export default function StudentDetails() {
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [activeDetailTab, setActiveDetailTab] = useState<
+    "profile" | "academics" | "outpass"
+  >("profile");
   const [editFormData, setEditFormData] = useState({
     branch: "",
     year: "",
@@ -67,7 +70,7 @@ export default function StudentDetails() {
       const res = await fetch(ADMIN_VIEW_STUDENT(id), {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
         },
       });
 
@@ -93,7 +96,7 @@ export default function StudentDetails() {
       const res = await fetch(SEARCH_STUDENTS, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -124,7 +127,7 @@ export default function StudentDetails() {
       const res = await fetch(ADMIN_VIEW_STUDENT(username.toUpperCase()), {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
         },
       });
       const data = await res.json();
@@ -152,7 +155,7 @@ export default function StudentDetails() {
       const res = await fetch(ADMIN_SUSPEND_STUDENT(username), {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -193,7 +196,7 @@ export default function StudentDetails() {
       const res = await fetch(ADMIN_UPDATE_STUDENT(selectedStudent.username), {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(editFormData),
@@ -515,195 +518,414 @@ export default function StudentDetails() {
                     </p>
                   </div>
                 </div>
+
+                {/* Detail Tabs */}
+                <div className="flex bg-white/10 backdrop-blur-md mt-6 p-1 rounded-[20px] border border-white/10">
+                  <button
+                    onClick={() => setActiveDetailTab("profile")}
+                    className={`flex-1 py-3.5 rounded-[16px] text-[10px] font-bold uppercase tracking-widest transition-all ${activeDetailTab === "profile" ? "bg-white text-blue-600 shadow-xl" : "text-white/60 hover:text-white"}`}
+                  >
+                    Profile
+                  </button>
+                  <button
+                    onClick={() => setActiveDetailTab("academics")}
+                    className={`flex-1 py-3.5 rounded-[16px] text-[10px] font-bold uppercase tracking-widest transition-all ${activeDetailTab === "academics" ? "bg-white text-blue-600 shadow-xl" : "text-white/60 hover:text-white"}`}
+                  >
+                    Academic Stats
+                  </button>
+                  <button
+                    onClick={() => setActiveDetailTab("outpass")}
+                    className={`flex-1 py-3.5 rounded-[16px] text-[10px] font-bold uppercase tracking-widest transition-all ${activeDetailTab === "outpass" ? "bg-white text-blue-600 shadow-xl" : "text-white/60 hover:text-white"}`}
+                  >
+                    Security Log
+                  </button>
+                </div>
               </div>
 
-              {isEditing ? (
-                <div className="p-8 space-y-6 bg-white">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2.5">
-                      <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                        Branch
-                      </label>
-                      <select
-                        value={editFormData.branch}
-                        onChange={(e) =>
-                          setEditFormData({
-                            ...editFormData,
-                            branch: e.target.value,
-                          })
-                        }
-                        className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all cursor-pointer"
-                      >
-                        {[
-                          "CSE",
-                          "ECE",
-                          "EEE",
-                          "MECH",
-                          "CIVIL",
-                          "CHEM",
-                          "MME",
-                        ].map((b) => (
-                          <option key={b}>{b}</option>
-                        ))}
-                      </select>
+              {activeDetailTab === "profile" && (
+                <>
+                  {isEditing ? (
+                    <div className="p-8 space-y-6 bg-white">
+                      <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-2.5">
+                          <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
+                            Branch
+                          </label>
+                          <select
+                            value={editFormData.branch}
+                            onChange={(e) =>
+                              setEditFormData({
+                                ...editFormData,
+                                branch: e.target.value,
+                              })
+                            }
+                            className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all cursor-pointer"
+                          >
+                            {[
+                              "CSE",
+                              "ECE",
+                              "EEE",
+                              "MECH",
+                              "CIVIL",
+                              "CHEM",
+                              "MME",
+                            ].map((b) => (
+                              <option key={b}>{b}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="space-y-2.5">
+                          <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
+                            Year
+                          </label>
+                          <select
+                            value={editFormData.year}
+                            onChange={(e) =>
+                              setEditFormData({
+                                ...editFormData,
+                                year: e.target.value,
+                              })
+                            }
+                            className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all cursor-pointer"
+                          >
+                            {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
+                              <option key={y}>{y}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-2.5">
+                          <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
+                            Gender
+                          </label>
+                          <select
+                            value={editFormData.gender}
+                            onChange={(e) =>
+                              setEditFormData({
+                                ...editFormData,
+                                gender: e.target.value,
+                              })
+                            }
+                            className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all cursor-pointer"
+                          >
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                            <option value="O">Other</option>
+                          </select>
+                        </div>
+                        <div className="space-y-2.5">
+                          <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
+                            Phone
+                          </label>
+                          <input
+                            type="tel"
+                            value={editFormData.phone_number}
+                            onChange={(e) =>
+                              setEditFormData({
+                                ...editFormData,
+                                phone_number: e.target.value,
+                              })
+                            }
+                            className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2.5">
+                        <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
+                          Room Number
+                        </label>
+                        <input
+                          type="text"
+                          value={editFormData.room_number}
+                          onChange={(e) =>
+                            setEditFormData({
+                              ...editFormData,
+                              room_number: e.target.value,
+                            })
+                          }
+                          className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all"
+                        />
+                      </div>
+                      <div className="pt-4 flex gap-4">
+                        <button
+                          onClick={() => setIsEditing(false)}
+                          className="flex-1 h-12 flex items-center justify-center rounded-[18px] font-semibold text-sm bg-slate-50 text-slate-600 border border-slate-100 hover:bg-slate-100 transition-all active:scale-[0.98]"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleUpdateStudent}
+                          disabled={loading}
+                          className="flex-1 h-12 flex items-center justify-center rounded-[18px] font-semibold text-sm bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all active:scale-[0.98] disabled:opacity-50 gap-2"
+                        >
+                          {loading ? (
+                            <Loader2 className="animate-spin w-4 h-4" />
+                          ) : (
+                            <Save size={18} />
+                          )}{" "}
+                          Save Changes
+                        </button>
+                      </div>
                     </div>
-                    <div className="space-y-2.5">
-                      <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                        Year
-                      </label>
-                      <select
-                        value={editFormData.year}
-                        onChange={(e) =>
-                          setEditFormData({
-                            ...editFormData,
-                            year: e.target.value,
-                          })
-                        }
-                        className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all cursor-pointer"
-                      >
-                        {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
-                          <option key={y}>{y}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2.5">
-                      <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                        Gender
-                      </label>
-                      <select
-                        value={editFormData.gender}
-                        onChange={(e) =>
-                          setEditFormData({
-                            ...editFormData,
-                            gender: e.target.value,
-                          })
-                        }
-                        className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all cursor-pointer"
-                      >
-                        <option value="M">Male</option>
-                        <option value="F">Female</option>
-                        <option value="O">Other</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2.5">
-                      <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                        Phone
-                      </label>
-                      <input
-                        type="tel"
-                        value={editFormData.phone_number}
-                        onChange={(e) =>
-                          setEditFormData({
-                            ...editFormData,
-                            phone_number: e.target.value,
-                          })
-                        }
-                        className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all"
+                  ) : (
+                    <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-white">
+                      <DetailItem
+                        icon={Mail}
+                        label="Email Address"
+                        value={selectedStudent.email}
                       />
-                    </div>
-                  </div>
-                  <div className="space-y-2.5">
-                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                      Room Number
-                    </label>
-                    <input
-                      type="text"
-                      value={editFormData.room_number}
-                      onChange={(e) =>
-                        setEditFormData({
-                          ...editFormData,
-                          room_number: e.target.value,
-                        })
-                      }
-                      className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all"
-                    />
-                  </div>
-                  <div className="pt-4 flex gap-4">
-                    <button
-                      onClick={() => setIsEditing(false)}
-                      className="flex-1 h-12 flex items-center justify-center rounded-[18px] font-semibold text-sm bg-slate-50 text-slate-600 border border-slate-100 hover:bg-slate-100 transition-all active:scale-[0.98]"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleUpdateStudent}
-                      disabled={loading}
-                      className="flex-1 h-12 flex items-center justify-center rounded-[18px] font-semibold text-sm bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all active:scale-[0.98] disabled:opacity-50 gap-2"
-                    >
-                      {loading ? (
-                        <Loader2 className="animate-spin w-4 h-4" />
-                      ) : (
-                        <Save size={18} />
-                      )}{" "}
-                      Save Changes
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-white">
-                  <DetailItem
-                    icon={Mail}
-                    label="Email Address"
-                    value={selectedStudent.email}
-                  />
-                  <DetailItem
-                    icon={Phone}
-                    label="Phone Number"
-                    value={selectedStudent.phone_number || "Not provided"}
-                  />
-                  <DetailItem
-                    icon={MapPin}
-                    label="Room & Address"
-                    value={`${selectedStudent.roomno || "Not Assigned"}, Dept: ${selectedStudent.department || selectedStudent.branch}`}
-                  />
-                  <DetailItem
-                    icon={Calendar}
-                    label="Date of Birth"
-                    value={selectedStudent.date_of_birth || "Not provided"}
-                  />
-                  <DetailItem
-                    icon={GraduationCap}
-                    label="Campus Status"
-                    value={
-                      selectedStudent.is_in_campus
-                        ? "Present in Campus"
-                        : "Outside Campus"
-                    }
-                  />
-                  <DetailItem
-                    icon={Users}
-                    label="Parental Guardian"
-                    value={selectedStudent.father_name || "Not provided"}
-                  />
-
-                  {isWebmaster && (
-                    <div className="md:col-span-2 pt-4">
-                      <button
-                        onClick={(e) =>
-                          handleToggleSuspension(
-                            e,
-                            selectedStudent.username,
-                            selectedStudent.is_suspended === true,
-                          )
+                      <DetailItem
+                        icon={Phone}
+                        label="Phone Number"
+                        value={selectedStudent.phone_number || "Not provided"}
+                      />
+                      <DetailItem
+                        icon={MapPin}
+                        label="Room & Address"
+                        value={`${selectedStudent.roomno || "Not Assigned"}, Dept: ${selectedStudent.department || selectedStudent.branch}`}
+                      />
+                      <DetailItem
+                        icon={Calendar}
+                        label="Date of Birth"
+                        value={selectedStudent.date_of_birth || "Not provided"}
+                      />
+                      <DetailItem
+                        icon={GraduationCap}
+                        label="Campus Status"
+                        value={
+                          selectedStudent.is_in_campus
+                            ? "Present in Campus"
+                            : "Outside Campus"
                         }
-                        disabled={isActionLoading === selectedStudent.username}
-                        className={`w-full ${selectedStudent.is_suspended === true ? "uniz-primary-btn bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20 hover:shadow-emerald-600/30" : "uniz-primary-btn bg-red-600 hover:bg-red-700 shadow-red-600/20 hover:shadow-red-600/30"}`}
-                      >
-                        {isActionLoading === selectedStudent.username ? (
-                          <Loader2 size={16} className="animate-spin" />
-                        ) : selectedStudent.is_suspended === true ? (
-                          <ShieldCheck size={16} />
-                        ) : (
-                          <ShieldAlert size={16} />
-                        )}
-                        {selectedStudent.is_suspended === true
-                          ? "Restore Student Access"
-                          : "Suspend Student Access"}
-                      </button>
+                      />
+                      <DetailItem
+                        icon={Users}
+                        label="Parental Guardian"
+                        value={selectedStudent.father_name || "Not provided"}
+                      />
+
+                      {isWebmaster && (
+                        <div className="md:col-span-2 pt-4">
+                          <button
+                            onClick={(e) =>
+                              handleToggleSuspension(
+                                e,
+                                selectedStudent.username,
+                                selectedStudent.is_suspended === true,
+                              )
+                            }
+                            disabled={
+                              isActionLoading === selectedStudent.username
+                            }
+                            className={`w-full ${selectedStudent.is_suspended === true ? "uniz-primary-btn bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20 hover:shadow-emerald-600/30" : "uniz-primary-btn bg-red-600 hover:bg-red-700 shadow-red-600/20 hover:shadow-red-600/30"}`}
+                          >
+                            {isActionLoading === selectedStudent.username ? (
+                              <Loader2 size={16} className="animate-spin" />
+                            ) : selectedStudent.is_suspended === true ? (
+                              <ShieldCheck size={16} />
+                            ) : (
+                              <ShieldAlert size={16} />
+                            )}
+                            {selectedStudent.is_suspended === true
+                              ? "Restore Student Access"
+                              : "Suspend Student Access"}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
+                </>
+              )}
+
+              {activeDetailTab === "academics" && (
+                <div className="p-8 space-y-8 bg-slate-50/30 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  {/* Key Stats Grid */}
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="p-6 bg-white border border-slate-100 rounded-[28px] shadow-sm hover:shadow-md transition-all">
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-2">
+                        CGPA
+                      </p>
+                      <h4 className="text-4xl font-black text-slate-900 leading-none">
+                        {selectedStudent.cgpa || "0.00"}
+                      </h4>
+                      <p className="text-[10px] font-medium text-slate-400 mt-2 italic">
+                        Cumulative Performance
+                      </p>
+                    </div>
+                    <div className="p-6 bg-white border border-slate-100 rounded-[28px] shadow-sm hover:shadow-md transition-all">
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 mb-2">
+                        Attendance
+                      </p>
+                      <h4 className="text-4xl font-black text-slate-900 leading-none">
+                        {selectedStudent.attendance_summary?.overall_percent ||
+                          "0"}
+                        %
+                      </h4>
+                      <p className="text-[10px] font-medium text-slate-400 mt-2 italic">
+                        Campus Presence
+                      </p>
+                    </div>
+                    <div className="p-6 bg-white border border-slate-100 rounded-[28px] shadow-sm hover:shadow-md transition-all col-span-2 lg:col-span-1">
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600 mb-2">
+                        Incompletes
+                      </p>
+                      <h4 className="text-4xl font-black text-slate-900 leading-none">
+                        {selectedStudent.total_backlogs || 0}
+                      </h4>
+                      <p className="text-[10px] font-medium text-slate-400 mt-2 italic">
+                        Pending Credits
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Motivation Banner (If available) */}
+                  {selectedStudent.motivation && (
+                    <div className="p-5 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-[24px] text-white flex items-center gap-4 shadow-lg shadow-blue-100">
+                      <div className="p-3 bg-white/20 rounded-xl">
+                        <GraduationCap size={20} className="text-amber-300" />
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-blue-100 opacity-70">
+                          Saber Intelligence Insight
+                        </p>
+                        <p className="font-bold text-sm leading-tight mt-0.5">
+                          {selectedStudent.motivation}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Detailed Data */}
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between px-2">
+                      <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        Subject Breakdown
+                      </h5>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-3">
+                      {selectedStudent.grades?.length > 0 ? (
+                        selectedStudent.grades.map((g: any, i: number) => (
+                          <div
+                            key={i}
+                            className="bg-white p-5 rounded-[22px] border border-slate-100 flex items-center justify-between group hover:border-blue-200 transition-all"
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center font-bold text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                {g.grade >= 10 ? "EX" : g.grade}
+                              </div>
+                              <div>
+                                <p className="font-bold text-slate-900 text-sm">
+                                  {g.subject.name}
+                                </p>
+                                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-0.5">
+                                  {g.subject.code} • {g.subject.credits} Credits
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1.5 justify-end">
+                                <span
+                                  className={`w-1.5 h-1.5 rounded-full ${g.grade >= 5 ? "bg-emerald-500" : "bg-red-500"}`}
+                                ></span>
+                                <p
+                                  className={`text-[11px] font-black uppercase tracking-widest ${g.grade >= 5 ? "text-emerald-600" : "text-red-600"}`}
+                                >
+                                  {g.grade >= 5 ? "Passed" : "Remedial"}
+                                </p>
+                              </div>
+                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                                {g.semesterId}
+                              </p>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="p-12 text-center bg-white rounded-[28px] border border-slate-100">
+                          <LayoutList
+                            className="mx-auto text-slate-200 mb-4"
+                            size={32}
+                          />
+                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+                            No academic records found
+                            <br />
+                            for this student
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeDetailTab === "outpass" && (
+                <div className="p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="flex items-center justify-between px-2">
+                    <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      Movement History
+                    </h5>
+                  </div>
+
+                  <div className="space-y-4">
+                    {selectedStudent.outpass_history?.length > 0 ? (
+                      selectedStudent.outpass_history.map(
+                        (op: any, i: number) => (
+                          <div
+                            key={i}
+                            className="relative pl-8 border-l-2 border-slate-100 pb-2 last:pb-0"
+                          >
+                            <div
+                              className={`absolute left-[-9px] top-0 w-4 h-4 rounded-full border-2 border-white shadow-sm ${op.status === "APPROVED" ? "bg-emerald-500" : "bg-slate-300"}`}
+                            ></div>
+                            <div className="bg-white p-5 rounded-[22px] border border-slate-100 shadow-sm">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <p className="font-bold text-slate-900 text-sm">
+                                    {op.type.toUpperCase()}
+                                  </p>
+                                  <p className="text-[11px] font-medium text-slate-500 mt-1">
+                                    {op.reason}
+                                  </p>
+                                </div>
+                                <span
+                                  className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${op.status === "APPROVED" ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-400"}`}
+                                >
+                                  {op.status}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-4 mt-4 pt-3 border-t border-slate-50">
+                                <div className="flex items-center gap-1.5 text-slate-400">
+                                  <Calendar size={12} />
+                                  <span className="text-[10px] font-bold tabular-nums">
+                                    From:{" "}
+                                    {new Date(op.fromDate).toLocaleDateString()}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-slate-400">
+                                  <Calendar size={12} />
+                                  <span className="text-[10px] font-bold tabular-nums">
+                                    To:{" "}
+                                    {new Date(op.toDate).toLocaleDateString()}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ),
+                      )
+                    ) : (
+                      <div className="p-12 text-center bg-white rounded-[28px] border border-slate-100 border-dashed">
+                        <MapPin
+                          className="mx-auto text-slate-200 mb-4"
+                          size={32}
+                        />
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                          No movement logs recorded
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
