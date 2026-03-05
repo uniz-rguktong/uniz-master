@@ -825,15 +825,17 @@ app.post("/subscribe", requireAuth, async (req, res) => {
         .json({ error: "Missing username or subscription" });
     }
 
+    const targetUsername = username.toLowerCase();
+
     await prisma.pushSubscription.upsert({
       where: { endpoint: subscription.endpoint },
       update: {
-        username,
+        username: targetUsername,
         p256dh: subscription.keys.p256dh,
         auth: subscription.keys.auth,
       },
       create: {
-        username,
+        username: targetUsername,
         endpoint: subscription.endpoint,
         p256dh: subscription.keys.p256dh,
         auth: subscription.keys.auth,
@@ -966,9 +968,13 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       });
     }
 
-    const targetUsernames = targetUsers.map((u) => u.username);
+    const targetUsernames = targetUsers.map((u) => u.username.toLowerCase());
     const subscriptions = await prisma.pushSubscription.findMany({
-      where: { username: { in: targetUsernames } },
+      where: {
+        username: {
+          in: targetUsernames,
+        },
+      },
     });
 
     console.log(
