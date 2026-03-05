@@ -52,7 +52,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
           localStorage.getItem("faculty_token") ||
           ""
         ).replace(/"/g, "");
-        const url = `${GET_SUBJECTS}?department=${branch}&semester=${encodeURIComponent(semester)}&limit=100`;
+        const url = `${GET_SUBJECTS}?department=${branch}&semester=${encodeURIComponent(`${year}-${semester}`)}&limit=100`;
         const res = await fetch(url, {
           headers: { Authorization: `Bearer ${token}` },
         });
