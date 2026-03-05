@@ -221,9 +221,14 @@ export default function FacultyManagement({
           <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
             User Management
           </h2>
-          <p className="text-slate-500 font-medium text-[15px]">
-            Manage administrative and teaching staff accounts.
-          </p>
+          <div className="flex items-center gap-2 mt-2">
+            <span className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-black uppercase tracking-widest">
+              {meta.total} Registered Staff
+            </span>
+            <p className="text-slate-500 font-medium text-[15px]">
+              Manage administrative and teaching staff accounts.
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-4">
@@ -263,6 +268,31 @@ export default function FacultyManagement({
       </div>
 
       <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden">
+        {/* Top Pagination bar */}
+        {meta.totalPages > 1 && (
+          <div className="flex items-center justify-between px-10 py-4 bg-slate-50/30 border-b border-slate-100">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+              Control Panel • Page {page} of {meta.totalPages}
+            </p>
+            <div className="flex gap-2">
+              <button
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 disabled:opacity-30 hover:bg-slate-50 transition-all font-bold text-[9px] uppercase tracking-widest shadow-sm"
+              >
+                Prev
+              </button>
+              <button
+                disabled={page >= meta.totalPages}
+                onClick={() => setPage((p) => p + 1)}
+                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 disabled:opacity-30 hover:bg-slate-50 transition-all font-bold text-[9px] uppercase tracking-widest shadow-sm"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
