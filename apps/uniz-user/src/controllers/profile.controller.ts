@@ -382,7 +382,12 @@ export const getFacultyProfile = async (
   res: Response,
 ) => {
   const user = req.user;
-  if (!user || (user.role !== UserRole.TEACHER && user.role !== UserRole.HOD)) {
+  if (
+    !user ||
+    ![UserRole.TEACHER, UserRole.HOD, UserRole.FACULTY].includes(
+      user.role as UserRole,
+    )
+  ) {
     return res
       .status(403)
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
@@ -1006,7 +1011,12 @@ export const updateFacultyProfileSelf = async (
   const user = req.user;
   const updates = req.body;
 
-  if (!user || (user.role !== UserRole.TEACHER && user.role !== UserRole.HOD)) {
+  if (
+    !user ||
+    ![UserRole.TEACHER, UserRole.HOD, UserRole.FACULTY].includes(
+      user.role as UserRole,
+    )
+  ) {
     return res
       .status(403)
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });

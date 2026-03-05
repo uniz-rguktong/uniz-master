@@ -407,13 +407,20 @@ function ProfileSection({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ contact: "", designation: "" });
+  const [form, setForm] = useState({
+    name: "",
+    contact: "",
+    designation: "",
+    profileUrl: "",
+  });
 
   useEffect(() => {
     if (profile) {
       setForm({
+        name: profile.Name || "",
         contact: profile.Contact || "",
         designation: profile.Designation || "",
+        profileUrl: profile.ProfileUrl || "",
       });
     }
   }, [profile]);
@@ -422,17 +429,16 @@ function ProfileSection({
     if (!profile) return;
     setSaving(true);
     try {
-      const res = await fetch(
-        `${BASE_URL}/profile/admin/faculty/${profile.Username}`,
-        {
-          method: "PUT",
-          headers: { ...authHeader(), "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contact: form.contact,
-            designation: form.designation,
-          }),
-        },
-      );
+      const res = await fetch(`${BASE_URL}/profile/faculty/me/update`, {
+        method: "PUT",
+        headers: { ...authHeader(), "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          contact: form.contact,
+          designation: form.designation,
+          profileUrl: form.profileUrl,
+        }),
+      });
       const data = await res.json();
       if (data.success) {
         toast.success("Profile updated!");
@@ -534,7 +540,6 @@ function ProfileSection({
               value: profile.Username,
               editable: false,
             },
-            { label: "Full Name", value: profile.Name, editable: false },
             { label: "Email Address", value: profile.Email, editable: false },
             { label: "Department", value: profile.Department, editable: false },
             {
@@ -552,6 +557,24 @@ function ProfileSection({
               </p>
             </div>
           ))}
+
+          {/* Editable: Full Name */}
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+              Full Name
+            </label>
+            {isEditing ? (
+              <input
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl font-semibold text-neutral-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all"
+              />
+            ) : (
+              <p className="font-semibold text-neutral-900 text-base">
+                {profile.Name || "Not set"}
+              </p>
+            )}
+          </div>
 
           {/* Editable: Designation */}
           <div className="space-y-2">
@@ -589,6 +612,28 @@ function ProfileSection({
             ) : (
               <p className="font-semibold text-neutral-900 text-base">
                 {profile.Contact || "Not provided"}
+              </p>
+            )}
+          </div>
+
+          {/* Editable: Profile URL */}
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+              Profile Photo URL
+            </label>
+            {isEditing ? (
+              <input
+                type="url"
+                value={form.profileUrl}
+                onChange={(e) =>
+                  setForm({ ...form, profileUrl: e.target.value })
+                }
+                placeholder="https://example.com/photo.jpg"
+                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl font-semibold text-neutral-900 outline-none focus:ring-4 focus:ring-black/5 focus:border-black transition-all"
+              />
+            ) : (
+              <p className="font-semibold text-neutral-900 text-base truncate">
+                {profile.ProfileUrl || "No photo set"}
               </p>
             )}
           </div>
