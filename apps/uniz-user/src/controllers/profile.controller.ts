@@ -94,6 +94,7 @@ const mapFacultyProfile = (profile: any) => ({
   Role: profile.role,
   Contact: profile.contact,
   ProfileUrl: profile.profileUrl,
+  is_suspended: profile.isSuspended || false,
 });
 
 export const getStudentProfile = async (
@@ -677,11 +678,27 @@ export const toggleUserSuspension = async (
   }
 
   try {
-    // 1. Update User Profile in current service
-    const updated = await prisma.studentProfile.update({
-      where: { username: targetUsername },
-      data: { isSuspended: suspended },
-    });
+    // 1. Try updating student profile first
+    let updated: any;
+    let isStudent = true;
+
+    try {
+      updated = await prisma.studentProfile.update({
+        where: { username: targetUsername },
+        data: { isSuspended: suspended },
+      });
+    } catch (e: any) {
+      // P2025: Record not found
+      if (e.code === "P2025") {
+        isStudent = false;
+        updated = await prisma.facultyProfile.update({
+          where: { username: targetUsername.toLowerCase() },
+          data: { isSuspended: suspended },
+        });
+      } else {
+        throw e;
+      }
+    }
 
     // 2. Sync with Auth Service
     const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
@@ -689,7 +706,7 @@ export const toggleUserSuspension = async (
       await axios.post(
         `${AUTH_SERVICE_URL}/admin/suspend`,
         {
-          username: targetUsername,
+          username: targetUsername.toLowerCase(),
           suspended: suspended,
         },
         {
@@ -702,15 +719,12 @@ export const toggleUserSuspension = async (
         `[USER-SERVICE] Failed to sync suspension with Auth Service for ${targetUsername}:`,
         authError.message,
       );
-      // We don't necessarily want to fail the whole request if sync fails,
-      // but the user might still be able to login if auth service is not updated.
-      // However, usually it's better to be consistent.
     }
 
     // 3. Invalidate Cache
     await redis.del(`profile:v2:${targetUsername}`);
 
-    // 4. Notify Student
+    // 4. Notify User
     sendPush(
       targetUsername,
       suspended ? "Account Suspended" : "Account Reinstated",
@@ -721,8 +735,10 @@ export const toggleUserSuspension = async (
 
     return res.json({
       success: true,
-      message: `Student suspension status updated to ${suspended}`,
-      student: mapStudentProfile(updated),
+      message: `${isStudent ? "Student" : "Staff"} suspension status updated to ${suspended}`,
+      [isStudent ? "student" : "faculty"]: isStudent
+        ? mapStudentProfile(updated)
+        : mapFacultyProfile(updated),
     });
   } catch (e: any) {
     console.error(

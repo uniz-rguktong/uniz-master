@@ -51,6 +51,7 @@ model FacultyProfile {
   designation String
   role        String   @default("teacher")
   profileUrl  String   @default("")
+  isSuspended Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
