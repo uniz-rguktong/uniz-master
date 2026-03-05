@@ -206,18 +206,19 @@ export default function StudentProfilePage() {
       const data = await res.json();
 
       if (data.secure_url) {
+        // Only send profile_url — don't mix in personal fields
         const updateRes = await apiClient<any>(UPDATE_DETAILS, {
           method: "PUT",
-          body: JSON.stringify({ ...fields, profile_url: data.secure_url }),
+          body: JSON.stringify({ profile_url: data.secure_url }),
         });
         if (updateRes && updateRes.success) {
-          toast.success("Profile photo updated successfully!");
+          toast.success("Profile photo updated!");
           await refetch();
         } else {
-          toast.error("Failed to update profile.");
+          toast.error("Failed to update profile photo.");
         }
       } else {
-        toast.error("Upload failed.");
+        toast.error("Image upload failed. Please try again.");
       }
     } catch (err) {
       toast.error("Failed to upload image.");
@@ -453,25 +454,46 @@ export default function StudentProfilePage() {
 
           {/* Centered Avatar and Info */}
           <div className="flex flex-col items-center mt-4">
-            {/* The Verified Status Ring */}
-            <div className="relative p-[4px] md:p-[5px] rounded-full mb-4"
+            {/* Avatar with upload state */}
+            <div
+              className="relative p-[4px] md:p-[5px] rounded-full mb-4"
               style={{
                 background: "#2ebd59",
-                boxShadow: "0 0 0 1px rgba(46, 189, 89, 0.1)"
+                boxShadow: "0 0 0 1px rgba(46, 189, 89, 0.1)",
               }}
             >
               <div className="relative bg-slate-50 p-[3px] rounded-full">
-                <div className="w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-[#004e43] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
+                <div className="relative w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-[#004e43] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
+                  {/* Profile image or initial */}
                   {user?.profile_url ? (
-                    <img src={user.profile_url} alt="Profile" className="w-full h-full object-cover" />
+                    <img
+                      src={user.profile_url}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     user?.name ? user.name.charAt(0).toUpperCase() : "S"
                   )}
-                  {isUploadingImage && (
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm z-10">
-                      <Loader2 className="w-8 h-8 text-white animate-spin" />
-                    </div>
-                  )}
+
+                  {/* Dark blurry overlay — contained fully inside the circle */}
+                  <AnimatePresence>
+                    {isUploadingImage && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute inset-0 rounded-full flex items-center justify-center"
+                        style={{
+                          background: "rgba(0, 0, 0, 0.55)",
+                          backdropFilter: "blur(6px)",
+                          WebkitBackdropFilter: "blur(6px)",
+                        }}
+                      >
+                        <Loader2 className="w-9 h-9 text-white animate-spin" strokeWidth={2} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
 
@@ -479,7 +501,7 @@ export default function StudentProfilePage() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingImage}
-                className="absolute bottom-[-1px] right-2 w-8 h-8 bg-[#e8f0fe] border-[1.5px] border-[#4285f4] rounded-full flex items-center justify-center text-[#174ea6] hover:bg-blue-100 transition-colors z-20 cursor-pointer"
+                className="absolute bottom-[-1px] right-2 w-8 h-8 bg-[#e8f0fe] border-[1.5px] border-[#4285f4] rounded-full flex items-center justify-center text-[#174ea6] hover:bg-blue-100 transition-all z-20 cursor-pointer shadow-sm hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Update Profile Photo"
               >
                 <Camera className="w-[18px] h-[18px] overflow-hidden" strokeWidth={2.5} />

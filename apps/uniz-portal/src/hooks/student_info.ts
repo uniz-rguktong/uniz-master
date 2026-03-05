@@ -10,6 +10,12 @@ let globalSetStudent: any = null;
 let globalSetAuthLoading: any = null;
 let isPollingStarted = false;
 
+/** Call this on logout to clear the deduplication cache. */
+export function resetStudentDataCache() {
+  lastFetchTime = 0;
+  fetchPromise = null;
+}
+
 interface StudentData {
   _id: string;
   name: string;
