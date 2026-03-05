@@ -535,13 +535,11 @@ webpush.setVapidDetails(
 
 const sendWebPush = async (
   username: string,
-  payload: { title: string; body: string; data?: any },
+  payload: { title: string; body: string; data?: any; name?: string },
 ): Promise<number> => {
   try {
-    // Only send to the 3 most recently active devices to prevent "noise" on old devices
-    // and focus on the devices the user is currently using.
     const subscriptions = await prisma.pushSubscription.findMany({
-      where: { username },
+      where: { username: { equals: username, mode: "insensitive" } },
       orderBy: { updatedAt: "desc" },
       take: 3,
     });
@@ -551,9 +549,12 @@ const sendWebPush = async (
       return 0;
     }
 
+    const recipientName = payload.name || username;
+    const professionalBody = `Dear ${recipientName},\n\n${payload.body}`;
+
     const pushPayload = JSON.stringify({
       title: payload.title,
-      body: payload.body,
+      body: professionalBody,
       icon: "/assets/ongole_logo.png",
       badge: "/assets/ongole_logo.png",
       tag: payload.data?.tag || `uniz-${username}-${Date.now()}`,
@@ -669,8 +670,11 @@ const worker = new Worker(
         const pushUsername =
           (job.data as any).username || rawRecipient.split("@")[0];
         const pushSentCount = await sendWebPush(pushUsername, {
-          title: subject || "UniZ Notification",
-          body: body || "You have a new update on UniZ.",
+          title: subject || "UniZ Academic Notification",
+          body:
+            body ||
+            "A new academic update has been posted. Please review the details at your earliest convenience.",
+          name: (job.data as any).name,
           data: { type: "GENERIC" },
         });
 
@@ -699,8 +703,9 @@ const worker = new Worker(
         // Targeted Push Notice Only
         const pushUsername = (job.data as any).username;
         const pushSentCount = await sendWebPush(pushUsername, {
-          title: "Results Published",
-          body: `Official results for ${semesterId} are now available.`,
+          title: "Examination Results Published",
+          body: `We are pleased to inform you that the official academic results for ${semesterId} have been published and are now available for your review on the UniZ portal.`,
+          name: (job.data as any).name,
           data: { type: "RESULTS", semesterId },
         });
 
@@ -733,8 +738,9 @@ const worker = new Worker(
         // PRIORITY 1: Push Notice
         const pushUsername = (job.data as any).username;
         const pushSentCount = await sendWebPush(pushUsername, {
-          title: "Attendance Report Published",
-          body: `The attendance record for ${semesterId} is now available.`,
+          title: "Attendance Report Generated",
+          body: `Your comprehensive attendance record for the ${semesterId} academic term has been generated. Please log in to the portal to verify your attendance status.`,
+          name: (job.data as any).name,
           data: { type: "ATTENDANCE", semesterId },
         });
 
@@ -992,9 +998,11 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
         const userSubs = subscriptions.filter(
           (s) => s.username.toUpperCase() === u.username.toUpperCase(),
         );
-        const personalizedBody = body
-          .replace(/{{name}}/g, u.name || u.username)
-          .replace(/{{username}}/g, u.username);
+        const personalizedBody =
+          `Dear ${u.name || u.username},\n\n` +
+          body
+            .replace(/{{name}}/g, u.name || u.username)
+            .replace(/{{username}}/g, u.username);
         const personalizedTitle = title
           .replace(/{{name}}/g, u.name || u.username)
           .replace(/{{username}}/g, u.username);
