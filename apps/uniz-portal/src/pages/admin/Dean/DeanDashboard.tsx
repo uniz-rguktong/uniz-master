@@ -10,7 +10,10 @@ import {
   ChevronRight,
   LayoutDashboard,
   Activity,
+  UserCircle,
+  Settings,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import StudentDetails from "../Webmaster/StudentDetails";
@@ -39,6 +42,7 @@ export default function DeanDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const username = localStorage.getItem("username") || "Dean";
+  const navigate = useNavigate();
 
   const role = (localStorage.getItem("admin_role") || "admin").replace(
     /"/g,
@@ -241,7 +245,7 @@ export default function DeanDashboard() {
           >
             {isSidebarOpen ? <Menu size={20} /> : <ChevronRight size={20} />}
           </button>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-semibold text-slate-900 leading-none tracking-tight">
                 {username}
@@ -250,7 +254,24 @@ export default function DeanDashboard() {
                 {roleLabel}
               </p>
             </div>
-            <div className="w-11 h-11 rounded-[14px] bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center font-semibold text-blue-700 shadow-inner group transition-all hover:scale-105 cursor-pointer">
+            <button
+              onClick={() => navigate("/admin/profile")}
+              title="My Profile"
+              className="p-2 rounded-full hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+            >
+              <UserCircle size={22} />
+            </button>
+            <button
+              onClick={() => navigate("/admin/settings")}
+              title="Security Settings"
+              className="p-2 rounded-full hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+            >
+              <Settings size={20} />
+            </button>
+            <div
+              onClick={() => navigate("/admin/profile")}
+              className="w-11 h-11 rounded-[14px] bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center font-semibold text-blue-700 shadow-inner cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
+            >
               {(username || "D")[0].toUpperCase()}
             </div>
           </div>

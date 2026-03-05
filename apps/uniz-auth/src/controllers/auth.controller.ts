@@ -157,12 +157,38 @@ export const requestOtp = async (req: Request, res: Response) => {
       data: { username, otp, expiresAt },
     });
 
-    // Send OTP via Push ONLY (Primary channel)
-    sendOtpPush(username, otp).catch((err: any) => {
-      console.error(`[AUTH] Background OTP push failed for ${username}:`, err);
-    });
+    // Send OTP via Push (Primary channel) with automatic Email fallback
+    const sentCount = await sendOtpPush(username, otp);
 
-    console.log(`[AUTH] OTP generated for ${username}: ${otp}`);
+    if (sentCount === 0) {
+      console.log(
+        `[AUTH] No push devices for ${username}. Falling back to email.`,
+      );
+      // Resolve email
+      let email = `${username.toLowerCase()}@rguktong.ac.in`;
+      try {
+        const rawUserUrl = (
+          process.env.USER_SERVICE_URL || "http://localhost:3002"
+        ).trim();
+        const USER_SERVICE = rawUserUrl.endsWith("/health")
+          ? rawUserUrl.slice(0, -7)
+          : rawUserUrl;
+        const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+        const userRes = await axios.get(
+          `${USER_SERVICE}/admin/student/${username}`,
+          { headers: { "x-internal-secret": SECRET } },
+        );
+        if (userRes.data?.student?.email) email = userRes.data.student.email;
+      } catch (e) {}
+
+      await sendOtpEmail(email, username, otp);
+      return res.json({
+        success: true,
+        message: "OTP sent to your registered email (no push devices found)",
+      });
+    }
+
+    console.log(`[AUTH] OTP generated and pushed for ${username}: ${otp}`);
     return res.json({
       success: true,
       message: "OTP sent to your registered devices",

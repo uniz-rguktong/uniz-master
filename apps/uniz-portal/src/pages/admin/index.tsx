@@ -17,6 +17,7 @@ import {
   Search,
   ScanLine,
   LayoutGrid,
+  UserCircle,
 } from "lucide-react";
 import { useLogout } from "../../hooks/useLogout";
 import { motion } from "framer-motion";
@@ -165,39 +166,39 @@ export default function Admin() {
       items: [
         ...(isDean
           ? [
-            {
-              onClick: () => navigate("/admin/addfaculty"),
-              title: "Faculty",
-              subtitle: "Manage Staff",
-              Icon: UserPlus,
-            },
-            {
-              onClick: () => navigate("/admin/addstudents"),
-              title: "Students",
-              subtitle: "Import CSV",
-              Icon: UserPlus,
-            },
-          ]
+              {
+                onClick: () => navigate("/admin/addfaculty"),
+                title: "Faculty",
+                subtitle: "Manage Staff",
+                Icon: UserPlus,
+              },
+              {
+                onClick: () => navigate("/admin/addstudents"),
+                title: "Students",
+                subtitle: "Import CSV",
+                Icon: UserPlus,
+              },
+            ]
           : []),
         ...(isDirector
           ? [
-            {
-              onClick: () => navigate("/admin/roles"),
-              title: "Roles",
-              subtitle: "Permissions",
-              Icon: UserCog,
-            },
-          ]
+              {
+                onClick: () => navigate("/admin/roles"),
+                title: "Roles",
+                subtitle: "Permissions",
+                Icon: UserCog,
+              },
+            ]
           : []),
         ...(isSecurity
           ? [
-            {
-              onClick: () => navigate("/admin/searchstudents"),
-              title: "Search",
-              subtitle: "Find Students",
-              Icon: Search,
-            },
-          ]
+              {
+                onClick: () => navigate("/admin/searchstudents"),
+                title: "Search",
+                subtitle: "Find Students",
+                Icon: Search,
+              },
+            ]
           : []),
       ],
     },
@@ -213,13 +214,13 @@ export default function Admin() {
         },
         ...(isDean
           ? [
-            {
-              onClick: () => navigate("/admin/banners"),
-              title: "Banners",
-              subtitle: "Site Visuals",
-              Icon: ImageIcon,
-            },
-          ]
+              {
+                onClick: () => navigate("/admin/banners"),
+                title: "Banners",
+                subtitle: "Site Visuals",
+                Icon: ImageIcon,
+              },
+            ]
           : []),
       ],
     },
@@ -258,6 +259,13 @@ export default function Admin() {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate("/admin/profile")}
+              className="p-2.5 rounded-xl hover:bg-neutral-50 text-neutral-400 hover:text-black transition-colors"
+              title="My Profile"
+            >
+              <UserCircle className="w-5 h-5" />
+            </button>
             <button
               onClick={() => navigate("/admin/settings")}
               className="p-2.5 rounded-xl hover:bg-neutral-50 text-neutral-400 hover:text-black transition-colors"
