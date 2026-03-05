@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Smartphone, Share } from "lucide-react";
+import { X, Download, Share } from "lucide-react";
 import { useRecoilValue } from "recoil";
 import { is_authenticated } from "../store";
 
@@ -25,7 +25,6 @@ export const InstallPWA = () => {
 
     // 3. Handle beforeinstallprompt (Android/Chrome)
     const handleBeforeInstallPrompt = (e: any) => {
-      console.log("Captured beforeinstallprompt event");
       e.preventDefault();
       setDeferredPrompt(e);
       const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
@@ -58,29 +57,28 @@ export const InstallPWA = () => {
       window.matchMedia("(display-mode: standalone)").matches ||
       (window.navigator as any).standalone === true;
 
-    // Show if mobile and not installed
     if (!isStandaloneMatch && isMobile) {
       const timer = setTimeout(() => setIsVisible(true), 1500);
       return () => clearTimeout(timer);
     }
   }, [isStandalone]);
 
-  // 5. Immediate show after login if not already standalone
+  // 5. Show after login if not already standalone
   useEffect(() => {
     const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
     if (auth.is_authnticated && !isStandalone && !isDismissed) {
-      setIsVisible(true);
+      setTimeout(() => setIsVisible(true), 2000);
     }
   }, [auth.is_authnticated, isStandalone]);
 
-  // 6. Auto-dismiss after 5 seconds of visibility
+  // 6. Auto-dismiss after 8 seconds of visibility
   useEffect(() => {
     let timer: any;
     if (isVisible) {
       timer = setTimeout(() => {
         setIsVisible(false);
         localStorage.setItem("pwa_prompt_dismissed", "true");
-      }, 5000);
+      }, 8000);
     }
     return () => clearTimeout(timer);
   }, [isVisible]);
@@ -94,18 +92,17 @@ export const InstallPWA = () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      console.log(`User response to install prompt: ${outcome}`);
       if (outcome === "accepted") {
         setDeferredPrompt(null);
         setIsVisible(false);
       }
     } else if (isIOS) {
       alert(
-        "To install UniZ App: Tap 'Share' icon in Safari bottom menu, then select 'Add to Home Screen'.",
+        "To install UniZ: Tap 'Share' in Safari and select 'Add to Home Screen'.",
       );
     } else {
       alert(
-        "Open your browser menu (usually three dots) and look for 'Install App' or 'Add to Home Screen'.",
+        "Open your browser menu and select 'Install App' or 'Add to Home Screen'.",
       );
     }
   };
@@ -115,97 +112,62 @@ export const InstallPWA = () => {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ y: 0, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 0, opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        className="fixed inset-0 z-[99999] bg-[#312e2b] flex flex-col font-sans"
+        initial={{ y: 20, opacity: 0, scale: 0.95 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: 10, opacity: 0, scale: 0.98 }}
+        className="fixed bottom-6 right-6 z-[9999] w-[320px] md:w-[380px]"
       >
-        {/* Top App Banner */}
-        <div className="flex items-center px-4 py-3 bg-[#262421] border-b border-white/5">
-          <button
-            onClick={handleDismiss}
-            className="text-slate-400 hover:text-white p-1 -ml-1 mr-2"
-          >
-            <X size={20} />
-          </button>
-          <div className="w-10 h-10 bg-white rounded-lg p-1 flex items-center justify-center shrink-0">
-            <img
-              src="/assets/ongole_logo.png"
-              alt="UniZ Logo"
-              className="w-full h-full object-contain"
-            />
-          </div>
-          <div className="ml-3 flex-1 overflow-hidden">
-            <h4 className="text-white text-[15px] font-bold leading-tight">
-              UniZ App
-            </h4>
-            <p className="text-slate-400 text-[12px] leading-tight truncate mt-0.5">
-              Access grades, outpass & more!
-            </p>
-          </div>
-          <button
-            onClick={handleInstallClick}
-            className="bg-[#81b64c] hover:bg-[#a3d160] text-white font-bold text-[14px] px-4 py-1.5 rounded-md shadow-sm transition-colors shrink-0"
-          >
-            Install
-          </button>
-        </div>
+        <div className="relative overflow-hidden bg-white/95 backdrop-blur-xl border border-white/40 shadow-[0_15px_40px_rgba(0,0,0,0.12)] rounded-xl p-4 font-sans">
+          {/* Subtle timer line */}
+          <motion.div
+            initial={{ width: "100%" }}
+            animate={{ width: "0%" }}
+            transition={{ duration: 8, ease: "linear" }}
+            className="absolute top-0 left-0 h-[2px] bg-blue-600/40"
+          />
 
-        {/* Main Content Body */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-20 overflow-y-auto">
-          <div className="w-16 h-16 bg-white rounded-2xl p-2 shadow-2xl mb-6">
-            <img
-              src="/assets/ongole_logo.png"
-              alt="UniZ Logo"
-              className="w-full h-full object-contain"
-            />
-          </div>
-
-          <h1 className="text-white text-3xl font-black text-center mb-8 px-4 leading-[1.1] tracking-tight">
-            Install the UniZ App
-          </h1>
-
-          <div className="w-40 h-40 mb-10 opacity-90 drop-shadow-2xl">
-            {/* Using a large central icon representing the app installation */}
-            <Smartphone
-              className="w-full h-full text-[#81b64c]"
-              strokeWidth={1}
-            />
-          </div>
-
-          <div className="w-full max-w-[340px] flex flex-col gap-4">
-            <button
-              onClick={handleInstallClick}
-              className="w-full bg-[#81b64c] hover:bg-[#a3d160] text-white font-bold text-lg py-4 rounded-xl shadow-[0_4px_0_rgba(0,0,0,0.2)] transition-all active:translate-y-1 active:shadow-none"
-            >
-              {isIOS ? "Show Instructions" : "Install App"}
-            </button>
-
-            <div className="flex items-center gap-3 my-2 opacity-50">
-              <div className="flex-1 h-px bg-white/20" />
-              <span className="text-white/60 text-xs font-bold uppercase tracking-wider">
-                OR
-              </span>
-              <div className="flex-1 h-px bg-white/20" />
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-0.5">
+                <h3 className="unifrakturcook-bold text-xl text-slate-800 tracking-tight leading-none">
+                  uniZ
+                </h3>
+                <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                  App
+                </span>
+              </div>
+              <h4 className="text-slate-900 font-bold text-[13px] truncate">
+                Install app to enjoy full services.
+              </h4>
             </div>
 
-            <button
-              onClick={handleDismiss}
-              className="w-full bg-[#45423f] hover:bg-[#524f4c] border border-white/5 text-white/90 font-bold text-base py-3.5 rounded-xl transition-all shadow-[0_3px_0_rgba(0,0,0,0.1)] active:translate-y-1 active:shadow-none"
-            >
-              Continue in Browser
-            </button>
-
-            {isIOS && (
-              <p className="text-[11px] text-center text-white/40 font-semibold uppercase tracking-wide mt-4 flex items-center justify-center gap-1.5">
-                <Share size={12} className="text-white/60" /> Tap Share then
-                'Add to Home Screen'
-              </p>
-            )}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleInstallClick}
+                className="bg-slate-900 hover:bg-black text-white px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+              >
+                <Download size={13} />
+                Install
+              </button>
+              <button
+                onClick={handleDismiss}
+                className="p-1 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
           </div>
+
+          {isIOS && (
+            <div className="mt-3 pt-2 border-t border-slate-100 flex items-center gap-1.5 text-[9px] text-slate-400 font-medium italic">
+              <Share size={10} className="text-blue-500" />
+              <span>Safari: Tap 'Share' then 'Add to Home Screen'</span>
+            </div>
+          )}
         </div>
       </motion.div>
     </AnimatePresence>
   );
 };
+
+
