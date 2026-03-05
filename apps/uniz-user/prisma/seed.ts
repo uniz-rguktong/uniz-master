@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import crypto from "crypto";
+import * as fs from "fs";
+import * as path from "path";
 
 const prisma = new PrismaClient();
 
@@ -92,6 +94,45 @@ async function main() {
     });
   }
   console.log(` Seeded student profiles with deterministic IDs.`);
+
+  // 4. Seed Faculty Profiles
+  let faculty: any[] = [];
+  try {
+    const data = fs.readFileSync(
+      path.join(__dirname, "faculty_data.json"),
+      "utf8",
+    );
+    faculty = JSON.parse(data);
+  } catch (err) {
+    console.warn("⚠️ faculty_data.json not found, using small fallback.");
+    faculty = [
+      {
+        username: "HOD_CSE",
+        name: "Dr. A. Satish Chandra",
+        email: "hod_cse@uniz.com",
+        department: "CSE",
+        designation: "Professor & HOD",
+        role: "hod",
+        contact: "9848012345",
+      },
+    ];
+  }
+
+  for (const f of faculty) {
+    const id = getDeterministicID(f.username);
+    const { bio, photo, ...rest } = f;
+    await prisma.facultyProfile.upsert({
+      where: { username: f.username },
+      update: rest,
+      create: {
+        ...rest,
+        id,
+      },
+    });
+  }
+  console.log(
+    ` Seeded ${faculty.length} Faculty profiles with deterministic IDs.`,
+  );
 
   console.log(" User Service Seeding finished.");
 }

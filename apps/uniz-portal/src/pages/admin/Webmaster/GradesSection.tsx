@@ -33,6 +33,7 @@ import {
   BULK_UPDATE_GRADES,
   GET_BATCH_GRADES,
   ADD_MANUAL_GRADE,
+  GET_SUBJECTS,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../api/apiClient";
@@ -60,6 +61,44 @@ export default function GradesSection() {
     semesterId: "SEM-1",
     grade: "",
   });
+  const [manualDept, setManualDept] = useState("CSE");
+
+  // Dynamic subjects for manual entry
+  const [manualSubjects, setManualSubjects] = useState<
+    { code: string; name: string }[]
+  >([]);
+  const [manualSubjectsLoading, setManualSubjectsLoading] = useState(false);
+
+  useEffect(() => {
+    if (subTab !== "manual") return;
+    const fetchManualSubjects = async () => {
+      setManualSubjectsLoading(true);
+      setManualGrade((prev) => ({ ...prev, subjectId: "" }));
+      try {
+        const token = (localStorage.getItem("admin_token") || "").replace(
+          /"/g,
+          "",
+        );
+        const url = `${GET_SUBJECTS}?department=${manualDept}&semester=${encodeURIComponent(manualGrade.semesterId)}&limit=100`;
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.success && data.subjects) {
+          setManualSubjects(
+            data.subjects.map((s: any) => ({ code: s.code, name: s.name })),
+          );
+        } else {
+          setManualSubjects([]);
+        }
+      } catch {
+        setManualSubjects([]);
+      } finally {
+        setManualSubjectsLoading(false);
+      }
+    };
+    fetchManualSubjects();
+  }, [manualDept, manualGrade.semesterId, subTab]);
 
   const handleBulkUpdate = async () => {
     if (!bulkJson) {
@@ -746,23 +785,89 @@ export default function GradesSection() {
 
                   <div className="flex-1 min-w-[200px] space-y-2">
                     <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                      Subject Code
+                      Department
                     </label>
                     <div className="relative">
-                      <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4" />
-                      <input
+                      <select
+                        value={manualDept}
+                        onChange={(e) => setManualDept(e.target.value)}
+                        className="w-full pl-5 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                      >
+                        {[
+                          "CSE",
+                          "ECE",
+                          "EEE",
+                          "MECH",
+                          "CIVIL",
+                          "CHEM",
+                          "MATHEMATICS",
+                          "PHYSICS",
+                          "IT",
+                          "ENGLISH",
+                        ].map((d) => (
+                          <option key={d} value={d}>
+                            {d}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                        size={14}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex-1 min-w-[200px] space-y-2">
+                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
+                      Subject Code
+                      {manualSubjectsLoading && (
+                        <span className="ml-2 text-blue-500 normal-case tracking-normal font-medium text-[9px]">
+                          loading...
+                        </span>
+                      )}
+                    </label>
+                    <div className="relative">
+                      <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 pointer-events-none z-10" />
+                      <select
                         required
                         value={manualGrade.subjectId}
                         onChange={(e) =>
                           setManualGrade({
                             ...manualGrade,
-                            subjectId: e.target.value.toUpperCase(),
+                            subjectId: e.target.value,
                           })
                         }
-                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
-                        placeholder="CS101"
+                        className="w-full pl-12 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none disabled:opacity-50"
+                        disabled={manualSubjectsLoading}
+                      >
+                        <option value="">
+                          {manualSubjectsLoading
+                            ? "Loading..."
+                            : manualSubjects.length === 0
+                              ? "No subjects"
+                              : "Select Subject"}
+                        </option>
+                        {manualSubjects.map((s) => (
+                          <option key={s.code} value={s.code}>
+                            {s.code} — {s.name}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                        size={14}
                       />
                     </div>
+                    {manualGrade.subjectId && (
+                      <p className="text-[10px] text-blue-600 font-semibold ml-2">
+                        ✓{" "}
+                        {
+                          manualSubjects.find(
+                            (s) => s.code === manualGrade.subjectId,
+                          )?.name
+                        }
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex-1 min-w-[200px] space-y-2">
