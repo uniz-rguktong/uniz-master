@@ -1043,3 +1043,245 @@ export const updateAdminProfile = async (
     });
   }
 };
+
+// ─────────────────────────────────────────────
+// BULK FACULTY OPERATIONS (Webmaster only)
+// ─────────────────────────────────────────────
+
+export const bulkCreateFaculty = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const allowed = [UserRole.WEBMASTER, UserRole.DIRECTOR];
+  if (!user || !allowed.includes(user.role as UserRole)) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  const entries: Array<{
+    username: string;
+    name: string;
+    email?: string;
+    department?: string;
+    designation?: string;
+    role?: string;
+    contact?: string;
+  }> = req.body.faculty;
+
+  if (!Array.isArray(entries) || entries.length === 0) {
+    return res
+      .status(400)
+      .json({ code: "VALIDATION_ERROR", message: "faculty array is required" });
+  }
+
+  const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+  const results: Array<{
+    username: string;
+    status: "created" | "skipped" | "error";
+    reason?: string;
+  }> = [];
+
+  for (const entry of entries) {
+    const username = String(entry.username || "")
+      .trim()
+      .toLowerCase();
+    if (!username) {
+      results.push({
+        username: "(empty)",
+        status: "error",
+        reason: "Missing username",
+      });
+      continue;
+    }
+
+    try {
+      await prisma.facultyProfile.create({
+        data: {
+          id: randomUUID(),
+          username,
+          name: entry.name || username.toUpperCase(),
+          email: entry.email || `${username}@rguktong.ac.in`,
+          department: (entry.department || "ALL").toUpperCase(),
+          designation: entry.designation || "Faculty",
+          role: entry.role || "teacher",
+          contact: entry.contact || undefined,
+        },
+      });
+
+      // Sync auth credentials
+      const defaultPassword = `${username}@uniz`;
+      await axios
+        .post(
+          `${AUTH_SERVICE_URL}/signup`,
+          {
+            username,
+            password: defaultPassword,
+            role: entry.role || "teacher",
+            email: entry.email,
+          },
+          { headers: { "x-internal-secret": SECRET }, timeout: 5000 },
+        )
+        .catch(() => {});
+
+      results.push({ username, status: "created" });
+    } catch (e: any) {
+      if (e.code === "P2002") {
+        results.push({ username, status: "skipped", reason: "Already exists" });
+      } else {
+        results.push({ username, status: "error", reason: e.message });
+      }
+    }
+  }
+
+  const created = results.filter((r) => r.status === "created").length;
+  const skipped = results.filter((r) => r.status === "skipped").length;
+  const errors = results.filter((r) => r.status === "error").length;
+
+  return res.status(201).json({
+    success: true,
+    summary: { total: entries.length, created, skipped, errors },
+    results,
+  });
+};
+
+export const bulkUpdateFaculty = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const allowed = [UserRole.WEBMASTER, UserRole.DIRECTOR];
+  if (!user || !allowed.includes(user.role as UserRole)) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  // updates: [{ username, role?, designation?, department?, name?, contact? }]
+  const updates: Array<{ username: string; [key: string]: any }> =
+    req.body.updates;
+
+  if (!Array.isArray(updates) || updates.length === 0) {
+    return res
+      .status(400)
+      .json({ code: "VALIDATION_ERROR", message: "updates array is required" });
+  }
+
+  const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+  const results: Array<{
+    username: string;
+    status: "updated" | "not_found" | "error";
+    reason?: string;
+  }> = [];
+
+  for (const upd of updates) {
+    const username = String(upd.username || "").trim();
+    if (!username) continue;
+
+    const { username: _u, ...fieldsToUpdate } = upd;
+
+    try {
+      const existing = await prisma.facultyProfile.findFirst({
+        where: { username: { equals: username, mode: "insensitive" } },
+      });
+
+      if (!existing) {
+        results.push({ username, status: "not_found" });
+        continue;
+      }
+
+      await prisma.facultyProfile.update({
+        where: { id: existing.id },
+        data: fieldsToUpdate,
+      });
+
+      // If role changed, sync auth service
+      if (fieldsToUpdate.role) {
+        await axios
+          .post(
+            `${AUTH_SERVICE_URL}/signup`,
+            {
+              username: existing.username,
+              password: `${existing.username}@uniz`,
+              role: fieldsToUpdate.role,
+            },
+            { headers: { "x-internal-secret": SECRET }, timeout: 5000 },
+          )
+          .catch(() => {});
+      }
+
+      results.push({ username, status: "updated" });
+    } catch (e: any) {
+      results.push({ username, status: "error", reason: e.message });
+    }
+  }
+
+  const updated = results.filter((r) => r.status === "updated").length;
+  const notFound = results.filter((r) => r.status === "not_found").length;
+  const errors = results.filter((r) => r.status === "error").length;
+
+  return res.json({
+    success: true,
+    summary: { total: updates.length, updated, notFound, errors },
+    results,
+  });
+};
+
+export const bulkDeleteFaculty = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const allowed = [UserRole.WEBMASTER, UserRole.DIRECTOR];
+  if (!user || !allowed.includes(user.role as UserRole)) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  const usernames: string[] = req.body.usernames;
+  if (!Array.isArray(usernames) || usernames.length === 0) {
+    return res.status(400).json({
+      code: "VALIDATION_ERROR",
+      message: "usernames array is required",
+    });
+  }
+
+  const results: Array<{
+    username: string;
+    status: "deleted" | "not_found" | "error";
+    reason?: string;
+  }> = [];
+
+  for (const raw of usernames) {
+    const username = String(raw || "").trim();
+    if (!username) continue;
+
+    try {
+      const existing = await prisma.facultyProfile.findFirst({
+        where: { username: { equals: username, mode: "insensitive" } },
+      });
+
+      if (!existing) {
+        results.push({ username, status: "not_found" });
+        continue;
+      }
+
+      await prisma.facultyProfile.delete({ where: { id: existing.id } });
+      results.push({ username, status: "deleted" });
+    } catch (e: any) {
+      results.push({ username, status: "error", reason: e.message });
+    }
+  }
+
+  const deleted = results.filter((r) => r.status === "deleted").length;
+  const notFound = results.filter((r) => r.status === "not_found").length;
+  const errors = results.filter((r) => r.status === "error").length;
+
+  return res.json({
+    success: true,
+    summary: { total: usernames.length, deleted, notFound, errors },
+    results,
+  });
+};

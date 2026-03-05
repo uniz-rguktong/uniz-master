@@ -80,6 +80,9 @@ export const UPDATE_FACULTY = (username: string) =>
   `${BASE_URL}/profile/admin/faculty/${username}`;
 export const ADMIN_SUSPEND_FACULTY = (username: string) =>
   `${BASE_URL}/profile/admin/faculty/${username}/suspend`;
+export const BULK_CREATE_FACULTY = `${BASE_URL}/profile/admin/faculty/bulk-create`;
+export const BULK_UPDATE_FACULTY = `${BASE_URL}/profile/admin/faculty/bulk-update`;
+export const BULK_DELETE_FACULTY = `${BASE_URL}/profile/admin/faculty/bulk-delete`;
 
 // Webmaster / Specialized Admin Endpoints
 export const ADMIN_VIEW_STUDENT = (id: string) =>
