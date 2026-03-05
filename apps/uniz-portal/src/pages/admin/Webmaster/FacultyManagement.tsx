@@ -10,6 +10,14 @@ import {
   Filter,
   X,
   Trash2,
+  Upload,
+  Download,
+  CheckSquare,
+  Square,
+  AlertTriangle,
+  CheckCircle2,
+  ChevronDown,
+  Layers,
 } from "lucide-react";
 import {
   SEARCH_FACULTY,
@@ -17,25 +25,58 @@ import {
   UPDATE_FACULTY,
   ADMIN_SUSPEND_FACULTY,
   BASE_URL,
+  BULK_CREATE_FACULTY,
+  BULK_UPDATE_FACULTY,
+  BULK_DELETE_FACULTY,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
+
+const ROLES = [
+  "teacher",
+  "hod",
+  "dean",
+  "webmaster",
+  "dsw",
+  "swo",
+  "warden",
+  "caretaker",
+  "security",
+  "director",
+];
+const DEPARTMENTS = [
+  "CSE",
+  "ECE",
+  "EEE",
+  "MECH",
+  "CIVIL",
+  "CHEM",
+  "CHEMISTRY",
+  "PHYSICS",
+  "ENGLISH",
+  "MATHS",
+  "ALL",
+];
+
+const getToken = () =>
+  (localStorage.getItem("admin_token") || "").replace(/"/g, "");
 
 export default function FacultyManagement({
   deptRestrict,
 }: {
   deptRestrict?: string;
 }) {
+  /* ─── mode: "single" | "bulk" ─── */
+  const [mode, setMode] = useState<"single" | "bulk">("single");
+
+  /* ─── Single-mode state ─── */
   const [faculty, setFaculty] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
-
-  // Pagination & Filtering State
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [search, setSearch] = useState("");
   const [meta, setMeta] = useState<any>({ total: 0, totalPages: 1 });
-
   const [formData, setFormData] = useState({
     username: "",
     name: "",
@@ -47,14 +88,29 @@ export default function FacultyManagement({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /* ─── Bulk-mode state ─── */
+  const [selectedUsernames, setSelectedUsernames] = useState<Set<string>>(
+    new Set(),
+  );
+  const [bulkTab, setBulkTab] = useState<"add" | "update" | "delete">("add");
+  const [csvText, setCsvText] = useState("");
+  const [bulkUpdateFields, setBulkUpdateFields] = useState({
+    role: "",
+    designation: "",
+    department: "",
+  });
+  const [bulkResult, setBulkResult] = useState<any>(null);
+  const [bulkLoading, setBulkLoading] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  /* ─── Fetch ─── */
   const fetchFaculty = async () => {
     setLoading(true);
-    const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(SEARCH_FACULTY, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
+          Authorization: `Bearer ${getToken()}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -71,7 +127,7 @@ export default function FacultyManagement({
           data.pagination || { total: data.faculty.length, totalPages: 1 },
         );
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch faculty list");
     } finally {
       setLoading(false);
@@ -81,30 +137,25 @@ export default function FacultyManagement({
   useEffect(() => {
     fetchFaculty();
   }, [page]);
-
   useEffect(() => {
     const timer = setTimeout(() => {
-      // If we have deptRestrict, we should ideally add it to the search query
-      // but the current SEARCH_FACULTY endpoint might not support it.
-      // So we just have to hope the users search specifically.
       if (page !== 1) setPage(1);
       else fetchFaculty();
     }, 500);
     return () => clearTimeout(timer);
   }, [search]);
 
+  /* ─── Single CRUD ─── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const token = localStorage.getItem("admin_token");
     try {
       const url = editMode ? UPDATE_FACULTY(formData.username) : CREATE_FACULTY;
       const method = editMode ? "PUT" : "POST";
-
       const res = await fetch(url, {
         method,
         headers: {
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
+          Authorization: `Bearer ${getToken()}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -120,68 +171,52 @@ export default function FacultyManagement({
         );
         setShowModal(false);
         fetchFaculty();
-      } else {
-        toast.error(data.message || "Operation failed");
-      }
-    } catch (error) {
+      } else toast.error(data.message || "Operation failed");
+    } catch {
       toast.error("Error processing request");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleSuspend = async (username: string, currentStatus: boolean) => {
-    const token = localStorage.getItem("admin_token");
-    if (
-      !window.confirm(
-        `Are you sure you want to ${currentStatus ? "reinstate" : "suspend"} this user?`,
-      )
-    )
+  const handleSuspend = async (username: string, current: boolean) => {
+    if (!window.confirm(`${current ? "Reinstate" : "Suspend"} this user?`))
       return;
-
     try {
       const res = await fetch(ADMIN_SUSPEND_FACULTY(username), {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
+          Authorization: `Bearer ${getToken()}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ suspended: !currentStatus }),
+        body: JSON.stringify({ suspended: !current }),
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(`User ${!currentStatus ? "suspended" : "reinstated"}`);
+        toast.success(`User ${!current ? "suspended" : "reinstated"}`);
         fetchFaculty();
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to update status");
     }
   };
 
   const handleDelete = async (username: string) => {
-    const token = localStorage.getItem("admin_token");
     if (
-      !window.confirm(
-        `CRITICAL: Are you sure you want to PERMANENTLY DELETE this faculty profile? This cannot be undone.`,
-      )
+      !window.confirm(`PERMANENTLY DELETE ${username}? This cannot be undone.`)
     )
       return;
-
     try {
       const res = await fetch(`${BASE_URL}/profile/admin/faculty/${username}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-        },
+        headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
       if (data.success) {
         toast.success("Profile deleted");
         fetchFaculty();
-      } else {
-        toast.error(data.message || "Failed to delete");
-      }
-    } catch (error) {
+      } else toast.error(data.message || "Failed to delete");
+    } catch {
       toast.error("Network error during deletion");
     }
   };
@@ -199,7 +234,6 @@ export default function FacultyManagement({
     setEditMode(true);
     setShowModal(true);
   };
-
   const openAdd = () => {
     setFormData({
       username: "",
@@ -214,8 +248,160 @@ export default function FacultyManagement({
     setShowModal(true);
   };
 
+  /* ─── Bulk selection ─── */
+  const toggleSelect = (username: string) => {
+    setSelectedUsernames((prev) => {
+      const n = new Set(prev);
+      n.has(username) ? n.delete(username) : n.add(username);
+      return n;
+    });
+  };
+  const toggleAll = () => {
+    if (selectedUsernames.size === faculty.length)
+      setSelectedUsernames(new Set());
+    else setSelectedUsernames(new Set(faculty.map((f) => f.Username)));
+  };
+
+  /* ─── CSV template download ─── */
+  const downloadTemplate = () => {
+    const csv =
+      "username,name,email,department,designation,role,contact\njdoe,John Doe,jdoe@rguktong.ac.in,CSE,Lecturer,teacher,9876543210";
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "faculty_bulk_template.csv";
+    a.click();
+  };
+
+  /* ─── Parse CSV ─── */
+  const parseCsv = (text: string) => {
+    const lines = text.trim().split("\n").filter(Boolean);
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
+    return lines.slice(1).map((line) => {
+      const vals = line.split(",").map((v) => v.trim());
+      const obj: any = {};
+      headers.forEach((h, i) => {
+        obj[h] = vals[i] || "";
+      });
+      return obj;
+    });
+  };
+
+  /* ─── Bulk Add ─── */
+  const handleBulkAdd = async () => {
+    const entries = parseCsv(csvText);
+    if (!entries.length) {
+      toast.error("No valid rows to import. Check your CSV.");
+      return;
+    }
+    setBulkLoading(true);
+    setBulkResult(null);
+    try {
+      const res = await fetch(BULK_CREATE_FACULTY, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ faculty: entries }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBulkResult(data);
+        toast.success(
+          `Done: ${data.summary.created} created, ${data.summary.skipped} skipped, ${data.summary.errors} errors`,
+        );
+        fetchFaculty();
+      } else toast.error(data.message || "Bulk add failed");
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  /* ─── Bulk Update ─── */
+  const handleBulkUpdate = async () => {
+    if (!selectedUsernames.size) {
+      toast.error("No users selected");
+      return;
+    }
+    const fieldsToApply: any = {};
+    if (bulkUpdateFields.role) fieldsToApply.role = bulkUpdateFields.role;
+    if (bulkUpdateFields.designation)
+      fieldsToApply.designation = bulkUpdateFields.designation;
+    if (bulkUpdateFields.department)
+      fieldsToApply.department = bulkUpdateFields.department;
+    if (!Object.keys(fieldsToApply).length) {
+      toast.error("Choose at least one field to update");
+      return;
+    }
+    setBulkLoading(true);
+    setBulkResult(null);
+    try {
+      const updates = Array.from(selectedUsernames).map((u) => ({
+        username: u,
+        ...fieldsToApply,
+      }));
+      const res = await fetch(BULK_UPDATE_FACULTY, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ updates }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBulkResult(data);
+        toast.success(`Done: ${data.summary.updated} updated`);
+        setSelectedUsernames(new Set());
+        fetchFaculty();
+      } else toast.error(data.message || "Bulk update failed");
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  /* ─── Bulk Delete ─── */
+  const handleBulkDelete = async () => {
+    if (!selectedUsernames.size) {
+      toast.error("No users selected");
+      return;
+    }
+    setBulkLoading(true);
+    setBulkResult(null);
+    setShowDeleteConfirm(false);
+    try {
+      const res = await fetch(BULK_DELETE_FACULTY, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ usernames: Array.from(selectedUsernames) }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBulkResult(data);
+        toast.success(`Done: ${data.summary.deleted} deleted`);
+        setSelectedUsernames(new Set());
+        fetchFaculty();
+      } else toast.error(data.message || "Bulk delete failed");
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
   return (
     <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
+      {/* ─── Top bar ─── */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex flex-col gap-1.5">
           <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
@@ -231,61 +417,394 @@ export default function FacultyManagement({
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex bg-slate-100/80 p-1 rounded-full border border-slate-200/50 backdrop-blur-sm shadow-inner">
-            <button className="p-2.5 text-slate-500 hover:text-blue-600 transition-all">
-              <Filter size={18} />
+        <div className="flex items-center gap-3">
+          {/* Mode Toggle */}
+          <div className="flex bg-slate-100 p-1 rounded-xl gap-1">
+            <button
+              onClick={() => setMode("single")}
+              className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${mode === "single" ? "bg-white text-slate-900 shadow" : "text-slate-400 hover:text-slate-600"}`}
+            >
+              Individual
             </button>
             <button
-              onClick={fetchFaculty}
-              className={`p-2.5 text-slate-500 hover:text-blue-600 transition-all ${loading ? "animate-spin" : ""}`}
+              onClick={() => setMode("bulk")}
+              className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 ${mode === "bulk" ? "bg-white text-slate-900 shadow" : "text-slate-400 hover:text-slate-600"}`}
             >
-              <RefreshCw size={18} />
+              <Layers size={12} /> Bulk Ops
             </button>
           </div>
 
-          <div className="relative group">
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"
-              size={14}
-            />
-            <input
-              type="text"
-              placeholder="System Search..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 pr-5 h-11 bg-white border border-slate-200 rounded-full text-[11px] font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[240px] shadow-sm"
-            />
-          </div>
-
-          <button
-            onClick={openAdd}
-            className="h-11 px-6 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center gap-2.5"
-          >
-            <Plus size={16} /> Add Staff
-          </button>
+          {mode === "single" && (
+            <>
+              <div className="flex bg-slate-100/80 p-1 rounded-full border border-slate-200/50 shadow-inner">
+                <button className="p-2.5 text-slate-500 hover:text-blue-600 transition-all">
+                  <Filter size={18} />
+                </button>
+                <button
+                  onClick={fetchFaculty}
+                  className={`p-2.5 text-slate-500 hover:text-blue-600 transition-all ${loading ? "animate-spin" : ""}`}
+                >
+                  <RefreshCw size={18} />
+                </button>
+              </div>
+              <div className="relative group">
+                <Search
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"
+                  size={14}
+                />
+                <input
+                  type="text"
+                  placeholder="System Search..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-10 pr-5 h-11 bg-white border border-slate-200 rounded-full text-[11px] font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[220px] shadow-sm"
+                />
+              </div>
+              <button
+                onClick={openAdd}
+                className="h-11 px-6 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center gap-2.5"
+              >
+                <Plus size={16} /> Add Staff
+              </button>
+            </>
+          )}
         </div>
       </div>
 
+      {/* ─── BULK MODE ─── */}
+      {mode === "bulk" && (
+        <div className="space-y-6">
+          {/* Sub-tabs */}
+          <div className="flex gap-2">
+            {(["add", "update", "delete"] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => {
+                  setBulkTab(t);
+                  setBulkResult(null);
+                }}
+                className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${bulkTab === t ? (t === "delete" ? "bg-red-600 text-white shadow-lg shadow-red-100" : "bg-slate-900 text-white shadow-lg") : "bg-white border border-slate-200 text-slate-500 hover:border-slate-400"}`}
+              >
+                {t === "add"
+                  ? "📥 Bulk Add"
+                  : t === "update"
+                    ? "✏️ Bulk Update"
+                    : "🗑️ Bulk Delete"}
+              </button>
+            ))}
+          </div>
+
+          {/* ── Bulk Add ── */}
+          {bulkTab === "add" && (
+            <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm p-8 space-y-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-1">
+                    Bulk Add Faculty
+                  </h3>
+                  <p className="text-sm text-slate-400 font-medium">
+                    Paste CSV data or upload. Default password ={" "}
+                    <code className="bg-slate-100 px-2 py-0.5 rounded text-xs font-mono">
+                      username@uniz
+                    </code>
+                  </p>
+                </div>
+                <button
+                  onClick={downloadTemplate}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-100 transition-all"
+                >
+                  <Download size={14} /> Download Template
+                </button>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-2">
+                  CSV Data
+                </label>
+                <textarea
+                  value={csvText}
+                  onChange={(e) => setCsvText(e.target.value)}
+                  rows={8}
+                  className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-mono text-xs outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all resize-none"
+                  placeholder={`username,name,email,department,designation,role\nktejokiran,K Tejo Kiran,ktejokiran@rguktong.ac.in,CSE,Lecturer,teacher\nnewfaculty,New Faculty,new@rguktong.ac.in,ECE,HOD,hod`}
+                />
+              </div>
+
+              <button
+                onClick={handleBulkAdd}
+                disabled={bulkLoading || !csvText.trim()}
+                className="w-full h-12 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.99]"
+              >
+                {bulkLoading ? (
+                  <Loader2 className="animate-spin w-4 h-4" />
+                ) : (
+                  <Upload size={16} />
+                )}
+                {bulkLoading ? "Processing..." : "Run Bulk Import"}
+              </button>
+            </div>
+          )}
+
+          {/* ── Bulk Update ── */}
+          {bulkTab === "update" && (
+            <div className="space-y-4">
+              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-center gap-3">
+                <CheckSquare size={18} className="text-blue-600 shrink-0" />
+                <p className="text-sm text-blue-700 font-semibold">
+                  Select faculty from the table below, then pick fields to
+                  update.
+                  <span className="font-black ml-1">
+                    {selectedUsernames.size} selected.
+                  </span>
+                </p>
+              </div>
+              <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm p-8 space-y-6">
+                <h3 className="text-xl font-bold text-slate-900">
+                  Fields to Apply to Selected
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      New Role
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={bulkUpdateFields.role}
+                        onChange={(e) =>
+                          setBulkUpdateFields((p) => ({
+                            ...p,
+                            role: e.target.value,
+                          }))
+                        }
+                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 appearance-none cursor-pointer"
+                      >
+                        <option value="">— No change —</option>
+                        {ROLES.map((r) => (
+                          <option key={r} value={r}>
+                            {r}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        size={14}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      New Department
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={bulkUpdateFields.department}
+                        onChange={(e) =>
+                          setBulkUpdateFields((p) => ({
+                            ...p,
+                            department: e.target.value,
+                          }))
+                        }
+                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 appearance-none cursor-pointer"
+                      >
+                        <option value="">— No change —</option>
+                        {DEPARTMENTS.map((d) => (
+                          <option key={d} value={d}>
+                            {d}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        size={14}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      New Designation
+                    </label>
+                    <input
+                      value={bulkUpdateFields.designation}
+                      onChange={(e) =>
+                        setBulkUpdateFields((p) => ({
+                          ...p,
+                          designation: e.target.value,
+                        }))
+                      }
+                      placeholder="e.g. Senior Lecturer"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={handleBulkUpdate}
+                  disabled={bulkLoading || !selectedUsernames.size}
+                  className="w-full h-12 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-40 active:scale-[0.99]"
+                >
+                  {bulkLoading ? (
+                    <Loader2 className="animate-spin w-4 h-4" />
+                  ) : null}
+                  {bulkLoading
+                    ? "Updating..."
+                    : `Apply to ${selectedUsernames.size} Selected`}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── Bulk Delete ── */}
+          {bulkTab === "delete" && (
+            <div className="space-y-4">
+              <div className="bg-red-50 border border-red-100 rounded-2xl p-4 flex items-center gap-3">
+                <AlertTriangle size={18} className="text-red-500 shrink-0" />
+                <p className="text-sm text-red-700 font-semibold">
+                  Select rows below then delete. This is{" "}
+                  <strong>permanent and cannot be undone.</strong>
+                  <span className="font-black ml-1">
+                    {selectedUsernames.size} selected.
+                  </span>
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  if (!selectedUsernames.size) {
+                    toast.error("Select at least one user");
+                    return;
+                  }
+                  setShowDeleteConfirm(true);
+                }}
+                disabled={bulkLoading || !selectedUsernames.size}
+                className="w-full h-12 bg-red-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-red-700 transition-all flex items-center justify-center gap-2 disabled:opacity-40 shadow-lg shadow-red-100 active:scale-[0.99]"
+              >
+                {bulkLoading ? (
+                  <Loader2 className="animate-spin w-4 h-4" />
+                ) : (
+                  <Trash2 size={16} />
+                )}
+                {bulkLoading
+                  ? "Deleting..."
+                  : `Delete ${selectedUsernames.size} Selected`}
+              </button>
+
+              {/* Confirm Dialog */}
+              {showDeleteConfirm && (
+                <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+                  <div className="bg-white rounded-[24px] p-8 max-w-sm w-full shadow-2xl border border-red-100 mx-4">
+                    <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mb-5">
+                      <AlertTriangle size={28} className="text-red-500" />
+                    </div>
+                    <h3 className="text-xl font-black text-slate-900 mb-2">
+                      Confirm Bulk Delete
+                    </h3>
+                    <p className="text-sm text-slate-500 mb-2">
+                      You are about to permanently delete{" "}
+                      <strong className="text-red-600">
+                        {selectedUsernames.size} faculty account
+                        {selectedUsernames.size > 1 ? "s" : ""}
+                      </strong>
+                      .
+                    </p>
+                    <div className="max-h-28 overflow-y-auto bg-slate-50 rounded-xl p-3 mb-6">
+                      {Array.from(selectedUsernames).map((u) => (
+                        <p key={u} className="text-xs font-mono text-slate-600">
+                          {u}
+                        </p>
+                      ))}
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setShowDeleteConfirm(false)}
+                        className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-500 font-bold text-xs uppercase tracking-widest hover:bg-slate-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleBulkDelete}
+                        className="flex-[2] py-3 rounded-xl bg-red-600 text-white font-black text-xs uppercase tracking-widest hover:bg-red-700 transition-all"
+                      >
+                        Yes, Delete All
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Result summary */}
+          {bulkResult && (
+            <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <CheckCircle2 size={18} className="text-emerald-500" />
+                <h4 className="font-bold text-slate-900">Operation Result</h4>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  Total {bulkResult.summary?.total}
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                {Object.entries(bulkResult.summary || {})
+                  .filter(([k]) => k !== "total")
+                  .map(([k, v]: any) => (
+                    <div
+                      key={k}
+                      className={`p-3 rounded-xl text-center ${k === "errors" || k === "deleted" ? (k === "deleted" ? "bg-red-50" : "bg-red-50") : k.includes("skip") || k.includes("not") ? "bg-amber-50" : "bg-emerald-50"}`}
+                    >
+                      <p
+                        className={`text-2xl font-black ${k === "errors" ? "text-red-600" : k.includes("skip") || k.includes("not") ? "text-amber-600" : k === "deleted" ? "text-red-600" : "text-emerald-600"}`}
+                      >
+                        {v}
+                      </p>
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">
+                        {k}
+                      </p>
+                    </div>
+                  ))}
+              </div>
+              {bulkResult.results?.filter(
+                (r: any) => r.status === "error" || r.reason,
+              ).length > 0 && (
+                <div className="max-h-36 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-1">
+                  {bulkResult.results
+                    .filter(
+                      (r: any) =>
+                        r.status !== "created" && r.status !== "updated",
+                    )
+                    .map((r: any, i: number) => (
+                      <p key={i} className="text-xs font-mono text-slate-600">
+                        <span
+                          className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
+                        >
+                          [{r.status}]
+                        </span>{" "}
+                        {r.username} {r.reason ? `— ${r.reason}` : ""}
+                      </p>
+                    ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ─── TABLE (shown in both modes) ─── */}
       <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden">
-        {/* Top Pagination bar */}
         {meta.totalPages > 1 && (
           <div className="flex items-center justify-between px-10 py-4 bg-slate-50/30 border-b border-slate-100">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-              Control Panel • Page {page} of {meta.totalPages}
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              Page {page} of {meta.totalPages}
             </p>
             <div className="flex gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 disabled:opacity-30 hover:bg-slate-50 transition-all font-bold text-[9px] uppercase tracking-widest shadow-sm"
+                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 disabled:opacity-30 hover:bg-slate-50 text-[9px] font-black uppercase tracking-widest shadow-sm"
               >
                 Prev
               </button>
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 disabled:opacity-30 hover:bg-slate-50 transition-all font-bold text-[9px] uppercase tracking-widest shadow-sm"
+                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 disabled:opacity-30 hover:bg-slate-50 text-[9px] font-black uppercase tracking-widest shadow-sm"
               >
                 Next
               </button>
@@ -297,6 +816,21 @@ export default function FacultyManagement({
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-50">
+                {mode === "bulk" && (
+                  <th className="px-6 py-6 bg-slate-50/20">
+                    <button
+                      onClick={toggleAll}
+                      className="text-slate-400 hover:text-slate-700 transition-colors"
+                    >
+                      {selectedUsernames.size === faculty.length &&
+                      faculty.length > 0 ? (
+                        <CheckSquare size={18} className="text-blue-600" />
+                      ) : (
+                        <Square size={18} />
+                      )}
+                    </button>
+                  </th>
+                )}
                 <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   User Details
                 </th>
@@ -309,9 +843,11 @@ export default function FacultyManagement({
                 <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   Status
                 </th>
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20 text-right">
-                  System Actions
-                </th>
+                {mode === "single" && (
+                  <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20 text-right">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50/60">
@@ -321,99 +857,127 @@ export default function FacultyManagement({
                   .map((_, i) => (
                     <tr key={i} className="animate-pulse">
                       <td
-                        colSpan={5}
+                        colSpan={mode === "bulk" ? 6 : 5}
                         className="px-10 py-8 bg-slate-50/20"
                       ></td>
                     </tr>
                   ))
               ) : faculty.length > 0 ? (
-                faculty.map((member) => (
-                  <tr
-                    key={member.id}
-                    className="hover:bg-slate-50/30 transition-all group"
-                  >
-                    <td className="px-10 py-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-11 h-11 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-200 border-2 border-white ring-1 ring-slate-100">
-                          {member.Name?.[0] || member.Username?.[0]}
-                        </div>
-                        <div className="flex flex-col">
-                          <p className="font-bold text-slate-900 tracking-tight leading-none mb-1.5">
-                            {member.Name}
-                          </p>
-                          <div className="flex items-center gap-2">
-                            <Mail size={10} className="text-slate-300" />
-                            <p className="text-[10px] font-medium text-slate-400 leading-none">
-                              {member.Email}
+                faculty.map((member) => {
+                  const isSelected = selectedUsernames.has(member.Username);
+                  return (
+                    <tr
+                      key={member.id}
+                      onClick={() =>
+                        mode === "bulk"
+                          ? toggleSelect(member.Username)
+                          : undefined
+                      }
+                      className={`transition-all group ${mode === "bulk" ? "cursor-pointer select-none" : ""} ${isSelected ? "bg-blue-50/60 hover:bg-blue-50" : "hover:bg-slate-50/30"}`}
+                    >
+                      {mode === "bulk" && (
+                        <td className="px-6 py-6">
+                          {isSelected ? (
+                            <CheckSquare size={18} className="text-blue-600" />
+                          ) : (
+                            <Square
+                              size={18}
+                              className="text-slate-300 group-hover:text-slate-400"
+                            />
+                          )}
+                        </td>
+                      )}
+                      <td className="px-10 py-6">
+                        <div className="flex items-center gap-4">
+                          <div
+                            className={`w-11 h-11 rounded-full text-white flex items-center justify-center font-bold text-sm shadow-lg border-2 border-white ring-1 ring-slate-100 ${isSelected ? "bg-blue-600" : "bg-slate-900"}`}
+                          >
+                            {member.Name?.[0] || member.Username?.[0]}
+                          </div>
+                          <div className="flex flex-col">
+                            <p className="font-bold text-slate-900 tracking-tight leading-none mb-1.5">
+                              {member.Name}
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <Mail size={10} className="text-slate-300" />
+                              <p className="text-[10px] font-medium text-slate-400 leading-none">
+                                {member.Email}
+                              </p>
+                            </div>
+                            <p className="text-[9px] font-mono text-slate-300 mt-1">
+                              {member.Username}
                             </p>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-10 py-6">
-                      <p className="text-xs font-black text-slate-600 uppercase tracking-wide">
-                        {member.Designation || "Lecturer"}
-                      </p>
-                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                        {member.Department}
-                      </p>
-                    </td>
-                    <td className="px-10 py-6">
-                      <span className="px-3 py-1 bg-slate-50 rounded-lg text-slate-500 font-semibold uppercase tracking-widest text-[9px] border border-slate-100">
-                        {member.Role?.toUpperCase() || "FACULTY"}
-                      </span>
-                    </td>
-                    <td className="px-10 py-6">
-                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full border text-[9px] font-bold uppercase tracking-widest w-fit animate-in fade-in zoom-in-95 duration-300">
-                        {!member.is_suspended ? (
-                          <>
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span className="text-emerald-600">Active</span>
-                          </>
-                        ) : (
-                          <>
-                            <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                            <span className="text-red-500">Suspended</span>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-10 py-6">
-                      <div className="flex items-center justify-end gap-2.5">
-                        <button
-                          onClick={() => openEdit(member)}
-                          className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-600 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all hover:bg-slate-200 active:scale-95 shadow-sm"
+                      </td>
+                      <td className="px-10 py-6">
+                        <p className="text-xs font-black text-slate-600 uppercase tracking-wide">
+                          {member.Designation || "Lecturer"}
+                        </p>
+                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                          {member.Department}
+                        </p>
+                      </td>
+                      <td className="px-10 py-6">
+                        <span className="px-3 py-1 bg-slate-50 rounded-lg text-slate-500 font-semibold uppercase tracking-widest text-[9px] border border-slate-100">
+                          {member.Role?.toUpperCase() || "FACULTY"}
+                        </span>
+                      </td>
+                      <td className="px-10 py-6">
+                        <div
+                          className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-[9px] font-bold uppercase tracking-widest w-fit ${!member.is_suspended ? "border-emerald-100 text-emerald-600" : "border-red-100 text-red-500"}`}
                         >
-                          Modify
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleSuspend(member.Username, member.is_suspended)
-                          }
-                          className={`flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-full text-[9px] font-bold uppercase tracking-widest transition-all hover:bg-slate-800 active:scale-95 shadow-lg shadow-slate-200 ${member.is_suspended ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-100" : ""}`}
-                        >
-                          {member.is_suspended ? "Reinstate" : "Suspend"}
-                        </button>
-                        <button
-                          onClick={() => handleDelete(member.Username)}
-                          className="p-2.5 bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all active:scale-90 border border-red-100"
-                          title="Delete Faculty"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${!member.is_suspended ? "bg-emerald-500 animate-pulse" : "bg-red-500"}`}
+                          ></span>
+                          {!member.is_suspended ? "Active" : "Suspended"}
+                        </div>
+                      </td>
+                      {mode === "single" && (
+                        <td className="px-10 py-6">
+                          <div className="flex items-center justify-end gap-2.5">
+                            <button
+                              onClick={() => openEdit(member)}
+                              className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-600 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-slate-200 active:scale-95 transition-all shadow-sm"
+                            >
+                              Modify
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleSuspend(
+                                  member.Username,
+                                  member.is_suspended,
+                                )
+                              }
+                              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-lg ${member.is_suspended ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-100" : "bg-slate-900 hover:bg-slate-800 text-white shadow-slate-200"}`}
+                            >
+                              {member.is_suspended ? "Reinstate" : "Suspend"}
+                            </button>
+                            <button
+                              onClick={() => handleDelete(member.Username)}
+                              className="p-2.5 bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all active:scale-90 border border-red-100"
+                              title="Delete"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
-                  <td colSpan={5} className="p-24 text-center">
+                  <td
+                    colSpan={mode === "bulk" ? 5 : 5}
+                    className="p-24 text-center"
+                  >
                     <div className="flex flex-col items-center gap-5">
                       <div className="p-6 bg-slate-50 rounded-full border border-slate-100 shadow-inner">
                         <Users size={40} className="text-slate-300" />
                       </div>
-                      <p className="font-semibold text-slate-400 italic text-sm tracking-tight">
-                        No staff members matching your current criteria.
+                      <p className="font-semibold text-slate-400 italic text-sm">
+                        No staff members matching your criteria.
                       </p>
                     </div>
                   </td>
@@ -423,31 +987,25 @@ export default function FacultyManagement({
           </table>
         </div>
 
-        {/* Pagination Controls */}
         {meta.totalPages > 1 && (
           <div className="flex items-center justify-between px-10 py-6 bg-slate-50/50 border-t border-slate-100">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Showing page {page} of {meta.totalPages} • Total {meta.total}{" "}
-              staff
+              Page {page} of {meta.totalPages} • Total {meta.total} staff
             </p>
             <div className="flex items-center gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-50 transition-all shadow-sm"
+                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 hover:bg-slate-50 shadow-sm"
               >
                 Previous
               </button>
               <div className="flex gap-1.5">
-                {[...Array(meta.totalPages)].map((_, i) => (
+                {[...Array(Math.min(meta.totalPages, 5))].map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold transition-all ${
-                      page === i + 1
-                        ? "bg-blue-600 text-white shadow-lg shadow-blue-100"
-                        : "bg-white border border-slate-200 text-slate-400 hover:border-blue-400 hover:text-blue-500"
-                    }`}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold transition-all ${page === i + 1 ? "bg-blue-600 text-white shadow-lg shadow-blue-100" : "bg-white border border-slate-200 text-slate-400 hover:border-blue-400 hover:text-blue-500"}`}
                   >
                     {i + 1}
                   </button>
@@ -456,7 +1014,7 @@ export default function FacultyManagement({
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-50 transition-all shadow-sm"
+                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 hover:bg-slate-50 shadow-sm"
               >
                 Next
               </button>
@@ -465,13 +1023,13 @@ export default function FacultyManagement({
         )}
       </div>
 
-      {/* Modal */}
+      {/* ─── Single Add/Edit Modal ─── */}
       {showModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white w-full max-w-lg rounded-[28px] p-10 shadow-2xl relative animate-in zoom-in-95 duration-300 border border-slate-100">
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-8 right-8 p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400"
+              className="absolute top-8 right-8 p-2 hover:bg-slate-50 rounded-full text-slate-400"
             >
               <X size={24} />
             </button>
@@ -483,7 +1041,6 @@ export default function FacultyManagement({
                 ? "Update profile information and permissions"
                 : "Create a new faculty or administrative account"}
             </p>
-
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -497,11 +1054,11 @@ export default function FacultyManagement({
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        username: e.target.value.toUpperCase(),
+                        username: e.target.value.toLowerCase(),
                       })
                     }
                     className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-sm disabled:opacity-50"
-                    placeholder="e.g. FAC001"
+                    placeholder="e.g. jdoe"
                   />
                 </div>
                 <div className="space-y-2">
@@ -519,7 +1076,6 @@ export default function FacultyManagement({
                   />
                 </div>
               </div>
-
               <div className="space-y-2">
                 <label className="text-xs font-black uppercase tracking-widest text-slate-400">
                   Email Address
@@ -535,7 +1091,6 @@ export default function FacultyManagement({
                   placeholder="faculty@rguktong.ac.in"
                 />
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 {!deptRestrict && (
                   <div className="space-y-2">
@@ -549,20 +1104,9 @@ export default function FacultyManagement({
                       }
                       className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl font-bold outline-none"
                     >
-                      {[
-                        "CSE",
-                        "ECE",
-                        "EEE",
-                        "MECH",
-                        "CIVIL",
-                        "CHEM",
-                        "CHEMISTRY",
-                        "PHYSICS",
-                        "ENGLISH",
-                        "MATHS",
-                      ].map((dept) => (
-                        <option key={dept} value={dept}>
-                          {dept}
+                      {DEPARTMENTS.map((d) => (
+                        <option key={d} value={d}>
+                          {d}
                         </option>
                       ))}
                     </select>
@@ -579,12 +1123,14 @@ export default function FacultyManagement({
                     }
                     className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold cursor-pointer"
                   >
-                    <option value="teacher">Teacher</option>
-                    <option value="hod">Department Head</option>
+                    {ROLES.map((r) => (
+                      <option key={r} value={r}>
+                        {r.charAt(0).toUpperCase() + r.slice(1)}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
-
               <div className="space-y-2">
                 <label className="text-xs font-black uppercase tracking-widest text-slate-400">
                   Designation
@@ -599,7 +1145,6 @@ export default function FacultyManagement({
                   placeholder="e.g. HOD, Lecturer"
                 />
               </div>
-
               <div className="pt-6 flex gap-4">
                 <button
                   type="button"
