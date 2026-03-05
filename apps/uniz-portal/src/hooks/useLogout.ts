@@ -2,6 +2,7 @@ import { useSetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
 import { is_authenticated, adminUsername, student, resetTokenState } from "../store";
 import { clearSession } from "../utils/security";
+import { resetStudentDataCache } from "./student_info";
 
 export function useLogout() {
     const setAuth = useSetRecoilState(is_authenticated);
@@ -13,6 +14,9 @@ export function useLogout() {
     const logout = () => {
         // 1. Storage & Cookies
         clearSession();
+
+        // 2. Reset /me fetch cache so next login always triggers a fresh call
+        resetStudentDataCache();
 
         // 2. Global State Reset
         setAuth({ is_authnticated: false, type: "" });

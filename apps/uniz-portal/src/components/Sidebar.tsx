@@ -3,6 +3,7 @@ import { student } from "../store";
 import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../hooks/is_authenticated";
 import { useLogout } from "../hooks/useLogout";
+import { useStudentData } from "../hooks/student_info";
 import { useState, lazy, Suspense } from "react";
 import { enableOutingsAndOutpasses } from "../pages/student/student";
 import {
@@ -55,9 +56,11 @@ const ContentSkeleton = () => (
 
 export default function Sidebar({ content }: MainContent) {
   useIsAuth();
+  // Trigger /me fetch immediately when the student portal shell mounts,
+  // so all pages have user data even before the profile tab is visited.
+  useStudentData();
   const userData = useRecoilValue<any>(student);
   const navigate = useNavigate();
-
 
   const [showConfirm, setShowConfirm] = useState(false);
 
