@@ -198,7 +198,11 @@ export const getBatchGrades = async (
       if (sem.includes(y)) {
         semesterIdFilter = sem;
       } else {
-        semesterIdFilter = `${y.toUpperCase()}-${sem.toUpperCase()}`;
+        const semStr = String(sem).toUpperCase();
+        const yearStr = String(y).toUpperCase();
+        semesterIdFilter = semStr.includes(yearStr)
+          ? semStr
+          : { in: [semStr, `${yearStr}-${semStr}`] };
       }
     } else if (sem) {
       semesterIdFilter = { endsWith: `-${sem.toUpperCase()}` };
@@ -374,7 +378,11 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
 
     let semesterIdFilter: any = undefined;
     if (sem && y) {
-      semesterIdFilter = `${y.toUpperCase()}-${sem.toUpperCase()}`;
+      const semStr = String(sem).toUpperCase();
+      const yearStr = String(y).toUpperCase();
+      semesterIdFilter = semStr.includes(yearStr)
+        ? semStr
+        : { in: [semStr, `${yearStr}-${semStr}`] };
     } else if (sem) {
       semesterIdFilter = { endsWith: `-${sem.toUpperCase()}` };
     } else if (y) {
@@ -783,7 +791,11 @@ export const getAttendance = async (
 
     let semesterIdFilter: any = undefined;
     if (sem && y) {
-      semesterIdFilter = `${y.toUpperCase()}-${sem.toUpperCase()}`;
+      const semStr = String(sem).toUpperCase();
+      const yearStr = String(y).toUpperCase();
+      semesterIdFilter = semStr.includes(yearStr)
+        ? semStr
+        : { in: [semStr, `${yearStr}-${semStr}`] };
     } else if (sem) {
       semesterIdFilter = { endsWith: `-${sem.toUpperCase()}` };
     } else if (y) {
@@ -1712,14 +1724,14 @@ export const getGradesTemplate = async (
 
     students.forEach((s: any) => {
       activeSubjects.forEach((sub) => {
-        headers.push([
-          s.username,
-          s.name,
-          sub.code,
-          sub.name,
-          (semesterId as string) || sub.semester,
-          "",
-        ]);
+        const rowSemId = (semesterId as string) || sub.semester;
+        // Standardize to YEAR-SEM-ID if not already prefixed
+        const finalSemId =
+          rowSemId && year && !rowSemId.includes(String(year).toUpperCase())
+            ? `${String(year).toUpperCase()}-${rowSemId.toUpperCase()}`
+            : rowSemId;
+
+        headers.push([s.username, s.name, sub.code, sub.name, finalSemId, ""]);
       });
     });
 
