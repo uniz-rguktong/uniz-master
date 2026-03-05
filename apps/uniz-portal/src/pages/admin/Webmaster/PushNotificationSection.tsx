@@ -139,7 +139,7 @@ export default function PushNotificationSection() {
                   .map((_, i) => (
                     <tr key={i} className="animate-pulse">
                       <td
-                        colSpan={4}
+                        colSpan={5}
                         className="px-10 py-8 bg-slate-50/20"
                       ></td>
                     </tr>
