@@ -255,8 +255,16 @@ export default function FacultyDashboard() {
                 {profile?.Department}
               </p>
             </div>
-            <div className="w-11 h-11 rounded-[14px] bg-black flex items-center justify-center font-bold text-white shadow-sm">
-              {(profile?.Name || username || "F")[0].toUpperCase()}
+            <div className="w-11 h-11 rounded-[14px] bg-black flex items-center justify-center font-bold text-white shadow-sm overflow-hidden">
+              {profile?.ProfileUrl ? (
+                <img
+                  src={profile.ProfileUrl}
+                  alt={profile.Name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                (profile?.Name || username || "F")[0].toUpperCase()
+              )}
             </div>
           </div>
         </header>
@@ -516,8 +524,16 @@ function ProfileSection({
       <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
         {/* Profile header */}
         <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 p-8 flex items-center gap-6">
-          <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-white font-bold text-3xl border-2 border-white/20">
-            {profile.Name[0]}
+          <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-white font-bold text-3xl border-2 border-white/20 overflow-hidden shrink-0">
+            {profile.ProfileUrl ? (
+              <img
+                src={profile.ProfileUrl}
+                alt={profile.Name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              profile.Name[0]
+            )}
           </div>
           <div>
             <h3 className="text-2xl font-bold text-white">{profile.Name}</h3>
