@@ -102,9 +102,8 @@ export default function FacultyDashboard() {
   const [profile, setProfile] = useState<FacultyProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
 
-  const username = JSON.parse(
-    localStorage.getItem("username") || `"Professor"`,
-  );
+  const username =
+    localStorage.getItem("username")?.replace(/"/g, "") || "Professor";
   const isHOD = (profile?.Role || "").toLowerCase() === "hod";
 
   /* ── Fetch profile ── */
@@ -996,7 +995,7 @@ type PwdStep = "current" | "otp" | "new";
 function PasswordSection() {
   const [step, setStep] = useState<PwdStep>("current");
   const [username] = useState(
-    () => JSON.parse(localStorage.getItem("username") || `""`) || "",
+    () => localStorage.getItem("username")?.replace(/"/g, "") || "",
   );
   const [currentPassword, setCurrentPassword] = useState("");
   const [otp, setOtp] = useState("");
