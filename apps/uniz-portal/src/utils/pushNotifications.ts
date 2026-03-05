@@ -54,10 +54,18 @@ async function storeUsernameInSwCache(username: string): Promise<void> {
   }
 }
 
+let isPushSetupInProgress = false;
+
 export async function initPushNotifications(
   username: string,
   notificationServiceUrl: string,
 ): Promise<void> {
+  if (isPushSetupInProgress) {
+    console.log("[Push] Setup already in progress, skipping duplicate call.");
+    return;
+  }
+  isPushSetupInProgress = true;
+
   try {
     console.log(`[Push] initPushNotifications called for user: ${username}`);
 
@@ -178,6 +186,8 @@ export async function initPushNotifications(
     console.log(`[Push] ✅ Successfully registered push for ${username}`);
   } catch (err) {
     console.warn("[Push] Setup failed:", err);
+  } finally {
+    isPushSetupInProgress = false;
   }
 }
 
