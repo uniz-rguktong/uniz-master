@@ -88,15 +88,31 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     fi
   done
 
-  if [ $REBUILT_COUNT -gt 0 ]; then
+  if [ $REBUILT_COUNT -gt 0 ] || [ "$FORCE_ALL" == "true" ]; then
+    echo "🧹 Cleaning up dangling Docker components..."
+    docker system prune -f
+    docker image prune -a -f --filter "until=24h"
+    
+    echo "♻️  Pruning old K3s images..."
+    # Remove images with 'local-' tag that are not currently used by any pod
+    USED_IMAGES=$(kubectl get pods -A -o jsonpath='{.items[*].spec.containers[*].image}' | tr ' ' '\n' | sort -u)
+    k3s ctr images ls -q | grep "local-" | while read -r img; do
+      if ! echo "$USED_IMAGES" | grep -q "$img"; then
+        echo "🗑️ Removing unused K3s image: $img"
+        k3s ctr images rm "$img" || true
+      fi
+    done
+    
     echo "✅ Redeployed $REBUILT_COUNT services."
-    docker image prune -f
   else
     echo "✨ No services needed updating."
   fi
   
-  echo "⌛ Stabilization (30s)..."
-  sleep 30
+  echo "⌛ Stabilization & Health Check..."
+  for i in {1..6}; do
+    echo "Check $i/6: $(kubectl get pods --no-headers | grep -v 'Running\|Completed' | wc -l | xargs) pods still initializing..."
+    sleep 10
+  done
   kubectl get pods
 EOF
 
