@@ -489,10 +489,32 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
       motivation = "Fetching your personalized advice... (Refresh in a moment)";
     }
 
+    // Calculate Overall CGPA and Backlogs
+    let totalEarnedPoints = 0;
+    let totalWeightedCredits = 0;
+    let backlogCount = 0;
+
+    grades.forEach((g) => {
+      const points = g.grade;
+      const credits = g.subject?.credits || 0;
+
+      if (points === 0) backlogCount++;
+
+      totalEarnedPoints += points * credits;
+      totalWeightedCredits += credits;
+    });
+
+    const cgpa =
+      totalWeightedCredits > 0
+        ? parseFloat((totalEarnedPoints / totalWeightedCredits).toFixed(2))
+        : 0;
+
     const responsePayload = {
       success: true,
       grades,
       gpa: gpaResults,
+      cgpa,
+      totalBacklogs: backlogCount,
       motivation,
     };
 

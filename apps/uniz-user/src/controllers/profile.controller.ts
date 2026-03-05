@@ -144,26 +144,40 @@ export const getStudentProfile = async (
     const token = req.headers.authorization;
     if (token && req.params.username) {
       try {
-        const [gradesRes, attendanceRes] = await Promise.all([
+        const [gradesRes, attendanceRes, historyRes] = await Promise.all([
           axios
             .get(
               `${GATEWAY_URL}/academics/grades?studentId=${targetUsername}`,
-              { headers: { Authorization: token }, timeout: 2000 },
+              { headers: { Authorization: token }, timeout: 5000 },
             )
             .catch(() => ({ data: null })),
           axios
             .get(
               `${GATEWAY_URL}/academics/attendance?studentId=${targetUsername}`,
-              { headers: { Authorization: token }, timeout: 2000 },
+              { headers: { Authorization: token }, timeout: 5000 },
             )
+            .catch(() => ({ data: null })),
+          axios
+            .get(`${GATEWAY_URL}/requests/history/${targetUsername}`, {
+              headers: { Authorization: token },
+              timeout: 5000,
+            })
             .catch(() => ({ data: null })),
         ]);
 
         if (gradesRes.data && gradesRes.data.success) {
-          mapped.grades_summary = gradesRes.data.gpa;
+          mapped.grades = gradesRes.data.grades;
+          mapped.gpa_stats = gradesRes.data.gpa;
+          mapped.cgpa = gradesRes.data.cgpa;
+          mapped.total_backlogs = gradesRes.data.totalBacklogs;
+          mapped.motivation = gradesRes.data.motivation;
         }
         if (attendanceRes.data && attendanceRes.data.success) {
+          mapped.attendance = attendanceRes.data.attendance;
           mapped.attendance_summary = attendanceRes.data.summary;
+        }
+        if (historyRes.data && historyRes.data.success) {
+          mapped.outpass_history = historyRes.data.history;
         }
       } catch (err) {
         console.error("Profile Enrichment partially failed:", err);
