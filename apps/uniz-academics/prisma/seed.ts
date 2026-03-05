@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import * as fs from "fs";
+import * as path from "path";
 
 const prisma = new PrismaClient();
 
@@ -779,6 +781,44 @@ async function main() {
     }
   }
   */
+  // 6. Seed Faculty Profiles (Rich Data)
+  let facultyProfiles: any[] = [];
+  try {
+    const data = fs.readFileSync(
+      path.join(__dirname, "faculty_data.json"),
+      "utf8",
+    );
+    facultyProfiles = JSON.parse(data);
+  } catch (err) {
+    console.warn(
+      "⚠️ faculty_data.json not found in academics seed, using fallback.",
+    );
+    facultyProfiles = [
+      {
+        name: "Dr. A. Satish Chandra",
+        email: "hod_cse@uniz.com",
+        department: "CSE",
+        designation: "Professor & HOD",
+        role: "HOD",
+        bio: {
+          education: "Ph.D. in Computer Science (IIT Bombay)",
+          experience: "25+ years in Academia & Research",
+          researchInterests: ["Artificial Intelligence", "Blockchain Systems"],
+          awards: ["Best Researcher 2023", "Eminent Engineer Award"],
+        },
+      },
+    ];
+  }
+
+  console.log(` Seeding ${facultyProfiles.length} rich faculty profiles...`);
+  for (const f of facultyProfiles) {
+    await (prisma as any).faculty.upsert({
+      where: { email: f.email },
+      update: f,
+      create: f,
+    });
+  }
+
   console.log(" Seeding complete.");
 }
 

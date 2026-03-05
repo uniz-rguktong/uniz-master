@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Upload,
   FileDown,
@@ -15,6 +15,7 @@ import {
   UPLOAD_GRADES,
   GET_ATTENDANCE_TEMPLATE,
   GET_GRADES_TEMPLATE,
+  GET_SUBJECTS,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient, downloadFile } from "../../../api/apiClient";
@@ -32,6 +33,45 @@ export default function UploadSection({ type }: { type: UploadType }) {
   const [semester, setSemester] = useState("SEM-1");
   const [subjectCode, setSubjectCode] = useState("");
   const [remedialsOnly, setRemedialsOnly] = useState(false);
+
+  // Dynamic subject list
+  const [subjects, setSubjects] = useState<{ code: string; name: string }[]>(
+    [],
+  );
+  const [subjectsLoading, setSubjectsLoading] = useState(false);
+
+  // Fetch subjects whenever branch or semester changes (only for grades upload)
+  useEffect(() => {
+    if (type !== "grades") return;
+    const fetchSubjects = async () => {
+      setSubjectsLoading(true);
+      setSubjectCode(""); // reset selection on criteria change
+      try {
+        const token = (
+          localStorage.getItem("admin_token") ||
+          localStorage.getItem("faculty_token") ||
+          ""
+        ).replace(/"/g, "");
+        const url = `${GET_SUBJECTS}?department=${branch}&semester=${encodeURIComponent(semester)}&limit=100`;
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.success && data.subjects) {
+          setSubjects(
+            data.subjects.map((s: any) => ({ code: s.code, name: s.name })),
+          );
+        } else {
+          setSubjects([]);
+        }
+      } catch {
+        setSubjects([]);
+      } finally {
+        setSubjectsLoading(false);
+      }
+    };
+    fetchSubjects();
+  }, [branch, semester, type]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -181,14 +221,42 @@ export default function UploadSection({ type }: { type: UploadType }) {
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                   Subject Code
+                  {subjectsLoading && (
+                    <span className="ml-2 text-blue-500 normal-case tracking-normal font-medium">
+                      loading...
+                    </span>
+                  )}
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g. CS201"
-                  value={subjectCode}
-                  onChange={(e) => setSubjectCode(e.target.value.toUpperCase())}
-                  className="w-full h-11 px-6 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-900 placeholder:text-slate-400"
-                />
+                <div className="relative group">
+                  <select
+                    value={subjectCode}
+                    onChange={(e) => setSubjectCode(e.target.value)}
+                    className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none disabled:opacity-50"
+                    disabled={subjectsLoading}
+                  >
+                    <option value="">
+                      {subjectsLoading
+                        ? "Loading subjects..."
+                        : subjects.length === 0
+                          ? "No subjects found"
+                          : "Select Subject"}
+                    </option>
+                    {subjects.map((s) => (
+                      <option key={s.code} value={s.code}>
+                        {s.code} — {s.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    size={14}
+                  />
+                </div>
+                {subjectCode && (
+                  <p className="text-[10px] text-blue-600 font-semibold ml-2 mt-1">
+                    ✓ {subjects.find((s) => s.code === subjectCode)?.name}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">

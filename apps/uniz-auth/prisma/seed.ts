@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import * as fs from "fs";
+import * as path from "path";
 
 const prisma = new PrismaClient();
 
@@ -81,6 +83,37 @@ async function main() {
         username: studentId,
         passwordHash: defaultPass,
         role: "student",
+      },
+    });
+  }
+
+  // 4. Seed Faculty Credentials
+  let faculty: any[] = [];
+  try {
+    const data = fs.readFileSync(
+      path.join(__dirname, "faculty_data.json"),
+      "utf8",
+    );
+    faculty = JSON.parse(data);
+  } catch (err) {
+    console.warn(
+      "⚠️ faculty_data.json not found in auth seed, using fallback.",
+    );
+    faculty = [{ username: "HOD_CSE", role: "hod" }];
+  }
+
+  const facultyPass = await bcrypt.hash("faculty@uniz", 10);
+
+  for (const f of faculty) {
+    const id = getDeterministicID(f.username);
+    await prisma.authCredential.upsert({
+      where: { username: f.username },
+      update: { passwordHash: facultyPass, role: f.role || "teacher" },
+      create: {
+        id,
+        username: f.username,
+        passwordHash: facultyPass,
+        role: f.role || "teacher",
       },
     });
   }

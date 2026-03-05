@@ -53,7 +53,8 @@ export default function Signin({ type }: SigninProps) {
   // Redirect if already authenticated
   useEffect(() => {
     // Only redirect if a token is actually present in storage
-    const hasToken = localStorage.getItem("student_token") ||
+    const hasToken =
+      localStorage.getItem("student_token") ||
       localStorage.getItem("admin_token") ||
       localStorage.getItem("faculty_token");
 
@@ -132,6 +133,17 @@ export default function Signin({ type }: SigninProps) {
         setAuth({ is_authnticated: true, type: "student" });
         toast.success(`Welcome back, ${username.trim()}!`);
         navigate("/student", { replace: true });
+      } else if (
+        type === "admin" &&
+        data.role === "teacher" &&
+        (token || data.success)
+      ) {
+        localStorage.setItem("faculty_token", token);
+        localStorage.setItem("username", username.trim());
+        localStorage.setItem("role", "teacher");
+        setAuth({ is_authnticated: true, type: "faculty" });
+        toast.success(`Welcome Professor ${username.trim()}!`);
+        navigate("/faculty", { replace: true });
       } else if (type === "admin" && (token || data.success)) {
         localStorage.setItem("admin_token", token);
         localStorage.setItem("username", username.trim());
@@ -326,9 +338,7 @@ export default function Signin({ type }: SigninProps) {
                 label="Username"
                 icon={<User className="w-4 h-4" />}
                 value={username}
-                onChange={(e) =>
-                  setUsername(e.target.value.toUpperCase())
-                }
+                onChange={(e) => setUsername(e.target.value.toUpperCase())}
                 placeholder={
                   type === "student"
                     ? "University ID"
@@ -360,17 +370,15 @@ export default function Signin({ type }: SigninProps) {
                 </Button>
               </div>
 
-              {type === "student" && (
-                <div className="text-center pt-2">
-                  <button
-                    type="button"
-                    className="text-sm text-slate-900 hover:text-black font-bold uppercase tracking-widest underline transition-all"
-                    onClick={() => setStep("forgot")}
-                  >
-                    Forgot password?
-                  </button>
-                </div>
-              )}
+              <div className="text-center pt-2">
+                <button
+                  type="button"
+                  className="text-sm text-slate-900 hover:text-black font-bold uppercase tracking-widest underline transition-all"
+                  onClick={() => setStep("forgot")}
+                >
+                  Forgot password?
+                </button>
+              </div>
               {type === "admin" && (
                 <div className="text-center pt-2">
                   <button
@@ -394,9 +402,7 @@ export default function Signin({ type }: SigninProps) {
                 label="University ID"
                 icon={<User className="w-4 h-4" />}
                 value={username}
-                onChange={(e) =>
-                  setUsername(e.target.value.toUpperCase())
-                }
+                onChange={(e) => setUsername(e.target.value.toUpperCase())}
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck={false}
