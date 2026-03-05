@@ -19,8 +19,8 @@ UniZ is a **microservices-based monorepo** built with Node.js, Express, Docker, 
 | **uniz-gateway-api**          | 3000            | Express API Gateway  | **Primary Router** (Regex-based), Auth middleware, Aggregation. |
 | **uniz-auth-service**         | 3001            | Auth Service         | Authentication, Session management.                             |
 | **uniz-user-service**         | 3002            | User Service         | User profiles, **CMS (Banners/Content)**.                       |
-| **uniz-outpass-service**      | 3003            | Outpass Service      | Student outpasses, **Grievances**, **Requests**.                |
-| **uniz-academics-service**    | 3004            | Academics Service    | Grades, Attendance, Curriculum.                                 |
+| **uniz-outpass-service**      | 3003            | Outpass Service      | Student outpasses, **SWO Grievances**, **Requests**.            |
+| **uniz-academics-service**    | 3004            | Academics Service    | Grades, Attendance, Curriculum, **Excel Ingestion**.            |
 | **uniz-files-service**        | 3005            | Files Service        | File uploads/downloads.                                         |
 | **uniz-mail-service**         | 3006            | Mail Service         | Email delivery.                                                 |
 | **uniz-notification-service** | 3007            | Notification Service | Push/In-app notifications.                                      |
@@ -99,7 +99,10 @@ Deployment is often done by pushing code and running a sync script, or manually 
 - **Case-Insensitive Subscriber Search (Feb 21, 2026)**: Fixed empty subscriber lists when searching with mixed-case prefixes by refactoring SQL queries to use `mode: 'insensitive'`.
 - **Gateway PDF Proxy Corruption (Feb 21, 2026)**: Downloading PDFs through the Gateway resulted in corrupted empty files or JSON syntax errors. **Solution**: Configured Axios to use `responseType: "arraybuffer"` and explicitly stripped `Content-Encoding` and `Transfer-Encoding` headers from the proxy response object before sending binary arrays, as Axios auto-decompresses the stream natively.
 - **Push Notification Timestamps (Feb 21, 2026)**: Check-in/Check-out push notifications were displaying in 24-hour UTC or inconsistent local formats. **Solution**: Switched `toLocaleString` arguments to explicit `en-US` with `Asia/Kolkata` bounds to force native AM/PM Indian Standard Time rendering exactly as expected by the UI.
-- **Push Notification Device Context (Feb 21, 2026)**: Security alerts sent opaque IP addresses ("from IP: X.X.X.X"). **Solution**: Added `ua-parser-js` to `uniz-auth-service` to parse `User-Agent` headers and inject human-readable device info (e.g., "Chrome on Mac OS").
+- **Push Notification User Context (Feb 21, 2026)**: Security alerts sent opaque IP addresses ("from IP: X.X.X.X"). **Solution**: Added `ua-parser-js` to `uniz-auth-service` to parse `User-Agent` headers and inject human-readable device info (e.g., "Chrome on Mac OS").
+- **Faculty Management Bio Scraping (Mar 4, 2026)**: The `college-scraped` API requires `deep=true` and `dept_code` to return bio data. Implemented a parallel background scraper in `FacultyManagement.tsx` to enrich local profiles.
+- **Push Notification Stability Cleanup (Mar 5, 2026)**: Removed the "trash" delete subscription functionality from the UI to prevent administrators from accidentally or maliciously revoking valid push tokens, ensuring more reliable alert delivery.
+- **Excel Template Generation Failures (Mar 5, 2026)**: `xlsx` library and `ExcelJS` headers must match strictly between `Grades_Template` generation and `uploadGrades` parsing. Fixed header validation to include exact case-sensitive matches for "Student ID", "Subject Code", etc.
 
 ---
 
@@ -109,7 +112,8 @@ Deployment is often done by pushing code and running a sync script, or manually 
 
 - **Color Scheme**: Maroon (`#800000`) is the primary institutional color for all official documents and PDF reports.
 - **Official Logo**: Uses the RGUKT Ongole logo (`rguktongole_logo_kbpaui.jpg`).
-- **Typography**: Professional sans-serif (Helvetica) for all generated documentation.
+- **Typography**: Professional sans-serif (Inter/Helvetica) for all generated documentation and UI components.
+- **Aesthetics**: Premium modern UI with glassmorphism, subtle micro-animations, and high-fidelity shadow systems across administrative modules.
 
 ### PDF Report Generation
 
@@ -123,16 +127,18 @@ Deployment is often done by pushing code and running a sync script, or manually 
 
 ## 7. Data State Annotations (Feb 20, 2026)
 
-- **Mass Update: Student Branch**: All existing students in `user_v2.StudentProfile` have been updated to branch `CSE` to ensure data consistency across the ecosystem.
+---
+
+## 8. Faculty & Staff Management Standards (Mar 4, 2026)
+
+- **Rich Profiles**: Faculty profiles now support a `bio` field (JSON) in PostgreSQL, storing publications, experience, and contact details.
+- **Ingestion**: Prefers CSV/Excel upload via `PapaParse` over manual entry for bulk staff registration.
+- **Verification**: Administrators can view full faculty profiles in a professional modal including `Joined On` (CreatedAt) timestamps and high-resolution profile photos from the scraped repository.
 
 ---
 
-## 8. Future Integrations (Multi-Tenant)
+## 10. SWO Grievance Engine (Mar 5, 2026)
 
-- **Ornate Frontend (`ornate.rguktong.in`)**: The K3s + Nginx Ingress architecture natively supports multi-tenant domains. In the future, a containerized Next.js application will be deployed alongside the UniZ infrastructure.
-  - **Implementation Plan**:
-    1. Containerize the Next.js app (Dockerfile).
-    2. Deploy it to the cluster (e.g., `ornate-portal` deployment).
-    3. Expose it via a ClusterIP service (e.g., port 3000).
-    4. Update the K3s `ingress.yaml` to route `host: ornate.rguktong.in` directly to the `ornate-portal` service.
-    5. Secure the new domain via `certbot --nginx -d ornate.rguktong.in` on the host.
+- **Integration**: Students can file grievances in the Student Portal, which are routed to the SWO (Student Welfare Officer) dashboard via the `uniz-outpass-service`.
+- **Management**: SWO can review, categorize, and action grievances directly from the dashboard, unified with Outing/Outpass requests.
+- **UI**: Uses a consistent "Secure Engine" theme with live delivery status for all grievance-related push notifications.
