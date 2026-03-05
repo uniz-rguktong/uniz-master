@@ -4,11 +4,9 @@ import {
   GraduationCap,
   Search,
   Plus,
-  RefreshCw,
   Loader2,
   User,
   BookOpen,
-  Save,
   Table,
   CheckCircle2,
   AlertCircle,
@@ -16,6 +14,12 @@ import {
   BarChart3 as BarChartIcon,
   PieChart as PieChartIcon,
   ChevronDown,
+  FileSpreadsheet,
+  Download,
+  Upload,
+  ArrowRight,
+  ShieldCheck,
+  Zap,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -30,10 +34,11 @@ import {
   Cell,
 } from "recharts";
 import {
-  BULK_UPDATE_GRADES,
   GET_BATCH_GRADES,
   ADD_MANUAL_GRADE,
   GET_SUBJECTS,
+  UPLOAD_GRADES,
+  GET_GRADES_TEMPLATE,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../api/apiClient";
@@ -48,7 +53,6 @@ export default function GradesSection() {
   const [meta, setMeta] = useState({ total: 0, totalPages: 1 });
 
   // Form States
-  const [bulkJson, setBulkJson] = useState("");
   const [batchFilters, setBatchFilters] = useState({
     branch: "CSE",
     year: "E1",
@@ -63,6 +67,18 @@ export default function GradesSection() {
   });
   const [manualDept, setManualDept] = useState("CSE");
   const [manualYear, setManualYear] = useState("E1");
+
+  // Template Filters
+  const [templateFilters, setTemplateFilters] = useState({
+    branch: "CSE",
+    year: "E1",
+    semesterId: "SEM-1",
+    subjectCode: "",
+    remedialsOnly: false,
+  });
+  const [templateSubjects, setTemplateSubjects] = useState<any[]>([]);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   // Dynamic subjects for manual entry
   const [manualSubjects, setManualSubjects] = useState<
@@ -106,28 +122,112 @@ export default function GradesSection() {
     fetchManualSubjects();
   }, [manualDept, manualYear, manualGrade.semesterId, subTab]);
 
-  const handleBulkUpdate = async () => {
-    if (!bulkJson) {
-      toast.error("Please provide JSON data");
-      return;
-    }
+  // Fetch subjects for template
+  useEffect(() => {
+    if (subTab !== "bulk") return;
+    const fetchTemplateSubjects = async () => {
+      try {
+        const token = (localStorage.getItem("admin_token") || "").replace(
+          /"/g,
+          "",
+        );
+        const url = `${GET_SUBJECTS}?department=${templateFilters.branch}&semester=${encodeURIComponent(templateFilters.semesterId)}&limit=100`;
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.success && data.subjects) {
+          const filtered = data.subjects.filter((s: any) =>
+            s.code.toUpperCase().includes(`-${templateFilters.year}-`),
+          );
+          setTemplateSubjects(filtered);
+        }
+      } catch (err) {
+        console.error("Failed to fetch template subjects", err);
+      }
+    };
+    fetchTemplateSubjects();
+  }, [
+    templateFilters.branch,
+    templateFilters.year,
+    templateFilters.semesterId,
+    subTab,
+  ]);
+
+  const handleDownloadTemplate = async () => {
     setLoading(true);
     try {
-      const payload = JSON.parse(bulkJson);
-      const res = await apiClient<any>(BULK_UPDATE_GRADES, {
-        method: "PUT",
-        body: JSON.stringify(payload),
+      const { branch, year, semesterId, subjectCode, remedialsOnly } =
+        templateFilters;
+      const url = GET_GRADES_TEMPLATE(
+        branch,
+        year,
+        semesterId,
+        subjectCode,
+        remedialsOnly,
+      );
+      const token = (localStorage.getItem("admin_token") || "").replace(
+        /"/g,
+        "",
+      );
+
+      const response = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (res && res.success) {
-        toast.success("Bulk grades updated successfully");
-        setBulkJson("");
-      }
-    } catch (error) {
-      toast.error("Invalid JSON or server error");
+
+      if (!response.ok) throw new Error("Failed to download template");
+
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = `Grades_Template_${branch}_${year}_${semesterId}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(downloadUrl);
+      toast.success("Template generated successfully");
+    } catch (err: any) {
+      toast.error("Template generation failed: " + err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleFileUpload = async () => {
+    if (!uploadFile) {
+      toast.error("Please select a file first");
+      return;
+    }
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", uploadFile);
+
+      const token = (localStorage.getItem("admin_token") || "").replace(
+        /"/g,
+        "",
+      );
+      const response = await fetch(UPLOAD_GRADES, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      const res = await response.json();
+      if (res.success) {
+        toast.success("Excel processed. Background ingestion started.");
+        setUploadFile(null);
+      } else {
+        toast.error(res.message || "Upload failed");
+      }
+    } catch (error) {
+      toast.error("Upload failure.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // handleBulkUpdate was removed in favor of handleFileUpload
 
   const fetchBatchGrades = async (p = page) => {
     setLoading(true);
@@ -208,7 +308,7 @@ export default function GradesSection() {
           onClick={() => setSubTab("bulk")}
           className={`px-6 py-2.5 rounded-full font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "bulk" ? "bg-white text-blue-700 shadow-sm border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
         >
-          <RefreshCw size={14} /> Bulk Update
+          <Zap size={14} /> Resource Ingestion
         </button>
         <button
           onClick={() => setSubTab("batch")}
@@ -247,45 +347,251 @@ export default function GradesSection() {
       ) : (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           {subTab === "bulk" && (
-            <div className="bg-white rounded-[28px] border border-slate-100 p-10 space-y-6 shadow-sm">
-              <div className="flex items-center gap-4">
-                <div className="p-3.5 bg-blue-50 text-blue-600 rounded-[22px] border border-blue-100 shadow-sm">
-                  <RefreshCw size={22} />
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
+              {/* Template Section */}
+              <div className="bg-white rounded-[32px] border border-slate-100 p-10 space-y-10 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="p-4 bg-emerald-50 text-emerald-600 rounded-[22px] border border-emerald-100 shadow-sm">
+                    <FileSpreadsheet size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-none mb-2">
+                      Template Generator
+                    </h3>
+                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                      Provision specialized Excel sheets
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold tracking-[-0.01em]">
-                    Bulk Update
-                  </h3>
-                  <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-widest mt-1">
-                    Update multiple student grades via JSON payload
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      Branch
+                    </label>
+                    <select
+                      value={templateFilters.branch}
+                      onChange={(e) =>
+                        setTemplateFilters({
+                          ...templateFilters,
+                          branch: e.target.value,
+                        })
+                      }
+                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 appearance-none"
+                    >
+                      <option>CSE</option>
+                      <option>ECE</option>
+                      <option>EEE</option>
+                      <option>MECH</option>
+                      <option>CIVIL</option>
+                      <option>CHEM</option>
+                      <option>MET</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      Academic Year
+                    </label>
+                    <select
+                      value={templateFilters.year}
+                      onChange={(e) =>
+                        setTemplateFilters({
+                          ...templateFilters,
+                          year: e.target.value,
+                        })
+                      }
+                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 appearance-none"
+                    >
+                      <option>E1</option>
+                      <option>E2</option>
+                      <option>E3</option>
+                      <option>E4</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      Semester
+                    </label>
+                    <select
+                      value={templateFilters.semesterId}
+                      onChange={(e) =>
+                        setTemplateFilters({
+                          ...templateFilters,
+                          semesterId: e.target.value,
+                        })
+                      }
+                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 appearance-none"
+                    >
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                        <option key={s} value={`SEM-${s}`}>
+                          Semester {s}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      Subject (Optional)
+                    </label>
+                    <select
+                      value={templateFilters.subjectCode}
+                      onChange={(e) =>
+                        setTemplateFilters({
+                          ...templateFilters,
+                          subjectCode: e.target.value,
+                        })
+                      }
+                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 appearance-none"
+                    >
+                      <option value="">All Subjects</option>
+                      {templateSubjects.map((s) => (
+                        <option key={s.code} value={s.code}>
+                          {s.name} ({s.code.split("-").pop()})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                  <div className="p-2 bg-emerald-500 rounded-lg text-white">
+                    <ShieldCheck size={16} />
+                  </div>
+                  <p className="text-xs text-emerald-800 font-bold leading-relaxed">
+                    Templates are pre-populated with student IDs and subject
+                    data based on your filters to ensure error-free ingestion.
                   </p>
                 </div>
+
+                <button
+                  onClick={handleDownloadTemplate}
+                  disabled={loading}
+                  className="w-full bg-slate-900 text-white h-16 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-800 transition-all flex items-center justify-center gap-3 shadow-2xl active:scale-[0.98] disabled:opacity-50"
+                >
+                  {loading ? (
+                    <Loader2 className="animate-spin w-5 h-5" />
+                  ) : (
+                    <Download size={20} />
+                  )}
+                  Download Smart Template
+                </button>
               </div>
 
-              <div className="space-y-3">
-                <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                  JSON Payload Entry
-                </label>
-                <textarea
-                  value={bulkJson}
-                  onChange={(e) => setBulkJson(e.target.value)}
-                  placeholder='{ "updates": [{ "studentId": "O210008", "subjectId": "...", "semesterId": "SEM-1", "grade": "EX" }] }'
-                  className="w-full h-48 px-7 py-7 bg-slate-900 text-emerald-400 font-mono text-xs rounded-[24px] border-none outline-none focus:ring-8 focus:ring-slate-900/5 transition-all scrollbar-hide"
-                />
-              </div>
+              {/* Upload Section */}
+              <div className="bg-white rounded-[32px] border border-slate-100 p-10 space-y-10 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="p-4 bg-blue-50 text-blue-600 rounded-[22px] border border-blue-100 shadow-sm">
+                    <Upload size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-none mb-2">
+                      Bulk Ingestion Center
+                    </h3>
+                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                      Commit finished grading assets
+                    </p>
+                  </div>
+                </div>
 
-              <button
-                onClick={handleBulkUpdate}
-                disabled={loading}
-                className="w-full bg-blue-600 text-white py-5 rounded-[22px] font-semibold uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-3 shadow-xl shadow-blue-100 active:scale-[0.98]"
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin w-5 h-5" />
-                ) : (
-                  <Save size={18} />
-                )}
-                Execute Bulk Update
-              </button>
+                <div className="space-y-6">
+                  <label className="flex flex-col items-center justify-center w-full h-64 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[32px] cursor-pointer hover:bg-blue-50/30 hover:border-blue-300 transition-all group relative overflow-hidden">
+                    {uploadFile ? (
+                      <div className="flex flex-col items-center justify-center p-6 text-center">
+                        <div className="p-4 bg-white rounded-2xl shadow-xl mb-4 animate-bounce">
+                          <FileSpreadsheet className="w-10 h-10 text-emerald-500" />
+                        </div>
+                        <p className="text-sm font-black text-slate-900 px-6 line-clamp-1">
+                          {uploadFile.name}
+                        </p>
+                        <p className="text-[10px] text-slate-400 font-bold mt-1">
+                          {(uploadFile.size / 1024).toFixed(1)} KB • Ready for
+                          Ingestion
+                        </p>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setUploadFile(null);
+                          }}
+                          className="mt-4 text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline"
+                        >
+                          Remove Asset
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <div className="p-5 bg-white rounded-[24px] shadow-sm mb-4 group-hover:scale-110 transition-transform">
+                          <Upload className="w-8 h-8 text-blue-600" />
+                        </div>
+                        <p className="mb-2 text-sm text-slate-600 font-black">
+                          Drag & Drop Ingestion Asset
+                        </p>
+                        <p className="text-xs text-slate-400 font-bold">
+                          XLSX or CSV Format Only
+                        </p>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept=".xlsx,.xls,.csv"
+                      onChange={(e) =>
+                        setUploadFile(e.target.files?.[0] || null)
+                      }
+                    />
+                  </label>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between px-2">
+                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      Ingestion Protocol
+                    </h4>
+                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest flex items-center gap-1.5">
+                      <Zap size={10} /> Live Validation
+                    </span>
+                  </div>
+                  <div className="p-6 bg-slate-900 rounded-[28px] text-emerald-400 font-mono text-[10px] leading-relaxed shadow-2xl">
+                    <p className="opacity-50"># Protocol Configuration:</p>
+                    <p>
+                      <span className="text-blue-400">Validate</span>{" "}
+                      (asset_integrity = true)
+                    </p>
+                    <p>
+                      <span className="text-blue-400">Map</span> (headers {"=>"}{" "}
+                      schema_v3)
+                    </p>
+                    <p>
+                      <span className="text-blue-400">Commit</span> (batch_size
+                      = 50)
+                    </p>
+                    <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+                      <span className="text-white">Status:</span>
+                      <span
+                        className={
+                          uploadFile
+                            ? "text-emerald-400"
+                            : "text-amber-400 animate-pulse"
+                        }
+                      >
+                        {uploadFile ? "ASSET_LOADED" : "AWAITING_INPUT"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleFileUpload}
+                  disabled={!uploadFile || uploading}
+                  className="w-full bg-blue-600 text-white h-16 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-3 shadow-xl shadow-blue-100 active:scale-[0.98] disabled:opacity-50 disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
+                >
+                  {uploading ? (
+                    <Loader2 className="animate-spin w-5 h-5" />
+                  ) : (
+                    <ArrowRight size={20} />
+                  )}
+                  Execute System Ingestion
+                </button>
+              </div>
             </div>
           )}
 
