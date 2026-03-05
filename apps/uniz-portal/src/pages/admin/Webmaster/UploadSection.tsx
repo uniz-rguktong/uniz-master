@@ -52,14 +52,19 @@ export default function UploadSection({ type }: { type: UploadType }) {
           localStorage.getItem("faculty_token") ||
           ""
         ).replace(/"/g, "");
-        const url = `${GET_SUBJECTS}?department=${branch}&semester=${encodeURIComponent(`${year}-${semester}`)}&limit=100`;
+        const url = `${GET_SUBJECTS}?department=${branch}&semester=${encodeURIComponent(semester)}&limit=100`;
         const res = await fetch(url, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
         if (data.success && data.subjects) {
+          // Year is encoded in the subject code (e.g. CSE-E2-SEM-1-01)
+          // Filter client-side by checking if the code contains the selected year
+          const filtered = data.subjects.filter((s: any) =>
+            s.code.toUpperCase().includes(`-${year}-`),
+          );
           setSubjects(
-            data.subjects.map((s: any) => ({ code: s.code, name: s.name })),
+            filtered.map((s: any) => ({ code: s.code, name: s.name })),
           );
         } else {
           setSubjects([]);
