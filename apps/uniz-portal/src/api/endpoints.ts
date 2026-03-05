@@ -141,6 +141,8 @@ export const UPDATE_BANNER_VISIBILITY = (id: string) =>
 export const UPDATES_BASE = `${BASE_URL}/cms/admin/updates`;
 // // export const TENDERS_BASE = `${BASE_URL}/cms/admin/tenders`;
 export const GET_NOTIFICATIONS = `${BASE_URL}/cms/notifications`;
+export const PUBLIC_BANNERS = `${BASE_URL}/cms/banners/public`;
+export const SYSTEM_HEALTH = `${BASE_URL}/system/health`;
 
 // Push Notifications
 export const PUSH_SUBSCRIBE = `${BASE_URL}/notifications/subscribe`;

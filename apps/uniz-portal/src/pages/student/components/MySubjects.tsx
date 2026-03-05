@@ -55,6 +55,8 @@ export default function MySubjects({
       setLoading(true);
       const res = await apiClient<CurrentSubjectsResponse>(
         GET_CURRENT_SUBJECTS(studentId),
+        {},
+        false
       );
       setData(res);
     } catch (err) {

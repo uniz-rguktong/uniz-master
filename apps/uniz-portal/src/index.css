@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -37,14 +40,12 @@
     scroll-behavior: smooth;
   }
 
-  /* Refined typography rendering */
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
-  /* Sleek minimalist scrollbar */
   ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -76,6 +77,86 @@
     @apply focus:ring-2 focus:ring-blue-600 focus:outline-none;
     @apply disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed;
   }
+
+  .menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: #ffffff;
+    border-top: 1px solid #f1f5f9;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: env(safe-area-inset-bottom, 1.5rem);
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.03);
+    width: 100%;
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --component-active-color: #2563eb;
+  }
+
+  .menu__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background-color: transparent;
+    border: none;
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    flex: 1 1 0%;
+    color: #94a3b8;
+  }
+
+  .menu__item.active {
+    color: var(--component-active-color);
+  }
+
+  .menu__icon .icon {
+    width: 22px;
+    height: 22px;
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+  }
+
+  .menu__item.active .menu__icon {
+    animation: iconBounce 0.6s ease;
+  }
+
+  .menu__text {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    opacity: 0.4;
+    transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+  }
+
+  .menu__text.active {
+    opacity: 1;
+  }
+
+  .menu__item::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    background-color: #2563eb;
+    border-radius: 9999px;
+    transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0;
+  }
+
+  .menu__item.active::after {
+    width: var(--lineWidth);
+  }
+
+  .unifrakturcook-bold {
+    font-family: "UnifrakturCook", cursive;
+    font-weight: 700;
+    font-style: normal;
+  }
 }
 
 @layer utilities {
@@ -84,9 +165,7 @@
   }
 
   .premium-shadow {
-    box-shadow:
-      0 8px 32px -4px rgba(0, 0, 0, 0.04),
-      0 4px 12px -2px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.04), 0 4px 12px -2px rgba(0, 0, 0, 0.02);
   }
 
   @keyframes marquee {
@@ -98,4 +177,43 @@
       transform: translateX(-100%);
     }
   }
+
+  @keyframes iconBounce {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    20% {
+      transform: translateY(-0.35em);
+    }
+
+    40% {
+      transform: translateY(0);
+    }
+
+    60% {
+      transform: translateY(-0.15em);
+    }
+
+    80% {
+      transform: translateY(0);
+    }
+  }
+}
+
+:root {
+  --muted-foreground: #64748b;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --secondary: #f1f5f9;
+  --accent-foreground: #2563eb;
+
+  --component-inactive-color: var(--muted-foreground);
+  --component-bg: var(--card);
+  --component-shadow: var(--border);
+  --component-active-bg: var(--secondary);
+  --component-line-inactive-color: var(--border);
+  --component-active-color-default: var(--accent-foreground);
 }
