@@ -96,6 +96,7 @@ const mapFacultyProfile = (profile: any) => ({
   ProfileUrl: profile.profileUrl,
   Bio: profile.bio || {},
   is_suspended: profile.isSuspended || false,
+  CreatedAt: profile.createdAt,
 });
 
 const mapAdminProfile = (profile: any) => ({
