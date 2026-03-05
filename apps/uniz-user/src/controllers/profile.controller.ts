@@ -94,6 +94,7 @@ const mapFacultyProfile = (profile: any) => ({
   Role: profile.role,
   Contact: profile.contact,
   ProfileUrl: profile.profileUrl,
+  Bio: profile.bio || {},
   is_suspended: profile.isSuspended || false,
 });
 
@@ -1023,9 +1024,19 @@ export const updateFacultyProfileSelf = async (
   }
 
   try {
+    const cleanUpdates: any = {};
+    if (updates.name) cleanUpdates.name = updates.name;
+    if (updates.email) cleanUpdates.email = updates.email;
+    if (updates.contact) cleanUpdates.contact = updates.contact;
+    if (updates.designation) cleanUpdates.designation = updates.designation;
+    if (updates.profileUrl || updates.profile_url)
+      cleanUpdates.profileUrl = updates.profileUrl || updates.profile_url;
+    if (updates.bio || updates.Bio)
+      cleanUpdates.bio = updates.bio || updates.Bio;
+
     const updated = await prisma.facultyProfile.update({
       where: { username: user.username },
-      data: updates,
+      data: cleanUpdates,
     });
 
     return res.json({ success: true, faculty: mapFacultyProfile(updated) });
@@ -1082,8 +1093,11 @@ export const updateAdminProfile = async (
       if (updates.name) facultyData.name = updates.name;
       if (updates.email) facultyData.email = updates.email;
       if (updates.contact) facultyData.contact = updates.contact;
+      if (updates.designation) facultyData.designation = updates.designation;
       if (updates.profileUrl) facultyData.profileUrl = updates.profileUrl;
       if (updates.profile_url) facultyData.profileUrl = updates.profile_url;
+      if (updates.bio || updates.Bio)
+        facultyData.bio = updates.bio || updates.Bio;
 
       const updated = await prisma.facultyProfile.update({
         where: { username: user.username },
@@ -1102,6 +1116,7 @@ export const updateAdminProfile = async (
           role: updated.role,
           department: updated.department,
           designation: updated.designation,
+          bio: updated.bio,
         },
       });
     }
