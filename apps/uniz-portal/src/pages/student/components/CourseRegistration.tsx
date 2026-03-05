@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   AlertCircle,
   CreditCard,
+  Coffee,
 } from "lucide-react";
 import {
   GET_AVAILABLE_SUBJECTS,
@@ -37,13 +38,14 @@ export default function CourseRegistration({
     setLoading(true);
     try {
       const data = await apiClient<any>(GET_AVAILABLE_SUBJECTS(branch, year));
-      setAvailable(data.subjects || []);
-      setAlreadyRegistered(data.alreadyRegistered || false);
-      setIsOpen(data.isOpen ?? true);
-      setSemesterName(data.semester?.name || "");
-      // Pre-select all by default if mandatory? Actually let user choose
+      if (data) {
+        setAvailable(data.subjects || []);
+        setAlreadyRegistered(data.alreadyRegistered || false);
+        setIsOpen(data.isOpen ?? true);
+        setSemesterName(data.semester?.name || "");
+      }
     } catch (error) {
-      toast.error("Failed to fetch available subjects");
+      console.error("Failed to fetch available subjects", error);
     } finally {
       setLoading(false);
     }
@@ -137,16 +139,15 @@ export default function CourseRegistration({
 
   if (available.length === 0) {
     return (
-      <div className="bg-white rounded-[40px] p-12 text-center border-2 border-dashed border-slate-100 max-w-2xl mx-auto shadow-xl">
-        <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-200 mx-auto mb-6">
-          <AlertCircle size={40} />
+      <div className="flex flex-col items-center justify-center py-24 px-4 text-center max-w-md mx-auto animate-in fade-in duration-700">
+        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-400 mb-6 border border-slate-100 shadow-sm">
+          <Coffee size={32} strokeWidth={1.5} />
         </div>
-        <h3 className="text-2xl font-black text-slate-900 mb-2">
-          Hooray! No courses found
+        <h3 className="text-2xl font-bold tracking-tight text-slate-900 mb-2.5">
+          Semester Not Started
         </h3>
-        <p className="text-slate-500 font-medium font-outfit mb-8 leading-relaxed px-10">
-          Either the registration window for your branch is closed or your
-          department has not yet published the course list for this semester.
+        <p className="text-[14px] text-slate-500 font-medium leading-relaxed">
+          The registration window is currently closed. Kick back, relax, and enjoy your break. We'll alert you the moment your new courses are ready!
         </p>
       </div>
     );
@@ -202,18 +203,16 @@ export default function CourseRegistration({
             <button
               key={sub.subject?.id}
               onClick={() => toggleSubject(sub.subject?.id)}
-              className={`p-6 rounded-[32px] border-2 transition-all flex items-start gap-4 text-left group overflow-hidden relative ${
-                isSelected
-                  ? "bg-white border-blue-600 shadow-xl shadow-blue-50"
-                  : "bg-white border-slate-50 hover:border-slate-200"
-              }`}
+              className={`p-6 rounded-[32px] border-2 transition-all flex items-start gap-4 text-left group overflow-hidden relative ${isSelected
+                ? "bg-white border-blue-600 shadow-xl shadow-blue-50"
+                : "bg-white border-slate-50 hover:border-slate-200"
+                }`}
             >
               <div
-                className={`p-4 rounded-xl transition-all ${
-                  isSelected
-                    ? "bg-blue-600 text-white"
-                    : "bg-slate-50 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-600"
-                }`}
+                className={`p-4 rounded-xl transition-all ${isSelected
+                  ? "bg-blue-600 text-white"
+                  : "bg-slate-50 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-600"
+                  }`}
               >
                 <BookOpen size={24} />
               </div>
@@ -221,18 +220,16 @@ export default function CourseRegistration({
               <div className="flex-1 space-y-1.5 min-w-0">
                 <div className="flex items-center justify-between">
                   <span
-                    className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
-                      isSelected ? "text-blue-600" : "text-slate-300"
-                    }`}
+                    className={`text-[10px] font-black uppercase tracking-widest transition-colors ${isSelected ? "text-blue-600" : "text-slate-300"
+                      }`}
                   >
                     {sub.subject?.code}
                   </span>
                   <div
-                    className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${
-                      isSelected
-                        ? "bg-amber-50 text-amber-600 border-amber-100"
-                        : "bg-slate-50 text-slate-400 border-slate-100"
-                    }`}
+                    className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${isSelected
+                      ? "bg-amber-50 text-amber-600 border-amber-100"
+                      : "bg-slate-50 text-slate-400 border-slate-100"
+                      }`}
                   >
                     <CreditCard size={10} />
                     <span className="text-[10px] font-black">
@@ -241,9 +238,8 @@ export default function CourseRegistration({
                   </div>
                 </div>
                 <h4
-                  className={`text-lg font-black tracking-tight leading-tight truncate transition-colors ${
-                    isSelected ? "text-slate-900" : "text-slate-400"
-                  }`}
+                  className={`text-lg font-black tracking-tight leading-tight truncate transition-colors ${isSelected ? "text-slate-900" : "text-slate-400"
+                    }`}
                 >
                   {sub.subject?.name}
                 </h4>

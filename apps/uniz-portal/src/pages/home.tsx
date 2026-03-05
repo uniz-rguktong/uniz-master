@@ -1,284 +1,265 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useIsAuth } from "../hooks/is_authenticated";
-import {
-  ChevronRight,
-  ChevronLeft,
-  Users,
-  GraduationCap,
-  Briefcase,
-} from "lucide-react";
-import { motion, useInView, useSpring, useTransform } from "framer-motion";
-
-import { NotificationPanel } from "../components/NotificationPanel";
-
-const CAROUSEL_IMAGES = [
-  "/assets/ornate image.png",
-  "/assets/republic Day ssn.png",
-  "/assets/ssn.png",
-  "/assets/ssnview.png",
-];
+import { motion, AnimatePresence } from "framer-motion";
+import { Bell, Calendar, ArrowRight, ChevronRight, Activity } from "lucide-react";
+import { PUBLIC_BANNERS, GET_NOTIFICATIONS, SYSTEM_HEALTH } from "../api/endpoints";
 
 export default function Home() {
   useIsAuth();
   const navigate = useNavigate();
+  const [banners, setBanners] = useState<any[]>([]);
+  const [updates, setUpdates] = useState<any[]>([]);
+  const [health, setHealth] = useState<any>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Secret Admin Access (Easter Egg)
+  // AUTHENTIC API IMPLEMENTATION FOR BANNERS
   useEffect(() => {
-    let keyBuffer = "";
-    let lastKeyTime = Date.now();
-    const targetSequence = "admin";
+    const myHeaders = new Headers();
+    myHeaders.append("x-cms-api-key", "uniz-landing-v1-key");
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Clear buffer if more than 2 seconds since last key
-      const now = Date.now();
-      if (now - lastKeyTime > 2000) keyBuffer = "";
-      lastKeyTime = now;
-
-      // Only track single character alphanumeric keys
-      if (event.key.length === 1) {
-        keyBuffer += event.key.toLowerCase();
-
-        if (keyBuffer.length > targetSequence.length) {
-          keyBuffer = keyBuffer.slice(-targetSequence.length);
-        }
-
-        if (keyBuffer === targetSequence) {
-          keyBuffer = ""; // Reset immediately
-          navigate("/admin/signin");
-        }
-      }
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow" as RequestRedirect
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    fetch(PUBLIC_BANNERS, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.success) {
+          setBanners(result.banners || []);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  // AUTHENTIC API IMPLEMENTATION FOR NOTIFICATIONS
+  useEffect(() => {
+    const myHeaders = new Headers();
+    myHeaders.append("x-cms-api-key", "uniz-landing-v1-key");
+
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow" as RequestRedirect
+    };
+
+    fetch(GET_NOTIFICATIONS, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.success && result.notifications) {
+          setUpdates(result.notifications.updates || []);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
+  // AUTHENTIC API IMPLEMENTATION FOR SYSTEM HEALTH
+  useEffect(() => {
+    const fetchHealth = async () => {
+      try {
+        const response = await fetch(SYSTEM_HEALTH);
+        const result = await response.json();
+        setHealth(result);
+      } catch (error) {
+        console.error("Health Check Error:", error);
+      }
+    };
+    fetchHealth();
+    const interval = setInterval(fetchHealth, 60000); // Refresh every minute
+    return () => clearInterval(interval);
+  }, []);
+
+  // Sync auto-advance
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [banners.length]);
+
+  // Admin access
+  useEffect(() => {
+    let keys = "";
+    const track = (e: KeyboardEvent) => {
+      keys += e.key.toLowerCase();
+      if (keys.endsWith("admin")) navigate("/admin/signin");
+      keys = keys.slice(-10);
+    };
+    window.addEventListener("keydown", track);
+    return () => window.removeEventListener("keydown", track);
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-[#800000] selection:text-white flex flex-col">
-      {/* Hero Section */}
-      <section className="relative h-[600px] lg:h-[700px] overflow-hidden group">
-        {/* Carousel */}
-        <Carousel />
-
-        {/* Overlay Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30 pointer-events-none"></div>
-
-        {/* Content */}
-        <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center items-center text-center text-white pb-20 pointer-events-none">
-          <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 flex flex-col items-center">
-            <div className="mb-6 animate-pulse">
-              <span className="bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-yellow-400 shadow-sm">
-                EST. 2018
-              </span>
-            </div>
-            <h2 className="text-xl md:text-3xl font-bold tracking-[0.2em] uppercase text-white/90 mb-2 drop-shadow-md font-serif">
-              Welcome to RGUKT
-            </h2>
-            <h1 className="text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter mb-8 drop-shadow-2xl leading-none">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">
-                Ongole
-              </span>
-            </h1>
-            <p className="text-lg md:text-xl text-slate-100 max-w-2xl mx-auto font-medium mb-10 leading-relaxed drop-shadow-lg text-shadow-sm">
-              Catering to the Educational Needs of Gifted Rural Youth of Andhra
-              Pradesh through world-class education and innovation.
-            </p>
-          </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden md:block z-20 pointer-events-none">
-          <div className="w-6 h-10 rounded-full border-2 border-white/30 flex justify-center p-1">
-            <div className="w-1 h-3 bg-white/60 rounded-full"></div>
-          </div>
-        </div>
-      </section>
-
-      {/* Director's Message Section */}
-      <section className="bg-white py-16 md:py-24 px-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#800000]/5 rounded-bl-full -mr-16 -mt-16 z-0 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-slate-100 rounded-tr-full -ml-12 -mb-12 z-0 pointer-events-none"></div>
-
-        <div className="max-w-7xl mx-auto relative z-10">
-          <h2 className="text-3xl md:text-4xl font-black text-slate-800 text-center mb-16 uppercase tracking-tight flex flex-col items-center">
-            Message from the Director
-            <span className="w-24 h-1.5 bg-[#800000] mt-4 rounded-full"></span>
-          </h2>
-
-          <div className="flex flex-col md:flex-row gap-12 lg:gap-24 items-center">
-            {/* Content Column */}
-            <div className="md:w-7/12 space-y-8 text-center md:text-left">
-              <h3 className="text-2xl md:text-3xl font-bold text-slate-800 font-serif italic relative inline-block">
-                "Directing towards Bigger Goals"
-                <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-yellow-400 rounded-full opacity-50"></span>
-              </h3>
-              <div className="space-y-4 text-slate-600 leading-relaxed text-base md:text-lg font-medium">
-                <p>Greetings to the vibrant community of RGUKT Ongole!</p>
-                <p>
-                  It is my privilege to be directing the students of{" "}
-                  <span className="font-bold text-[#800000]">RGUKT Ongole</span>{" "}
-                  to achieve the bigger goals in their lives. Education is the
-                  foundation upon which great nations are built, and here, we
-                  are committed to nurturing not just skilled professionals, but
-                  visionary leaders.
-                </p>
-                <p>
-                  I urge every student to look beyond the horizon, to dream big,
-                  and to work with unwavering dedication. Let your time here be
-                  defined by curiosity, innovation, and a relentless pursuit of
-                  excellence.
-                </p>
-              </div>
-            </div>
-
-            {/* Image Column */}
-            <div className="md:w-4/12 flex flex-col items-center relative group">
-              <div className="absolute top-0 left-0 w-full h-full bg-[#800000] rounded-tl-[3rem] rounded-br-[3rem] translate-x-3 translate-y-3 -z-10 transition-transform group-hover:translate-x-5 group-hover:translate-y-5"></div>
-              <div className="w-full aspect-square overflow-hidden rounded-tl-[3rem] rounded-br-[3rem] shadow-xl bg-slate-200 border-4 border-white">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+      {/* 100% DYNAMIC HERO SECTION */}
+      {banners.length > 0 && (
+        <section className="relative h-[80vh] min-h-[500px] bg-slate-900 overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8 }}
+              className="absolute inset-0"
+            >
+              {/* Image & Gradient */}
+              <div className="absolute inset-0">
                 <img
-                  src="/assets/director_ji.png"
-                  alt="Dr. A V S S Kumara Swami Gupta"
-                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
+                  src={banners[currentIndex].imageUrl}
+                  className="w-full h-full object-cover scale-105"
+                  alt=""
                 />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent"></div>
               </div>
-              <div className="mt-8 text-center relative z-10 w-4/5 bg-white p-6 shadow-xl -mt-12 mx-auto rounded border-l-4 border-[#800000]">
-                <h3 className="text-lg font-bold text-[#800000] uppercase tracking-wide leading-tight">
-                  Dr. A V S S Kumara Swami Gupta
-                </h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">
-                  Director, RGUKT Ongole
-                </p>
+
+              {/* Text Content */}
+              <div className="relative h-full container mx-auto px-10 flex flex-col justify-center">
+                <div className="max-w-4xl">
+                  <motion.span
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    className="inline-block px-3 py-1 bg-[#800000] text-white text-[10px] font-black uppercase tracking-[0.3em] mb-6 rounded"
+                  >
+                    Campus Spotlight
+                  </motion.span>
+                  <motion.h1
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                    className="text-5xl md:text-8xl font-black text-white mb-6 leading-none tracking-tighter"
+                  >
+                    {banners[currentIndex].title}
+                  </motion.h1>
+                  <motion.p
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-lg md:text-2xl text-slate-300 max-w-2xl leading-relaxed mb-10"
+                  >
+                    {banners[currentIndex].text}
+                  </motion.p>
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="flex gap-4"
+                  >
+                    <button onClick={() => navigate('/student/signin')} className="px-10 py-4 bg-[#800000] text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-red-800 transition-all shadow-xl shadow-red-900/20 active:scale-95">
+                      Sign In
+                    </button>
+                    <button className="px-10 py-4 border border-white/20 text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-white/10 transition-all active:scale-95">
+                      Explore
+                    </button>
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Indicators */}
+          <div className="absolute bottom-12 left-10 flex gap-2">
+            {banners.map((_, i) => (
+              <div key={i} className={`h-1 rounded-full transition-all duration-500 ${i === currentIndex ? 'w-12 bg-[#800000]' : 'w-4 bg-white/20'}`}></div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 100% DYNAMIC NOTIFICATIONS SECTION */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-10">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
+            <div className="space-y-4">
+              <span className="flex items-center gap-2 text-[#800000] font-black uppercase tracking-widest text-[10px]">
+                <Bell size={14} className="animate-bounce" /> Live News
+              </span>
+              <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter">
+                Latest <span className="text-[#800000]">Pulse</span>
+              </h2>
+            </div>
+            <button className="text-slate-400 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2 hover:text-[#800000] transition-colors">
+              VIEW ARCHIVE <ArrowRight size={14} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {updates.length > 0 ? (
+              updates.map((update, i) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  key={update.id}
+                  className="group p-10 bg-slate-50 rounded-[3rem] border border-slate-100 hover:border-[#800000]/20 hover:bg-white hover:shadow-2xl transition-all flex flex-col h-full"
+                >
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className="p-3 bg-white rounded-2xl group-hover:bg-[#800000] group-hover:text-white transition-all">
+                      <Calendar size={20} />
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                      {new Date(update.createdAt).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                      })}
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-4 group-hover:text-[#800000] transition-colors line-clamp-2 leading-tight">
+                    {update.title}
+                  </h3>
+                  <p className="text-slate-500 font-medium leading-relaxed mb-10 line-clamp-3">
+                    {update.content}
+                  </p>
+                  <div className="mt-auto pt-6 border-t border-slate-100">
+                    <a
+                      href={update.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] font-black uppercase tracking-widest text-[#800000] flex items-center gap-1 hover:gap-2 transition-all"
+                    >
+                      READ DETAIL <ChevronRight size={12} />
+                    </a>
+                  </div>
+                </motion.div>
+              ))
+            ) : (
+              <div className="col-span-full py-20 text-center bg-slate-50 rounded-[3rem] border-4 border-dashed border-slate-100">
+                <p className="text-slate-300 font-black uppercase tracking-widest text-[10px]">No active notifications</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* MINIMAL FOOTER */}
+      <footer className="mt-auto bg-slate-900 py-12 px-10">
+        <div className="container mx-auto flex flex-col md:flex-row items-center justify-center gap-6">
+          <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.6em]">
+            RGUKT ONGOLE &bull; 2026 UNIVERSITY PORTAL
+          </p>
+
+          {health && (
+            <div className="flex items-center gap-4 pl-6 border-l border-white/10">
+              <div className="flex items-center gap-2">
+                <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${health.status === 'ok' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-amber-500'}`}></div>
+                <span className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Systems {health.status === 'ok' ? 'Active' : 'Degraded'}</span>
+              </div>
+
+
+
+              <div className="flex items-center gap-2 px-2 py-0.5 rounded-full bg-white/5 border border-white/10">
+                <Activity size={10} className="text-emerald-500" />
+                <span className="text-[8px] font-bold text-white/40 uppercase tracking-tighter">Live Monitor</span>
               </div>
             </div>
-          </div>
+          )}
         </div>
-      </section>
-
-      {/* Notifications Section */}
-      <section className="bg-white py-12 px-6">
-        <NotificationPanel />
-      </section>
-
-      {/* Statistics Section */}
-
-      <motion.section
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="bg-[#800000] py-10 text-white relative overflow-hidden rounded-2xl mx-4 md:mx-6 mb-8 shadow-xl"
-      >
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-          <div className="absolute right-0 top-0 w-96 h-96 bg-yellow-400 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-          <div className="absolute left-0 bottom-0 w-96 h-96 bg-white rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
-        </div>
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <StatItem icon={GraduationCap} count={6000} label="Students" />
-            <StatItem icon={Users} count={250} label="Faculty" />
-            <StatItem icon={Briefcase} count={1200} label="Placements" />
-          </div>
-        </div>
-      </motion.section>
-    </div>
-  );
-}
-
-function StatItem({
-  icon: Icon,
-  count,
-  label,
-}: {
-  icon: any;
-  count: number;
-  label: string;
-}) {
-  return (
-    <div className="flex flex-col items-center p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 group hover:-translate-y-1">
-      <div className="mb-3 p-3 bg-white/10 rounded-full group-hover:scale-110 transition-transform duration-300 shadow-lg border border-white/20">
-        <Icon className="w-6 h-6 text-yellow-400" />
-      </div>
-      <div className="text-2xl md:text-3xl flex items-center justify-center gap-1 font-black mb-1 tracking-tight font-serif">
-        <Counter value={count} />
-        <span className="text-xl text-yellow-400 font-bold">+</span>
-      </div>
-      <div className="h-0.5 w-8 bg-white/30 rounded-full mb-2 group-hover:w-12 transition-all duration-300"></div>
-      <p className="text-xs font-bold text-white/90 uppercase tracking-[0.2em]">
-        {label}
-      </p>
-    </div>
-  );
-}
-
-function Counter({ value }: { value: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const spring = useSpring(0, { mass: 1, stiffness: 50, damping: 15 });
-  const display = useTransform(spring, (current: number) =>
-    Math.round(current),
-  );
-
-  useEffect(() => {
-    if (isInView) {
-      spring.set(value);
-    }
-  }, [isInView, value, spring]);
-
-  return <motion.span ref={ref}>{display}</motion.span>;
-}
-
-function Carousel() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % CAROUSEL_IMAGES.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex(
-      (prev) => (prev - 1 + CAROUSEL_IMAGES.length) % CAROUSEL_IMAGES.length,
-    );
-  };
-
-  // Auto-advance
-  useEffect(() => {
-    const timer = setInterval(nextSlide, 2000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <div className="absolute inset-0 w-full h-full">
-      {CAROUSEL_IMAGES.map((src, index) => (
-        <div
-          key={src}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentIndex ? "opacity-100" : "opacity-0"
-            }`}
-        >
-          <img
-            src={src}
-            alt={`Slide ${index + 1}`}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      ))}
-
-      {/* Arrows */}
-      <div className="absolute inset-0 flex justify-between items-center px-4 md:px-8 z-20 pointer-events-auto">
-        <button
-          onClick={prevSlide}
-          className="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center rounded-full bg-black/20 hover:bg-[#800000] text-white/70 hover:text-white transition-all backdrop-blur-sm border border-white/20 hover:border-[#800000] group"
-        >
-          <ChevronLeft className="w-6 h-6 md:w-8 md:h-8 group-hover:scale-110 transition-transform" />
-        </button>
-        <button
-          onClick={nextSlide}
-          className="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center rounded-full bg-black/20 hover:bg-[#800000] text-white/70 hover:text-white transition-all backdrop-blur-sm border border-white/20 hover:border-[#800000] group"
-        >
-          <ChevronRight className="w-6 h-6 md:w-8 md:h-8 group-hover:scale-110 transition-transform" />
-        </button>
-      </div>
+      </footer>
     </div>
   );
 }

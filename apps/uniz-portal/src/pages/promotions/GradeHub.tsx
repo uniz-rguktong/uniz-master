@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { toast } from "react-toastify";
 import { apiClient, downloadFile } from "../../api/apiClient";
-import { student } from "../../store";
+import { student, studentAuthLoading } from "../../store";
 
 import { ChevronDown, Award, AlertCircle, Download } from "lucide-react";
 import { GET_GRADES, DOWNLOAD_GRADES } from "../../api/endpoints";
@@ -14,6 +14,7 @@ const PIKACHU_IMAGE = "/pikachu.png";
 
 export default function GradeHub() {
   const user = useRecoilValue(student);
+  const authLoading = useRecoilValue(studentAuthLoading);
   // Hardcoded options as per requirements
   const years = ["E1", "E2", "E3", "E4"];
   const semesterOptions = ["Sem 1", "Sem 2"];
@@ -93,9 +94,10 @@ export default function GradeHub() {
       }
 
       if (data.success && data.grades) {
-        const semesterKey = `${selectedYear}-${mappedSemester}`;
-        const gpaData = data.gpa?.[semesterKey];
-        const extractedGPA = gpaData ? gpaData.gpa : null;
+        // Try to locate the GPA data from the response. 
+        // Handles "SEM-1" or "E1-SEM-1" dynamically depending on the backend structure.
+        const gpaDataObj = data.gpa?.[mappedSemester] || data.gpa?.[`${selectedYear}-${mappedSemester}`] || Object.values(data.gpa || {})[0] as any;
+        const extractedGPA = gpaDataObj ? gpaDataObj.gpa : (data.cgpa || 0);
 
         const formattedGrades = data.grades.map((g: any) => ({
           subject: g.subject.name,
@@ -126,12 +128,14 @@ export default function GradeHub() {
           year: selectedYear,
           semester: selectedSemester,
           gpa: extractedGPA,
+          cgpa: data.cgpa,
+          totalBacklogs: data.totalBacklogs || 0,
           calculation_details: formattedGrades,
           visualization_data: {
             pieChart,
             barChart,
           },
-          motivational_messages: data.motivation ? [data.motivation] : [],
+          motivational_messages: data.motivation || null,
         };
 
         setGrades(transformedData);
@@ -196,11 +200,10 @@ export default function GradeHub() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${
-                        selectedYear === year
-                          ? "bg-slate-950 text-white"
-                          : "hover:bg-slate-50 text-slate-600"
-                      }`}
+                      className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${selectedYear === year
+                        ? "bg-slate-950 text-white"
+                        : "hover:bg-slate-50 text-slate-600"
+                        }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setShowDropdown(false);
@@ -318,7 +321,7 @@ export default function GradeHub() {
             </div>
 
             {/* Content */}
-            {grades.gpa === null || grades.gpa === undefined ? (
+            {!grades.calculation_details || grades.calculation_details.length === 0 ? (
               <div className="p-12 text-center">
                 <AlertCircle
                   size={48}
@@ -373,11 +376,10 @@ export default function GradeHub() {
                                 </td>
                                 <td className="px-2 py-2.5 text-center">
                                   <span
-                                    className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
-                                      item.grade === "Ex"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-slate-100 text-slate-800"
-                                    }`}
+                                    className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${item.grade === "Ex"
+                                      ? "bg-blue-600 text-white"
+                                      : "bg-slate-100 text-slate-800"
+                                      }`}
                                   >
                                     {item.grade}
                                   </span>
@@ -404,11 +406,10 @@ export default function GradeHub() {
                                   </td>
                                   <td className="px-2 py-2.5 text-center">
                                     <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
-                                        grade === "Ex"
-                                          ? "bg-blue-600 text-white"
-                                          : "bg-slate-100 text-slate-800"
-                                      }`}
+                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${grade === "Ex"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-slate-100 text-slate-800"
+                                        }`}
                                     >
                                       {grade}
                                     </span>
@@ -426,21 +427,47 @@ export default function GradeHub() {
                 </div>
 
                 {/* GPA Display - Centered below table */}
-                <div className="px-6 py-8 bg-slate-50/30 flex flex-col items-center justify-center border-t border-slate-50">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                      Semester GPA :
+                <div className="px-6 py-8 bg-slate-50/30 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 border-t border-slate-50">
+                  {/* SGPA Section */}
+                  <div className="flex flex-col items-center">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
+                      Semester GPA
                     </span>
-                    <span className="text-3xl font-semibold text-slate-900 tracking-tighter">
+                    <span className="text-4xl font-black text-blue-600 tracking-tighter">
                       {grades.gpa !== null && grades.gpa !== undefined
                         ? Number(grades.gpa).toFixed(2)
                         : "N/A"}
                     </span>
                   </div>
-                  {(grades.gpa === null || grades.gpa === undefined) && (
-                    <div className="mt-1 text-xs text-slate-400">
-                      Results not formatted
-                    </div>
+
+                  {/* Subtle Divider */}
+                  <div className="w-[1px] h-12 bg-slate-200 hidden md:block"></div>
+
+                  {/* CGPA Section */}
+                  <div className="flex flex-col items-center">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
+                      Cumulative GPA
+                    </span>
+                    <span className="text-4xl font-black text-emerald-600 tracking-tighter">
+                      {grades.cgpa !== null && grades.cgpa !== undefined
+                        ? Number(grades.cgpa).toFixed(2)
+                        : "N/A"}
+                    </span>
+                  </div>
+
+                  {/* Backlogs Section */}
+                  {grades.totalBacklogs !== undefined && grades.totalBacklogs > 0 && (
+                    <>
+                      <div className="w-[1px] h-12 bg-slate-200 hidden md:block"></div>
+                      <div className="flex flex-col items-center">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
+                          Active Backlogs
+                        </span>
+                        <span className="text-4xl font-black text-red-500 tracking-tighter flex items-center gap-2">
+                          {grades.totalBacklogs}
+                        </span>
+                      </div>
+                    </>
                   )}
                 </div>
               </>
@@ -451,8 +478,8 @@ export default function GradeHub() {
           </div>
         )}
 
-        {/* Not Logged In State */}
-        {!user?.username && !isLoading && !resultsFetched && (
+        {/* Not Logged In State — only show AFTER /me has resolved */}
+        {!authLoading && !user?.username && !isLoading && !resultsFetched && (
           <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center">
             <div className="bg-white w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
               <AlertCircle size={40} className="text-blue-600" />
@@ -468,8 +495,8 @@ export default function GradeHub() {
           </div>
         )}
 
-        {/* Empty State */}
-        {user?.username && !isLoading && !resultsFetched && !error && (
+        {/* Empty State — only show after /me has resolved */}
+        {!authLoading && user?.username && !isLoading && !resultsFetched && !error && (
           <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center">
             <div className="bg-white w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
               <Award size={40} className="text-blue-600" />
