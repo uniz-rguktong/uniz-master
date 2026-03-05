@@ -17,7 +17,7 @@ import { UAParser } from "ua-parser-js";
 
 export const login = async (req: Request, res: Response) => {
   const username = (req.body.username || "").trim(); // Case-insensitive: handled by Prisma mode:"insensitive" below
-  const { password } = req.body;
+  const password = req.body.password;
 
   try {
     const user = await prisma.authCredential.findFirst({
