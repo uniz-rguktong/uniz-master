@@ -51,6 +51,7 @@ interface FacultyProfile {
   Role: string;
   Contact?: string;
   ProfileUrl?: string;
+  Bio?: Record<string, string[]>;
 }
 
 interface Student {
@@ -420,6 +421,7 @@ function ProfileSection({
     contact: "",
     designation: "",
     profileUrl: "",
+    bio: {} as Record<string, string[]>,
   });
 
   useEffect(() => {
@@ -429,6 +431,7 @@ function ProfileSection({
         contact: profile.Contact || "",
         designation: profile.Designation || "",
         profileUrl: profile.ProfileUrl || "",
+        bio: profile.Bio || {},
       });
     }
   }, [profile]);
@@ -445,6 +448,7 @@ function ProfileSection({
           contact: form.contact,
           designation: form.designation,
           profileUrl: form.profileUrl,
+          bio: form.bio,
         }),
       });
       const data = await res.json();
