@@ -9,6 +9,7 @@ import {
   Image as ImageIcon,
   Target,
   Zap,
+  Trash2,
 } from "lucide-react";
 import { PUSH_SUBSCRIBERS, PUSH_SEND } from "../../../api/endpoints";
 import { apiClient } from "../../../api/apiClient";
@@ -51,6 +52,32 @@ export default function PushNotificationSection() {
       console.error("Error fetching subscribers:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteSubscriber = async (endpoint: string) => {
+    if (
+      !window.confirm("Are you sure you want to remove this push subscription?")
+    )
+      return;
+    setSending(true);
+    try {
+      // Assuming a delete endpoint exists or we use the base with method DELETE
+      const data = await apiClient<any>(`${PUSH_SUBSCRIBERS}/delete`, {
+        method: "POST", // Some APIs use POST for delete with body
+        body: JSON.stringify({ endpoint }),
+      });
+      if (data && data.success) {
+        toast.success("Subscriber removed");
+        fetchSubscribers();
+      } else {
+        toast.error("Endpoint not removable via this API");
+      }
+    } catch (error) {
+      console.error("Error deleting subscriber:", error);
+      toast.error("Failed to remove subscriber");
+    } finally {
+      setSending(false);
     }
   };
 
@@ -130,6 +157,9 @@ export default function PushNotificationSection() {
                 <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   Creation Date
                 </th>
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20 text-right">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50/60">
@@ -190,11 +220,22 @@ export default function PushNotificationSection() {
                         </p>
                       </div>
                     </td>
+                    <td className="px-10 py-6">
+                      <div className="flex items-center justify-end">
+                        <button
+                          onClick={() => deleteSubscriber(sub.endpoint)}
+                          disabled={sending}
+                          className="p-3 bg-slate-50 text-slate-400 rounded-full hover:bg-red-50 hover:text-red-600 border border-slate-100 transition-all active:scale-95 disabled:opacity-50"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="p-24 text-center">
+                  <td colSpan={5} className="p-24 text-center">
                     <div className="flex flex-col items-center gap-5">
                       <div className="p-6 bg-slate-50 rounded-full border border-slate-100 shadow-inner text-slate-300">
                         <Users size={40} />
