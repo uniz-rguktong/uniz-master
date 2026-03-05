@@ -1696,12 +1696,18 @@ export const getGradesTemplate = async (
       where: {
         department: (branch as string) || undefined,
         semester: (semesterId as string) || undefined,
-        code: { startsWith: (year as string) || undefined },
+        code: { contains: (year as string) || undefined, mode: "insensitive" },
       },
     });
 
     const activeSubjects = subjectCode
-      ? subjects.filter((s) => s.code === subjectCode)
+      ? subjects.filter(
+          (s) =>
+            s.code.toUpperCase() === (subjectCode as string).toUpperCase() ||
+            s.code
+              .toUpperCase()
+              .includes((subjectCode as string).toUpperCase()),
+        )
       : subjects;
 
     students.forEach((s: any) => {
@@ -1922,7 +1928,7 @@ export const getAttendanceTemplate = async (
       where: {
         department: (branch as string) || undefined,
         semester: (semesterId as string) || undefined,
-        code: { startsWith: (year as string) || undefined },
+        code: { contains: (year as string) || undefined, mode: "insensitive" },
       },
     });
 
