@@ -11,6 +11,8 @@ import {
   X,
   ExternalLink,
   AlertCircle,
+  Edit3,
+  Trash2,
 } from "lucide-react";
 import { UPDATES_BASE, GET_NOTIFICATIONS } from "../../../api/endpoints";
 import { toast } from "react-toastify";
@@ -28,6 +30,7 @@ export default function UpdatesSection() {
     link: "",
     isVisible: true,
   });
+  const [editingUpdate, setEditingUpdate] = useState<any>(null);
 
   useEffect(() => {
     fetchUpdates();
@@ -111,13 +114,18 @@ export default function UpdatesSection() {
     setLoading(false);
   };
 
-  const handleCreateUpdate = async (e: React.FormEvent) => {
+  const handleSaveUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setActionLoading("creating");
+    setActionLoading(editingUpdate ? "updating" : "creating");
     const token = getAuthToken();
     try {
-      const res = await fetch(UPDATES_BASE, {
-        method: "POST",
+      const url = editingUpdate
+        ? `${UPDATES_BASE}/${editingUpdate._id || editingUpdate.id}`
+        : UPDATES_BASE;
+      const method = editingUpdate ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -126,15 +134,59 @@ export default function UpdatesSection() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success("Broadcast published!");
+        toast.success(
+          editingUpdate ? "Broadcast updated!" : "Broadcast published!",
+        );
         setShowAddModal(false);
+        setEditingUpdate(null);
         setNewUpdate({ title: "", content: "", link: "", isVisible: true });
         fetchUpdates();
       } else {
         toast.error(data.msg || "Post failed");
       }
     } catch (error) {
-      toast.error("Error publishing update");
+      toast.error("Error saving update");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleEditClick = (update: any) => {
+    setEditingUpdate(update);
+    setNewUpdate({
+      title: update.title,
+      content: update.content || update.description,
+      link: update.link || "",
+      isVisible: update.isVisible !== false,
+    });
+    setShowAddModal(true);
+  };
+
+  const deleteUpdate = async (id: string) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this broadcast permanently?",
+      )
+    )
+      return;
+    setActionLoading(id);
+    const token = getAuthToken();
+    try {
+      const res = await fetch(`${UPDATES_BASE}/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Broadcast removed");
+        fetchUpdates();
+      } else {
+        toast.error(data.msg || "Deletion failed");
+      }
+    } catch (error) {
+      toast.error("Error deleting update");
     } finally {
       setActionLoading(null);
     }
@@ -188,6 +240,9 @@ export default function UpdatesSection() {
                 <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   Distribution Date
                 </th>
+                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20 text-right">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50/60">
@@ -197,7 +252,7 @@ export default function UpdatesSection() {
                   .map((_, i) => (
                     <tr key={i} className="animate-pulse">
                       <td
-                        colSpan={4}
+                        colSpan={5}
                         className="px-10 py-8 bg-slate-50/20"
                       ></td>
                     </tr>
@@ -281,11 +336,28 @@ export default function UpdatesSection() {
                         </p>
                       </div>
                     </td>
+                    <td className="px-10 py-6">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => handleEditClick(update)}
+                          className="p-3 bg-slate-50 text-slate-400 rounded-full hover:bg-blue-50 hover:text-blue-600 border border-slate-100 transition-all active:scale-95"
+                        >
+                          <Edit3 size={14} />
+                        </button>
+                        <button
+                          onClick={() => deleteUpdate(update._id || update.id)}
+                          disabled={actionLoading === (update._id || update.id)}
+                          className="p-3 bg-slate-50 text-slate-400 rounded-full hover:bg-red-50 hover:text-red-600 border border-slate-100 transition-all active:scale-95"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="p-24 text-center">
+                  <td colSpan={5} className="p-24 text-center">
                     <div className="flex flex-col items-center gap-5">
                       <div className="p-6 bg-slate-50 rounded-full border border-slate-100 shadow-inner text-slate-300">
                         <Bell size={40} />
@@ -328,30 +400,50 @@ export default function UpdatesSection() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
           <div
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
-            onClick={() => setShowAddModal(false)}
+            onClick={() => {
+              setShowAddModal(false);
+              setEditingUpdate(null);
+              setNewUpdate({
+                title: "",
+                content: "",
+                link: "",
+                isVisible: true,
+              });
+            }}
           />
           <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-            <div className="bg-blue-600 p-8 text-white relative flex items-center gap-5">
+            <div
+              className={`${editingUpdate ? "bg-slate-900" : "bg-blue-600"} p-8 text-white relative flex items-center gap-5 transition-colors duration-500`}
+            >
               <div className="p-3.5 bg-white/20 rounded-2xl">
-                <Bell size={26} />
+                {editingUpdate ? <Edit3 size={26} /> : <Bell size={26} />}
               </div>
               <div>
                 <h3 className="text-2xl font-semibold tracking-[-0.02em]">
-                  New Broadcast
+                  {editingUpdate ? "Edit Broadcast" : "New Broadcast"}
                 </h3>
                 <p className="text-white/70 text-[10px] font-semibold uppercase tracking-[0.2em] mt-1.5">
                   Publish News to Student Dashboard
                 </p>
               </div>
               <button
-                onClick={() => setShowAddModal(false)}
+                onClick={() => {
+                  setShowAddModal(false);
+                  setEditingUpdate(null);
+                  setNewUpdate({
+                    title: "",
+                    content: "",
+                    link: "",
+                    isVisible: true,
+                  });
+                }}
                 className="absolute top-8 right-8 text-white/60 hover:text-white transition-colors"
               >
                 <X size={26} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateUpdate} className="p-10 space-y-8">
+            <form onSubmit={handleSaveUpdate} className="p-10 space-y-8">
               <div className="space-y-6">
                 {/* Title */}
                 <div className="space-y-2">
@@ -418,14 +510,17 @@ export default function UpdatesSection() {
               <button
                 disabled={!!actionLoading}
                 type="submit"
-                className="w-full bg-blue-600 text-white py-5 rounded-2xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95"
+                className={`w-full ${editingUpdate ? "bg-slate-900 shadow-slate-200" : "bg-blue-600 shadow-blue-200"} text-white py-5 rounded-2xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:opacity-90 transition-all shadow-xl flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95`}
               >
-                {actionLoading === "creating" ? (
+                {actionLoading === "creating" ||
+                actionLoading === "updating" ? (
                   <Loader2 className="animate-spin w-5 h-5" />
-                ) : (
+                ) : editingUpdate ? (
                   <CheckCircle2 size={18} />
+                ) : (
+                  <Plus size={18} />
                 )}
-                Broadcast Now
+                {editingUpdate ? "Update Broadcast" : "Broadcast Now"}
               </button>
             </form>
           </div>
