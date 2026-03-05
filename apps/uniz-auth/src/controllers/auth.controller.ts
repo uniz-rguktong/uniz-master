@@ -69,7 +69,9 @@ export const login = async (req: Request, res: Response) => {
 
     if (user.role === UserRole.STUDENT) {
       response.student_token = token;
-    } else if (user.role !== UserRole.HOD && user.role !== UserRole.TEACHER) {
+    } else {
+      // All non-student roles (faculty, hod, dean, webmaster, etc.) get admin_token
+      // since they all log in via the admin portal
       response.admin_token = token;
     }
 

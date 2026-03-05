@@ -102,7 +102,11 @@ export default function Signin({ type }: SigninProps) {
       const data = await apiClient<SigninResponse>(SIGNIN(type), {
         method: "POST",
         body: JSON.stringify({
-          username: username.trim().toUpperCase(),
+          // For students we uppercase (roll numbers); for admin/faculty backend does case-insensitive lookup
+          username:
+            type === "student"
+              ? username.trim().toUpperCase()
+              : username.trim(),
           password: password.trim(),
         }),
       });
