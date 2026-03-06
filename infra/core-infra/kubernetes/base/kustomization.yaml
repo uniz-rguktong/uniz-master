@@ -9,6 +9,7 @@ resources:
   - redis.yaml
   - gateway-api.yaml
   - gateway.yaml
+  - db-ui.yaml
   - auth-service.yaml
   - user-service.yaml
   - academics-service.yaml
