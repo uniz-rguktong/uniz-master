@@ -44,7 +44,11 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     "uniz-portal:uniz-portal:uniz-portal:portal"
     "uniz-user:uniz-user-service:uniz-user-service:user-service"
     "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
+    "ornate-ems:ornate-ems:ornate-ems:ornate-ems"
   )
+
+  echo "🛠️  Applying Kubernetes configurations..."
+  kubectl apply -k infra/core-infra/kubernetes/base/
 
   REBUILT_COUNT=0
   declare -A BUILT_IMAGES
