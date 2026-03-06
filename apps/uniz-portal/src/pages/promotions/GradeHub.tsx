@@ -94,16 +94,20 @@ export default function GradeHub() {
       }
 
       if (data.success && data.grades) {
-        // Try to locate the GPA data from the response. 
+        // Try to locate the GPA data from the response.
         // Handles "SEM-1" or "E1-SEM-1" dynamically depending on the backend structure.
-        const gpaDataObj = data.gpa?.[mappedSemester] || data.gpa?.[`${selectedYear}-${mappedSemester}`] || Object.values(data.gpa || {})[0] as any;
-        const extractedGPA = gpaDataObj ? gpaDataObj.gpa : (data.cgpa || 0);
+        const gpaDataObj =
+          data.gpa?.[mappedSemester] ||
+          data.gpa?.[`${selectedYear}-${mappedSemester}`] ||
+          (Object.values(data.gpa || {})[0] as any);
+        const extractedGPA = gpaDataObj ? gpaDataObj.gpa : data.cgpa || 0;
 
         const formattedGrades = data.grades.map((g: any) => ({
           subject: g.subject.name,
           credits: g.subject.credits,
           grade: pointToGrade(g.grade),
           points: g.grade,
+          isRemedial: g.isRemedial,
           contribution: g.grade * g.subject.credits,
         }));
 
@@ -200,10 +204,11 @@ export default function GradeHub() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${selectedYear === year
-                        ? "bg-slate-950 text-white"
-                        : "hover:bg-slate-50 text-slate-600"
-                        }`}
+                      className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${
+                        selectedYear === year
+                          ? "bg-slate-950 text-white"
+                          : "hover:bg-slate-50 text-slate-600"
+                      }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setShowDropdown(false);
@@ -321,7 +326,8 @@ export default function GradeHub() {
             </div>
 
             {/* Content */}
-            {!grades.calculation_details || grades.calculation_details.length === 0 ? (
+            {!grades.calculation_details ||
+            grades.calculation_details.length === 0 ? (
               <div className="p-12 text-center">
                 <AlertCircle
                   size={48}
@@ -375,14 +381,22 @@ export default function GradeHub() {
                                   {item.credits}
                                 </td>
                                 <td className="px-2 py-2.5 text-center">
-                                  <span
-                                    className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${item.grade === "Ex"
-                                      ? "bg-blue-600 text-white"
-                                      : "bg-slate-100 text-slate-800"
+                                  <div className="flex flex-col items-center gap-0.5">
+                                    <span
+                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
+                                        item.grade === "Ex"
+                                          ? "bg-blue-600 text-white"
+                                          : "bg-slate-100 text-slate-800"
                                       }`}
-                                  >
-                                    {item.grade}
-                                  </span>
+                                    >
+                                      {item.grade}
+                                    </span>
+                                    {item.isRemedial && (
+                                      <span className="text-[8px] font-black text-orange-500 uppercase tracking-tighter">
+                                        Remedial
+                                      </span>
+                                    )}
+                                  </div>
                                 </td>
                                 <td className="px-2 py-2.5 text-center font-bold text-slate-800 text-xs">
                                   {item.points}
@@ -406,10 +420,11 @@ export default function GradeHub() {
                                   </td>
                                   <td className="px-2 py-2.5 text-center">
                                     <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${grade === "Ex"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-slate-100 text-slate-800"
-                                        }`}
+                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
+                                        grade === "Ex"
+                                          ? "bg-blue-600 text-white"
+                                          : "bg-slate-100 text-slate-800"
+                                      }`}
                                     >
                                       {grade}
                                     </span>
@@ -456,19 +471,20 @@ export default function GradeHub() {
                   </div>
 
                   {/* Backlogs Section */}
-                  {grades.totalBacklogs !== undefined && grades.totalBacklogs > 0 && (
-                    <>
-                      <div className="w-[1px] h-12 bg-slate-200 hidden md:block"></div>
-                      <div className="flex flex-col items-center">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
-                          Active Backlogs
-                        </span>
-                        <span className="text-4xl font-black text-red-500 tracking-tighter flex items-center gap-2">
-                          {grades.totalBacklogs}
-                        </span>
-                      </div>
-                    </>
-                  )}
+                  {grades.totalBacklogs !== undefined &&
+                    grades.totalBacklogs > 0 && (
+                      <>
+                        <div className="w-[1px] h-12 bg-slate-200 hidden md:block"></div>
+                        <div className="flex flex-col items-center">
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
+                            Active Backlogs
+                          </span>
+                          <span className="text-4xl font-black text-red-500 tracking-tighter flex items-center gap-2">
+                            {grades.totalBacklogs}
+                          </span>
+                        </div>
+                      </>
+                    )}
                 </div>
               </>
             )}
@@ -496,19 +512,23 @@ export default function GradeHub() {
         )}
 
         {/* Empty State — only show after /me has resolved */}
-        {!authLoading && user?.username && !isLoading && !resultsFetched && !error && (
-          <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center">
-            <div className="bg-white w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
-              <Award size={40} className="text-blue-600" />
-            </div>
+        {!authLoading &&
+          user?.username &&
+          !isLoading &&
+          !resultsFetched &&
+          !error && (
+            <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center">
+              <div className="bg-white w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
+                <Award size={40} className="text-blue-600" />
+              </div>
 
-            <h3 className="text-2xl font-black mb-3">No Results Selected</h3>
-            <p className="text-slate-500 mb-6 max-w-sm mx-auto font-medium">
-              Select an academic year and semester above, then click "View
-              Results" to see your grades.
-            </p>
-          </div>
-        )}
+              <h3 className="text-2xl font-black mb-3">No Results Selected</h3>
+              <p className="text-slate-500 mb-6 max-w-sm mx-auto font-medium">
+                Select an academic year and semester above, then click "View
+                Results" to see your grades.
+              </p>
+            </div>
+          )}
       </div>
     </div>
   );
