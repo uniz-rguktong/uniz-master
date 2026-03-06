@@ -16,6 +16,7 @@ export interface Grade {
   id: string;
   subjectId: string;
   grade: number;
+  isRemedial?: boolean;
   subject: Subject;
   semester: Semester;
 }
