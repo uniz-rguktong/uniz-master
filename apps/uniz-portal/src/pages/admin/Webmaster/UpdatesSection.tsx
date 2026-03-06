@@ -322,13 +322,13 @@ export default function UpdatesSection() {
                         <p className="text-sm font-semibold tracking-tight text-slate-700">
                           {update.createdAt
                             ? new Date(update.createdAt).toLocaleDateString(
-                                "en-GB",
-                                {
-                                  day: "2-digit",
-                                  month: "short",
-                                  year: "numeric",
-                                },
-                              )
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )
                             : "Today"}
                         </p>
                         <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
@@ -513,7 +513,7 @@ export default function UpdatesSection() {
                 className={`w-full ${editingUpdate ? "bg-slate-900 shadow-slate-200" : "bg-blue-600 shadow-blue-200"} text-white py-5 rounded-2xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:opacity-90 transition-all shadow-xl flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95`}
               >
                 {actionLoading === "creating" ||
-                actionLoading === "updating" ? (
+                  actionLoading === "updating" ? (
                   <Loader2 className="animate-spin w-5 h-5" />
                 ) : editingUpdate ? (
                   <CheckCircle2 size={18} />

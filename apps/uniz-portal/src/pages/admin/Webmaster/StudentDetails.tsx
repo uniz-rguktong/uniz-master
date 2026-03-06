@@ -421,11 +421,10 @@ export default function StudentDetails() {
                           std.is_suspended === true,
                         )
                       }
-                      className={`p-3 rounded-xl transition-all border ${
-                        std.is_suspended !== true
+                      className={`p-3 rounded-xl transition-all border ${std.is_suspended !== true
                           ? "text-slate-400 hover:text-red-500 hover:bg-red-50 border-transparent hover:border-red-100"
                           : "text-emerald-500 bg-emerald-50 border-emerald-100 hover:bg-emerald-100"
-                      }`}
+                        }`}
                     >
                       {isActionLoading === std.username ? (
                         <Loader2 size={18} className="animate-spin" />
