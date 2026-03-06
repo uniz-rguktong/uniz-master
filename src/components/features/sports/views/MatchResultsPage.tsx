@@ -329,12 +329,20 @@ export function MatchResultsPage() {
               />
             </div>
             <div className="w-[1px] h-4 bg-[#E5E7EB]" />
-            <Select value={selectedSport} onValueChange={(v) => { setSelectedSport(v); setSelectedAthleticsSubType('All'); }}>
+            <Select value={selectedSport} onValueChange={(v) => {
+              if (v === 'athletics-nav') {
+                document.getElementById('athletics-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                return;
+              }
+              setSelectedSport(v);
+              setSelectedAthleticsSubType('All');
+            }}>
               <SelectTrigger className="min-w-[120px] max-w-[200px] w-auto border-0 bg-transparent font-bold text-xs h-full focus:ring-0 [&>span]:truncate">
                 <SelectValue placeholder="Sport" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">All Sports</SelectItem>
+                <SelectItem value="athletics-nav">Athletics Events</SelectItem>
                 {availableSports.map((sport) => (
                   <SelectItem key={sport.id} value={sport.id}>
                     {sport.name} ({sport.gender === 'MALE' ? 'Boys' : sport.gender === 'FEMALE' ? 'Girls' : 'Mixed'})
@@ -458,7 +466,7 @@ export function MatchResultsPage() {
 
             {/* ── Athletics Individual Events ── */}
             {showAthletics && (
-              <div>
+              <div id="athletics-section" className="scroll-mt-10">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
                   <h2 className="text-base font-bold text-[#1A1A1A] flex items-center gap-2">
                     <Medal className="w-4 h-4 text-amber-500" />

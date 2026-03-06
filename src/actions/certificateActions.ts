@@ -635,7 +635,8 @@ async function distributeParticipationCertificates(eventId: string) {
                 }
             });
 
-            if (reg.user?.email) {
+            const recipientEmail = reg.user?.email || reg.email;
+            if (recipientEmail) {
                 const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
                 const verificationUrl = `${appUrl}/verify/${reg.id}`;
 
@@ -656,7 +657,7 @@ async function distributeParticipationCertificates(eventId: string) {
                 const emailHtml = getParticipationEmailTemplate(reg.studentName, event.title, verificationUrl, reg.id);
 
                 await sendCertificateEmail(
-                    reg.user.email,
+                    recipientEmail,
                     `Certificate of Participation: ${event.title}`,
                     emailHtml,
                     attachments
@@ -750,7 +751,8 @@ async function distributeWinnerCertificates(eventId: string) {
                 }
             });
 
-            if (winner.user?.email) {
+            const recipientEmail = winner.user?.email || winner.email;
+            if (recipientEmail) {
                 const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
                 const verificationUrl = `${appUrl}/verify/${winner.id}`;
 
@@ -771,7 +773,7 @@ async function distributeWinnerCertificates(eventId: string) {
                 const emailHtml = getWinnerEmailTemplate(winner.studentName, winner.event.title, winner.rank!, verificationUrl, winner.id);
 
                 await sendCertificateEmail(
-                    winner.user.email,
+                    recipientEmail,
                     `Certificate of Achievement: ${winner.event.title}`,
                     emailHtml,
                     attachments
