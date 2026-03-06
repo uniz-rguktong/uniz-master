@@ -107,6 +107,9 @@ const mapAdminProfile = (profile: any) => ({
   contact: profile.contact,
   profile_url: profile.profileUrl,
   role: profile.role,
+  bio: profile.bio || "",
+  designation: profile.designation || "",
+  department: profile.department || "",
   created_at: profile.createdAt,
   updated_at: profile.updatedAt,
 });
@@ -1101,14 +1104,18 @@ export const updateAdminProfile = async (
       // Map frontend fields (profile_url, etc.) to prisma fields (profileUrl, etc.) if needed
       // Actually standard update body might work if keys match.
       // Lets be explicit for safety.
+      // Explicitly map fields to avoid Prisma errors with extra data
       const facultyData: any = {};
-      if (updates.name) facultyData.name = updates.name;
-      if (updates.email) facultyData.email = updates.email;
-      if (updates.contact) facultyData.contact = updates.contact;
-      if (updates.designation) facultyData.designation = updates.designation;
-      if (updates.profileUrl) facultyData.profileUrl = updates.profileUrl;
-      if (updates.profile_url) facultyData.profileUrl = updates.profile_url;
-      if (updates.bio || updates.Bio)
+      if (updates.name !== undefined) facultyData.name = updates.name;
+      if (updates.email !== undefined) facultyData.email = updates.email;
+      if (updates.contact !== undefined) facultyData.contact = updates.contact;
+      if (updates.designation !== undefined)
+        facultyData.designation = updates.designation;
+      if (updates.department !== undefined)
+        facultyData.department = updates.department;
+      if (updates.profileUrl !== undefined || updates.profile_url !== undefined)
+        facultyData.profileUrl = updates.profileUrl || updates.profile_url;
+      if (updates.bio !== undefined || updates.Bio !== undefined)
         facultyData.bio = updates.bio || updates.Bio;
 
       const updated: any = await prisma.facultyProfile.update({
@@ -1133,9 +1140,21 @@ export const updateAdminProfile = async (
       });
     }
 
+    const adminData: any = {};
+    if (updates.name !== undefined) adminData.name = updates.name;
+    if (updates.email !== undefined) adminData.email = updates.email;
+    if (updates.contact !== undefined) adminData.contact = updates.contact;
+    if (updates.designation !== undefined)
+      adminData.designation = updates.designation;
+    if (updates.department !== undefined)
+      adminData.department = updates.department;
+    if (updates.profileUrl !== undefined || updates.profile_url !== undefined)
+      adminData.profileUrl = updates.profileUrl || updates.profile_url;
+    if (updates.bio !== undefined) adminData.bio = updates.bio;
+
     const updated = await prisma.adminProfile.update({
       where: { username: user.username },
-      data: updates,
+      data: adminData,
     });
 
     return res.json({ success: true, data: mapAdminProfile(updated) });

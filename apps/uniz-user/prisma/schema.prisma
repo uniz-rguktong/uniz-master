@@ -60,15 +60,18 @@ model FacultyProfile {
 }
 
 model AdminProfile {
-  id         String   @id @default(uuid())
-  username   String   @unique
-  name       String   @default("")
-  email      String   @unique @default("")
-  contact    String    @default("")
-  profileUrl String   @default("")
-  role       String   @default("webmaster")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          String   @id @default(uuid())
+  username    String   @unique
+  name        String   @default("")
+  email       String   @unique @default("")
+  contact     String   @default("")
+  profileUrl  String   @default("")
+  role        String   @default("webmaster")
+  designation String   @default("")
+  department  String   @default("")
+  bio         Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Banner {
