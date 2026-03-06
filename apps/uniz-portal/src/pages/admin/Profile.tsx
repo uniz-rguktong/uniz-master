@@ -13,7 +13,7 @@ import {
 import { adminUsername } from "../../store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { BASE_URL } from "../../api/endpoints";
+import { BASE_URL, UPLOAD_IMAGE } from "../../api/endpoints";
 
 export default function AdminProfile() {
   const username = useRecoilValue(adminUsername);
@@ -53,20 +53,18 @@ export default function AdminProfile() {
     try {
       setIsUploading(true);
       const formData = new FormData();
-      formData.append("file", file);
-      formData.append(
-        "upload_preset",
-        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || "uniz_upload",
-      );
+      formData.append("image", file);
 
-      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        { method: "POST", body: formData },
-      );
+      const res = await fetch(UPLOAD_IMAGE, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${(localStorage.getItem("admin_token") || "").replace(/"/g, "")}`,
+        },
+        body: formData,
+      });
       const data = await res.json();
 
-      if (data.secure_url) {
+      if (data.success && data.url) {
         const token = localStorage.getItem("admin_token");
         const updateRes = await fetch(`${BASE_URL}/profile/admin/me/update`, {
           method: "PUT",
@@ -74,13 +72,15 @@ export default function AdminProfile() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
           },
-          body: JSON.stringify({ profileUrl: data.secure_url }),
+          body: JSON.stringify({ profileUrl: data.url }),
         });
         const updateData = await updateRes.json();
         if (updateData.success) {
           toast.success("Profile photo updated!");
           fetchProfile();
         }
+      } else {
+        toast.error(data.message || "Failed to upload image");
       }
     } catch (err) {
       toast.error("Failed to upload image");

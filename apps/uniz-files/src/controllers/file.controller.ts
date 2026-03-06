@@ -458,3 +458,37 @@ export const uploadGrades = async (
     return res.status(500).json({ success: false, message: e.message });
   }
 };
+
+export const uploadImage = async (req: AuthenticatedRequest, res: Response) => {
+  if (!req.file) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No image file provided" });
+  }
+
+  try {
+    const result: any = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: "uniz/profiles",
+          resource_type: "image",
+          transformation: [{ width: 500, height: 500, crop: "limit" }],
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        },
+      );
+      uploadStream.end(req.file!.buffer);
+    });
+
+    return res.json({
+      success: true,
+      url: result.secure_url,
+      public_id: result.public_id,
+    });
+  } catch (e: any) {
+    console.error("Cloudinary Image Upload Error:", e);
+    return res.status(500).json({ success: false, message: e.message });
+  }
+};

@@ -22,6 +22,7 @@ import {
   Eye,
   BookOpen,
   Calendar,
+  Camera,
 } from "lucide-react";
 import Papa from "papaparse";
 import {
@@ -33,6 +34,7 @@ import {
   BULK_CREATE_FACULTY,
   BULK_UPDATE_FACULTY,
   BULK_DELETE_FACULTY,
+  UPLOAD_IMAGE,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 
@@ -90,6 +92,7 @@ export default function FacultyManagement({
     role: "teacher",
     designation: "Lecturer",
     contact: "",
+    profileUrl: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -109,6 +112,8 @@ export default function FacultyManagement({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedFaculty, setSelectedFaculty] = useState<any>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   /* ─── Fetch ─── */
   const fetchFaculty = async () => {
@@ -237,6 +242,7 @@ export default function FacultyManagement({
       role: member.Role || "teacher",
       designation: member.Designation,
       contact: member.Contact || "",
+      profileUrl: member.ProfileUrl || "",
     });
     setEditMode(true);
     setShowModal(true);
@@ -250,9 +256,40 @@ export default function FacultyManagement({
       role: "teacher",
       designation: "Lecturer",
       contact: "",
+      profileUrl: "",
     });
     setEditMode(false);
     setShowModal(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formDataUpload = new FormData();
+    formDataUpload.append("image", file);
+
+    try {
+      const res = await fetch(UPLOAD_IMAGE, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: formDataUpload,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setFormData((prev) => ({ ...prev, profileUrl: data.url }));
+        toast.success("Profile photo uploaded!");
+      } else {
+        toast.error(data.message || "Upload failed");
+      }
+    } catch {
+      toast.error("Upload failed due to network error");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   /* ─── Bulk selection ─── */
@@ -1117,6 +1154,55 @@ export default function FacultyManagement({
                 : "Create a new faculty or administrative account"}
             </p>
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Profile Picture Upload Section */}
+              <div className="flex flex-col items-center gap-4 py-4 border-b border-slate-50 mb-4">
+                <div className="relative group">
+                  <div className="w-24 h-24 rounded-3xl bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden relative shadow-inner">
+                    {formData.profileUrl ? (
+                      <img
+                        src={formData.profileUrl}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center text-slate-300">
+                        <Users size={32} />
+                        <span className="text-[8px] font-black uppercase tracking-tighter mt-1">
+                          No Photo
+                        </span>
+                      </div>
+                    )}
+                    {isUploading && (
+                      <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
+                        <Loader2 className="animate-spin text-blue-600 w-5 h-5" />
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all active:scale-90 border-2 border-white"
+                  >
+                    <Camera size={14} />
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
+                </div>
+                <div className="text-center">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">
+                    Profile Identity Photo
+                  </p>
+                  <p className="text-[9px] font-medium text-slate-400">
+                    Cloudinary Optimized • 500x500 crop
+                  </p>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">

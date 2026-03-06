@@ -91,6 +91,7 @@ export const GET_SUBJECTS = `${BASE_URL}/academics/subjects`;
 export const ADD_SUBJECT = `${BASE_URL}/academics/subjects/add`;
 export const UPLOAD_ATTENDANCE = `${BASE_URL}/academics/attendance/upload`;
 export const UPLOAD_GRADES = `${BASE_URL}/academics/grades/upload`;
+export const UPLOAD_IMAGE = `${BASE_URL}/files/image/upload`;
 
 export const GET_ATTENDANCE_TEMPLATE = (
   branch: string,
