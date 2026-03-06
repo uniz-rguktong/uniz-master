@@ -222,11 +222,11 @@ model PromoVideo {
   status     String   @default("active")
   views      Int      @default(0)
   duration   String?
-  category   String   @default("video")
   uploadDate DateTime @default(now())
   creatorId  String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  category   String   @default("video")
   creator    Admin    @relation("VideoCreator", fields: [creatorId], references: [id])
 }
 

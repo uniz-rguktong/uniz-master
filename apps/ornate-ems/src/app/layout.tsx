@@ -23,6 +23,13 @@ export const metadata: Metadata = {
   },
   description: "Comprehensive multi-portal event management system for institutional event planning, registration, certificates, and analytics.",
   keywords: ["event management", "registration", "certificates", "dashboard", "university events"],
+  icons: {
+    icon: "/Ornate_LOGO.jpg.jpeg",
+    apple: "/Ornate_LOGO.jpg.jpeg",
+  },
+  openGraph: {
+    images: [{ url: "/Ornate_LOGO.jpg.jpeg" }],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
