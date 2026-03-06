@@ -97,8 +97,9 @@ export const GET_ATTENDANCE_TEMPLATE = (
   branch: string,
   year: string,
   semesterId: string,
+  batch?: string,
 ) =>
-  `${BASE_URL}/academics/attendance/template?branch=${branch}&year=${year}&semesterId=${semesterId}`;
+  `${BASE_URL}/academics/attendance/template?branch=${branch}&year=${year}&semesterId=${semesterId}${batch ? `&batch=${batch}` : ""}`;
 
 export const GET_GRADES_TEMPLATE = (
   branch: string,
@@ -106,8 +107,9 @@ export const GET_GRADES_TEMPLATE = (
   semesterId: string,
   subjectCode: string,
   remedialsOnly: boolean,
+  batch?: string,
 ) =>
-  `${BASE_URL}/academics/grades/template?branch=${branch}&year=${year}&semesterId=${semesterId}&subjectCode=${subjectCode}&remedialsOnly=${remedialsOnly}`;
+  `${BASE_URL}/academics/grades/template?branch=${branch}&year=${year}&semesterId=${semesterId}&subjectCode=${subjectCode}&remedialsOnly=${remedialsOnly}${batch ? `&batch=${batch}` : ""}`;
 
 export const ADMIN_SUSPEND_STUDENT = (id: string) =>
   `${BASE_URL}/profile/admin/student/${id}/suspend`;
@@ -122,11 +124,13 @@ export const ADMIN_STUDENT_EXPORT = (
   branch?: string,
   year?: string,
   fields?: string,
+  batch?: string,
 ) => {
   let url = `${BASE_URL}/profile/admin/student/export?`;
   if (branch) url += `branch=${branch}&`;
   if (year) url += `year=${year}&`;
   if (fields) url += `fields=${fields}&`;
+  if (batch) url += `batch=${batch}&`;
   return url.endsWith("&") || url.endsWith("?") ? url.slice(0, -1) : url;
 };
 

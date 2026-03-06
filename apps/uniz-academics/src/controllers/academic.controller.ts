@@ -1656,7 +1656,8 @@ export const getGradesTemplate = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { branch, year, semesterId, subjectCode, remedialsOnly } = req.query;
+  const { branch, year, semesterId, subjectCode, remedialsOnly, batch } =
+    req.query;
   const token = req.headers.authorization;
 
   try {
@@ -1695,7 +1696,8 @@ export const getGradesTemplate = async (
         `${GATEWAY_URL}/profile/student/search`,
         {
           branch,
-          year,
+          year: !batch ? year : undefined,
+          batch: batch || undefined,
           limit: 10000, // High limit for all students
         },
         getHeaders(token!),
@@ -1922,7 +1924,7 @@ export const getAttendanceTemplate = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { branch, year, semesterId } = req.query;
+  const { branch, year, semesterId, batch } = req.query;
   const token = req.headers.authorization;
 
   try {
@@ -1930,7 +1932,8 @@ export const getAttendanceTemplate = async (
       `${GATEWAY_URL}/profile/student/search`,
       {
         branch,
-        year,
+        year: !batch ? year : undefined,
+        batch: batch || undefined,
         limit: 10000,
       },
       getHeaders(token!),

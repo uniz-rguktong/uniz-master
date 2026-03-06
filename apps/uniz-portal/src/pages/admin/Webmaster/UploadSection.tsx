@@ -37,6 +37,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
   const [semester, setSemester] = useState("SEM-1");
   const [subjectCode, setSubjectCode] = useState("");
   const [remedialsOnly, setRemedialsOnly] = useState(false);
+  const [batch, setBatch] = useState("");
 
   // Dynamic subject list
   const [subjects, setSubjects] = useState<{ code: string; name: string }[]>(
@@ -178,14 +179,15 @@ export default function UploadSection({ type }: { type: UploadType }) {
   const downloadTemplate = async () => {
     const url =
       type === "attendance"
-        ? GET_ATTENDANCE_TEMPLATE(branch, year, semester)
+        ? GET_ATTENDANCE_TEMPLATE(branch, year, semester, batch)
         : GET_GRADES_TEMPLATE(
-          branch,
-          year,
-          semester,
-          subjectCode,
-          remedialsOnly,
-        );
+            branch,
+            year,
+            semester,
+            subjectCode,
+            remedialsOnly,
+            batch,
+          );
     const fileName = `${type}_${branch}_${year}_${semester}_template.xlsx`;
     await downloadFile(url, fileName);
   };
@@ -272,6 +274,19 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 size={14}
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+              Batch (Oxx)
+            </label>
+            <input
+              type="text"
+              placeholder="OPTIONAL"
+              value={batch}
+              onChange={(e) => setBatch(e.target.value)}
+              className="w-full h-11 px-5 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600"
+            />
           </div>
 
           {type === "grades" && (
@@ -410,10 +425,11 @@ export default function UploadSection({ type }: { type: UploadType }) {
         <div className="space-y-6">
           {result ? (
             <div
-              className={`p-8 rounded-2xl border animate-in slide-in-from-right-8 duration-500 h-full ${result.success
+              className={`p-8 rounded-2xl border animate-in slide-in-from-right-8 duration-500 h-full ${
+                result.success
                   ? "bg-emerald-50 border-emerald-100"
                   : "bg-red-50 border-red-100"
-                }`}
+              }`}
             >
               <div className="flex items-center gap-4 mb-6">
                 <div
@@ -441,7 +457,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                       <span className="text-blue-600 font-black">
                         {Math.round(
                           ((progress.processed || 0) / (progress.total || 1)) *
-                          100,
+                            100,
                         )}
                         %
                       </span>
@@ -533,7 +549,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                   <span className="font-black">
                     {Math.round(
                       ((progress?.processed || 0) / (progress?.total || 1)) *
-                      100,
+                        100,
                     )}
                     %
                   </span>

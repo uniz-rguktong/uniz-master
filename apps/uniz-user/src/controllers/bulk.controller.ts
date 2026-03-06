@@ -10,6 +10,22 @@ const prisma = new PrismaClient();
 const AUTH_SERVICE_URL =
   process.env.AUTH_SERVICE_URL || "http://localhost:3001";
 
+const BRANCH_MAP: Record<string, string> = {
+  "COMPUTER SCIENCE AND ENGINEERING": "CSE",
+  "ELECTRONICS AND COMMUNICATION ENGINEERING": "ECE",
+  "ELECTRICAL AND ELECTRONICS ENGINEERING": "EEE",
+  "MECHANICAL ENGINEERING": "MECH",
+  "CIVIL ENGINEERING": "CIVIL",
+  "CHEMICAL ENGINEERING": "CHEM",
+  "METALLURGICAL AND MATERIALS ENGINEERING": "MME",
+  "METALLURGY AND MATERIALS ENGINEERING": "MME",
+};
+
+const mapBranch = (name: string) => {
+  const upper = name.trim().toUpperCase();
+  return BRANCH_MAP[upper] || upper;
+};
+
 // Helper for Excel generation
 const generateExcel = async (
   headers: string[][],
@@ -133,8 +149,11 @@ export const uploadStudents = async (req: any, res: Response) => {
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber === 1) return;
       const rowData: any = {};
-      row.eachCell((cell, colNumber) => {
-        rowData[headers[colNumber - 1]] = cell.value;
+      row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+        const header = headers[colNumber - 1];
+        if (header) {
+          rowData[header] = cell.value;
+        }
       });
       rows.push(rowData);
     });
@@ -183,16 +202,29 @@ export const uploadStudents = async (req: any, res: Response) => {
             const id = getVal([
               "student id",
               "studentid",
+              "student_id",
               "id",
               "username",
             ]).toUpperCase();
-            const name = getVal(["name", "student name"]);
-            const email = getVal(["email", "mail"]);
+            const name = getVal(["name", "student name", "student_name"]);
+            const email = getVal(["email", "mail", "student_email"]);
             const gender = getVal(["gender", "sex"]);
-            const branch = getVal(["branch", "department"]).toUpperCase();
-            const year = getVal(["year", "class"]).toUpperCase();
+            const branch = mapBranch(
+              getVal(["branch", "department", "allocation_branch"]),
+            );
+            const year = getVal([
+              "year",
+              "class",
+              "academic_year",
+            ]).toUpperCase();
             const section = getVal(["section", "sec"]).toUpperCase();
-            const phone = getVal(["phone", "mobile"]);
+            const phone = getVal(["phone", "mobile", "contact"]);
+
+            // Derive defaults
+            const finalEmail =
+              email || (id ? `${id.toLowerCase()}@rguktong.ac.in` : "");
+            const finalYear = year || "E1"; // Default to E1 for branch allocation newcomers
+            const finalSection = section || "GENERAL";
 
             if (!id) {
               failCount++;
@@ -209,11 +241,11 @@ export const uploadStudents = async (req: any, res: Response) => {
                 where: { username: id },
                 update: {
                   name,
-                  email,
+                  email: finalEmail,
                   gender,
                   branch,
-                  year,
-                  section,
+                  year: finalYear,
+                  section: finalSection,
                   phone,
                   updatedAt: new Date(),
                 },
@@ -221,11 +253,11 @@ export const uploadStudents = async (req: any, res: Response) => {
                   id,
                   username: id,
                   name,
-                  email,
+                  email: finalEmail,
                   gender,
                   branch,
-                  year,
-                  section,
+                  year: finalYear,
+                  section: finalSection,
                   phone,
                 },
               });
@@ -331,7 +363,7 @@ export const exportStudentsSelective = async (
   res: Response,
 ) => {
   try {
-    const { branch, year, gender, section, fields } = req.query;
+    const { branch, year, gender, section, fields, batch } = req.query;
 
     // Build filter
     const where: any = {};
@@ -339,6 +371,12 @@ export const exportStudentsSelective = async (
     if (year) where.year = String(year).toUpperCase();
     if (gender) where.gender = String(gender);
     if (section) where.section = String(section).toUpperCase();
+    if (batch) {
+      where.username = {
+        startsWith: String(batch).toUpperCase(),
+        mode: "insensitive",
+      };
+    }
 
     const students = await prisma.studentProfile.findMany({
       where,
