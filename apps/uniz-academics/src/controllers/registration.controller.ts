@@ -321,8 +321,14 @@ export const updateAllocation = async (
   res: Response,
 ) => {
   const { id } = req.params;
-  const { customName, customCredits, isApproved } = req.body;
-
+  const {
+    customName,
+    customCredits,
+    isApproved,
+    isMandatory,
+    electiveGroupId,
+    electiveLimit,
+  } = req.body;
   try {
     const allocation = await prisma.branchAllocation.update({
       where: { id },
@@ -330,6 +336,11 @@ export const updateAllocation = async (
         customName,
         customCredits: customCredits ? Number(customCredits) : undefined,
         isApproved: isApproved !== undefined ? isApproved : undefined,
+        isMandatory: isMandatory !== undefined ? isMandatory : undefined,
+        electiveGroupId:
+          electiveGroupId !== undefined ? electiveGroupId : undefined,
+        electiveLimit:
+          electiveLimit !== undefined ? Number(electiveLimit) : undefined,
       },
     });
     res.json({ success: true, allocation });
