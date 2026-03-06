@@ -240,7 +240,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 onChange={(e) => setYear(e.target.value)}
                 className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
               >
-                {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
+                {["E1", "E2", "E3", "E4"].map((y) => (
                   <option key={y} value={y}>
                     {y}
                   </option>

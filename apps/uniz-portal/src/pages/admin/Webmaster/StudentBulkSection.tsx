@@ -95,7 +95,11 @@ export default function StudentBulkSection() {
           });
           const data = await res.json();
           setProgress(data);
-          if (data.status === "completed" || data.status === "failed") {
+          if (
+            data.status?.toLowerCase() === "done" ||
+            data.status?.toLowerCase() === "completed" ||
+            data.status?.toLowerCase() === "failed"
+          ) {
             setUploadId(null);
             clearInterval(interval);
           }
