@@ -35,6 +35,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     "uniz-auth:uniz-auth-service:uniz-auth-service:auth-service"
     "uniz-cron:uniz-cron-service:uniz-maintenance-job:cron-worker"
     "uniz-cron:uniz-cron-service:uniz-storage-cleanup-job:storage-cleaner"
+    "uniz-cron:uniz-cron-service:uniz-cron-service:cron-worker"
     "uniz-files:uniz-files-service:uniz-files-service:files-service"
     "uniz-gateway:uniz-gateway-api:uniz-gateway-api:gateway-api"
     "uniz-mail:uniz-mail-service:uniz-mail-service:mail-service"
