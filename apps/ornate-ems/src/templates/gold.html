@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Appreciation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Lato:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ... (pasting content of style.css, excluding the @import) ... */
+        :root {
+            --text-color: #333333;
+            --gold-accent: #bf953f;
+            --bg-color: #fcfbf9;
+            /* Fallback */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .certificate-container {
+            width: 1000px;
+            /* A4 Landscape approx */
+            height: 700px;
+            background: linear-gradient(135deg, #8E793E, #AD974F, #F3E5AB, #AD974F, #8E793E);
+            /* Richer Gold Gradient */
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            padding: 60px 80px;
+            color: var(--text-color);
+            overflow: hidden;
+            /* Ensure image doesn't bleed out */
+        }
+
+        /* Background Image styling */
+        .print-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            /* Behind content */
+        }
+
+        /* Seal removed as it is in BG */
+
+        /* Seal (Old class, can be removed or ignored) */
+        /* Seal */
+        .seal-image {
+            position: absolute;
+            top: 25px;
+            left: 750px;
+            width: 260px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+            z-index: 20;
+        }
+
+        /* Corner Decoration */
+        .corner-decoration {
+            position: absolute;
+            bottom: -17.5px;
+            /* Slight bleed adjustment */
+            left: -26px;
+            width: 400px;
+            /* Zoomed in */
+            height: auto;
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        /* Content */
+        .content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            z-index: 10;
+            /* Above background */
+            transform: scale(0.98);
+            transform-origin: center;
+        }
+
+        /* Header */
+        /* Header */
+        header {
+            margin-top: 50px;
+            /* Give it more breathing room from top */
+            text-align: left;
+            /* Moved to left as requested */
+            position: relative;
+            padding-left: 40px;
+            /* Indent slightly from the edge padding */
+            z-index: 20;
+        }
+
+        .main-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 9rem;
+            /* Slightly larger */
+            font-weight: 400;
+            line-height: 1;
+            color: #1a1a1a;
+            /* Sharper black */
+            margin-bottom: 0px;
+            text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.5);
+            /* Subtle highlight for depth */
+            margin-left: -24px;
+            /* Slight optical adjustment for the C swirl */
+        }
+
+        .subtitle {
+            font-family: 'Cinzel', serif;
+            /* Switch to Cinzel for that classic 'Engraved' look */
+            font-size: 1.8rem;
+            color: #333;
+            letter-spacing: 12px;
+            /* Wide luxurious spacing */
+            margin-top: -15px;
+            /* Tuck it closer to the script bottom */
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-left: 130px;
+            /* Indented relative to Certificate start */
+            text-align: left;
+        }
+
+        /* Body */
+        .main-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .presentation-text {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            /* Regular weight */
+            letter-spacing: 2px;
+            color: #000000;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .recipient-name {
+            font-family: 'Great Vibes', cursive;
+            font-size: 5rem;
+            font-weight: 400;
+            color: #222;
+            margin-bottom: 5px;
+            padding: 0 40px;
+        }
+
+        .separator-line {
+            width: 80%;
+            height: 1px;
+            background-color: #666;
+            margin-bottom: 25px;
+        }
+
+        .description {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            /* Larger and more readable */
+            line-height: 1.8;
+            /* Better spacing */
+            color: #1a1a1a;
+            /* Darker for better contrast */
+            max-width: 80%;
+            font-style: normal;
+            /* Removed italics for a cleaner formal look */
+            font-weight: 400;
+        }
+
+        /* Digital Signature Mock */
+        .digital-signature {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.5rem;
+            color: #1a1a1a;
+            transform: rotate(-10deg) translateY(10px);
+            /* Tilted and nudged down onto the line */
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+            z-index: 5;
+        }
+
+
+        /* Footer */
+        footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            /* Aligns Date and Signature to the bottom */
+            padding: 0 80px 20px;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .signature-line {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 200px;
+        }
+
+        .signature-line .line {
+            width: 100%;
+            height: 1px;
+            background-color: #444;
+            margin-bottom: 10px;
+        }
+
+        .signature-line .label {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: #444;
+        }
+
+        #date-placeholder {
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.5rem;
+            /* Larger script font */
+            color: #000;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .qr-code {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            z-index: 30;
+        }
+
+        /* Print Styles */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0;
+                /* Critical: removes browser default print margins */
+            }
+
+            html,
+            body {
+                width: 297mm;
+                height: 210mm;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: none;
+            }
+
+            .certificate-container {
+                /* Lock styling for print */
+                width: 100% !important;
+                height: 100% !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin: 0 !important;
+                padding: 60px 80px !important;
+                /* Keep internal padding for text */
+                box-shadow: none;
+                page-break-inside: avoid;
+                background-color: transparent !important;
+                background: none !important;
+                /* Remove gradient in print */
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                overflow: hidden;
+            }
+
+            /* Force Seal layout in print */
+            .seal-overlay {
+                position: absolute;
+                top: 15mm;
+                right: 15mm;
+                width: 50mm;
+                /* Fixed print size approx 190px */
+                z-index: 50;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Ensure background image covers the A4 area */
+            .print-background {
+                width: 105%;
+                /* Slight bleed to avoid white edges */
+                height: 105%;
+                top: -2.5%;
+                /* Center the bleed */
+                left: -2.5%;
+            }
+
+            /* Overall Background for Print */
+            .overall-bg {
+                display: block !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                z-index: -2;
+                /* Behind everything */
+            }
+        }
+
+        /* Overall BG hidden on screen */
+        .overall-bg {
+            display: none;
+        }
+
+        /* Screen-specific adjustment for footer alignment */
+        @media screen {
+            footer {
+                padding-bottom: 60px;
+                /* Lifts the footer text up on screen view */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="certificate-container">
+        <!-- Overall Print Background -->
+        <img src="./components/gold_overall1_bg.png" alt="Print Background" class="overall-bg">
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Background Image (Restricted to Content Area) -->
+            <img src="./components/gold_bg.png" alt="Certificate Background" class="print-background">
+
+            <!-- Seal Image -->
+            <img src="./components/gold_seal.png" alt="Seal" class="seal-image">
+
+            <!-- Corner Interior Decoration -->
+            <img src="./components/gold_corner_decoration.png" alt="Decoration" class="corner-decoration">
+
+            <header>
+                <h1 class="main-title">Certificate</h1>
+                <p class="subtitle">of Appreciation</p>
+            </header>
+
+            <div class="main-body">
+                <p class="presentation-text">THIS CERTIFICATE IS PROUDLY PRESENTED TO</p>
+
+                <h2 class="recipient-name" id="recipient-name">{{name}}</h2>
+
+                <div class="separator-line"></div>
+
+                <p class="description">
+                    This certificate is proudly awarded for securing {{rank}} in <span id="event-name">{{event}}</span>.
+                    The recipient has demonstrated outstanding performance, dedication, and excellence throughout
+                    the event.
+                </p>
+            </div>
+
+            <footer>
+                <div class="signature-line">
+                    <div class="digital-signature">[Signature]</div>
+                    <div class="line"></div>
+                    <span class="label">Signature</span>
+                </div>
+            </footer>
+
+            <!-- QR Code -->
+            <img src="{{qr_code}}" class="qr-code" alt="Verification QR Code">
+        </div>
+    </div>
+</body>
+
+</html>
