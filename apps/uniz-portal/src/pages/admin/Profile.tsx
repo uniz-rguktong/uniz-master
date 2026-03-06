@@ -9,6 +9,9 @@ import {
   CheckCircle,
   Shield,
   ArrowLeft,
+  FileText,
+  Building,
+  Briefcase,
 } from "lucide-react";
 import { adminUsername } from "../../store";
 import { useNavigate } from "react-router-dom";
@@ -28,6 +31,9 @@ export default function AdminProfile() {
     name: "",
     email: "",
     contact: "",
+    bio: "",
+    designation: "",
+    department: "",
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -46,6 +52,9 @@ export default function AdminProfile() {
           name: data.data.name || "",
           email: data.data.email || "",
           contact: data.data.contact || "",
+          bio: data.data.bio || "",
+          designation: data.data.designation || "",
+          department: data.data.department || "",
         });
       }
     } catch (e) {
@@ -224,7 +233,9 @@ export default function AdminProfile() {
                   </button>
                 </div>
                 <p className="text-slate-500 font-medium mt-1">
-                  System Administrator • RGUKT Ongole
+                  {profile?.designation ? `${profile.designation} • ` : ""}
+                  {profile?.department ? `${profile.department} • ` : ""}
+                  RGUKT Ongole
                 </p>
                 {isEditing && (
                   <button
@@ -258,11 +269,50 @@ export default function AdminProfile() {
                 onChange={(val) => setFormData({ ...formData, contact: val })}
               />
               <ProfileItem
+                icon={<Building className="text-purple-500" />}
+                label="Department"
+                value={formData.department || "Administration"}
+              />
+              <ProfileItem
+                icon={<Briefcase className="text-cyan-500" />}
+                label="Designation"
+                value={formData.designation || "Webmaster"}
+              />
+              <ProfileItem
                 icon={<CheckCircle className="text-amber-500" />}
                 label="Account Status"
                 value="Verified & Active"
               />
             </div>
+
+            {/* Bio Section */}
+            {(profile?.role === "teacher" ||
+              profile?.role === "hod" ||
+              profile?.role === "faculty") && (
+              <div className="mt-8 pt-8 border-t border-slate-100">
+                <div className="flex items-center gap-2 mb-4">
+                  <FileText size={18} className="text-slate-400" />
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-900">
+                    Faculty Biography
+                  </h4>
+                </div>
+                {isEditing ? (
+                  <textarea
+                    value={formData.bio}
+                    onChange={(e) =>
+                      setFormData({ ...formData, bio: e.target.value })
+                    }
+                    rows={4}
+                    className="w-full text-sm font-medium text-slate-600 leading-relaxed bg-slate-50 border border-slate-200 rounded-2xl p-4 focus:outline-none focus:border-blue-500"
+                    placeholder="Tell us about your academic background and interests..."
+                  />
+                ) : (
+                  <p className="text-sm font-medium text-slate-600 leading-relaxed">
+                    {formData.bio || "No biography provided yet."}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

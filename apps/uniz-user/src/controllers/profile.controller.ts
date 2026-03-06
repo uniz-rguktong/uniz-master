@@ -464,6 +464,7 @@ export const getAdminProfile = async (
               role: profile.role,
               department: profile.department,
               designation: profile.designation,
+              bio: profile.bio,
             }
           : null,
       });
