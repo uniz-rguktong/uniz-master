@@ -1,53 +1,50 @@
 /**
  * ─────────────────────────────────────────────────────────
- * Upstash Redis Client — Edge-Compatible
+ * Standard Redis Client (ioredis) — TCP-Based
  * ─────────────────────────────────────────────────────────
  *
- * WHY @upstash/redis INSTEAD OF ioredis:
- *   Next.js middleware runs in the Edge Runtime, which does NOT support
- *   raw TCP connections. ioredis requires a persistent TCP socket, making
- *   it incompatible with Vercel's serverless/Edge environment.
- *   @upstash/redis communicates over HTTP (REST API), which works in
- *   ALL runtimes — Edge, serverless, and Node.js.
- *
- * WHY THIS DOES NOT CONFLICT WITH unstable_cache:
- *   Next.js `unstable_cache` uses Vercel's built-in Data Cache (file-based
- *   on disk or Vercel's internal cache layer). It is completely separate
- *   from Redis. This Redis instance is used EXCLUSIVELY for rate limiting
- *   counters. There is zero overlap between the two systems:
- *     - unstable_cache → Vercel Data Cache (tag-based revalidation)
- *     - @upstash/redis → Upstash Redis (rate limit counters only)
+ * WHY ioredis:
+ *   In your VPS environment, Redis is running as a local K3s service.
+ *   ioredis uses standard TCP connections, which are faster and more reliable
+ *   within your cluster's internal network than HTTP resets.
  *
  * REQUIRED ENVIRONMENT VARIABLES:
- *   UPSTASH_REDIS_REST_URL  — Your Upstash Redis REST endpoint
- *   UPSTASH_REDIS_REST_TOKEN — Your Upstash Redis REST auth token
- *
- * Both are available from your Upstash Console after creating a database.
+ *   REDIS_URL — e.g. redis://uniz-redis:6379
  * ─────────────────────────────────────────────────────────
  */
 
-import { Redis } from "@upstash/redis";
+import Redis from "ioredis";
 
-/**
- * Singleton Upstash Redis client.
- *
- * Creates a real Redis client when UPSTASH_REDIS_REST_URL and
- * UPSTASH_REDIS_REST_TOKEN are set. Returns `null` when they aren't
- * (e.g., local development without Upstash). The rate limiter checks
- * for null and gracefully skips rate limiting in that case.
- */
 function createRedisClient(): Redis | null {
-    const url = process.env.UPSTASH_REDIS_REST_URL;
-    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const redisUrl = process.env.REDIS_URL;
 
-    if (!url || !token) {
-        if (process.env.NODE_ENV === 'development') {
-            console.warn('[Redis] UPSTASH_REDIS_REST_URL / TOKEN not set — rate limiting disabled in dev.');
-        }
-        return null;
+  if (!redisUrl) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn(
+        "[Redis] REDIS_URL not set — rate limiting might be affected.",
+      );
     }
+    return null;
+  }
 
-    return new Redis({ url, token });
+  try {
+    const client = new Redis(redisUrl, {
+      maxRetriesPerRequest: 3,
+      reconnectOnError: (err) => {
+        console.error("[Redis] Reconnect error:", err.message);
+        return true;
+      },
+    });
+
+    client.on("error", (err) => {
+      console.error("[Redis] Client error:", err.message);
+    });
+
+    return client;
+  } catch (e) {
+    console.error("[Redis] Failed to initialize:", e);
+    return null;
+  }
 }
 
 export const redis = createRedisClient();

@@ -1019,17 +1019,22 @@ export async function getTournamentStandings(): Promise<FixtureActionResponse> {
         }
 
         for (const bp of branchPoints) {
-            const sportName = bp.sport.name;
+            const rawSportName = bp.sport.name;
             const genderKey = bp.sport.gender === 'FEMALE' ? 'Girls' : 'Boys';
 
-            if (!standings[genderKey][sportName]) {
-                standings[genderKey][sportName] = {};
+            // Grouping logic: All sub-categories of Athletics are combined into one row
+            const isAthletic = rawSportName.toLowerCase().includes('athletic');
+            const bucketName = isAthletic ? 'Athletics' : rawSportName;
+
+            if (!standings[genderKey][bucketName]) {
+                standings[genderKey][bucketName] = {};
                 for (const branch of BRANCHES) {
-                    standings[genderKey][sportName]![branch] = 0;
+                    standings[genderKey][bucketName]![branch] = 0;
                 }
             }
 
-            standings[genderKey][sportName]![bp.branch] = bp.points + bp.manualAdjustment;
+            const pointsObj = standings[genderKey][bucketName]!;
+            pointsObj[bp.branch] = (pointsObj[bp.branch] || 0) + (bp.points + bp.manualAdjustment);
         }
 
         return { success: true, data: standings };
