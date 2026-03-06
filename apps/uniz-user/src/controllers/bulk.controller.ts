@@ -263,7 +263,9 @@ export const uploadStudents = async (req: any, res: Response) => {
               });
               successCount++;
 
-              // 2. Create Auth Credential (if needed)
+              // Cache Invalidation
+              await redis.del(`profile:v2:${id}`);
+
               // 2. Create/Update Auth Credential
               try {
                 const SECRET = (
