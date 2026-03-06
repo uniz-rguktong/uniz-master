@@ -2,8 +2,9 @@
 
 # 1. Push code to GitHub
 echo "🚀 Pushing code to GitHub..."
+MSG=${1:-"chore: deployment update $(date +'%Y-%m-%d %H:%M:%S')"}
 git add .
-git commit -m "chore: deployment update $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+git commit -m "$MSG" || echo "No changes to commit"
 git push origin main
 
 # 2. Deploy to VPS
