@@ -11,6 +11,7 @@ export interface ResultData {
   semesterId: string;
   grades: {
     grade: number;
+    isRemedial?: boolean;
     subject: {
       code: string;
       name: string;
@@ -285,8 +286,12 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
         { width: tWidths.credits, align: "center" },
       );
 
-      const gLetter = getGradeLetter(g.grade);
-      if (gLetter === "R") doc.fillColor("#D32F2F");
+      let gLetter = getGradeLetter(g.grade);
+      if (g.isRemedial && gLetter !== "R") {
+        gLetter += " (R)";
+      }
+
+      if (gLetter.includes("R")) doc.fillColor("#D32F2F");
       doc
         .font("Helvetica-Bold")
         .text(
