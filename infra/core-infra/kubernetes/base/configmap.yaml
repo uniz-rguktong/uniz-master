@@ -28,3 +28,11 @@ data:
   EMAIL_POOL: "noreply.uniz@gmail.com:pdke hcfz fltp qagc" # Format: "user1:pass1,user2:pass2"
   VAPID_PUBLIC_KEY: "BBUDnL9QZfs1W_wmn1kCW7U81ISk0isqNro00JEIamFsQaMGqC3AO8nnK32jY94o3zCg0Thuz-Le1o3mH3Z8Thc"
   VAPID_PRIVATE_KEY: "oWMk2dkJanNgjqhOAmcJ9cf4dLFaFQSmsvPyD1AlMzw"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ornate-ems-config
+data:
+  NODE_ENV: "production"
+  NEXTAUTH_URL: "https://ornate-ems.rguktong.in"

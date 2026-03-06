@@ -20,4 +20,5 @@ resources:
   - cron-service.yaml
   - storage-cleanup-job.yaml
   - portal.yaml
+  - ornate-ems.yaml
   - ingress.yaml
