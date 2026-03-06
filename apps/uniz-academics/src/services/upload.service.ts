@@ -60,6 +60,7 @@ export async function processNextBatch() {
     processed: initialProcessed = 0,
     total,
     filename,
+    fileUrl,
     startTime = Date.now(),
     successCount: initialSuccess = 0,
     failCount: initialFail = 0,
@@ -347,11 +348,15 @@ export async function processNextBatch() {
   } else {
     await recordUploadHistory({
       type,
-      filename,
+      filename: fileUrl ? fileUrl : filename,
       totalRows: total,
       successCount,
       failCount,
-      errors: errors.slice(0, 50),
+      errors: {
+        fileUrl: fileUrl,
+        originalName: filename,
+        rowErrors: errors.slice(0, 50),
+      },
       uploadedBy: user.username,
     });
     return { status: "completed" };

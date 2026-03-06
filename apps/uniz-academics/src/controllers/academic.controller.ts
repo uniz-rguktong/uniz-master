@@ -1813,18 +1813,39 @@ export const uploadGrades = async (req: any, res: Response) => {
     });
 
     const total = rows.length;
-    // If rows > 2000, consider chunking or storing in Blob storage.
-    // Assuming < 2000 rows as per requirements.
+
+    // Upload to Cloudinary
+    let fileUrl = null;
+    try {
+      const FormData = require("form-data");
+      const form = new FormData();
+      form.append("file", req.file.buffer, req.file.originalname);
+      form.append("upload_preset", "uniz_upload");
+      form.append(
+        "public_id",
+        `uniz/grades_${req.file.originalname.replace(".xlsx", "")}_${Date.now()}`,
+      );
+
+      const resUpload = await axios.post(
+        "https://api.cloudinary.com/v1_1/dy2fjgt46/raw/upload",
+        form,
+        { headers: form.getHeaders() },
+      );
+      fileUrl = resUpload.data.secure_url;
+    } catch (err) {
+      console.warn("[Academics] Cloudinary grades upload failed:", err);
+    }
 
     // Create Job Payload
     const uploadId = randomUUID();
     const job = {
-      jobId: uploadId, // Use uploadId as jobId for consistency
-      uploadId, // Add explicit uploadId field
+      jobId: uploadId,
+      uploadId,
+      fileUrl, // Store CDN Link
       type: "GRADES",
       rows,
       total,
-      user: { username: user.username }, // Minimal user info needed
+      user: { username: user.username },
       filename: req.file.originalname,
       createdAt: Date.now(),
     };
@@ -2045,11 +2066,34 @@ export const uploadAttendance = async (req: any, res: Response) => {
 
     const total = rows.length;
 
+    // Upload to Cloudinary
+    let fileUrl = null;
+    try {
+      const FormData = require("form-data");
+      const form = new FormData();
+      form.append("file", req.file.buffer, req.file.originalname);
+      form.append("upload_preset", "uniz_upload");
+      form.append(
+        "public_id",
+        `uniz/attendance_${req.file.originalname.replace(".xlsx", "")}_${Date.now()}`,
+      );
+
+      const resUpload = await axios.post(
+        "https://api.cloudinary.com/v1_1/dy2fjgt46/raw/upload",
+        form,
+        { headers: form.getHeaders() },
+      );
+      fileUrl = resUpload.data.secure_url;
+    } catch (err) {
+      console.warn("[Academics] Cloudinary attendance upload failed:", err);
+    }
+
     // Create Job Payload
     const uploadId = randomUUID();
     const job = {
       jobId: uploadId,
       uploadId,
+      fileUrl, // Store CDN Link
       type: "ATTENDANCE",
       rows,
       total,

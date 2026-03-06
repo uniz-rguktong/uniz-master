@@ -317,25 +317,48 @@ export const uploadStudents = async (req: any, res: Response) => {
         );
       }
 
+      // Upload the raw buffer to Cloudinary for historical download access
+      let cloudinaryUrl = null;
+      try {
+        const FormData = require("form-data");
+        const form = new FormData();
+        form.append("file", req.file.buffer, req.file.originalname);
+        form.append("upload_preset", "uniz_upload");
+
+        // Use the Cloudinary REST API matching the frontend
+        const resUpload = await axios.post(
+          "https://api.cloudinary.com/v1_1/dy2fjgt46/raw/upload",
+          form,
+          { headers: form.getHeaders() },
+        );
+        cloudinaryUrl = resUpload.data.secure_url;
+      } catch (cloudErr) {
+        console.warn("Failed to backup file to Cloudinary:", cloudErr);
+      }
+
       // Record in UploadHistory
       try {
-        await prisma.uploadHistory.create({
-          data: {
-            type: "STUDENTS",
-            filename: req.file.originalname,
-            totalRows: total,
-            successCount,
-            failCount,
-            errors: errors.slice(0, 100), // Store up to 100 errors for reporting
-            uploadedBy: user.username,
-            status:
-              failCount === 0
-                ? "COMPLETED"
-                : successCount > 0
-                  ? "PARTIAL"
-                  : "FAILED",
+        const historyData: any = {
+          type: "STUDENTS",
+          filename: cloudinaryUrl ? cloudinaryUrl : req.file.originalname, // We'll store URL in filename if available
+          totalRows: total,
+          successCount,
+          failCount,
+          errors: {
+            fileUrl: cloudinaryUrl,
+            originalName: req.file.originalname,
+            rowErrors: errors.slice(0, 100),
           },
-        });
+          uploadedBy: user.username,
+          status:
+            failCount === 0
+              ? "COMPLETED"
+              : successCount > 0
+                ? "PARTIAL"
+                : "FAILED",
+        };
+
+        await prisma.uploadHistory.create({ data: historyData });
       } catch (hErr) {
         console.error("Failed to record upload history:", hErr);
       }
