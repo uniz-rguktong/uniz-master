@@ -325,6 +325,7 @@ export const searchStudents = async (
     username,
     branch,
     year,
+    batch,
     gender,
     page = 1,
     limit = 10,
@@ -340,6 +341,12 @@ export const searchStudents = async (
         { username: { contains: username, mode: "insensitive" } },
         { name: { contains: username, mode: "insensitive" } },
       ];
+    }
+    if (batch) {
+      where.username = {
+        startsWith: String(batch).toUpperCase(),
+        mode: "insensitive",
+      };
     }
     if (branch) where.branch = branch;
     if (year) where.year = year;

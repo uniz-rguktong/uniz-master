@@ -32,6 +32,7 @@ export default function StudentBulkSection() {
     branch: "CSE",
     year: "E1",
     fields: "username,name,email,branch,section",
+    batch: "",
   });
 
   // Template Function
@@ -39,7 +40,7 @@ export default function StudentBulkSection() {
     const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(ADMIN_STUDENT_TEMPLATE, {
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
       });
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
@@ -63,7 +64,7 @@ export default function StudentBulkSection() {
     try {
       const res = await fetch(ADMIN_STUDENT_UPLOAD, {
         method: "POST",
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
         body: formData,
       });
       const data = await res.json();
@@ -88,7 +89,9 @@ export default function StudentBulkSection() {
         const token = localStorage.getItem("admin_token");
         try {
           const res = await fetch(ADMIN_STUDENT_PROGRESS, {
-            headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+            headers: {
+              Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
+            },
           });
           const data = await res.json();
           setProgress(data);
@@ -112,16 +115,21 @@ export default function StudentBulkSection() {
       exportParams.branch,
       exportParams.year,
       exportParams.fields,
+      exportParams.batch,
     );
     try {
       const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
       });
       const blob = await res.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = downloadUrl;
-      a.download = `students_export_${exportParams.branch || "all"}_${exportParams.year || "all"}.xlsx`;
+      const fileNameStr =
+        [exportParams.batch, exportParams.branch, exportParams.year]
+          .filter(Boolean)
+          .join("_") || "all";
+      a.download = `students_export_${fileNameStr}.xlsx`;
       a.click();
       toast.success("Export completed");
     } catch (error) {
@@ -289,7 +297,7 @@ export default function StudentBulkSection() {
                         {Math.round(
                           ((progress?.processed || 0) /
                             (progress?.total || 1)) *
-                          100,
+                            100,
                         )}
                         %
                       </span>
@@ -419,6 +427,23 @@ export default function StudentBulkSection() {
                     size={16}
                   />
                 </div>
+              </div>
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
+                  Batch Focus (e.g. O21)
+                </label>
+                <input
+                  type="text"
+                  placeholder="OPTIONAL"
+                  value={exportParams.batch}
+                  onChange={(e) =>
+                    setExportParams({
+                      ...exportParams,
+                      batch: e.target.value.toUpperCase(),
+                    })
+                  }
+                  className="w-full h-14 px-8 bg-slate-50/50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] transition-all shadow-sm tracking-wide"
+                />
               </div>
               <div className="md:col-span-2 space-y-3">
                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
