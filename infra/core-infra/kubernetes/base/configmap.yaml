@@ -36,3 +36,10 @@ metadata:
 data:
   NODE_ENV: "production"
   NEXTAUTH_URL: "https://ornate-ems.rguktong.in"
+  REDIS_URL: "redis://uniz-redis:6379"
+  R2_ACCOUNT_ID: "22c4923ed8c5f3e1575a2ef9bf3dc15b"
+  R2_ENDPOINT: "https://22c4923ed8c5f3e1575a2ef9bf3dc15b.r2.cloudflarestorage.com"
+  R2_BUCKET_NAME: "ornate-ems-assets"
+  R2_PUBLIC_DOMAIN: "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev"
+  AWS_REGION: "ap-south-1"
+  SES_FROM_EMAIL: "no-reply-ems@rguktong.in"
