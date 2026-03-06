@@ -11,14 +11,14 @@
 
 import { redis } from "./redis";
 
-interface RateLimitResult {
+export interface RateLimitResult {
   success: boolean;
   limit: number;
   remaining: number;
   reset: number;
 }
 
-class SlidingWindowLimiter {
+export class SlidingWindowLimiter {
   private prefix: string;
   private max: number;
   private windowSeconds: number;
