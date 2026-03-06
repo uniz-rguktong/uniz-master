@@ -469,14 +469,22 @@ export const getAdminProfile = async (
       });
     }
 
-    profile = await prisma.adminProfile.findUnique({
+    profile = await prisma.adminProfile.upsert({
       where: { username: user.username },
+      update: {},
+      create: {
+        username: user.username,
+        role: user.role as string,
+        name: user.username.charAt(0).toUpperCase() + user.username.slice(1),
+        email: `${user.username}@rguktong.ac.in`, // Fallback email
+      },
     });
     return res.json({
       success: true,
-      data: profile ? mapAdminProfile(profile) : null,
+      data: mapAdminProfile(profile),
     });
   } catch (e) {
+    console.error("Fetch Admin Profile Error:", e);
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to fetch admin profile",
