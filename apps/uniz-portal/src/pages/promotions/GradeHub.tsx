@@ -108,6 +108,7 @@ export default function GradeHub() {
           grade: pointToGrade(g.grade),
           points: g.grade,
           isRemedial: g.isRemedial,
+          passDate: g.updatedAt,
           contribution: g.grade * g.subject.credits,
         }));
 
@@ -362,8 +363,11 @@ export default function GradeHub() {
                             <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[15%]">
                               Gr
                             </th>
-                            <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[15%]">
+                            <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[10%]">
                               Pt
+                            </th>
+                            <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[15%]">
+                              Pass Date
                             </th>
                           </tr>
                         </thead>
@@ -400,6 +404,13 @@ export default function GradeHub() {
                                 </td>
                                 <td className="px-2 py-2.5 text-center font-bold text-slate-800 text-xs">
                                   {item.points}
+                                </td>
+                                <td className="px-2 py-2.5 text-center text-slate-400 font-medium text-[10px]">
+                                  {item.passDate
+                                    ? new Date(
+                                        item.passDate,
+                                      ).toLocaleDateString()
+                                    : "-"}
                                 </td>
                               </tr>
                             ),

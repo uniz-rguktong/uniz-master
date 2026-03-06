@@ -31,7 +31,6 @@ import {
   REQUEST_OUTPASS,
   GET_STUDENT_SEATING,
 } from "../../api/endpoints";
-import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import RequestCard from "../../components/RequestCard";
 import { toast } from "react-toastify";
@@ -353,6 +352,79 @@ export default function StudentProfilePage() {
     }
   };
 
+  // Seating Summary Widget
+  const SeatingSummaryWidget = () => {
+    const [seating, setSeating] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchSeating = async () => {
+        try {
+          const data = await apiClient<any>(GET_STUDENT_SEATING);
+          if (data && data.seating) {
+            setSeating(data.seating);
+          }
+        } catch (err) {
+          console.error("Failed to fetch seating summary", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchSeating();
+    }, []);
+
+    if (loading || seating.length === 0) return null;
+
+    const now = new Date();
+    const upcoming = seating
+      .filter((s) => s.date && new Date(s.date) >= now)
+      .sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      )[0];
+
+    if (!upcoming) return null;
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-slate-900 rounded-[24px] p-6 text-white shadow-xl shadow-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-white/10"
+      >
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md text-blue-400">
+            <Calendar size={24} />
+          </div>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              Upcoming Examination
+            </p>
+            <h3 className="text-lg font-bold leading-tight pt-1">
+              {upcoming.subjectName}
+            </h3>
+            <p className="text-xs text-slate-300 font-medium">
+              {upcoming.examName} •{" "}
+              {new Date(upcoming.date).toLocaleDateString("en-GB")}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="flex-1 md:flex-none px-5 py-3 bg-white/10 rounded-2xl text-center border border-white/5">
+            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-0.5">
+              Hall
+            </p>
+            <p className="text-xl font-black">{upcoming.room}</p>
+          </div>
+          <button
+            onClick={() => setActiveTab("seating")}
+            className="flex-1 md:flex-none px-6 py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all"
+          >
+            View Full Plan
+          </button>
+        </div>
+      </motion.div>
+    );
+  };
+
   if (!user && !isLoading)
     return (
       <div className="flex h-screen items-center justify-center text-slate-400 font-medium">
@@ -668,6 +740,14 @@ export default function StudentProfilePage() {
                   <AcademicRecord student={user} />
                 </div>
               </div>
+            )}
+
+            {activeTab === "registration" && (
+              <MySubjects
+                studentId={user?.username}
+                branch={user?.branch}
+                year={user?.year}
+              />
             )}
 
             {activeTab === "seating" && (
