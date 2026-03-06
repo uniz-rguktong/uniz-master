@@ -1306,44 +1306,77 @@ export const bulkUpdateFaculty = async (
   }> = [];
 
   for (const upd of updates) {
-    const username = String(upd.username || "").trim();
-    if (!username) continue;
-
-    const { username: _u, ...fieldsToUpdate } = upd;
+    const rawUsername = String(upd.username || "").trim();
+    if (!rawUsername) continue;
 
     try {
       const existing = await prisma.facultyProfile.findFirst({
-        where: { username: { equals: username, mode: "insensitive" } },
+        where: { username: { equals: rawUsername, mode: "insensitive" } },
       });
 
       if (!existing) {
-        results.push({ username, status: "not_found" });
+        results.push({ username: rawUsername, status: "not_found" });
+        continue;
+      }
+
+      // Explicitly map allowed fields to avoid Prisma errors with extra/invalid data
+      const data: any = {};
+      if (upd.name !== undefined) data.name = upd.name;
+      if (upd.email !== undefined) data.email = upd.email;
+      if (upd.role !== undefined) data.role = upd.role;
+      if (upd.designation !== undefined) data.designation = upd.designation;
+      if (upd.department !== undefined) data.department = upd.department;
+      if (upd.contact !== undefined) data.contact = upd.contact;
+      if (upd.profileUrl !== undefined) data.profileUrl = upd.profileUrl;
+      if (upd.Bio !== undefined || upd.bio !== undefined)
+        data.bio = upd.Bio || upd.bio;
+
+      if (Object.keys(data).length === 0) {
+        results.push({
+          username: rawUsername,
+          status: "error",
+          reason: "No fields to update provided",
+        });
         continue;
       }
 
       await prisma.facultyProfile.update({
         where: { id: existing.id },
-        data: fieldsToUpdate,
+        data: data,
       });
 
-      // If role changed, sync auth service
-      if (fieldsToUpdate.role) {
+      // If role changed, sync auth service (Idempotent update)
+      if (data.role) {
         await axios
           .post(
-            `${AUTH_SERVICE_URL}/signup`,
+            `${AUTH_SERVICE_URL}/signup`, // signup endpoint handles upsert/update of user entries
             {
               username: existing.username,
-              password: `${existing.username}@uniz`,
-              role: fieldsToUpdate.role,
+              password: `${existing.username}@uniz`, // fallback password
+              role: data.role,
+              email: data.email || existing.email,
             },
-            { headers: { "x-internal-secret": SECRET }, timeout: 5000 },
+            {
+              headers: { "x-internal-secret": SECRET },
+              timeout: 5000,
+            },
           )
-          .catch(() => {});
+          .catch((err) => {
+            console.error(
+              `[BULK-UPDATE] Failed to sync auth for ${existing.username}:`,
+              err.message,
+            );
+          });
       }
 
-      results.push({ username, status: "updated" });
+      results.push({ username: rawUsername, status: "updated" });
     } catch (e: any) {
-      results.push({ username, status: "error", reason: e.message });
+      console.error(`[BULK-UPDATE] Error updating ${rawUsername}:`, e.message);
+      results.push({
+        username: rawUsername,
+        status: "error",
+        reason: e.message,
+      });
     }
   }
 

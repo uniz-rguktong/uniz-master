@@ -38,7 +38,7 @@ import {
 import { toast } from "react-toastify";
 
 const ROLES = [
-  "teacher",  
+  "teacher",
   "hod",
   "dean",
   "webmaster",
@@ -48,6 +48,11 @@ const ROLES = [
   "caretaker",
   "security",
   "director",
+  "librarian",
+  "warden_male",
+  "warden_female",
+  "caretaker_male",
+  "caretaker_female",
 ];
 const DEPARTMENTS = [
   "CSE",
@@ -56,10 +61,14 @@ const DEPARTMENTS = [
   "MECH",
   "CIVIL",
   "CHEM",
+  "MME",
   "CHEMISTRY",
   "PHYSICS",
   "ENGLISH",
   "MATHS",
+  "TELUGU",
+  "FINE ARTS",
+  "MANAGEMENT",
   "ALL",
 ];
 
@@ -105,6 +114,10 @@ export default function FacultyManagement({
     role: "",
     designation: "",
     department: "",
+    name: "",
+    email: "",
+    contact: "",
+    profileUrl: "",
   });
   const [bulkResult, setBulkResult] = useState<any>(null);
   const [bulkLoading, setBulkLoading] = useState(false);
@@ -378,6 +391,12 @@ export default function FacultyManagement({
       fieldsToApply.designation = bulkUpdateFields.designation;
     if (bulkUpdateFields.department)
       fieldsToApply.department = bulkUpdateFields.department;
+    if (bulkUpdateFields.name) fieldsToApply.name = bulkUpdateFields.name;
+    if (bulkUpdateFields.email) fieldsToApply.email = bulkUpdateFields.email;
+    if (bulkUpdateFields.contact)
+      fieldsToApply.contact = bulkUpdateFields.contact;
+    if (bulkUpdateFields.profileUrl)
+      fieldsToApply.profileUrl = bulkUpdateFields.profileUrl;
     if (!Object.keys(fieldsToApply).length) {
       toast.error("Choose at least one field to update");
       return;
@@ -729,6 +748,54 @@ export default function FacultyManagement({
                       className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
                     />
                   </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      New Name (Generic)
+                    </label>
+                    <input
+                      value={bulkUpdateFields.name}
+                      onChange={(e) =>
+                        setBulkUpdateFields((p) => ({
+                          ...p,
+                          name: e.target.value,
+                        }))
+                      }
+                      placeholder="Apply same name to all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      New Contact
+                    </label>
+                    <input
+                      value={bulkUpdateFields.contact}
+                      onChange={(e) =>
+                        setBulkUpdateFields((p) => ({
+                          ...p,
+                          contact: e.target.value,
+                        }))
+                      }
+                      placeholder="Apply same contact to all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      Profile URL
+                    </label>
+                    <input
+                      value={bulkUpdateFields.profileUrl}
+                      onChange={(e) =>
+                        setBulkUpdateFields((p) => ({
+                          ...p,
+                          profileUrl: e.target.value,
+                        }))
+                      }
+                      placeholder="Apply same image to all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
+                    />
+                  </div>
                 </div>
                 <button
                   onClick={handleBulkUpdate}
@@ -834,6 +901,12 @@ export default function FacultyManagement({
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                   Total {bulkResult.summary?.total}
                 </span>
+                <button
+                  onClick={() => setBulkResult(null)}
+                  className="ml-auto p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-red-500 transition-all"
+                >
+                  <X size={14} />
+                </button>
               </div>
               <div className="grid grid-cols-3 gap-3 mb-4">
                 {Object.entries(bulkResult.summary || {})
@@ -857,24 +930,24 @@ export default function FacultyManagement({
               {bulkResult.results?.filter(
                 (r: any) => r.status === "error" || r.reason,
               ).length > 0 && (
-                  <div className="max-h-36 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-1">
-                    {bulkResult.results
-                      .filter(
-                        (r: any) =>
-                          r.status !== "created" && r.status !== "updated",
-                      )
-                      .map((r: any, i: number) => (
-                        <p key={i} className="text-xs font-mono text-slate-600">
-                          <span
-                            className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
-                          >
-                            [{r.status}]
-                          </span>{" "}
-                          {r.username} {r.reason ? `— ${r.reason}` : ""}
-                        </p>
-                      ))}
-                  </div>
-                )}
+                <div className="max-h-36 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-1">
+                  {bulkResult.results
+                    .filter(
+                      (r: any) =>
+                        r.status !== "created" && r.status !== "updated",
+                    )
+                    .map((r: any, i: number) => (
+                      <p key={i} className="text-xs font-mono text-slate-600">
+                        <span
+                          className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
+                        >
+                          [{r.status}]
+                        </span>{" "}
+                        {r.username} {r.reason ? `— ${r.reason}` : ""}
+                      </p>
+                    ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -917,7 +990,7 @@ export default function FacultyManagement({
                       className="text-slate-400 hover:text-slate-700 transition-colors"
                     >
                       {selectedUsernames.size === faculty.length &&
-                        faculty.length > 0 ? (
+                      faculty.length > 0 ? (
                         <CheckSquare size={18} className="text-blue-600" />
                       ) : (
                         <Square size={18} />
@@ -1406,7 +1479,7 @@ export default function FacultyManagement({
                 </div>
 
                 {selectedFaculty.Bio &&
-                  Object.keys(selectedFaculty.Bio).length > 0 ? (
+                Object.keys(selectedFaculty.Bio).length > 0 ? (
                   <div className="grid grid-cols-1 gap-6">
                     {Object.entries(selectedFaculty.Bio).map(
                       ([key, val]: any) => {
