@@ -2266,6 +2266,7 @@ export const downloadGrades = async (
       semesterId,
       grades: grades.map((g) => ({
         grade: g.grade,
+        isRemedial: g.isRemedial,
         subject: {
           code: g.subject.code,
           name: g.subject.name,
