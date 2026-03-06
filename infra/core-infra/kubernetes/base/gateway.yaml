@@ -17,7 +17,7 @@ spec:
       containers:
         - name: gateway-nginx
           image: uniz-gateway:local
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           volumeMounts:

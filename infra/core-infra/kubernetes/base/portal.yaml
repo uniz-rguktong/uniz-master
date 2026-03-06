@@ -17,7 +17,7 @@ spec:
       containers:
         - name: portal
           image: uniz-portal:local
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           resources:

@@ -17,7 +17,7 @@ spec:
       containers:
         - name: academics-service
           image: uniz-academics-service:local
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3004
           env:
