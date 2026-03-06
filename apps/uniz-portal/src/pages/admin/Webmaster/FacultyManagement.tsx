@@ -820,24 +820,24 @@ export default function FacultyManagement({
               {bulkResult.results?.filter(
                 (r: any) => r.status === "error" || r.reason,
               ).length > 0 && (
-                <div className="max-h-36 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-1">
-                  {bulkResult.results
-                    .filter(
-                      (r: any) =>
-                        r.status !== "created" && r.status !== "updated",
-                    )
-                    .map((r: any, i: number) => (
-                      <p key={i} className="text-xs font-mono text-slate-600">
-                        <span
-                          className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
-                        >
-                          [{r.status}]
-                        </span>{" "}
-                        {r.username} {r.reason ? `— ${r.reason}` : ""}
-                      </p>
-                    ))}
-                </div>
-              )}
+                  <div className="max-h-36 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-1">
+                    {bulkResult.results
+                      .filter(
+                        (r: any) =>
+                          r.status !== "created" && r.status !== "updated",
+                      )
+                      .map((r: any, i: number) => (
+                        <p key={i} className="text-xs font-mono text-slate-600">
+                          <span
+                            className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
+                          >
+                            [{r.status}]
+                          </span>{" "}
+                          {r.username} {r.reason ? `— ${r.reason}` : ""}
+                        </p>
+                      ))}
+                  </div>
+                )}
             </div>
           )}
         </div>
@@ -880,7 +880,7 @@ export default function FacultyManagement({
                       className="text-slate-400 hover:text-slate-700 transition-colors"
                     >
                       {selectedUsernames.size === faculty.length &&
-                      faculty.length > 0 ? (
+                        faculty.length > 0 ? (
                         <CheckSquare size={18} className="text-blue-600" />
                       ) : (
                         <Square size={18} />
@@ -1320,7 +1320,7 @@ export default function FacultyManagement({
                 </div>
 
                 {selectedFaculty.Bio &&
-                Object.keys(selectedFaculty.Bio).length > 0 ? (
+                  Object.keys(selectedFaculty.Bio).length > 0 ? (
                   <div className="grid grid-cols-1 gap-6">
                     {Object.entries(selectedFaculty.Bio).map(
                       ([key, val]: any) => {
