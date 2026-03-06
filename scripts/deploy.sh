@@ -47,6 +47,26 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     "ornate-ems:ornate-ems:ornate-ems:ornate-ems"
   )
 
+  # Prevent kubectl apply from overwriting current images with :local
+  echo "💾 Preserving current image tags..."
+  echo "images:" >> infra/core-infra/kubernetes/base/kustomization.yaml
+  for s in "${ALL_SERVICES[@]}"; do
+    IFS=':' read -r DIR IMG DEP CON <<< "$s"
+    if [[ "$DEP" == *"job"* ]]; then
+      CURRENT_IMG=$(kubectl get cronjob "$DEP" -o jsonpath="{.spec.jobTemplate.spec.template.spec.containers[?(@.name=='$CON')].image}" 2>/dev/null)
+    else
+      CURRENT_IMG=$(kubectl get deployment "$DEP" -o jsonpath="{.spec.template.spec.containers[?(@.name=='$CON')].image}" 2>/dev/null)
+    fi
+    if [ -n "$CURRENT_IMG" ] && [[ "$CURRENT_IMG" != *":local" ]]; then
+      # CURRENT_IMG comes out like docker.io/library/uniz-academics-service:local-12345
+      IMG_REPO="${CURRENT_IMG%:*}"
+      IMG_TAG="${CURRENT_IMG##*:}"
+      echo "  - name: ${IMG}:local" >> infra/core-infra/kubernetes/base/kustomization.yaml
+      echo "    newName: $IMG_REPO" >> infra/core-infra/kubernetes/base/kustomization.yaml
+      echo "    newTag: $IMG_TAG" >> infra/core-infra/kubernetes/base/kustomization.yaml
+    fi
+  done
+
   echo "🛠️  Applying Kubernetes configurations..."
   kubectl apply -k infra/core-infra/kubernetes/base/
 
