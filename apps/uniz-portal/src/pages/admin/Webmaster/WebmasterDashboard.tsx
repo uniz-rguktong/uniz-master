@@ -14,6 +14,7 @@ import {
   Smartphone,
   UserCircle,
   Settings,
+  ScanLine,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -30,6 +31,7 @@ import PushNotificationSection from "./PushNotificationSection";
 import GradesSection from "./GradesSection";
 import StudentBulkSection from "./StudentBulkSection";
 import SystemLogsSection from "./SystemLogsSection";
+import SeatingUploadSection from "./SeatingUploadSection";
 
 export default function WebmasterDashboard() {
   useIsAuth();
@@ -47,6 +49,7 @@ export default function WebmasterDashboard() {
     | "grades_mgmt"
     | "faculty_mgmt"
     | "system_logs"
+    | "exam_seating"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -65,6 +68,7 @@ export default function WebmasterDashboard() {
     { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
     // { id: "tenders", label: "Tenders", icon: Briefcase },
     { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
+    { id: "exam_seating", label: "Exam Seating", icon: ScanLine },
     { id: "faculty_mgmt", label: "Staff Management", icon: Users },
     { id: "system_logs", label: "System & Logs", icon: Activity },
   ];
@@ -102,6 +106,8 @@ export default function WebmasterDashboard() {
         return <FacultyManagement />;
       case "system_logs":
         return <SystemLogsSection />;
+      case "exam_seating":
+        return <SeatingUploadSection />;
       default:
         return (
           <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
