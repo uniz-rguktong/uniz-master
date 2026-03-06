@@ -17,6 +17,7 @@ import {
   LogOut,
   AlertCircle,
   X,
+  Layers,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -30,22 +31,24 @@ const ResetPassword = lazy(() => import("../pages/student/resetpass"));
 const RequestComp = lazy(() => import("../pages/student/request-component"));
 const Student = lazy(() => import("../pages/student/student"));
 const GradeHub = lazy(() => import("../pages/promotions/GradeHub"));
+const CurrentSemester = lazy(() => import("../pages/student/CurrentSemester"));
 const Grievance = lazy(() => import("../pages/student/Grievance"));
 
 export { enableOutingsAndOutpasses } from "../pages/student/student";
 
 interface MainContent {
   content:
-  | "outpass"
-  | "outing"
-  | "gradehub"
-  | "resetpassword"
-  | "dashboard"
-  | "requestOuting"
-  | "requestOutpass"
-  | "attendance"
-  | "grievance"
-  | "error";
+    | "outpass"
+    | "outing"
+    | "gradehub"
+    | "resetpassword"
+    | "dashboard"
+    | "requestOuting"
+    | "requestOutpass"
+    | "attendance"
+    | "grievance"
+    | "currentSemester"
+    | "error";
 }
 
 const ContentSkeleton = () => (
@@ -66,8 +69,6 @@ export default function Sidebar({ content }: MainContent) {
 
   const [showNotice, setShowNotice] = useState(true);
 
-
-
   const { logout } = useLogout();
 
   const handleLogout = () => {
@@ -86,25 +87,25 @@ export default function Sidebar({ content }: MainContent) {
     },
     ...(enableOutingsAndOutpasses
       ? [
-        {
-          id: "outing",
-          label: "Outing Requests",
-          href: "/student/outing",
-          content: "outing",
-          icon: Clock,
-          activeColor: "text-amber-500",
-          hoverColor: "hover:text-amber-500",
-        },
-        {
-          id: "outpass",
-          label: "Outpass Requests",
-          href: "/student/outpass",
-          content: "outpass",
-          icon: CalendarDays,
-          activeColor: "text-orange-500",
-          hoverColor: "hover:text-orange-500",
-        },
-      ]
+          {
+            id: "outing",
+            label: "Outing Requests",
+            href: "/student/outing",
+            content: "outing",
+            icon: Clock,
+            activeColor: "text-amber-500",
+            hoverColor: "hover:text-amber-500",
+          },
+          {
+            id: "outpass",
+            label: "Outpass Requests",
+            href: "/student/outpass",
+            content: "outpass",
+            icon: CalendarDays,
+            activeColor: "text-orange-500",
+            hoverColor: "hover:text-orange-500",
+          },
+        ]
       : []),
     {
       id: "gradehub",
@@ -114,6 +115,15 @@ export default function Sidebar({ content }: MainContent) {
       icon: GraduationCap,
       activeColor: "text-emerald-600",
       hoverColor: "hover:text-emerald-600",
+    },
+    {
+      id: "current-semester",
+      label: "Current Sem",
+      href: "/student/current-semester",
+      content: "currentSemester",
+      icon: Layers,
+      activeColor: "text-indigo-600",
+      hoverColor: "hover:text-indigo-600",
     },
     {
       id: "attendance",
@@ -162,39 +172,39 @@ export default function Sidebar({ content }: MainContent) {
       isActive: false,
       activeColor: "text-red-600",
       hoverColor: "hover:text-red-600",
-    }
+    },
   ];
 
   const mobileMenuItems: InteractiveMenuItem[] = [
     {
-      label: 'Profile',
+      label: "Profile",
       icon: LayoutDashboard,
       onClick: () => navigate("/student"),
-      isActive: content === "dashboard"
+      isActive: content === "dashboard",
     },
     {
-      label: 'Results',
+      label: "Results",
       icon: GraduationCap,
       onClick: () => navigate("/student/gradehub"),
-      isActive: content === "gradehub"
+      isActive: content === "gradehub",
     },
     {
-      label: 'Attendance',
+      label: "Attendance",
       icon: CalendarCheck,
       onClick: () => navigate("/student/attendance"),
-      isActive: content === "attendance"
+      isActive: content === "attendance",
     },
     {
-      label: 'Settings',
+      label: "Settings",
       icon: KeyRound,
       onClick: () => navigate("/student/resetpassword"),
-      isActive: content === "resetpassword"
+      isActive: content === "resetpassword",
     },
     {
-      label: 'Grievance',
+      label: "Grievance",
       icon: AlertCircle,
       onClick: () => navigate("/student/grievance"),
-      isActive: content === "grievance"
+      isActive: content === "grievance",
     },
   ];
 
@@ -206,11 +216,11 @@ export default function Sidebar({ content }: MainContent) {
     requestOutpass: <RequestComp type="outpass" />,
     dashboard: <Student />,
     gradehub: <GradeHub />,
+    currentSemester: <CurrentSemester />,
     attendance: <Attendance />,
     grievance: <Grievance />,
     error: <Error />,
   };
-
 
   return (
     <div className="flex flex-col min-h-screen bg-premium-gradient text-slate-900 selection:bg-blue-100 selection:text-blue-900">
@@ -223,7 +233,8 @@ export default function Sidebar({ content }: MainContent) {
             className="bg-blue-600 text-white py-2.5 px-6 flex items-center justify-between shadow-lg relative z-[100]"
           >
             <div className="flex-1 text-center text-[11px] md:text-[13px] font-sans font-bold tracking-tight">
-              Outpass and outing feature has been currently disabled by the administration
+              Outpass and outing feature has been currently disabled by the
+              administration
             </div>
             <button
               onClick={() => setShowNotice(false)}
@@ -235,7 +246,6 @@ export default function Sidebar({ content }: MainContent) {
         )}
       </AnimatePresence>
       <div className="flex flex-col flex-1 relative">
-
         {/* Floating Desktop Dock */}
         <div className="hidden md:flex fixed left-6 top-1/2 -translate-y-1/2 z-50">
           <Dock
@@ -267,7 +277,11 @@ export default function Sidebar({ content }: MainContent) {
               </div>
               <div className="w-11 h-11 rounded-full ring-2 ring-blue-50 border-2 border-white overflow-hidden shadow-sm">
                 {userData?.profile_url ? (
-                  <img src={userData.profile_url} className="w-full h-full object-cover" alt="" />
+                  <img
+                    src={userData.profile_url}
+                    className="w-full h-full object-cover"
+                    alt=""
+                  />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-bold text-xs">
                     {userData?.name?.charAt(0) || "S"}
@@ -302,6 +316,6 @@ export default function Sidebar({ content }: MainContent) {
           <InteractiveMenu items={mobileMenuItems} />
         </div>
       </div>
-    </div >
+    </div>
   );
 }

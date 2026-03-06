@@ -772,3 +772,127 @@ export const getRegistrations = async (
     res.status(500).json({ error: "Failed to fetch registrations" });
   }
 };
+/**
+ * @desc Get summary of the current semester for the logged-in user
+ */
+export const getSemesterOverview = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+  try {
+    // 1. Get the latest active semester
+    const activeSem = await prisma.academicSemester.findFirst({
+      where: {
+        status: {
+          in: [
+            "DEAN_REVIEW",
+            "REGISTRATION_OPEN",
+            "REGISTRATION_CLOSED",
+            "APPROVED",
+          ],
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (!activeSem) {
+      return res.json({ semester: null, data: null });
+    }
+
+    if (user.role === "student") {
+      // For Students: Show registered subjects
+      const registrations = await prisma.registration.findMany({
+        where: {
+          studentId: user.username,
+          semesterId: activeSem.id,
+          status: "REGISTERED",
+        },
+        include: { subject: true },
+      });
+
+      const totalCredits = registrations.reduce(
+        (acc, r) => acc + r.subject.credits,
+        0,
+      );
+
+      return res.json({
+        semester: activeSem,
+        role: "student",
+        data: {
+          registrations: registrations.map((r) => ({
+            id: r.id,
+            subjectCode: r.subject.code,
+            subjectName: r.subject.name,
+            credits: r.subject.credits,
+            registeredAt: r.createdAt,
+          })),
+          summary: {
+            subjectCount: registrations.length,
+            totalCredits,
+          },
+        },
+      });
+    } else {
+      // For Admins/Faculty: Show branch-wise summary
+      const branchAllocations = await prisma.branchAllocation.findMany({
+        where: {
+          semesterId: activeSem.id,
+        },
+        include: { subject: true },
+      });
+
+      // Group by branch
+      const branchSummary: Record<string, any> = {};
+      branchAllocations.forEach((alloc) => {
+        if (!branchSummary[alloc.branch]) {
+          branchSummary[alloc.branch] = {
+            subjectCount: 0,
+            totalCredits: 0,
+            academicYears: new Set(),
+            subjects: [],
+          };
+        }
+        branchSummary[alloc.branch].subjects.push({
+          code: alloc.subject.code,
+          name: alloc.customName || alloc.subject.name,
+          credits: alloc.customCredits || alloc.subject.credits,
+          year: alloc.academicYear,
+          isApproved: alloc.isApproved,
+          status: alloc.status,
+        });
+        branchSummary[alloc.branch].subjectCount++;
+        branchSummary[alloc.branch].totalCredits +=
+          alloc.customCredits || alloc.subject.credits;
+        if (alloc.academicYear)
+          branchSummary[alloc.branch].academicYears.add(alloc.academicYear);
+      });
+
+      // Convert Sets to Arrays for JSON
+      const finalBranchSummary = Object.entries(branchSummary).map(
+        ([branch, details]) => ({
+          branch,
+          ...details,
+          academicYears: Array.from(details.academicYears).sort(),
+        }),
+      );
+
+      return res.json({
+        semester: activeSem,
+        role: user.role,
+        data: {
+          branches: finalBranchSummary,
+          summary: {
+            totalBranches: finalBranchSummary.length,
+            totalSubjects: branchAllocations.length,
+          },
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Semester Overview Error:", error);
+    res.status(500).json({ error: "Failed to fetch semester overview" });
+  }
+};

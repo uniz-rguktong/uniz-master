@@ -191,3 +191,4 @@ export const REGISTER_SUBJECTS = `${BASE_URL}/academics/student/register`;
 export const GET_CURRENT_SUBJECTS = (studentId: string) =>
   `${BASE_URL}/academics/student/current/${studentId}`;
 export const GET_REGISTRATIONS = `${BASE_URL}/academics/registrations`;
+export const GET_SEMESTER_OVERVIEW = `${BASE_URL}/academics/semester/overview`;

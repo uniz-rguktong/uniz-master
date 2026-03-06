@@ -36,6 +36,7 @@ import {
   deleteSemester,
   deleteAllocation,
   getRegistrations,
+  getSemesterOverview,
 } from "../controllers/registration.controller";
 import {
   getFaculties,
@@ -104,6 +105,7 @@ router.get("/semester", getSemesters);
 router.post("/semester/init", initSemester);
 router.patch("/semester/status/:id", updateSemesterStatus);
 router.put("/semester/status/:id", updateSemesterStatus);
+router.get("/semester/overview", getSemesterOverview);
 router.delete("/semester/:id", deleteSemester);
 
 router.get("/dean/review/:branch", getDeanAllocations);
