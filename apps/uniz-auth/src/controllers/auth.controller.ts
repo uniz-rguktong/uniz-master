@@ -599,18 +599,19 @@ export const signup = async (req: Request, res: Response) => {
 
     if (existing) {
       if (isInternal) {
-        // Upsert behavior for internal services
-        const updated = await prisma.authCredential.update({
-          where: { id: existing.id },
-          data: {
-            passwordHash: hashedPassword,
-            role: role || existing.role,
-          },
-        });
+        // For internal bulk-upload calls: NEVER reset the password of an
+        // existing user. Only update the role if it changed.
+        // Resetting the password would lock out students who already changed theirs.
+        if (role && role !== existing.role) {
+          await prisma.authCredential.update({
+            where: { id: existing.id },
+            data: { role },
+          });
+        }
         return res.json({
           success: true,
-          message: "Credential updated",
-          id: updated.id,
+          message: "Credential already exists (skipped password reset)",
+          id: existing.id,
         });
       }
 
