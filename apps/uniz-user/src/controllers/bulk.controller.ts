@@ -196,7 +196,14 @@ export const uploadStudents = async (req: any, res: Response) => {
               const found = Object.keys(row).find((k) =>
                 keys.includes(k.trim().toLowerCase()),
               );
-              return found ? String(row[found]).trim() : "";
+              if (!found) return "";
+              const val = row[found];
+              if (val && typeof val === "object") {
+                return (val as any).text
+                  ? String((val as any).text).trim()
+                  : "";
+              }
+              return val ? String(val).trim() : "";
             };
 
             const id = getVal([
