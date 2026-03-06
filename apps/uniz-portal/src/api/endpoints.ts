@@ -193,3 +193,14 @@ export const GET_CURRENT_SUBJECTS = (studentId: string) =>
   `${BASE_URL}/academics/student/current/${studentId}`;
 export const GET_REGISTRATIONS = `${BASE_URL}/academics/registrations`;
 export const GET_SEMESTER_OVERVIEW = `${BASE_URL}/academics/semester/overview`;
+
+// Seating Arrangement
+export const GET_SEATING_TEMPLATE = (
+  semesterId: string,
+  branch: string,
+  year: string,
+  examName: string,
+) =>
+  `${BASE_URL}/academics/seating/template?semesterId=${semesterId}&branch=${branch}&year=${year}&examName=${examName}`;
+export const UPLOAD_SEATING = `${BASE_URL}/academics/seating/upload`;
+export const GET_STUDENT_SEATING = `${BASE_URL}/academics/seating/student`;

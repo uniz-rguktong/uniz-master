@@ -7,6 +7,7 @@ export const JwtPayloadSchema = z.object({
   role: z.nativeEnum(UserRole).or(z.string()),
   iat: z.number().optional(),
   exp: z.number().optional(),
+  department: z.string().optional(),
 });
 
 export type JwtPayload = z.infer<typeof JwtPayloadSchema>;

@@ -17,8 +17,9 @@ model Subject {
   semester          String
   attendance        Attendance[]
   grades            Grade[]
-  branchAllocations BranchAllocation[]
-  registrations     Registration[]
+  branchAllocations   BranchAllocation[]
+  registrations       Registration[]
+  seatingArrangements SeatingArrangement[]
 }
 
 model Grade {
@@ -69,9 +70,10 @@ model AcademicSemester {
   id                String             @id @default(uuid())
   name              String // e.g. "AY 2024-25 SEM-II"
   status            SemesterStatus     @default(DRAFT)
-  branchAllocations BranchAllocation[]
-  registrations     Registration[]
-  createdAt         DateTime           @default(now())
+  branchAllocations   BranchAllocation[]
+  registrations       Registration[]
+  seatingArrangements SeatingArrangement[]
+  createdAt           DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
 }
 
@@ -99,7 +101,7 @@ enum AllocationStatus {
 model BranchAllocation {
   id            String           @id @default(uuid())
   branch        String // e.g. "CSE", "ECE"
-  academicYear  String?          @default("E4") // e.g. "E1", "E2", "E3", "E4"
+  academicYear  String?          @default("E1") // e.g. "E1", "E2", "E3", "E4"
   subjectId     String
   semesterId    String
   customName    String? // For electives (e.g. ELECTIVE (NPTEL Course))
@@ -130,6 +132,26 @@ model Registration {
   updatedAt  DateTime         @updatedAt
 
   @@unique([studentId, subjectId, semesterId])
+  @@index([studentId])
+  @@index([semesterId])
+}
+
+model SeatingArrangement {
+  id         String           @id @default(uuid())
+  studentId  String
+  subjectId  String
+  semesterId String
+  room       String
+  seatNumber String?
+  examName   String // e.g. "MID-1", "MID-2", "SEM-END"
+  date       DateTime?
+  time       String? // e.g. "10:00 AM - 1:00 PM"
+  subject    Subject          @relation(fields: [subjectId], references: [id])
+  semester   AcademicSemester @relation(fields: [semesterId], references: [id])
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@unique([studentId, subjectId, semesterId, examName])
   @@index([studentId])
   @@index([semesterId])
 }
