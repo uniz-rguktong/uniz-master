@@ -99,7 +99,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     
     echo "♻️  Pruning old K3s images..."
     # Remove images with 'local-' tag that are not currently used by any pod
-    USED_IMAGES=$(kubectl get pods -A -o jsonpath='{.items[*].spec.containers[*].image}' | tr ' ' '\n' | sort -u)
+    USED_IMAGES=$(kubectl get pods,deployments,cronjobs -A -o jsonpath='{..image}' | tr ' ' '\n' | sort -u)
     k3s ctr images ls -q | grep "local-" | while read -r img; do
       if ! echo "$USED_IMAGES" | grep -q "$img"; then
         echo "🗑️ Removing unused K3s image: $img"
