@@ -23,6 +23,12 @@ export default function AdminProfile() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    contact: "",
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchProfile = async () => {
@@ -34,8 +40,13 @@ export default function AdminProfile() {
         },
       });
       const data = await res.json();
-      if (data.success) {
+      if (data.success && data.data) {
         setProfile(data.data);
+        setFormData({
+          name: data.data.name || "",
+          email: data.data.email || "",
+          contact: data.data.contact || "",
+        });
       }
     } catch (e) {
       toast.error("Failed to load profile");
@@ -86,6 +97,33 @@ export default function AdminProfile() {
       toast.error("Failed to upload image");
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    const token = localStorage.getItem("admin_token");
+    try {
+      setLoading(true);
+      const res = await fetch(`${BASE_URL}/profile/admin/me/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Profile updated successfully!");
+        setIsEditing(false);
+        fetchProfile();
+      } else {
+        toast.error(data.message || "Failed to update profile");
+      }
+    } catch (e) {
+      toast.error("Failed to update profile");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -150,17 +188,52 @@ export default function AdminProfile() {
               </div>
 
               <div className="flex-1 pb-2">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-                    {profile?.name || username}
-                  </h1>
-                  <div className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[9px] font-black uppercase tracking-widest border border-blue-100 flex items-center gap-1.5">
-                    <Shield size={10} /> {profile?.role}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) =>
+                          setFormData({ ...formData, name: e.target.value })
+                        }
+                        className="text-3xl font-bold text-slate-900 tracking-tight bg-slate-50 border-b-2 border-blue-600 focus:outline-none px-2 py-1 rounded-t-lg"
+                        placeholder="Your Name"
+                      />
+                    ) : (
+                      <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+                        {profile?.name || username}
+                      </h1>
+                    )}
+                    <div className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[9px] font-black uppercase tracking-widest border border-blue-100 flex items-center gap-1.5 shrink-0">
+                      <Shield size={10} /> {profile?.role}
+                    </div>
                   </div>
+                  <button
+                    onClick={() => {
+                      if (isEditing) handleUpdateProfile();
+                      else setIsEditing(true);
+                    }}
+                    className={`px-6 py-2.5 rounded-full font-bold text-[10px] uppercase tracking-widest border transition-all ${
+                      isEditing
+                        ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100 hover:bg-blue-700"
+                        : "bg-white text-slate-900 border-slate-200 hover:border-slate-300"
+                    }`}
+                  >
+                    {isEditing ? "Save Changes" : "Edit Details"}
+                  </button>
                 </div>
                 <p className="text-slate-500 font-medium mt-1">
                   System Administrator • RGUKT Ongole
                 </p>
+                {isEditing && (
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="mt-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest hover:text-red-500 transition-colors"
+                  >
+                    Cancel Editing
+                  </button>
+                )}
               </div>
             </div>
 
@@ -168,10 +241,9 @@ export default function AdminProfile() {
               <ProfileItem
                 icon={<Mail className="text-blue-500" />}
                 label="Email Address"
-                value={
-                  profile?.email ||
-                  `${(username ?? "").toLowerCase()}@rguktong.ac.in`
-                }
+                value={formData.email || `${username}@rguktong.ac.in`}
+                editable={isEditing}
+                onChange={(val) => setFormData({ ...formData, email: val })}
               />
               <ProfileItem
                 icon={<User className="text-indigo-500" />}
@@ -181,7 +253,9 @@ export default function AdminProfile() {
               <ProfileItem
                 icon={<Phone className="text-emerald-500" />}
                 label="Contact Number"
-                value={profile?.contact || "Not provided"}
+                value={formData.contact || "Not provided"}
+                editable={isEditing}
+                onChange={(val) => setFormData({ ...formData, contact: val })}
               />
               <ProfileItem
                 icon={<CheckCircle className="text-amber-500" />}
@@ -215,23 +289,36 @@ function ProfileItem({
   icon,
   label,
   value,
+  editable,
+  onChange,
 }: {
   icon: any;
   label: string;
   value: string | null | undefined;
+  editable?: boolean;
+  onChange?: (val: string) => void;
 }) {
   return (
     <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-50 bg-slate-50/30">
       <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-sm">
         {icon}
       </div>
-      <div>
+      <div className="flex-1">
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
           {label}
         </p>
-        <p className="text-sm font-semibold text-slate-900 tracking-tight">
-          {value}
-        </p>
+        {editable && onChange ? (
+          <input
+            type="text"
+            value={value || ""}
+            onChange={(e) => onChange(e.target.value)}
+            className="text-sm font-semibold text-slate-900 tracking-tight bg-white border border-slate-200 rounded px-2 py-1 w-full focus:outline-none focus:border-blue-500"
+          />
+        ) : (
+          <p className="text-sm font-semibold text-slate-900 tracking-tight">
+            {value}
+          </p>
+        )}
       </div>
     </div>
   );
