@@ -154,6 +154,10 @@ export async function processNextBatch() {
               },
             });
             successCount++;
+
+            // Cache Invalidation
+            await redis.del(`grades:${studentId}`);
+            await redis.del(`profile:v2:${studentId}`);
           } catch (err: any) {
             if (failCount === 0) {
               console.error(`[Worker] [GRADES] First failure on row:`, row);
@@ -244,6 +248,10 @@ export async function processNextBatch() {
               },
             });
             successCount++;
+
+            // Cache Invalidation
+            await redis.del(`attendance:${studentId}`);
+            await redis.del(`profile:v2:${studentId}`);
           } catch (err: any) {
             failCount++;
             errors.push({
