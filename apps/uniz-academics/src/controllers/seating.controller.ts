@@ -152,7 +152,7 @@ export const uploadSeating = async (
 
   try {
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(file.buffer);
+    await workbook.xlsx.load(file.buffer as any);
     const worksheet = workbook.getWorksheet(1);
     if (!worksheet) {
       return res.status(400).json({ error: "Invalid worksheet" });
@@ -279,7 +279,7 @@ export const getStudentSeating = async (
 
     res.json({
       semester: activeSem,
-      seating: seating.map((s) => ({
+      seating: seating.map((s: any) => ({
         id: s.id,
         subjectName: s.subject.name,
         subjectCode: s.subject.code,

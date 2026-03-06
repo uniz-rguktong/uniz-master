@@ -18,6 +18,7 @@ import {
   AlertCircle,
   X,
   Layers,
+  ScanLine,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -33,6 +34,9 @@ const Student = lazy(() => import("../pages/student/student"));
 const GradeHub = lazy(() => import("../pages/promotions/GradeHub"));
 const CurrentSemester = lazy(() => import("../pages/student/CurrentSemester"));
 const Grievance = lazy(() => import("../pages/student/Grievance"));
+const SeatingArrangement = lazy(
+  () => import("../pages/student/components/SeatingArrangement"),
+);
 
 export { enableOutingsAndOutpasses } from "../pages/student/student";
 
@@ -48,6 +52,7 @@ interface MainContent {
     | "attendance"
     | "grievance"
     | "currentSemester"
+    | "seating"
     | "error";
 }
 
@@ -144,6 +149,15 @@ export default function Sidebar({ content }: MainContent) {
       hoverColor: "hover:text-slate-600",
     },
     {
+      id: "seating",
+      label: "Exam Seating",
+      href: "/student?tab=seating",
+      content: "seating",
+      icon: ScanLine,
+      activeColor: "text-rose-600",
+      hoverColor: "hover:text-rose-600",
+    },
+    {
       id: "grievance",
       label: "Grievance",
       href: "/student/grievance",
@@ -219,6 +233,7 @@ export default function Sidebar({ content }: MainContent) {
     currentSemester: <CurrentSemester />,
     attendance: <Attendance />,
     grievance: <Grievance />,
+    seating: <SeatingArrangement />,
     error: <Error />,
   };
 
