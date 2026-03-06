@@ -34,7 +34,6 @@ import {
   BULK_CREATE_FACULTY,
   BULK_UPDATE_FACULTY,
   BULK_DELETE_FACULTY,
-  UPLOAD_IMAGE,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 
@@ -268,19 +267,20 @@ export default function FacultyManagement({
 
     setIsUploading(true);
     const formDataUpload = new FormData();
-    formDataUpload.append("image", file);
+    formDataUpload.append("file", file);
+    formDataUpload.append("upload_preset", "uniz_upload");
 
     try {
-      const res = await fetch(UPLOAD_IMAGE, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dy2fjgt46/image/upload",
+        {
+          method: "POST",
+          body: formDataUpload,
         },
-        body: formDataUpload,
-      });
+      );
       const data = await res.json();
-      if (data.success) {
-        setFormData((prev) => ({ ...prev, profileUrl: data.url }));
+      if (data.secure_url) {
+        setFormData((prev) => ({ ...prev, profileUrl: data.secure_url }));
         toast.success("Profile photo uploaded!");
       } else {
         toast.error(data.message || "Upload failed");

@@ -13,7 +13,9 @@ import {
 import { adminUsername } from "../../store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { BASE_URL, UPLOAD_IMAGE } from "../../api/endpoints";
+import { BASE_URL } from "../../api/endpoints";
+const VITE_CLOUDINARY_CLOUD_NAME = "dy2fjgt46";
+const VITE_CLOUDINARY_UPLOAD_PRESET = "uniz_upload";
 
 export default function AdminProfile() {
   const username = useRecoilValue(adminUsername);
@@ -53,18 +55,16 @@ export default function AdminProfile() {
     try {
       setIsUploading(true);
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("file", file);
+      formData.append("upload_preset", VITE_CLOUDINARY_UPLOAD_PRESET);
 
-      const res = await fetch(UPLOAD_IMAGE, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${(localStorage.getItem("admin_token") || "").replace(/"/g, "")}`,
-        },
-        body: formData,
-      });
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        { method: "POST", body: formData },
+      );
       const data = await res.json();
 
-      if (data.success && data.url) {
+      if (data.secure_url) {
         const token = localStorage.getItem("admin_token");
         const updateRes = await fetch(`${BASE_URL}/profile/admin/me/update`, {
           method: "PUT",
@@ -72,7 +72,7 @@ export default function AdminProfile() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
           },
-          body: JSON.stringify({ profileUrl: data.url }),
+          body: JSON.stringify({ profileUrl: data.secure_url }),
         });
         const updateData = await updateRes.json();
         if (updateData.success) {
