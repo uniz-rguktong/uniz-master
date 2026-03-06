@@ -1,29 +1,22 @@
 import { useState, useCallback, useEffect } from "react";
 import { Input } from "../../components/Input";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { is_authenticated, student } from "../../store";
+import { useRecoilState } from "recoil";
+import { is_authenticated } from "../../store";
 import { useStudentData } from "../../hooks/student_info";
 import { toast } from "react-toastify";
-import {
-  FORGOT_PASS_ENDPOINT,
-  VERIFY_OTP_ENDPOINT,
-  SET_NEW_PASS_ENDPOINT
-} from "../../api/endpoints";
+import { CHANGE_PASS_ENDPOINT } from "../../api/endpoints";
 import { apiClient } from "../../api/apiClient";
-import { RefreshCw, ShieldCheck, KeyRound, ArrowRight } from "lucide-react";
+import { KeyRound } from "lucide-react";
 
 export default function Resetpassword() {
-  const [otp, setOtp] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [repassword, setRePassword] = useState("");
-  const [step, setStep] = useState<"request" | "verify" | "reset">("request");
-  const [resetToken, setResetToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigateTo = useNavigate();
   useStudentData();
-  const Student = useRecoilValue(student);
   const [_isAuth, setAuth] = useRecoilState(is_authenticated);
 
   // Password strength state
@@ -67,83 +60,32 @@ export default function Resetpassword() {
     setPasswordStrength(validatePassword(password));
   }, [password, validatePassword]);
 
-  // Step 1: Request OTP
-  const handleRequestOtp = async () => {
-    if (!Student?.username) {
-      toast.error("User context missing. Please refresh.");
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const data = await apiClient<{ success: boolean; message?: string }>(
-        FORGOT_PASS_ENDPOINT,
-        {
-          method: "POST",
-          body: JSON.stringify({ username: Student.username }),
-        }
-      );
-      if (data?.success) {
-        toast.success("OTP sent to your registered devices");
-        setStep("verify");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Step 2: Verify OTP
-  const handleVerifyOtp = async () => {
-    if (otp.length !== 6) {
-      toast.error("Please enter a valid 6-digit OTP");
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const data = await apiClient<{
-        success: boolean;
-        resetToken?: string;
-        message?: string
-      }>(VERIFY_OTP_ENDPOINT, {
-        method: "POST",
-        body: JSON.stringify({
-          username: Student.username,
-          otp: otp.trim()
-        }),
-      });
-
-      if (data?.success && data.resetToken) {
-        setResetToken(data.resetToken);
-        setStep("reset");
-        toast.success("Verification successful");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Step 3: Reset Password (The one requested by user)
+  // Handle Reset Password (Now Change Password)
   const handleResetPassword = async () => {
+    if (!currentPassword) {
+      toast.error("Please enter your current password");
+      return;
+    }
     if (password !== repassword) {
-      toast.error("Passwords do not match");
+      toast.error("New passwords do not match");
       return;
     }
     if (passwordStrength.score < 3) {
-      toast.error("Password is too weak");
+      toast.error("New password is too weak");
       return;
     }
 
     setIsLoading(true);
     try {
       const data = await apiClient<{ success: boolean; message?: string }>(
-        SET_NEW_PASS_ENDPOINT,
+        CHANGE_PASS_ENDPOINT,
         {
           method: "POST",
           body: JSON.stringify({
-            username: Student.username,
-            resetToken: resetToken,
+            currentPassword: currentPassword,
             newPassword: password,
           }),
-        }
+        },
       );
 
       if (data?.success) {
@@ -204,125 +146,84 @@ export default function Resetpassword() {
               </div>
 
               <div className="space-y-4 md:space-y-6">
-                {step === "request" && (
-                  <div className="py-6 text-center space-y-4">
-                    <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <RefreshCw className={`w-8 h-8 ${isLoading ? 'animate-spin' : ''}`} />
-                    </div>
-                    <p className="text-slate-600 max-w-xs mx-auto text-sm leading-relaxed">
-                      For your security, we'll send a verification code to your registered university email to authorize this change.
-                    </p>
-                    <button
-                      onClick={handleRequestOtp}
-                      disabled={isLoading}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3.5 font-bold transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2"
-                    >
-                      {isLoading ? "Sending..." : "Send Verification OTP"}
-                      {!isLoading && <ArrowRight size={18} />}
-                    </button>
+                {/* Current Password */}
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
+                    Current Password
+                  </label>
+                  <div className="relative group">
+                    <Input
+                      type="password"
+                      onchangeFunction={handleInputChange(setCurrentPassword)}
+                      placeholder="Enter current password"
+                      className="focus:border-blue-600 focus:ring-blue-600"
+                    />
                   </div>
-                )}
+                </div>
 
-                {step === "verify" && (
-                  <div className="space-y-6">
-                    <div>
-                      <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
-                        One-Time Password
-                      </label>
-                      <Input
-                        type="text"
-                        onchangeFunction={handleInputChange(setOtp)}
-                        placeholder="Enter 6-digit code"
-                        className="text-center text-xl tracking-[0.5em] font-mono"
-                        maxLength={6}
-                      />
-                    </div>
-                    <button
-                      onClick={handleVerifyOtp}
-                      disabled={isLoading}
-                      className="w-full bg-slate-900 hover:bg-black text-white rounded-xl py-3.5 font-bold transition-all flex items-center justify-center gap-2"
-                    >
-                      {isLoading ? "Verifying..." : "Verify & Continue"}
-                      {!isLoading && <ShieldCheck size={18} />}
-                    </button>
-                    <button
-                      onClick={() => setStep("request")}
-                      className="w-full text-slate-400 font-bold text-xs uppercase tracking-widest hover:text-slate-600"
-                    >
-                      Resend Code
-                    </button>
+                {/* New Password */}
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
+                    New Password
+                  </label>
+                  <div className="relative group">
+                    <Input
+                      type="password"
+                      onchangeFunction={handleInputChange(setPassword)}
+                      placeholder="Enter new password"
+                      className="focus:border-blue-600 focus:ring-blue-600"
+                    />
                   </div>
-                )}
-
-                {step === "reset" && (
-                  <div className="space-y-4 md:space-y-6">
-                    {/* New Password */}
-                    <div>
-                      <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
-                        New Password
-                      </label>
-                      <div className="relative group">
-                        <Input
-                          type="password"
-                          onchangeFunction={handleInputChange(setPassword)}
-                          placeholder="Enter new password"
-                          className="focus:border-blue-600 focus:ring-blue-600"
-                        />
-                      </div>
-                      {password && (
-                        <div className="mt-3">
-                          <div className="flex items-center gap-3">
-                            <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
-                              <div
-                                className={`h-full transition-all duration-500 ${passwordStrength.color}`}
-                                style={{
-                                  width: `${(passwordStrength.score / 3) * 100}%`,
-                                }}
-                              ></div>
-                            </div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                              {passwordStrength.label}
-                            </span>
-                          </div>
+                  {password && (
+                    <div className="mt-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full transition-all duration-500 ${passwordStrength.color}`}
+                            style={{
+                              width: `${(passwordStrength.score / 3) * 100}%`,
+                            }}
+                          ></div>
                         </div>
-                      )}
-                    </div>
-
-                    {/* Confirm New Password */}
-                    <div>
-                      <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
-                        Confirm Password
-                      </label>
-                      <div className="relative group">
-                        <Input
-                          type="password"
-                          onchangeFunction={handleInputChange(setRePassword)}
-                          placeholder="Repeat new password"
-                          className="focus:border-blue-600 focus:ring-blue-600"
-                        />
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                          {passwordStrength.label}
+                        </span>
                       </div>
                     </div>
+                  )}
+                </div>
 
-                    <button
-                      onClick={handleResetPassword}
-                      disabled={isLoading}
-                      className="w-full h-[50px] bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2"
-                    >
-                      {isLoading ? "Updating..." : "Update Password"}
-                      {!isLoading && <KeyRound size={18} />}
-                    </button>
+                {/* Confirm New Password */}
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
+                    Confirm Password
+                  </label>
+                  <div className="relative group">
+                    <Input
+                      type="password"
+                      onchangeFunction={handleInputChange(setRePassword)}
+                      placeholder="Repeat new password"
+                      className="focus:border-blue-600 focus:ring-blue-600"
+                    />
                   </div>
-                )}
+                </div>
 
-                {step !== "reset" && (
-                  <button
-                    onClick={() => navigateTo("/student")}
-                    className="w-full h-[46px] text-slate-500 hover:text-slate-900 font-bold text-sm transition-colors"
-                    disabled={isLoading}
-                  >
-                    Cancel & Return
-                  </button>
-                )}
+                <button
+                  onClick={handleResetPassword}
+                  disabled={isLoading}
+                  className="w-full h-[50px] bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2"
+                >
+                  {isLoading ? "Updating..." : "Update Password"}
+                  {!isLoading && <KeyRound size={18} />}
+                </button>
+
+                <button
+                  onClick={() => navigateTo("/student")}
+                  className="w-full h-[46px] text-slate-500 hover:text-slate-900 font-bold text-sm transition-colors"
+                  disabled={isLoading}
+                >
+                  Cancel & Return
+                </button>
               </div>
             </div>
 
@@ -427,7 +328,8 @@ export default function Resetpassword() {
                     />
                   </svg>
                   <p className="text-[11px] font-medium text-slate-400 leading-relaxed uppercase tracking-wider">
-                    Terminal security protocol will automatically log out all sessions after successful credential update.
+                    Terminal security protocol will automatically log out all
+                    sessions after successful credential update.
                   </p>
                 </div>
               </div>
