@@ -486,6 +486,14 @@ export default function GradeHub() {
                       </>
                     )}
                 </div>
+
+                {grades.motivational_messages && (
+                  <div className="px-6 pb-8 bg-slate-50/30 text-center">
+                    <p className="text-slate-500 font-medium italic text-sm max-w-2xl mx-auto">
+                      "{grades.motivational_messages}"
+                    </p>
+                  </div>
+                )}
               </>
             )}
 

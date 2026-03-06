@@ -13,10 +13,9 @@ const GATEWAY_URL = (
 
 const getHeaders = (token: string) => ({ headers: { Authorization: token } });
 
-import { mapGradeToPoint } from "../utils/helpers.util";
+import { mapGradeToPoint, getGpaDialogue } from "../utils/helpers.util";
 import { randomUUID } from "crypto";
 import { redis, notificationQueue } from "../utils/redis.util";
-import { generateMotivation } from "../utils/ai.util";
 import { processNextBatch } from "../services/upload.service";
 import { generateResultPdf, generateAttendancePdf } from "../utils/pdf.util";
 
@@ -461,43 +460,6 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
       }
     }
 
-    // 2. Generate AI Motivational Message
-    let motivation = "";
-    const motivationCacheKey = `motivation:${targetStudentId}:${semester || "all"}:${year || "all"}`;
-    const cachedMotivation = await redis.get(motivationCacheKey);
-
-    if (cachedMotivation) {
-      motivation = cachedMotivation;
-    } else {
-      let attSummary = null;
-      if (attendance.length > 0) {
-        const total = attendance.reduce(
-          (acc, curr) => acc + curr.totalClasses,
-          0,
-        );
-        const attended = attendance.reduce(
-          (acc, curr) => acc + curr.attendedClasses,
-          0,
-        );
-        const percent = total > 0 ? Math.round((attended / total) * 100) : 0;
-        attSummary = {
-          overallPercentage: percent,
-          status: percent >= 75 ? "GOOD" : "POOR",
-        };
-      }
-
-      // OPTIMIZATION: Don't await the AI call.
-      // Return empty motivation now, but trigger background generation to populate cache for the NEXT refresh.
-      // This makes the API feel instant.
-      generateMotivation(gpaResults, attSummary)
-        .then((mot) => redis.setex(motivationCacheKey, 43200, mot))
-        .catch((err) =>
-          console.error("Background motivation failed:", err.message),
-        );
-
-      motivation = "Fetching your personalized advice... (Refresh in a moment)";
-    }
-
     // Calculate Overall CGPA and Backlogs
     let totalEarnedPoints = 0;
     let totalWeightedCredits = 0;
@@ -517,6 +479,12 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
       totalWeightedCredits > 0
         ? parseFloat((totalEarnedPoints / totalWeightedCredits).toFixed(2))
         : 0;
+
+    // 2. Generate GPA-based Motivational Message
+    // Find the latest semester GPA to provide a relevant dialogue
+    const latestSemId = Object.keys(gpaResults).sort().pop();
+    const gpaForDialogue = latestSemId ? gpaResults[latestSemId].gpa : cgpa;
+    const motivation = getGpaDialogue(gpaForDialogue);
 
     const responsePayload = {
       success: true,
