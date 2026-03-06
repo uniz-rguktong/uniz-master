@@ -289,7 +289,7 @@ export default function StudentBulkSection() {
                         {Math.round(
                           ((progress?.processed || 0) /
                             (progress?.total || 1)) *
-                            100,
+                          100,
                         )}
                         %
                       </span>

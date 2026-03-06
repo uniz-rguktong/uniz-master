@@ -168,24 +168,10 @@ export default function WebmasterDashboard() {
         className={`bg-white border-r border-slate-100 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"} hidden md:flex flex-col premium-shadow h-screen sticky top-0`}
       >
         {/* Header with logo */}
-        <div className="flex items-center space-x-3.5 p-6 bg-transparent shrink-0">
-          <div className="w-14 h-14 flex items-center justify-center p-1 shrink-0">
-            <img
-              src="/assets/ongole_logo.png"
-              className="h-full w-full object-contain"
-              alt="Ongole Logo"
-            />
-          </div>
-          {isSidebarOpen && (
-            <div className="flex flex-col animate-in fade-in duration-500">
-              <span className="font-semibold text-slate-900 text-[19px] tracking-tight leading-none">
-                Ongole
-              </span>
-              <span className="text-[10px] uppercase tracking-[0.2em] text-[#6366f1]/80 font-semibold mt-1.5 px-0.5">
-                WEBMASTER PORTAL
-              </span>
-            </div>
-          )}
+        <div className="flex items-center justify-center w-full p-6 bg-transparent shrink-0">
+          <span className="unifrakturcook-bold text-3xl text-slate-800 tracking-tight leading-none">
+            uniZ
+          </span>
         </div>
 
         {/* Navigation Section */}
@@ -200,10 +186,9 @@ export default function WebmasterDashboard() {
                 onClick={() => setActiveTab(item.id as any)}
                 className={`
                   w-full flex items-center space-x-3 px-4 py-3 rounded-full text-left transition-all duration-200 group relative
-                  ${
-                    isActive
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  ${isActive
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }
                 `}
               >
@@ -211,10 +196,9 @@ export default function WebmasterDashboard() {
                   <Icon
                     size={21}
                     className={`shrink-0 transition-transform group-hover:scale-110 duration-200
-                      ${
-                        isActive
-                          ? "text-blue-600"
-                          : "text-slate-400 group-hover:text-slate-700"
+                      ${isActive
+                        ? "text-blue-600"
+                        : "text-slate-400 group-hover:text-slate-700"
                       }`}
                   />
                 </div>

@@ -180,12 +180,12 @@ export default function UploadSection({ type }: { type: UploadType }) {
       type === "attendance"
         ? GET_ATTENDANCE_TEMPLATE(branch, year, semester)
         : GET_GRADES_TEMPLATE(
-            branch,
-            year,
-            semester,
-            subjectCode,
-            remedialsOnly,
-          );
+          branch,
+          year,
+          semester,
+          subjectCode,
+          remedialsOnly,
+        );
     const fileName = `${type}_${branch}_${year}_${semester}_template.xlsx`;
     await downloadFile(url, fileName);
   };
@@ -410,11 +410,10 @@ export default function UploadSection({ type }: { type: UploadType }) {
         <div className="space-y-6">
           {result ? (
             <div
-              className={`p-8 rounded-2xl border animate-in slide-in-from-right-8 duration-500 h-full ${
-                result.success
+              className={`p-8 rounded-2xl border animate-in slide-in-from-right-8 duration-500 h-full ${result.success
                   ? "bg-emerald-50 border-emerald-100"
                   : "bg-red-50 border-red-100"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-4 mb-6">
                 <div
@@ -442,7 +441,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                       <span className="text-blue-600 font-black">
                         {Math.round(
                           ((progress.processed || 0) / (progress.total || 1)) *
-                            100,
+                          100,
                         )}
                         %
                       </span>
@@ -534,7 +533,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                   <span className="font-black">
                     {Math.round(
                       ((progress?.processed || 0) / (progress?.total || 1)) *
-                        100,
+                      100,
                     )}
                     %
                   </span>
