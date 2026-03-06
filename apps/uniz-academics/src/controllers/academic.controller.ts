@@ -362,7 +362,7 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
 
   try {
     const isFiltered = sem || y;
-    const cacheKey = `grades:${targetStudentId.toUpperCase()}`;
+    const cacheKey = `grades_v3:${targetStudentId.toUpperCase()}`;
 
     if (!isFiltered) {
       const cached = await redis.get(cacheKey);
