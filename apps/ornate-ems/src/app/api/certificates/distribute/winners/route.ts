@@ -195,8 +195,9 @@ export async function POST(request: NextRequest) {
           },
         });
 
-        // Send Email
-        if (reg.user && reg.user.email) {
+        // Send Email — prefer user relation email, fall back to registration email
+        const recipientEmail = reg.user?.email || reg.email;
+        if (recipientEmail) {
           const emailHtml = getWinnerEmailTemplate(
             reg.studentName,
             event.title,
@@ -205,7 +206,7 @@ export async function POST(request: NextRequest) {
             reg.id,
           );
           const emailResult = await sendCertificateEmail(
-            reg.user.email,
+            recipientEmail,
             `Congratulations! You won ${reg.rank === 1 ? "1st" : reg.rank === 2 ? "2nd" : "3rd"} Prize in ${event.title}`,
             emailHtml,
           );
