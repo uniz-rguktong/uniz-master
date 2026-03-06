@@ -17,7 +17,7 @@ spec:
       containers:
         - name: files-service
           image: uniz-files-service:local
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3005
           env:

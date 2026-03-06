@@ -17,7 +17,7 @@ spec:
       containers:
         - name: auth-service
           image: uniz-auth-service:local
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3001
           env:
