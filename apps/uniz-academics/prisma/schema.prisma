@@ -106,6 +106,9 @@ model BranchAllocation {
   customCredits Int? // Ability to override default subject credits
   status        AllocationStatus @default(DEAN_PENDING)
   isApproved    Boolean          @default(false)
+  isMandatory   Boolean          @default(true)
+  electiveGroupId String?        @default("")
+  electiveLimit Int?             @default(1)
   subject       Subject          @relation(fields: [subjectId], references: [id])
   semester      AcademicSemester @relation(fields: [semesterId], references: [id])
 
