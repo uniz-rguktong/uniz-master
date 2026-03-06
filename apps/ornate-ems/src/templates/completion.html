@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Completion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0d1e38;
+            /* Deep Navy Blue */
+            --text-color: #333333;
+            --bg-color: #ffffff;
+            --border-color: #d1d1d1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #e0e0e0;
+            font-family: 'Lato', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .certificate-container {
+            width: 1100px;
+            /* Landscape */
+            height: 750px;
+            background-color: var(--bg-color);
+            position: relative;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Border Frame Simulation */
+        .border-frame {
+            width: 100%;
+            height: 100%;
+            border: 2px solid #888;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 40px;
+        }
+
+        .border-frame::before {
+            content: "";
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 1px solid #aaa;
+            pointer-events: none;
+        }
+
+        /* Corner decorations (CSS circles for now) */
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border: 2px solid #888;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .top-left {
+            top: -10px;
+            left: -10px;
+        }
+
+        .top-right {
+            top: -10px;
+            right: -10px;
+        }
+
+        .bottom-left {
+            bottom: -10px;
+            left: -10px;
+        }
+
+        .bottom-right {
+            bottom: -10px;
+            right: -10px;
+        }
+
+        .inner-content {
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Header Section */
+        header {
+            margin-top: 20px;
+        }
+
+        .main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-weight: 400;
+        }
+
+        .subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .certify-text {
+            font-family: 'Lato', sans-serif;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        /* Recipient Name */
+        .recipient-name {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: #294c7a;
+            /* A lighter blue */
+            margin: 10px 0 20px 0;
+            border-bottom: 1px solid #ddd;
+            display: inline-block;
+            padding: 0 50px;
+            min-width: 400px;
+        }
+
+        /* Body Text */
+        .body-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #444;
+            max-width: 800px;
+            margin: 0 auto 30px auto;
+        }
+
+        .details-grid {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .details-row {
+            margin-bottom: 5px;
+        }
+
+        /* Dates Section */
+        .dates-section {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 40px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            color: #333;
+        }
+
+        .date-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .date-value {
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* Footer Section */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 40px;
+            padding: 0 20px;
+        }
+
+        .logos {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .logo-placeholder {
+            width: 70px;
+            height: 70px;
+            background-color: #f4f4f4;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            /* Circle badge */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.6rem;
+            color: #555;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 5px;
+        }
+
+        .qr-placeholder {
+            width: 60px;
+            height: 60px;
+            background-color: #fff;
+            border: 1px solid #333;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 2px;
+            align-content: flex-start;
+        }
+
+        /* Simulated QR Pattern */
+        .qr-placeholder::before {
+            content: " ";
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(#333 40%, transparent 41%);
+            background-size: 10px 10px;
+        }
+
+        .signature-section {
+            text-align: center;
+            min-width: 250px;
+        }
+
+        .signature-img {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .signature-line {
+            height: 1px;
+            background-color: #333;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .signature-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .signature-name {
+            font-weight: 400;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        /* Watermark Background */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background: url('./components/bronze_seal.png') no-repeat center center;
+            /* Using existing seal as watermark */
+            background-size: contain;
+            opacity: 0.05;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @media print {
+            @page {
+                size: landscape;
+                margin: 0;
+            }
+
+            body {
+                background: none;
+            }
+
+            .certificate-container {
+                box-shadow: none;
+                width: 100%;
+                height: 100vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="certificate-container">
+        <!-- Watermark -->
+        <div class="watermark"></div>
+
+        <div class="border-frame">
+            <!-- Decorative Corners -->
+            <div class="corner top-left"></div>
+            <div class="corner top-right"></div>
+            <div class="corner bottom-left"></div>
+            <div class="corner bottom-right"></div>
+
+            <div class="inner-content">
+                <header>
+                    <h1 class="main-title">Certificate of Completion</h1>
+                    <h2 class="subtitle">Oleoresin Capsicum Spray</h2>
+                </header>
+
+                <div>
+                    <p class="certify-text">This is to certify that</p>
+                    <div class="recipient-name">Recipient's Name</div>
+
+                    <p class="body-text">
+                        has successfully fulfilled the requirements for Oleoresin Capsicum (OC) Spray Certification
+                        under the standards of the Certified Use-of-Force Standards Council, demonstrating compliance
+                        with national guidelines on lawful deployment, exposure training, and accountability in
+                        use-of-force practices.
+                    </p>
+
+                    <div class="details-grid">
+                        <div class="details-row">
+                            <strong>Certification Level:</strong> National Certification — Compliance Credential
+                        </div>
+                        <div class="details-row">
+                            <strong>Training Duration:</strong> Completed: 2-Day Certification Program
+                        </div>
+                    </div>
+
+                    <div class="dates-section">
+                        <div class="date-item">
+                            <span>DATE OF ISSUE:</span>
+                            <span class="date-value">October 21, 2025</span>
+                        </div>
+                        <div class="date-item">
+                            <span>DATE OF COMPLETION:</span>
+                            <span class="date-value">October 20, 2025</span>
+                        </div>
+                        <div class="date-item">
+                            <span>CERTIFICATE ID:</span>
+                            <span class="date-value">904813652</span>
+                        </div>
+                    </div>
+                </div>
+
+                <footer>
+                    <div class="logos">
+                        <!-- QR Code Placeholder -->
+                        <div class="qr-placeholder">QR</div>
+                        <!-- Seal Placeholder -->
+                        <div class="logo-placeholder">Seal 1</div>
+                        <!-- Logo Placeholder -->
+                        <div class="logo-placeholder">Guardian Security</div>
+                    </div>
+
+                    <div class="signature-section">
+                        <div class="signature-img">Arthur Dealy</div>
+                        <div class="signature-line"></div>
+                        <div>
+                            <span class="signature-title">Program Director</span>
+                            <span class="signature-name"> Arthur Dealy</span>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
