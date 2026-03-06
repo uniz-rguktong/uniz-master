@@ -272,11 +272,19 @@ export default function AdminProfile() {
                 icon={<Building className="text-purple-500" />}
                 label="Department"
                 value={formData.department || "Administration"}
+                editable={isEditing}
+                onChange={(val) =>
+                  setFormData({ ...formData, department: val })
+                }
               />
               <ProfileItem
                 icon={<Briefcase className="text-cyan-500" />}
                 label="Designation"
                 value={formData.designation || "Webmaster"}
+                editable={isEditing}
+                onChange={(val) =>
+                  setFormData({ ...formData, designation: val })
+                }
               />
               <ProfileItem
                 icon={<CheckCircle className="text-amber-500" />}
@@ -286,33 +294,29 @@ export default function AdminProfile() {
             </div>
 
             {/* Bio Section */}
-            {(profile?.role === "teacher" ||
-              profile?.role === "hod" ||
-              profile?.role === "faculty") && (
-              <div className="mt-8 pt-8 border-t border-slate-100">
-                <div className="flex items-center gap-2 mb-4">
-                  <FileText size={18} className="text-slate-400" />
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-900">
-                    Faculty Biography
-                  </h4>
-                </div>
-                {isEditing ? (
-                  <textarea
-                    value={formData.bio}
-                    onChange={(e) =>
-                      setFormData({ ...formData, bio: e.target.value })
-                    }
-                    rows={4}
-                    className="w-full text-sm font-medium text-slate-600 leading-relaxed bg-slate-50 border border-slate-200 rounded-2xl p-4 focus:outline-none focus:border-blue-500"
-                    placeholder="Tell us about your academic background and interests..."
-                  />
-                ) : (
-                  <p className="text-sm font-medium text-slate-600 leading-relaxed">
-                    {formData.bio || "No biography provided yet."}
-                  </p>
-                )}
+            <div className="mt-8 pt-8 border-t border-slate-100">
+              <div className="flex items-center gap-2 mb-4">
+                <FileText size={18} className="text-slate-400" />
+                <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-900">
+                  Professional Biography
+                </h4>
               </div>
-            )}
+              {isEditing ? (
+                <textarea
+                  value={formData.bio}
+                  onChange={(e) =>
+                    setFormData({ ...formData, bio: e.target.value })
+                  }
+                  rows={4}
+                  className="w-full text-sm font-medium text-slate-600 leading-relaxed bg-slate-50 border border-slate-200 rounded-2xl p-4 focus:outline-none focus:border-blue-500"
+                  placeholder="Tell us about your professional background and interests..."
+                />
+              ) : (
+                <p className="text-sm font-medium text-slate-600 leading-relaxed">
+                  {formData.bio || "No biography provided yet."}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
