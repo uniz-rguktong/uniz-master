@@ -48,7 +48,8 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
               <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
                 <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100 flex items-center justify-between">
                   <h3 className="font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 text-slate-400">
-                    <Award size={14} className="text-blue-500" /> Subject Performance
+                    <Award size={14} className="text-blue-500" /> Subject
+                    Performance
                   </h3>
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                     CGPA: 0.00
@@ -76,9 +77,18 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                             {g.subject.credits}
                           </td>
                           <td className="px-5 py-4 text-right">
-                            <span className="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[11px] font-bold border border-blue-100/50">
-                              {g.grade}
-                            </span>
+                            <div className="flex flex-col items-end gap-1">
+                              <span
+                                className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold border ${g.grade === 0 ? "bg-red-50 text-red-600 border-red-100/50" : "bg-blue-50 text-blue-600 border-blue-100/50"}`}
+                              >
+                                {g.grade === 0 ? "R" : g.grade}
+                              </span>
+                              {g.isRemedial && (
+                                <span className="text-[9px] font-bold text-orange-500 uppercase tracking-tighter">
+                                  Remedial Pass
+                                </span>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -93,7 +103,8 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
               <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm h-fit">
                 <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100">
                   <h3 className="font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 text-slate-400">
-                    <Percent size={14} className="text-blue-500" /> Attendance Matrix
+                    <Percent size={14} className="text-blue-500" /> Attendance
+                    Matrix
                   </h3>
                 </div>
                 <div className="divide-y divide-slate-50">
@@ -101,9 +112,9 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                     const percentage =
                       att.totalClasses > 0
                         ? (
-                          (att.attendedClasses / att.totalClasses) *
-                          100
-                        ).toFixed(1)
+                            (att.attendedClasses / att.totalClasses) *
+                            100
+                          ).toFixed(1)
                         : "0.0";
                     const isLow = parseFloat(percentage) < 75;
                     return (

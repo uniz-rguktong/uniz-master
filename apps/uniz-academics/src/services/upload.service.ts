@@ -137,6 +137,31 @@ export async function processNextBatch() {
             const targetSemester = semesterId || subject.semester || "SEM-1";
             const batchYear = studentId.substring(0, 3);
 
+            const existingGrade = await prisma.grade.findUnique({
+              where: {
+                studentId_subjectId_semesterId: {
+                  studentId,
+                  subjectId: subject.id,
+                  semesterId: targetSemester,
+                },
+              },
+            });
+
+            // Determine if remedial (previous score was 0, now it's getting updated, typically to passing)
+            let isRemedial = existingGrade?.isRemedial || false;
+            // If previous was fail (0) & not remedial, and we are updating it now
+            if (existingGrade && existingGrade.grade === 0 && grade !== 0) {
+              isRemedial = true;
+            } else if (
+              existingGrade &&
+              existingGrade.grade === 0 &&
+              grade === 0
+            ) {
+              // Failed again in a remedial attempt -> still a remedial record, although it's up to policy. Let's strictly mark pass as remedial or keep it.
+              // We'll mark as remedial if it's being updated after a long enough time, but just marking pass attempts is safer.
+              isRemedial = existingGrade.isRemedial;
+            }
+
             await prisma.grade.upsert({
               where: {
                 studentId_subjectId_semesterId: {
@@ -145,13 +170,19 @@ export async function processNextBatch() {
                   semesterId: targetSemester,
                 },
               },
-              update: { grade, batch: batchYear, updatedAt: new Date() },
+              update: {
+                grade,
+                batch: batchYear,
+                isRemedial,
+                updatedAt: new Date(),
+              },
               create: {
                 studentId,
                 subjectId: subject.id,
                 semesterId: targetSemester,
                 grade,
                 batch: batchYear,
+                isRemedial,
               },
             });
             successCount++;

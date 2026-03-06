@@ -28,6 +28,7 @@ model Grade {
   semesterId String
   grade      Float
   batch      String? // e.g. "O21"
+  isRemedial Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   subject    Subject  @relation(fields: [subjectId], references: [id])

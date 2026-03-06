@@ -401,6 +401,7 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
           id: true,
           semesterId: true,
           grade: true,
+          isRemedial: true,
           subject: {
             select: {
               code: true,
