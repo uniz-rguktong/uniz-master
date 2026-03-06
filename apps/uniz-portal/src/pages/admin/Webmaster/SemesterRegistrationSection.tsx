@@ -44,6 +44,9 @@ interface Allocation {
   customName?: string;
   customCredits?: number;
   facultyId?: string;
+  isMandatory: boolean;
+  electiveGroupId?: string;
+  electiveLimit?: number;
 }
 
 export default function SemesterRegistrationSection({
@@ -64,6 +67,9 @@ export default function SemesterRegistrationSection({
   const [editFormData, setEditFormData] = useState({
     customName: "",
     customCredits: 0,
+    isMandatory: true,
+    electiveGroupId: "",
+    electiveLimit: 1,
   });
   const [activeViewTab, setActiveViewTab] = useState<
     "allocations" | "registrations"
@@ -241,6 +247,9 @@ export default function SemesterRegistrationSection({
     setEditFormData({
       customName: item.customName || item.subject.name,
       customCredits: item.customCredits || item.subject.credits,
+      isMandatory: item.isMandatory ?? true,
+      electiveGroupId: item.electiveGroupId || "",
+      electiveLimit: item.electiveLimit || 1,
     });
   };
 
@@ -834,6 +843,67 @@ export default function SemesterRegistrationSection({
                 className="w-full px-6 py-4 bg-slate-50 rounded-2xl font-bold"
                 placeholder="Credits"
               />
+
+              <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 rounded-[24px] border border-slate-100">
+                <input
+                  type="checkbox"
+                  id="isMandatory"
+                  checked={editFormData.isMandatory}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      isMandatory: e.target.checked,
+                    })
+                  }
+                  className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                />
+                <label
+                  htmlFor="isMandatory"
+                  className="font-bold text-slate-700"
+                >
+                  Mandatory Course
+                </label>
+              </div>
+
+              {!editFormData.isMandatory && (
+                <div className="space-y-6 p-6 bg-blue-50/50 rounded-[32px] border border-blue-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-blue-600 px-1 block">
+                      Elective Group Name
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.electiveGroupId}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          electiveGroupId: e.target.value,
+                        })
+                      }
+                      className="w-full px-6 py-4 bg-white border border-blue-100 rounded-2xl font-bold text-slate-900 outline-none"
+                      placeholder="e.g. Professional Elective-I"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-blue-600 px-1 block">
+                      Selection Limit
+                    </label>
+                    <input
+                      type="number"
+                      value={editFormData.electiveLimit}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          electiveLimit: parseInt(e.target.value),
+                        })
+                      }
+                      className="w-full px-6 py-4 bg-white border border-blue-100 rounded-2xl font-bold text-slate-900 outline-none"
+                      placeholder="How many courses from this group?"
+                      min={1}
+                    />
+                  </div>
+                </div>
+              )}
               <div className="flex gap-4 pt-4">
                 <button
                   onClick={() => setEditingAllocation(null)}

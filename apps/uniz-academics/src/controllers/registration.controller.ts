@@ -341,7 +341,7 @@ export const updateAllocation = async (
           electiveGroupId !== undefined ? electiveGroupId : undefined,
         electiveLimit:
           electiveLimit !== undefined ? Number(electiveLimit) : undefined,
-      },
+      } as any,
     });
     res.json({ success: true, allocation });
   } catch (e: any) {
@@ -541,7 +541,86 @@ export const registerSubjects = async (
       return res.status(403).json({ error: "Registration is not open" });
     }
 
-    // 2. Perform subject registration
+    // 2. Fetch student details to get branch (department)
+    let studentBranch = (user as any).department;
+    if (!studentBranch) {
+      try {
+        const studentRes = await axios.get(
+          `${GATEWAY_URL}/profile/student/me`,
+          {
+            headers: { Authorization: req.headers.authorization },
+          },
+        );
+        studentBranch = studentRes.data?.department || studentRes.data?.branch;
+      } catch (err) {
+        console.warn(
+          "Failed to fetch student branch, falling back to subject branch check",
+        );
+      }
+    }
+
+    const allocations = await prisma.branchAllocation.findMany({
+      where: {
+        semesterId: sem.id,
+        ...(studentBranch
+          ? { branch: { equals: studentBranch, mode: "insensitive" } }
+          : {}),
+        isApproved: true,
+      },
+      include: { subject: true },
+    });
+
+    // If we didn't have studentBranch, infer it from the first allocation for validation
+    if (!studentBranch && allocations.length > 0) {
+      studentBranch = allocations[0].branch;
+    }
+
+    // Check mandatory subjects
+    const mandatoryMissing = allocations
+      .filter((a: any) => a.isMandatory)
+      .filter((a) => !subjectIds.includes(a.subjectId));
+
+    if (mandatoryMissing.length > 0) {
+      return res.status(400).json({
+        error: `Missing mandatory subjects: ${mandatoryMissing.map((m) => m.subject.name).join(", ")}`,
+      });
+    }
+
+    // Check elective group limits
+    const electiveGroups: Record<
+      string,
+      { limit: number; names: string[]; selectedCount: number }
+    > = {};
+    allocations.forEach((a: any) => {
+      if (a.electiveGroupId && a.electiveGroupId.trim() !== "") {
+        if (!electiveGroups[a.electiveGroupId]) {
+          electiveGroups[a.electiveGroupId] = {
+            limit: a.electiveLimit || 1,
+            names: [],
+            selectedCount: 0,
+          };
+        }
+        electiveGroups[a.electiveGroupId].names.push(a.subject.name);
+        if (subjectIds.includes(a.subjectId)) {
+          electiveGroups[a.electiveGroupId].selectedCount++;
+        }
+      }
+    });
+
+    for (const [groupId, group] of Object.entries(electiveGroups)) {
+      if (group.selectedCount > group.limit) {
+        return res.status(400).json({
+          error: `Group ${groupId}: You can only select ${group.limit} subjects from: ${group.names.join(", ")}`,
+        });
+      }
+      if (group.selectedCount < group.limit) {
+        return res.status(400).json({
+          error: `Group ${groupId}: Please select exactly ${group.limit} subjects from: ${group.names.join(", ")}`,
+        });
+      }
+    }
+
+    // 3. Perform subject registration
     await Promise.all(
       subjectIds.map((id: string) =>
         prisma.registration.upsert({
@@ -873,6 +952,9 @@ export const getSemesterOverview = async (
           year: alloc.academicYear,
           isApproved: alloc.isApproved,
           status: alloc.status,
+          isMandatory: (alloc as any).isMandatory,
+          electiveGroupId: (alloc as any).electiveGroupId,
+          electiveLimit: (alloc as any).electiveLimit,
         });
         branchSummary[alloc.branch].subjectCount++;
         branchSummary[alloc.branch].totalCredits +=
