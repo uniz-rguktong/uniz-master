@@ -1,0 +1,124 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model StudentProfile {
+  id                   String    @id @default(uuid())
+  username             String    @unique
+  name                 String    @default("")
+  email                String    @default("")
+  gender               String    @default("")
+  phone                String    @default("")
+  fatherName           String    @default("")
+  motherName           String    @default("")
+  fatherOccupation     String    @default("")
+  motherOccupation     String    @default("")
+  fatherEmail          String    @default("")
+  motherEmail          String    @default("")
+  fatherAddress        String    @default("")
+  motherAddress        String    @default("")
+  bloodGroup           String    @default("")
+  dateOfBirth          DateTime?
+  profileUrl           String    @default("")
+  year                 String    @default("")
+  branch               String    @default("")
+  section              String    @default("")
+  roomno               String    @default("")
+  isPresentInCampus    Boolean   @default(true)
+  isApplicationPending Boolean   @default(false)
+  telegramChatId       String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([branch, year])
+}
+
+model FacultyProfile {
+  id          String   @id @default(uuid())
+  username    String   @unique
+  name        String
+  email       String   @unique
+  contact     String   @default("")
+  department  String
+  designation String
+  role        String   @default("teacher")
+  profileUrl  String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([department])
+}
+
+model AdminProfile {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String   @unique @default("")
+  role      String   @default("webmaster")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Banner {
+  id        String   @id @default(uuid())
+  title     String
+  text      String
+  imageUrl  String
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PublicNotification {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  link      String?
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tender {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  pdfUrl      String?
+  deadline    DateTime?
+  isVisible   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model UploadHistory {
+  id           String   @id @default(uuid())
+  type         String // "STUDENTS" | "GRADES" | "ATTENDANCE" | "FACULTY"
+  filename     String?
+  totalRows    Int      @default(0)
+  successCount Int      @default(0)
+  failCount    Int      @default(0)
+  errors       Json? // Summary of errors or specific row failures
+  status       String   @default("COMPLETED") // "COMPLETED" | "FAILED" | "PARTIAL"
+  uploadedBy   String // Username of the webmaster
+  createdAt    DateTime @default(now())
+
+  @@index([type])
+  @@index([uploadedBy])
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  username  String   // Link to StudentProfile.username, etc.
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([username])
+}
