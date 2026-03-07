@@ -1,10 +1,22 @@
-// CI/CD Trigger
+/**
+ * ==============================================================================
+ * UNIZ MICROSERVICES - AUTHENTICATION ENGINE
+ * ==============================================================================
+ * Entry point for the Authentication Service. Handles JWT generation,
+ * OTP verification, and identity management across the UniZ ecosystem.
+ * ==============================================================================
+ */
+
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import authRoutes from "./routes/auth.routes";
+
+// ------------------------------------------------------------------------------
+// 1. INITIALIZATION & MIDDLEWARE
+// ------------------------------------------------------------------------------
 
 dotenv.config();
 
@@ -20,11 +32,15 @@ app.use(express.json());
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
 app.use(attributionMiddleware);
 
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok", service: "uniz-auth-service" });
-});
+// ------------------------------------------------------------------------------
+// 2. ROUTING & GATEWAYS
+// ------------------------------------------------------------------------------
 
 app.use("/", authRoutes);
+
+// ------------------------------------------------------------------------------
+// 3. ERROR ORCHESTRATION
+// ------------------------------------------------------------------------------
 
 // 404 Handler
 app.use((req, res) => {
@@ -52,6 +68,10 @@ app.use(
   },
 );
 
+// ------------------------------------------------------------------------------
+// 4. SERVER BOOTSTRAP
+// ------------------------------------------------------------------------------
+
 const server = app.listen(PORT, () => {
   console.log(`Auth Service running on port ${PORT}`);
   server.keepAliveTimeout = 65000;
@@ -59,6 +79,10 @@ const server = app.listen(PORT, () => {
 });
 
 export default app;
+
+// ------------------------------------------------------------------------------
+// 5. SYSTEM SIGNAL HANDLERS (GRACEFUL TERMINATION)
+// ------------------------------------------------------------------------------
 
 // Graceful Shutdown Handler
 process.on("SIGTERM", async () => {

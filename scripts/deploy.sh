@@ -1,7 +1,18 @@
 #!/bin/bash
+# ==============================================================================
+# UNIZ INFRASTRUCTURE - AUTOMATED DEPLOYMENT PIPELINE
+# ==============================================================================
+# Author: UNIZ Engineering
+# Description: Handles secure code push, VPS remote trigger, and K8s rollout.
+# Usage: ./scripts/deploy.sh "commit message" [--vps-run]
+# ==============================================================================
 
-# 2. Deploy to VPS
-# Check if we are running locally (on developer machine) or directly on VPS
+# ------------------------------------------------------------------------------
+# 1. EXECUTION CONTEXT DETECTION
+# ------------------------------------------------------------------------------
+# Determines if the script is running on a local developer machine or 
+# directly on the production VPS (hybrid execution).
+
 VPS_RUN=false
 for arg in "$@"; do
   if [ "$arg" == "--vps-run" ]; then
@@ -12,9 +23,16 @@ done
 
 if [ "$VPS_RUN" == "true" ]; then
   echo "[Deploy] Detected direct VPS execution..."
-  # When running on VPS, we skip the SSH wrapper and just run the logic below
+  # When running on VPS, we skip the SSH remote-trigger and proceed to core logic.
 else
-  # 1. Push code to GitHub (Only if not on VPS)
+  # ----------------------------------------------------------------------------
+  # 1.1 LOCAL WRAPPER: Git Push & Remote Trigger
+  # ----------------------------------------------------------------------------
+  # Steps:
+  # a. Commit and Push latest changes to GitHub
+  # b. Execute the same script on VPS via SSH with the --vps-run flag
+  # c. Perform immediate health check
+  
   echo "[Push] Pushing code to GitHub..."
   MSG=${1:-"chore: deployment update $(date +'%Y-%m-%d %H:%M:%S')"}
   git add .
@@ -30,8 +48,10 @@ else
   exit 0
 fi
 
-# THE CORE DEPLOYMENT LOGIC (Runs on VPS)
-# Everything below this line is executed on the VPS environment.
+# ------------------------------------------------------------------------------
+# 2. CORE DEPLOYMENT LOGIC (VPS EXCLUSIVE)
+# ------------------------------------------------------------------------------
+# This block handles the actual container builds and Kubernetes orchestration.
 
 cd /root/uniz-master
 echo "[Git] Fetching latest code..."
@@ -40,7 +60,11 @@ git reset --hard origin/main
   NEW_HEAD=$(git rev-parse HEAD)
   echo "[Git] Latest Commit: $(git log -1 --format='%h - %s')"
 
-  # Force rebuild all if requested
+  # ----------------------------------------------------------------------------
+  # 2.1 FORCE BUILD DETECTION
+  # ----------------------------------------------------------------------------
+  # Allows bypass of diff-based build logic via commit message tags.
+  
   FORCE_ALL=false
   COMMIT_MSG=$(git log -1 --pretty=%B)
   if [[ "$COMMIT_MSG" == *"[rebuild all]"* ]] || [[ "$COMMIT_MSG" == *"[force build]"* ]]; then
@@ -48,7 +72,11 @@ git reset --hard origin/main
     FORCE_ALL=true
   fi
 
-  # Detect changed files relative to last successful build
+  # ----------------------------------------------------------------------------
+  # 2.2 CHANGE DETECTION
+  # ----------------------------------------------------------------------------
+  # Optimizes deployment by only rebuilding modified microservices.
+  
   CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD || git show --name-only --format="")
   
   # Service mapping: "folder_name:image_name:deployment_name:container_name"
@@ -70,7 +98,12 @@ git reset --hard origin/main
     "ornate-core:ornate-core:ornate-core:ornate-core"
   )
 
-  # Prevent kubectl apply from overwriting current images with :local
+  # ----------------------------------------------------------------------------
+  # 2.3 KUSTOMIZE STATE PRESERVATION
+  # ----------------------------------------------------------------------------
+  # Crucial: This prevent K8s from reverting rolling updates of services 
+  # that were NOT rebuilt in this cycle by locking their current image tags.
+  
   echo "[Infra] Preserving current image tags..."
   echo "images:" >> infra/core-infra/kubernetes/base/kustomization.yaml
   for s in "${ALL_SERVICES[@]}"; do
@@ -90,16 +123,18 @@ git reset --hard origin/main
     fi
   done
 
+  # ----------------------------------------------------------------------------
+  # 2.4 SECRET MANAGEMENT & K8S APPLY
+  # ----------------------------------------------------------------------------
+  # Dynamically hydrates secrets.yaml with environment variables from VPS storage.
+
   echo "[K8s] Applying Kubernetes configurations..."
-  # If we have secrets in environment variables (e.g. on VPS), use them to fill the template
   if [ -f "infra/core-infra/kubernetes/base/secrets.yaml.template" ]; then
     echo "[Vault] Generating secrets from template..."
-    # Export all variables from /root/uniz-secrets.env to ensure envsubst sees them
     if [ -f "/root/uniz-secrets.env" ]; then
       while IFS='=' read -r key value || [ -n "$key" ]; do
         [[ "$key" =~ ^#.*$ ]] && continue
         [[ "$key" =~ ^[[:space:]]*$ ]] && continue
-        # Strip quotes if they exist in the value
         value="${value%\"}"
         value="${value#\"}"
         export "$key"="$value"
@@ -109,6 +144,11 @@ git reset --hard origin/main
   fi
   kubectl apply -k infra/core-infra/kubernetes/base/
 
+  # ----------------------------------------------------------------------------
+  # 2.5 BUILD & ROLLOUT ORCHESTRATOR
+  # ----------------------------------------------------------------------------
+  # Iterates through service map, performs parallel-safe builds and triggers rollouts.
+  
   REBUILT_COUNT=0
   declare -A BUILT_IMAGES
 
@@ -163,6 +203,11 @@ git reset --hard origin/main
     fi
   done
 
+  # ----------------------------------------------------------------------------
+  # 2.6 INFRASTRUCTURE CLEANUP & HEALTH
+  # ----------------------------------------------------------------------------
+  # Prunes dangling Docker layers and unused K3s images to prevent disk saturation.
+  
   if [ $REBUILT_COUNT -gt 0 ] || [ "$FORCE_ALL" == "true" ]; then
     echo "[Cleanup] Cleaning up dangling Docker components..."
     docker system prune -f

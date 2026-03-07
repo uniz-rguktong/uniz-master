@@ -1,3 +1,12 @@
+/**
+ * ==============================================================================
+ * UNIZ AUTH SERVICE - BUSINESS LOGIC CONTROLLER
+ * ==============================================================================
+ * Central hub for authentication workflows. Orchestrates credential
+ * verification, multi-channel OTP delivery, and password lifecycle management.
+ * ==============================================================================
+ */
+
 import { Request, Response } from "express";
 import axios from "axios";
 import { prisma } from "../utils/prisma";
@@ -15,6 +24,10 @@ import { ErrorCode } from "../shared/error-codes";
 import { UserRole } from "../shared/roles.enum";
 import { UAParser } from "ua-parser-js";
 import { verifyTurnstileToken } from "../utils/turnstile.util";
+
+// ------------------------------------------------------------------------------
+// 1. PRIMARY AUTHENTICATION FLOWS
+// ------------------------------------------------------------------------------
 
 export const login = async (req: Request, res: Response) => {
   const username = (req.body.username || "").trim(); // Case-insensitive: handled by Prisma mode:"insensitive" below
@@ -146,6 +159,10 @@ export const login = async (req: Request, res: Response) => {
 
 export const studentLogin = login;
 export const adminLogin = login;
+
+// ------------------------------------------------------------------------------
+// 2. MULTI-FACTOR / OTP ORCHESTRATION
+// ------------------------------------------------------------------------------
 
 export const requestOtp = async (req: Request, res: Response) => {
   const username = String(req.body.username || "").toUpperCase();
@@ -333,6 +350,9 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
     });
   }
 };
+// ------------------------------------------------------------------------------
+// 3. SECURE PASSWORD LIFECYCLE MANAGEMENT
+// ------------------------------------------------------------------------------
 
 export const verifyOtp = async (req: Request, res: Response) => {
   const { otp } = req.body;
@@ -534,6 +554,11 @@ export const changePassword = async (
     });
   }
 };
+
+// ------------------------------------------------------------------------------
+// 4. ADMINISTRATIVE & INTERNAL UTILITIES
+// ------------------------------------------------------------------------------
+
 export const toggleSuspension = async (req: Request, res: Response) => {
   const { username, suspended } = req.body;
   // Note: In a real system, the auth middleware would verify the requester is an admin
