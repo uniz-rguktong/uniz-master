@@ -1,3 +1,12 @@
+/**
+ * ==============================================================================
+ * UNIZ PORTAL - UNIFIED AUTHENTICATION INTERFACE
+ * ==============================================================================
+ * Central sign-in orchestration for Students, Faculty, and Admin. Handles
+ * multi-step authentication, OTP delivery channels, and role-based routing.
+ * ==============================================================================
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { Input } from "../../components/Input";
@@ -21,6 +30,7 @@ import {
   ArrowLeft,
   ChevronLeft,
   Chrome,
+  AlertCircle,
 } from "lucide-react";
 import LoginScreen from "../../components/ui/login-1";
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -37,6 +47,10 @@ interface SigninResponse {
   role?: string;
 }
 
+// ------------------------------------------------------------------------------
+// 1. STATE CONFIGURATION & IDENTITY CONTEXT
+// ------------------------------------------------------------------------------
+
 export default function Signin({ type }: SigninProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -51,6 +65,10 @@ export default function Signin({ type }: SigninProps) {
   const setAdmin = useSetRecoilState<any>(adminUsername);
   const setAuth = useSetRecoilState(is_authenticated);
   const navigate = useNavigate();
+
+  // ------------------------------------------------------------------------------
+  // 2. LIFECYCLE & IDENTITY SYNCHRONIZATION
+  // ------------------------------------------------------------------------------
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -80,6 +98,10 @@ export default function Signin({ type }: SigninProps) {
     setStep("signin");
     setIsLoading(false);
   }, [type]);
+
+  // ------------------------------------------------------------------------------
+  // 3. AUTHENTICATION ORCHESTRATORS (LOGIN/OTP/RESET)
+  // ------------------------------------------------------------------------------
 
   const sendDataToBackend = async () => {
     if (username.trim() === "" || password.trim() === "") {
@@ -286,6 +308,10 @@ export default function Signin({ type }: SigninProps) {
     }
   };
 
+  // ------------------------------------------------------------------------------
+  // 4. UI RENDER ENGINE
+  // ------------------------------------------------------------------------------
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (step === "signin") sendDataToBackend();
@@ -376,8 +402,13 @@ export default function Signin({ type }: SigninProps) {
                 </div>
               ) : (
                 import.meta.env.DEV && (
-                  <div className="text-center py-2 text-[10px] text-amber-600 font-medium">
-                    ⚠️ Turnstile Disabled (No Site Key)
+                  <div className="flex justify-center py-2">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 border border-amber-100 rounded-full">
+                      <AlertCircle className="w-3 h-3 text-amber-600" />
+                      <span className="text-[10px] text-amber-700 font-bold tracking-tight uppercase">
+                        Turnstile Bypass (Dev Mode)
+                      </span>
+                    </div>
                   </div>
                 )
               )}

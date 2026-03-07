@@ -1,24 +1,70 @@
 #!/bin/bash
+# ==============================================================================
+# UNIZ INFRASTRUCTURE - AUTOMATED DEPLOYMENT PIPELINE
+# ==============================================================================
+# Author: UNIZ Engineering
+# Description: Handles secure code push, VPS remote trigger, and K8s rollout.
+# Usage: ./scripts/deploy.sh "commit message" [--vps-run]
+# ==============================================================================
 
-# 1. Push code to GitHub
-echo "[Push] Pushing code to GitHub..."
-MSG=${1:-"chore: deployment update $(date +'%Y-%m-%d %H:%M:%S')"}
-git add .
-git commit -m "$MSG" || echo "No changes to commit"
-git push origin main
+# ------------------------------------------------------------------------------
+# 1. EXECUTION CONTEXT DETECTION
+# ------------------------------------------------------------------------------
+# Determines if the script is running on a local developer machine or 
+# directly on the production VPS (hybrid execution).
 
-# 2. Deploy to VPS
-echo "[Deploy] Starting VPS Deployment..."
-ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
-  cd /root/uniz-master
+VPS_RUN=false
+for arg in "$@"; do
+  if [ "$arg" == "--vps-run" ]; then
+    VPS_RUN=true
+    break
+  fi
+done
+
+if [ "$VPS_RUN" == "true" ]; then
+  echo "[Deploy] Detected direct VPS execution..."
+  # When running on VPS, we skip the SSH remote-trigger and proceed to core logic.
+else
+  # ----------------------------------------------------------------------------
+  # 1.1 LOCAL WRAPPER: Git Push & Remote Trigger
+  # ----------------------------------------------------------------------------
+  # Steps:
+  # a. Commit and Push latest changes to GitHub
+  # b. Execute the same script on VPS via SSH with the --vps-run flag
+  # c. Perform immediate health check
   
-  echo "[Git] Fetching latest code..."
-  git fetch origin main
-  git reset --hard origin/main
+  echo "[Push] Pushing code to GitHub..."
+  MSG=${1:-"chore: deployment update $(date +'%Y-%m-%d %H:%M:%S')"}
+  git add .
+  git commit -m "$MSG" || echo "No changes to commit"
+  git push origin main
+
+  echo "[Deploy] Starting VPS Deployment..."
+  ssh -o StrictHostKeyChecking=no root@76.13.241.174 "bash /root/uniz-master/scripts/deploy.sh --vps-run '$MSG'"
+  
+  echo "[Health] Quick check on API health..."
+  curl -s -o /dev/null -w "%{http_code}" https://api.uniz.rguktong.in/api/v1/system/health || true
+  echo -e "\n[Done] Deployment Pipeline Complete!"
+  exit 0
+fi
+
+# ------------------------------------------------------------------------------
+# 2. CORE DEPLOYMENT LOGIC (VPS EXCLUSIVE)
+# ------------------------------------------------------------------------------
+# This block handles the actual container builds and Kubernetes orchestration.
+
+cd /root/uniz-master
+echo "[Git] Fetching latest code..."
+git fetch origin main
+git reset --hard origin/main
   NEW_HEAD=$(git rev-parse HEAD)
   echo "[Git] Latest Commit: $(git log -1 --format='%h - %s')"
 
-  # Force rebuild all if requested
+  # ----------------------------------------------------------------------------
+  # 2.1 FORCE BUILD DETECTION
+  # ----------------------------------------------------------------------------
+  # Allows bypass of diff-based build logic via commit message tags.
+  
   FORCE_ALL=false
   COMMIT_MSG=$(git log -1 --pretty=%B)
   if [[ "$COMMIT_MSG" == *"[rebuild all]"* ]] || [[ "$COMMIT_MSG" == *"[force build]"* ]]; then
@@ -26,7 +72,11 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     FORCE_ALL=true
   fi
 
-  # Detect changed files relative to last successful build
+  # ----------------------------------------------------------------------------
+  # 2.2 CHANGE DETECTION
+  # ----------------------------------------------------------------------------
+  # Optimizes deployment by only rebuilding modified microservices.
+  
   CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD || git show --name-only --format="")
   
   # Service mapping: "folder_name:image_name:deployment_name:container_name"
@@ -48,7 +98,12 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     "ornate-core:ornate-core:ornate-core:ornate-core"
   )
 
-  # Prevent kubectl apply from overwriting current images with :local
+  # ----------------------------------------------------------------------------
+  # 2.3 KUSTOMIZE STATE PRESERVATION
+  # ----------------------------------------------------------------------------
+  # Crucial: This prevent K8s from reverting rolling updates of services 
+  # that were NOT rebuilt in this cycle by locking their current image tags.
+  
   echo "[Infra] Preserving current image tags..."
   echo "images:" >> infra/core-infra/kubernetes/base/kustomization.yaml
   for s in "${ALL_SERVICES[@]}"; do
@@ -68,16 +123,18 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     fi
   done
 
+  # ----------------------------------------------------------------------------
+  # 2.4 SECRET MANAGEMENT & K8S APPLY
+  # ----------------------------------------------------------------------------
+  # Dynamically hydrates secrets.yaml with environment variables from VPS storage.
+
   echo "[K8s] Applying Kubernetes configurations..."
-  # If we have secrets in environment variables (e.g. on VPS), use them to fill the template
   if [ -f "infra/core-infra/kubernetes/base/secrets.yaml.template" ]; then
     echo "[Vault] Generating secrets from template..."
-    # Export all variables from /root/uniz-secrets.env to ensure envsubst sees them
     if [ -f "/root/uniz-secrets.env" ]; then
       while IFS='=' read -r key value || [ -n "$key" ]; do
         [[ "$key" =~ ^#.*$ ]] && continue
         [[ "$key" =~ ^[[:space:]]*$ ]] && continue
-        # Strip quotes if they exist in the value
         value="${value%\"}"
         value="${value#\"}"
         export "$key"="$value"
@@ -87,6 +144,11 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   fi
   kubectl apply -k infra/core-infra/kubernetes/base/
 
+  # ----------------------------------------------------------------------------
+  # 2.5 BUILD & ROLLOUT ORCHESTRATOR
+  # ----------------------------------------------------------------------------
+  # Iterates through service map, performs parallel-safe builds and triggers rollouts.
+  
   REBUILT_COUNT=0
   declare -A BUILT_IMAGES
 
@@ -141,6 +203,11 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     fi
   done
 
+  # ----------------------------------------------------------------------------
+  # 2.6 INFRASTRUCTURE CLEANUP & HEALTH
+  # ----------------------------------------------------------------------------
+  # Prunes dangling Docker layers and unused K3s images to prevent disk saturation.
+  
   if [ $REBUILT_COUNT -gt 0 ] || [ "$FORCE_ALL" == "true" ]; then
     echo "[Cleanup] Cleaning up dangling Docker components..."
     docker system prune -f
@@ -169,7 +236,6 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     sleep 10
   done
   kubectl get pods
-EOF
 
 echo "[Health] Quick check on API health..."
 curl -s -o /dev/null -w "%{http_code}" https://api.uniz.rguktong.in/api/v1/system/health || true

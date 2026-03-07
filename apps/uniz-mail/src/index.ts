@@ -1,8 +1,21 @@
+/**
+ * ==============================================================================
+ * UNIZ MICROSERVICES - NOTIFICATION & EMAIL ENGINE
+ * ==============================================================================
+ * Entry point for the Mail Service. Responsible for SMTP orchestration,
+ * transactional email delivery, and multi-service notification relay.
+ * ==============================================================================
+ */
+
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
 import emailRoutes from "./routes/email.routes";
+
+// ------------------------------------------------------------------------------
+// 1. INITIALIZATION & MIDDLEWARE
+// ------------------------------------------------------------------------------
 
 dotenv.config();
 
@@ -17,11 +30,19 @@ app.use(express.json());
 import { attributionMiddleware } from "./middlewares/attribution.middleware";
 app.use(attributionMiddleware);
 
+// ------------------------------------------------------------------------------
+// 2. ROUTING & GATEWAYS
+// ------------------------------------------------------------------------------
+
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", service: "uniz-mail-service" });
 });
 
 app.use("/", emailRoutes);
+
+// ------------------------------------------------------------------------------
+// 3. ERROR ORCHESTRATION
+// ------------------------------------------------------------------------------
 
 // 404 Handler
 app.use((req, res) => {
@@ -45,11 +66,19 @@ app.use(
   },
 );
 
+// ------------------------------------------------------------------------------
+// 4. SERVER BOOTSTRAP
+// ------------------------------------------------------------------------------
+
 const server = app.listen(PORT, () => {
   console.log(`Mail Service running on port ${PORT}`);
   server.keepAliveTimeout = 65000;
   server.headersTimeout = 66000;
 });
+
+// ------------------------------------------------------------------------------
+// 5. SYSTEM SIGNAL HANDLERS (GRACEFUL TERMINATION)
+// ------------------------------------------------------------------------------
 
 // Graceful Shutdown Handler
 process.on("SIGTERM", async () => {
