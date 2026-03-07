@@ -1,9 +1,9 @@
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 export const metadata = {
-    title: 'Super Admin',
+  title: "Super Admin",
 };
 
 export default function FestSetupPage() {
-    redirect('/super-admin');
+  redirect("/super-admin");
 }

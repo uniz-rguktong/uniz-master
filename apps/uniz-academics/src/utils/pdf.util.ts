@@ -36,14 +36,15 @@ export interface AttendanceData {
   }[];
 }
 
-const LOGO_URL =
-  "https://res.cloudinary.com/dy2fjgt46/image/upload/v1771604895/rguktongole_logo_kbpaui.jpg";
 const CACHE_DIR = path.join(process.cwd(), "cache");
 const CACHE_PATH = path.join(CACHE_DIR, "university_logo.jpg");
 let logoBuffer: Buffer | null = null;
 
 const fetchLogo = async () => {
   if (logoBuffer) return logoBuffer;
+  const logoUrl = process.env.INSTITUTION_LOGO_URL;
+  if (!logoUrl) return null;
+
   try {
     if (fs.existsSync(CACHE_PATH)) {
       logoBuffer = fs.readFileSync(CACHE_PATH);
@@ -54,7 +55,7 @@ const fetchLogo = async () => {
   }
 
   try {
-    const response = await axios.get(LOGO_URL, { responseType: "arraybuffer" });
+    const response = await axios.get(logoUrl, { responseType: "arraybuffer" });
     logoBuffer = Buffer.from(response.data);
     if (!fs.existsSync(CACHE_DIR)) {
       fs.mkdirSync(CACHE_DIR, { recursive: true });

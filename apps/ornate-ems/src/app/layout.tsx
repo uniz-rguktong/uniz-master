@@ -21,8 +21,15 @@ export const metadata: Metadata = {
     template: "%s | Ornate EMS",
     default: "Ornate EMS — Event Management System",
   },
-  description: "Comprehensive multi-portal event management system for institutional event planning, registration, certificates, and analytics.",
-  keywords: ["event management", "registration", "certificates", "dashboard", "university events"],
+  description:
+    "Comprehensive multi-portal event management system for institutional event planning, registration, certificates, and analytics.",
+  keywords: [
+    "event management",
+    "registration",
+    "certificates",
+    "dashboard",
+    "university events",
+  ],
   icons: {
     icon: "/Ornate_LOGO.jpg.jpeg",
     apple: "/Ornate_LOGO.jpg.jpeg",
@@ -32,7 +39,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body

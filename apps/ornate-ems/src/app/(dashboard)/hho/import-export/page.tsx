@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 export default function HHOBulkImportExportPage() {
-    redirect('/hho/all-registrations');
+  redirect("/hho/all-registrations");
 }

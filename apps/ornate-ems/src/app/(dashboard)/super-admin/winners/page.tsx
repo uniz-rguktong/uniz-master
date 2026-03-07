@@ -1,18 +1,20 @@
 // Super-admin winners page: unified event + sport winners
-import { getAllWinners } from '@/actions/superAdminGetters';
-import { getSportWinnerAnnouncements } from '@/actions/sportWinnerActions';
+import { getAllWinners } from "@/actions/superAdminGetters";
+import { getSportWinnerAnnouncements } from "@/actions/sportWinnerActions";
 
 export default async function SuperAdminWinnersPage() {
   // Fetch event winners
   const eventWinners = await getAllWinners();
   // Fetch sport winners
   const sportWinnersResult = await getSportWinnerAnnouncements();
-  const sportWinners = sportWinnersResult?.success ? sportWinnersResult.data : [];
+  const sportWinners = sportWinnersResult?.success
+    ? sportWinnersResult.data
+    : [];
 
   // Normalize and merge
   const allWinners = [
     ...eventWinners.map((w: any) => ({
-      type: 'Event',
+      type: "Event",
       event: w.event,
       branch: w.branch,
       organizer: w.organizer,
@@ -20,19 +22,19 @@ export default async function SuperAdminWinnersPage() {
       winner: w.winner,
       runner: w.runner,
       secondRunner: w.secondRunner,
-      publishedAt: null
+      publishedAt: null,
     })),
     ...sportWinners.map((sw: any) => ({
-      type: 'Sport',
-      event: sw.sport?.name || 'Unknown Sport',
-      branch: sw.sport?.category || 'General',
-      organizer: '',
-      category: sw.sport?.category || 'Sport',
-      winner: sw.positions?.[0]?.teamName || '',
-      runner: sw.positions?.[1]?.teamName || '',
-      secondRunner: sw.positions?.[2]?.teamName || '',
-      publishedAt: sw.publishedAt || null
-    }))
+      type: "Sport",
+      event: sw.sport?.name || "Unknown Sport",
+      branch: sw.sport?.category || "General",
+      organizer: "",
+      category: sw.sport?.category || "Sport",
+      winner: sw.positions?.[0]?.teamName || "",
+      runner: sw.positions?.[1]?.teamName || "",
+      secondRunner: sw.positions?.[2]?.teamName || "",
+      publishedAt: sw.publishedAt || null,
+    })),
   ];
 
   return (
@@ -61,7 +63,11 @@ export default async function SuperAdminWinnersPage() {
               <td>{w.winner}</td>
               <td>{w.runner}</td>
               <td>{w.secondRunner}</td>
-              <td>{w.publishedAt ? new Date(w.publishedAt).toLocaleDateString() : ''}</td>
+              <td>
+                {w.publishedAt
+                  ? new Date(w.publishedAt).toLocaleDateString()
+                  : ""}
+              </td>
             </tr>
           ))}
         </tbody>

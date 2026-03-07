@@ -34,3 +34,7 @@ ehthumbs.db
 
 node_modules
 infra/core-infra/test_output/
+*secrets.env
+*.env
+.env
+secrets.env

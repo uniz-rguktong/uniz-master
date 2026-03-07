@@ -1,9 +1,9 @@
-'use client';
-import { useState, useRef } from 'react';
-import type { ChangeEvent } from 'react';
-import { Upload, X, Image as ImageIcon, File, Plus } from 'lucide-react';
-import Image from 'next/image';
-import { useToast } from '@/hooks/useToast';
+"use client";
+import { useState, useRef } from "react";
+import type { ChangeEvent } from "react";
+import { Upload, X, Image as ImageIcon, File, Plus } from "lucide-react";
+import Image from "next/image";
+import { useToast } from "@/hooks/useToast";
 
 interface EventDocument {
   name: string;
@@ -24,7 +24,9 @@ interface MediaAssetsStepProps {
 
 export function MediaAssetsStep({ data, updateData }: MediaAssetsStepProps) {
   const [poster, setPoster] = useState(data.poster || null);
-  const [documents, setDocuments] = useState<EventDocument[]>(data.documents || []);
+  const [documents, setDocuments] = useState<EventDocument[]>(
+    data.documents || [],
+  );
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const docInputRef = useRef<HTMLInputElement | null>(null);
@@ -35,7 +37,7 @@ export function MediaAssetsStep({ data, updateData }: MediaAssetsStepProps) {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      showToast('File size too large (max 5MB)', 'error');
+      showToast("File size too large (max 5MB)", "error");
       return;
     }
 
@@ -43,16 +45,16 @@ export function MediaAssetsStep({ data, updateData }: MediaAssetsStepProps) {
       name: file.name,
       size: file.size,
       type: file.type,
-      url: URL.createObjectURL(file) // Mock URL
+      url: URL.createObjectURL(file), // Mock URL
     };
 
     const newDocs = [...documents, newDoc];
     setDocuments(newDocs);
     updateData({ documents: newDocs });
-    showToast('Document added successfully', 'success');
+    showToast("Document added successfully", "success");
 
     // Reset input
-    e.target.value = '';
+    e.target.value = "";
   };
 
   const removeDocument = (index: number) => {
@@ -66,7 +68,7 @@ export function MediaAssetsStep({ data, updateData }: MediaAssetsStepProps) {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      showToast('File size too large (max 5MB)', 'error');
+      showToast("File size too large (max 5MB)", "error");
       return;
     }
 
@@ -74,16 +76,16 @@ export function MediaAssetsStep({ data, updateData }: MediaAssetsStepProps) {
     try {
       // Upload via server-side multipart proxy (validates size, type, & magic bytes)
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
+      const response = await fetch("/api/upload", {
+        method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Upload failed');
+        throw new Error(errorData.error || "Upload failed");
       }
 
       const { publicUrl } = await response.json();
@@ -91,12 +93,11 @@ export function MediaAssetsStep({ data, updateData }: MediaAssetsStepProps) {
       // Update State with Public URL
       setPoster(publicUrl);
       updateData({ poster: publicUrl });
-      showToast('Poster uploaded successfully', 'success');
-
+      showToast("Poster uploaded successfully", "success");
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      showToast('Upload failed: ' + message, 'error');
+      const message = error instanceof Error ? error.message : "Unknown error";
+      showToast("Upload failed: " + message, "error");
     } finally {
       setIsUploading(false);
     }
@@ -134,17 +135,20 @@ export function MediaAssetsStep({ data, updateData }: MediaAssetsStepProps) {
                 <Upload className="w-8 h-8 text-[#6B7280]" />
               </div>
               <h3 className="text-sm font-medium text-[#1A1A1A] mb-1">
-                {isUploading ? 'Uploading...' : 'Drag and drop or click to browse'}
+                {isUploading
+                  ? "Uploading..."
+                  : "Drag and drop or click to browse"}
               </h3>
               <p className="text-xs text-[#6B7280] mb-4">
-                Recommended: 1920x1080 px (16:9 ratio) • JPG, PNG, WebP • Max 5MB
+                Recommended: 1920x1080 px (16:9 ratio) • JPG, PNG, WebP • Max
+                5MB
               </p>
               <button
                 type="button"
                 className="px-4 py-2 bg-[#1A1A1A] text-white rounded-lg text-sm font-medium hover:bg-[#2D2D2D] transition-colors"
                 disabled={isUploading}
               >
-                {isUploading ? 'Processing...' : 'Browse Files'}
+                {isUploading ? "Processing..." : "Browse Files"}
               </button>
             </div>
           </div>
@@ -183,11 +187,14 @@ export function MediaAssetsStep({ data, updateData }: MediaAssetsStepProps) {
 
         {/* URL Fallback */}
         <div className="mt-4">
-          <div className="text-xs text-gray-500 mb-1">Or paste a direct image link (Temporary fix until Cloudinary is set up):</div>
+          <div className="text-xs text-gray-500 mb-1">
+            Or paste a direct image link (Temporary fix until Cloudinary is set
+            up):
+          </div>
           <input
             type="text"
             placeholder="https://example.com/image.jpg"
-            value={poster?.startsWith('http') ? poster : ''}
+            value={poster?.startsWith("http") ? poster : ""}
             onChange={(e) => {
               setPoster(e.target.value);
               updateData({ poster: e.target.value });
@@ -213,8 +220,12 @@ export function MediaAssetsStep({ data, updateData }: MediaAssetsStepProps) {
         <div className="border border-[#E5E7EB] rounded-lg p-4 bg-white">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h4 className="text-sm font-medium text-[#1A1A1A]">Upload Documents</h4>
-              <p className="text-xs text-[#6B7280]">Attach rulebooks, schedules, or guidelines (PDF, DOCX)</p>
+              <h4 className="text-sm font-medium text-[#1A1A1A]">
+                Upload Documents
+              </h4>
+              <p className="text-xs text-[#6B7280]">
+                Attach rulebooks, schedules, or guidelines (PDF, DOCX)
+              </p>
             </div>
             <button
               type="button"
@@ -228,24 +239,34 @@ export function MediaAssetsStep({ data, updateData }: MediaAssetsStepProps) {
 
           {documents.length === 0 ? (
             <div className="text-center py-6 border border-dashed border-[#E5E7EB] rounded-lg">
-              <p className="text-xs text-[#6B7280]">No documents uploaded yet.</p>
+              <p className="text-xs text-[#6B7280]">
+                No documents uploaded yet.
+              </p>
             </div>
           ) : (
             <div className="space-y-2">
               {documents.map((doc: any, idx: any) => (
-                <div key={idx} className="flex items-center justify-between p-3 border border-[#E5E7EB] rounded-lg bg-[#F9FAFB]">
+                <div
+                  key={idx}
+                  className="flex items-center justify-between p-3 border border-[#E5E7EB] rounded-lg bg-[#F9FAFB]"
+                >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-white border border-[#E5E7EB] flex items-center justify-center">
                       <File className="w-4 h-4 text-[#6B7280]" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-[#1A1A1A]">{doc.name}</p>
-                      <p className="text-xs text-[#6B7280]">{(doc.size / 1024).toFixed(1)} KB</p>
+                      <p className="text-sm font-medium text-[#1A1A1A]">
+                        {doc.name}
+                      </p>
+                      <p className="text-xs text-[#6B7280]">
+                        {(doc.size / 1024).toFixed(1)} KB
+                      </p>
                     </div>
                   </div>
                   <button
                     onClick={() => removeDocument(idx)}
-                    className="p-1.5 hover:bg-[#FEE2E2] rounded text-[#EF4444] transition-colors">
+                    className="p-1.5 hover:bg-[#FEE2E2] rounded text-[#EF4444] transition-colors"
+                  >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -254,7 +275,6 @@ export function MediaAssetsStep({ data, updateData }: MediaAssetsStepProps) {
           )}
         </div>
       </div>
-
     </div>
   );
 }

@@ -17,8 +17,9 @@ import { adminUsername } from "../../store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../api/endpoints";
-const VITE_CLOUDINARY_CLOUD_NAME = "dy2fjgt46";
-const VITE_CLOUDINARY_UPLOAD_PRESET = "uniz_upload";
+const VITE_CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const VITE_CLOUDINARY_UPLOAD_PRESET = import.meta.env
+  .VITE_CLOUDINARY_UPLOAD_PRESET;
 
 export default function AdminProfile() {
   const username = useRecoilValue(adminUsername);

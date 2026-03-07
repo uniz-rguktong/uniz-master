@@ -121,10 +121,8 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-
-
 @layer base {
-  :where(:not(:has([class*=' text-']), :not(:has([class^='text-'])))) {
+  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
     h1 {
       font-size: var(--text-2xl);
       font-weight: var(--font-weight-medium);
@@ -295,14 +293,16 @@ html {
 }
 
 .skeleton-shimmer {
-  background: linear-gradient(90deg, #F2F1EE 25%, #EDEBE7 50%, #F2F1EE 75%);
+  background: linear-gradient(90deg, #f2f1ee 25%, #edebe7 50%, #f2f1ee 75%);
   background-size: 200% 100%;
   animation: shimmer 1.2s infinite linear;
 }
 
 /* Hover Animations */
 .hover-card-effect {
-  transition: transform 160ms ease-out, box-shadow 160ms ease-out;
+  transition:
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out;
 }
 
 .hover-card-effect:hover {
@@ -311,11 +311,14 @@ html {
 }
 
 .row-hover-effect {
-  transition: background-color 120ms ease-out, transform 160ms ease-out, box-shadow 160ms ease-out;
+  transition:
+    background-color 120ms ease-out,
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out;
 }
 
 .row-hover-effect:hover {
-  background-color: #FAFAFA !important;
+  background-color: #fafafa !important;
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   z-index: 1;
@@ -324,7 +327,10 @@ html {
 
 /* Button Micro-interactions */
 .btn-interaction {
-  transition: background-color 140ms ease-out, transform 80ms ease-out, box-shadow 120ms ease-out;
+  transition:
+    background-color 140ms ease-out,
+    transform 80ms ease-out,
+    box-shadow 120ms ease-out;
 }
 
 .btn-interaction:active {
@@ -386,10 +392,10 @@ html {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #E5E7EB;
+  background: #e5e7eb;
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #D1D5DB;
+  background: #d1d5db;
 }

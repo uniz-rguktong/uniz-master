@@ -1,9 +1,9 @@
-'use client';
-import { createPortal } from 'react-dom';
-import { useState, useEffect } from 'react';
-import { X, Download, Trash2, Eye, Check } from 'lucide-react';
-import Image from 'next/image';
-import { PhotoDetailModal } from './PhotoDetailModal';
+"use client";
+import { createPortal } from "react-dom";
+import { useState, useEffect } from "react";
+import { X, Download, Trash2, Eye, Check } from "lucide-react";
+import Image from "next/image";
+import { PhotoDetailModal } from "./PhotoDetailModal";
 
 interface GalleryCategory {
   id: string;
@@ -25,7 +25,10 @@ interface ViewGalleryModalProps {
   isReadOnly?: boolean;
   onDeletePhotos: (photoIds: string[]) => void | Promise<void>;
   confirmDeletePhotos?: (count: number) => boolean | Promise<boolean>;
-  onUpdatePhoto?: (photoId: string, payload: { caption?: string }) => void | Promise<void>;
+  onUpdatePhoto?: (
+    photoId: string,
+    payload: { caption?: string },
+  ) => void | Promise<void>;
   onReplacePhoto?: (photoId: string, file: File) => void | Promise<void>;
   onDownloadPhoto?: (photo: GalleryPhoto) => void | Promise<void>;
   openPreviewOnImageClick?: boolean;
@@ -34,8 +37,8 @@ interface ViewGalleryModalProps {
 
 const isUnsupportedImage = (url?: string) => {
   if (!url) return false;
-  const ext = url.split('?')[0]?.split('.').pop()?.toLowerCase();
-  return ext === 'heic' || ext === 'heif';
+  const ext = url.split("?")[0]?.split(".").pop()?.toLowerCase();
+  return ext === "heic" || ext === "heif";
 };
 
 export function ViewGalleryModal({
@@ -48,7 +51,7 @@ export function ViewGalleryModal({
   onReplacePhoto,
   onDownloadPhoto,
   openPreviewOnImageClick = false,
-  onClose
+  onClose,
 }: ViewGalleryModalProps) {
   const [selectedPhotos, setSelectedPhotos] = useState<Set<string>>(new Set());
   const [previewPhoto, setPreviewPhoto] = useState<GalleryPhoto | null>(null);
@@ -56,9 +59,9 @@ export function ViewGalleryModal({
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, []);
 
@@ -87,7 +90,9 @@ export function ViewGalleryModal({
 
     const confirmed = confirmDeletePhotos
       ? await confirmDeletePhotos(selectedPhotos.size)
-      : confirm(`Are you sure you want to delete ${selectedPhotos.size} photo(s)?`);
+      : confirm(
+          `Are you sure you want to delete ${selectedPhotos.size} photo(s)?`,
+        );
 
     if (!confirmed) return;
     await onDeletePhotos(Array.from(selectedPhotos));
@@ -103,14 +108,16 @@ export function ViewGalleryModal({
     const photoUrl = photo.url || photo.thumbnail;
     if (!photoUrl) return;
 
-    const originalName = photo.filename || photo.name || 'photo';
+    const originalName = photo.filename || photo.name || "photo";
     const extensionMatch = photoUrl.match(/\.([a-zA-Z0-9]+)(?:\?|$)/);
-    const extension = extensionMatch?.[1]?.toLowerCase() || 'jpg';
-    const filename = originalName.includes('.') ? originalName : `${originalName}.${extension}`;
-    const safeFilename = filename.replace(/\s+/g, '_');
+    const extension = extensionMatch?.[1]?.toLowerCase() || "jpg";
+    const filename = originalName.includes(".")
+      ? originalName
+      : `${originalName}.${extension}`;
+    const safeFilename = filename.replace(/\s+/g, "_");
     const downloadUrl = `/api/branding/download?url=${encodeURIComponent(photoUrl)}&filename=${encodeURIComponent(safeFilename)}`;
 
-    const anchor = document.createElement('a');
+    const anchor = document.createElement("a");
     anchor.href = downloadUrl;
     anchor.download = safeFilename;
     document.body.appendChild(anchor);
@@ -134,10 +141,15 @@ export function ViewGalleryModal({
       <div className="bg-[#F4F2F0] rounded-[18px] p-[10px] w-full max-w-6xl max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between px-[12px] pt-[10px] pb-[16px]">
           <div>
-            <h2 className="text-[18px] font-semibold text-[#1A1A1A] mb-1">{category?.name || 'Album'}</h2>
+            <h2 className="text-[18px] font-semibold text-[#1A1A1A] mb-1">
+              {category?.name || "Album"}
+            </h2>
             <p className="text-sm text-[#6B7280]">{photos.length} photos</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-[#E5E7EB] rounded-lg transition-colors">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-[#E5E7EB] rounded-lg transition-colors"
+          >
             <X className="w-5 h-5 text-[#6B7280]" />
           </button>
         </div>
@@ -149,9 +161,15 @@ export function ViewGalleryModal({
                 onClick={selectAll}
                 className="px-3 py-2 text-sm font-medium text-[#1A1A1A] bg-white border border-[#E5E7EB] rounded-lg hover:bg-[#F7F8FA] transition-colors"
               >
-                {selectedPhotos.size === photos.length && photos.length > 0 ? 'Deselect All' : 'Select All'}
+                {selectedPhotos.size === photos.length && photos.length > 0
+                  ? "Deselect All"
+                  : "Select All"}
               </button>
-              {selectedPhotos.size > 0 && <span className="text-sm text-[#6B7280]">{selectedPhotos.size} selected</span>}
+              {selectedPhotos.size > 0 && (
+                <span className="text-sm text-[#6B7280]">
+                  {selectedPhotos.size} selected
+                </span>
+              )}
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -184,8 +202,12 @@ export function ViewGalleryModal({
                 <div className="w-16 h-16 bg-[#F7F8FA] rounded-full flex items-center justify-center mb-4">
                   <ImageIcon className="w-8 h-8 text-[#9CA3AF]" />
                 </div>
-                <h3 className="text-lg font-medium text-[#1A1A1A]">No photos in this album</h3>
-                <p className="text-sm text-[#6B7280]">Use the upload button in the main gallery to add photos.</p>
+                <h3 className="text-lg font-medium text-[#1A1A1A]">
+                  No photos in this album
+                </h3>
+                <p className="text-sm text-[#6B7280]">
+                  Use the upload button in the main gallery to add photos.
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -202,21 +224,28 @@ export function ViewGalleryModal({
                     }}
                   >
                     <div
-                      className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedPhotos.has(photo.id)
-                        ? 'border-[#10B981] ring-2 ring-[#10B981]'
-                        : 'border-transparent hover:border-[#E5E7EB]'
-                        }`}
+                      className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                        selectedPhotos.has(photo.id)
+                          ? "border-[#10B981] ring-2 ring-[#10B981]"
+                          : "border-transparent hover:border-[#E5E7EB]"
+                      }`}
                     >
-                      {isUnsupportedImage(photo.url || photo.thumbnail || '') ? (
+                      {isUnsupportedImage(
+                        photo.url || photo.thumbnail || "",
+                      ) ? (
                         <div className="absolute inset-0 bg-[#F7F8FA] flex flex-col items-center justify-center p-4 text-center">
                           <ImageIcon className="w-10 h-10 text-[#9CA3AF] mb-2" />
-                          <span className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">HEIC Image</span>
-                          <span className="text-[9px] text-[#9CA3AF] mt-1 px-2">Preview not available in this browser</span>
+                          <span className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">
+                            HEIC Image
+                          </span>
+                          <span className="text-[9px] text-[#9CA3AF] mt-1 px-2">
+                            Preview not available in this browser
+                          </span>
                         </div>
                       ) : (
                         <Image
-                          src={photo.url || photo.thumbnail || ''}
-                          alt={photo.filename || photo.name || 'Gallery Image'}
+                          src={photo.url || photo.thumbnail || ""}
+                          alt={photo.filename || photo.name || "Gallery Image"}
                           width={400}
                           height={400}
                           unoptimized
@@ -257,10 +286,11 @@ export function ViewGalleryModal({
                             e.stopPropagation();
                             togglePhotoSelection(photo.id);
                           }}
-                          className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all cursor-pointer ${selectedPhotos.has(photo.id)
-                            ? 'bg-[#10B981] border-[#10B981] shadow-lg scale-110'
-                            : 'bg-white/80 border-white backdrop-blur-sm opacity-0 group-hover:opacity-100'
-                            }`}
+                          className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all cursor-pointer ${
+                            selectedPhotos.has(photo.id)
+                              ? "bg-[#10B981] border-[#10B981] shadow-lg scale-110"
+                              : "bg-white/80 border-white backdrop-blur-sm opacity-0 group-hover:opacity-100"
+                          }`}
                         >
                           {selectedPhotos.has(photo.id) && (
                             <Check className="w-4 h-4 text-white" />
@@ -270,8 +300,10 @@ export function ViewGalleryModal({
                     </div>
 
                     <div className="mt-2 text-xs text-[#6B7280]">
-                      <div className="font-medium text-[#1A1A1A] truncate">{photo.filename || photo.name}</div>
-                      <div>{photo.size || 'Original'}</div>
+                      <div className="font-medium text-[#1A1A1A] truncate">
+                        {photo.filename || photo.name}
+                      </div>
+                      <div>{photo.size || "Original"}</div>
                     </div>
                   </div>
                 ))}
@@ -290,17 +322,22 @@ export function ViewGalleryModal({
           onDownloadImage={triggerPhotoDownload}
           onDeleteImage={(photoId) => onDeletePhotos([photoId])}
           {...(onReplacePhoto ? { onReplaceImage: onReplacePhoto } : {})}
-          {...(confirmDeletePhotos ? { confirmDelete: () => confirmDeletePhotos(1) } : {})}
+          {...(confirmDeletePhotos
+            ? { confirmDelete: () => confirmDeletePhotos(1) }
+            : {})}
           {...(onUpdatePhoto ? { onSaveChanges: onUpdatePhoto } : {})}
           onClose={() => setPreviewPhoto(null)}
           onNavigate={(direction) => {
             if (!photos || photos.length <= 1) return;
-            const currentIndex = photos.findIndex((p) => p.id === activePreviewPhoto.id);
+            const currentIndex = photos.findIndex(
+              (p) => p.id === activePreviewPhoto.id,
+            );
             if (currentIndex === -1) return;
 
-            const newIndex = direction === 'next'
-              ? (currentIndex + 1) % photos.length
-              : (currentIndex - 1 + photos.length) % photos.length;
+            const newIndex =
+              direction === "next"
+                ? (currentIndex + 1) % photos.length
+                : (currentIndex - 1 + photos.length) % photos.length;
             const targetPhoto = photos[newIndex];
             if (targetPhoto) {
               setPreviewPhoto(targetPhoto);
@@ -309,7 +346,7 @@ export function ViewGalleryModal({
         />
       )}
     </div>,
-    document.body
+    document.body,
   );
 }
 

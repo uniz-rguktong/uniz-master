@@ -1,5 +1,5 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
 import {
   Mail,
   Lock,
@@ -13,15 +13,15 @@ import {
   Zap,
   Wrench,
   Settings,
-  BookOpen
-} from 'lucide-react';
+  BookOpen,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+  SelectValue,
+} from "@/components/ui/select";
 
 interface LoginUser {
   role: string;
@@ -37,35 +37,43 @@ interface LoginPageProps {
 export function LoginPage({ onLogin }: LoginPageProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState('cse');
-  const [selectedClub, setSelectedClub] = useState('club1');
-  const [dashboardType, setDashboardType] = useState('');
+  const [selectedBranch, setSelectedBranch] = useState("cse");
+  const [selectedClub, setSelectedClub] = useState("club1");
+  const [dashboardType, setDashboardType] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const branches = [
-    { id: 'cse', name: 'Computer Science' },
-    { id: 'ece', name: 'Electronics & Comm.' },
-    { id: 'eee', name: 'Electrical & Electronics' },
-    { id: 'mech', name: 'Mechanical' },
-    { id: 'civil', name: 'Civil Engineering' },
+    { id: "cse", name: "Computer Science" },
+    { id: "ece", name: "Electronics & Comm." },
+    { id: "eee", name: "Electrical & Electronics" },
+    { id: "mech", name: "Mechanical" },
+    { id: "civil", name: "Civil Engineering" },
   ];
 
   const clubs = Array.from({ length: 8 }, (_, i) => ({
     id: `club${i + 1}`,
-    name: `Club ${i + 1}`
+    name: `Club ${i + 1}`,
   }));
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
   // Demo credentials mapping for "Sign In" simulation
   const demoUsers = {
-    'cse@admin.com': { role: 'branch', branch: 'cse', name: 'CSE Admin' },
-    'ece@admin.com': { role: 'branch', branch: 'ece', name: 'ECE Admin' },
-    'eee@admin.com': { role: 'branch', branch: 'eee', name: 'EEE Admin' },
-    'mech@admin.com': { role: 'branch', branch: 'mech', name: 'Mechanical Admin' },
-    'civil@admin.com': { role: 'branch', branch: 'civil', name: 'Civil Admin' },
-    'club@admin.com': { role: 'club', branch: null, name: 'Club Coordinator' },
-    'super@admin.com': { role: 'super_admin', branch: null, name: 'Super Admin' },
+    "cse@admin.com": { role: "branch", branch: "cse", name: "CSE Admin" },
+    "ece@admin.com": { role: "branch", branch: "ece", name: "ECE Admin" },
+    "eee@admin.com": { role: "branch", branch: "eee", name: "EEE Admin" },
+    "mech@admin.com": {
+      role: "branch",
+      branch: "mech",
+      name: "Mechanical Admin",
+    },
+    "civil@admin.com": { role: "branch", branch: "civil", name: "Civil Admin" },
+    "club@admin.com": { role: "club", branch: null, name: "Club Coordinator" },
+    "super@admin.com": {
+      role: "super_admin",
+      branch: null,
+      name: "Super Admin",
+    },
   };
 
   const handleSubmit = (e: any) => {
@@ -79,17 +87,20 @@ export function LoginPage({ onLogin }: LoginPageProps) {
       // REGISTER MODE: Use selected dropdown values
       userData = {
         role: dashboardType,
-        branch: dashboardType === 'branch' ? selectedBranch : null,
-        clubId: dashboardType === 'club' ? selectedClub : null,
-        name: dashboardType === 'branch' ? branches.find(b => b.id === selectedBranch)?.name + ' Admin' : 'New User'
+        branch: dashboardType === "branch" ? selectedBranch : null,
+        clubId: dashboardType === "club" ? selectedClub : null,
+        name:
+          dashboardType === "branch"
+            ? branches.find((b) => b.id === selectedBranch)?.name + " Admin"
+            : "New User",
       };
     } else {
       // SIGN IN MODE: specific demo emails or default
       const demoUser = (demoUsers as any)[email.toLowerCase()];
       userData = demoUser || {
-        role: 'branch',
-        branch: 'cse', // Default fallback
-        name: 'Demo Admin'
+        role: "branch",
+        branch: "cse", // Default fallback
+        name: "Demo Admin",
       };
     }
 
@@ -105,13 +116,14 @@ export function LoginPage({ onLogin }: LoginPageProps) {
       {/* Auth Form */}
       <div className="w-full max-w-md relative z-10">
         <div className="w-full max-w-md space-y-8 bg-white p-8 md:p-10 rounded-[32px] shadow-2xl shadow-gray-200/50 border border-gray-100">
-
           <div className="text-center space-y-2">
             <h2 className="text-3xl font-bold text-[#1A1A1A] tracking-tight">
-              {isLogin ? 'Welcome Back' : 'Create Account'}
+              {isLogin ? "Welcome Back" : "Create Account"}
             </h2>
             <p className="text-[#6B7280]">
-              {isLogin ? 'Enter your credentials to access your account' : 'Select your access level to join the portal'}
+              {isLogin
+                ? "Enter your credentials to access your account"
+                : "Select your access level to join the portal"}
             </p>
           </div>
 
@@ -119,27 +131,37 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           <div className="flex p-1 bg-[#F4F4F5] rounded-xl">
             <button
               onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${isLogin ? 'bg-white text-[#1A1A1A] shadow-sm' : 'text-[#6B7280] hover:text-[#1A1A1A]'
-                }`}
+              className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
+                isLogin
+                  ? "bg-white text-[#1A1A1A] shadow-sm"
+                  : "text-[#6B7280] hover:text-[#1A1A1A]"
+              }`}
             >
               Sign In
             </button>
             <button
               onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${!isLogin ? 'bg-white text-[#1A1A1A] shadow-sm' : 'text-[#6B7280] hover:text-[#1A1A1A]'
-                }`}
+              className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
+                !isLogin
+                  ? "bg-white text-[#1A1A1A] shadow-sm"
+                  : "text-[#6B7280] hover:text-[#1A1A1A]"
+              }`}
             >
               Register
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-
             {!isLogin && (
               <div className="space-y-5 animate-fade-in">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-[#1A1A1A]">Select Role</label>
-                  <Select value={dashboardType} onValueChange={setDashboardType}>
+                  <label className="text-sm font-medium text-[#1A1A1A]">
+                    Select Role
+                  </label>
+                  <Select
+                    value={dashboardType}
+                    onValueChange={setDashboardType}
+                  >
                     <SelectTrigger className="w-full h-12 bg-white border border-[#E5E7EB] rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981]">
                       <SelectValue placeholder="Select Role" />
                     </SelectTrigger>
@@ -154,15 +176,20 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                 </div>
 
                 {/* Branch Selection (Dropdown) */}
-                {dashboardType === 'branch' && (
+                {dashboardType === "branch" && (
                   <div className="space-y-2 animate-fade-in">
-                    <label className="text-sm font-medium text-[#1A1A1A]">Select Department</label>
-                    <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+                    <label className="text-sm font-medium text-[#1A1A1A]">
+                      Select Department
+                    </label>
+                    <Select
+                      value={selectedBranch}
+                      onValueChange={setSelectedBranch}
+                    >
                       <SelectTrigger className="w-full h-12 bg-white border border-[#E5E7EB] rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981]">
                         <SelectValue placeholder="Select Department" />
                       </SelectTrigger>
                       <SelectContent>
-                        {branches.map(branch => (
+                        {branches.map((branch) => (
                           <SelectItem key={branch.id} value={branch.id}>
                             {branch.name}
                           </SelectItem>
@@ -173,15 +200,20 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                 )}
 
                 {/* Club Selection (Dropdown) */}
-                {dashboardType === 'club' && (
+                {dashboardType === "club" && (
                   <div className="space-y-2 animate-fade-in">
-                    <label className="text-sm font-medium text-[#1A1A1A]">Select Club</label>
-                    <Select value={selectedClub} onValueChange={setSelectedClub}>
+                    <label className="text-sm font-medium text-[#1A1A1A]">
+                      Select Club
+                    </label>
+                    <Select
+                      value={selectedClub}
+                      onValueChange={setSelectedClub}
+                    >
                       <SelectTrigger className="w-full h-12 bg-white border border-[#E5E7EB] rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981]">
                         <SelectValue placeholder="Select Club" />
                       </SelectTrigger>
                       <SelectContent>
-                        {clubs.map(club => (
+                        {clubs.map((club) => (
                           <SelectItem key={club.id} value={club.id}>
                             {club.name}
                           </SelectItem>
@@ -195,7 +227,9 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
             <div className="space-y-5">
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-[#1A1A1A]">Email Address</label>
+                <label className="text-sm font-medium text-[#1A1A1A]">
+                  Email Address
+                </label>
                 <div className="relative group">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9CA3AF] group-focus-within:text-[#10B981] transition-colors" />
                   <input
@@ -211,9 +245,16 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-[#1A1A1A]">Password</label>
+                  <label className="text-sm font-medium text-[#1A1A1A]">
+                    Password
+                  </label>
                   {isLogin && (
-                    <a href="#" className="text-xs font-bold text-[#10B981] hover:underline">Forgot password?</a>
+                    <a
+                      href="#"
+                      className="text-xs font-bold text-[#10B981] hover:underline"
+                    >
+                      Forgot password?
+                    </a>
                   )}
                 </div>
                 <div className="relative group">
@@ -229,7 +270,11 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#1A1A1A] transition-colors"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -244,14 +289,12 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                 <>Loading...</>
               ) : (
                 <>
-                  {isLogin ? 'Sign In' : 'Create Account'}
+                  {isLogin ? "Sign In" : "Create Account"}
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </>
               )}
             </button>
           </form>
-
-
         </div>
       </div>
     </div>

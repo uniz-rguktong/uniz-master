@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { EventCalendar } from '@/components/shared/EventCalendar';
-import { Modal } from '@/components/Modal';
-import { deleteSport } from '@/actions/sportActions';
-import { getSportsCalendarEvents } from '@/actions/sportGetters';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { EventCalendar } from "@/components/shared/EventCalendar";
+import { Modal } from "@/components/Modal";
+import { deleteSport } from "@/actions/sportActions";
+import { getSportsCalendarEvents } from "@/actions/sportGetters";
 import {
   Select,
   SelectContent,
@@ -13,34 +13,61 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from '@/hooks/useToast';
-import { ConfirmDialog } from '@/components/ConfirmDialog'; // Added import
+import { useToast } from "@/hooks/useToast";
+import { ConfirmDialog } from "@/components/ConfirmDialog"; // Added import
 
 export function EventCalendarPage() {
   const router = useRouter();
   const { showToast } = useToast();
   const [showAddEventModal, setShowAddEventModal] = useState(false);
-  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; id: string | null }>({ isOpen: false, id: null }); // Added state
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    id: string | null;
+  }>({ isOpen: false, id: null }); // Added state
 
   // Add Event State
   const [newEvent, setNewEvent] = useState<any>({
-    title: '',
-    date: '',
-    time: '',
-    category: 'Workshops',
-    venue: '',
-    capacity: 100
+    title: "",
+    date: "",
+    time: "",
+    category: "Workshops",
+    venue: "",
+    capacity: 100,
   });
 
-  const categories = ['Workshops', 'Technical', 'Non-Technical', 'Cultural', 'Sports', 'Seminars']; // Should ideally come from DB or constants
-  const venues = ['Main Auditorium', 'Seminar Hall 1', 'Seminar Hall 2', 'Ground', 'Indoor Stadium', 'Online'];
+  const categories = [
+    "Workshops",
+    "Technical",
+    "Non-Technical",
+    "Cultural",
+    "Sports",
+    "Seminars",
+  ]; // Should ideally come from DB or constants
+  const venues = [
+    "Main Auditorium",
+    "Seminar Hall 1",
+    "Seminar Hall 2",
+    "Ground",
+    "Indoor Stadium",
+    "Online",
+  ];
 
   const handleAddEvent = () => {
     // This is a mock implementation as seen in the original file
     // Ideally this should call an API action
-    showToast('Event creation is not fully implemented in this prototype', 'info');
+    showToast(
+      "Event creation is not fully implemented in this prototype",
+      "info",
+    );
     setShowAddEventModal(false);
-    setNewEvent({ title: '', date: '', time: '', category: 'Workshops', venue: '', capacity: 100 });
+    setNewEvent({
+      title: "",
+      date: "",
+      time: "",
+      category: "Workshops",
+      venue: "",
+      capacity: 100,
+    });
   };
 
   // Modified handleDeleteEvent to open the confirmation dialog
@@ -60,7 +87,7 @@ export function EventCalendarPage() {
     try {
       const result = await deleteSport(eventIdToDelete);
       if (result.success) {
-        showToast('Event deleted successfully', 'success');
+        showToast("Event deleted successfully", "success");
         // The calendar component fetches events, so we might need to trigger a refetch
         // But since fetchEvents is a prop, we can't easily trigger it from outside unless we lift state.
         // However, the unified component handles internal state.
@@ -68,11 +95,11 @@ export function EventCalendarPage() {
         // For now, reload window or router refresh
         location.reload();
       } else {
-        showToast(result.error || 'Failed to delete event', 'error');
+        showToast(result.error || "Failed to delete event", "error");
       }
     } catch (error) {
-      console.error('Error deleting event:', error);
-      showToast('Failed to delete event', 'error');
+      console.error("Error deleting event:", error);
+      showToast("Failed to delete event", "error");
     }
   };
 
@@ -91,7 +118,7 @@ export function EventCalendarPage() {
           showFilters: true,
           onAddEvent: () => setShowAddEventModal(true),
           onEditEvent: handleEditEvent,
-          onDeleteEvent: handleDeleteEvent
+          onDeleteEvent: handleDeleteEvent,
         }}
       />
 
@@ -102,67 +129,96 @@ export function EventCalendarPage() {
         title="Add New Event"
         onConfirm={handleAddEvent}
         confirmText="Add Event"
-        confirmButtonClass="bg-[#10B981] hover:bg-[#059669]">
-
+        confirmButtonClass="bg-[#10B981] hover:bg-[#059669]"
+      >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Event Title</label>
+            <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+              Event Title
+            </label>
             <input
               type="text"
               value={newEvent.title}
-              onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, title: e.target.value })
+              }
               className="w-full px-4 py-2 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
-              placeholder="Enter event title" />
+              placeholder="Enter event title"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Date</label>
+              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                Date
+              </label>
               <input
                 type="date"
                 value={newEvent.date}
-                onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
-                className="w-full px-4 py-2 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, date: e.target.value })
+                }
+                className="w-full px-4 py-2 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+              />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Time</label>
+              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                Time
+              </label>
               <input
                 type="text"
                 value={newEvent.time}
-                onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, time: e.target.value })
+                }
                 className="w-full px-4 py-2 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
-                placeholder="e.g. 10:00 AM - 12:00 PM" />
+                placeholder="e.g. 10:00 AM - 12:00 PM"
+              />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Category</label>
+              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                Category
+              </label>
               <Select
                 value={newEvent.category}
-                onValueChange={(value) => setNewEvent({ ...newEvent, category: value })}>
+                onValueChange={(value) =>
+                  setNewEvent({ ...newEvent, category: value })
+                }
+              >
                 <SelectTrigger className="w-full h-[38px] bg-white border border-[#E5E7EB] rounded-lg text-sm focus:ring-2 focus:ring-[#10B981]">
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
-                  {categories.map((c: any) =>
-                    <SelectItem key={c} value={c} className="cursor-pointer">{c}</SelectItem>
-                  )}
+                  {categories.map((c: any) => (
+                    <SelectItem key={c} value={c} className="cursor-pointer">
+                      {c}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Venue</label>
+              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                Venue
+              </label>
               <Select
                 value={newEvent.venue}
-                onValueChange={(value) => setNewEvent({ ...newEvent, venue: value })}>
+                onValueChange={(value) =>
+                  setNewEvent({ ...newEvent, venue: value })
+                }
+              >
                 <SelectTrigger className="w-full h-[38px] bg-white border border-[#E5E7EB] rounded-lg text-sm focus:ring-2 focus:ring-[#10B981]">
                   <SelectValue placeholder="Select Venue" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
-                  {venues.map((v: any) =>
-                    <SelectItem key={v} value={v} className="cursor-pointer">{v}</SelectItem>
-                  )}
+                  {venues.map((v: any) => (
+                    <SelectItem key={v} value={v} className="cursor-pointer">
+                      {v}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

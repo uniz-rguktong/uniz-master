@@ -330,11 +330,13 @@ export const uploadStudents = async (req: any, res: Response) => {
         const FormData = require("form-data");
         const form = new FormData();
         form.append("file", req.file.buffer, req.file.originalname);
-        form.append("upload_preset", "uniz_upload");
+        const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+        form.append("upload_preset", uploadPreset);
 
         // Use the Cloudinary REST API matching the frontend
         const resUpload = await axios.post(
-          "https://api.cloudinary.com/v1_1/dy2fjgt46/raw/upload",
+          `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
           form,
           { headers: form.getHeaders() },
         );

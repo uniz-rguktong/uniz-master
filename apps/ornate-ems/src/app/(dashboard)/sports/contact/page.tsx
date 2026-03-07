@@ -1,5 +1,5 @@
-import { ContactUsPage } from '@/components/features/sports/views/ContactUsPage';
+import { ContactUsPage } from "@/components/features/sports/views/ContactUsPage";
 
 export default function Page() {
-    return <ContactUsPage />;
+  return <ContactUsPage />;
 }

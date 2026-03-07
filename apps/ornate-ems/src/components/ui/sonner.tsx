@@ -3,16 +3,16 @@
 import { useTheme } from "next-themes";
 import { Toaster as Sonner } from "sonner";
 
-import { CheckCircle2, XCircle, AlertTriangle, Info } from 'lucide-react';
+import { CheckCircle2, XCircle, AlertTriangle, Info } from "lucide-react";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
   const toasterTheme: ToasterProps["theme"] =
-  theme === "light" || theme === "dark" || theme === "system" ?
-  theme :
-  "system";
+    theme === "light" || theme === "dark" || theme === "system"
+      ? theme
+      : "system";
 
   return (
     <Sonner
@@ -25,7 +25,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
         classNames: {
           toast:
             "group toast group-[.toaster]:bg-white group-[.toaster]:text-[#1A1A1A] group-[.toaster]:border-[#E5E7EB] group-[.toaster]:shadow-[0_8px_30px_rgb(0,0,0,0.08)] group-[.toaster]:rounded-[10px] group-[.toaster]:py-3 group-[.toaster]:pl-4 group-[.toaster]:pr-10 group-[.toaster]:gap-4 group-[.toaster]:min-w-[320px] group-[.toaster]:flex group-[.toaster]:items-center",
-          title: "group-[.toast]:text-[14px] group-[.toast]:font-medium group-[.toast]:text-[#1A1A1A]",
+          title:
+            "group-[.toast]:text-[14px] group-[.toast]:font-medium group-[.toast]:text-[#1A1A1A]",
           description: "group-[.toast]:text-muted-foreground",
           actionButton:
             "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",

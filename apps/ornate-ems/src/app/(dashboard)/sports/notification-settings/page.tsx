@@ -1,5 +1,5 @@
-import { NotificationSettingsPage } from '@/components/features/sports/views/NotificationSettingsPage';
+import { NotificationSettingsPage } from "@/components/features/sports/views/NotificationSettingsPage";
 
 export default function Page() {
-    return <NotificationSettingsPage />;
+  return <NotificationSettingsPage />;
 }

@@ -1,12 +1,12 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { Star, Award, Plus, CheckCircle, Users, UserPlus } from 'lucide-react';
-import Image from 'next/image';
-import { Modal } from '@/components/Modal';
-import { ActionMenu } from '@/components/ActionMenu';
-import { useToast } from '@/hooks/useToast';
-import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { Skeleton } from '@/components/ui/skeleton';
+"use client";
+import { useState, useEffect } from "react";
+import { Star, Award, Plus, CheckCircle, Users, UserPlus } from "lucide-react";
+import Image from "next/image";
+import { Modal } from "@/components/Modal";
+import { ActionMenu } from "@/components/ActionMenu";
+import { useToast } from "@/hooks/useToast";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -19,150 +19,162 @@ import {
 const initialStudents = [
   {
     id: 1,
-    name: 'Ryan Korsgaard',
-    rollNumber: 'CS2021001',
-    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop',
-    branch: 'CSE',
-    year: 'IV',
+    name: "Ryan Korsgaard",
+    rollNumber: "CS2021001",
+    photo:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop",
+    branch: "CSE",
+    year: "IV",
     cgpa: 9.8,
     achievements: [
-      'Winner - Hackathon 2024',
-      'Best Project Award',
-      'Research Paper Published',
-      '5 Certifications Completed'],
+      "Winner - Hackathon 2024",
+      "Best Project Award",
+      "Research Paper Published",
+      "5 Certifications Completed",
+    ],
 
     eventsParticipated: 12,
     eventsWon: 5,
-    placementStatus: 'Placed - Google',
-    package: '₹45 LPA',
-    gender: 'male',
+    placementStatus: "Placed - Google",
+    package: "₹45 LPA",
+    gender: "male",
     awardYear: 2025,
     isPublished: true,
-    publishedDate: '2025-11-01T10:00:00'
+    publishedDate: "2025-11-01T10:00:00",
   },
   {
     id: 2,
-    name: 'Madelyn Lubin',
-    rollNumber: 'CS2021045',
-    photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop',
-    branch: 'CSE',
-    year: 'IV',
+    name: "Madelyn Lubin",
+    rollNumber: "CS2021045",
+    photo:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop",
+    branch: "CSE",
+    year: "IV",
     cgpa: 9.6,
     achievements: [
-      'Most Active in Tech Fests',
-      'Event Coordinator - 3 Events',
-      'Internship at Microsoft',
-      'Startup Founder'],
+      "Most Active in Tech Fests",
+      "Event Coordinator - 3 Events",
+      "Internship at Microsoft",
+      "Startup Founder",
+    ],
 
     eventsParticipated: 18,
     eventsWon: 7,
-    placementStatus: 'Placed - Microsoft',
-    package: '₹38 LPA',
-    gender: 'female',
+    placementStatus: "Placed - Microsoft",
+    package: "₹38 LPA",
+    gender: "female",
     awardYear: 2025,
     isPublished: true,
-    publishedDate: '2025-11-01T10:00:00'
+    publishedDate: "2025-11-01T10:00:00",
   },
   {
     id: 3,
-    name: 'James Wilson',
-    rollNumber: 'CS2021067',
-    photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop',
-    branch: 'CSE',
-    year: 'IV',
+    name: "James Wilson",
+    rollNumber: "CS2021067",
+    photo:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop",
+    branch: "CSE",
+    year: "IV",
     cgpa: 9.4,
     achievements: [
-      'Best Technical Skills',
-      'Open Source Contributor',
-      'Workshop Instructor',
-      'Coding Competition Champion'],
+      "Best Technical Skills",
+      "Open Source Contributor",
+      "Workshop Instructor",
+      "Coding Competition Champion",
+    ],
 
     eventsParticipated: 15,
     eventsWon: 8,
-    placementStatus: 'Placed - Amazon',
-    package: '₹42 LPA',
-    gender: 'male',
+    placementStatus: "Placed - Amazon",
+    package: "₹42 LPA",
+    gender: "male",
     awardYear: 2024,
     isPublished: true,
-    publishedDate: '2024-11-01T10:00:00'
+    publishedDate: "2024-11-01T10:00:00",
   },
   {
     id: 4,
-    name: 'Sarah Johnson',
-    rollNumber: 'CS2021089',
-    photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop',
-    branch: 'CSE',
-    year: 'IV',
+    name: "Sarah Johnson",
+    rollNumber: "CS2021089",
+    photo:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop",
+    branch: "CSE",
+    year: "IV",
     cgpa: 9.7,
     achievements: [
-      'Research Excellence Award',
-      '3 Patents Filed',
-      'International Conference Speaker',
-      'Gold Medalist'],
+      "Research Excellence Award",
+      "3 Patents Filed",
+      "International Conference Speaker",
+      "Gold Medalist",
+    ],
 
     eventsParticipated: 10,
     eventsWon: 4,
-    placementStatus: 'Higher Studies - MIT',
-    package: 'Full Scholarship',
-    gender: 'female',
+    placementStatus: "Higher Studies - MIT",
+    package: "Full Scholarship",
+    gender: "female",
     awardYear: 2024,
     isPublished: false,
-    publishedDate: null
-  }];
-
-
+    publishedDate: null,
+  },
+];
 
 export function BestOutgoingStudentsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [studentsList, setStudentsList] = useState(initialStudents);
-  const [filterGender, setFilterGender] = useState('all');
-  const [filterYear, setFilterYear] = useState('all');
-  const [filterStatus, setFilterStatus] = useState('published');
+  const [filterGender, setFilterGender] = useState("all");
+  const [filterYear, setFilterYear] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("published");
   const [editingStudent, setEditingStudent] = useState<any>(null);
   const [confirmDialog, setConfirmDialog] = useState<any>(null);
 
   const [formData, setFormData] = useState<any>({
-    name: '',
-    rollNumber: '',
-    gender: 'male',
+    name: "",
+    rollNumber: "",
+    gender: "male",
     awardYear: new Date().getFullYear(),
-    branch: 'CSE',
-    year: 'IV',
-    cgpa: '',
-    achievements: '',
-    placementStatus: '',
-    package: '',
-    isPublished: true
+    branch: "CSE",
+    year: "IV",
+    cgpa: "",
+    achievements: "",
+    placementStatus: "",
+    package: "",
+    isPublished: true,
   });
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      rollNumber: '',
-      gender: 'male',
+      name: "",
+      rollNumber: "",
+      gender: "male",
       awardYear: new Date().getFullYear(),
-      branch: 'CSE',
-      year: 'IV',
-      cgpa: '',
-      achievements: '',
-      placementStatus: '',
-      package: '',
-      isPublished: true
+      branch: "CSE",
+      year: "IV",
+      cgpa: "",
+      achievements: "",
+      placementStatus: "",
+      package: "",
+      isPublished: true,
     });
     setEditingStudent(null);
   };
 
   const { showToast } = useToast();
 
-  const years = Array.from(new Set(studentsList.map((s: any) => s.awardYear))).sort((a: any, b: any) => b - a);
+  const years = Array.from(
+    new Set(studentsList.map((s: any) => s.awardYear)),
+  ).sort((a: any, b: any) => b - a);
 
   const filteredStudents = studentsList.filter((student: any) => {
-    const matchesGender = filterGender === 'all' || student.gender === filterGender;
-    const matchesYear = filterYear === 'all' || student.awardYear === filterYear;
-    const matchesStatus = filterStatus === 'all' ||
-      filterStatus === 'published' && student.isPublished ||
-      filterStatus === 'draft' && !student.isPublished;
+    const matchesGender =
+      filterGender === "all" || student.gender === filterGender;
+    const matchesYear =
+      filterYear === "all" || student.awardYear === filterYear;
+    const matchesStatus =
+      filterStatus === "all" ||
+      (filterStatus === "published" && student.isPublished) ||
+      (filterStatus === "draft" && !student.isPublished);
     return matchesGender && matchesYear && matchesStatus;
   });
 
@@ -175,10 +187,10 @@ export function BestOutgoingStudentsPage() {
       branch: student.branch,
       year: student.year,
       cgpa: student.cgpa,
-      achievements: student.achievements.join('\n'),
+      achievements: student.achievements.join("\n"),
       placementStatus: student.placementStatus,
       package: student.package,
-      isPublished: student.isPublished
+      isPublished: student.isPublished,
     });
     setEditingStudent(student);
   };
@@ -186,63 +198,70 @@ export function BestOutgoingStudentsPage() {
   const handleDelete = (student: any) => {
     setConfirmDialog({
       isOpen: true,
-      title: 'Delete Student',
+      title: "Delete Student",
       message: `Are you sure you want to delete ${student.name} from the best outgoing students list? This action cannot be undone.`,
-      type: 'danger',
+      type: "danger",
       onConfirm: () => {
-        setStudentsList(prev => prev.filter(s => s.id !== student.id));
-        showToast(`${student.name} has been removed`, 'success');
+        setStudentsList((prev) => prev.filter((s) => s.id !== student.id));
+        showToast(`${student.name} has been removed`, "success");
         setConfirmDialog(null);
-      }
+      },
     });
   };
 
   const handleDownload = (student: any) => {
-    showToast(`Downloading ${student.name}'s profile...`, 'info');
+    showToast(`Downloading ${student.name}'s profile...`, "info");
   };
 
   const handlePublishToggle = (student: any) => {
-    setStudentsList(prev => prev.map(s =>
-      s.id === student.id ? { ...s, isPublished: !s.isPublished } : s
-    ));
+    setStudentsList((prev) =>
+      prev.map((s) =>
+        s.id === student.id ? { ...s, isPublished: !s.isPublished } : s,
+      ),
+    );
     if (student.isPublished) {
-      showToast(`${student.name}'s profile has been unpublished`, 'info');
+      showToast(`${student.name}'s profile has been unpublished`, "info");
     } else {
-      showToast(`${student.name}'s profile has been published`, 'success');
+      showToast(`${student.name}'s profile has been published`, "success");
     }
   };
 
   const handleSave = () => {
     if (!formData.name || !formData.rollNumber) {
-      showToast('Name and Roll Number are required', 'error');
+      showToast("Name and Roll Number are required", "error");
       return;
     }
 
-    const achievementsArray = formData.achievements.split('\n').filter(Boolean);
+    const achievementsArray = formData.achievements.split("\n").filter(Boolean);
 
     if (editingStudent) {
-      setStudentsList(prev => prev.map(s =>
-        s.id === editingStudent.id ? {
-          ...s,
-          ...formData,
-          achievements: achievementsArray,
-          eventsParticipated: s.eventsParticipated || 0, // Preserve or default
-          eventsWon: s.eventsWon || 0
-        } : s
-      ));
-      showToast('Student updated successfully', 'success');
+      setStudentsList((prev) =>
+        prev.map((s) =>
+          s.id === editingStudent.id
+            ? {
+                ...s,
+                ...formData,
+                achievements: achievementsArray,
+                eventsParticipated: s.eventsParticipated || 0, // Preserve or default
+                eventsWon: s.eventsWon || 0,
+              }
+            : s,
+        ),
+      );
+      showToast("Student updated successfully", "success");
     } else {
       const newStudent = {
         id: Date.now(),
         ...formData,
         achievements: achievementsArray,
-        photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop', // Default placeholder
+        photo:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop", // Default placeholder
         eventsParticipated: 0,
         eventsWon: 0,
-        publishedDate: new Date().toISOString()
+        publishedDate: new Date().toISOString(),
       };
-      setStudentsList(prev => [newStudent, ...prev]);
-      showToast('Student added successfully', 'success');
+      setStudentsList((prev) => [newStudent, ...prev]);
+      showToast("Student added successfully", "success");
     }
     setShowAddModal(false);
     resetForm();
@@ -257,13 +276,19 @@ export function BestOutgoingStudentsPage() {
           <span>›</span>
           <span>Content Management</span>
           <span>›</span>
-          <span className="text-[#1A1A1A] font-medium">Best Outgoing Students</span>
+          <span className="text-[#1A1A1A] font-medium">
+            Best Outgoing Students
+          </span>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <div>
-            <h1 className="text-[28px] font-semibold text-[#1A1A1A] mb-2">Best Outgoing Students</h1>
-            <p className="text-sm text-[#6B7280]">Recognize and showcase top-performing graduating students</p>
+            <h1 className="text-[28px] font-semibold text-[#1A1A1A] mb-2">
+              Best Outgoing Students
+            </h1>
+            <p className="text-sm text-[#6B7280]">
+              Recognize and showcase top-performing graduating students
+            </p>
           </div>
 
           <button
@@ -271,8 +296,8 @@ export function BestOutgoingStudentsPage() {
               resetForm();
               setShowAddModal(true);
             }}
-            className="flex items-center justify-center gap-2 px-5 py-3 bg-[#10B981] text-white rounded-lg text-sm font-medium hover:bg-[#059669] transition-colors shadow-sm w-full md:w-auto">
-
+            className="flex items-center justify-center gap-2 px-5 py-3 bg-[#10B981] text-white rounded-lg text-sm font-medium hover:bg-[#059669] transition-colors shadow-sm w-full md:w-auto"
+          >
             <Plus className="w-5 h-5" />
             Add Student
           </button>
@@ -310,8 +335,12 @@ export function BestOutgoingStudentsPage() {
                       <Users className="w-5 h-5 text-[#3B82F6]" />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-sm text-[#6B7280]">Total Students</div>
-                      <div className="text-2xl font-semibold text-[#1A1A1A]">{studentsList.length}</div>
+                      <div className="text-sm text-[#6B7280]">
+                        Total Students
+                      </div>
+                      <div className="text-2xl font-semibold text-[#1A1A1A]">
+                        {studentsList.length}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -340,30 +369,33 @@ export function BestOutgoingStudentsPage() {
         <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-4 gap-4">
           <div className="flex flex-wrap items-center gap-3">
             <button
-              onClick={() => setFilterGender('all')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterGender === 'all' ?
-                'bg-[#1A1A1A] text-white' :
-                'bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]'}`
-              }>
-
+              onClick={() => setFilterGender("all")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                filterGender === "all"
+                  ? "bg-[#1A1A1A] text-white"
+                  : "bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]"
+              }`}
+            >
               All
             </button>
             <button
-              onClick={() => setFilterGender('male')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterGender === 'male' ?
-                'bg-[#1A1A1A] text-white' :
-                'bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]'}`
-              }>
-
+              onClick={() => setFilterGender("male")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                filterGender === "male"
+                  ? "bg-[#1A1A1A] text-white"
+                  : "bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]"
+              }`}
+            >
               Male Students
             </button>
             <button
-              onClick={() => setFilterGender('female')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterGender === 'female' ?
-                'bg-[#1A1A1A] text-white' :
-                'bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]'}`
-              }>
-
+              onClick={() => setFilterGender("female")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                filterGender === "female"
+                  ? "bg-[#1A1A1A] text-white"
+                  : "bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]"
+              }`}
+            >
               Female Students
             </button>
           </div>
@@ -372,258 +404,299 @@ export function BestOutgoingStudentsPage() {
             {/* Year Filter */}
             <div className="flex flex-wrap items-center gap-2">
               <button
-                onClick={() => setFilterYear('all')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${filterYear === 'all' ?
-                  'bg-[#F7F8FA] border border-[#1A1A1A] text-[#1A1A1A]' :
-                  'bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]'}`
-                }>
-
+                onClick={() => setFilterYear("all")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  filterYear === "all"
+                    ? "bg-[#F7F8FA] border border-[#1A1A1A] text-[#1A1A1A]"
+                    : "bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]"
+                }`}
+              >
                 All Years
               </button>
-              {years.map((year: any) =>
+              {years.map((year: any) => (
                 <button
                   key={year}
                   onClick={() => setFilterYear(year)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${filterYear === year ?
-                    'bg-[#F7F8FA] border border-[#1A1A1A] text-[#1A1A1A]' :
-                    'bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]'}`
-                  }>
-
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                    filterYear === year
+                      ? "bg-[#F7F8FA] border border-[#1A1A1A] text-[#1A1A1A]"
+                      : "bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]"
+                  }`}
+                >
                   {year}
                 </button>
-              )}
+              ))}
             </div>
 
             {/* Status Filter */}
             <div className="flex flex-wrap items-center gap-2">
-              {['published', 'draft', 'all'].map((status: any) =>
+              {["published", "draft", "all"].map((status: any) => (
                 <button
                   key={status}
                   onClick={() => setFilterStatus(status)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors capitalize ${filterStatus === status ?
-                    'bg-[#F7F8FA] border border-[#1A1A1A] text-[#1A1A1A]' :
-                    'bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]'}`
-                  }>
-
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors capitalize ${
+                    filterStatus === status
+                      ? "bg-[#F7F8FA] border border-[#1A1A1A] text-[#1A1A1A]"
+                      : "bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]"
+                  }`}
+                >
                   {status}
                 </button>
-              )}
+              ))}
             </div>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {isLoading ? (
-          [...Array(4)].map((_: any, i: any) => (
-            <div key={i} className="bg-[#F4F2F0] rounded-[18px] p-[10px] px-[10px] py-[16px]">
-              <div className="flex items-start justify-between mb-[18px] px-[12px]">
-                <div className="flex items-start gap-3">
-                  <Skeleton width={80} height={80} borderRadius="50%" />
-                  <div className="pt-2">
-                    <Skeleton width={150} height={24} className="mb-2" />
-                    <Skeleton width={100} height={14} />
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white rounded-[14px] p-5">
-                <div className="grid grid-cols-3 gap-4 mb-5 pb-5 border-b border-[#E5E7EB]">
-                  <div className="space-y-2">
-                    <Skeleton width="60%" height={24} className="mx-auto" />
-                    <Skeleton width="40%" height={10} className="mx-auto" />
-                  </div>
-                  <div className="space-y-2">
-                    <Skeleton width="60%" height={24} className="mx-auto" />
-                    <Skeleton width="40%" height={10} className="mx-auto" />
-                  </div>
-                  <div className="space-y-2">
-                    <Skeleton width="60%" height={24} className="mx-auto" />
-                    <Skeleton width="40%" height={10} className="mx-auto" />
-                  </div>
-                </div>
-                <div className="space-y-3 mb-5">
-                  <Skeleton width="40%" height={14} />
-                  <Skeleton width="90%" height={12} />
-                  <Skeleton width="85%" height={12} />
-                  <Skeleton width="80%" height={12} />
-                </div>
-                <Skeleton width="100%" height={60} borderRadius={8} />
-              </div>
-            </div>
-          ))
-        ) : (
-          filteredStudents.map((student: any) =>
-            <div
-              key={student.id}
-              className="bg-[#F4F2F0] rounded-[18px] p-[10px] px-[10px] py-[16px] animate-card-entrance"
-              style={{ animationDelay: `${studentsList.indexOf(student) * 40}ms` }}>
-
-              {/* Header / Profile Row */}
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 px-3 py-0 mt-1 mr-0.5 ml-0 gap-4">
-                {/* Left: Profile Image & Details */}
-                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-3 text-center sm:text-left w-full sm:w-auto">
-                  {/* Profile Image with Badge */}
-                  <div className="relative">
-                    <Image
-                      src={student.photo}
-                      alt={student.name}
-                      width={80}
-                      height={80}
-                      className="w-20 h-20 rounded-full object-cover" />
-
-                    <div
-                      className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center border-2 border-[#F4F2F0] shadow-md"
-                      style={{ backgroundColor: student.gender === 'male' ? '#3B82F6' : '#EC4899' }}>
-
-                      <Star className="w-4 h-4 text-white fill-current" />
-                    </div>
-                  </div>
-
-                  {/* Student Info */}
-                  <div className="flex-1">
-                    <h3 className="text-[20px] font-semibold text-[#1A1A1A] mb-1">
-                      {student.name}
-                    </h3>
-                    <div className="flex items-center gap-2 text-sm text-[#6B7280] mb-2">
-                      <span>{student.rollNumber}</span>
-                      <span>•</span>
-                      <span>{student.branch} - Year {student.year}</span>
-                    </div>
-                    <div
-                      className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-white"
-                      style={{ backgroundColor: student.gender === 'male' ? '#3B82F6' : '#EC4899' }}>
-
-                      Best {student.gender === 'male' ? 'Male' : 'Female'} Student {student.awardYear}
+        {isLoading
+          ? [...Array(4)].map((_: any, i: any) => (
+              <div
+                key={i}
+                className="bg-[#F4F2F0] rounded-[18px] p-[10px] px-[10px] py-[16px]"
+              >
+                <div className="flex items-start justify-between mb-[18px] px-[12px]">
+                  <div className="flex items-start gap-3">
+                    <Skeleton width={80} height={80} borderRadius="50%" />
+                    <div className="pt-2">
+                      <Skeleton width={150} height={24} className="mb-2" />
+                      <Skeleton width={100} height={14} />
                     </div>
                   </div>
                 </div>
-
-                {/* Right: Status Badge & Actions */}
-                <div className="flex items-center gap-2 self-start sm:self-auto w-full sm:w-auto justify-between sm:justify-end">
-                  {student.isPublished ?
-                    <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#D1FAE5] rounded-full text-xs font-semibold text-[#10B981]">
-                      <CheckCircle className="w-3 h-3" />
-                      Published
-                    </span> :
-
-                    <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FEF3C7] rounded-full text-xs font-semibold text-[#F59E0B]">
-                      Draft
-                    </span>
-                  }
-
-                  <ActionMenu
-                    actions={[
-                      {
-                        label: 'Edit Student',
-                        icon: 'edit',
-                        onClick: () => handleEdit(student)
-                      },
-                      {
-                        label: student.isPublished ? 'Unpublish' : 'Publish',
-                        icon: student.isPublished ? 'pending' : 'approve',
-                        onClick: () => handlePublishToggle(student)
-                      },
-                      {
-                        label: 'Download Profile',
-                        icon: 'download',
-                        onClick: () => handleDownload(student)
-                      },
-                      { divider: true },
-                      {
-                        label: 'Delete Student',
-                        icon: 'delete',
-                        onClick: () => handleDelete(student),
-                        danger: true
-                      }]
-                    }
-                    size="sm" />
-
+                <div className="bg-white rounded-[14px] p-5">
+                  <div className="grid grid-cols-3 gap-4 mb-5 pb-5 border-b border-[#E5E7EB]">
+                    <div className="space-y-2">
+                      <Skeleton width="60%" height={24} className="mx-auto" />
+                      <Skeleton width="40%" height={10} className="mx-auto" />
+                    </div>
+                    <div className="space-y-2">
+                      <Skeleton width="60%" height={24} className="mx-auto" />
+                      <Skeleton width="40%" height={10} className="mx-auto" />
+                    </div>
+                    <div className="space-y-2">
+                      <Skeleton width="60%" height={24} className="mx-auto" />
+                      <Skeleton width="40%" height={10} className="mx-auto" />
+                    </div>
+                  </div>
+                  <div className="space-y-3 mb-5">
+                    <Skeleton width="40%" height={14} />
+                    <Skeleton width="90%" height={12} />
+                    <Skeleton width="85%" height={12} />
+                    <Skeleton width="80%" height={12} />
+                  </div>
+                  <Skeleton width="100%" height={60} borderRadius={8} />
                 </div>
               </div>
+            ))
+          : filteredStudents.map((student: any) => (
+              <div
+                key={student.id}
+                className="bg-[#F4F2F0] rounded-[18px] p-[10px] px-[10px] py-[16px] animate-card-entrance"
+                style={{
+                  animationDelay: `${studentsList.indexOf(student) * 40}ms`,
+                }}
+              >
+                {/* Header / Profile Row */}
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 px-3 py-0 mt-1 mr-0.5 ml-0 gap-4">
+                  {/* Left: Profile Image & Details */}
+                  <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-3 text-center sm:text-left w-full sm:w-auto">
+                    {/* Profile Image with Badge */}
+                    <div className="relative">
+                      <Image
+                        src={student.photo}
+                        alt={student.name}
+                        width={80}
+                        height={80}
+                        className="w-20 h-20 rounded-full object-cover"
+                      />
 
-              {/* Inner White Card */}
-              <div className="bg-white rounded-[14px] p-5">
-                {/* Statistics Row */}
-                <div className="grid grid-cols-3 gap-4 mb-5 pb-5 border-b border-[#E5E7EB]">
-                  <div className="text-center">
-                    <div className="text-[24px] font-bold text-[#1A1A1A] mb-1">{student.cgpa}</div>
-                    <div className="text-xs text-[#6B7280]">CGPA</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-[24px] font-bold text-[#1A1A1A] mb-1">{student.eventsWon}</div>
-                    <div className="text-xs text-[#6B7280]">Events Won</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-[24px] font-bold text-[#1A1A1A] mb-1">{student.eventsParticipated}</div>
-                    <div className="text-xs text-[#6B7280]">Participated</div>
-                  </div>
-                </div>
-
-                {/* Key Achievements Section */}
-                <div className="mb-5">
-                  <div className="text-sm font-semibold text-[#1A1A1A] mb-3">Key Achievements</div>
-                  <ul className="space-y-2">
-                    {student.achievements.slice(0, 3).map((achievement: any, index: any) =>
-                      <li key={index} className="flex items-start gap-2 text-sm text-[#6B7280]">
-                        <Award className="w-4 h-4 text-[#10B981] shrink-0 mt-0.5" />
-                        <span>{achievement}</span>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-
-                {/* Placement Status Section */}
-                <div className="p-4 bg-[#F7F8FA] rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-xs text-[#6B7280] mb-1">Placement Status</div>
-                      <div className="text-sm font-semibold text-[#1A1A1A]">
-                        {student.placementStatus}
+                      <div
+                        className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center border-2 border-[#F4F2F0] shadow-md"
+                        style={{
+                          backgroundColor:
+                            student.gender === "male" ? "#3B82F6" : "#EC4899",
+                        }}
+                      >
+                        <Star className="w-4 h-4 text-white fill-current" />
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-xs text-[#6B7280] mb-1">Package</div>
-                      <div className="text-lg font-bold text-[#10B981]">{student.package}</div>
+
+                    {/* Student Info */}
+                    <div className="flex-1">
+                      <h3 className="text-[20px] font-semibold text-[#1A1A1A] mb-1">
+                        {student.name}
+                      </h3>
+                      <div className="flex items-center gap-2 text-sm text-[#6B7280] mb-2">
+                        <span>{student.rollNumber}</span>
+                        <span>•</span>
+                        <span>
+                          {student.branch} - Year {student.year}
+                        </span>
+                      </div>
+                      <div
+                        className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-white"
+                        style={{
+                          backgroundColor:
+                            student.gender === "male" ? "#3B82F6" : "#EC4899",
+                        }}
+                      >
+                        Best {student.gender === "male" ? "Male" : "Female"}{" "}
+                        Student {student.awardYear}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: Status Badge & Actions */}
+                  <div className="flex items-center gap-2 self-start sm:self-auto w-full sm:w-auto justify-between sm:justify-end">
+                    {student.isPublished ? (
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#D1FAE5] rounded-full text-xs font-semibold text-[#10B981]">
+                        <CheckCircle className="w-3 h-3" />
+                        Published
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#FEF3C7] rounded-full text-xs font-semibold text-[#F59E0B]">
+                        Draft
+                      </span>
+                    )}
+
+                    <ActionMenu
+                      actions={[
+                        {
+                          label: "Edit Student",
+                          icon: "edit",
+                          onClick: () => handleEdit(student),
+                        },
+                        {
+                          label: student.isPublished ? "Unpublish" : "Publish",
+                          icon: student.isPublished ? "pending" : "approve",
+                          onClick: () => handlePublishToggle(student),
+                        },
+                        {
+                          label: "Download Profile",
+                          icon: "download",
+                          onClick: () => handleDownload(student),
+                        },
+                        { divider: true },
+                        {
+                          label: "Delete Student",
+                          icon: "delete",
+                          onClick: () => handleDelete(student),
+                          danger: true,
+                        },
+                      ]}
+                      size="sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Inner White Card */}
+                <div className="bg-white rounded-[14px] p-5">
+                  {/* Statistics Row */}
+                  <div className="grid grid-cols-3 gap-4 mb-5 pb-5 border-b border-[#E5E7EB]">
+                    <div className="text-center">
+                      <div className="text-[24px] font-bold text-[#1A1A1A] mb-1">
+                        {student.cgpa}
+                      </div>
+                      <div className="text-xs text-[#6B7280]">CGPA</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-[24px] font-bold text-[#1A1A1A] mb-1">
+                        {student.eventsWon}
+                      </div>
+                      <div className="text-xs text-[#6B7280]">Events Won</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-[24px] font-bold text-[#1A1A1A] mb-1">
+                        {student.eventsParticipated}
+                      </div>
+                      <div className="text-xs text-[#6B7280]">Participated</div>
+                    </div>
+                  </div>
+
+                  {/* Key Achievements Section */}
+                  <div className="mb-5">
+                    <div className="text-sm font-semibold text-[#1A1A1A] mb-3">
+                      Key Achievements
+                    </div>
+                    <ul className="space-y-2">
+                      {student.achievements
+                        .slice(0, 3)
+                        .map((achievement: any, index: any) => (
+                          <li
+                            key={index}
+                            className="flex items-start gap-2 text-sm text-[#6B7280]"
+                          >
+                            <Award className="w-4 h-4 text-[#10B981] shrink-0 mt-0.5" />
+                            <span>{achievement}</span>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+
+                  {/* Placement Status Section */}
+                  <div className="p-4 bg-[#F7F8FA] rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-xs text-[#6B7280] mb-1">
+                          Placement Status
+                        </div>
+                        <div className="text-sm font-semibold text-[#1A1A1A]">
+                          {student.placementStatus}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-[#6B7280] mb-1">
+                          Package
+                        </div>
+                        <div className="text-lg font-bold text-[#10B981]">
+                          {student.package}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )
-        )}
+            ))}
       </div>
 
-      {filteredStudents.length === 0 &&
+      {filteredStudents.length === 0 && (
         <div className="text-center py-12 bg-white rounded-xl">
           <UserPlus className="w-12 h-12 text-[#9CA3AF] mx-auto mb-3" />
-          <p className="text-[#6B7280] mb-4">No students found matching your filters</p>
+          <p className="text-[#6B7280] mb-4">
+            No students found matching your filters
+          </p>
           <button
             onClick={() => {
-              setFilterGender('all');
-              setFilterYear('all');
-              setFilterStatus('published');
+              setFilterGender("all");
+              setFilterYear("all");
+              setFilterStatus("published");
             }}
-            className="text-sm text-[#3B82F6] hover:underline">
-
+            className="text-sm text-[#3B82F6] hover:underline"
+          >
             Clear filters
           </button>
         </div>
-      }
+      )}
 
       {/* Add/Edit Student Modal */}
-      {(showAddModal || editingStudent) &&
+      {(showAddModal || editingStudent) && (
         <Modal
           isOpen={true}
           onClose={() => {
             setShowAddModal(false);
             resetForm();
           }}
-          title={editingStudent ? 'Edit Best Outgoing Student' : 'Add Best Outgoing Student'}
+          title={
+            editingStudent
+              ? "Edit Best Outgoing Student"
+              : "Add Best Outgoing Student"
+          }
           size="lg"
           onConfirm={handleSave}
-          confirmText={editingStudent ? 'Update Student' : 'Add Student'}
-          confirmButtonClass="bg-[#10B981] hover:bg-[#059669]">
-
+          confirmText={editingStudent ? "Update Student" : "Add Student"}
+          confirmButtonClass="bg-[#10B981] hover:bg-[#059669]"
+        >
           <div className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -633,10 +706,12 @@ export function BestOutgoingStudentsPage() {
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   placeholder="Enter student name"
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
@@ -645,10 +720,12 @@ export function BestOutgoingStudentsPage() {
                 <input
                   type="text"
                   value={formData.rollNumber}
-                  onChange={(e) => setFormData({ ...formData, rollNumber: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, rollNumber: e.target.value })
+                  }
                   placeholder="Enter roll number"
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                />
               </div>
             </div>
 
@@ -657,7 +734,12 @@ export function BestOutgoingStudentsPage() {
                 <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                   Gender *
                 </label>
-                <Select value={formData.gender} onValueChange={(val) => setFormData({ ...formData, gender: val })}>
+                <Select
+                  value={formData.gender}
+                  onValueChange={(val) =>
+                    setFormData({ ...formData, gender: val })
+                  }
+                >
                   <SelectTrigger className="w-full h-[46px] bg-white border border-[#E5E7EB] rounded-lg text-sm focus:ring-2 focus:ring-[#10B981]">
                     <SelectValue placeholder="Select Gender" />
                   </SelectTrigger>
@@ -675,12 +757,13 @@ export function BestOutgoingStudentsPage() {
                   type="number"
                   value={formData.awardYear}
                   onChange={(e) => {
-                    const val = e.target.value === '' ? '' : parseInt(e.target.value);
+                    const val =
+                      e.target.value === "" ? "" : parseInt(e.target.value);
                     setFormData({ ...formData, awardYear: val });
                   }}
                   placeholder="2025"
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                />
               </div>
             </div>
 
@@ -689,7 +772,12 @@ export function BestOutgoingStudentsPage() {
                 <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                   Branch *
                 </label>
-                <Select value={formData.branch} onValueChange={(val) => setFormData({ ...formData, branch: val })}>
+                <Select
+                  value={formData.branch}
+                  onValueChange={(val) =>
+                    setFormData({ ...formData, branch: val })
+                  }
+                >
                   <SelectTrigger className="w-full h-[46px] bg-white border border-[#E5E7EB] rounded-lg text-sm focus:ring-2 focus:ring-[#10B981]">
                     <SelectValue placeholder="Select Branch" />
                   </SelectTrigger>
@@ -706,7 +794,12 @@ export function BestOutgoingStudentsPage() {
                 <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
                   Year *
                 </label>
-                <Select value={formData.year} onValueChange={(val) => setFormData({ ...formData, year: val })}>
+                <Select
+                  value={formData.year}
+                  onValueChange={(val) =>
+                    setFormData({ ...formData, year: val })
+                  }
+                >
                   <SelectTrigger className="w-full h-[46px] bg-white border border-[#E5E7EB] rounded-lg text-sm focus:ring-2 focus:ring-[#10B981]">
                     <SelectValue placeholder="Select Year" />
                   </SelectTrigger>
@@ -727,12 +820,13 @@ export function BestOutgoingStudentsPage() {
                   step="0.01"
                   value={formData.cgpa}
                   onChange={(e) => {
-                    const val = e.target.value === '' ? '' : parseFloat(e.target.value);
+                    const val =
+                      e.target.value === "" ? "" : parseFloat(e.target.value);
                     setFormData({ ...formData, cgpa: val });
                   }}
                   placeholder="9.5"
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                />
               </div>
             </div>
 
@@ -743,10 +837,12 @@ export function BestOutgoingStudentsPage() {
               <textarea
                 rows={4}
                 value={formData.achievements}
-                onChange={(e) => setFormData({ ...formData, achievements: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, achievements: e.target.value })
+                }
                 placeholder="Enter achievements (one per line)"
-                className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981] resize-none" />
-
+                className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981] resize-none"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -757,10 +853,15 @@ export function BestOutgoingStudentsPage() {
                 <input
                   type="text"
                   value={formData.placementStatus}
-                  onChange={(e) => setFormData({ ...formData, placementStatus: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      placementStatus: e.target.value,
+                    })
+                  }
                   placeholder="e.g., Placed - Google"
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
@@ -769,10 +870,12 @@ export function BestOutgoingStudentsPage() {
                 <input
                   type="text"
                   value={formData.package}
-                  onChange={(e) => setFormData({ ...formData, package: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, package: e.target.value })
+                  }
                   placeholder="e.g., ₹45 LPA"
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                />
               </div>
             </div>
 
@@ -785,7 +888,10 @@ export function BestOutgoingStudentsPage() {
                   <Award className="w-6 h-6 text-[#6B7280]" />
                 </div>
                 <p className="text-sm text-[#6B7280] mb-1">
-                  <span className="text-[#10B981] font-medium">Click to upload</span> or drag and drop
+                  <span className="text-[#10B981] font-medium">
+                    Click to upload
+                  </span>{" "}
+                  or drag and drop
                 </p>
                 <p className="text-xs text-[#9CA3AF]">PNG, JPG (max. 2MB)</p>
               </div>
@@ -795,29 +901,33 @@ export function BestOutgoingStudentsPage() {
               <input
                 type="checkbox"
                 checked={formData.isPublished}
-                onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
-                className="w-4 h-4 rounded border-[#D1D5DB]" />
+                onChange={(e) =>
+                  setFormData({ ...formData, isPublished: e.target.checked })
+                }
+                className="w-4 h-4 rounded border-[#D1D5DB]"
+              />
 
-              <label className="text-sm text-[#1A1A1A]">Publish immediately</label>
+              <label className="text-sm text-[#1A1A1A]">
+                Publish immediately
+              </label>
             </div>
           </div>
         </Modal>
-      }
+      )}
 
       {/* Confirm Dialog */}
-      {confirmDialog &&
+      {confirmDialog && (
         <ConfirmDialog
           isOpen={confirmDialog.isOpen}
           onClose={() => setConfirmDialog(null)}
           onConfirm={confirmDialog.onConfirm}
           title={confirmDialog.title}
           message={confirmDialog.message}
-          type={confirmDialog.type} />
-
-      }
+          type={confirmDialog.type}
+        />
+      )}
 
       {/* Toast Notifications */}
-
-    </div>);
-
+    </div>
+  );
 }

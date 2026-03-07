@@ -1,10 +1,10 @@
-import { Eye, Edit, Trash2, Play } from 'lucide-react';
-import Image from 'next/image';
+import { Eye, Edit, Trash2, Play } from "lucide-react";
+import Image from "next/image";
 
 interface VideoCardItem {
   title: string;
   thumbnail: string;
-  status: 'active' | 'inactive' | string;
+  status: "active" | "inactive" | string;
   duration: string;
   views: number;
   platform: string;
@@ -19,24 +19,13 @@ interface VideoCardProps {
   onDelete: () => void;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export function VideoCard({ video, isReadOnly = false, onPreview, onEdit, onDelete }: VideoCardProps) {
+export function VideoCard({
+  video,
+  isReadOnly = false,
+  onPreview,
+  onEdit,
+  onDelete,
+}: VideoCardProps) {
   return (
     <div className="bg-[#F4F2F0] rounded-[18px] hover:shadow-lg transition-all p-[10px]">
       {/* Header - Outside white card */}
@@ -61,7 +50,6 @@ export function VideoCard({ video, isReadOnly = false, onPreview, onEdit, onDele
               className="object-cover transition-opacity duration-200"
             />
 
-
             {/* Hover Overlay */}
             <div className="absolute inset-0 bg-black opacity-0 group-hover/thumbnail:opacity-60 transition-opacity duration-200 rounded-[12px]"></div>
 
@@ -72,16 +60,19 @@ export function VideoCard({ video, isReadOnly = false, onPreview, onEdit, onDele
 
             {/* Status Badge - Top Left */}
             <div className="absolute top-3 left-3 z-10">
-              <span className={`px-3 py-1 rounded-lg text-xs font-semibold text-white ${video.status === 'active' ? 'bg-[#10B981]' : 'bg-[#6B7280]'}`
-              }>
-                {video.status === 'active' ? 'Active' : 'Inactive'}
+              <span
+                className={`px-3 py-1 rounded-lg text-xs font-semibold text-white ${video.status === "active" ? "bg-[#10B981]" : "bg-[#6B7280]"}`}
+              >
+                {video.status === "active" ? "Active" : "Inactive"}
               </span>
             </div>
 
             {/* Duration - Bottom Right */}
             <div className="absolute bottom-3 right-3 px-2 py-1 bg-black bg-opacity-70 rounded z-10">
               <span className="text-xs font-semibold text-white">
-                {video.duration && video.duration !== '0:00' ? video.duration : 'N/A'}
+                {video.duration && video.duration !== "0:00"
+                  ? video.duration
+                  : "N/A"}
               </span>
             </div>
           </div>
@@ -96,10 +87,11 @@ export function VideoCard({ video, isReadOnly = false, onPreview, onEdit, onDele
 
           {/* Upload Date */}
           <div className="text-sm text-[#6B7280] mb-4">
-            Uploaded: {new Date(video.uploadDate).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric'
+            Uploaded:{" "}
+            {new Date(video.uploadDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
             })}
           </div>
 
@@ -108,7 +100,8 @@ export function VideoCard({ video, isReadOnly = false, onPreview, onEdit, onDele
             {/* Watch Button */}
             <button
               onClick={onPreview}
-              className="flex-1 h-10 bg-[#1A1A1A] text-white rounded-xl hover:bg-[#2D2D2D] transition-all duration-200 flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] cursor-pointer">
+              className="flex-1 h-10 bg-[#1A1A1A] text-white rounded-xl hover:bg-[#2D2D2D] transition-all duration-200 flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] cursor-pointer"
+            >
               <Play className="w-4 h-4 fill-current" />
               <span className="text-[13px] font-semibold">Watch</span>
             </button>
@@ -118,14 +111,16 @@ export function VideoCard({ video, isReadOnly = false, onPreview, onEdit, onDele
                 {/* Edit Button */}
                 <button
                   onClick={onEdit}
-                  className="w-10 h-10 bg-white border border-[#E5E7EB] rounded-xl hover:bg-[#F9FAFB] transition-all duration-200 flex items-center justify-center shadow-sm active:scale-[0.98] cursor-pointer">
+                  className="w-10 h-10 bg-white border border-[#E5E7EB] rounded-xl hover:bg-[#F9FAFB] transition-all duration-200 flex items-center justify-center shadow-sm active:scale-[0.98] cursor-pointer"
+                >
                   <Edit className="w-4 h-4 text-[#1A1A1A]" />
                 </button>
 
                 {/* Delete Button */}
                 <button
                   onClick={onDelete}
-                  className="w-10 h-10 bg-[#FEF2F2] border border-red-50 rounded-xl hover:bg-[#FEE2E2] transition-all duration-200 flex items-center justify-center active:scale-[0.98] cursor-pointer">
+                  className="w-10 h-10 bg-[#FEF2F2] border border-red-50 rounded-xl hover:bg-[#FEE2E2] transition-all duration-200 flex items-center justify-center active:scale-[0.98] cursor-pointer"
+                >
                   <Trash2 className="w-4 h-4 text-[#EF4444]" />
                 </button>
               </>
@@ -133,6 +128,6 @@ export function VideoCard({ video, isReadOnly = false, onPreview, onEdit, onDele
           </div>
         </div>
       </div>
-    </div>);
-
+    </div>
+  );
 }

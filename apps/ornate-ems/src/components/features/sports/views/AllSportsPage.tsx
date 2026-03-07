@@ -1,44 +1,57 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { Search, Grid3x3, List, Calendar as CalendarIcon, Filter, Plus, Download } from 'lucide-react';
-import { SportsGridView } from '../components/events/SportsGridView';
-import { SportsListView } from '../components/events/SportsListView';
-import { SportsCalendarView } from '../components/events/SportsCalendarView';
-import { SportsFiltersPanel } from '../components/events/SportsFiltersPanel';
-import { Skeleton } from '@/components/ui/skeleton';
-import { getSports } from '@/actions/sportGetters';
-import { getUpcomingMatches } from '@/actions/fixtureActions';
-import { AddRegistrationModal } from '@/components/shared/AddRegistrationModal';
-import { Modal } from '@/components/Modal';
-import { SportForm } from '../components/events/SportForm';
+"use client";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import {
+  Search,
+  Grid3x3,
+  List,
+  Calendar as CalendarIcon,
+  Filter,
+  Plus,
+  Download,
+} from "lucide-react";
+import { SportsGridView } from "../components/events/SportsGridView";
+import { SportsListView } from "../components/events/SportsListView";
+import { SportsCalendarView } from "../components/events/SportsCalendarView";
+import { SportsFiltersPanel } from "../components/events/SportsFiltersPanel";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getSports } from "@/actions/sportGetters";
+import { getUpcomingMatches } from "@/actions/fixtureActions";
+import { AddRegistrationModal } from "@/components/shared/AddRegistrationModal";
+import { Modal } from "@/components/Modal";
+import { SportForm } from "../components/events/SportForm";
 
 interface AllSportsPageProps {
   onNavigate?: (path: string, options?: Record<string, unknown>) => void;
-  calendarVariant?: 'default' | 'sports-admin';
+  calendarVariant?: "default" | "sports-admin";
 }
 
-export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSportsPageProps = {}) {
+export function AllSportsPage({
+  onNavigate,
+  calendarVariant = "default",
+}: AllSportsPageProps = {}) {
   const { data: session } = useSession();
   const router = useRouter();
-  const isBranchPortal = (session?.user?.role === 'BRANCH_SPORTS_ADMIN');
+  const isBranchPortal = session?.user?.role === "BRANCH_SPORTS_ADMIN";
 
-  const [viewType, setViewType] = useState('grid');
-  const [selectedFilter, setSelectedFilter] = useState('All');
+  const [viewType, setViewType] = useState("grid");
+  const [selectedFilter, setSelectedFilter] = useState("All");
   const [showFiltersPanel, setShowFiltersPanel] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
   const [showDrafts, setShowDrafts] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [sportsData, setSportsData] = useState<any[]>([]);
   const [calendarMatches, setCalendarMatches] = useState<any[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingSport, setEditingSport] = useState<any>(null);
-  const [preSelectedSportId, setPreSelectedSportId] = useState<string | null>(null);
+  const [preSelectedSportId, setPreSelectedSportId] = useState<string | null>(
+    null,
+  );
 
-  const filterChips = ['All', 'Individual', 'Team'];
+  const filterChips = ["All", "Individual", "Team"];
 
   useEffect(() => {
     async function fetchData() {
@@ -51,13 +64,13 @@ export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSp
       if (sportsRes.success) {
         setSportsData(sportsRes.sports || []);
       } else {
-        console.error('Failed to fetch sports:', sportsRes.error);
+        console.error("Failed to fetch sports:", sportsRes.error);
       }
 
       if (matchesRes.success) {
         setCalendarMatches(matchesRes.data || []);
       } else {
-        console.error('Failed to fetch calendar matches:', matchesRes.error);
+        console.error("Failed to fetch calendar matches:", matchesRes.error);
         setCalendarMatches([]);
       }
       setIsLoading(false);
@@ -93,27 +106,37 @@ export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSp
               <span className="text-[#9CA3AF]">›</span>
               <span>Sports Management</span>
               <span className="text-[#9CA3AF]">›</span>
-              <span className="text-[#1A1A1A] font-medium">Sports Competition</span>
+              <span className="text-[#1A1A1A] font-medium">
+                Sports Competition
+              </span>
             </div>
 
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
               <div>
-                <h1 className="text-2xl md:text-[28px] font-semibold text-[#1A1A1A] mb-2">Sports Competition</h1>
-                <p className="text-sm text-[#6B7280]">Refine, track, and manage all athletic tournaments for the session.</p>
+                <h1 className="text-2xl md:text-[28px] font-semibold text-[#1A1A1A] mb-2">
+                  Sports Competition
+                </h1>
+                <p className="text-sm text-[#6B7280]">
+                  Refine, track, and manage all athletic tournaments for the
+                  session.
+                </p>
               </div>
               {!isBranchPortal && (
                 <div className="flex flex-wrap items-center gap-3">
                   <button
                     onClick={() => setShowArchived(!showArchived)}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all border ${showArchived
-                      ? 'bg-amber-50 border-amber-200 text-amber-700'
-                      : 'bg-white border-[#E5E7EB] text-[#6B7280] hover:bg-[#F9FAFB]'
-                      }`}>
-                    {showArchived ? 'Viewing Archived' : 'View Archived'}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all border ${
+                      showArchived
+                        ? "bg-amber-50 border-amber-200 text-amber-700"
+                        : "bg-white border-[#E5E7EB] text-[#6B7280] hover:bg-[#F9FAFB]"
+                    }`}
+                  >
+                    {showArchived ? "Viewing Archived" : "View Archived"}
                   </button>
                   <button
-                    onClick={() => onNavigate?.('add-sport')}
-                    className="flex items-center justify-center gap-2 px-5 py-2.5 bg-[#10B981] text-white rounded-xl text-sm font-semibold hover:bg-[#059669] transition-all shadow-sm active:scale-95">
+                    onClick={() => onNavigate?.("add-sport")}
+                    className="flex items-center justify-center gap-2 px-5 py-2.5 bg-[#10B981] text-white rounded-xl text-sm font-semibold hover:bg-[#059669] transition-all shadow-sm active:scale-95"
+                  >
                     <Plus className="w-5 h-5" />
                     New Sport
                   </button>
@@ -133,7 +156,8 @@ export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSp
                         placeholder="Search tournaments..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/5 active:border-[#1A1A1A] transition-all" />
+                        className="w-full pl-12 pr-4 py-3 bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/5 active:border-[#1A1A1A] transition-all"
+                      />
                     </div>
 
                     <div className="hidden lg:flex items-center gap-2">
@@ -141,10 +165,11 @@ export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSp
                         <button
                           key={chip}
                           onClick={() => setSelectedFilter(chip)}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedFilter === chip
-                            ? 'bg-[#1A1A1A] text-white'
-                            : 'bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]'
-                            }`}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            selectedFilter === chip
+                              ? "bg-[#1A1A1A] text-white"
+                              : "bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]"
+                          }`}
                         >
                           {chip}
                         </button>
@@ -157,27 +182,33 @@ export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSp
 
                     <div className="flex items-center gap-1 bg-[#F9FAFB] border border-[#E5E7EB] rounded-[18px] p-1.5 focus-within:ring-2 focus-within:ring-[#1A1A1A]/5">
                       <button
-                        onClick={() => setViewType('grid')}
-                        className={`p-2 rounded-xl transition-all ${viewType === 'grid' ?
-                          'bg-white text-[#1A1A1A] shadow-sm' :
-                          'text-[#9CA3AF] hover:text-[#1A1A1A]'}`
-                        }>
+                        onClick={() => setViewType("grid")}
+                        className={`p-2 rounded-xl transition-all ${
+                          viewType === "grid"
+                            ? "bg-white text-[#1A1A1A] shadow-sm"
+                            : "text-[#9CA3AF] hover:text-[#1A1A1A]"
+                        }`}
+                      >
                         <Grid3x3 className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => setViewType('list')}
-                        className={`p-2 rounded-xl transition-all ${viewType === 'list' ?
-                          'bg-white text-[#1A1A1A] shadow-sm' :
-                          'text-[#9CA3AF] hover:text-[#1A1A1A]'}`
-                        }>
+                        onClick={() => setViewType("list")}
+                        className={`p-2 rounded-xl transition-all ${
+                          viewType === "list"
+                            ? "bg-white text-[#1A1A1A] shadow-sm"
+                            : "text-[#9CA3AF] hover:text-[#1A1A1A]"
+                        }`}
+                      >
                         <List className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => setViewType('calendar')}
-                        className={`p-2 rounded-xl transition-all ${viewType === 'calendar' ?
-                          'bg-white text-[#1A1A1A] shadow-sm' :
-                          'text-[#9CA3AF] hover:text-[#1A1A1A]'}`
-                        }>
+                        onClick={() => setViewType("calendar")}
+                        className={`p-2 rounded-xl transition-all ${
+                          viewType === "calendar"
+                            ? "bg-white text-[#1A1A1A] shadow-sm"
+                            : "text-[#9CA3AF] hover:text-[#1A1A1A]"
+                        }`}
+                      >
                         <CalendarIcon className="w-4 h-4" />
                       </button>
                     </div>
@@ -187,11 +218,17 @@ export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSp
             </div>
 
             {/* Sports Display */}
-            {isLoading ?
+            {isLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[...Array(6)].map((_: any, i: any) =>
-                  <div key={i} className="bg-white rounded-[32px] border border-[#E5E7EB] overflow-hidden p-5 shadow-sm">
-                    <Skeleton height={200} className="w-full rounded-[24px] mb-5" />
+                {[...Array(6)].map((_: any, i: any) => (
+                  <div
+                    key={i}
+                    className="bg-white rounded-[32px] border border-[#E5E7EB] overflow-hidden p-5 shadow-sm"
+                  >
+                    <Skeleton
+                      height={200}
+                      className="w-full rounded-[24px] mb-5"
+                    />
                     <div className="space-y-4">
                       <Skeleton width="40%" height={12} />
                       <Skeleton width="85%" height={28} />
@@ -202,20 +239,23 @@ export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSp
                       </div>
                     </div>
                   </div>
-                )}
-              </div> :
-
+                ))}
+              </div>
+            ) : (
               <div className="animate-card-entrance">
-                {viewType === 'grid' && (
+                {viewType === "grid" && (
                   <SportsGridView
                     sports={sportsData}
                     searchQuery={searchQuery}
                     selectedFilter={selectedFilter}
                     onNavigate={(path, params: any) => {
-                      if (path === 'add-registration' && params?.initialData) {
+                      if (path === "add-registration" && params?.initialData) {
                         setPreSelectedSportId(params.initialData.id);
                         setShowAddModal(true);
-                      } else if (path === 'add-sport' && params?.mode === 'edit') {
+                      } else if (
+                        path === "add-sport" &&
+                        params?.mode === "edit"
+                      ) {
                         setEditingSport(params.initialData);
                         setShowEditModal(true);
                       } else {
@@ -227,16 +267,19 @@ export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSp
                     onRefresh={refreshData}
                   />
                 )}
-                {viewType === 'list' && (
+                {viewType === "list" && (
                   <SportsListView
                     sports={sportsData}
                     searchQuery={searchQuery}
                     selectedFilter={selectedFilter}
                     onNavigate={(path, params: any) => {
-                      if (path === 'add-registration' && params?.initialData) {
+                      if (path === "add-registration" && params?.initialData) {
                         setPreSelectedSportId(params.initialData.id);
                         setShowAddModal(true);
-                      } else if (path === 'add-sport' && params?.mode === 'edit') {
+                      } else if (
+                        path === "add-sport" &&
+                        params?.mode === "edit"
+                      ) {
                         setEditingSport(params.initialData);
                         setShowEditModal(true);
                       } else {
@@ -248,7 +291,7 @@ export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSp
                     onRefresh={refreshData}
                   />
                 )}
-                {viewType === 'calendar' && (
+                {viewType === "calendar" && (
                   <div className="bg-[#F4F2F0] p-[10px] rounded-[18px]">
                     <div className="bg-white p-5 rounded-[14px] border border-[#E5E7EB] shadow-sm">
                       <SportsCalendarView
@@ -262,17 +305,17 @@ export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSp
                   </div>
                 )}
               </div>
-            }
+            )}
           </div>
         </div>
       </div>
 
       {/* Filters Panel - Right Side Overlay */}
-      {showFiltersPanel &&
+      {showFiltersPanel && (
         <div className="fixed inset-y-0 right-0 z-50 w-[320px] bg-white border-l border-[#E5E7EB] overflow-y-auto animate-slide-left shadow-2xl flex flex-col">
           <SportsFiltersPanel onClose={() => setShowFiltersPanel(false)} />
         </div>
-      }
+      )}
 
       <AddRegistrationModal
         isOpen={showAddModal}
@@ -285,7 +328,9 @@ export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSp
           setPreSelectedSportId(null);
           refreshData();
         }}
-        initialSportId={preSelectedSportId === null ? undefined : preSelectedSportId}
+        initialSportId={
+          preSelectedSportId === null ? undefined : preSelectedSportId
+        }
       />
 
       <Modal
@@ -304,5 +349,6 @@ export function AllSportsPage({ onNavigate, calendarVariant = 'default' }: AllSp
           onCancel={() => setShowEditModal(false)}
         />
       </Modal>
-    </div>);
+    </div>
+  );
 }

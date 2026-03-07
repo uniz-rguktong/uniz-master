@@ -1,3 +1,3 @@
-'use client';
+"use client";
 
-export { LiveAttendancePage } from '@/components/features/admin/views/LiveAttendancePage';
+export { LiveAttendancePage } from "@/components/features/admin/views/LiveAttendancePage";

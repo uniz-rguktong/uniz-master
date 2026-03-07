@@ -1,13 +1,13 @@
-'use client';
-import { createPortal } from 'react-dom';
-import { useEffect, useState, useRef } from 'react';
-import type { ChangeEvent } from 'react';
-import { X, Upload, Loader2 } from 'lucide-react';
-import Image from 'next/image';
-import { uploadFileToR2 } from '@/lib/upload';
-import { useToast } from '@/hooks/useToast';
+"use client";
+import { createPortal } from "react-dom";
+import { useEffect, useState, useRef } from "react";
+import type { ChangeEvent } from "react";
+import { X, Upload, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { uploadFileToR2 } from "@/lib/upload";
+import { useToast } from "@/hooks/useToast";
 
-type CategoryVisibility = 'public' | 'private' | 'branch';
+type CategoryVisibility = "public" | "private" | "branch";
 
 interface CategoryData {
   name: string;
@@ -29,10 +29,16 @@ interface CategoryModalProps {
   }) => void;
 }
 
-export function CategoryModal({ category, onClose, onSave }: CategoryModalProps) {
-  const [name, setName] = useState(category?.name || '');
-  const [description, setDescription] = useState(category?.description || '');
-  const [visibility, setVisibility] = useState(category?.visibility || 'public');
+export function CategoryModal({
+  category,
+  onClose,
+  onSave,
+}: CategoryModalProps) {
+  const [name, setName] = useState(category?.name || "");
+  const [description, setDescription] = useState(category?.description || "");
+  const [visibility, setVisibility] = useState(
+    category?.visibility || "public",
+  );
   const [displayOrder, setDisplayOrder] = useState(category?.displayOrder || 1);
   const [coverImage, setCoverImage] = useState(category?.coverImage || null);
   const [isUploading, setIsUploading] = useState(false);
@@ -42,16 +48,16 @@ export function CategoryModal({ category, onClose, onSave }: CategoryModalProps)
 
   useEffect(() => {
     setMounted(true);
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, []);
 
   useEffect(() => {
-    setName(category?.name || '');
-    setDescription(category?.description || '');
-    setVisibility(category?.visibility || 'public');
+    setName(category?.name || "");
+    setDescription(category?.description || "");
+    setVisibility(category?.visibility || "public");
     setDisplayOrder(category?.displayOrder || 1);
     setCoverImage(category?.coverImage || null);
   }, [category]);
@@ -61,7 +67,7 @@ export function CategoryModal({ category, onClose, onSave }: CategoryModalProps)
     if (!file) return;
 
     // Basic validation
-    if (!file.type.startsWith('image/')) {
+    if (!file.type.startsWith("image/")) {
       showToast("Please select a valid image file", "error");
       return;
     }
@@ -84,7 +90,7 @@ export function CategoryModal({ category, onClose, onSave }: CategoryModalProps)
       showToast("An error occurred during upload", "error");
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -98,7 +104,7 @@ export function CategoryModal({ category, onClose, onSave }: CategoryModalProps)
       description,
       visibility,
       displayOrder,
-      coverImage
+      coverImage,
     });
   };
 
@@ -110,11 +116,12 @@ export function CategoryModal({ category, onClose, onSave }: CategoryModalProps)
         {/* Header */}
         <div className="flex items-center justify-between px-[16px] pt-[12px] pb-[16px]">
           <h2 className="text-[18px] font-bold text-[#1A1A1A]">
-            {category ? 'Edit Category' : 'Create New Category'}
+            {category ? "Edit Category" : "Create New Category"}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[#E5E7EB] rounded-full transition-colors text-[#6B7280]">
+            className="p-2 hover:bg-[#E5E7EB] rounded-full transition-colors text-[#6B7280]"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -132,11 +139,16 @@ export function CategoryModal({ category, onClose, onSave }: CategoryModalProps)
               onChange={(e) => setName(e.target.value)}
               maxLength={50}
               placeholder="e.g., Annual Sports Meet 2026"
-              className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 transition-all" />
+              className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 transition-all"
+            />
 
             <div className="flex items-center justify-between mt-2">
-              <span className="text-[11px] text-[#6B7280] font-medium">Choose a descriptive and catchy name</span>
-              <span className="text-[11px] text-[#6B7280] font-bold">{name.length}/50</span>
+              <span className="text-[11px] text-[#6B7280] font-medium">
+                Choose a descriptive and catchy name
+              </span>
+              <span className="text-[11px] text-[#6B7280] font-bold">
+                {name.length}/50
+              </span>
             </div>
           </div>
 
@@ -151,11 +163,16 @@ export function CategoryModal({ category, onClose, onSave }: CategoryModalProps)
               maxLength={200}
               rows={3}
               placeholder="What events are included in this category?"
-              className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 resize-none transition-all" />
+              className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]/20 resize-none transition-all"
+            />
 
             <div className="flex items-center justify-between mt-2">
-              <span className="text-[11px] text-[#6B7280] font-medium">Optional context for users</span>
-              <span className="text-[11px] text-[#6B7280] font-bold">{description.length}/200</span>
+              <span className="text-[11px] text-[#6B7280] font-medium">
+                Optional context for users
+              </span>
+              <span className="text-[11px] text-[#6B7280] font-bold">
+                {description.length}/200
+              </span>
             </div>
           </div>
 
@@ -173,7 +190,7 @@ export function CategoryModal({ category, onClose, onSave }: CategoryModalProps)
               onChange={handleFileChange}
             />
 
-            {coverImage ?
+            {coverImage ? (
               <div className="relative group rounded-2xl overflow-hidden border border-[#E5E7EB]">
                 <Image
                   src={coverImage}
@@ -181,62 +198,80 @@ export function CategoryModal({ category, onClose, onSave }: CategoryModalProps)
                   width={800}
                   height={450}
                   unoptimized
-                  className="w-full aspect-video object-cover" />
+                  className="w-full aspect-video object-cover"
+                />
 
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="p-3 bg-white text-[#1A1A1A] rounded-xl font-bold text-xs hover:bg-[#F3F4F6] transition-all">
+                    className="p-3 bg-white text-[#1A1A1A] rounded-xl font-bold text-xs hover:bg-[#F3F4F6] transition-all"
+                  >
                     Change Image
                   </button>
                   <button
                     onClick={() => setCoverImage(null)}
-                    className="p-3 bg-[#EF4444] text-white rounded-xl font-bold text-xs hover:bg-[#DC2626] transition-all">
+                    className="p-3 bg-[#EF4444] text-white rounded-xl font-bold text-xs hover:bg-[#DC2626] transition-all"
+                  >
                     Remove
                   </button>
                 </div>
-              </div> :
-
+              </div>
+            ) : (
               <div
                 onClick={() => !isUploading && fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer ${isUploading ? 'bg-[#F7F8FA] border-[#E5E7EB]' : 'bg-white border-[#E5E7EB] hover:border-[#10B981] hover:bg-[#10B981]/5'}`}>
-
+                className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer ${isUploading ? "bg-[#F7F8FA] border-[#E5E7EB]" : "bg-white border-[#E5E7EB] hover:border-[#10B981] hover:bg-[#10B981]/5"}`}
+              >
                 <div className="flex flex-col items-center">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-[#E5E7EB] ${isUploading ? 'bg-white' : 'bg-[#F7F8FA]'}`}>
-                    {isUploading ? <Loader2 className="w-7 h-7 text-[#10B981] animate-spin" /> : <Upload className="w-7 h-7 text-[#6B7280]" />}
+                  <div
+                    className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-[#E5E7EB] ${isUploading ? "bg-white" : "bg-[#F7F8FA]"}`}
+                  >
+                    {isUploading ? (
+                      <Loader2 className="w-7 h-7 text-[#10B981] animate-spin" />
+                    ) : (
+                      <Upload className="w-7 h-7 text-[#6B7280]" />
+                    )}
                   </div>
                   <h3 className="text-sm font-bold text-[#1A1A1A] mb-1">
-                    {isUploading ? 'Uploading Image...' : 'Select Cover Image'}
+                    {isUploading ? "Uploading Image..." : "Select Cover Image"}
                   </h3>
                   <p className="text-[11px] text-[#6B7280] mb-4">
                     Recommended: 16:9 ratio • JPG, PNG • Max 5MB
                   </p>
                   <button
                     disabled={isUploading}
-                    className="px-6 py-2 bg-[#1A1A1A] text-white rounded-xl text-xs font-bold hover:bg-[#2D2D2D] transition-all disabled:opacity-50">
+                    className="px-6 py-2 bg-[#1A1A1A] text-white rounded-xl text-xs font-bold hover:bg-[#2D2D2D] transition-all disabled:opacity-50"
+                  >
                     Browse Files
                   </button>
                 </div>
               </div>
-            }
+            )}
           </div>
 
           {/* Visibility Controls */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[
-              { id: 'public', label: 'Public', desc: 'Site visible' },
-              { id: 'private', label: 'Private', desc: 'Admin only' },
-              { id: 'branch', label: 'Branch', desc: 'Branch only' }
+              { id: "public", label: "Public", desc: "Site visible" },
+              { id: "private", label: "Private", desc: "Admin only" },
+              { id: "branch", label: "Branch", desc: "Branch only" },
             ].map((v: any) => (
-              <label key={v.id} className={`flex flex-col p-4 border-2 rounded-xl cursor-pointer transition-all ${visibility === v.id ? 'border-[#10B981] bg-[#10B981]/5' : 'border-[#E5E7EB] hover:border-[#D1D5DB]'}`}>
+              <label
+                key={v.id}
+                className={`flex flex-col p-4 border-2 rounded-xl cursor-pointer transition-all ${visibility === v.id ? "border-[#10B981] bg-[#10B981]/5" : "border-[#E5E7EB] hover:border-[#D1D5DB]"}`}
+              >
                 <input
                   type="radio"
                   name="visibility"
                   value={v.id}
                   checked={visibility === v.id}
-                  onChange={(e) => setVisibility(e.target.value as CategoryVisibility)}
-                  className="hidden" />
-                <span className="text-xs font-bold text-[#1A1A1A]">{v.label}</span>
+                  onChange={(e) =>
+                    setVisibility(e.target.value as CategoryVisibility)
+                  }
+                  className="hidden"
+                />
+                <span className="text-xs font-bold text-[#1A1A1A]">
+                  {v.label}
+                </span>
                 <span className="text-[10px] text-[#6B7280]">{v.desc}</span>
               </label>
             ))}
@@ -246,20 +281,22 @@ export function CategoryModal({ category, onClose, onSave }: CategoryModalProps)
           <div className="flex items-center justify-end gap-3 pt-6 border-t border-[#E5E7EB]">
             <button
               onClick={onClose}
-              className="px-6 py-3 bg-[#F7F8FA] border border-[#E5E7EB] rounded-xl text-sm font-bold text-[#1A1A1A] hover:bg-[#F3F4F6] transition-all">
+              className="px-6 py-3 bg-[#F7F8FA] border border-[#E5E7EB] rounded-xl text-sm font-bold text-[#1A1A1A] hover:bg-[#F3F4F6] transition-all"
+            >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={isUploading}
-              className="px-10 py-3 bg-[#1A1A1A] text-white rounded-xl text-sm font-black hover:bg-[#2D2D2D] shadow-xl transition-all disabled:opacity-50 flex items-center gap-2">
+              className="px-10 py-3 bg-[#1A1A1A] text-white rounded-xl text-sm font-black hover:bg-[#2D2D2D] shadow-xl transition-all disabled:opacity-50 flex items-center gap-2"
+            >
               {isUploading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {category ? 'Update Category' : 'Create Category'}
+              {category ? "Update Category" : "Create Category"}
             </button>
           </div>
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

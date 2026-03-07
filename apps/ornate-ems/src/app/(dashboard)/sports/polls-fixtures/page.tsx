@@ -1,5 +1,5 @@
-import { PollsFixturesPage } from '@/components/features/sports/views/PollsFixturesPage';
+import { PollsFixturesPage } from "@/components/features/sports/views/PollsFixturesPage";
 
 export default function Page() {
-    return <PollsFixturesPage />;
+  return <PollsFixturesPage />;
 }

@@ -1,7 +1,7 @@
 interface SettingsLayoutProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 export default function SettingsLayout({ children }: SettingsLayoutProps) {
-    return <>{children}</>;
+  return <>{children}</>;
 }

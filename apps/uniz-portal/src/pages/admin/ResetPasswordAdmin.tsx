@@ -432,7 +432,8 @@ export default function Resetpassword() {
                     />
                   </svg>
                   <p className="text-[11px] font-medium text-slate-400 leading-relaxed uppercase tracking-wider">
-                    Terminal security protocol will automatically log out all sessions after successful credential update.
+                    Terminal security protocol will automatically log out all
+                    sessions after successful credential update.
                   </p>
                 </div>
               </div>

@@ -1,8 +1,16 @@
-'use client';
-import { useState, useRef } from 'react';
-import { Building2, Mail, Phone, Upload, Trash2, Save, GraduationCap } from 'lucide-react';
-import { useToast } from '@/hooks/useToast';
-import { InfoTooltip } from '@/components/InfoTooltip';
+"use client";
+import { useState, useRef } from "react";
+import {
+  Building2,
+  Mail,
+  Phone,
+  Upload,
+  Trash2,
+  Save,
+  GraduationCap,
+} from "lucide-react";
+import { useToast } from "@/hooks/useToast";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
 export function BranchSettingsPage() {
   const { showToast } = useToast();
@@ -14,15 +22,16 @@ export function BranchSettingsPage() {
     shortName: "CSE",
     coordinator: "Dr. Arvind Kumar",
     establishedYear: "1995",
-    description: "Department focused on excellence in computing education, research, and innovation. Managing all department-level events and student activities.",
+    description:
+      "Department focused on excellence in computing education, research, and innovation. Managing all department-level events and student activities.",
     email: "cse.hod@university.edu",
     phone: "+91 76543 21098",
     logo: null,
     stats: {
       students: 1200,
       faculty: 45,
-      researchPapers: 320
-    }
+      researchPapers: 320,
+    },
   });
 
   const [hasChanges, setHasChanges] = useState(false);
@@ -31,7 +40,7 @@ export function BranchSettingsPage() {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     setHasChanges(true);
   };
@@ -48,7 +57,8 @@ export function BranchSettingsPage() {
   const handleFileChange = (event: any) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      if (file.size > 2 * 1024 * 1024) {
+        // 2MB limit
         showToast("File size too large. Maximum size is 2MB.", "error");
         return;
       }
@@ -56,7 +66,7 @@ export function BranchSettingsPage() {
       const imageUrl = URL.createObjectURL(file);
       setFormData((prev: any) => ({
         ...prev,
-        logo: imageUrl
+        logo: imageUrl,
       }));
       setHasChanges(true);
       showToast("Logo selected. Click save to apply changes.", "info");
@@ -77,17 +87,23 @@ export function BranchSettingsPage() {
 
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-[28px] font-semibold text-[#1A1A1A] mb-2">Branch Settings</h1>
-            <p className="text-sm text-[#6B7280]">Configure department details and contact information</p>
+            <h1 className="text-[28px] font-semibold text-[#1A1A1A] mb-2">
+              Branch Settings
+            </h1>
+            <p className="text-sm text-[#6B7280]">
+              Configure department details and contact information
+            </p>
           </div>
 
           <button
             onClick={handleSave}
             disabled={!hasChanges}
-            className={`flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium transition-colors shadow-sm ${hasChanges
-              ? "bg-[#10B981] text-white hover:bg-[#059669]"
-              : "bg-gray-200 text-gray-500 cursor-not-allowed"
-              }`}>
+            className={`flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium transition-colors shadow-sm ${
+              hasChanges
+                ? "bg-[#10B981] text-white hover:bg-[#059669]"
+                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+            }`}
+          >
             <Save className="w-5 h-5" />
             Save Changes
           </button>
@@ -98,7 +114,10 @@ export function BranchSettingsPage() {
         {/* Main Settings */}
         <div className="lg:col-span-2 space-y-6">
           {/* Basic Information */}
-          <div className="bg-[#F4F2F0] rounded-[18px] p-[10px] animate-card-entrance" style={{ animationDelay: '40ms' }}>
+          <div
+            className="bg-[#F4F2F0] rounded-[18px] p-[10px] animate-card-entrance"
+            style={{ animationDelay: "40ms" }}
+          >
             <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3 pl-[5px] pt-[15px] pb-[5px] flex items-center gap-2">
               Basic Information
               <InfoTooltip text="Core details about the department/branch." />
@@ -115,7 +134,8 @@ export function BranchSettingsPage() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                  />
                 </div>
 
                 <div>
@@ -127,7 +147,8 @@ export function BranchSettingsPage() {
                     name="shortName"
                     value={formData.shortName}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                  />
                 </div>
 
                 <div>
@@ -139,7 +160,8 @@ export function BranchSettingsPage() {
                     name="coordinator"
                     value={formData.coordinator}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                  />
                 </div>
 
                 <div>
@@ -151,7 +173,8 @@ export function BranchSettingsPage() {
                     name="establishedYear"
                     value={formData.establishedYear}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                  />
                 </div>
 
                 <div>
@@ -163,14 +186,18 @@ export function BranchSettingsPage() {
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981] resize-none" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981] resize-none"
+                  />
                 </div>
               </div>
             </div>
           </div>
 
           {/* Contact Information */}
-          <div className="bg-[#F4F2F0] rounded-[18px] p-[10px] animate-card-entrance" style={{ animationDelay: '80ms' }}>
+          <div
+            className="bg-[#F4F2F0] rounded-[18px] p-[10px] animate-card-entrance"
+            style={{ animationDelay: "80ms" }}
+          >
             <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3 pl-[5px] pt-[15px] pb-[5px] flex items-center gap-2">
               Contact Information
               <InfoTooltip text="Public contact channels for branch queries." />
@@ -190,7 +217,8 @@ export function BranchSettingsPage() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                  />
                 </div>
 
                 <div>
@@ -205,7 +233,8 @@ export function BranchSettingsPage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                  />
                 </div>
               </div>
             </div>
@@ -231,11 +260,13 @@ export function BranchSettingsPage() {
                   className="hidden"
                 />
 
-                <div
-                  className="w-32 h-32 mx-auto mb-4 bg-[#F7F8FA] rounded-lg flex items-center justify-center border-2 border-dashed border-[#E5E7EB] overflow-hidden relative"
-                >
+                <div className="w-32 h-32 mx-auto mb-4 bg-[#F7F8FA] rounded-lg flex items-center justify-center border-2 border-dashed border-[#E5E7EB] overflow-hidden relative">
                   {formData.logo ? (
-                    <img src={formData.logo} alt="Branch Logo" className="w-full h-full object-cover" />
+                    <img
+                      src={formData.logo}
+                      alt="Branch Logo"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <Building2 className="w-12 h-12 text-[#9CA3AF]" />
                   )}
@@ -247,7 +278,7 @@ export function BranchSettingsPage() {
                     className="flex items-center justify-center gap-2 px-4 py-2 bg-[#F7F8FA] hover:bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg text-sm font-medium text-[#1A1A1A] transition-colors mx-auto w-full"
                   >
                     <Upload className="w-4 h-4" />
-                    {formData.logo ? 'Change Logo' : 'Upload Logo'}
+                    {formData.logo ? "Change Logo" : "Upload Logo"}
                   </button>
                   {formData.logo && (
                     <button
@@ -281,22 +312,38 @@ export function BranchSettingsPage() {
               <table className="w-full">
                 <thead className="bg-[#F9FAFB] border-b border-[#F3F4F6]">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Metric</th>
-                    <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Value</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      Metric
+                    </th>
+                    <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      Value
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F3F4F6]">
                   <tr>
-                    <td className="px-6 py-4 text-sm font-medium text-[#6B7280]">Total Students</td>
-                    <td className="px-6 py-4 text-right text-sm font-bold text-[#1A1A1A]">{formData.stats.students}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-[#6B7280]">
+                      Total Students
+                    </td>
+                    <td className="px-6 py-4 text-right text-sm font-bold text-[#1A1A1A]">
+                      {formData.stats.students}
+                    </td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 text-sm font-medium text-[#6B7280]">Faculty Members</td>
-                    <td className="px-6 py-4 text-right text-sm font-bold text-[#1A1A1A]">{formData.stats.faculty}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-[#6B7280]">
+                      Faculty Members
+                    </td>
+                    <td className="px-6 py-4 text-right text-sm font-bold text-[#1A1A1A]">
+                      {formData.stats.faculty}
+                    </td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 text-sm font-medium text-[#6B7280]">Research Papers</td>
-                    <td className="px-6 py-4 text-right text-sm font-bold text-[#1A1A1A]">{formData.stats.researchPapers}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-[#6B7280]">
+                      Research Papers
+                    </td>
+                    <td className="px-6 py-4 text-right text-sm font-bold text-[#1A1A1A]">
+                      {formData.stats.researchPapers}
+                    </td>
                   </tr>
                 </tbody>
               </table>

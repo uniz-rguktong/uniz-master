@@ -1,18 +1,20 @@
-'use client';
-import { GalleryCard } from './GalleryCard';
-import { useToast } from '@/hooks/useToast';
+"use client";
+import { GalleryCard } from "./GalleryCard";
+import { useToast } from "@/hooks/useToast";
 
-
-
-
-
-type GalleryMenuAction = 'view' | 'edit' | 'upload' | 'download' | 'archive' | 'delete';
+type GalleryMenuAction =
+  | "view"
+  | "edit"
+  | "upload"
+  | "download"
+  | "archive"
+  | "delete";
 
 interface GalleryCategory {
   id: string;
   name: string;
   coverImage: string;
-  visibility: 'public' | 'private' | 'branch';
+  visibility: "public" | "private" | "branch";
   photoCount: number;
   dateCreated: string;
   lastUpdated: string;
@@ -31,35 +33,47 @@ interface GalleryGridViewProps {
   onArchiveCategory?: (category: GalleryCategory) => void;
 }
 
-export function GalleryGridView({ categories, isReadOnly = false, onEditCategory, onUploadPhotos, onViewGallery, onDownloadCategory, onDeleteCategory, onArchiveCategory }: GalleryGridViewProps) {
+export function GalleryGridView({
+  categories,
+  isReadOnly = false,
+  onEditCategory,
+  onUploadPhotos,
+  onViewGallery,
+  onDownloadCategory,
+  onDeleteCategory,
+  onArchiveCategory,
+}: GalleryGridViewProps) {
   const { showToast } = useToast();
 
-  const handleActionMenuClick = (category: GalleryCategory, action: GalleryMenuAction) => {
+  const handleActionMenuClick = (
+    category: GalleryCategory,
+    action: GalleryMenuAction,
+  ) => {
     switch (action) {
-      case 'view':
+      case "view":
         if (onViewGallery) {
           onViewGallery(category);
         }
         break;
-      case 'edit':
+      case "edit":
         onEditCategory(category);
         break;
-      case 'upload':
+      case "upload":
         onUploadPhotos(category.name);
         break;
-      case 'download':
+      case "download":
         if (onDownloadCategory) {
           onDownloadCategory(category);
         } else {
-          showToast(`Downloading ${category.photoCount} photos...`, 'info');
+          showToast(`Downloading ${category.photoCount} photos...`, "info");
         }
         break;
-      case 'archive':
+      case "archive":
         if (onArchiveCategory) {
           onArchiveCategory(category);
         }
         break;
-      case 'delete':
+      case "delete":
         if (onDeleteCategory) {
           onDeleteCategory(category);
         }
@@ -76,7 +90,7 @@ export function GalleryGridView({ categories, isReadOnly = false, onEditCategory
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map((category: any) =>
+        {categories.map((category: any) => (
           <GalleryCard
             key={category.id}
             category={category}
@@ -84,13 +98,12 @@ export function GalleryGridView({ categories, isReadOnly = false, onEditCategory
             onEdit={() => onEditCategory(category)}
             onAddPhotos={onUploadPhotos}
             onDelete={() => handleDelete(category)}
-            onActionMenuClick={(action) => handleActionMenuClick(category, action)} />
-
-        )}
+            onActionMenuClick={(action) =>
+              handleActionMenuClick(category, action)
+            }
+          />
+        ))}
       </div>
-
-
-
-    </>);
-
+    </>
+  );
 }

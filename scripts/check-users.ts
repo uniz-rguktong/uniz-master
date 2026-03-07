@@ -1,4 +1,4 @@
-import { PrismaClient } from "./apps/uniz-auth/node_modules/@prisma/client/index.js";
+import { PrismaClient } from "@prisma/client/index-browser";
 
 const prisma = new PrismaClient();
 async function main() {

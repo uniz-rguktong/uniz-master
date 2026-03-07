@@ -1,8 +1,5 @@
 # UniZ | University Intelligence Engine
 
-
-
-
 [![CodeQL](https://github.com/uniz-rguktong/uniz-master/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/github-code-scanning/codeql)
 [![Copilot code review](https://github.com/uniz-rguktong/uniz-master/actions/workflows/copilot-pull-request-reviewer/copilot-pull-request-reviewer/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/copilot-pull-request-reviewer/copilot-pull-request-reviewer)
 [![Manual VPS Deployment](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml)
