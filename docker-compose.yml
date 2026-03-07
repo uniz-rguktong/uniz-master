@@ -1,0 +1,34 @@
+services:
+  # Main Database Engine
+  uniz-db:
+    image: postgres:17-alpine
+    container_name: uniz-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_MULTIPLE_DATABASES: uniz_auth,uniz_user,uniz_academics,uniz_outpass,uniz_files,uniz_mail,uniz_notifications,uniz_cron,ornate_core
+    volumes:
+      - uniz_db_data:/var/lib/postgresql/data
+      - ./infra/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # In-Memory Cache & Queue
+  uniz-redis:
+    image: redis:alpine
+    container_name: uniz-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  uniz_db_data:

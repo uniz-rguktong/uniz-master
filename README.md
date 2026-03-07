@@ -88,7 +88,7 @@ graph TD
     ```
 2.  **Infrastructure**:
     ```bash
-    npm run db:reset-migrate
+    docker-compose up -d
     ```
 3.  **Run Services**:
     ```bash
