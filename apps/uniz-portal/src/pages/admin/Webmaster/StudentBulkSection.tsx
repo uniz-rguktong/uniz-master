@@ -2,8 +2,6 @@
 import { useState, useEffect } from "react";
 import {
   Upload,
-  FileDown,
-  FileSpreadsheet,
   Loader2,
   CheckCircle2,
   X,
@@ -14,7 +12,6 @@ import {
 } from "lucide-react";
 import {
   ADMIN_STUDENT_UPLOAD,
-  ADMIN_STUDENT_TEMPLATE,
   ADMIN_STUDENT_PROGRESS,
   ADMIN_STUDENT_EXPORT,
 } from "../../../api/endpoints";
@@ -32,26 +29,8 @@ export default function StudentBulkSection() {
     branch: "CSE",
     year: "E1",
     fields: "username,name,email,branch,section",
-    batch: "",
   });
 
-  // Template Function
-  const downloadTemplate = async () => {
-    const token = localStorage.getItem("admin_token");
-    try {
-      const res = await fetch(ADMIN_STUDENT_TEMPLATE, {
-        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
-      });
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "student_upload_template.xlsx";
-      a.click();
-    } catch (error) {
-      toast.error("Failed to download template");
-    }
-  };
 
   // Bulk Upload Function
   const handleUpload = async () => {
@@ -64,7 +43,7 @@ export default function StudentBulkSection() {
     try {
       const res = await fetch(ADMIN_STUDENT_UPLOAD, {
         method: "POST",
-        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
         body: formData,
       });
       const data = await res.json();
@@ -89,17 +68,11 @@ export default function StudentBulkSection() {
         const token = localStorage.getItem("admin_token");
         try {
           const res = await fetch(ADMIN_STUDENT_PROGRESS, {
-            headers: {
-              Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-            },
+            headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
           });
           const data = await res.json();
           setProgress(data);
-          if (
-            data.status?.toLowerCase() === "done" ||
-            data.status?.toLowerCase() === "completed" ||
-            data.status?.toLowerCase() === "failed"
-          ) {
+          if (data.status === "completed" || data.status === "failed") {
             setUploadId(null);
             clearInterval(interval);
           }
@@ -119,21 +92,16 @@ export default function StudentBulkSection() {
       exportParams.branch,
       exportParams.year,
       exportParams.fields,
-      exportParams.batch,
     );
     try {
       const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
       });
       const blob = await res.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = downloadUrl;
-      const fileNameStr =
-        [exportParams.batch, exportParams.branch, exportParams.year]
-          .filter(Boolean)
-          .join("_") || "all";
-      a.download = `students_export_${fileNameStr}.xlsx`;
+      a.download = `students_export_${exportParams.branch || "all"}_${exportParams.year || "all"}.xlsx`;
       a.click();
       toast.success("Export completed");
     } catch (error) {
@@ -172,197 +140,108 @@ export default function StudentBulkSection() {
       </div>
 
       {activeTab === "upload" ? (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-7 space-y-6">
-            {/* Summary Step */}
-            <div className="bg-white p-7 rounded-[28px] border border-slate-100 shadow-sm space-y-5 transition-all hover:shadow-2xl hover:translate-y-[-2px] group">
-              <div className="flex items-center gap-4">
-                <div className="p-4 bg-blue-50 text-blue-600 border border-blue-100 rounded-[22px] shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                  <FileDown size={22} />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg tracking-tight">
-                    Step 1: Get the Framework
-                  </h3>
-                  <p className="text-slate-500 text-[13px] font-medium mt-0.5">
-                    Download the standard template to ensure data compatibility.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={downloadTemplate}
-                className="w-full h-12 flex items-center justify-center gap-3 bg-slate-50/50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-full text-blue-700 font-bold uppercase tracking-widest text-[10px] transition-all active:scale-[0.98]"
+        <div className="max-w-4xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+          {/* Upload Step */}
+          <div className="bg-white p-6 md:p-8 rounded-[40px] border border-slate-100 shadow-xl space-y-6 transition-all hover:shadow-2xl">
+            <div
+              className={`
+                border-4 border-dashed rounded-[32px] p-8 md:p-12 text-center transition-all relative
+                ${file ? "border-blue-600 bg-blue-50/50 shadow-inner" : "border-slate-100 hover:border-blue-200 bg-slate-50/30 hover:bg-slate-50/50"}
+              `}
+            >
+              <input
+                type="file"
+                id="bulk-student-file"
+                className="hidden"
+                accept=".xlsx,.xls,.csv"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+              />
+              <label
+                htmlFor="bulk-student-file"
+                className="cursor-pointer flex flex-col items-center gap-6"
               >
-                <FileSpreadsheet size={16} className="opacity-70" /> Download
-                Excel Template
-              </button>
-            </div>
-
-            {/* Upload Step */}
-            <div className="bg-white p-8 rounded-[28px] border border-slate-100 shadow-sm space-y-6 transition-all hover:shadow-md">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-50 text-blue-600 border border-blue-100 rounded-2xl">
-                  <Upload size={22} />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg tracking-tight">
-                    Step 2: Sync Records
-                  </h3>
-                  <p className="text-slate-500 text-[13px] font-medium mt-0.5">
-                    Upload your filled records to update student profiles.
-                  </p>
-                </div>
-              </div>
-
-              <div
-                className={`
-                                  border-4 border-dashed rounded-[32px] p-12 text-center transition-all relative
-                                  ${file ? "border-blue-600 bg-blue-50/50" : "border-slate-100 hover:border-blue-200 bg-slate-50/30"}
-                              `}
-              >
-                <input
-                  type="file"
-                  id="bulk-student-file"
-                  className="hidden"
-                  accept=".xlsx,.xls,.csv"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                />
-                <label
-                  htmlFor="bulk-student-file"
-                  className="cursor-pointer flex flex-col items-center gap-4"
+                <div
+                  className={`p-6 rounded-[28px] transition-all duration-500 ${file ? "bg-blue-600 text-white animate-pulse shadow-2xl shadow-blue-200" : "bg-white text-slate-300 shadow-xl border border-slate-50"}`}
                 >
-                  <div
-                    className={`p-6 rounded-3xl transition-all duration-500 ${file ? "bg-blue-600 text-white animate-pulse shadow-2xl shadow-blue-200" : "bg-white text-slate-300 shadow-inner border border-slate-50"}`}
-                  >
-                    <Upload size={32} />
-                  </div>
-                  <div className="space-y-1.5">
-                    <p className="text-xl font-semibold text-slate-900 tracking-tight">
-                      {file ? file.name : "Choose XLSX File"}
-                    </p>
-                    <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">
-                      Maximum 5000 records per upload
-                    </p>
-                  </div>
-                </label>
-                {file && (
-                  <button
-                    onClick={() => setFile(null)}
-                    className="absolute top-6 right-6 p-2 bg-white rounded-full shadow-2xl text-red-500 hover:scale-110 transition-all border border-red-50"
-                  >
-                    <X size={14} />
-                  </button>
-                )}
-              </div>
-
-              <button
-                onClick={handleUpload}
-                disabled={!file || loading || !!uploadId}
-                className="w-full h-14 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[11px] shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin w-5 h-5" />
-                ) : (
-                  <CheckCircle2 size={20} />
-                )}
-                Initiate Bulk Provisioning
-              </button>
-            </div>
-          </div>
-
-          <div className="lg:col-span-5 space-y-6">
-            <div className="sticky top-24">
-              {progress || uploadId ? (
-                <div className="bg-blue-600 rounded-[32px] p-10 text-white shadow-2xl shadow-blue-200 space-y-10 animate-in slide-in-from-right-8 duration-500 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-12 opacity-5 translate-x-1/4 -translate-y-1/4 pointer-events-none">
-                    <History size={200} />
-                  </div>
-                  <div className="flex items-center justify-between relative z-10">
-                    <div className="p-4 bg-white/10 rounded-[22px] backdrop-blur-md border border-white/20 shadow-xl">
-                      <History
-                        size={26}
-                        className={uploadId ? "animate-spin" : ""}
-                      />
-                    </div>
-                    <div className="text-right space-y-1">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 leading-none">
-                        Current Status
-                      </p>
-                      <p className="font-semibold text-3xl tracking-tight capitalize leading-none pt-2">
-                        {progress?.status || "Processing"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-5 relative z-10">
-                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-white/70">
-                      <span>Sync Progress</span>
-                      <span className="font-black">
-                        {Math.round(
-                          ((progress?.processed || 0) /
-                            (progress?.total || 1)) *
-                            100,
-                        )}
-                        %
-                      </span>
-                    </div>
-                    <div className="h-4 bg-black/10 rounded-full overflow-hidden border border-white/5 p-1 shadow-inner">
-                      <div
-                        className="h-full bg-white rounded-full transition-all duration-1000 ease-out shadow-[0_0_20px_rgba(255,255,255,0.8)]"
-                        style={{
-                          width: `${((progress?.processed || 0) / (progress?.total || 1)) * 100}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 pt-2 relative z-10">
-                    <div className="bg-white/10 p-6 rounded-[28px] border border-white/10 backdrop-blur-md shadow-xl">
-                      <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/50 leading-none mb-4">
-                        Processed
-                      </p>
-                      <p className="text-4xl font-semibold tracking-tighter leading-none">
-                        {progress?.processed || 0}
-                      </p>
-                    </div>
-                    <div className="bg-white/10 p-6 rounded-[28px] border border-white/10 backdrop-blur-md shadow-xl">
-                      <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/50 leading-none mb-4">
-                        Failed
-                      </p>
-                      <p className="text-4xl font-semibold tracking-tighter leading-none text-red-100">
-                        {progress?.failed || 0}
-                      </p>
-                    </div>
-                  </div>
-
-                  {progress?.status === "completed" && (
-                    <div className="flex items-center gap-3.5 p-5 bg-emerald-500/20 text-emerald-300 rounded-[22px] border border-emerald-500/30 backdrop-blur-sm animate-in zoom-in-95 duration-500 relative z-10">
-                      <CheckCircle2 size={24} className="shrink-0" />
-                      <p className="text-[11px] font-bold leading-relaxed tracking-wide">
-                        Database synchronization finalized successfully.
-                      </p>
-                    </div>
-                  )}
+                  <Upload size={32} />
                 </div>
-              ) : (
-                <div className="bg-white rounded-[32px] border border-slate-100 p-12 text-center space-y-7 flex flex-col items-center justify-center shadow-sm">
-                  <div className="p-12 bg-slate-50 rounded-full text-slate-200 border border-slate-50 shadow-inner">
-                    <History size={72} strokeWidth={1} />
-                  </div>
-                  <div className="space-y-3">
-                    <h4 className="text-2xl font-semibold text-slate-900 tracking-tight leading-none">
-                      Operation Monitor
-                    </h4>
-                    <p className="text-slate-400 text-[15px] font-medium max-w-[260px] mx-auto leading-relaxed">
-                      Real-time feedback on your background sync tasks will
-                      appear here.
-                    </p>
-                  </div>
+                <div className="space-y-2">
+                  <p className="text-2xl font-bold text-slate-900 tracking-tight">
+                    {file ? file.name : "Choose XLSX File"}
+                  </p>
+                  <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em]">
+                    Maximum 5000 records per upload
+                  </p>
                 </div>
+              </label>
+              {file && (
+                <button
+                  onClick={() => setFile(null)}
+                  className="absolute top-6 right-6 p-3 bg-white rounded-full shadow-2xl text-red-500 hover:scale-110 hover:bg-red-50 transition-all border border-red-50"
+                >
+                  <X size={16} />
+                </button>
               )}
             </div>
+
+            <button
+              onClick={handleUpload}
+              disabled={!file || loading || !!uploadId}
+              className="w-full h-16 bg-blue-600 text-white rounded-[24px] font-bold uppercase tracking-[0.2em] text-[11px] shadow-xl shadow-blue-100 hover:bg-blue-700 hover:scale-[1.01] transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
+            >
+              {loading ? (
+                <Loader2 className="animate-spin w-5 h-5" />
+              ) : (
+                <CheckCircle2 size={20} />
+              )}
+              Initiate Bulk Provisioning
+            </button>
+
+            {/* Progress UI integrated inside the card or below it */}
+            {(progress || uploadId) && (
+              <div className="pt-10 border-t border-slate-100 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="bg-slate-900 rounded-[32px] p-8 text-white space-y-8 relative overflow-hidden">
+                  <div className="flex items-center justify-between relative z-10">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/10">
+                        <History size={20} className={uploadId ? "animate-spin" : ""} />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/40">Status</p>
+                        <p className="font-semibold text-xl capitalize">{progress?.status || "Processing"}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-white/40">Progress</p>
+                      <p className="font-bold text-3xl">
+                        {Math.round(((progress?.processed || 0) / (progress?.total || 1)) * 100)}%
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="h-3 bg-white/10 rounded-full overflow-hidden p-0.5">
+                    <div
+                      className="h-full bg-blue-500 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                      style={{ width: `${((progress?.processed || 0) / (progress?.total || 1)) * 100}%` }}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-1">Processed</p>
+                      <p className="text-2xl font-bold">{progress?.processed || 0}</p>
+                    </div>
+                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-white/30 mb-1">Failed</p>
+                      <p className="text-2xl font-bold text-red-400">{progress?.failed || 0}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
+
       ) : (
         <div className="bg-white rounded-[40px] border border-slate-100 p-12 text-slate-900 animate-in slide-in-from-right-8 duration-700 shadow-sm transition-all hover:shadow-2xl">
           <div className="max-w-4xl mx-auto space-y-12">
@@ -431,23 +310,6 @@ export default function StudentBulkSection() {
                     size={16}
                   />
                 </div>
-              </div>
-              <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
-                  Batch Focus (e.g. O21)
-                </label>
-                <input
-                  type="text"
-                  placeholder="OPTIONAL"
-                  value={exportParams.batch}
-                  onChange={(e) =>
-                    setExportParams({
-                      ...exportParams,
-                      batch: e.target.value.toUpperCase(),
-                    })
-                  }
-                  className="w-full h-14 px-8 bg-slate-50/50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] transition-all shadow-sm tracking-wide"
-                />
               </div>
               <div className="md:col-span-2 space-y-3">
                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
