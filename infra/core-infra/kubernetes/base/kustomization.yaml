@@ -20,6 +20,7 @@ resources:
   - cron-service.yaml
   - storage-cleanup-job.yaml
   - portal.yaml
+  - uniz-landing.yaml
   - ornate-ems.yaml
   - ingress.yaml
 images:

@@ -27,7 +27,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: uniz-portal
+                name: uniz-landing
                 port:
                   number: 80
     - host: uniz.rguktong.in
