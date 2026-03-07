@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Certificate of Achievement - Child Care</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-blue: #0a2342;
+        /* Premium Deep Navy */
+        --accent-gold: #d4af37;
+        /* Metallic Gold */
+        --bg-color: #fffafa;
+        /* Snow */
+        --text-color: #2c3e50;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #333;
+        font-family: "Open Sans", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .certificate-container {
+        width: 1100px;
+        height: 780px;
+        background-color: var(--bg-color);
+        position: relative;
+        padding: 20px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        /* Deep shadow */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%239C92AC' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        overflow: hidden;
+      }
+
+      .border-frame {
+        width: 100%;
+        height: 100%;
+        border: 15px solid var(--primary-blue);
+        position: relative;
+        padding: 8px;
+        background: #fff;
+      }
+
+      .inner-border {
+        width: 100%;
+        height: 100%;
+        border: 3px double var(--accent-gold);
+        /* Double Gold Border */
+        position: relative;
+        padding: 40px 60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: linear-gradient(135deg, #fff 0%, #f9f9f9 100%);
+      }
+
+      /* Enhanced Header */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        position: relative;
+        z-index: 10;
+      }
+
+      .header-logo {
+        text-align: center;
+        width: 180px;
+      }
+
+      .logo-icon {
+        margin-bottom: 5px;
+      }
+
+      .logo-text {
+        font-family: "Merriweather", serif;
+        font-weight: 700;
+        color: var(--primary-blue);
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .logo-subtext {
+        font-size: 0.6rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--accent-gold);
+        /* Gold Accent */
+        font-weight: 700;
+      }
+
+      .header-title {
+        text-align: center;
+        flex-grow: 1;
+      }
+
+      .main-title {
+        font-family: "Merriweather", serif;
+        font-size: 3.8rem;
+        /* Gradient Text */
+        background: linear-gradient(
+          to right,
+          #0a2342 0%,
+          #1c3d62 50%,
+          #0a2342 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 700;
+        line-height: 1;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .main-title span {
+        font-family: "Great Vibes", cursive;
+        font-size: 2.2rem;
+        text-transform: none;
+        color: var(--accent-gold);
+        -webkit-text-fill-color: var(--accent-gold);
+        /* Override gradient for 'of' */
+        font-weight: 400;
+        margin: 0 15px;
+      }
+
+      .qr-code {
+        width: 80px;
+        height: 80px;
+        background: #fff;
+        padding: 5px;
+        border: 1px solid #ddd;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Simulated QR Pattern inner */
+      .qr-code::after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(#0a2342 40%, transparent 41%);
+        background-size: 8px 8px;
+      }
+
+      /* Body Content */
+      .content-body {
+        text-align: center;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 20px 0;
+        position: relative;
+        z-index: 10;
+      }
+
+      .presented-to {
+        font-family: "Merriweather", serif;
+        font-size: 1.1rem;
+        font-style: italic;
+        color: #666;
+        margin-bottom: 20px;
+      }
+
+      .recipient-name {
+        font-family: "Open Sans", sans-serif;
+        font-size: 4rem;
+        font-weight: 700;
+        color: #222;
+        margin-bottom: 20px;
+        letter-spacing: 1px;
+        text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+      }
+
+      .completion-text {
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 20px;
+        font-weight: 300;
+      }
+
+      .course-div {
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        padding: 20px 0;
+        margin-bottom: 40px;
+        display: inline-block;
+        width: 80%;
+        align-self: center;
+      }
+
+      .course-title {
+        font-family: "Merriweather", serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      /* Details Grid */
+      .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 40px;
+        text-align: left;
+        margin-bottom: 20px;
+        width: 100%;
+      }
+
+      .col {
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 8px;
+      }
+
+      .grid-header {
+        font-family: "Open Sans", sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        color: var(--accent-gold);
+        margin-bottom: 10px;
+        letter-spacing: 1px;
+      }
+
+      .grid-content {
+        font-family: "Merriweather", serif;
+        font-size: 0.9rem;
+        color: #444;
+        line-height: 1.8;
+      }
+
+      .badge-text {
+        color: var(--primary-blue);
+        font-weight: 700;
+      }
+
+      .topics-list {
+        list-style-type: none;
+        /* Removed bullets for cleaner look */
+      }
+
+      .topics-list li::before {
+        content: "•";
+        color: var(--accent-gold);
+        margin-right: 8px;
+      }
+
+      /* Footer */
+      footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-top: 10px;
+        padding: 0 10px;
+        position: relative;
+        z-index: 10;
+      }
+
+      .signature-block {
+        text-align: center;
+        width: 250px;
+      }
+
+      .signature-img {
+        font-family: "Great Vibes", cursive;
+        font-size: 3rem;
+        color: var(--primary-blue);
+        margin-bottom: 0px;
+        transform: rotate(-5deg);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .sig-line {
+        height: 2px;
+        background-color: var(--primary-blue);
+        width: 100%;
+        margin-bottom: 8px;
+      }
+
+      .sig-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #333;
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .sig-title {
+        font-size: 0.75rem;
+        color: #666;
+        font-style: italic;
+      }
+
+      .center-meta {
+        text-align: center;
+        font-size: 0.75rem;
+        color: #777;
+        position: relative;
+      }
+
+      /* CSS Gold Seal */
+      .gold-seal {
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
+        border-radius: 50%;
+        position: absolute;
+        bottom: 30px;
+        /* Positioned above text */
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow:
+          0 5px 15px rgba(0, 0, 0, 0.3),
+          inset 0 0 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 4px dashed #f0e68c;
+      }
+
+      .seal-inner {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        border: 2px solid #f0e68c;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .seal-text {
+        font-family: "Merriweather", serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #5b4500;
+        text-transform: uppercase;
+        transform: rotate(-5deg);
+      }
+
+      .ribbon-tail {
+        position: absolute;
+        width: 30px;
+        height: 60px;
+        background: #b8860b;
+        bottom: -35px;
+        z-index: -1;
+      }
+
+      .ribbon-tail.left {
+        left: 20px;
+        transform: rotate(30deg);
+        background: linear-gradient(to bottom, #d4af37, #b8860b);
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+      }
+
+      .ribbon-tail.right {
+        right: 20px;
+        transform: rotate(-30deg);
+        background: linear-gradient(to bottom, #d4af37, #b8860b);
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+      }
+
+      .meta-line {
+        display: block;
+        margin: 4px 0;
+        font-family: "Open Sans", sans-serif;
+        font-weight: 600;
+      }
+
+      /* Print Overrides */
+      /* Print Overrides */
+      @media print {
+        @page {
+          size: A4 landscape;
+          margin: 0;
+        }
+
+        html,
+        body {
+          width: 297mm;
+          height: 210mm;
+          margin: 0 !important;
+          padding: 0 !important;
+          background: none;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        .certificate-container {
+          width: 100% !important;
+          height: 100% !important;
+          position: relative;
+          top: 0;
+          left: 0;
+          margin: 0;
+          padding: 0;
+          /* Let the border be the edge, or minimal padding */
+          box-shadow: none;
+          page-break-inside: avoid;
+          overflow: hidden;
+          background-color: #fff !important;
+          background-image: none;
+
+          /* Scale down slightly to fit content comfortably if needed, or rely on flex */
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          zoom: 0.95;
+          /* Slight shrink to ensure borders fit safe zones */
+        }
+
+        .border-frame {
+          /* Ensure the blue border hits the edge of the paper or close to it */
+          box-sizing: border-box;
+        }
+
+        /* Ensure grid aligns perfectly on paper */
+        .details-grid {
+          column-gap: 20px;
+          /* Reduce gap slightly to prevent wrapping */
+        }
+
+        /* Remove screen-only shadow effects for sharpness */
+        .main-title,
+        .recipient-name,
+        .signature-img {
+          text-shadow: none;
+        }
+
+        .gold-seal {
+          bottom: 20mm;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="certificate-container">
+      <div class="border-frame">
+        <div class="inner-border">
+          <header>
+            <div class="header-logo">
+              <!-- Placeholder Logo -->
+              <div class="logo-icon">&#128118;</div>
+              <!-- Baby/Child Icon Concept -->
+              <div class="logo-text">Child Care</div>
+              <div class="logo-subtext">Children House</div>
+            </div>
+
+            <div class="header-title">
+              <div class="main-title">
+                Certificate <span>of</span> <br />Achievement
+              </div>
+            </div>
+
+            <div class="qr-code"></div>
+          </header>
+
+          <div class="content-body">
+            <p class="presented-to">This certificate is proudly presented to</p>
+            <div class="recipient-name">Recipient's Name</div>
+
+            <p class="completion-text">
+              for successfully completing the professional training course:
+            </p>
+            <div class="course-title">CHILD SAFEGUARDING AWARENESS</div>
+
+            <div class="details-grid">
+              <div class="col">
+                <div class="grid-header">Topics Covered:</div>
+                <ul class="grid-content topics-list">
+                  <li>Child Development Stages</li>
+                  <li>Positive Discipline Techniques</li>
+                  <li>Health & Nutrition</li>
+                  <li>First Aid for Children</li>
+                </ul>
+              </div>
+              <div class="col">
+                <div style="margin-bottom: 20px">
+                  <div class="grid-header">Course Type / Track:</div>
+                  <div class="grid-content">
+                    Child Safety & Protection Module
+                  </div>
+                </div>
+                <div>
+                  <div class="grid-header">Program Completion Status:</div>
+                  <div class="grid-content">With Distinction</div>
+                </div>
+              </div>
+              <div class="col">
+                <div style="margin-bottom: 20px">
+                  <div class="grid-header">Training Hours:</div>
+                  <div class="grid-content">24 Hours of Instruction</div>
+                </div>
+                <div>
+                  <div class="grid-header">CEUs Earned:</div>
+                  <div class="grid-content">6 CEU Credits</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <footer>
+            <div class="signature-block">
+              <div class="signature-img">Emily Atchison</div>
+              <div class="sig-line"></div>
+              <span class="sig-name">Emily Atchison</span>
+              <span class="sig-title">Training Supervisor, Smart Horizons</span>
+            </div>
+
+            <div class="center-meta">
+              <span class="meta-line">Certificate ID: 76589430257</span>
+              <span class="meta-line">Date Issued: 04.09.2025</span>
+            </div>
+
+            <div class="signature-block">
+              <div class="signature-img">Emily Atchison</div>
+              <div class="sig-line"></div>
+              <span class="sig-name">Emily Atchison</span>
+              <span class="sig-title">Training Supervisor, Smart Horizons</span>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

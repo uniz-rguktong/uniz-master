@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: uniz-maintenance-job
+spec:
+  schedule: "0 2 * * *" # Run daily at 2:00 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: cron-worker
+              image: uniz-cron-service:local
+              imagePullPolicy: IfNotPresent
+              # We use the existing image but trigger the maintenance script
+              # Our current index.js starts a server, but we can override CMD
+              # or just let it run (it will timeout if it doesn't exit, so we should probably add a CLI mode)
+              command:
+                [
+                  "node",
+                  "-e",
+                  "require('./dist/index.js').runMaintenance().then(() => process.exit(0))",
+                ]
+              env:
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uniz-secrets
+                      key: CRON_DATABASE_URL
+              envFrom:
+                - configMapRef:
+                    name: uniz-config
+                - secretRef:
+                    name: uniz-secrets
+          restartPolicy: OnFailure

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-redis
+  labels:
+    app: uniz-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uniz-redis
+  template:
+    metadata:
+      labels:
+        app: uniz-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-redis
+spec:
+  selector:
+    app: uniz-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+  type: ClusterIP

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-files-service
+  labels:
+    app: uniz-files-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uniz-files-service
+  template:
+    metadata:
+      labels:
+        app: uniz-files-service
+    spec:
+      containers:
+        - name: files-service
+          image: uniz-files-service:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3005
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: uniz-secrets
+                  key: FILES_DATABASE_URL
+          envFrom:
+            - configMapRef:
+                name: uniz-config
+            - secretRef:
+                name: uniz-secrets
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-files-service
+spec:
+  selector:
+    app: uniz-files-service
+  ports:
+    - protocol: TCP
+      port: 3005
+      targetPort: 3005

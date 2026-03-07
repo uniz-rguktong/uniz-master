@@ -1,0 +1,59 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - cluster-issuer.yaml
+  - configmap.yaml
+  - secrets.yaml
+  - gateway-configmap.yaml
+  - redis.yaml
+  - gateway-api.yaml
+  - gateway.yaml
+  - db-ui.yaml
+  - auth-service.yaml
+  - user-service.yaml
+  - academics-service.yaml
+  - outpass-service.yaml
+  - files-service.yaml
+  - mail-service.yaml
+  - notification-service.yaml
+  - cron-service.yaml
+  - storage-cleanup-job.yaml
+  - portal.yaml
+  - uniz-landing.yaml
+  - ornate-ems.yaml
+  - ingress.yaml
+images:
+  - name: uniz-academics-service:local
+    newName: docker.io/library/uniz-academics-service
+    newTag: local-1772818250
+  - name: uniz-auth-service:local
+    newName: docker.io/library/uniz-auth-service
+    newTag: fixed-1772801709
+  - name: uniz-cron-service:local
+    newName: docker.io/library/uniz-cron-service
+    newTag: local-1772778699
+  - name: uniz-files-service:local
+    newName: docker.io/library/uniz-files-service
+    newTag: fixed-1772801709
+  - name: uniz-gateway-api:local
+    newName: docker.io/library/uniz-gateway-api
+    newTag: fixed-1772801709
+  - name: uniz-mail-service:local
+    newName: docker.io/library/uniz-mail-service
+    newTag: fixed-1772801709
+  - name: uniz-notification-service:local
+    newName: docker.io/library/uniz-notification-service
+    newTag: fixed-1772801709
+  - name: uniz-outpass-service:local
+    newName: docker.io/library/uniz-outpass-service
+    newTag: fixed-1772801709
+  - name: uniz-portal:local
+    newName: docker.io/library/uniz-portal
+    newTag: local-1772818033
+  - name: uniz-user-service:local
+    newName: docker.io/library/uniz-user-service
+    newTag: local-1772803274
+  - name: ornate-ems:local
+    newName: docker.io/library/ornate-ems
+    newTag: local-1772816385

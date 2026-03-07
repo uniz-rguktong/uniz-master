@@ -1,0 +1,7 @@
+node_modules
+dist
+.vercel
+prisma/generated
+package-lock.json
+*.json
+!postman/collections/*.json

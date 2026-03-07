@@ -1,0 +1,43 @@
+name: Manual VPS Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_message:
+        description: "Commit message for the deployment"
+        required: true
+        default: "manual-deployment"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            cd /root/uniz-master
+            echo "[Auth] Deployment triggered by ${{ github.actor }}"
+
+            # Check if current user is allowed (SreeCharan)
+            # GitHub stores login in github.actor, we check against known allowed handles
+            ALLOWED_USERS="sreecharan-desu"
+            if [[ ! " $ALLOWED_USERS " =~ " ${{ github.actor }} " ]]; then
+              echo "[Error] User ${{ github.actor }} is not authorized to deploy."
+              exit 1
+            fi
+
+            echo "[Git] Updating repository..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            # Run the same localized deploy script the user uses locally
+            /bin/bash ./scripts/deploy.sh "${{ github.event.inputs.commit_message }}"

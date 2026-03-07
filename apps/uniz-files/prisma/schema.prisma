@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Subject {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  credits     Int
+  department  String
+  semester    String
+  
+  grades      Grade[]
+  attendance  Attendance[]
+}
+
+model Grade {
+  id          String   @id @default(uuid())
+  studentId   String
+  subjectId   String
+  semesterId  String
+  grade       Float
+  
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([studentId, subjectId, semesterId])
+}
+
+model Attendance {
+  id              String   @id @default(uuid())
+  studentId       String
+  subjectId       String
+  semesterId      String
+  totalClasses    Int
+  attendedClasses Int
+  
+  subject         Subject  @relation(fields: [subjectId], references: [id])
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([studentId, subjectId, semesterId])
+}

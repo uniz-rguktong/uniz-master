@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-cron-service
+spec:
+  selector:
+    app: uniz-cron-service
+  ports:
+    - protocol: TCP
+      port: 3008
+      targetPort: 3008
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-cron-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uniz-cron-service
+  template:
+    metadata:
+      labels:
+        app: uniz-cron-service
+    spec:
+      containers:
+        - name: cron-worker
+          image: uniz-cron-service:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3008
+          envFrom:
+            - configMapRef:
+                name: uniz-config
+            - secretRef:
+                name: uniz-secrets

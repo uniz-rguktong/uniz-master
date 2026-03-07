@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-portal
+  labels:
+    app: uniz-portal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: uniz-portal
+  template:
+    metadata:
+      labels:
+        app: uniz-portal
+    spec:
+      containers:
+        - name: portal
+          image: uniz-portal:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-portal
+spec:
+  selector:
+    app: uniz-portal
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

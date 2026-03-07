@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-notification-service
+  labels:
+    app: uniz-notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uniz-notification-service
+  template:
+    metadata:
+      labels:
+        app: uniz-notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: uniz-notification-service:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3007
+          envFrom:
+            - configMapRef:
+                name: uniz-config
+            - secretRef:
+                name: uniz-secrets
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-notification-service
+spec:
+  selector:
+    app: uniz-notification-service
+  ports:
+    - protocol: TCP
+      port: 3007
+      targetPort: 3007
