@@ -201,8 +201,12 @@ export const uploadStudents = async (req: any, res: Response) => {
       let failCount = 0;
       const errors: any[] = [];
 
-      const CHUNK_SIZE = 5;
+      const CHUNK_SIZE = 20;
+      console.log(`[Bulk] Starting ingestion for ${total} students...`);
       for (let i = 0; i < total; i += CHUNK_SIZE) {
+        console.log(
+          `[Bulk] Processing chunk ${Math.floor(i / CHUNK_SIZE) + 1} (${i} to ${Math.min(i + CHUNK_SIZE, total)})...`,
+        );
         const chunk = rows.slice(i, i + CHUNK_SIZE);
 
         await Promise.all(
@@ -402,9 +406,15 @@ export const uploadStudents = async (req: any, res: Response) => {
         };
 
         await prisma.uploadHistory.create({ data: historyData });
+        console.log(
+          `[Bulk] Successfully recorded upload history for ${user.username}.`,
+        );
       } catch (hErr) {
         console.error("Failed to record upload history:", hErr);
       }
+      console.log(
+        `[Bulk] Ingestion complete for ${user.username}. Final success: ${successCount}, Fail: ${failCount}`,
+      );
     };
 
     runIngestion();
