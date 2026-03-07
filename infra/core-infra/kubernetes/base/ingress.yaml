@@ -10,11 +10,22 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
+        - rguktong.in
         - uniz.rguktong.in
         - api.uniz.rguktong.in
         - ornate-ems.rguktong.in
       secretName: uniz-tls-cert
   rules:
+    - host: rguktong.in
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: uniz-portal
+                port:
+                  number: 80
     - host: uniz.rguktong.in
       http:
         paths:
