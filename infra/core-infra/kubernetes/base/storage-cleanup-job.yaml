@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: uniz-storage-cleanup-job
+spec:
+  schedule: "0 3 * * *" # Run daily at 3:00 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: storage-cleaner
+              image: uniz-cron-service:local
+              imagePullPolicy: IfNotPresent
+              command:
+                [
+                  "node",
+                  "-e",
+                  "require('./dist/utils/storage.js').runStorageCleanup().then(() => process.exit(0))",
+                ]
+              # Mount the host's docker and containerd sockets to allow cleanup from within the pod
+              # Note: This requires the pod to have sufficient privileges
+              volumeMounts:
+                - name: docker-sock
+                  mountPath: /var/run/docker.sock
+                - name: containerd-sock
+                  mountPath: /run/k3s/containerd/containerd.sock
+              envFrom:
+                - configMapRef:
+                    name: uniz-config
+                - secretRef:
+                    name: uniz-secrets
+          restartPolicy: OnFailure
+          volumes:
+            - name: docker-sock
+              hostPath:
+                path: /var/run/docker.sock
+                type: Socket
+            - name: containerd-sock
+              hostPath:
+                path: /run/k3s/containerd/containerd.sock
+                type: Socket
