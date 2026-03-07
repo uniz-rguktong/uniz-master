@@ -81,8 +81,12 @@ export const login = async (req: Request, res: Response) => {
     const normalizedUsername = user.username.toUpperCase();
     let department = "";
     try {
+      const isK8s =
+        process.env.KUBERNETES_SERVICE_HOST ||
+        process.env.DOCKER_ENV === "true";
       const rawUserUrl = (
-        process.env.USER_SERVICE_URL || "http://uniz-user-service:3002"
+        process.env.USER_SERVICE_URL ||
+        (isK8s ? "http://uniz-user-service:3002" : "http://localhost:3002")
       ).trim();
       const USER_SERVICE = rawUserUrl.endsWith("/health")
         ? rawUserUrl.slice(0, -7)
