@@ -2,29 +2,50 @@ import express from "express";
 import cors from "cors";
 import axios from "axios";
 import path from "path";
+import compression from "compression";
+import Redis from "ioredis";
+import httpProxy from "http-proxy";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-console.log("Raw CLIENT_URL:", process.env.CLIENT_URL);
+// Initialize Redis for High-Speed Caching
+const redis = new Redis(process.env.REDIS_URL || "redis://uniz-redis:6379", {
+  maxRetriesPerRequest: 3,
+  retryStrategy: (times) => Math.min(times * 50, 2000),
+});
+
+redis.on("error", (err) =>
+  console.error("[Redis] Connection Error:", err.message),
+);
+redis.on("connect", () => console.log("[Redis] Connected for Caching"));
+
+// Initialize High-Performance Proxy Engine
+const proxy = httpProxy.createProxyServer({
+  changeOrigin: true,
+  // Ensure connection pooling
+  agent: new (require("http").Agent)({ keepAlive: true, maxSockets: 100 }),
+});
+
+proxy.on("error", (err, req, res: any) => {
+  console.error("[Proxy-Error]", err.message);
+  if (!res.headersSent) {
+    res
+      .status(502)
+      .json({ error: "Upstream Service Unreachable", message: err.message });
+  }
+});
+
+// 1. Compression (Drastically reduces payload size)
+app.use(compression());
 
 const allowedOrigins = process.env.CLIENT_URL
   ? process.env.CLIENT_URL.split(",").map((origin) => origin.trim())
-  : ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"];
+  : ["http://localhost:5173", "http://localhost:3000"];
 
-console.log("Allowed Origins:", allowedOrigins);
-
-// app.use(
-//   cors({
-//     origin: allowedOrigins,
-//     credentials: true,
-//     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
-//   }),
-// );
-
+// 2. Optimized CORS
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -36,84 +57,146 @@ app.use((req, res, next) => {
       "Access-Control-Allow-Headers",
       "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-cms-api-key, x-api-key, uid, role",
     );
-    res.setHeader("Access-Control-Max-Age", "86400"); // 24 hours
+    res.setHeader("Access-Control-Max-Age", "86400");
   }
 
-  if (req.method === "OPTIONS") {
-    return res.status(204).end();
-  }
-
+  if (req.method === "OPTIONS") return res.status(204).end();
   next();
 });
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-const services = [
-  {
-    name: "Auth Service",
-    env: "AUTH_SERVICE_URL",
-    default: "http://localhost:3001",
-  },
-  {
-    name: "User Service",
-    env: "USER_SERVICE_URL",
-    default: "http://localhost:3002",
-  },
-  {
-    name: "CMS Service",
-    env: "USER_SERVICE_URL",
-    default: "http://localhost:3002",
-  },
-  {
-    name: "Academics Service",
-    env: "ACADEMICS_SERVICE_URL",
-    default: "http://localhost:3004",
-  },
-  {
-    name: "Outpass Service",
-    env: "OUTPASS_SERVICE_URL",
-    default: "http://localhost:3003",
-  },
-  {
-    name: "Files Service",
-    env: "FILES_SERVICE_URL",
-    default: "http://localhost:3005",
-  },
-  {
-    name: "Mail Service",
-    env: "MAIL_SERVICE_URL",
-    default: "http://localhost:3006",
-  },
-  {
-    name: "Notification Service",
-    env: "NOTIFICATION_SERVICE_URL",
-    default: "http://localhost:3007",
-  },
-];
+// 3. Smart Cache Middleware
+const cacheMiddleware = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  // Only cache GET requests
+  if (req.method !== "GET") return next();
 
-const serviceMap: Record<string, string> = {
-  auth: process.env.AUTH_SERVICE_URL || "http://localhost:3001",
-  profile: process.env.USER_SERVICE_URL || "http://localhost:3002",
-  cms: process.env.USER_SERVICE_URL || "http://localhost:3002",
-  academics: process.env.ACADEMICS_SERVICE_URL || "http://localhost:3004",
-  requests: process.env.OUTPASS_SERVICE_URL || "http://localhost:3003",
-  files: process.env.FILES_SERVICE_URL || "http://localhost:3005",
-  mail: process.env.MAIL_SERVICE_URL || "http://localhost:3006",
-  notifications:
-    process.env.NOTIFICATION_SERVICE_URL || "http://localhost:3007",
-  cron: process.env.CRON_SERVICE_URL || "http://localhost:3008",
-  grievance: process.env.OUTPASS_SERVICE_URL || "http://localhost:3003",
-  system: "http://localhost:3000",
+  // Skip cache if explicitly requested
+  if (req.headers["cache-control"] === "no-cache") return next();
+
+  // Generate unique key based on URL and User Context (Role/UID)
+  // This prevents caching cross-user data leaking
+  const userKey = req.headers["uid"] || req.headers["authorization"] || "guest";
+  const cacheKey = `proxy_cache:${req.url}:${userKey}`;
+
+  try {
+    const cachedResponse = await redis.get(cacheKey);
+    if (cachedResponse) {
+      const { data, headers, status } = JSON.parse(cachedResponse);
+      console.log(`[Cache-Hit] ${req.url}`);
+
+      // Set headers from cache
+      Object.entries(headers).forEach(([k, v]) =>
+        res.setHeader(k, v as string),
+      );
+      res.setHeader("X-Cache", "HIT");
+      return res.status(status).send(data);
+    }
+  } catch (e) {
+    console.error("[Cache-Read-Error]", e);
+  }
+
+  // If No Cache, intercept the send to store it
+  const originalSend = res.send;
+  (res as any).send = function (body: any) {
+    if (res.statusCode === 200) {
+      const respToCache = {
+        data: body,
+        headers: res.getHeaders(),
+        status: res.statusCode,
+      };
+      // Cache for 60 seconds by default
+      redis
+        .setex(cacheKey, 60, JSON.stringify(respToCache))
+        .catch((err) => console.error("[Cache-Write-Error]", err));
+    }
+    return originalSend.apply(res, [body]);
+  };
+
+  res.setHeader("X-Cache", "MISS");
+  next();
 };
 
-app.get("/favicon.ico", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/favicon.ico"));
+const serviceMap: Record<string, string> = {
+  auth:
+    process.env.AUTH_SERVICE_URL ||
+    "http://uniz-auth-service.default.svc.cluster.local:3001",
+  profile:
+    process.env.USER_SERVICE_URL ||
+    "http://uniz-user-service.default.svc.cluster.local:3002",
+  cms:
+    process.env.USER_SERVICE_URL ||
+    "http://uniz-user-service.default.svc.cluster.local:3002",
+  academics:
+    process.env.ACADEMICS_SERVICE_URL ||
+    "http://uniz-academics-service.default.svc.cluster.local:3004",
+  requests:
+    process.env.OUTPASS_SERVICE_URL ||
+    "http://uniz-outpass-service.default.svc.cluster.local:3003",
+  files:
+    process.env.FILES_SERVICE_URL ||
+    "http://uniz-files-service.default.svc.cluster.local:3005",
+  mail:
+    process.env.MAIL_SERVICE_URL ||
+    "http://uniz-mail-service.default.svc.cluster.local:3006",
+  notifications:
+    process.env.NOTIFICATION_SERVICE_URL ||
+    "http://uniz-notification-service.default.svc.cluster.local:3007",
+  cron:
+    process.env.CRON_SERVICE_URL ||
+    "http://uniz-cron-service.default.svc.cluster.local:3008",
+  grievance:
+    process.env.OUTPASS_SERVICE_URL ||
+    "http://uniz-outpass-service.default.svc.cluster.local:3003",
+};
+
+// 4. Standard Health Endpoints (Fast path)
+app.get("/gateway-status", (req, res) =>
+  res.json({
+    status: "alive",
+    attribution: "SABER",
+    node: process.env.HOSTNAME,
+  }),
+);
+
+app.get("/api/v1/system/health", async (req, res) => {
+  const resultPromises = Object.entries(serviceMap).map(async ([name, url]) => {
+    try {
+      const start = Date.now();
+      await axios.get(`${url.replace(/\/$/, "")}/health`, { timeout: 2000 });
+      return { name, status: "healthy", latency: `${Date.now() - start}ms` };
+    } catch (e: any) {
+      return { name, status: "unhealthy", error: e.message };
+    }
+  });
+  const results = await Promise.all(resultPromises);
+  const allOk = results.every((r) => r.status === "healthy");
+  res
+    .status(allOk ? 200 : 503)
+    .json({ status: allOk ? "ok" : "degraded", services: results });
+});
+
+// 5. The Heavy Lifter: Streaming Proxy with Path Rewriting
+app.all("/api/v1/:service/*", cacheMiddleware, (req, res) => {
+  const service = req.params.service.toLowerCase();
+  const target = serviceMap[service];
+
+  if (!target) {
+    return res.status(404).json({ error: "Service Not Found", service });
+  }
+
+  // Strip prefix: /api/v1/:service/path -> /path
+  const path = req.url.split("/").slice(4).join("/");
+  req.url = `/${path}`;
+
+  proxy.web(req, res, { target });
 });
 
 app.get("/", (req, res) => {
-  console.log(`[Gateway] Serving ASCII Banner to ${req.ip}`);
   res.send(`
-<pre>
+<pre style="background: black; color: white; padding: 20px; font-family: monospace;">
 ██╗   ██╗███╗   ██╗██╗███████╗
 ██║   ██║████╗  ██║██║╚══███╔╝
 ██║   ██║██╔██╗ ██║██║  ███╔╝ 
@@ -121,422 +204,15 @@ app.get("/", (req, res) => {
 ╚██████╔╝██║ ╚████║██║███████╗
  ╚═════╝ ╚═╝  ╚═══╝╚═╝╚══════╝
 
-UniZ Backend Gateway - Running (status: ok)
-Attribution: SABER
+UniZ Ultra-Speed Gateway - Layer 7 (status: blazing)
+Caching: Enabled (Redis)
+Compression: Enabled (Gzip)
+Proxying: Streaming Engine
+Attribution: SABER Node
 </pre>
   `);
 });
 
-app.get("/health", async (req, res) => {
-  console.log(`[Gateway] Preparing Beautiful System Dashboard`);
-
-  const results = await Promise.all(
-    services.map(async (service) => {
-      const baseUrl = process.env[service.env] || service.default;
-      const healthUrl = baseUrl.endsWith("/health")
-        ? baseUrl
-        : `${baseUrl.replace(/\/$/, "")}/health`;
-
-      try {
-        const start = Date.now();
-        await axios.get(healthUrl, { timeout: 3000 });
-        return {
-          name: service.name,
-          status: "Healthy",
-          color: "#4ade80",
-          dots: "●",
-          latency: `${Date.now() - start}ms`,
-        };
-      } catch (error) {
-        return {
-          name: service.name,
-          status: "Offline",
-          color: "#f87171",
-          dots: "○",
-          latency: "N/A",
-        };
-      }
-    }),
-  );
-
-  const totalHealthy = results.filter((r) => r.status === "Healthy").length;
-  const statusColor = totalHealthy === services.length ? "#4ade80" : "#fbbf24";
-
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>UniZ Status</title>
-        <style>
-            :root {
-                --bg: #000000;
-                --text: #ffffff;
-                --gray: #888888;
-                --border: #333333;
-                --success: #ffffff;
-                --error: #888888;
-            }
-            body {
-                background: var(--bg);
-                color: var(--text);
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-                margin: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 60px 20px;
-            }
-            .container {
-                width: 100%;
-                max-width: 600px;
-            }
-            .header {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-end;
-                margin-bottom: 40px;
-                padding-bottom: 20px;
-                border-bottom: 1px solid var(--border);
-            }
-            h1 {
-                font-size: 14px;
-                font-weight: 500;
-                text-transform: uppercase;
-                letter-spacing: 2px;
-                margin: 0;
-            }
-            .overall-status {
-                font-size: 12px;
-                color: var(--gray);
-            }
-            .status-list {
-                display: flex;
-                flex-direction: column;
-                gap: 1px;
-                background: var(--border);
-                border: 1px solid var(--border);
-            }
-            .service-row {
-                background: var(--bg);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 20px;
-            }
-            .service-info {
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-            }
-            .service-name {
-                font-size: 14px;
-                font-weight: 400;
-            }
-            .latency {
-                font-size: 11px;
-                color: var(--gray);
-                font-family: monospace;
-            }
-            .status-indicator {
-                font-size: 11px;
-                font-weight: 500;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            .dot {
-                width: 6px;
-                height: 6px;
-                border-radius: 50%;
-                background: currentColor;
-            }
-            .dot.pulse {
-                animation: pulse 2s infinite;
-            }
-            @keyframes pulse {
-                0% { opacity: 0.4; }
-                50% { opacity: 1; }
-                100% { opacity: 0.4; }
-            }
-            .footer {
-                margin-top: 60px;
-                font-size: 10px;
-                color: var(--gray);
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                text-align: center;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <h1>UniZ Systems</h1>
-                <div class="overall-status">
-                    ${totalHealthy === services.length ? "All Systems Operational (status: ok)" : "Partial System Outage"}
-                </div>
-            </div>
-            <div class="status-list">
-                ${results
-                  .map(
-                    (r) => `
-                    <div class="service-row">
-                        <div class="service-info">
-                            <span class="service-name">${r.name}</span>
-                            <span class="latency">${r.latency}</span>
-                        </div>
-                        <div class="status-indicator" style="color: ${r.status === "Healthy" ? "var(--success)" : "var(--gray)"}">
-                            <div class="dot ${r.status === "Healthy" ? "pulse" : ""}"></div>
-                            ${r.status}
-                        </div>
-                    </div>
-                `,
-                  )
-                  .join("")}
-            </div>
-            <div class="footer">
-                Network Operations Center • SABER Node
-            </div>
-        </div>
-    </body>
-    </html>
-  `);
-});
-
-app.get("/api/v1/system/health", async (req, res) => {
-  console.log(`[Gateway] System Aggregated Health Check`);
-  const results = await Promise.all(
-    services.map(async (service) => {
-      const baseUrl = process.env[service.env] || service.default;
-      const healthUrl = baseUrl.endsWith("/health")
-        ? baseUrl
-        : `${baseUrl.replace(/\/$/, "")}/health`;
-
-      try {
-        const start = Date.now();
-        await axios.get(healthUrl, { timeout: 5000 });
-        return {
-          name: service.name,
-          status: "healthy",
-          latency: `${Date.now() - start}ms`,
-        };
-      } catch (error: any) {
-        return {
-          name: service.name,
-          status: "unhealthy",
-          error: error.message,
-        };
-      }
-    }),
-  );
-
-  const allHealthy = results.every((r) => r.status === "healthy");
-  res.status(allHealthy ? 200 : 503).json({
-    status: allHealthy ? "ok" : "degraded",
-    timestamp: new Date().toISOString(),
-    services: results,
-    attribution: "SABER",
-  });
-});
-
-app.get("/gateway-status", (req, res) => {
-  res.status(200).json({ status: "alive", attribution: "SABER" });
-});
-
-// Implementation of proxy behavior
-app.all("/api/v1/:service/:path*", async (req, res) => {
-  const { service } = req.params;
-  const serviceKey = service.toLowerCase();
-  const targetBase = serviceMap[serviceKey];
-
-  console.log(`[Gateway-DEBUG] Incoming: ${req.method} ${req.url}`);
-  console.log(
-    `[Gateway-DEBUG] Parsed Service: ${service} -> Key: ${serviceKey}`,
-  );
-
-  if (!targetBase) {
-    console.warn(`[Gateway-WARN] Service ${serviceKey} NOT found in map!`);
-    return res
-      .status(404)
-      .json({ error: `Service ${service} not found in gateway map` });
-  }
-
-  // Robust path reconstruction
-  // Extract everything after /api/v1/:service
-  const urlParts = req.url.split("/");
-  // /api/v1/:service/the/rest/of/path?query=1
-  // parts: ["", "api", "v1", ":service", "the", "rest", "..."]
-  const pathWithQuery = urlParts.slice(4).join("/");
-  const targetUrl = `${targetBase.replace(/\/$/, "")}/${pathWithQuery}`;
-
-  console.log(`[Proxy] ${req.method} ${req.url} -> ${targetUrl}`);
-
-  try {
-    const cleanedHeaders = { ...req.headers };
-    delete cleanedHeaders.host;
-    const contentType = req.headers["content-type"] || "";
-
-    // For non-multipart requests, remove content-length so axios can recalculate it correctly
-    if (!contentType.includes("multipart/form-data")) {
-      delete cleanedHeaders["content-length"];
-    }
-
-    console.log(`[Proxy] Content-Type: ${contentType}`);
-
-    // For multipart/form-data, use pipe to avoid body parsing issues
-    if (contentType.includes("multipart/form-data")) {
-      console.log(`[Proxy] Handling as Multipart Stream`);
-      const proxyReq = axios({
-        method: req.method,
-        url: targetUrl,
-        headers: {
-          ...cleanedHeaders,
-          host: new URL(targetBase).host,
-        },
-        responseType: "stream",
-        maxBodyLength: Infinity,
-        maxContentLength: Infinity,
-        validateStatus: () => true,
-        data: req, // Pipe the request stream directly
-      });
-
-      const response = await proxyReq;
-
-      // Pipe response back
-      res.status(response.status);
-      Object.entries(response.headers).forEach(([key, value]) => {
-        res.setHeader(key, value as string);
-      });
-      response.data.pipe(res);
-      return;
-    }
-
-    // For JSON and others, use standard handling
-    const axiosConfig: any = {
-      method: req.method,
-      url: targetUrl,
-      headers: {
-        ...cleanedHeaders,
-        host: new URL(targetBase).host,
-      },
-      responseType: "arraybuffer", // Use arraybuffer to preserve binary data fully
-      validateStatus: () => true,
-      maxBodyLength: Infinity,
-      maxContentLength: Infinity,
-      timeout: 300000, // Increased to 5 minutes
-    };
-
-    if (req.method !== "GET" && req.method !== "HEAD" && req.body) {
-      axiosConfig.data = req.body;
-    }
-
-    let response;
-    let lastError;
-    let attempts = 0;
-    const maxAttempts = 3;
-
-    while (attempts < maxAttempts) {
-      try {
-        attempts++;
-        response = await axios(axiosConfig);
-        break;
-      } catch (error: any) {
-        lastError = error;
-        const isNetworkError =
-          error.code === "ECONNREFUSED" ||
-          error.code === "ETIMEDOUT" ||
-          error.code === "ENOTFOUND" ||
-          error.message.includes("Network Error");
-
-        if (isNetworkError && attempts < maxAttempts) {
-          console.warn(
-            `[Proxy] Retry ${attempts}/${maxAttempts} for ${targetUrl} (${error.code || error.message})`,
-          );
-          // Wait before retry: 200ms, 600ms
-          await new Promise((resolve) => setTimeout(resolve, attempts * 400));
-          continue;
-        }
-        throw error;
-      }
-    }
-
-    if (!response) throw lastError;
-
-    // Pass headers down perfectly, ensuring content-types mismatch don't happen
-    Object.entries(response.headers).forEach(([key, value]) => {
-      const lowerKey = key.toLowerCase();
-      // Protect CORS headers and handle encoding
-      if (
-        lowerKey !== "content-encoding" &&
-        lowerKey !== "transfer-encoding" &&
-        !lowerKey.startsWith("access-control-")
-      ) {
-        res.setHeader(key, value as string);
-      }
-    });
-
-    res.status(response.status).send(response.data);
-  } catch (error: any) {
-    if (!res.headersSent) {
-      console.error(
-        `[Gateway] Final Proxy Error for ${targetUrl}:`,
-        error.message,
-      );
-      res.status(500).json({
-        error: "Gateway Proxy Error",
-        message: error.message,
-        target: targetUrl,
-        banner: [
-          "██╗   ██╗███╗   ██╗██╗███████╗",
-          "██║   ██║████╗  ██║██║╚══███╔╝",
-          "██║   ██║██╔██╗ ██║██║  ███╔╝ ",
-          "██║   ██║██║╚██╗██║██║ ███╔╝  ",
-          "╚██████╔╝██║ ╚████║██║███████╗",
-          " ╚═════╝ ╚═╝  ╚═══╝╚═╝╚══════╝",
-        ],
-      });
-    }
-  }
-});
-
-app.use((req, res) => {
-  console.log(`[Gateway] 404 Not Found: ${req.method} ${req.url}`);
-  res.status(404).json({
-    status: "error",
-    message: `Route ${req.method} ${req.url} not found`,
-    timestamp: new Date().toISOString(),
-    attribution: "SABER",
-    banner: [
-      "██╗   ██╗███╗   ██╗██╗███████╗",
-      "██║   ██║████╗  ██║██║╚══███╔╝",
-      "██║   ██║██╔██╗ ██║██║  ███╔╝ ",
-      "██║   ██║██║╚██╗██║██║ ███╔╝  ",
-      "╚██████╔╝██║ ╚████║██║███████╗",
-      " ╚═════╝ ╚═╝  ╚═══╝╚═╝╚══════╝",
-    ],
-  });
-});
-
-const server = app.listen(PORT, () => {
-  console.log(`Gateway API Service running on port ${PORT}`);
-  server.keepAliveTimeout = 65000;
-  server.headersTimeout = 66000;
-});
-
-// Graceful Shutdown Handler
-process.on("SIGTERM", async () => {
-  console.log("SIGTERM received. Starting graceful shutdown...");
-  server.close(() => {
-    console.log("HTTP server closed.");
-  });
-  try {
-    if ((global as any).prisma || require("./utils/db.util").prisma) {
-      // generic attempt to close prisma if it exists
-    }
-  } catch (e) {}
-  process.exit(0);
+app.listen(PORT, () => {
+  console.log(`[Super-Gateway] Blazing fast at port ${PORT}`);
 });
