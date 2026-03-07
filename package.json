@@ -11,6 +11,7 @@
     "clean": "rm -rf logs/ *.log",
     "install:all": "for d in apps/uniz-* apps/ornate-core infra/core-infra; do (cd $d && npm install && npm audit fix); done",
     "setup": "cp secrets.env.example secrets.env && npm run vault:sync",
+    "dev": "concurrently \"cd apps/uniz-gateway && npm run dev\" \"cd apps/uniz-auth && npm run dev\" \"cd apps/uniz-user && npm run dev\" \"cd apps/uniz-portal && npm run dev\"",
     "prettify": "prettier --write .",
     "vault:get": "bash ./scripts/uniz-vault.sh get",
     "vault:set": "bash ./scripts/uniz-vault.sh set",
