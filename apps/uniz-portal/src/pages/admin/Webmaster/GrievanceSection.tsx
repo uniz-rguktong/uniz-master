@@ -105,7 +105,7 @@ export default function GrievanceSection() {
           <button
             onClick={fetchGrievances}
             disabled={loading}
-            className="bg-white border border-slate-200 p-3 rounded-xl hover:bg-slate-50 transition-all shadow-sm"
+            className="bg-white border border-slate-200 p-3 rounded-xl hover:bg-slate-50 transition-all shadow-none"
           >
             <Clock size={18} className={loading ? "animate-spin" : ""} />
           </button>
@@ -141,7 +141,7 @@ export default function GrievanceSection() {
       </div>
 
       {/* Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-5 rounded-[28px] border border-slate-100 shadow-sm transition-all focus-within:shadow-md">
+      <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-5 rounded-xl border border-slate-100 shadow-none transition-all">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
           <input
@@ -149,7 +149,7 @@ export default function GrievanceSection() {
             placeholder="Search grievances by ID, category or content..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
+            className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
           />
         </div>
 
@@ -158,7 +158,7 @@ export default function GrievanceSection() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-5 py-2 rounded-full text-[10px] font-semibold uppercase tracking-widest transition-all ${filter === f ? "bg-white text-blue-700 shadow-sm border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
+              className={`px-5 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-widest transition-all ${filter === f ? "bg-white text-blue-700 shadow-none border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
             >
               {f}
             </button>
@@ -178,7 +178,7 @@ export default function GrievanceSection() {
             {filteredGrievances.map((grievance) => (
               <div
                 key={grievance.id || grievance._id}
-                className="bg-white rounded-3xl border border-slate-100 p-6 hover:shadow-xl transition-all group flex flex-col justify-between"
+                className="bg-white rounded-xl border border-slate-100 p-6 shadow-none transition-all group flex flex-col justify-between"
               >
                 <div>
                   <div className="flex justify-between items-start mb-5">
@@ -203,7 +203,7 @@ export default function GrievanceSection() {
                     </div>
                   </div>
 
-                  <p className="text-slate-700 font-medium leading-relaxed mb-6 line-clamp-3 bg-slate-50/30 p-5 rounded-[22px] border border-slate-100/50 italic text-[14px]">
+                  <p className="text-slate-700 font-medium leading-relaxed mb-6 line-clamp-3 bg-slate-50/30 p-5 rounded-xl border border-slate-100/50 italic text-[14px]">
                     "{grievance.description}"
                   </p>
                 </div>
@@ -245,12 +245,12 @@ export default function GrievanceSection() {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="w-12 h-12 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-95"
+                className="w-12 h-12 rounded-xl bg-white border border-slate-100 shadow-none flex items-center justify-center hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-95"
               >
                 <Clock size={18} className="rotate-180" />
               </button>
 
-              <div className="flex bg-slate-100 p-1.5 rounded-2xl gap-1">
+              <div className="flex bg-slate-100 p-1.5 rounded-xl gap-1">
                 {[...Array(meta.totalPages)].map((_, i) => {
                   const p = i + 1;
                   if (
@@ -262,11 +262,10 @@ export default function GrievanceSection() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl font-black text-xs transition-all ${
-                          page === p
-                            ? "bg-blue-600 text-white shadow-lg shadow-blue-100"
-                            : "text-slate-400 hover:bg-white hover:text-blue-600"
-                        }`}
+                        className={`w-10 h-10 rounded-xl font-black text-xs transition-all ${page === p
+                          ? "bg-blue-600 text-white shadow-none"
+                          : "text-slate-400 hover:bg-white hover:text-blue-600"
+                          }`}
                       >
                         {p}
                       </button>
@@ -279,7 +278,7 @@ export default function GrievanceSection() {
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                className="w-12 h-12 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-95"
+                className="w-12 h-12 rounded-xl bg-white border border-slate-100 shadow-none flex items-center justify-center hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-95"
               >
                 <Clock size={18} />
               </button>
@@ -307,9 +306,9 @@ export default function GrievanceSection() {
 
 function StatCard({ label, count, icon: Icon, color }: any) {
   return (
-    <div className="bg-white p-7 rounded-[28px] border border-slate-100 shadow-sm flex items-center gap-6 transition-all hover:shadow-md">
+    <div className="bg-white p-7 rounded-xl border border-slate-100 shadow-none flex items-center gap-6 transition-all hover:shadow-none">
       <div
-        className={`p-4 rounded-2xl text-white ${color} shadow-inner bg-opacity-90`}
+        className={`p-4 rounded-xl text-white ${color} shadow-none bg-opacity-90`}
       >
         <Icon size={26} />
       </div>
