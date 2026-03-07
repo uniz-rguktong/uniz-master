@@ -45,7 +45,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     "uniz-landing:uniz-landing:uniz-landing:landing"
     "uniz-user:uniz-user-service:uniz-user-service:user-service"
     "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
-    "ornate-ems:ornate-ems:ornate-ems:ornate-ems"
+    "ornate-core:ornate-core:ornate-core:ornate-core"
   )
 
   # Prevent kubectl apply from overwriting current images with :local

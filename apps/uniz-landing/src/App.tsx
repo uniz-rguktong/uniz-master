@@ -94,7 +94,7 @@ export default function App() {
                 Portal
               </a>
               <a
-                href="https://ornate-ems.rguktong.in"
+                href="https://ornate-core.rguktong.in"
                 className="text-[10px] font-black text-slate-400 hover:text-primary uppercase tracking-widest transition-colors"
               >
                 EMS
@@ -245,7 +245,7 @@ export default function App() {
                 faculty and administrative teams.
               </p>
               <a
-                href="https://ornate-ems.rguktong.in"
+                href="https://ornate-core.rguktong.in"
                 className="flex items-center justify-between p-4 bg-white rounded-2xl group active:scale-95 transition-transform hover:shadow-lg"
               >
                 <span className="font-black text-[10px] uppercase tracking-widest group-hover:text-accent transition-colors">
@@ -364,7 +364,7 @@ export default function App() {
                 Student Portal
               </a>
               <a
-                href="https://ornate-ems.rguktong.in"
+                href="https://ornate-core.rguktong.in"
                 className="hover:text-accent transition-colors"
               >
                 Staff EMS
