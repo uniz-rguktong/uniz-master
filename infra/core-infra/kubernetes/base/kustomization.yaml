@@ -57,3 +57,4 @@ images:
   - name: ornate-core:local
     newName: docker.io/library/ornate-core
     newTag: local-1772816385
+images:
