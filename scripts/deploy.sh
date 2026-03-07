@@ -74,9 +74,13 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     echo "[Vault] Generating secrets from template..."
     # Export all variables from /root/uniz-secrets.env to ensure envsubst sees them
     if [ -f "/root/uniz-secrets.env" ]; then
-      set -a
-      source /root/uniz-secrets.env
-      set +a
+      while IFS= read -r line || [ -n "$line" ]; do
+        # Skip comments and empty lines
+        [[ "$line" =~ ^#.*$ ]] && continue
+        [[ "$line" =~ ^[[:space:]]*$ ]] && continue
+        # Export the line, ensuring it handles spaces and special characters safely
+        export "$line"
+      done < /root/uniz-secrets.env
     fi
     envsubst < infra/core-infra/kubernetes/base/secrets.yaml.template > infra/core-infra/kubernetes/base/secrets.yaml
   fi
