@@ -219,6 +219,7 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
         headers: { ...req.headers, host: new URL(target).host },
         responseType: "arraybuffer", // Use arraybuffer to prevent binary corruption (Excel, Images, etc.)
         validateStatus: () => true,
+        timeout: 30000, // 30s timeout to prevent gateway hangs
       });
 
       const contentType = response.headers["content-type"] || "";
