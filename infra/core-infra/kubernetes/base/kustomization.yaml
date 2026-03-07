@@ -21,7 +21,7 @@ resources:
   - storage-cleanup-job.yaml
   - portal.yaml
   - uniz-landing.yaml
-  - ornate-ems.yaml
+  - ornate-core.yaml
   - ingress.yaml
 images:
   - name: uniz-academics-service:local
@@ -54,6 +54,6 @@ images:
   - name: uniz-user-service:local
     newName: docker.io/library/uniz-user-service
     newTag: local-1772803274
-  - name: ornate-ems:local
-    newName: docker.io/library/ornate-ems
+  - name: ornate-core:local
+    newName: docker.io/library/ornate-core
     newTag: local-1772816385
