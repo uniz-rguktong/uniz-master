@@ -34,8 +34,9 @@ app.use((req, res, next) => {
     );
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-cms-api-key",
+      "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-cms-api-key, x-api-key, uid, role",
     );
+    res.setHeader("Access-Control-Max-Age", "86400"); // 24 hours
   }
 
   if (req.method === "OPTIONS") {
@@ -467,10 +468,12 @@ app.all("/api/v1/:service/:path*", async (req, res) => {
 
     // Pass headers down perfectly, ensuring content-types mismatch don't happen
     Object.entries(response.headers).forEach(([key, value]) => {
-      // Axios auto-decompresses responses, so we must remove the encoding headers to prevent browser decode errors
+      const lowerKey = key.toLowerCase();
+      // Protect CORS headers and handle encoding
       if (
-        key.toLowerCase() !== "content-encoding" &&
-        key.toLowerCase() !== "transfer-encoding"
+        lowerKey !== "content-encoding" &&
+        lowerKey !== "transfer-encoding" &&
+        !lowerKey.startsWith("access-control-")
       ) {
         res.setHeader(key, value as string);
       }
