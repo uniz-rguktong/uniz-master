@@ -1,0 +1,58 @@
+{
+  "name": "uniz-infrastructure",
+  "version": "1.0.0",
+  "description": "Welcome to the specific repository for running the **UniZ Backend**. This setup orchestrates all microservices (Auth, User, Academics, etc.) using Docker, giving you a fully functional API locally in minutes.",
+  "main": "comprehensive_test.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test:e2e": "node tests/comprehensive_test.js",
+    "db:seed": "node scripts/seed_pg.js",
+    "deploy:redeploy": "bash scripts/redeploy.sh",
+    "clean": "rm -rf node_modules logs/*.log .env.clean",
+    "health": "curl -s http://localhost/api/v1/system/health | jq",
+    "status": "curl -s http://localhost/gateway-status"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uniz-rguktong/uniz-infrastructure.git"
+  },
+  "keywords": [
+    "uniz",
+    "microservices",
+    "docker",
+    "infrastructure",
+    "education-platform"
+  ],
+  "author": "SABER",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/uniz-rguktong/uniz-infrastructure/issues"
+  },
+  "homepage": "https://github.com/uniz-rguktong/uniz-infrastructure#readme",
+  "dependencies": {
+    "@prisma/client": "^7.4.0",
+    "@types/node": "^25.2.3",
+    "axios": "^1.13.5",
+    "bcryptjs": "^3.0.3",
+    "colors": "^1.4.0",
+    "dotenv": "^17.3.1",
+    "form-data": "^4.0.1",
+    "pg": "^8.18.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
+  },
+  "overrides": {
+    "minimatch": "^10.2.3",
+    "glob": "^10.3.10"
+  }
+}

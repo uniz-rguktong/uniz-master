@@ -1,0 +1,1590 @@
+import { Response } from "express";
+import { PrismaClient } from "@prisma/client";
+import { AuthenticatedRequest } from "../middlewares/auth.middleware";
+import { ErrorCode } from "../shared/error-codes";
+import {
+  OutpassRequestSchema,
+  OutingRequestSchema,
+  ApprovalLogEntrySchema,
+  ApprovalLogEntry,
+} from "../shared/outpass.schema";
+import { UserRole } from "../shared/roles.enum";
+
+const prisma = new PrismaClient();
+
+// Helper to append log
+const appendLog = (currentLogs: any, entry: ApprovalLogEntry) => {
+  const logs = Array.isArray(currentLogs) ? currentLogs : [];
+  return [...logs, entry];
+};
+
+import axios from "axios";
+
+// Helper: Check if student is in campus
+const NOTIFICATION_SERVICE_URL = (
+  (process.env.DOCKER_ENV === "true"
+    ? "http://uniz-notification-service:3007"
+    : process.env.NOTIFICATION_SERVICE_URL) || "http://localhost:3007"
+)
+  .trim()
+  .replace(/\/health$/, "");
+
+const sendPush = async (username: string, title: string, body: string) => {
+  try {
+    const url = `${NOTIFICATION_SERVICE_URL}/push/send`;
+    const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+    await axios.post(
+      url,
+      {
+        target: "user",
+        username: username,
+        title,
+        body,
+      },
+      {
+        headers: { "x-internal-secret": SECRET },
+        timeout: 5000,
+      },
+    );
+    console.log(
+      `[OUTPASS] Successfully sent push notification to: ${username}`,
+    );
+  } catch (e: any) {
+    console.error(
+      `[OUTPASS] Failed to send push notification to ${username}:`,
+      e.message,
+    );
+  }
+};
+
+const triggerNotification = async (evt: string, payload: any) => {
+  const { recipient, extra } = payload;
+  if (!extra) return;
+
+  let title = "";
+  let body = "";
+  const username =
+    extra.username_raw || extra.username || recipient.split("@")[0];
+
+  switch (evt) {
+    case "OUTPASS_REQUEST":
+      title = "Outpass Request Submitted";
+      body = `Your outpass request for ${extra.fromDate} to ${extra.toDate} has been submitted.`;
+      break;
+    case "OUTING_REQUEST":
+      title = "Outing Request Submitted";
+      body = `Your outing request for ${extra.fromDate} has been submitted.`;
+      break;
+    case "REQUEST_UPDATE":
+    case "REQUEST_REJECTED":
+      const type = extra.requestType === "outing" ? "Outing" : "Outpass";
+      title = `${type} Status Update`;
+      body = `Your ${type} has been ${extra.status} by ${extra.approver || "Staff"}. Comment: ${extra.comment || "None"}`;
+      break;
+    case "CHECK_IN":
+    case "CHECK_OUT":
+      const dir = evt === "CHECK_IN" ? "In" : "Out";
+      title = `Campus Check-${dir}`;
+      body = `You have successfully checked ${dir.toLowerCase()} at ${new Date().toLocaleTimeString()}.`;
+      break;
+  }
+
+  if (title && body && username) {
+    await sendPush(username, title, body);
+  }
+};
+
+const sendAdminConfirmation = async (
+  adminUsername: string,
+  action: "approved" | "rejected" | "forwarded",
+  studentName: string,
+  studentId: string,
+  type: "outing" | "outpass",
+) => {
+  await sendPush(
+    adminUsername,
+    "Action Confirmation",
+    `You have ${action} the ${type} request for ${studentName} (${studentId}).`,
+  );
+};
+
+async function getStudentStatus(token: string) {
+  try {
+    const GATEWAY = (
+      (process.env.DOCKER_ENV === "true"
+        ? "http://uniz-gateway-api:3000/api/v1"
+        : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
+    ).trim();
+    const res = await axios.get(`${GATEWAY}/profile/student/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return {
+      isInCampus: res.data.student.is_in_campus,
+      hasPending: res.data.student.has_pending_requests,
+      gender: res.data.student.gender,
+    };
+  } catch (e) {
+    console.error("Profile check failed:", e);
+    return { isInCampus: true, hasPending: false, gender: undefined }; // Safe defaults
+  }
+}
+
+async function updateStudentProfileStatus(
+  username: string,
+  token: string,
+  status: { isPresent?: boolean; isPending?: boolean },
+) {
+  try {
+    const GATEWAY = (
+      (process.env.DOCKER_ENV === "true"
+        ? "http://uniz-gateway-api:3000/api/v1"
+        : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
+    ).trim();
+    await axios.put(
+      `${GATEWAY}/profile/student/status`,
+      {
+        username,
+        ...status,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+  } catch (e: any) {
+    console.error("Failed to update student profile status:", e.message);
+  }
+}
+
+export const createOutpass = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ code: ErrorCode.AUTH_UNAUTHORIZED });
+
+  // Validate Input
+  const parse = OutpassRequestSchema.safeParse(req.body);
+  if (!parse.success) {
+    return res
+      .status(400)
+      .json({ code: ErrorCode.VALIDATION_ERROR, errors: parse.error.errors });
+  }
+  const { reason, fromDay, toDay } = parse.data;
+
+  // 0. Ensure dates are not in the past
+  const now = new Date();
+  // Use start of today for fromDay comparison if it's a date only comparison,
+  // but here we probably want to ensure it's at least today or later.
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+  );
+
+  if (new Date(fromDay) < startOfToday) {
+    return res.status(400).json({
+      code: ErrorCode.VALIDATION_ERROR,
+      message: "From Date cannot be in the past.",
+    });
+  }
+  if (new Date(toDay) < new Date(fromDay)) {
+    return res.status(400).json({
+      code: ErrorCode.VALIDATION_ERROR,
+      message: "To Date cannot be before From Date.",
+    });
+  }
+
+  const fromDateObj = new Date(fromDay);
+  const toDateObj = new Date(toDay);
+  toDateObj.setHours(23, 59, 59, 999);
+
+  // Calculate days
+  const diffMs = toDateObj.getTime() - fromDateObj.getTime();
+  const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24)) || 1; // Default to 1 day if today to today
+
+  try {
+    // 1. Check if student is IN CAMPUS and doesn't have PENDING requests
+    const { isInCampus, hasPending, gender } = await getStudentStatus(
+      req.headers.authorization?.split(" ")[1] || "",
+    );
+    const studentId = user.username.toUpperCase();
+
+    // 1. Proactive Expiry: Clean up any past requests for this student that aren't finalized
+    await Promise.all([
+      prisma.outpass.updateMany({
+        where: {
+          studentId,
+          isExpired: false,
+          toDay: { lt: now }, // Already past the end of the day or specified date
+          checkedOutTime: null, // Only if they never even left
+        },
+        data: { isExpired: true },
+      }),
+      prisma.outing.updateMany({
+        where: {
+          studentId,
+          isExpired: false,
+          toTime: { lt: now },
+          checkedOutTime: null,
+        },
+        data: { isExpired: true },
+      }),
+    ]);
+
+    if (!isInCampus) {
+      return res.status(403).json({
+        code: ErrorCode.AUTH_FORBIDDEN,
+        message: "You are already marked as OUT of campus.",
+      });
+    }
+
+    if (hasPending) {
+      // Self-healing: check if student is marked as pending in profile but has no active requests in DB
+      const currentActive = await Promise.all([
+        prisma.outpass.findFirst({
+          where: {
+            studentId,
+            isRejected: false,
+            isExpired: false,
+            checkedInTime: null,
+            OR: [{ toDay: { gte: now } }, { checkedOutTime: { not: null } }],
+          },
+        }),
+        prisma.outing.findFirst({
+          where: {
+            studentId,
+            isRejected: false,
+            isExpired: false,
+            checkedInTime: null,
+            OR: [{ toTime: { gte: now } }, { checkedOutTime: { not: null } }],
+          },
+        }),
+      ]);
+
+      if (!currentActive[0] && !currentActive[1]) {
+        console.log(
+          `[OUTPASS] Self-healing: Clearing stuck pending status for ${studentId}`,
+        );
+        await updateStudentProfileStatus(
+          user.username,
+          req.headers.authorization?.split(" ")[1] || "",
+          { isPending: false },
+        );
+      } else {
+        return res.status(409).json({
+          code: ErrorCode.RESOURCE_ALREADY_EXISTS,
+          message:
+            "You already have a pending/active request (Profile indicates Pending).",
+        });
+      }
+    }
+
+    // 2. Double check local DB for existing pending Outpass AND Outing
+    const [existingOutpass, existingOuting] = await Promise.all([
+      prisma.outpass.findFirst({
+        where: {
+          studentId,
+          isRejected: false,
+          isExpired: false,
+          checkedInTime: null,
+          OR: [{ toDay: { gte: now } }, { checkedOutTime: { not: null } }],
+        },
+      }),
+      prisma.outing.findFirst({
+        where: {
+          studentId,
+          isRejected: false,
+          isExpired: false,
+          checkedInTime: null,
+          OR: [{ toTime: { gte: now } }, { checkedOutTime: { not: null } }],
+        },
+      }),
+    ]);
+
+    if (existingOutpass || existingOuting) {
+      return res.status(409).json({
+        code: ErrorCode.RESOURCE_ALREADY_EXISTS,
+        message: "You already have a pending request (Outpass or Outing).",
+      });
+    }
+
+    const outpass = await prisma.outpass.create({
+      data: {
+        studentId: user.username.toUpperCase(),
+        studentGender: (gender || String(req.body.studentGender || "M"))
+          .toUpperCase()
+          .startsWith("F")
+          ? "F"
+          : "M",
+        reason,
+        fromDay: fromDateObj,
+        toDay: toDateObj,
+        days: days,
+        approvalLogs: [],
+        currentLevel: (gender || req.body.studentGender || "M")
+          .toUpperCase()
+          .startsWith("F")
+          ? UserRole.CARETAKER_FEMALE
+          : UserRole.CARETAKER_MALE,
+      },
+    });
+
+    // 3. Mark Pending in Profile (Atomic-ish)
+    await updateStudentProfileStatus(
+      user.username,
+      req.headers.authorization?.split(" ")[1] || "",
+      { isPending: true },
+    );
+
+    // Notify Student & Caretaker (Backgrounded for latency optimization)
+    triggerNotification("OUTPASS_REQUEST", {
+      recipient: user.email || `${user.username}@rguktong.ac.in`,
+      subject: "Outpass Request Submitted",
+      body: `Your request (ID: ${outpass.id}) has been submitted to your Caretaker.`,
+      extra: {
+        username: (user as any).name || user.username,
+        reason: reason,
+        fromDate: fromDateObj.toISOString(),
+        toDate: toDateObj.toISOString(),
+        requestType: "outpass",
+      },
+    }).catch((err) => {
+      console.error("[OUTPASS] Background outpass notification failed:", err);
+    });
+
+    return res.json({ success: true, data: outpass });
+  } catch (e: any) {
+    console.error("Outpass Creation Error:", e);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message:
+        "There was an issue submitting your outpass request. Please try again.",
+    });
+  }
+};
+
+export const createOuting = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ code: ErrorCode.AUTH_UNAUTHORIZED });
+
+  const parse = OutingRequestSchema.safeParse(req.body);
+  if (!parse.success) {
+    return res
+      .status(400)
+      .json({ code: ErrorCode.VALIDATION_ERROR, errors: parse.error.errors });
+  }
+  const { reason, fromTime, toTime } = parse.data;
+
+  const now = new Date();
+  const fromDateObj = new Date(fromTime);
+  const toDateObj = new Date(toTime);
+
+  if (fromDateObj < now) {
+    return res.status(400).json({
+      code: ErrorCode.VALIDATION_ERROR,
+      message: "From Time cannot be in the past.",
+    });
+  }
+  if (toDateObj < fromDateObj) {
+    return res.status(400).json({
+      code: ErrorCode.VALIDATION_ERROR,
+      message: "To Time cannot be before From Time.",
+    });
+  }
+
+  // Ensure it's the same day
+  if (fromDateObj.toDateString() !== toDateObj.toDateString()) {
+    return res.status(400).json({
+      code: ErrorCode.VALIDATION_ERROR,
+      message:
+        "Outing cannot span multiple days. Please take an Outpass instead.",
+    });
+  }
+
+  const diffMs = toDateObj.getTime() - fromDateObj.getTime();
+  const hours = Math.ceil(diffMs / (1000 * 60 * 60));
+
+  try {
+    // 1. Check if student is IN CAMPUS and doesn't have PENDING requests
+    const { isInCampus, hasPending, gender } = await getStudentStatus(
+      req.headers.authorization?.split(" ")[1] || "",
+    );
+
+    if (!isInCampus) {
+      return res.status(403).json({
+        code: ErrorCode.AUTH_FORBIDDEN,
+        message: "You are already marked as OUT of campus.",
+      });
+    }
+
+    const studentId = user.username.toUpperCase();
+
+    // 1. Proactive Expiry: Clean up any past requests for this student that aren't finalized
+    await Promise.all([
+      prisma.outpass.updateMany({
+        where: {
+          studentId,
+          isExpired: false,
+          toDay: { lt: now },
+          checkedOutTime: null,
+        },
+        data: { isExpired: true },
+      }),
+      prisma.outing.updateMany({
+        where: {
+          studentId,
+          isExpired: false,
+          toTime: { lt: now },
+          checkedOutTime: null,
+        },
+        data: { isExpired: true },
+      }),
+    ]);
+
+    if (hasPending) {
+      // Self-healing: check if student is marked as pending in profile but has no active requests in DB
+      const currentActive = await Promise.all([
+        prisma.outpass.findFirst({
+          where: {
+            studentId,
+            isRejected: false,
+            isExpired: false,
+            checkedInTime: null,
+            OR: [{ toDay: { gte: now } }, { checkedOutTime: { not: null } }],
+          },
+        }),
+        prisma.outing.findFirst({
+          where: {
+            studentId,
+            isRejected: false,
+            isExpired: false,
+            checkedInTime: null,
+            OR: [{ toTime: { gte: now } }, { checkedOutTime: { not: null } }],
+          },
+        }),
+      ]);
+
+      if (!currentActive[0] && !currentActive[1]) {
+        console.log(
+          `[OUTING] Self-healing: Clearing stuck pending status for ${studentId}`,
+        );
+        await updateStudentProfileStatus(
+          user.username,
+          req.headers.authorization?.split(" ")[1] || "",
+          { isPending: false },
+        );
+      } else {
+        return res.status(409).json({
+          code: ErrorCode.RESOURCE_ALREADY_EXISTS,
+          message:
+            "You already have a pending/active request (Profile indicates Pending).",
+        });
+      }
+    }
+
+    // 2. Double check local DB for existing pending Outpass AND Outing
+    const [existingOutpass, existingOuting] = await Promise.all([
+      prisma.outpass.findFirst({
+        where: {
+          studentId,
+          isRejected: false,
+          isExpired: false,
+          checkedInTime: null,
+          OR: [{ toDay: { gte: now } }, { checkedOutTime: { not: null } }],
+        },
+      }),
+      prisma.outing.findFirst({
+        where: {
+          studentId,
+          isRejected: false,
+          isExpired: false,
+          checkedInTime: null,
+          OR: [{ toTime: { gte: now } }, { checkedOutTime: { not: null } }],
+        },
+      }),
+    ]);
+
+    if (existingOutpass || existingOuting) {
+      return res.status(409).json({
+        code: ErrorCode.RESOURCE_ALREADY_EXISTS,
+        message: "You already have a pending request (Outpass or Outing).",
+      });
+    }
+
+    const outing = await prisma.outing.create({
+      data: {
+        studentId: user.username.toUpperCase(),
+        studentGender: (gender || String(req.body.studentGender || "M"))
+          .toUpperCase()
+          .startsWith("F")
+          ? "F"
+          : "M",
+        reason,
+        fromTime: fromDateObj,
+        toTime: toDateObj,
+        hours: hours,
+        currentLevel: (gender || req.body.studentGender || "M")
+          .toUpperCase()
+          .startsWith("F")
+          ? UserRole.CARETAKER_FEMALE
+          : UserRole.CARETAKER_MALE,
+        approvalLogs: [],
+      },
+    });
+
+    // Mark Pending in Profile
+    await updateStudentProfileStatus(
+      user.username,
+      req.headers.authorization?.split(" ")[1] || "",
+      { isPending: true },
+    );
+
+    // Backgrounded notification for latency optimization
+    triggerNotification("OUTING_REQUEST", {
+      recipient: user.email || `${user.username}@rguktong.ac.in`,
+      subject: "Outing Request Submitted",
+      body: `Your outing request (ID: ${outing.id}) has been submitted.`,
+      extra: {
+        username: (user as any).name || user.username,
+        reason: reason,
+        fromDate: fromDateObj.toISOString(),
+        toDate: toDateObj.toISOString(),
+        requestType: "outing",
+      },
+    }).catch((err) => {
+      console.error("[OUTPASS] Background outing notification failed:", err);
+    });
+
+    return res.json({ success: true, data: outing });
+  } catch (e: any) {
+    console.error("Outing Creation Error:", e);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message:
+        "There was an issue submitting your outing request. Please try again.",
+    });
+  }
+};
+
+export const getHistory = async (req: AuthenticatedRequest, res: Response) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ code: ErrorCode.AUTH_UNAUTHORIZED });
+
+  const targetId = (req.params.id || user.username).toUpperCase();
+  const { page = 1, limit = 10 } = req.query;
+
+  try {
+    const skip = (Number(page) - 1) * Number(limit);
+    const limitNum = Number(limit);
+
+    // Fetch both and combine. In a real system you might want a unified view/table if scale is huge.
+    const [outpasses, outings, totalOutpasses, totalOutings] =
+      await Promise.all([
+        prisma.outpass.findMany({
+          where: { studentId: targetId },
+          orderBy: { requestedTime: "desc" },
+          skip: skip,
+          take: limitNum,
+        }),
+        prisma.outing.findMany({
+          where: { studentId: targetId },
+          orderBy: { requestedTime: "desc" },
+          skip: skip,
+          take: limitNum,
+        }),
+        prisma.outpass.count({ where: { studentId: targetId } }),
+        prisma.outing.count({ where: { studentId: targetId } }),
+      ]);
+
+    // Merge and sort
+    const combined = [
+      ...outpasses.map((o) => ({ ...o, type: "outpass" })),
+      ...outings.map((o) => ({ ...o, type: "outing" })),
+    ]
+      .sort(
+        (a, b) =>
+          new Date(b.requestedTime).getTime() -
+          new Date(a.requestedTime).getTime(),
+      )
+      .slice(0, limitNum);
+
+    // Format keys for frontend compatibility
+    const history = combined.map((item) => ({
+      _id: item.id,
+      ...item,
+      is_approved: item.isApproved,
+      is_rejected: item.isRejected,
+      is_expired: item.isExpired,
+      requested_time: item.requestedTime,
+      from_time: (item as any).fromTime,
+      to_time: (item as any).toTime,
+      from_day: (item as any).fromDay,
+      to_day: (item as any).toDay,
+      checked_out_time: item.checkedOutTime,
+      checked_in_time: item.checkedInTime,
+    }));
+
+    return res.json({
+      success: true,
+      history,
+      pagination: {
+        page: Number(page),
+        totalPages: Math.ceil((totalOutpasses + totalOutings) / Number(limit)),
+        total: totalOutpasses + totalOutings,
+      },
+    });
+  } catch (e) {
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to retrieve your history. Please try again later.",
+    });
+  }
+};
+
+// Helper to determine request type and fetch
+const fetchRequest = async (id: string, prisma: any) => {
+  const outpass = await prisma.outpass.findUnique({ where: { id } });
+  if (outpass) return { type: "outpass", data: outpass };
+
+  const outing = await prisma.outing.findUnique({ where: { id } });
+  if (outing) return { type: "outing", data: outing };
+
+  return null;
+};
+
+export const approveOutpass = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { id } = req.params;
+  const user = req.user;
+  if (!user) return res.status(401).json({ code: ErrorCode.AUTH_UNAUTHORIZED });
+
+  const superRoles = [
+    UserRole.DIRECTOR,
+    UserRole.WEBMASTER,
+    UserRole.SWO,
+    UserRole.DEAN,
+  ];
+  const isSuper = superRoles.includes(user.role as UserRole);
+
+  try {
+    const found = await fetchRequest(id, prisma);
+    if (!found)
+      return res.status(404).json({ code: ErrorCode.RESOURCE_NOT_FOUND });
+
+    const { type, data: existing } = found;
+
+    if (existing.isApproved || existing.isRejected || existing.isExpired) {
+      return res.status(409).json({
+        code: ErrorCode.OUTPASS_ALREADY_APPROVED,
+        message: "Request already finalized",
+      });
+    }
+
+    // Gender restriction check
+    if (!isSuper) {
+      const roleStr = user.role.toLowerCase();
+      if (
+        (roleStr.includes("female") ||
+          roleStr === UserRole.CARETAKER_FEMALE ||
+          roleStr === UserRole.WARDEN_FEMALE) &&
+        existing.studentGender !== "F"
+      ) {
+        return res.status(403).json({
+          code: ErrorCode.AUTH_FORBIDDEN,
+          message: "Female staff can only approve female requests",
+        });
+      }
+      if (
+        (roleStr.includes("male") ||
+          roleStr === UserRole.CARETAKER_MALE ||
+          roleStr === UserRole.WARDEN_MALE) &&
+        existing.studentGender !== "M"
+      ) {
+        return res.status(403).json({
+          code: ErrorCode.AUTH_FORBIDDEN,
+          message: "Male staff can only approve male requests",
+        });
+      }
+    }
+
+    const currentRole = user.role as string;
+    // Auto-detect forward action from URL path (e.g., /requests/:id/forward)
+    const isForwardEndpoint = req.originalUrl.endsWith("/forward");
+    const requestedAction = isForwardEndpoint
+      ? "forward"
+      : req.body.action || "approve";
+
+    // --- STRICT HIERARCHY ENFORCEMENT ---
+    if (
+      !isSuper &&
+      existing.currentLevel &&
+      currentRole !== (existing.currentLevel as string)
+    ) {
+      return res.status(403).json({
+        code: ErrorCode.AUTH_FORBIDDEN,
+        message: `Strict Hierarchy: This request is currently at ${existing.currentLevel} level. You (${currentRole}) cannot process it.`,
+      });
+    }
+
+    let nextLevel = existing.currentLevel;
+    let finalApproval = false;
+    let actionMessage = "Processed";
+
+    // --- APPROVAL HIERARCHY LOGIC ---
+
+    if (type === "outing") {
+      // Outings: One-step approval by design
+      finalApproval = true;
+      actionMessage = "Approved";
+    } else {
+      // Outpass Flow: Multi-step potential
+      if (currentRole.includes("caretaker")) {
+        if (requestedAction === "forward") {
+          nextLevel =
+            existing.studentGender === "F"
+              ? UserRole.WARDEN_FEMALE
+              : UserRole.WARDEN_MALE;
+          actionMessage = "Forwarded to Warden";
+          finalApproval = false;
+        } else {
+          // Caretaker chooses to Approve (Final)
+          finalApproval = true;
+          actionMessage = "Approved";
+          nextLevel = existing.currentLevel; // Stays at this level but finalized
+        }
+      } else if (currentRole.includes("warden")) {
+        if (requestedAction === "forward") {
+          nextLevel = UserRole.SWO;
+          actionMessage = "Forwarded to SWO";
+          finalApproval = false;
+        } else {
+          // Warden chooses to Approve (Final)
+          finalApproval = true;
+          actionMessage = "Approved";
+          nextLevel = existing.currentLevel;
+        }
+      } else if (currentRole === UserRole.SWO || isSuper) {
+        // SWO/Super roles always Finalize
+        finalApproval = true;
+        actionMessage = "Approved";
+      }
+    }
+
+    const logEntry: ApprovalLogEntry = {
+      level: currentRole,
+      approverId: user.id || user.username,
+      status: finalApproval ? "approved" : "forwarded",
+      timestamp: new Date().toISOString(),
+      comment: req.body.comment || actionMessage,
+    };
+
+    const updateData: any = {
+      currentLevel: nextLevel,
+      approvalLogs: appendLog(existing.approvalLogs, logEntry),
+    };
+
+    if (finalApproval) {
+      updateData.isApproved = true;
+      updateData.issuedBy = user.username;
+      updateData.issuedTime = new Date();
+    }
+
+    let updated;
+    if (type === "outpass") {
+      updated = await prisma.outpass.update({
+        where: { id },
+        data: updateData,
+      });
+    } else {
+      updated = await prisma.outing.update({ where: { id }, data: updateData });
+    }
+
+    // --- NOTIFICATIONS (Backgrounded for latency optimization) ---
+    triggerNotification("REQUEST_UPDATE", {
+      recipient: `${existing.studentId}@rguktong.ac.in`,
+      subject: `${type === "outing" ? "Outing" : "Outpass"} Update: ${actionMessage}`,
+      body: `Your ${type} has been ${actionMessage} by ${user.role}.`,
+      extra: {
+        username: existing.studentId,
+        status: finalApproval ? "approved" : "forwarded",
+        approver: user.username, // or Name if available
+        comment: req.body.comment || actionMessage,
+        requestType: type,
+      },
+    }).catch((err) => {
+      console.error(
+        "[OUTPASS] Background status update notification failed:",
+        err,
+      );
+    });
+
+    // Admin Confirmation (Backgrounded)
+    if (user.email) {
+      sendAdminConfirmation(
+        user.email,
+        finalApproval ? "approved" : ("forwarded" as any),
+        existing.studentId,
+        existing.studentId,
+        type as "outing" | "outpass",
+      ).catch((err) => {
+        console.error("[OUTPASS] Background admin confirmation failed:", err);
+      });
+    }
+
+    return res.json({ success: true, data: updated });
+  } catch (e) {
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Unable to process approval. Please try again.",
+    });
+  }
+};
+
+export const rejectOutpass = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { id } = req.params;
+  const user = req.user;
+  if (!user || user.role === UserRole.STUDENT)
+    return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
+
+  // Explicitly block Security from rejecting anything
+  if (user.role === UserRole.SECURITY) {
+    return res.status(403).json({
+      code: ErrorCode.AUTH_FORBIDDEN,
+      message: "Security role is limited to Check-In/Check-Out operations.",
+    });
+  }
+
+  const currentRole = user.role as string;
+
+  try {
+    const found = await fetchRequest(id, prisma);
+    if (!found)
+      return res.status(404).json({ code: ErrorCode.RESOURCE_NOT_FOUND });
+
+    const { type, data: existing } = found;
+
+    if (existing.isApproved || existing.isRejected) {
+      return res.status(409).json({ code: ErrorCode.OUTPASS_ALREADY_APPROVED });
+    }
+
+    // --- STRICT HIERARCHY ENFORCEMENT ---
+    const superRoles = [
+      UserRole.DIRECTOR,
+      UserRole.WEBMASTER,
+      UserRole.SWO,
+      UserRole.DEAN,
+    ];
+    const isSuper = superRoles.includes(user.role as UserRole);
+
+    if (
+      !isSuper &&
+      existing.currentLevel &&
+      currentRole !== (existing.currentLevel as string)
+    ) {
+      return res.status(403).json({
+        code: ErrorCode.AUTH_FORBIDDEN,
+        message: `Strict Hierarchy: Rejection must be handled at the current level (${existing.currentLevel}).`,
+      });
+    }
+
+    const logEntry: ApprovalLogEntry = {
+      level: user.role as string,
+      approverId: user.id || user.username,
+      status: "rejected",
+      timestamp: new Date().toISOString(),
+      comment: req.body.comment,
+    };
+
+    const updateData = {
+      isRejected: true,
+      rejectedBy: user.username,
+      rejectedTime: new Date(),
+      approvalLogs: appendLog(existing.approvalLogs, logEntry),
+    };
+
+    let updated;
+    if (type === "outpass") {
+      updated = await prisma.outpass.update({
+        where: { id, isRejected: false },
+        data: updateData,
+      });
+    } else {
+      updated = await prisma.outing.update({
+        where: { id, isRejected: false },
+        data: updateData,
+      });
+    }
+
+    // Notify Student of Rejection
+    // Notify Student of Rejection
+    // Notify Student of Rejection
+    triggerNotification("REQUEST_REJECTED", {
+      recipient: `${existing.studentId}@rguktong.ac.in`,
+      subject: `${type === "outing" ? "Outing" : "Outpass"} Rejected`,
+      body: `Your ${type} was rejected by ${user.role}. Reason: ${req.body.comment || "No comment provided"}`,
+      extra: {
+        username: existing.studentId,
+        status: "rejected",
+        approver: user.username,
+        comment: req.body.comment,
+        requestType: type,
+      },
+    }).catch((err) => {
+      console.error("[OUTPASS] Background rejection notification failed:", err);
+    });
+
+    // Admin Confirmation
+    if (user.email) {
+      await sendAdminConfirmation(
+        user.email,
+        "rejected",
+        existing.studentId,
+        existing.studentId,
+        type as "outing" | "outpass",
+      );
+    }
+
+    // Clear Pending in Profile
+    await updateStudentProfileStatus(
+      existing.studentId,
+      req.headers.authorization?.split(" ")[1] || "",
+      { isPending: false },
+    );
+
+    return res.json({ success: true, data: updated });
+  } catch (e) {
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Unable to process rejection. Please try again.",
+    });
+  }
+};
+
+export const getAllOutings = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ code: ErrorCode.AUTH_UNAUTHORIZED });
+
+  const { page = 1, limit = 50, search = "" } = req.query;
+  const skip = (Number(page) - 1) * Number(limit);
+  const take = Number(limit);
+
+  const superRoles = [
+    UserRole.DIRECTOR,
+    UserRole.WEBMASTER,
+    UserRole.SWO,
+    UserRole.DEAN,
+  ];
+  const isSuper = superRoles.includes(user.role as UserRole);
+
+  let where: any = {};
+  if (search) {
+    where.studentId = { contains: search as string, mode: "insensitive" };
+  }
+
+  // 1. Role-based status filtering for Security
+  if (user.role === UserRole.SECURITY) {
+    where.isApproved = true;
+    where.isExpired = false;
+    where.isRejected = false;
+  } else {
+    // Requirement: Return only PENDING requests for approval views
+    where.isApproved = false;
+    where.isRejected = false;
+    where.isExpired = false;
+  }
+
+  // 2. Gender-based filtering for Hostel Staff
+  if (!isSuper && user.role !== UserRole.SECURITY) {
+    const roleStr = user.role.toLowerCase();
+    if (roleStr.includes("female")) {
+      where.studentGender = "F";
+    } else if (roleStr.includes("male")) {
+      where.studentGender = "M";
+    }
+  }
+
+  try {
+    const [outings, total] = await Promise.all([
+      prisma.outing.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { requestedTime: "desc" },
+      }),
+      prisma.outing.count({ where }),
+    ]);
+
+    const mapped = outings.map((o) => ({
+      _id: o.id,
+      ...o,
+      username: o.studentId,
+      is_approved: o.isApproved,
+      is_rejected: o.isRejected,
+      is_expired: o.isExpired,
+      requested_time: o.requestedTime,
+      from_time: o.fromTime,
+      to_time: o.toTime,
+      checked_in_time: o.checkedInTime,
+      checked_out_time: o.checkedOutTime,
+    }));
+
+    return res.json({
+      success: true,
+      outings: mapped,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: take,
+        totalPages: Math.ceil(total / take),
+      },
+    });
+  } catch (e) {
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to fetch outing records.",
+    });
+  }
+};
+
+export const getAllOutpasses = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ code: ErrorCode.AUTH_UNAUTHORIZED });
+
+  const { page = 1, limit = 50, search = "" } = req.query;
+  const skip = (Number(page) - 1) * Number(limit);
+  const take = Number(limit);
+
+  const superRoles = [
+    UserRole.DIRECTOR,
+    UserRole.WEBMASTER,
+    UserRole.SWO,
+    UserRole.DEAN,
+  ];
+  const isSuper = superRoles.includes(user.role as UserRole);
+
+  let where: any = {};
+  if (search) {
+    where.studentId = { contains: search as string, mode: "insensitive" };
+  }
+
+  // 1. Role-based status filtering
+  // Security sees APPROVED requests (for check-out operations)
+  // All other roles see PENDING requests only (not approved, not rejected, not expired)
+  if (user.role === UserRole.SECURITY) {
+    where.isApproved = true;
+    where.isExpired = false;
+    where.isRejected = false;
+  } else {
+    // STRICT: Only pending requests for approval workflow
+    // Never return approved outpasses to Caretakers/Wardens/Admins
+    where.isApproved = false;
+    where.isRejected = false;
+    where.isExpired = false;
+  }
+
+  // 2. Gender-based filtering for Hostel Staff
+  if (!isSuper && user.role !== UserRole.SECURITY) {
+    const roleStr = user.role.toLowerCase();
+    if (roleStr.includes("female")) {
+      where.studentGender = "F";
+    } else if (roleStr.includes("male")) {
+      where.studentGender = "M";
+    }
+  }
+
+  try {
+    const [outpasses, total] = await Promise.all([
+      prisma.outpass.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { requestedTime: "desc" },
+      }),
+      prisma.outpass.count({ where }),
+    ]);
+
+    const mapped = outpasses.map((o) => ({
+      _id: o.id,
+      ...o,
+      username: o.studentId,
+      is_approved: o.isApproved,
+      is_rejected: o.isRejected,
+      is_expired: o.isExpired,
+      requested_time: o.requestedTime,
+      from_day: o.fromDay,
+      to_day: o.toDay,
+      checked_in_time: o.checkedInTime,
+      checked_out_time: o.checkedOutTime,
+    }));
+
+    return res.json({
+      success: true,
+      outpasses: mapped,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: take,
+        totalPages: Math.ceil(total / take),
+      },
+    });
+  } catch (e) {
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to fetch outpass records.",
+    });
+  }
+};
+
+export const getSecuritySummary = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user || user.role !== UserRole.SECURITY) {
+    return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
+  }
+
+  const { search = "", limit = 50, page = 1 } = req.query;
+  const limitNum = Number(limit);
+  const skip = (Number(page) - 1) * limitNum;
+
+  // 1. Pending Actions (For Dashboard)
+  // Fetch requests that are Approved but NOT yet Checked In (Cycle incomplete)
+  const pendingWhere: any = {
+    isApproved: true,
+    isRejected: false,
+    isExpired: false,
+    checkedInTime: null,
+    studentId: search
+      ? { contains: search as string, mode: "insensitive" }
+      : undefined,
+  };
+
+  // 2. History (Completed) - Paginated
+  const historyWhere: any = {
+    checkedInTime: { not: null },
+    studentId: search
+      ? { contains: search as string, mode: "insensitive" }
+      : undefined,
+  };
+
+  try {
+    const [pendingOutings, pendingOutpasses, historyOutings, historyOutpasses] =
+      await Promise.all([
+        prisma.outing.findMany({
+          where: pendingWhere,
+          orderBy: { requestedTime: "desc" },
+          take: 500,
+        }),
+        prisma.outpass.findMany({
+          where: pendingWhere,
+          orderBy: { requestedTime: "desc" },
+          take: 500,
+        }),
+        prisma.outing.findMany({
+          where: historyWhere,
+          orderBy: { checkedInTime: "desc" },
+          take: limitNum,
+          skip,
+        }),
+        prisma.outpass.findMany({
+          where: historyWhere,
+          orderBy: { checkedInTime: "desc" },
+          take: limitNum,
+          skip,
+        }),
+      ]);
+
+    const mapType = (list: any[], type: string) =>
+      list.map((o) => ({ ...o, type }));
+
+    const pending = [
+      ...mapType(pendingOutings, "outing"),
+      ...mapType(pendingOutpasses, "outpass"),
+    ].sort(
+      (a, b) =>
+        new Date(b.requestedTime).getTime() -
+        new Date(a.requestedTime).getTime(),
+    );
+
+    const history = [
+      ...mapType(historyOutings, "outing"),
+      ...mapType(historyOutpasses, "outpass"),
+    ]
+      .sort(
+        (a, b) =>
+          new Date(b.checkedInTime).getTime() -
+          new Date(a.checkedInTime).getTime(),
+      )
+      .slice(0, limitNum);
+
+    return res.json({
+      success: true,
+      pending_checkout: pending.filter((r) => !r.checkedOutTime),
+      pending_checkin: pending.filter((r) => r.checkedOutTime),
+      history,
+      pagination: {
+        page: Number(page),
+        limit: limitNum,
+        totalHistory: historyOutings.length + historyOutpasses.length, // approximation or fetch actual total
+      },
+    });
+  } catch (e) {
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to generate security summary.",
+    });
+  }
+};
+
+// Dedicated Security Endpoints
+
+// CHECK OUT (Exit Campus)
+export const securityCheckOut = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { id } = req.params;
+  const user = req.user;
+  if (!user || user.role !== UserRole.SECURITY) {
+    return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
+  }
+
+  try {
+    const found = await fetchRequest(id, prisma);
+    if (!found)
+      return res.status(404).json({ code: ErrorCode.RESOURCE_NOT_FOUND });
+    const { type, data: existing } = found;
+
+    // Prevent double check-out
+    if (existing.checkedOutTime) {
+      return res.status(409).json({
+        message: "Checkout Denied: Student already checked out.",
+      });
+    }
+
+    if (!existing.isApproved || existing.isRejected || existing.isExpired) {
+      return res.status(400).json({
+        message:
+          "Request is not valid for checkout (Must be Approved & Active)",
+      });
+    }
+
+    // 1-Hour Expiration Rule Check
+    const now = new Date().getTime();
+    const issuedAt = new Date(existing.issuedTime).getTime();
+    const oneHour = 60 * 60 * 1000;
+
+    if (now - issuedAt > oneHour) {
+      // Auto expire
+      if (type === "outpass")
+        await prisma.outpass.update({
+          where: { id },
+          data: { isExpired: true },
+        });
+      else
+        await prisma.outing.update({
+          where: { id },
+          data: { isExpired: true },
+        });
+
+      // CLEAR PENDING in Profile Service
+      try {
+        await updateStudentProfileStatus(
+          existing.studentId,
+          req.headers.authorization?.split(" ")[1] || "",
+          { isPending: false },
+        );
+      } catch (e) {
+        console.warn("Pending status clear failed on expiry");
+      }
+
+      return res.status(400).json({
+        message: "Approval expired (User did not check out within 1 hour)",
+      });
+    }
+
+    // Proceed to Check Out - User is LEAVING campus
+    const updateData = { checkedOutTime: new Date() };
+    if (type === "outpass")
+      await prisma.outpass.update({ where: { id }, data: updateData });
+    else await prisma.outing.update({ where: { id }, data: updateData });
+
+    // Mark student as OUTSIDE in Profile Service
+    try {
+      await updateStudentProfileStatus(
+        existing.studentId,
+        req.headers.authorization?.split(" ")[1] || "",
+        { isPresent: false },
+      );
+    } catch (e) {
+      console.warn("Presence update failed");
+    }
+
+    // Notify Student
+    const istTimeOut = new Date().toLocaleTimeString("en-US", {
+      timeZone: "Asia/Kolkata",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+
+    triggerNotification("CHECK_OUT", {
+      recipient: `${existing.studentId}@rguktong.ac.in`,
+      subject: "Campus Check-Out",
+      body: `You have successfully checked out at ${istTimeOut}.`,
+      extra: { username: existing.studentId },
+    }).catch((err) => {
+      console.error("[OUTPASS] Background check-out notification failed:", err);
+    });
+
+    return res.json({ success: true, message: "Student Checked Out" });
+  } catch (e) {
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to process checkout.",
+    });
+  }
+};
+
+// CHECK IN (Return to Campus)
+export const securityCheckIn = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { id } = req.params;
+  const user = req.user;
+  if (!user || user.role !== UserRole.SECURITY) {
+    return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
+  }
+
+  try {
+    const found = await fetchRequest(id, prisma);
+    if (!found)
+      return res.status(404).json({ code: ErrorCode.RESOURCE_NOT_FOUND });
+    const { type, data: existing } = found;
+
+    // Validate Check-in: Must be checked out, and not checked in already
+    if (!existing.checkedOutTime) {
+      return res.status(400).json({
+        message: "Check-in Denied: Student has not checked out yet.",
+      });
+    }
+    if (existing.checkedInTime) {
+      return res
+        .status(409)
+        .json({ message: "Check-in Denied: Student already checked in." });
+    }
+
+    // Mark In Time
+    const updateData = { checkedInTime: new Date() };
+    if (type === "outpass")
+      await prisma.outpass.update({ where: { id }, data: updateData });
+    else await prisma.outing.update({ where: { id }, data: updateData });
+
+    // Mark student as INSIDE and CLEAR PENDING in Profile Service
+    try {
+      await updateStudentProfileStatus(
+        existing.studentId,
+        req.headers.authorization?.split(" ")[1] || "",
+        { isPresent: true, isPending: false },
+      );
+    } catch (e) {
+      console.warn("Presence update failed");
+    }
+
+    // Notify Student
+    const istTimeIn = new Date().toLocaleTimeString("en-US", {
+      timeZone: "Asia/Kolkata",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+
+    triggerNotification("CHECK_IN", {
+      recipient: `${existing.studentId}@rguktong.ac.in`,
+      subject: "Campus Check-In",
+      body: `You have successfully checked in at ${istTimeIn}.`,
+      extra: { username: existing.studentId },
+    }).catch((err) => {
+      console.error("[OUTPASS] Background check-in notification failed:", err);
+    });
+
+    return res.json({ success: true, message: "Student Checked In" });
+  } catch (e) {
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to process check-in.",
+    });
+  }
+};
+
+export const getOutsideStudents = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ code: ErrorCode.AUTH_UNAUTHORIZED });
+
+  const { page = 1, limit = 50 } = req.query;
+  const p = Number(page);
+  const l = Number(limit);
+  const skip = (p - 1) * l;
+
+  try {
+    // 1. Fetch total unique student IDs who are outside
+    const [outpassIds, outingIds] = await Promise.all([
+      prisma.outpass.findMany({
+        where: { checkedOutTime: { not: null }, checkedInTime: null },
+        select: { studentId: true },
+        distinct: ["studentId"],
+      }),
+      prisma.outing.findMany({
+        where: { checkedOutTime: { not: null }, checkedInTime: null },
+        select: { studentId: true },
+        distinct: ["studentId"],
+      }),
+    ]);
+
+    const allOutsideStudentIds = [
+      ...new Set([
+        ...outpassIds.map((o) => o.studentId),
+        ...outingIds.map((o) => o.studentId),
+      ]),
+    ];
+
+    const totalStudents = allOutsideStudentIds.length;
+    const paginatedStudentIds = allOutsideStudentIds.slice(skip, skip + l);
+
+    if (paginatedStudentIds.length === 0) {
+      return res.json({
+        success: true,
+        students: [],
+        pagination: { total: totalStudents, page: p, limit: l },
+      });
+    }
+
+    // 2. Fetch records only for THESE students
+    const [outpasses, outings] = await Promise.all([
+      prisma.outpass.findMany({
+        where: {
+          studentId: { in: paginatedStudentIds },
+          checkedOutTime: { not: null },
+          checkedInTime: null,
+        },
+      }),
+      prisma.outing.findMany({
+        where: {
+          studentId: { in: paginatedStudentIds },
+          checkedOutTime: { not: null },
+          checkedInTime: null,
+        },
+      }),
+    ]);
+
+    // 3. Fetch basic profile info from User Service (Batch)
+    const GATEWAY = (
+      (process.env.DOCKER_ENV === "true"
+        ? "http://uniz-gateway-api:3000/api/v1"
+        : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
+    ).trim();
+
+    const internalSecret = process.env.INTERNAL_SECRET || "uniz-core";
+    const profilesRes = await axios
+      .post(
+        `${GATEWAY}/profile/internal/bulk-profiles`,
+        { usernames: paginatedStudentIds },
+        { headers: { "x-internal-secret": internalSecret } },
+      )
+      .catch(() => ({ data: { success: false, students: [] } }));
+
+    const studentsMap = new Map();
+    if (profilesRes.data && profilesRes.data.success) {
+      profilesRes.data.students.forEach((s: any) =>
+        studentsMap.set(s.username.toUpperCase(), s),
+      );
+    }
+
+    // 4. Group requests by student
+    const result = paginatedStudentIds.map((sid: string) => {
+      const sidUpper = sid.toUpperCase();
+      const profile = studentsMap.get(sidUpper) || {
+        username: sidUpper,
+        name: "Unknown Student",
+        email: "N/A",
+        gender: "N/A",
+      };
+
+      const sOutpasses = outpasses
+        .filter((o) => o.studentId === sidUpper)
+        .map((o) => ({
+          ...o,
+          _id: o.id,
+          is_approved: o.isApproved,
+          is_expired: o.isExpired,
+          from_day: new Date(o.fromDay).toLocaleDateString("en-IN"),
+          to_day: new Date(o.toDay).toLocaleDateString("en-IN"),
+        }));
+
+      const sOutings = outings
+        .filter((o) => o.studentId === sidUpper)
+        .map((o) => ({
+          ...o,
+          _id: o.id,
+          is_approved: o.isApproved,
+          is_expired: o.isExpired,
+          from_time: new Date(o.fromTime).toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          to_time: new Date(o.toTime).toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        }));
+
+      return {
+        _id: profile._id || sidUpper,
+        username: sidUpper,
+        name: profile.name,
+        email: profile.email,
+        gender: profile.gender,
+        outpasses_list: sOutpasses,
+        outings_list: sOutings,
+      };
+    });
+
+    return res.json({
+      success: true,
+      students: result,
+      pagination: {
+        total: totalStudents,
+        page: p,
+        limit: l,
+        totalPages: Math.ceil(totalStudents / l),
+      },
+    });
+  } catch (e: any) {
+    console.error("[OUTPASS] getOutsideStudents Error:", e);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to fetch currently outside students list.",
+    });
+  }
+};
