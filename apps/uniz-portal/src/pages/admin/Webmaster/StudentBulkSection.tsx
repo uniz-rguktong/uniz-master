@@ -22,6 +22,7 @@ export default function StudentBulkSection() {
   const [uploadId, setUploadId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"upload" | "export">("upload");
+  const [uploadSuccess, setUploadSuccess] = useState<boolean | null>(null);
 
   // Export State
   const [exportParams, setExportParams] = useState({
@@ -40,6 +41,7 @@ export default function StudentBulkSection() {
     formData.append("file", file);
 
     try {
+      setUploadSuccess(null);
       const res = await fetch(ADMIN_STUDENT_UPLOAD, {
         method: "POST",
         headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
@@ -50,6 +52,7 @@ export default function StudentBulkSection() {
         setUploadId(data.uploadId || "checking");
         toast.info("Upload started. Monitoring progress...");
       } else {
+        setUploadSuccess(false);
         toast.error(data.msg || "Upload failed");
       }
     } catch (error) {
@@ -73,10 +76,12 @@ export default function StudentBulkSection() {
           // setProgress(data); // Removed UI
           if (data.status === "completed" || data.status === "done") {
             setUploadId(null);
+            setUploadSuccess(true);
             clearInterval(interval);
             toast.success("Bulk provisioning completed successfully");
           } else if (data.status === "failed" || data.status === "error") {
             setUploadId(null);
+            setUploadSuccess(false);
             clearInterval(interval);
             toast.error("Bulk provisioning failed");
           }
@@ -166,9 +171,12 @@ export default function StudentBulkSection() {
           {/* Upload Step */}
           <div className="bg-white p-6 md:p-8 rounded-xl border border-slate-100 shadow-none space-y-6 transition-all">
             <FileUploader
-              onFileSelect={setFile}
+              onFileSelect={(f) => { setFile(f); setUploadSuccess(null); }}
               label="Choose Student Records"
               description="Upload XLSX or CSV with mandatory fields (username, name, email)."
+              isUploading={loading || !!uploadId}
+              isSuccess={uploadSuccess === true}
+              isError={uploadSuccess === false}
             />
 
             <button
