@@ -1,3 +1,12 @@
+/**
+ * ==============================================================================
+ * UNIZ PORTAL - WEBMASTER OVERVIEW COMPONENT
+ * ==============================================================================
+ * Core identity interface for administrative users. Handles profile viewing,
+ * metadata editing, and high-fidelity avatar management.
+ * ==============================================================================
+ */
+
 import { useState, useEffect, useRef } from "react";
 import {
   Camera,
@@ -41,9 +50,16 @@ export default function WebmasterOverview({ username }: { username: string }) {
     designation: "",
     department: "",
   });
+  // ------------------------------------------------------------------------------
+  // 1. DATA STATE & AUTHENTICATION
+  // ------------------------------------------------------------------------------
 
   const token = () =>
     (localStorage.getItem("admin_token") || "").replace(/"/g, "");
+
+  // ------------------------------------------------------------------------------
+  // 2. DATA SYNCHRONIZATION (FETCH/PUSH)
+  // ------------------------------------------------------------------------------
 
   const fetchProfile = async () => {
     try {
@@ -137,6 +153,10 @@ export default function WebmasterOverview({ username }: { username: string }) {
   const displayName = profile?.name || username || "Webmaster";
   const initials = displayName[0].toUpperCase();
   const email = (profile?.email || `${username}@rguktong.ac.in`).toLowerCase();
+
+  // ------------------------------------------------------------------------------
+  // 3. UI RENDER ENGINE
+  // ------------------------------------------------------------------------------
 
   return (
     <div className="font-sans text-slate-900 min-h-[60vh] flex flex-col items-center justify-center px-4 pt-10 pb-20 animate-in fade-in duration-500">

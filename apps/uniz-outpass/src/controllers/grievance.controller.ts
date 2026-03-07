@@ -16,7 +16,8 @@ const GrievanceSchema = z.object({
 const NOTIFICATION_SERVICE_URL = (
   (process.env.DOCKER_ENV === "true"
     ? "http://uniz-notification-service:3007"
-    : process.env.NOTIFICATION_SERVICE_URL) || "http://localhost:3007"
+    : process.env.NOTIFICATION_SERVICE_URL) ||
+  "http://uniz-notification-service:3007"
 )
   .trim()
   .replace(/\/health$/, "");
