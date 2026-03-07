@@ -143,7 +143,7 @@ export default function SemesterRegistration() {
         </div>
         <button
           onClick={() => setShowInitModal(true)}
-          className="bg-blue-600 text-white px-8 py-4 rounded-3xl font-black uppercase tracking-widest text-xs flex items-center gap-2.5 hover:bg-blue-700 hover:-translate-y-1 transition-all shadow-xl shadow-blue-100 active:scale-95 active:translate-y-0"
+          className="bg-blue-600 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs flex items-center gap-2.5 hover:bg-blue-700 hover:-translate-y-1 transition-all shadow-none active:scale-95 active:translate-y-0"
         >
           <Plus size={18} /> Initialize New Semester
         </button>
@@ -165,12 +165,12 @@ export default function SemesterRegistration() {
           {semesters.map((sem: any) => (
             <div
               key={sem.id}
-              className="bg-white border border-slate-100 rounded-[32px] p-8 shadow-sm hover:shadow-xl transition-all group relative overflow-hidden"
+              className="bg-white border border-slate-100 rounded-xl p-8 shadow-none hover:shadow-none transition-all group relative overflow-hidden"
             >
               <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-8 relative z-10">
                 <div className="flex items-center gap-6">
                   <div
-                    className={`p-5 rounded-[24px] border-2 ${getStatusColor(sem.status)} transition-all duration-300 group-hover:scale-105`}
+                    className={`p-5 rounded-xl border-2 ${getStatusColor(sem.status)} transition-all duration-300 group-hover:scale-105`}
                   >
                     <Calendar size={32} strokeWidth={2.5} />
                   </div>
@@ -180,7 +180,7 @@ export default function SemesterRegistration() {
                     </h3>
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${getStatusColor(sem.status)}`}
+                        className={`px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border ${getStatusColor(sem.status)}`}
                       >
                         {sem.status.replace("_", " ")}
                       </span>
@@ -200,28 +200,28 @@ export default function SemesterRegistration() {
                 <div className="flex flex-wrap items-center gap-4">
                   {(sem.status === "DEAN_REVIEW" ||
                     sem.status === "UPCOMING") && (
-                    <button
-                      onClick={() =>
-                        handleStatusUpdate(sem.id, "REGISTRATION_OPEN")
-                      }
-                      className="px-6 py-3 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
-                    >
-                      <Play size={14} fill="currentColor" /> Open Registration
-                    </button>
-                  )}
+                      <button
+                        onClick={() =>
+                          handleStatusUpdate(sem.id, "REGISTRATION_OPEN")
+                        }
+                        className="px-6 py-3 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-blue-700 transition-all shadow-none"
+                      >
+                        <Play size={14} fill="currentColor" /> Open Registration
+                      </button>
+                    )}
                   {(sem.status === "REGISTRATION" ||
                     sem.status === "REGISTRATION_OPEN") && (
-                    <button
-                      onClick={() => handleStatusUpdate(sem.id, "ONGOING")}
-                      className="px-6 py-3 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100"
-                    >
-                      <RotateCcw size={14} /> Start Classes
-                    </button>
-                  )}
+                      <button
+                        onClick={() => handleStatusUpdate(sem.id, "ONGOING")}
+                        className="px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-none"
+                      >
+                        <RotateCcw size={14} /> Start Classes
+                      </button>
+                    )}
                   {sem.status === "ONGOING" && (
                     <button
                       onClick={() => handleStatusUpdate(sem.id, "COMPLETED")}
-                      className="px-6 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-800 transition-all shadow-lg shadow-slate-200"
+                      className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-slate-800 transition-all shadow-none"
                     >
                       <CheckCircle2 size={14} /> Close Semester
                     </button>
@@ -229,7 +229,7 @@ export default function SemesterRegistration() {
 
                   <button
                     onClick={() => handleDelete(sem.id)}
-                    className="p-3 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all shadow-sm border border-red-100 active:scale-90"
+                    className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-none border border-red-100 active:scale-90"
                     title="Delete Session"
                   >
                     <Trash2 size={16} />
@@ -246,7 +246,7 @@ export default function SemesterRegistration() {
                         {sem.branches?.map((b: any, i: number) => (
                           <div
                             key={i}
-                            className="w-7 h-7 rounded-full bg-slate-50 border-2 border-white flex items-center justify-center text-[8px] font-black text-slate-600 shadow-sm"
+                            className="w-7 h-7 rounded-xl bg-slate-50 border-2 border-white flex items-center justify-center text-[8px] font-black text-slate-600 shadow-none"
                           >
                             {b.branchName.charAt(0)}
                           </div>
@@ -267,8 +267,8 @@ export default function SemesterRegistration() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center h-80 bg-white rounded-[40px] border-2 border-dashed border-slate-100 p-12 text-center">
-          <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-200 mb-6">
+        <div className="flex flex-col items-center justify-center h-80 bg-white rounded-xl border-2 border-dashed border-slate-100 p-12 text-center">
+          <div className="w-20 h-20 bg-slate-50 rounded-xl flex items-center justify-center text-slate-200 mb-6">
             <Clock size={40} />
           </div>
           <h3 className="text-xl font-black text-slate-900 mb-2 mt-2">
@@ -280,7 +280,7 @@ export default function SemesterRegistration() {
           </p>
           <button
             onClick={() => setShowInitModal(true)}
-            className="bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-800 transition-all shadow-xl"
+            className="bg-slate-900 text-white px-8 py-3.5 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-800 transition-all shadow-none"
           >
             Start Initialization
           </button>
@@ -290,10 +290,10 @@ export default function SemesterRegistration() {
       {/* Initialize Modal */}
       {showInitModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-xl shadow-none relative overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="p-10">
               <div className="flex items-center gap-4 mb-8">
-                <div className="p-4 bg-blue-600 text-white rounded-3xl shadow-xl shadow-blue-100">
+                <div className="p-4 bg-blue-600 text-white rounded-xl shadow-none">
                   <ShieldCheck size={28} />
                 </div>
                 <div>
@@ -320,7 +320,7 @@ export default function SemesterRegistration() {
                       required
                       value={academicSemester}
                       onChange={(e) => setAcademicSemester(e.target.value)}
-                      className="w-full pl-16 pr-6 py-5 bg-slate-50 border border-slate-100 rounded-3xl focus:ring-8 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-black text-slate-700 placeholder:text-slate-300"
+                      className="w-full pl-16 pr-6 py-5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-8 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-black text-slate-700 placeholder:text-slate-300"
                       placeholder="e.g. AY 2024-25 E4 S2"
                     />
                   </div>
@@ -350,11 +350,10 @@ export default function SemesterRegistration() {
                                 : [...prev, branch],
                             )
                           }
-                          className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${
-                            selectedBranches.includes(branch)
-                              ? "bg-blue-600 text-white shadow-lg shadow-blue-100 scale-105"
+                          className={`px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${selectedBranches.includes(branch)
+                              ? "bg-blue-600 text-white shadow-none scale-105"
                               : "bg-slate-50 text-slate-400 border border-slate-100 hover:border-blue-200"
-                          }`}
+                            }`}
                         >
                           {branch}
                         </button>
@@ -363,8 +362,8 @@ export default function SemesterRegistration() {
                   </div>
                 </div>
 
-                <div className="bg-amber-50 rounded-3xl p-6 border border-amber-100 flex gap-4">
-                  <div className="p-3 bg-white rounded-2xl text-amber-500 shrink-0 shadow-sm border border-amber-100">
+                <div className="bg-amber-50 rounded-xl p-6 border border-amber-100 flex gap-4">
+                  <div className="p-3 bg-white rounded-xl text-amber-500 shrink-0 shadow-none border border-amber-100">
                     <BookOpen size={20} />
                   </div>
                   <div className="space-y-1">
@@ -383,14 +382,14 @@ export default function SemesterRegistration() {
                   <button
                     type="button"
                     onClick={() => setShowInitModal(false)}
-                    className="flex-1 px-8 py-5 rounded-3xl font-black uppercase tracking-widest text-xs border-2 border-slate-100 text-slate-400 hover:bg-slate-50 transition-all active:scale-95"
+                    className="flex-1 px-8 py-5 rounded-xl font-black uppercase tracking-widest text-xs border-2 border-slate-100 text-slate-400 hover:bg-slate-50 transition-all active:scale-95"
                   >
                     Discard
                   </button>
                   <button
                     disabled={isSubmitting || selectedBranches.length === 0}
                     type="submit"
-                    className="flex-[2] bg-slate-900 text-white px-8 py-5 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-2xl flex items-center justify-center gap-3 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                    className="flex-[2] bg-slate-900 text-white px-8 py-5 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-none flex items-center justify-center gap-3 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
                   >
                     {isSubmitting ? (
                       <Loader2 className="animate-spin w-5 h-5" />
