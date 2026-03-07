@@ -108,7 +108,13 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
 
         TAG="local-$(date +%s)"
         echo "[Build] Rebuilding $IMG:$TAG in context $BUILD_CONTEXT..."
-        if docker build --no-cache --platform linux/amd64 -t $IMG:$TAG $BUILD_CONTEXT; then
+        
+        BUILD_ARGS=""
+        if [[ "$DIR" == "uniz-portal" ]]; then
+          BUILD_ARGS="--build-arg VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg VITE_API_URL=$VITE_API_URL --build-arg VITE_CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME --build-arg VITE_CLOUDINARY_UPLOAD_PRESET=$CLOUDINARY_UPLOAD_PRESET"
+        fi
+
+        if docker build --no-cache --platform linux/amd64 $BUILD_ARGS -t $IMG:$TAG $BUILD_CONTEXT; then
           echo "[Docker] Importing $IMG:$TAG to K3s..."
           docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
           BUILT_IMAGES[$IMG]=$TAG
