@@ -61,6 +61,7 @@ export default function WebmasterDashboard() {
   const avatarBtnRef = useRef<HTMLButtonElement>(null);
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
   const [activeAnchor, setActiveAnchor] = useState<React.RefObject<HTMLElement>>(headerAvatarRef);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const username = localStorage.getItem("username") || "Webmaster";
   const initials = username[0]?.toUpperCase() ?? "W";
@@ -106,7 +107,7 @@ export default function WebmasterDashboard() {
         { id: "academic_mgmt", label: "Sem Registration", icon: Layout },
         { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
         { id: "grades", label: "Grades Upload", icon: GraduationCap },
-        { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
+        { id: "grades_mgmt", label: "Manual Grade upload", icon: GraduationCap },
       ]
     },
     {
@@ -207,6 +208,8 @@ export default function WebmasterDashboard() {
             <Search className={`absolute ${isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2"} top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600 transition-colors`} size={16} />
             <input
               type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={isSidebarOpen ? "Search operations..." : ""}
               className={`w-full bg-slate-50 border border-slate-200/60 rounded-xl ${isSidebarOpen ? "pl-10 pr-8" : "px-0"} py-2 text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all font-medium`}
             />
@@ -218,77 +221,117 @@ export default function WebmasterDashboard() {
 
         {/* Navigation Section */}
         <nav className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-2 overflow-y-auto space-y-6 custom-sidebar-scroll`}>
-          {navGroups.map((group, gIdx) => (
-            <div key={gIdx} className="space-y-1.5">
-              {group.group && isSidebarOpen && (
-                <h4 className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{group.group}</h4>
-              )}
-              {group.items.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeTab === item.id;
+          {(() => {
+            const filteredGroups = navGroups.map(group => ({
+              ...group,
+              items: group.items.filter(item =>
+                item.label.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+            })).filter(group => group.items.length > 0);
 
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id as any)}
-                    title={!isSidebarOpen ? item.label : ""}
-                    className={`
-                      w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group relative
-                      ${isActive
-                        ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
-                        : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
-                      }
-                    `}
-                  >
-                    <div className="flex items-center justify-center min-w-[22px]">
-                      <Icon
-                        size={20}
-                        className={`shrink-0 transition-colors
-                          ${isActive
-                            ? "text-blue-600"
-                            : "text-slate-400 group-hover:text-slate-600"
-                          }`}
-                      />
-                    </div>
-                    {isSidebarOpen && (
-                      <span
-                        className={`text-[13.5px] whitespace-nowrap tracking-tight leading-none
-                          ${isActive ? "font-bold" : "font-semibold"}`}
-                      >
-                        {item.label}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          ))}
+            if (filteredGroups.length === 0 && searchQuery) {
+              return (
+                <div className="flex flex-col items-center justify-center py-10 text-center">
+                  <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                    <Search size={20} className="text-slate-300" />
+                  </div>
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-4">No operations found</p>
+                </div>
+              );
+            }
+
+            return filteredGroups.map((group, gIdx) => (
+              <div key={gIdx} className="space-y-1.5">
+                {group.group && isSidebarOpen && (
+                  <h4 className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{group.group}</h4>
+                )}
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id as any)}
+                      title={!isSidebarOpen ? item.label : ""}
+                      className={`
+                        w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group relative
+                        ${isActive
+                          ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
+                          : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
+                        }
+                      `}
+                    >
+                      <div className="flex items-center justify-center min-w-[22px]">
+                        <Icon
+                          size={20}
+                          className={`shrink-0 transition-colors
+                            ${isActive
+                              ? "text-blue-600"
+                              : "text-slate-400 group-hover:text-slate-600"
+                            }`}
+                        />
+                      </div>
+                      {isSidebarOpen && (
+                        <span
+                          className={`text-[13.5px] whitespace-nowrap tracking-tight leading-none
+                            ${isActive ? "font-bold" : "font-semibold"}`}
+                        >
+                          {item.label}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            ));
+          })()}
+
+          {/* Special Logout Item (at the bottom of nav list) */}
+          <div className="pt-2">
+            <button
+              onClick={handleLogout}
+              className={`
+                w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group hover:bg-red-50 hover:text-red-500 text-slate-500
+              `}
+              title={!isSidebarOpen ? "Logout" : ""}
+            >
+              <div className="flex items-center justify-center min-w-[22px]">
+                <LogOut size={20} className="text-slate-400 group-hover:text-red-500 transition-colors" />
+              </div>
+              {isSidebarOpen && (
+                <span className="text-[13.5px] font-semibold whitespace-nowrap tracking-tight leading-none">
+                  Logout System
+                </span>
+              )}
+            </button>
+          </div>
         </nav>
 
-        {/* User Info Style */}
-        <div className="mt-auto border-t border-slate-200/60 p-4 pb-6">
+        {/* User Info Style (Back to minimal) */}
+        <div className="mt-auto border-t border-slate-200/60 p-3 pb-5">
           <div
             onClick={() => {
               setActiveAnchor(avatarBtnRef);
               setProfilePopupOpen(true);
             }}
-            className={`flex items-center ${isSidebarOpen ? "justify-start px-2" : "justify-center"} py-2 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group`}
+            className={`flex items-center ${isSidebarOpen ? "justify-start px-2" : "justify-center"} py-1.5 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group`}
           >
             <div className="flex items-center gap-3 min-w-0">
               <button
                 ref={avatarBtnRef}
-                className="w-9 h-9 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-slate-100 flex items-center justify-center shadow-md ring-1 ring-slate-200/60 transition-transform group-hover:scale-105"
+                className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-slate-100 flex items-center justify-center shadow-sm ring-1 ring-slate-200/60 transition-transform group-hover:scale-105"
               >
                 {profilePhoto ? (
                   <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
                 ) : (
-                  <span className="text-slate-600 font-bold text-[12px]">{initials}</span>
+                  <span className="text-slate-600 font-bold text-[11px]">{initials}</span>
                 )}
               </button>
               {isSidebarOpen && (
                 <div className="min-w-0">
-                  <p className="text-[14px] font-bold text-slate-900 truncate leading-tight">{profileName || username}</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate mt-1">Webmaster</p>
+                  <p className="text-[13px] font-bold text-slate-900 truncate leading-tight">{profileName || username}</p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate mt-0.5">Webmaster</p>
                 </div>
               )}
             </div>

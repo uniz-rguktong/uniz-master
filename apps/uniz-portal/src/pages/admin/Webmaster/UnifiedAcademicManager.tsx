@@ -11,7 +11,6 @@ import {
   BookText,
   ShieldCheck,
   X,
-  PlusCircle,
   Users,
   Layout,
   RefreshCcw,
@@ -84,6 +83,8 @@ export default function UnifiedAcademicManager() {
   const [allSubjects, setAllSubjects] = useState<any[]>([]);
   const [subSearch, setSubSearch] = useState("");
   const [subDept, setSubDept] = useState("");
+  const [subPage, setSubPage] = useState(1);
+  const SUB_ITEMS_PER_PAGE = 15;
   const [showSubModal, setShowSubModal] = useState(false);
   const [editingSub, setEditingSub] = useState<any>(null);
   const [newSub, setNewSub] = useState({
@@ -114,7 +115,8 @@ export default function UnifiedAcademicManager() {
   useEffect(() => {
     fetchSemesters();
     fetchMasterSubjects();
-  }, [subDept]);
+    setSubPage(1); // Reset page on filter change
+  }, [subDept, subSearch]);
 
   useEffect(() => {
     if (activeTab === "rollout" && selectedSem) {
@@ -312,10 +314,10 @@ export default function UnifiedAcademicManager() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-4">
-            <Layout className="text-blue-600" size={36} />
-            Academic Governance
-          </h1>
+          <h2 className="text-3xl font-semibold text-slate-900 tracking-tight flex items-center gap-4">
+            <Layout className="text-blue-600" size={32} />
+            Sem Registration
+          </h2>
           <p className="text-slate-500 font-medium text-[15px] mt-1">
             Master curriculum control and semester lifecycle management.
           </p>
@@ -332,10 +334,9 @@ export default function UnifiedAcademicManager() {
           </button>
           <button
             onClick={() => setShowNewSemModal(true)}
-            className="h-14 px-8 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-none"
+            className="h-11 px-6 bg-slate-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-none"
           >
-            <Zap size={16} className="text-amber-400 fill-amber-400" /> New
-            Rollout
+            New Rollout
           </button>
         </div>
       </div>
@@ -344,8 +345,8 @@ export default function UnifiedAcademicManager() {
       <div className="flex gap-2 bg-white/50 p-1.5 rounded-xl border border-slate-100 w-fit backdrop-blur-sm">
         {(["catalog", "subjects", "rollout"] as const).map((tabId) => {
           const labels: Record<string, string> = {
-            catalog: "Catalog",
-            subjects: "Master Catalog",
+            catalog: "Registration",
+            subjects: "Subjects",
             rollout: "Live Rollout",
           };
           const icons: Record<string, any> = {
@@ -379,7 +380,7 @@ export default function UnifiedAcademicManager() {
       {/* Viewport Rendering */}
       <div className="min-h-[60vh]">
         {activeTab === "catalog" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {semesters.map((sem) => (
               <div
                 key={sem.id}
@@ -387,17 +388,17 @@ export default function UnifiedAcademicManager() {
                   setSelectedSem(sem);
                   setActiveTab("rollout");
                 }}
-                className="bg-white rounded-xl border border-slate-100 p-8 transition-all group cursor-pointer overflow-hidden relative"
+                className="bg-white rounded-xl border border-slate-100 p-5 transition-colors group cursor-pointer overflow-hidden relative"
               >
-                <div className="flex justify-between items-start mb-10">
+                <div className="flex justify-between items-start mb-6">
                   <div
-                    className={`p-4 rounded-xl ${sem.status === "REGISTRATION_OPEN" ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-400"}`}
+                    className={`p-3 rounded-lg ${sem.status === "REGISTRATION_OPEN" ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-400"}`}
                   >
-                    <Calendar size={28} />
+                    <Calendar size={22} />
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span
-                      className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${sem.status === "REGISTRATION_OPEN"
+                      className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border ${sem.status === "REGISTRATION_OPEN"
                         ? "bg-emerald-50 text-emerald-600 border-emerald-100"
                         : "bg-slate-50 text-slate-400 border-slate-100"
                         }`}
@@ -406,31 +407,31 @@ export default function UnifiedAcademicManager() {
                     </span>
                   </div>
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors uppercase">
+                <h3 className="text-lg font-black text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors uppercase truncate">
                   {sem.name}
                 </h3>
-                <div className="flex items-center gap-6 mt-6 mb-8">
+                <div className="flex items-center gap-6 mt-4 mb-6">
                   <div>
-                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                    <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
                       Enrollment
                     </p>
-                    <p className="text-lg font-black text-slate-900">
+                    <p className="text-base font-black text-slate-900">
                       {sem._count?.registrations || 0}
                     </p>
                   </div>
-                  <div className="ml-auto flex gap-2">
+                  <div className="ml-auto flex gap-1.5">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteSem(sem.id);
                       }}
-                      className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-none"
+                      className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all shadow-none"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </div>
-                <div className="w-full h-2 bg-slate-50 rounded-full overflow-hidden mt-auto">
+                <div className="w-full h-1.5 bg-slate-50 rounded-full overflow-hidden mt-auto">
                   <div
                     className={`h-full transition-all duration-1000 ${sem.status === "REGISTRATION_OPEN" ? "w-full bg-emerald-500" : "w-1/3 bg-blue-500"}`}
                   ></div>
@@ -441,25 +442,25 @@ export default function UnifiedAcademicManager() {
         )}
 
         {activeTab === "subjects" && (
-          <div className="space-y-8">
-            <div className="flex flex-wrap gap-4 bg-white p-6 rounded-xl border border-slate-100">
-              <div className="relative flex-1 min-w-[300px]">
+          <div className="space-y-6">
+            <div className="flex flex-wrap gap-3 bg-white p-3 rounded-xl border border-slate-100 items-center">
+              <div className="relative flex-1 min-w-[240px]">
                 <Search
-                  className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"
-                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                  size={16}
                 />
                 <input
                   type="text"
-                  placeholder="Search master subjects..."
+                  placeholder="Filter subjects by name or code..."
                   value={subSearch}
                   onChange={(e) => setSubSearch(e.target.value)}
-                  className="w-full h-14 pl-14 pr-6 bg-slate-50 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 font-bold text-slate-900"
+                  className="w-full h-11 pl-11 pr-4 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 font-bold text-slate-900 text-sm"
                 />
               </div>
               <select
                 value={subDept}
                 onChange={(e) => setSubDept(e.target.value)}
-                className="h-14 px-8 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-600 border-none outline-none appearance-none"
+                className="h-11 px-6 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[9px] text-slate-600 border-none outline-none appearance-none"
               >
                 <option value="">All Departments</option>
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((d) => (
@@ -480,53 +481,100 @@ export default function UnifiedAcademicManager() {
                   });
                   setShowSubModal(true);
                 }}
-                className="h-14 px-8 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 border-2 border-white/20 shadow-none"
+                className="h-11 px-6 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-widest text-[9px] transition-all flex items-center gap-2 shadow-none hover:bg-black"
               >
-                <PlusCircle size={16} /> Add New Subject
+                <Plus size={14} /> New Subject
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {allSubjects.map((sub, i) => (
-                <div
-                  key={i}
-                  className="bg-white border border-slate-100 rounded-xl p-8 transition-all group overflow-hidden"
-                >
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-50 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                      <BookText size={20} />
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {loading ? (
+                Array.from({ length: 10 }).map((_, i) => (
+                  <div key={i} className="bg-slate-50/50 border border-slate-100 rounded-xl p-4 h-40 animate-pulse flex flex-col gap-4">
+                    <div className="flex justify-between">
+                      <div className="w-8 h-8 bg-slate-200 rounded-lg"></div>
+                      <div className="w-12 h-4 bg-slate-200 rounded"></div>
                     </div>
-                    <div className="px-3 py-1 bg-slate-50 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-400">
-                      {sub.code}
-                    </div>
+                    <div className="h-4 bg-slate-200 rounded w-3/4"></div>
+                    <div className="mt-auto h-3 bg-slate-200 rounded w-1/2"></div>
                   </div>
-                  <h3 className="text-lg font-black text-slate-900 leading-tight mb-4">
-                    {sub.name}
-                  </h3>
-                  <div className="flex items-center justify-between mt-auto pt-6 border-t border-slate-50">
-                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      {sub.department} • {sub.credits} Credits
-                    </div>
-                    <button
-                      onClick={() => {
-                        setEditingSub(sub);
-                        setNewSub({
-                          name: sub.name,
-                          code: sub.code,
-                          credits: sub.credits,
-                          department: sub.department,
-                          semester: sub.semester,
-                        });
-                        setShowSubModal(true);
-                      }}
-                      className="text-slate-300 hover:text-blue-600 transition-colors"
+                ))
+              ) : (
+                allSubjects
+                  .slice((subPage - 1) * SUB_ITEMS_PER_PAGE, subPage * SUB_ITEMS_PER_PAGE)
+                  .map((sub, i) => (
+                    <div
+                      key={i}
+                      className="bg-white border border-slate-100 rounded-xl p-4 flex flex-col h-full"
                     >
-                      <Edit3 size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="w-8 h-8 bg-blue-50 rounded-lg text-blue-600 flex items-center justify-center">
+                          <BookText size={16} />
+                        </div>
+                        <span className="px-2 py-0.5 bg-slate-50 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400 border border-slate-100">
+                          {sub.code}
+                        </span>
+                      </div>
+                      <h3 className="text-[13px] font-bold text-slate-900 leading-snug mb-3 min-h-[40px] line-clamp-2">
+                        {sub.name}
+                      </h3>
+                      <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-50">
+                        <div className="text-[8px] font-black uppercase tracking-widest text-slate-400">
+                          {sub.department} • {sub.credits}C
+                        </div>
+                        <button
+                          onClick={() => {
+                            setEditingSub(sub);
+                            setNewSub({
+                              name: sub.name,
+                              code: sub.code,
+                              credits: sub.credits,
+                              department: sub.department,
+                              semester: sub.semester,
+                            });
+                            setShowSubModal(true);
+                          }}
+                          className="p-1.5 text-slate-300 hover:text-blue-600 transition-colors"
+                        >
+                          <Edit3 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+              )}
             </div>
+
+            {/* Pagination Controls */}
+            {!loading && allSubjects.length > SUB_ITEMS_PER_PAGE && (
+              <div className="flex items-center justify-center gap-2 pt-6">
+                <button
+                  disabled={subPage === 1}
+                  onClick={() => setSubPage(prev => prev - 1)}
+                  className="p-2 px-4 bg-white border border-slate-200 rounded-lg text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  Prev
+                </button>
+                {Array.from({ length: Math.ceil(allSubjects.length / SUB_ITEMS_PER_PAGE) }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSubPage(i + 1)}
+                    className={`w-8 h-8 rounded-lg font-black text-[10px] transition-all ${subPage === i + 1
+                      ? "bg-slate-900 text-white shadow-md shadow-black/10"
+                      : "bg-white border border-slate-200 text-slate-400 hover:text-slate-900"
+                      }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  disabled={subPage === Math.ceil(allSubjects.length / SUB_ITEMS_PER_PAGE)}
+                  onClick={() => setSubPage(prev => prev + 1)}
+                  className="p-2 px-4 bg-white border border-slate-200 rounded-lg text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
         )}
 

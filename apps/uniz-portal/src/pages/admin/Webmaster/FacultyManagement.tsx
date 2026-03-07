@@ -126,6 +126,7 @@ export default function FacultyManagement({
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedFaculty, setSelectedFaculty] = useState<any>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [bulkUploadSuccess, setBulkUploadSuccess] = useState<boolean | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   /* ─── Fetch ─── */
@@ -356,6 +357,7 @@ export default function FacultyManagement({
     }
     setBulkLoading(true);
     setBulkResult(null);
+    setBulkUploadSuccess(null);
     try {
       const res = await fetch(BULK_CREATE_FACULTY, {
         method: "POST",
@@ -368,12 +370,17 @@ export default function FacultyManagement({
       const data = await res.json();
       if (data.success) {
         setBulkResult(data);
+        setBulkUploadSuccess(true);
         toast.success(
           `Done: ${data.summary.created} created, ${data.summary.skipped} skipped, ${data.summary.errors} errors`,
         );
         fetchFaculty();
-      } else toast.error(data.message || "Bulk add failed");
+      } else {
+        setBulkUploadSuccess(false);
+        toast.error(data.message || "Bulk add failed");
+      }
     } catch {
+      setBulkUploadSuccess(false);
       toast.error("Network error");
     } finally {
       setBulkLoading(false);
@@ -585,6 +592,7 @@ export default function FacultyManagement({
                 <div className="space-y-4">
                   <FileUploader
                     onFileSelect={(file: File | null) => {
+                      setBulkUploadSuccess(null);
                       if (file) {
                         Papa.parse(file, {
                           header: true,
@@ -606,6 +614,9 @@ export default function FacultyManagement({
                     }}
                     label="Upload CSV/Excel Asset"
                     description="XLSX or CSV. Use the template for correct headers."
+                    isUploading={bulkLoading}
+                    isSuccess={bulkUploadSuccess === true}
+                    isError={bulkUploadSuccess === false}
                   />
                 </div>
 
