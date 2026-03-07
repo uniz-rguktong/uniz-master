@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-landing
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: uniz-landing
+  template:
+    metadata:
+      labels:
+        app: uniz-landing
+    spec:
+      containers:
+        - name: landing
+          image: uniz-landing:local
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-landing
+spec:
+  selector:
+    app: uniz-landing
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

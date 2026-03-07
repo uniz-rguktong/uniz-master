@@ -42,6 +42,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     "uniz-notifications:uniz-notification-service:uniz-notification-service:notification-service"
     "uniz-outpass:uniz-outpass-service:uniz-outpass-service:outpass-service"
     "uniz-portal:uniz-portal:uniz-portal:portal"
+    "uniz-landing:uniz-landing:uniz-landing:landing"
     "uniz-user:uniz-user-service:uniz-user-service:user-service"
     "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
     "ornate-ems:ornate-ems:ornate-ems:ornate-ems"
