@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import {
-  CheckCircle2,
-  RefreshCcw,
   LogOut,
   Menu,
-  ChevronRight,
+  ChevronLeft,
   LayoutDashboard,
+  ClipboardCheck,
+  FileCheck,
+  Users2,
+  X,
 } from "lucide-react";
+import { useEffect } from "react";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import ApproveComp from "../approve-comp";
@@ -18,7 +21,18 @@ export default function WardenDashboard() {
   const [activeTab, setActiveTab] = useState<
     "dashboard" | "approve_outing" | "approve_outpass" | "status_update"
   >("dashboard");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth < 1024) setIsSidebarOpen(false);
+      else setIsSidebarOpen(true);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const rawRole = (localStorage.getItem("admin_role") || "warden").replace(
     /"/g,
@@ -35,9 +49,9 @@ export default function WardenDashboard() {
 
   const navItems = [
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
-    { id: "approve_outing", label: "Approve Outings", icon: CheckCircle2 },
-    { id: "approve_outpass", label: "Approve Outpasses", icon: CheckCircle2 },
-    { id: "status_update", label: "Status Update", icon: RefreshCcw },
+    { id: "approve_outing", label: "Outings", icon: ClipboardCheck },
+    { id: "approve_outpass", label: "Outpasses", icon: FileCheck },
+    { id: "status_update", label: "In/Out Update", icon: Users2 },
   ];
 
   const { logout } = useLogout();
@@ -49,11 +63,47 @@ export default function WardenDashboard() {
   const renderContent = () => {
     switch (activeTab) {
       case "approve_outing":
-        return <ApproveComp type="outing" />;
+        return (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="p-4 md:hidden">
+              <button
+                onClick={() => setActiveTab("dashboard")}
+                className="flex items-center gap-2 text-slate-500 font-bold uppercase tracking-widest text-[10px] mb-4"
+              >
+                <ChevronLeft size={14} /> Back to Hub
+              </button>
+            </div>
+            <ApproveComp type="outing" />
+          </div>
+        );
       case "approve_outpass":
-        return <ApproveComp type="outpass" />;
+        return (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="p-4 md:hidden">
+              <button
+                onClick={() => setActiveTab("dashboard")}
+                className="flex items-center gap-2 text-slate-500 font-bold uppercase tracking-widest text-[10px] mb-4"
+              >
+                <ChevronLeft size={14} /> Back to Hub
+              </button>
+            </div>
+            <ApproveComp type="outpass" />
+          </div>
+        );
       case "status_update":
-        return <UpdateStatus />;
+        return (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="p-4 md:hidden">
+              <button
+                onClick={() => setActiveTab("dashboard")}
+                className="flex items-center gap-2 text-slate-500 font-bold uppercase tracking-widest text-[10px] mb-4"
+              >
+                <ChevronLeft size={14} /> Back to Hub
+              </button>
+            </div>
+            <UpdateStatus />
+          </div>
+        );
       default:
         return (
           <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
@@ -113,30 +163,45 @@ export default function WardenDashboard() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+      {/* Mobile Sidebar Overlay */}
+      {isMobile && isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] animate-in fade-in duration-300"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
-        className={`bg-white border-r border-slate-100 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"} hidden md:flex flex-col premium-shadow h-screen sticky top-0`}
+        className={`bg-white border-r border-slate-100 transition-all duration-300 z-[70] 
+          ${isSidebarOpen ? "w-72 translate-x-0" : "w-20 -translate-x-full md:translate-x-0"} 
+          fixed md:sticky top-0 flex flex-col premium-shadow h-screen shadow-2xl md:shadow-none`}
       >
-        {/* Header with logo */}
-        <div className="flex items-center space-x-3.5 p-6 bg-transparent shrink-0">
-          <div className="w-14 h-14 flex items-center justify-center p-1 shrink-0">
-            <img
-              src="/assets/ongole_logo.png"
-              className="h-full w-full object-contain"
-              alt="Ongole Logo"
-            />
-          </div>
-          {isSidebarOpen && (
-            <div className="flex flex-col animate-in fade-in duration-500">
-              <span className="font-semibold text-slate-900 text-[19px] tracking-tight leading-none">
+        <div className="flex items-center justify-between p-6 md:p-6 pb-2">
+          {/* Header with logo */}
+          <div className="flex items-center space-x-3.5 bg-transparent shrink-0">
+            <div className="w-11 h-11 flex items-center justify-center p-1 shrink-0">
+              <img
+                src="/assets/ongole_logo.png"
+                className="h-full w-full object-contain"
+                alt="Ongole Logo"
+              />
+            </div>
+            <div className={`flex flex-col transition-all duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 w-0 overflow-hidden"}`}>
+              <span className="font-semibold text-slate-900 text-[17px] tracking-tight leading-none">
                 Ongole
               </span>
               <span
-                className={`text-[10px] uppercase tracking-[0.2em] ${isMale ? "text-blue-600/80" : "text-pink-600/80"} font-semibold mt-1.5 px-0.5`}
+                className={`text-[9px] uppercase tracking-[0.2em] ${isMale ? "text-blue-600/80" : "text-pink-600/80"} font-bold mt-1 px-0.5`}
               >
                 {portalLabel}
               </span>
             </div>
+          </div>
+          {isMobile && (
+            <button onClick={() => setIsSidebarOpen(false)} className="md:hidden p-2 text-slate-400">
+              <X size={20} />
+            </button>
           )}
         </div>
 
@@ -152,10 +217,9 @@ export default function WardenDashboard() {
                 onClick={() => setActiveTab(item.id as any)}
                 className={`
                   w-full flex items-center space-x-3 px-4 py-3 rounded-full text-left transition-all duration-200 group relative
-                  ${
-                    isActive
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  ${isActive
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }
                 `}
               >
@@ -163,10 +227,9 @@ export default function WardenDashboard() {
                   <Icon
                     size={21}
                     className={`shrink-0 transition-transform group-hover:scale-110 duration-200
-                      ${
-                        isActive
-                          ? "text-blue-600"
-                          : "text-slate-400 group-hover:text-slate-700"
+                      ${isActive
+                        ? "text-blue-600"
+                        : "text-slate-400 group-hover:text-slate-700"
                       }`}
                   />
                 </div>
@@ -177,6 +240,9 @@ export default function WardenDashboard() {
                   >
                     {item.label}
                   </span>
+                )}
+                {!isSidebarOpen && isActive && (
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-600 rounded-l-full" />
                 )}
               </button>
             );
@@ -220,14 +286,21 @@ export default function WardenDashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto max-h-screen">
-        <header className="bg-white/95 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-100/80 p-5 px-8 flex justify-between items-center shadow-sm shadow-slate-50/50">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="w-10 h-10 flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full hover:bg-white hover:shadow-lg transition-all md:flex hidden text-slate-400 hover:text-blue-600 active:scale-95"
-          >
-            {isSidebarOpen ? <Menu size={18} /> : <ChevronRight size={18} />}
-          </button>
+      <main className="flex-1 overflow-y-auto max-h-screen flex flex-col">
+        <header className="bg-white/95 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-100/80 p-4 px-6 md:px-8 flex justify-between items-center shadow-sm">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="w-10 h-10 flex items-center justify-center bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:shadow-lg transition-all text-slate-400 hover:text-blue-600 active:scale-95"
+            >
+              {isSidebarOpen ? <ChevronLeft size={18} /> : <Menu size={18} />}
+            </button>
+            {!isSidebarOpen && (
+              <h1 className="font-bold text-slate-900 text-[15px] hidden md:block">
+                {navItems.find(i => i.id === activeTab)?.label}
+              </h1>
+            )}
+          </div>
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-semibold text-slate-900 leading-none">
@@ -243,7 +316,29 @@ export default function WardenDashboard() {
           </div>
         </header>
 
-        <div className="max-w-7xl mx-auto">{renderContent()}</div>
+        <div className="flex-1 max-w-7xl mx-auto w-full">{renderContent()}</div>
+
+        {/* Mobile Bottom Navigation */}
+        <div className="md:hidden h-16 bg-white border-t border-slate-100 flex items-center justify-around px-2 sticky bottom-0 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] backdrop-blur-xl">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id as any)}
+                className={`flex flex-col items-center justify-center h-full flex-1 gap-1 transition-all ${isActive ? "text-blue-600" : "text-slate-400"}`}
+              >
+                <div className={`p-1.5 rounded-xl transition-all ${isActive ? "bg-blue-50" : ""}`}>
+                  <Icon size={isActive ? 20 : 18} />
+                </div>
+                <span className={`text-[9px] font-bold uppercase tracking-wider ${isActive ? "opacity-100" : "opacity-60"}`}>
+                  {item.label.split(' ')[0]}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </main>
     </div>
   );

@@ -14,6 +14,7 @@ import {
   Settings,
   ScanLine,
   Lock,
+  ScanLine,
 } from "lucide-react";
 import ProfilePopup from "./ProfilePopup";
 import SecuritySection from "./SecuritySection";
@@ -52,6 +53,7 @@ export default function WebmasterDashboard() {
     | "system_logs"
     | "exam_seating"
     | "security"
+    | "exam_seating"
   >("dashboard");
   const isSidebarOpen = true;
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
