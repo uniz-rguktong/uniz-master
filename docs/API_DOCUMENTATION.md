@@ -5,7 +5,7 @@
 
 ---
 
-## 🔐 Authentication & Profile
+## Authentication & Profile
 
 ### 1. Student Login
 
@@ -59,7 +59,7 @@
 
 ---
 
-## 📚 Academics (Grades & Attendance)
+## Academics (Grades & Attendance)
 
 ### 3. Get My Grades (Cached)
 
@@ -152,7 +152,7 @@
 
 ---
 
-## 🚪 Outpass & Permissions
+## Outpass & Permissions
 
 ### 5. Request Outpass
 
@@ -245,7 +245,7 @@
 
 ---
 
-## 🔐 Password Management
+## Password Management
 
 ### 8. Request Password Reset (OTP)
 
@@ -293,7 +293,7 @@
 
 ---
 
-## 📢 Banners & Announcements (Public/Admin)
+## Banners & Announcements (Public/Admin)
 
 ### 11. Get Banners (Student/Public)
 
@@ -337,7 +337,7 @@
 
 ---
 
-## 📅 Additional Student Features
+## Additional Student Features
 
 ### 13. Get Request History
 
@@ -487,7 +487,7 @@ _(Other usernames: `dean_cse`, `warden_male`, `caretaker_female`, `security_admi
 
 ---
 
-## 📚 Academic & Examination Cell (AEC)
+## Academic & Examination Cell (AEC)
 
 ### 25. Get Batch Grades (Bulk View)
 
@@ -642,7 +642,7 @@ _(Other usernames: `dean_cse`, `warden_male`, `caretaker_female`, `security_admi
 
 ---
 
-## 👥 Role & Responsibility Overview
+## Role & Responsibility Overview
 
 ### 1. Student (`student`)
 
