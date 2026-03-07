@@ -425,18 +425,11 @@ export default function UploadSection({ type }: { type: UploadType }) {
         <div className="space-y-6">
           {result ? (
             <div
-<<<<<<< HEAD
-              className={`p-8 rounded-2xl border animate-in slide-in-from-right-8 duration-500 h-full ${result.success
-                ? "bg-emerald-50 border-emerald-100"
-                : "bg-red-50 border-red-100"
-                }`}
-=======
               className={`p-8 rounded-2xl border animate-in slide-in-from-right-8 duration-500 h-full ${
                 result.success
                   ? "bg-emerald-50 border-emerald-100"
                   : "bg-red-50 border-red-100"
               }`}
->>>>>>> origin/main
             >
               <div className="flex items-center gap-4 mb-6">
                 <div
