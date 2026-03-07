@@ -8,7 +8,18 @@ RUN npm install --legacy-peer-deps
 
 COPY . .
 
-# Build the portal - Vite will automatically pick up the .env file now present in the context
+# Pass build arguments to Vite
+ARG VITE_TURNSTILE_SITE_KEY
+ARG VITE_API_URL
+ARG VITE_CLOUDINARY_CLOUD_NAME
+ARG VITE_CLOUDINARY_UPLOAD_PRESET
+
+ENV VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_CLOUDINARY_CLOUD_NAME=$VITE_CLOUDINARY_CLOUD_NAME
+ENV VITE_CLOUDINARY_UPLOAD_PRESET=$VITE_CLOUDINARY_UPLOAD_PRESET
+
+# Build the portal
 RUN npm run build
 
 
