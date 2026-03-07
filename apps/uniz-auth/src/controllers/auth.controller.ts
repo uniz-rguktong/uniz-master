@@ -35,7 +35,11 @@ export const login = async (req: Request, res: Response) => {
   const captchaToken = req.body.captchaToken;
 
   // Cloudflare Turnstile Verification
-  const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+  const isHuman = await verifyTurnstileToken(
+    captchaToken,
+    req.ip,
+    req.headers.origin as string,
+  );
   if (!isHuman) {
     return res.status(400).json({
       code: "AUTH_CAPTCHA_FAILED",
