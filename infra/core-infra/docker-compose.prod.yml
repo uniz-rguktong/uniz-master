@@ -1,0 +1,209 @@
+services:
+  uniz-redis:
+    image: redis:7-alpine
+    container_name: uniz-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: always
+
+  uniz-postgres:
+    image: postgres:17-alpine
+    container_name: uniz-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: uniz_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d uniz_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: always
+
+  uniz-gateway:
+    image: ghcr.io/uniz-rguktong/uniz-gateway:latest
+    container_name: uniz-gateway
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    env_file: .env
+    depends_on:
+      - uniz-gateway-api
+    restart: always
+
+  uniz-gateway-api:
+    image: ghcr.io/uniz-rguktong/uniz-gateway-api:latest
+    deploy:
+      mode: replicated
+      replicas: 3
+    init: true
+    env_file: .env
+    environment:
+      - PORT=3000
+    restart: always
+
+  uniz-portal:
+    image: ghcr.io/uniz-rguktong/uniz-portal:latest
+    container_name: uniz-portal
+    ports:
+      - "8081:80"
+    restart: always
+
+  uniz-auth-service:
+    image: ghcr.io/uniz-rguktong/uniz-auth-service:latest
+    container_name: uniz-auth-service
+    init: true
+    env_file: .env
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=${AUTH_DATABASE_URL}
+      - REDIS_URL=${REDIS_URL:-redis://uniz-redis:6379}
+      - PORT=3001
+      - DOCKER_ENV=true
+    depends_on:
+      uniz-redis:
+        condition: service_healthy
+      uniz-postgres:
+        condition: service_healthy
+    restart: always
+
+  uniz-user-service:
+    image: ghcr.io/uniz-rguktong/uniz-user-service:latest
+    container_name: uniz-user-service
+    init: true
+    env_file: .env
+    ports:
+      - "3002:3002"
+    environment:
+      - DATABASE_URL=${USER_DATABASE_URL}
+      - REDIS_URL=${REDIS_URL:-redis://uniz-redis:6379}
+      - PORT=3002
+      - DOCKER_ENV=true
+    depends_on:
+      uniz-redis:
+        condition: service_healthy
+      uniz-postgres:
+        condition: service_healthy
+    restart: always
+
+  uniz-outpass-service:
+    image: ghcr.io/uniz-rguktong/uniz-outpass-service:latest
+    container_name: uniz-outpass-service
+    init: true
+    env_file: .env
+    ports:
+      - "3003:3003"
+    environment:
+      - DATABASE_URL=${OUTPASS_DATABASE_URL}
+      - REDIS_URL=${REDIS_URL:-redis://uniz-redis:6379}
+      - PORT=3003
+      - DOCKER_ENV=true
+    depends_on:
+      uniz-redis:
+        condition: service_healthy
+      uniz-postgres:
+        condition: service_healthy
+    restart: always
+
+  uniz-academics-service:
+    image: ghcr.io/uniz-rguktong/uniz-academics-service:latest
+    container_name: uniz-academics-service
+    init: true
+    env_file: .env
+    ports:
+      - "3004:3004"
+    environment:
+      - DATABASE_URL=${ACADEMICS_DATABASE_URL}
+      - REDIS_URL=${REDIS_URL:-redis://uniz-redis:6379}
+      - PORT=3004
+      - DOCKER_ENV=true
+    depends_on:
+      uniz-redis:
+        condition: service_healthy
+      uniz-postgres:
+        condition: service_healthy
+    restart: always
+
+  uniz-files-service:
+    image: ghcr.io/uniz-rguktong/uniz-files-service:latest
+    container_name: uniz-files-service
+    init: true
+    env_file: .env
+    ports:
+      - "3005:3005"
+    environment:
+      - DATABASE_URL=${FILES_DATABASE_URL}
+      - PORT=3005
+      - DOCKER_ENV=true
+    depends_on:
+      uniz-postgres:
+        condition: service_healthy
+    restart: always
+
+  uniz-mail-service:
+    image: ghcr.io/uniz-rguktong/uniz-mail-service:latest
+    container_name: uniz-mail-service
+    init: true
+    env_file: .env
+    ports:
+      - "3006:3006"
+    environment:
+      - DATABASE_URL=${MAIL_DATABASE_URL}
+      - REDIS_URL=${REDIS_URL:-redis://uniz-redis:6379}
+      - PORT=3006
+      - DOCKER_ENV=true
+    depends_on:
+      uniz-redis:
+        condition: service_healthy
+      uniz-postgres:
+        condition: service_healthy
+    restart: always
+
+  uniz-notification-service:
+    image: ghcr.io/uniz-rguktong/uniz-notification-service:latest
+    container_name: uniz-notification-service
+    init: true
+    env_file: .env
+    ports:
+      - "3007:3007"
+    environment:
+      - REDIS_URL=${REDIS_URL:-redis://uniz-redis:6379}
+      - PORT=3007
+      - DOCKER_ENV=true
+    depends_on:
+      uniz-redis:
+        condition: service_healthy
+      uniz-postgres:
+        condition: service_healthy
+    restart: always
+
+  uniz-cron-service:
+    image: ghcr.io/uniz-rguktong/uniz-cron-service:latest
+    container_name: uniz-cron-service
+    init: true
+    env_file: .env
+    ports:
+      - "3008:3008"
+    environment:
+      - DATABASE_URL=${CRON_DATABASE_URL}
+      - PORT=3008
+      - DOCKER_ENV=true
+    depends_on:
+      uniz-postgres:
+        condition: service_healthy
+    restart: always
+
+volumes:
+  pg_data:
+  redis_data:
