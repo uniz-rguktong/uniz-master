@@ -33,6 +33,17 @@ export const verifyTurnstileToken = async (
     return true; // Don't block if not configured, but log a warning
   }
 
+  // Skip if not in production or Docker environment to allow seamless development
+  if (
+    process.env.NODE_ENV !== "production" &&
+    process.env.DOCKER_ENV !== "true"
+  ) {
+    console.log(
+      "[TURNSTILE] Development mode detected. Skipping verification.",
+    );
+    return true;
+  }
+
   if (!token) {
     return false;
   }
