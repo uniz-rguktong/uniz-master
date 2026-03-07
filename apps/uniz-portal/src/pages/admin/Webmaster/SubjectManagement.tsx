@@ -160,7 +160,7 @@ export default function SubjectManagement() {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="h-11 px-6 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2"
+          className="h-11 px-6 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2"
         >
           <Plus size={16} /> New Subject
         </button>
@@ -177,7 +177,7 @@ export default function SubjectManagement() {
             placeholder="Search by name or code..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-11 pl-12 pr-5 bg-white border border-slate-200 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 shadow-sm text-sm placeholder:text-slate-400 placeholder:font-medium"
+            className="w-full h-11 pl-12 pr-5 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm placeholder:text-slate-400 placeholder:font-medium shadow-none"
           />
         </div>
 
@@ -189,7 +189,7 @@ export default function SubjectManagement() {
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            className="bg-white border border-slate-200 pl-11 pr-10 h-11 rounded-full font-bold text-[10px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 shadow-sm min-w-[170px] transition-all cursor-pointer appearance-none hover:shadow-md"
+            className="bg-white border border-slate-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Departments</option>
             <option value="CSE">CSE</option>
@@ -214,7 +214,7 @@ export default function SubjectManagement() {
           <select
             value={semester}
             onChange={(e) => setSemester(e.target.value)}
-            className="bg-white border border-slate-200 pl-11 pr-10 h-11 rounded-full font-bold text-[10px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 shadow-sm min-w-[170px] transition-all cursor-pointer appearance-none hover:shadow-md"
+            className="bg-white border border-slate-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Semesters</option>
             {["E1", "E2", "E3", "E4"].map((y) => (
@@ -241,13 +241,13 @@ export default function SubjectManagement() {
             {subjects.map((sub, idx) => (
               <div
                 key={idx}
-                className="bg-white border border-slate-100 rounded-[28px] p-7 shadow-sm hover:shadow-xl hover:translate-y-[-2px] hover:border-blue-100 transition-all group overflow-hidden relative"
+                className="bg-white border border-slate-100 rounded-xl p-7 hover:translate-y-[-2px] hover:border-blue-100 transition-all group overflow-hidden relative shadow-none"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-blue-50 rounded-[18px] text-blue-600 border border-blue-50 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                  <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-50 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300 shadow-none">
                     <BookText size={20} />
                   </div>
-                  <div className="px-3 py-1.5 bg-slate-50 rounded-full text-[9px] font-semibold uppercase tracking-widest text-slate-400 border border-slate-100">
+                  <div className="px-3 py-1.5 bg-slate-50 rounded-xl text-[9px] font-semibold uppercase tracking-widest text-slate-400 border border-slate-100 shadow-none">
                     {sub.code}
                   </div>
                   <div className="ml-auto flex gap-1 transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
@@ -301,7 +301,7 @@ export default function SubjectManagement() {
                       {[...Array(Number(sub.credits))].map((_, i) => (
                         <div
                           key={i}
-                          className="flex-1 h-1 rounded-full bg-slate-100 group-hover:bg-blue-600/10 transition-colors overflow-hidden"
+                          className="flex-1 h-1 rounded-xl bg-slate-100 group-hover:bg-blue-600/10 transition-colors overflow-hidden shadow-none"
                         >
                           <div className="w-full h-full bg-blue-600 translate-x-0 group-hover:translate-x-0 transition-transform duration-500"></div>
                         </div>
@@ -318,7 +318,7 @@ export default function SubjectManagement() {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="uniz-primary-btn w-12 h-12 p-0 bg-white text-slate-900 border border-slate-200 shadow-sm"
+                className="uniz-primary-btn w-12 h-12 p-0 bg-white text-slate-900 border border-slate-200 shadow-none"
               >
                 <Plus size={20} className="rotate-[135deg]" />
               </button>
@@ -335,11 +335,10 @@ export default function SubjectManagement() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl font-semibold text-xs border transition-all ${
-                          page === p
-                            ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100"
-                            : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
-                        }`}
+                        className={`w-10 h-10 rounded-xl font-semibold text-xs border transition-all ${page === p
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
+                          }`}
                       >
                         {p}
                       </button>
@@ -359,7 +358,7 @@ export default function SubjectManagement() {
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                className="uniz-primary-btn w-12 h-12 p-0 bg-white text-slate-900 border border-slate-200 shadow-sm"
+                className="uniz-primary-btn w-12 h-12 p-0 bg-white text-slate-900 border border-slate-200 shadow-none"
               >
                 <Plus size={20} className="rotate-45" />
               </button>
@@ -367,8 +366,8 @@ export default function SubjectManagement() {
           )}
         </>
       ) : (
-        <div className="p-32 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-[28px] border border-slate-100 shadow-sm">
-          <div className="w-24 h-24 bg-slate-50 border border-slate-100 rounded-[24px] flex items-center justify-center text-slate-300 shadow-inner">
+        <div className="p-32 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-xl border border-slate-100 shadow-none">
+          <div className="w-24 h-24 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-300 shadow-none">
             <BookOpen size={48} strokeWidth={1.5} />
           </div>
           <div>
@@ -395,7 +394,7 @@ export default function SubjectManagement() {
 
       {showAddModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl relative animate-in zoom-in-95 duration-300">
+          <div className="bg-white w-full max-w-lg rounded-xl p-8 relative animate-in zoom-in-95 duration-300 shadow-none">
             <button
               onClick={() => setShowAddModal(false)}
               className="absolute top-6 right-6 p-2 hover:bg-slate-50 rounded-full transition-colors"
@@ -419,7 +418,7 @@ export default function SubjectManagement() {
                     onChange={(e) =>
                       setNewSubject({ ...newSubject, name: e.target.value })
                     }
-                    className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-sm"
+                    className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-sm shadow-none"
                     placeholder="e.g. Artificial Intelligence"
                   />
                 </div>
@@ -439,7 +438,7 @@ export default function SubjectManagement() {
                         code: e.target.value.toUpperCase(),
                       })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 shadow-none"
                     placeholder="CSE402"
                   />
                 </div>
@@ -459,7 +458,7 @@ export default function SubjectManagement() {
                         credits: parseInt(e.target.value),
                       })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 shadow-none"
                   />
                 </div>
               </div>
@@ -477,7 +476,7 @@ export default function SubjectManagement() {
                         department: e.target.value,
                       })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 cursor-pointer"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 cursor-pointer shadow-none"
                   >
                     <option>CSE</option>
                     <option>ECE</option>
@@ -495,7 +494,7 @@ export default function SubjectManagement() {
                     onChange={(e) =>
                       setNewSubject({ ...newSubject, semester: e.target.value })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 cursor-pointer"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 cursor-pointer shadow-none"
                   >
                     {["E1", "E2", "E3", "E4"].map((y) => (
                       <React.Fragment key={y}>
@@ -511,14 +510,14 @@ export default function SubjectManagement() {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-8 py-4 rounded-2xl font-semibold uppercase tracking-widest text-[11px] border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all active:scale-95"
+                  className="flex-1 px-8 py-4 rounded-xl font-semibold uppercase tracking-widest text-[11px] border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all active:scale-95 shadow-none"
                 >
                   Cancel
                 </button>
                 <button
                   disabled={isAdding}
                   type="submit"
-                  className={`flex-1 uniz-primary-btn ${editingSubject ? "bg-slate-900 hover:bg-black shadow-slate-200" : ""}`}
+                  className={`flex-1 uniz-primary-btn ${editingSubject ? "bg-slate-900 hover:bg-black shadow-none" : ""}`}
                 >
                   {isAdding ? (
                     <Loader2 className="animate-spin w-5 h-5" />
