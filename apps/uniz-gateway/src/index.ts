@@ -217,13 +217,19 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
       const targetUrl = `${target.replace(/\/$/, "")}/${path}`;
       const response = await axios.get(targetUrl, {
         headers: { ...req.headers, host: new URL(target).host },
-        responseType: "text",
+        responseType: "arraybuffer", // Use arraybuffer to prevent binary corruption (Excel, Images, etc.)
         validateStatus: () => true,
+        timeout: 30000, // 30s timeout to prevent gateway hangs
       });
 
-      if (response.status === 200) {
+      const contentType = response.headers["content-type"] || "";
+      const isBinary = /image|video|audio|pdf|excel|spreadsheet|zip/i.test(
+        contentType,
+      );
+
+      if (response.status === 200 && !isBinary) {
         const respToCache = {
-          data: response.data,
+          data: response.data.toString("utf-8"),
           headers: response.headers,
           status: response.status,
         };
