@@ -1,6 +1,12 @@
 # UniZ | University Intelligence Engine
 
 
+
+
+[![CodeQL](https://github.com/uniz-rguktong/uniz-master/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/github-code-scanning/codeql)
+[![Copilot code review](https://github.com/uniz-rguktong/uniz-master/actions/workflows/copilot-pull-request-reviewer/copilot-pull-request-reviewer/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/copilot-pull-request-reviewer/copilot-pull-request-reviewer)
+[![Manual VPS Deployment](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/deploy.yml)
+
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
