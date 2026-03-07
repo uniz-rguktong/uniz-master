@@ -119,37 +119,61 @@ const cacheMiddleware = async (
   next();
 };
 
+const isK8s =
+  process.env.KUBERNETES_SERVICE_HOST || process.env.DOCKER_ENV === "true";
+const localHost = process.env.LOCAL_IP || "localhost";
+
 const serviceMap: Record<string, string> = {
   auth:
     process.env.AUTH_SERVICE_URL ||
-    "http://uniz-auth-service.default.svc.cluster.local:3001",
+    (isK8s
+      ? "http://uniz-auth-service.default.svc.cluster.local:3001"
+      : `http://${localHost}:3001`),
   profile:
     process.env.USER_SERVICE_URL ||
-    "http://uniz-user-service.default.svc.cluster.local:3002",
+    (isK8s
+      ? "http://uniz-user-service.default.svc.cluster.local:3002"
+      : `http://${localHost}:3002`),
   cms:
     process.env.USER_SERVICE_URL ||
-    "http://uniz-user-service.default.svc.cluster.local:3002",
+    (isK8s
+      ? "http://uniz-user-service.default.svc.cluster.local:3002"
+      : `http://${localHost}:3002`),
   academics:
     process.env.ACADEMICS_SERVICE_URL ||
-    "http://uniz-academics-service.default.svc.cluster.local:3004",
+    (isK8s
+      ? "http://uniz-academics-service.default.svc.cluster.local:3004"
+      : `http://${localHost}:3004`),
   requests:
     process.env.OUTPASS_SERVICE_URL ||
-    "http://uniz-outpass-service.default.svc.cluster.local:3003",
+    (isK8s
+      ? "http://uniz-outpass-service.default.svc.cluster.local:3003"
+      : `http://${localHost}:3003`),
   files:
     process.env.FILES_SERVICE_URL ||
-    "http://uniz-files-service.default.svc.cluster.local:3005",
+    (isK8s
+      ? "http://uniz-files-service.default.svc.cluster.local:3005"
+      : `http://${localHost}:3005`),
   mail:
     process.env.MAIL_SERVICE_URL ||
-    "http://uniz-mail-service.default.svc.cluster.local:3006",
+    (isK8s
+      ? "http://uniz-mail-service.default.svc.cluster.local:3006"
+      : `http://${localHost}:3006`),
   notifications:
     process.env.NOTIFICATION_SERVICE_URL ||
-    "http://uniz-notification-service.default.svc.cluster.local:3007",
+    (isK8s
+      ? "http://uniz-notification-service.default.svc.cluster.local:3007"
+      : `http://${localHost}:3007`),
   cron:
     process.env.CRON_SERVICE_URL ||
-    "http://uniz-cron-service.default.svc.cluster.local:3008",
+    (isK8s
+      ? "http://uniz-cron-service.default.svc.cluster.local:3008"
+      : `http://${localHost}:3008`),
   grievance:
     process.env.OUTPASS_SERVICE_URL ||
-    "http://uniz-outpass-service.default.svc.cluster.local:3003",
+    (isK8s
+      ? "http://uniz-outpass-service.default.svc.cluster.local:3003"
+      : `http://${localHost}:3003`),
 };
 
 // 4. Standard Health Endpoints (Fast path)
