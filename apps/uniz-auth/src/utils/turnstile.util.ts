@@ -12,17 +12,15 @@ import axios from "axios";
 /**
  * Verifies a Cloudflare Turnstile token against the Cloudflare API.
  *
- * DESIGN PATTERN: Fail-Safe
- * If the secret key is missing, we log a warning but allow the request to
- * proceed to prevent complete service lockout due to misconfiguration.
- *
  * @param token The turnstile token from the client
- * @param clientIp The IP address of the client (optional but recommended for risk analysis)
+ * @param clientIp The IP address of the client
+ * @param origin The request origin (to allow bypassing in dev/localhost)
  * @returns boolean indicating if the token is valid or verification is skipped
  */
 export const verifyTurnstileToken = async (
   token: string,
   clientIp?: string,
+  origin?: string,
 ): Promise<boolean> => {
   const secretKey = process.env.TURNSTILE_SECRET_KEY;
 
@@ -33,13 +31,24 @@ export const verifyTurnstileToken = async (
     return true; // Don't block if not configured, but log a warning
   }
 
-  // Skip if not in production or Docker environment to allow seamless development
+  // ALLOW BYPASS FOR LOCAL DEVELOPMENT
+  // 1. If hitting from a dev environment
+  // 2. If hitting from localhost (even if hitting production backend)
+  // 3. If using the Cloudflare "Always Pass" dummy token
+  const isLocalhost =
+    origin &&
+    (origin.includes("localhost") ||
+      origin.includes("127.0.0.1") ||
+      origin.includes("0.0.0.0"));
+
   if (
-    process.env.NODE_ENV !== "production" &&
-    process.env.DOCKER_ENV !== "true"
+    process.env.NODE_ENV !== "production" ||
+    process.env.DOCKER_ENV !== "true" ||
+    isLocalhost ||
+    token === "1x00000000000000000000AA"
   ) {
     console.log(
-      "[TURNSTILE] Development mode detected. Skipping verification.",
+      `[TURNSTILE] Bypass condition met. (Localhost: ${!!isLocalhost}, NODE_ENV: ${process.env.NODE_ENV}, Token: ${token.substring(0, 10)}...)`,
     );
     return true;
   }
