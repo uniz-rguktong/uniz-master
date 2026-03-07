@@ -37,11 +37,11 @@ interface Semester {
   id: string;
   name: string;
   status:
-    | "DRAFT"
-    | "DEAN_REVIEW"
-    | "APPROVED"
-    | "REGISTRATION_OPEN"
-    | "REGISTRATION_CLOSED";
+  | "DRAFT"
+  | "DEAN_REVIEW"
+  | "APPROVED"
+  | "REGISTRATION_OPEN"
+  | "REGISTRATION_CLOSED";
   _count?: { registrations: number };
   createdAt: string;
 }
@@ -326,13 +326,13 @@ export default function UnifiedAcademicManager() {
               fetchSemesters();
               fetchMasterSubjects();
             }}
-            className="p-4 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-blue-600 hover:shadow-lg transition-all active:scale-95"
+            className="p-4 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-blue-600 transition-all active:scale-95"
           >
             <RefreshCcw size={20} className={loading ? "animate-spin" : ""} />
           </button>
           <button
             onClick={() => setShowNewSemModal(true)}
-            className="h-14 px-8 bg-slate-900 text-white rounded-[24px] font-bold text-xs uppercase tracking-widest shadow-2xl shadow-slate-200 hover:bg-black transition-all flex items-center gap-3"
+            className="h-14 px-8 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-none"
           >
             <Zap size={16} className="text-amber-400 fill-amber-400" /> New
             Rollout
@@ -341,7 +341,7 @@ export default function UnifiedAcademicManager() {
       </div>
 
       {/* Main Tab Navigation */}
-      <div className="flex gap-2 bg-white/50 p-1.5 rounded-[28px] border border-slate-100 w-fit backdrop-blur-sm">
+      <div className="flex gap-2 bg-white/50 p-1.5 rounded-xl border border-slate-100 w-fit backdrop-blur-sm">
         {(["catalog", "subjects", "rollout"] as const).map((tabId) => {
           const labels: Record<string, string> = {
             catalog: "Catalog",
@@ -361,11 +361,10 @@ export default function UnifiedAcademicManager() {
               disabled={tabId === "rollout" && !selectedSem}
               onClick={() => setActiveTab(tabId)}
               className={`
-                flex items-center gap-3 px-8 py-3.5 rounded-[22px] font-bold text-xs uppercase tracking-widest transition-all
-                ${
-                  activeTab === tabId
-                    ? "bg-white text-blue-600 shadow-sm border border-slate-100"
-                    : "text-slate-400 hover:text-slate-900 hover:bg-white/80"
+                flex items-center gap-3 px-8 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all
+                ${activeTab === tabId
+                  ? "bg-white text-blue-600 border border-slate-100"
+                  : "text-slate-400 hover:text-slate-900 hover:bg-white/80"
                 }
                 ${tabId === "rollout" && !selectedSem ? "opacity-30 cursor-not-allowed" : ""}
               `}
@@ -388,21 +387,20 @@ export default function UnifiedAcademicManager() {
                   setSelectedSem(sem);
                   setActiveTab("rollout");
                 }}
-                className="bg-white rounded-[40px] border border-slate-100 p-8 shadow-sm hover:shadow-2xl hover:translate-y-[-4px] transition-all group cursor-pointer overflow-hidden relative"
+                className="bg-white rounded-xl border border-slate-100 p-8 transition-all group cursor-pointer overflow-hidden relative"
               >
                 <div className="flex justify-between items-start mb-10">
                   <div
-                    className={`p-4 rounded-3xl ${sem.status === "REGISTRATION_OPEN" ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-400"}`}
+                    className={`p-4 rounded-xl ${sem.status === "REGISTRATION_OPEN" ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-400"}`}
                   >
                     <Calendar size={28} />
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span
-                      className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
-                        sem.status === "REGISTRATION_OPEN"
-                          ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                          : "bg-slate-50 text-slate-400 border-slate-100"
-                      }`}
+                      className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${sem.status === "REGISTRATION_OPEN"
+                        ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                        : "bg-slate-50 text-slate-400 border-slate-100"
+                        }`}
                     >
                       {sem.status.replace("_", " ")}
                     </span>
@@ -426,7 +424,7 @@ export default function UnifiedAcademicManager() {
                         e.stopPropagation();
                         handleDeleteSem(sem.id);
                       }}
-                      className="p-3 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all"
+                      className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-none"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -444,7 +442,7 @@ export default function UnifiedAcademicManager() {
 
         {activeTab === "subjects" && (
           <div className="space-y-8">
-            <div className="flex flex-wrap gap-4 bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm">
+            <div className="flex flex-wrap gap-4 bg-white p-6 rounded-xl border border-slate-100">
               <div className="relative flex-1 min-w-[300px]">
                 <Search
                   className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"
@@ -455,13 +453,13 @@ export default function UnifiedAcademicManager() {
                   placeholder="Search master subjects..."
                   value={subSearch}
                   onChange={(e) => setSubSearch(e.target.value)}
-                  className="w-full h-14 pl-14 pr-6 bg-slate-50 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 font-bold text-slate-900"
+                  className="w-full h-14 pl-14 pr-6 bg-slate-50 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 font-bold text-slate-900"
                 />
               </div>
               <select
                 value={subDept}
                 onChange={(e) => setSubDept(e.target.value)}
-                className="h-14 px-8 bg-slate-50 rounded-2xl font-bold uppercase tracking-widest text-[10px] text-slate-600 border-none outline-none"
+                className="h-14 px-8 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-600 border-none outline-none appearance-none"
               >
                 <option value="">All Departments</option>
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((d) => (
@@ -482,7 +480,7 @@ export default function UnifiedAcademicManager() {
                   });
                   setShowSubModal(true);
                 }}
-                className="h-14 px-8 bg-blue-600 text-white rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:shadow-xl hover:shadow-blue-200 transition-all flex items-center gap-2 border-2 border-white/20"
+                className="h-14 px-8 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 border-2 border-white/20 shadow-none"
               >
                 <PlusCircle size={16} /> Add New Subject
               </button>
@@ -492,13 +490,13 @@ export default function UnifiedAcademicManager() {
               {allSubjects.map((sub, i) => (
                 <div
                   key={i}
-                  className="bg-white border border-slate-100 rounded-[32px] p-8 shadow-sm hover:shadow-2xl transition-all group overflow-hidden"
+                  className="bg-white border border-slate-100 rounded-xl p-8 transition-all group overflow-hidden"
                 >
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="p-3 bg-blue-50 rounded-2xl text-blue-600 border border-blue-50 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-50 group-hover:bg-blue-600 group-hover:text-white transition-all">
                       <BookText size={20} />
                     </div>
-                    <div className="px-3 py-1 bg-slate-50 rounded-full text-[9px] font-black uppercase tracking-widest text-slate-400">
+                    <div className="px-3 py-1 bg-slate-50 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-400">
                       {sub.code}
                     </div>
                   </div>
@@ -534,11 +532,11 @@ export default function UnifiedAcademicManager() {
 
         {activeTab === "rollout" && selectedSem && (
           <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
-            <div className="bg-slate-900 rounded-[40px] p-10 text-white shadow-2xl relative overflow-hidden">
+            <div className="bg-slate-900 rounded-xl p-10 text-white relative overflow-hidden">
               <div className="relative z-10 flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="px-4 py-1.5 bg-blue-500/20 text-blue-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-500/30">
+                    <span className="px-4 py-1.5 bg-blue-500/20 text-blue-400 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-500/30">
                       Active Rollout
                     </span>
                     <span className="text-slate-500">•</span>
@@ -561,11 +559,10 @@ export default function UnifiedAcademicManager() {
                           : "REGISTRATION_OPEN",
                       )
                     }
-                    className={`h-14 px-10 rounded-[28px] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl ${
-                      selectedSem.status === "REGISTRATION_OPEN"
-                        ? "bg-red-50/10 text-red-500 border border-red-500/30 hover:bg-red-500 hover:text-white"
-                        : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-500/20"
-                    }`}
+                    className={`h-14 px-10 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all ${selectedSem.status === "REGISTRATION_OPEN"
+                      ? "bg-red-50/10 text-red-500 border border-red-500/30 hover:bg-red-500 hover:text-white"
+                      : "bg-emerald-600 text-white hover:bg-emerald-700"
+                      }`}
                   >
                     {selectedSem.status === "REGISTRATION_OPEN"
                       ? "Suspend Enrollment"
@@ -573,7 +570,7 @@ export default function UnifiedAcademicManager() {
                   </button>
                   <button
                     onClick={handleGlobalApprove}
-                    className="h-14 px-8 bg-white/10 text-white rounded-[28px] font-black text-xs uppercase tracking-widest hover:bg-white/20 transition-all border border-white/10"
+                    className="h-14 px-8 bg-white/10 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white/20 transition-all border border-white/10"
                   >
                     Push Progress
                   </button>
@@ -588,11 +585,10 @@ export default function UnifiedAcademicManager() {
                   <button
                     key={v}
                     onClick={() => setRolloutView(v)}
-                    className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${
-                      rolloutView === v
-                        ? "text-blue-600"
-                        : "text-slate-400 hover:text-slate-600"
-                    }`}
+                    className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${rolloutView === v
+                      ? "text-blue-600"
+                      : "text-slate-400 hover:text-slate-600"
+                      }`}
                   >
                     {v}
                     {rolloutView === v && (
@@ -603,7 +599,7 @@ export default function UnifiedAcademicManager() {
               </div>
 
               <div className="flex gap-3 mb-4">
-                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-2xl border border-slate-100 shadow-sm">
+                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-slate-100 shadow-none">
                   <Filter size={14} className="text-slate-400" />
                   <select
                     value={filterBranch}
@@ -618,7 +614,7 @@ export default function UnifiedAcademicManager() {
                     ))}
                   </select>
                 </div>
-                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-2xl border border-slate-100 shadow-sm">
+                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-slate-100 shadow-none">
                   <Users size={14} className="text-slate-400" />
                   <select
                     value={filterYear}
@@ -636,7 +632,7 @@ export default function UnifiedAcademicManager() {
                 {rolloutView === "allocations" && (
                   <button
                     onClick={() => setShowAddAllocModal(true)}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-200 hover:scale-105 active:scale-95 transition-all"
+                    className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-none hover:scale-105 active:scale-95 transition-all"
                   >
                     <Plus size={14} /> Add 🎓
                   </button>
@@ -644,7 +640,7 @@ export default function UnifiedAcademicManager() {
               </div>
             </div>
 
-            <div className="bg-white rounded-[40px] border border-slate-100 shadow-xl overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
               {rolloutView === "allocations" ? (
                 <table className="w-full text-left">
                   <thead>
@@ -663,7 +659,7 @@ export default function UnifiedAcademicManager() {
                       >
                         <td className="px-10 py-6">
                           <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 group-hover:text-blue-500 group-hover:bg-blue-50 transition-all">
+                            <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 group-hover:text-blue-500 group-hover:bg-blue-50 transition-all">
                               <BookOpen size={20} />
                             </div>
                             <div>
@@ -680,10 +676,10 @@ export default function UnifiedAcademicManager() {
                         </td>
                         <td className="px-10 py-6">
                           <div className="flex items-center gap-2">
-                            <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[9px] font-black uppercase tracking-widest">
+                            <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
                               {item.branch}
                             </span>
-                            <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[9px] font-black uppercase tracking-widest">
+                            <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
                               {item.academicYear}
                             </span>
                           </div>
@@ -701,7 +697,7 @@ export default function UnifiedAcademicManager() {
                         <td className="px-10 py-6 text-right">
                           <button
                             onClick={() => handleRemoveAlloc(item.id)}
-                            className="p-3 bg-red-50 text-red-500 rounded-2xl opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
+                            className="p-3 bg-red-50 text-red-500 rounded-xl opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -758,15 +754,15 @@ export default function UnifiedAcademicManager() {
                 rolloutAllocations.length === 0) ||
                 (rolloutView === "registrations" &&
                   rolloutRegistrations.length === 0)) && (
-                <div className="p-32 text-center">
-                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
-                    <X size={40} />
+                  <div className="p-32 text-center">
+                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                      <X size={40} />
+                    </div>
+                    <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
+                      Zero activity detected for these parameters.
+                    </p>
                   </div>
-                  <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
-                    Zero activity detected for these parameters.
-                  </p>
-                </div>
-              )}
+                )}
             </div>
           </div>
         )}
@@ -774,9 +770,9 @@ export default function UnifiedAcademicManager() {
 
       {showNewSemModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-          <div className="bg-white rounded-[40px] w-full max-w-xl p-10 shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="bg-white rounded-xl w-full max-w-xl p-10 animate-in zoom-in-95 duration-300">
             <div className="flex items-center gap-4 mb-10">
-              <div className="p-5 bg-blue-50 text-blue-600 rounded-[28px] shadow-inner">
+              <div className="p-5 bg-blue-50 text-blue-600 rounded-xl shadow-none">
                 <Zap size={32} className="fill-blue-600 opacity-20" />
               </div>
               <div>
@@ -798,7 +794,7 @@ export default function UnifiedAcademicManager() {
                   type="text"
                   value={newSemName}
                   onChange={(e) => setNewSemName(e.target.value)}
-                  className="w-full h-16 px-8 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-3xl outline-none font-black text-slate-900 transition-all"
+                  className="w-full h-16 px-8 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-xl outline-none font-black text-slate-900 transition-all"
                   placeholder="e.g. AY 2024-25 SEM-II"
                 />
               </div>
@@ -818,11 +814,10 @@ export default function UnifiedAcademicManager() {
                             : [...prev, b],
                         )
                       }
-                      className={`h-14 rounded-2xl font-black text-xs transition-all border ${
-                        selectedBranches.includes(b)
-                          ? "bg-slate-900 text-white border-slate-900 shadow-xl"
-                          : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-300"
-                      }`}
+                      className={`h-14 rounded-xl font-black text-xs transition-all border ${selectedBranches.includes(b)
+                        ? "bg-slate-900 text-white border-slate-900 shadow-none"
+                        : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-300"
+                        }`}
                     >
                       {b}
                     </button>
@@ -833,14 +828,14 @@ export default function UnifiedAcademicManager() {
               <div className="flex gap-4 pt-6">
                 <button
                   onClick={() => setShowNewSemModal(false)}
-                  className="h-16 flex-1 bg-slate-100 text-slate-500 rounded-3xl font-black uppercase tracking-widest text-xs"
+                  className="h-16 flex-1 bg-slate-100 text-slate-500 rounded-xl font-black uppercase tracking-widest text-xs"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleInitSemester}
                   disabled={loading}
-                  className="h-16 flex-[2] bg-blue-600 text-white rounded-3xl font-black uppercase tracking-[0.2em] text-xs shadow-2xl shadow-blue-200 hover:bg-blue-700 transition-all"
+                  className="h-16 flex-[2] bg-blue-600 text-white rounded-xl font-black uppercase tracking-[0.2em] text-xs shadow-none hover:bg-blue-700 transition-all"
                 >
                   {loading ? "Initializing Engine..." : "Launch Rollout 🎓"}
                 </button>
@@ -852,7 +847,7 @@ export default function UnifiedAcademicManager() {
 
       {showAddAllocModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-          <div className="bg-white rounded-[40px] w-full max-w-xl p-10 shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="bg-white rounded-xl w-full max-w-xl p-10 shadow-none animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-start mb-10">
               <div>
                 <h3 className="text-3xl font-black italic tracking-tighter text-slate-900">
@@ -883,7 +878,7 @@ export default function UnifiedAcademicManager() {
                       subjectId: e.target.value,
                     })
                   }
-                  className="w-full h-16 px-8 bg-slate-50 rounded-3xl outline-none font-bold text-slate-900 appearance-none"
+                  className="w-full h-16 px-8 bg-slate-50 rounded-xl outline-none font-bold text-slate-900 appearance-none"
                 >
                   <option value="">Select Subject...</option>
                   {allSubjects.map((s) => (
@@ -907,7 +902,7 @@ export default function UnifiedAcademicManager() {
                         branch: e.target.value,
                       })
                     }
-                    className="w-full h-14 px-6 bg-slate-50 rounded-2xl font-bold uppercase tracking-widest text-[10px] text-slate-700"
+                    className="w-full h-14 px-6 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-700"
                   >
                     {filterBranch === "all" ? (
                       ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map(
@@ -934,7 +929,7 @@ export default function UnifiedAcademicManager() {
                         academicYear: e.target.value,
                       })
                     }
-                    className="w-full h-14 px-6 bg-slate-50 rounded-2xl font-bold uppercase tracking-widest text-[10px] text-slate-700"
+                    className="w-full h-14 px-6 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-700"
                   >
                     {["E1", "E2", "E3", "E4"].map((y) => (
                       <option key={y} value={y}>
@@ -948,13 +943,13 @@ export default function UnifiedAcademicManager() {
               <button
                 onClick={handleManualAlloc}
                 disabled={loading || !addAllocData.subjectId}
-                className="w-full h-16 bg-slate-900 text-white rounded-3xl font-black uppercase tracking-[0.2em] text-xs shadow-2xl shadow-slate-200 mt-6"
+                className="w-full h-16 bg-slate-900 text-white rounded-xl font-black uppercase tracking-[0.2em] text-xs shadow-none mt-6"
               >
                 Confirm Allocation
               </button>
             </div>
 
-            <div className="mt-10 p-6 bg-amber-50 rounded-3xl border border-amber-100">
+            <div className="mt-10 p-6 bg-amber-50 rounded-xl border border-amber-100">
               <p className="text-amber-800 text-[11px] font-bold leading-relaxed">
                 <ShieldCheck size={14} className="inline mr-2" />
                 This will create a new BranchAllocation record for the target
@@ -968,7 +963,7 @@ export default function UnifiedAcademicManager() {
 
       {showSubModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-          <div className="bg-white rounded-[40px] w-full max-w-xl p-10 shadow-2xl animate-in zoom-in-95 duration-300 relative">
+          <div className="bg-white rounded-xl w-full max-w-xl p-10 shadow-none animate-in zoom-in-95 duration-300 relative">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-3xl font-black italic tracking-tighter text-slate-900">
                 {editingSub ? "Modify Subject" : "Course Architectural Entry"}
@@ -992,7 +987,7 @@ export default function UnifiedAcademicManager() {
                   onChange={(e) =>
                     setNewSub({ ...newSub, name: e.target.value })
                   }
-                  className="w-full h-14 px-8 bg-slate-50 rounded-2xl outline-none font-bold text-slate-900"
+                  className="w-full h-14 px-8 bg-slate-50 rounded-xl outline-none font-bold text-slate-900"
                   placeholder="e.g. Distributed Systems"
                 />
               </div>
@@ -1011,7 +1006,7 @@ export default function UnifiedAcademicManager() {
                         code: e.target.value.toUpperCase(),
                       })
                     }
-                    className="w-full h-14 px-8 bg-slate-50 rounded-2xl outline-none font-bold text-slate-900"
+                    className="w-full h-14 px-8 bg-slate-50 rounded-xl outline-none font-bold text-slate-900"
                     placeholder="CS401"
                   />
                 </div>
@@ -1028,7 +1023,7 @@ export default function UnifiedAcademicManager() {
                         credits: parseInt(e.target.value),
                       })
                     }
-                    className="w-full h-14 px-8 bg-slate-50 rounded-2xl outline-none font-bold text-slate-900"
+                    className="w-full h-14 px-8 bg-slate-50 rounded-xl outline-none font-bold text-slate-900"
                   />
                 </div>
               </div>
@@ -1043,7 +1038,7 @@ export default function UnifiedAcademicManager() {
                     onChange={(e) =>
                       setNewSub({ ...newSub, department: e.target.value })
                     }
-                    className="w-full h-14 px-8 bg-slate-50 rounded-2xl font-bold uppercase tracking-widest text-[10px] text-slate-700 appearance-none cursor-pointer"
+                    className="w-full h-14 px-8 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-700 appearance-none cursor-pointer"
                   >
                     {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((d) => (
                       <option key={d}>{d}</option>
@@ -1059,7 +1054,7 @@ export default function UnifiedAcademicManager() {
                     onChange={(e) =>
                       setNewSub({ ...newSub, semester: e.target.value })
                     }
-                    className="w-full h-14 px-8 bg-slate-50 rounded-2xl font-bold uppercase tracking-widest text-[10px] text-slate-700 appearance-none cursor-pointer"
+                    className="w-full h-14 px-8 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-700 appearance-none cursor-pointer"
                   >
                     {["SEM-1", "SEM-2"].map((s) => (
                       <option key={s}>{s}</option>
@@ -1070,7 +1065,7 @@ export default function UnifiedAcademicManager() {
 
               <button
                 type="submit"
-                className="w-full h-16 bg-blue-600 text-white rounded-3xl font-black uppercase tracking-[0.2em] text-xs shadow-2xl shadow-blue-200 hover:bg-blue-700 transition-all mt-6"
+                className="w-full h-16 bg-blue-600 text-white rounded-xl font-black uppercase tracking-[0.2em] text-xs shadow-none hover:bg-blue-700 transition-all mt-6"
               >
                 {editingSub
                   ? "Update Architectural Database"

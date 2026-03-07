@@ -146,11 +146,10 @@ export default function WebmasterOverview({ username }: { username: string }) {
           className="relative p-[4px] md:p-[5px] rounded-full"
           style={{
             background: "#2ebd59",
-            boxShadow: "0 0 0 2px rgba(46,189,89,0.12)",
           }}
         >
           <div className="relative bg-slate-50 p-[3px] rounded-full">
-            <div className="relative w-[110px] h-[110px] md:w-[130px] md:h-[130px] bg-[#004e43] rounded-full flex justify-center items-center text-white text-[54px] font-medium overflow-hidden">
+            <div className="relative w-[110px] h-[110px] md:w-[130px] md:h-[130px] bg-[#004e43] rounded-full flex justify-center items-center text-white text-[54px] font-medium overflow-hidden shadow-none">
               {loading ? (
                 <Loader2 className="w-9 h-9 animate-spin text-white/60" />
               ) : profile?.profile_url ? (
@@ -191,7 +190,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
-            className="absolute bottom-[-1px] right-2 w-8 h-8 bg-[#e8f0fe] border-[1.5px] border-[#4285f4] rounded-full flex items-center justify-center text-[#174ea6] hover:bg-blue-100 transition-all z-20 cursor-pointer shadow-sm hover:scale-110 active:scale-95 disabled:opacity-50"
+            className="absolute bottom-[-1px] right-2 w-8 h-8 bg-[#e8f0fe] border-[1.5px] border-[#4285f4] rounded-full flex items-center justify-center text-[#174ea6] hover:bg-blue-100 transition-all z-20 cursor-pointer hover:scale-110 active:scale-95 disabled:opacity-50 shadow-none"
             title="Update Profile Photo"
           >
             <Camera className="w-[17px] h-[17px]" strokeWidth={2.5} />
@@ -237,7 +236,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
       {/* Info tags */}
       {!loading && (
         <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold mb-6">
-          <span className="text-indigo-600 uppercase tracking-widest px-2.5 py-1 bg-indigo-50 border border-indigo-100 rounded">
+          <span className="text-indigo-600 uppercase tracking-widest px-2.5 py-1 bg-indigo-50 border border-indigo-100 rounded-xl">
             {username}
           </span>
           {profile?.role && (
@@ -275,7 +274,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.2 }}
-            className="w-full max-w-md bg-white rounded-[20px] border border-slate-100 shadow-sm p-5 space-y-3"
+            className="w-full max-w-md bg-white rounded-xl border border-slate-100 p-5 space-y-3"
           >
             {[
               {
@@ -303,7 +302,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                 key={key}
                 className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 rounded-xl border border-slate-100"
               >
-                <div className="w-7 h-7 rounded-full bg-white border border-slate-100 flex items-center justify-center shrink-0 shadow-sm">
+                <div className="w-7 h-7 rounded-xl bg-white border border-slate-100 flex items-center justify-center shrink-0">
                   {icon}
                 </div>
                 <div className="flex-1">
@@ -327,7 +326,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="flex-1 py-2.5 rounded-full bg-slate-900 text-white text-[11px] font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 hover:bg-slate-800 transition-all disabled:opacity-60"
+                className="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-[11px] font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 hover:bg-slate-800 transition-all disabled:opacity-60"
               >
                 {isSaving ? (
                   <Loader2 size={13} className="animate-spin" />
@@ -347,7 +346,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                     department: profile?.department || "",
                   });
                 }}
-                className="px-5 py-2.5 rounded-full border border-slate-200 text-slate-500 text-[11px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-1.5"
+                className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-500 text-[11px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-1.5"
               >
                 <X size={13} /> Cancel
               </button>
