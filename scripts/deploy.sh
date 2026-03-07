@@ -1,28 +1,28 @@
 #!/bin/bash
 
 # 1. Push code to GitHub
-echo "🚀 Pushing code to GitHub..."
+echo "[Push] Pushing code to GitHub..."
 MSG=${1:-"chore: deployment update $(date +'%Y-%m-%d %H:%M:%S')"}
 git add .
 git commit -m "$MSG" || echo "No changes to commit"
 git push origin main
 
 # 2. Deploy to VPS
-echo "🌐 Starting VPS Deployment..."
+echo "[Deploy] Starting VPS Deployment..."
 ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   cd /root/uniz-master
   
-  echo "📥 Fetching latest code..."
+  echo "[Git] Fetching latest code..."
   git fetch origin main
   git reset --hard origin/main
   NEW_HEAD=$(git rev-parse HEAD)
-  echo "✅ Latest Commit: $(git log -1 --format='%h - %s')"
+  echo "[Git] Latest Commit: $(git log -1 --format='%h - %s')"
 
   # Force rebuild all if requested
   FORCE_ALL=false
   COMMIT_MSG=$(git log -1 --pretty=%B)
   if [[ "$COMMIT_MSG" == *"[rebuild all]"* ]] || [[ "$COMMIT_MSG" == *"[force build]"* ]]; then
-    echo "🏗️  Force rebuild all requested via commit message."
+    echo "[Build] Force rebuild all requested via commit message."
     FORCE_ALL=true
   fi
 
@@ -48,7 +48,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   )
 
   # Prevent kubectl apply from overwriting current images with :local
-  echo "💾 Preserving current image tags..."
+  echo "[Infra] Preserving current image tags..."
   echo "images:" >> infra/core-infra/kubernetes/base/kustomization.yaml
   for s in "${ALL_SERVICES[@]}"; do
     IFS=':' read -r DIR IMG DEP CON <<< "$s"
@@ -67,7 +67,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     fi
   done
 
-  echo "🛠️  Applying Kubernetes configurations..."
+  echo "[K8s] Applying Kubernetes configurations..."
   kubectl apply -k infra/core-infra/kubernetes/base/
 
   REBUILT_COUNT=0
@@ -80,7 +80,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     if [ "$FORCE_ALL" == "true" ]; then
        SHOULD_BUILD=true
     elif echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
-      echo "🎯 Change detected in $DIR"
+      echo "[Build] Change detected in $DIR"
       SHOULD_BUILD=true
     fi
 
@@ -90,55 +90,55 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
         [[ "$DIR" == *"infra"* ]] && BUILD_CONTEXT="$DIR"
 
         TAG="local-$(date +%s)"
-        echo "🏗️  Rebuilding $IMG:$TAG in context $BUILD_CONTEXT..."
+        echo "[Build] Rebuilding $IMG:$TAG in context $BUILD_CONTEXT..."
         if docker build --no-cache --platform linux/amd64 -t $IMG:$TAG $BUILD_CONTEXT; then
-          echo "📥 Importing $IMG:$TAG to K3s..."
+          echo "[Docker] Importing $IMG:$TAG to K3s..."
           docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
           BUILT_IMAGES[$IMG]=$TAG
           ((REBUILT_COUNT++))
         else
-          echo "❌ Build failed for $IMG, skipping deployment."
+          echo "[Error] Build failed for $IMG, skipping deployment."
           continue
         fi
       else
         TAG=${BUILT_IMAGES[$IMG]}
-        echo "♻️  Using built image for $IMG with tag $TAG"
+        echo "[Build] Using built image for $IMG with tag $TAG"
       fi
 
-      echo "🛡️  Deploying $IMG:$TAG to $DEP..."
+      echo "[Deploy] Deploying $IMG:$TAG to $DEP..."
       if [[ "$DEP" == *"job"* ]]; then
         kubectl set image "cronjob/$DEP" "$CON=docker.io/library/$IMG:$TAG"
       else
         if kubectl set image "deployment/$DEP" "$CON=docker.io/library/$IMG:$TAG"; then
           kubectl rollout restart "deployment/$DEP"
         else
-          echo "⚠️  Deployment upgrade failed for $DEP, check container name $CON"
+          echo "[Warning] Deployment upgrade failed for $DEP, check container name $CON"
         fi
       fi
     fi
   done
 
   if [ $REBUILT_COUNT -gt 0 ] || [ "$FORCE_ALL" == "true" ]; then
-    echo "🧹 Cleaning up dangling Docker components..."
+    echo "[Cleanup] Cleaning up dangling Docker components..."
     docker system prune -f
     docker image prune -a -f --filter "until=24h"
     
-    echo "♻️  Pruning old K3s images..."
+    echo "[Cleanup] Pruning old K3s images..."
     # Remove images with 'local-' tag that are not currently used by any pod
     USED_IMAGES=$(kubectl get pods,deployments,cronjobs -A -o jsonpath='{..image}' | tr ' ' '\n' | sort -u)
     k3s ctr images ls -q | grep "local-" | while read -r img; do
       if ! echo "$USED_IMAGES" | grep -q "$img"; then
-        echo "🗑️ Removing unused K3s image: $img"
+        echo "[Cleanup] Removing unused K3s image: $img"
         k3s ctr images rm "$img" || true
       fi
     done
     
-    echo "✅ Redeployed $REBUILT_COUNT services."
+    echo "[OK] Redeployed $REBUILT_COUNT services."
   else
-    echo "✨ No services needed updating."
+    echo "[OK] No services needed updating."
   fi
   
-  echo "⌛ Stabilization & Health Check..."
+  echo "[Health] Stabilization & Health Check..."
   for i in {1..6}; do
     INIT_COUNT=$(kubectl get pods --no-headers | grep -v 'Running\|Completed' | wc -l | xargs)
     echo "Check $i/6: $INIT_COUNT pods still initializing..."
@@ -148,6 +148,6 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   kubectl get pods
 EOF
 
-echo "🚀 Quick check on API health..."
+echo "[Health] Quick check on API health..."
 curl -s -o /dev/null -w "%{http_code}" https://api.uniz.rguktong.in/api/v1/system/health || true
-echo -e "\n✅ Deployment Pipeline Complete!"
+echo -e "\n[Done] Deployment Pipeline Complete!"
