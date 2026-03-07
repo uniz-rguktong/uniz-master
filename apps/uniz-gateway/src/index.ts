@@ -178,19 +178,70 @@ app.get("/api/v1/system/health", async (req, res) => {
     .json({ status: allOk ? "ok" : "degraded", services: results });
 });
 
-// 5. The Heavy Lifter: Streaming Proxy with Path Rewriting
-app.all("/api/v1/:service/(.*)", cacheMiddleware, (req, res) => {
+// 5. The Heavy Lifter: Streaming Proxy with Path Rewriting + Caching
+app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
   const service = (req.params.service as string).toLowerCase();
   const target = serviceMap[service];
 
-  if (!target) {
+  if (!target)
     return res.status(404).json({ error: "Service Not Found", service });
-  }
 
-  // Strip prefix: /api/v1/:service/path -> /path
+  // Path Rewriting (DO THIS FIRST)
   const path = req.url.split("/").slice(4).join("/");
   req.url = `/${path}`;
 
+  // Cache Key Logic
+  const userKey = req.headers["uid"] || req.headers["authorization"] || "guest";
+  const cacheKey = `proxy_v3:${req.url}:${userKey}`;
+
+  // Purge logic
+  if (req.headers["x-cache-purge"]) {
+    await redis.del(cacheKey);
+    console.log(`[Cache-Purged] ${req.url}`);
+  }
+
+  // GET Cache Lookup + Fetch
+  if (req.method === "GET" && req.headers["cache-control"] !== "no-cache") {
+    try {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        const { data, headers, status } = JSON.parse(cached);
+        Object.entries(headers).forEach(([k, v]) =>
+          res.setHeader(k, v as string),
+        );
+        res.setHeader("X-Cache", "HIT");
+        return res.status(status).send(data);
+      }
+
+      // If MISS, fetch with axios for caching
+      const targetUrl = `${target.replace(/\/$/, "")}/${path}`;
+      const response = await axios.get(targetUrl, {
+        headers: { ...req.headers, host: new URL(target).host },
+        responseType: "text",
+        validateStatus: () => true,
+      });
+
+      if (response.status === 200) {
+        const respToCache = {
+          data: response.data,
+          headers: response.headers,
+          status: response.status,
+        };
+        redis.setex(cacheKey, 60, JSON.stringify(respToCache)).catch(() => {});
+      }
+
+      Object.entries(response.headers).forEach(([k, v]) =>
+        res.setHeader(k, v as string),
+      );
+      res.setHeader("X-Cache", "MISS");
+      return res.status(response.status).send(response.data);
+    } catch (e: any) {
+      console.error("[Cache-Fetch-Error]", e.message);
+    }
+  }
+
+  // Fallback to Streaming Proxy for POST/PUT/DELETE or large streams
+  res.setHeader("X-Cache", "BYPASS");
   proxy.web(req, res, { target });
 });
 
