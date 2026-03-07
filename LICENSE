@@ -1,24 +1,21 @@
-# UniZ Enterprise Academic Software License
+MIT License
 
-**Copyright (c) 2026 UniZ / RGUKT-ONG. All Rights Reserved.**
+Copyright (c) 2026 SreeCharan
 
-## 1. Proprietary Nature
-This software ecosystem, comprising microservices, infrastructure manifests, and documentation, is the proprietary property of UniZ and its affiliated academic institutions (RGUKT-ONG). By accessing this repository, you agree to the terms herein.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-## 2. Permitted Use
-- **Internal Development**: Usage is strictly limited to authorized developers and personnel affiliated with the UniZ project.
-- **Academic Research**: Non-commercial academic research is permitted only with prior written consent from sreecharan-desu.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-## 3. Strict Abuse Policy & Legal Consequences
-This software is officially affiliated with a government-recognized academic institution. Any of the following behaviors will be met with immediate legal action:
-- **Malicious Exploitation**: Any attempt to disrupt services, exploit vulnerabilities, or cause data breaches.
-- **Unauthorized Distribution**: Sharing, selling, or re-hosting this codebase without explicit authorization.
-- **Abusive Behavior**: Any harassment, cyber-attacks, or unethical use of the data patterns.
-
-**LEGAL WARNING**: Unauthorized access or malicious intent directed at this infrastructure is a federal offense under national cyber laws. Given its institutional affiliation, UniZ maintains a zero-tolerance policy. **Any abusive behavior or criminal exploitation will result in prosecution to the fullest extent of the law, which may include heavy fines, permanent academic expulsion, and imprisonment.**
-
-## 4. Liability
-The authors and the institution shall not be held liable for any damages arising from the use or inability to use this software, except where mandated by law.
-
----
-*UniZ Enterprise Infrastructure - Legal Authority: sreecharan-desu*
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
