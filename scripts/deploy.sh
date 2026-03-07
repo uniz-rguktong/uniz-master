@@ -96,6 +96,7 @@ git reset --hard origin/main
     "uniz-user:uniz-user-service:uniz-user-service:user-service"
     "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
     "ornate-core:ornate-core:ornate-core:ornate-core"
+    "ornate:ornate-landing:ornate-landing:ornate-landing"
   )
 
   # ----------------------------------------------------------------------------
