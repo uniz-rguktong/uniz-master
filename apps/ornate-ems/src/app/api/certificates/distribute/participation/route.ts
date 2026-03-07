@@ -177,8 +177,9 @@ export async function POST(request: NextRequest) {
           },
         });
 
-        // Send Email
-        if (reg.user && reg.user.email) {
+        // Send Email — prefer user relation email, fall back to registration email
+        const recipientEmail = reg.user?.email || reg.email;
+        if (recipientEmail) {
           const emailHtml = getParticipationEmailTemplate(
             reg.studentName,
             event.title,
@@ -186,7 +187,7 @@ export async function POST(request: NextRequest) {
             reg.id,
           );
           const emailResult = await sendCertificateEmail(
-            reg.user.email,
+            recipientEmail,
             `Participation Certificate for ${event.title}`,
             emailHtml,
           );
