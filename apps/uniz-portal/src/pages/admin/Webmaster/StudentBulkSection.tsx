@@ -12,6 +12,7 @@ import {
   ADMIN_STUDENT_UPLOAD,
   ADMIN_STUDENT_PROGRESS,
   ADMIN_STUDENT_EXPORT,
+  ADMIN_STUDENT_TEMPLATE,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { FileUploader } from "../../../components/ui/FileUploader";
@@ -114,6 +115,24 @@ export default function StudentBulkSection() {
     }
   };
 
+  const handleDownloadTemplate = async () => {
+    try {
+      const token = localStorage.getItem("admin_token");
+      const res = await fetch(ADMIN_STUDENT_TEMPLATE, {
+        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+      });
+      const blob = await res.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = "student_onboarding_template.xlsx";
+      a.click();
+      toast.success("Template downloaded");
+    } catch (error) {
+      toast.error("Failed to download template");
+    }
+  };
+
   return (
     <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -143,7 +162,7 @@ export default function StudentBulkSection() {
       </div>
 
       {activeTab === "upload" ? (
-        <div className="max-w-4xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="max-w-4xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-4">
           {/* Upload Step */}
           <div className="bg-white p-6 md:p-8 rounded-xl border border-slate-100 shadow-none space-y-6 transition-all">
             <FileUploader
@@ -166,9 +185,14 @@ export default function StudentBulkSection() {
               )}
               {uploadId ? "Processing Records..." : "Initiate Bulk Provisioning"}
             </button>
-
-
           </div>
+
+          <button
+            onClick={handleDownloadTemplate}
+            className="w-full flex items-center justify-center gap-2 py-4 bg-slate-50 text-slate-500 rounded-xl border border-slate-200 border-dashed hover:bg-slate-100 hover:text-blue-600 transition-all font-bold uppercase tracking-widest text-[10px]"
+          >
+            <Download size={14} /> Download Sample Template (XLSX)
+          </button>
         </div>
 
       ) : (
@@ -255,7 +279,7 @@ export default function StudentBulkSection() {
               </div>
             </div>
 
-            <div className="pt-8 space-y-8">
+            <div className="pt-8 space-y-6">
               <button
                 onClick={handleExport}
                 disabled={loading}
@@ -268,6 +292,14 @@ export default function StudentBulkSection() {
                 )}
                 Generate Excel Report
               </button>
+
+              <button
+                onClick={handleDownloadTemplate}
+                className="w-full flex items-center justify-center gap-2 py-4 bg-slate-50/50 text-slate-400 rounded-xl border border-slate-100 border-dashed hover:bg-slate-50 hover:text-blue-600 transition-all font-bold uppercase tracking-widest text-[9px]"
+              >
+                <Download size={14} /> Need a template? Download Sample
+              </button>
+
               <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] opacity-60">
                 Secure export protocol active • All access events timestamped
               </p>
