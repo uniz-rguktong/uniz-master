@@ -365,14 +365,22 @@ export default function Signin({ type }: SigninProps) {
                 className="h-12"
               />
 
-              <div className="flex justify-center py-2">
-                <Turnstile
-                  siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-                  onSuccess={(token) => setCaptchaToken(token)}
-                  onExpire={() => setCaptchaToken(null)}
-                  onError={() => setCaptchaToken(null)}
-                />
-              </div>
+              {import.meta.env.VITE_TURNSTILE_SITE_KEY ? (
+                <div className="flex justify-center py-2">
+                  <Turnstile
+                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                    onSuccess={(token) => setCaptchaToken(token)}
+                    onExpire={() => setCaptchaToken(null)}
+                    onError={() => setCaptchaToken(null)}
+                  />
+                </div>
+              ) : (
+                import.meta.env.DEV && (
+                  <div className="text-center py-2 text-[10px] text-amber-600 font-medium">
+                    ⚠️ Turnstile Disabled (No Site Key)
+                  </div>
+                )
+              )}
 
               <div className="flex items-center justify-end">
                 <button
@@ -389,7 +397,9 @@ export default function Signin({ type }: SigninProps) {
                 size="lg"
                 isLoading={isLoading}
                 type="submit"
-                disabled={!captchaToken}
+                disabled={
+                  !!import.meta.env.VITE_TURNSTILE_SITE_KEY && !captchaToken
+                }
               >
                 Sign In
               </Button>
