@@ -67,9 +67,9 @@ export default function SecuritySection({ username }: { username: string }) {
     return (
         <div className="p-6 space-y-6 animate-in fade-in duration-500 max-w-2xl mx-auto pb-20">
             {/* Header card */}
-            <div className="bg-gradient-to-br from-slate-900 to-[#1e293b] rounded-[24px] px-8 py-6 text-white shadow-xl relative overflow-hidden">
+            <div className="bg-gradient-to-br from-slate-900 to-[#1e293b] rounded-xl px-8 py-6 text-white shadow-none relative overflow-hidden">
                 <div className="relative z-10 space-y-1.5">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 mb-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-xl border border-white/10 mb-2">
                         <ShieldCheck size={12} className="text-emerald-400" />
                         <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400">Security</span>
                     </div>
@@ -85,7 +85,7 @@ export default function SecuritySection({ username }: { username: string }) {
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                 {/* Form */}
-                <div className="md:col-span-3 bg-white rounded-[20px] border border-slate-100 shadow-sm p-6 space-y-5">
+                <div className="md:col-span-3 bg-white rounded-xl border border-slate-100 shadow-none p-6 space-y-5">
                     <PasswordInput
                         label="Current Password"
                         value={oldPw}
@@ -138,7 +138,7 @@ export default function SecuritySection({ username }: { username: string }) {
                     <button
                         onClick={handleSubmit}
                         disabled={loading}
-                        className="w-full py-3 rounded-full bg-slate-900 text-white text-[12px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-60 flex items-center justify-center gap-2 shadow-lg shadow-slate-200"
+                        className="w-full py-3 rounded-xl bg-slate-900 text-white text-[12px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-60 flex items-center justify-center gap-2 shadow-none"
                     >
                         {loading ? <Loader2 size={14} className="animate-spin" /> : <Lock size={14} />}
                         Change Password
@@ -146,7 +146,7 @@ export default function SecuritySection({ username }: { username: string }) {
                 </div>
 
                 {/* Requirements panel */}
-                <div className="md:col-span-2 bg-white rounded-[20px] border border-slate-100 shadow-sm p-6 flex flex-col gap-5">
+                <div className="md:col-span-2 bg-white rounded-xl border border-slate-100 shadow-none p-6 flex flex-col gap-5">
                     <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
                         <ShieldCheck size={13} className="text-blue-500" /> Requirements
                     </h3>
@@ -159,7 +159,7 @@ export default function SecuritySection({ username }: { username: string }) {
                             <li key={text} className="flex items-center gap-2.5">
                                 <div
                                     className={cn(
-                                        "w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors",
+                                        "w-5 h-5 rounded-xl flex items-center justify-center shrink-0 transition-colors",
                                         met ? "bg-emerald-100 text-emerald-600" : "bg-slate-100 text-slate-400"
                                     )}
                                 >
@@ -171,7 +171,7 @@ export default function SecuritySection({ username }: { username: string }) {
                             </li>
                         ))}
                     </ul>
-                    <div className="mt-auto bg-amber-50 rounded-2xl p-4 border border-amber-100 flex gap-3">
+                    <div className="mt-auto bg-amber-50 rounded-xl p-4 border border-amber-100 flex gap-3">
                         <AlertTriangle size={14} className="text-amber-500 shrink-0 mt-0.5" />
                         <p className="text-[11px] text-amber-700 font-medium leading-relaxed">
                             You will be signed out automatically after a successful password change.

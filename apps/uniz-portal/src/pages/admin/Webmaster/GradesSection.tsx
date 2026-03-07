@@ -42,6 +42,7 @@ import {
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../api/apiClient";
+import { FileUploader } from "../../../components/ui/FileUploader";
 
 export default function GradesSection() {
   const [subTab, setSubTab] = useState<"bulk" | "batch" | "manual" | null>(
@@ -305,30 +306,30 @@ export default function GradesSection() {
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-2.5 bg-slate-100/80 p-1.5 rounded-full w-fit border border-slate-200/60 backdrop-blur-sm">
+      <div className="flex flex-wrap gap-2.5 bg-slate-100/80 p-1.5 rounded-xl w-fit border border-slate-200/60 backdrop-blur-sm">
         <button
           onClick={() => setSubTab("bulk")}
-          className={`px-6 py-2.5 rounded-full font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "bulk" ? "bg-white text-blue-700 shadow-sm border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
+          className={`px-6 py-2.5 rounded-xl font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "bulk" ? "bg-white text-blue-700 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
         >
           <Zap size={14} /> Resource Ingestion
         </button>
         <button
           onClick={() => setSubTab("batch")}
-          className={`px-6 py-2.5 rounded-full font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "batch" ? "bg-white text-blue-700 shadow-sm border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
+          className={`px-6 py-2.5 rounded-xl font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "batch" ? "bg-white text-blue-700 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
         >
           <Search size={14} /> Batch Grades
         </button>
         <button
           onClick={() => setSubTab("manual")}
-          className={`px-6 py-2.5 rounded-full font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "manual" ? "bg-white text-blue-700 shadow-sm border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
+          className={`px-6 py-2.5 rounded-xl font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "manual" ? "bg-white text-blue-700 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
         >
           <Plus size={14} /> Manual Add
         </button>
       </div>
 
       {!subTab ? (
-        <div className="p-32 flex flex-col items-center justify-center text-center space-y-6 bg-white rounded-[28px] border border-slate-50 shadow-sm">
-          <div className="w-24 h-24 bg-blue-50/50 rounded-2xl flex items-center justify-center text-blue-200">
+        <div className="p-32 flex flex-col items-center justify-center text-center space-y-6 bg-white rounded-xl border border-slate-50">
+          <div className="w-24 h-24 bg-blue-50/50 rounded-xl flex items-center justify-center text-blue-200">
             <GraduationCap size={48} strokeWidth={1.5} />
           </div>
           <div>
@@ -351,9 +352,9 @@ export default function GradesSection() {
           {subTab === "bulk" && (
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
               {/* Template Section */}
-              <div className="bg-white rounded-[32px] border border-slate-100 p-10 space-y-10 shadow-sm">
+              <div className="bg-white rounded-xl border border-slate-100 p-10 space-y-10">
                 <div className="flex items-center gap-4">
-                  <div className="p-4 bg-emerald-50 text-emerald-600 rounded-[22px] border border-emerald-100 shadow-sm">
+                  <div className="p-4 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100 shadow-none">
                     <FileSpreadsheet size={24} />
                   </div>
                   <div>
@@ -379,7 +380,7 @@ export default function GradesSection() {
                           branch: e.target.value,
                         })
                       }
-                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 appearance-none"
+                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 appearance-none"
                     >
                       <option>CSE</option>
                       <option>ECE</option>
@@ -402,7 +403,7 @@ export default function GradesSection() {
                           year: e.target.value,
                         })
                       }
-                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 appearance-none"
+                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 appearance-none"
                     >
                       <option>E1</option>
                       <option>E2</option>
@@ -422,7 +423,7 @@ export default function GradesSection() {
                           semesterId: e.target.value,
                         })
                       }
-                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 appearance-none"
+                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 appearance-none"
                     >
                       {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                         <option key={s} value={`SEM-${s}`}>
@@ -443,7 +444,7 @@ export default function GradesSection() {
                           subjectCode: e.target.value,
                         })
                       }
-                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 appearance-none"
+                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 appearance-none"
                     >
                       <option value="">All Subjects</option>
                       {templateSubjects.map((s) => (
@@ -467,12 +468,12 @@ export default function GradesSection() {
                           batch: e.target.value,
                         })
                       }
-                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600"
+                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600 shadow-none"
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                <div className="flex items-center gap-4 p-6 bg-emerald-50/50 rounded-xl border border-emerald-100">
                   <div className="p-2 bg-emerald-500 rounded-lg text-white">
                     <ShieldCheck size={16} />
                   </div>
@@ -485,7 +486,7 @@ export default function GradesSection() {
                 <button
                   onClick={handleDownloadTemplate}
                   disabled={loading}
-                  className="w-full bg-slate-900 text-white h-16 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-800 transition-all flex items-center justify-center gap-3 shadow-2xl active:scale-[0.98] disabled:opacity-50"
+                  className="w-full bg-slate-900 text-white h-16 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-slate-800 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50"
                 >
                   {loading ? (
                     <Loader2 className="animate-spin w-5 h-5" />
@@ -497,9 +498,9 @@ export default function GradesSection() {
               </div>
 
               {/* Upload Section */}
-              <div className="bg-white rounded-[32px] border border-slate-100 p-10 space-y-10 shadow-sm">
+              <div className="bg-white rounded-xl border border-slate-100 p-10 space-y-10">
                 <div className="flex items-center gap-4">
-                  <div className="p-4 bg-blue-50 text-blue-600 rounded-[22px] border border-blue-100 shadow-sm">
+                  <div className="p-4 bg-blue-50 text-blue-600 rounded-xl border border-blue-100">
                     <Upload size={24} />
                   </div>
                   <div>
@@ -513,51 +514,11 @@ export default function GradesSection() {
                 </div>
 
                 <div className="space-y-6">
-                  <label className="flex flex-col items-center justify-center w-full h-64 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[32px] cursor-pointer hover:bg-blue-50/30 hover:border-blue-300 transition-all group relative overflow-hidden">
-                    {uploadFile ? (
-                      <div className="flex flex-col items-center justify-center p-6 text-center">
-                        <div className="p-4 bg-white rounded-2xl shadow-xl mb-4 animate-bounce">
-                          <FileSpreadsheet className="w-10 h-10 text-emerald-500" />
-                        </div>
-                        <p className="text-sm font-black text-slate-900 px-6 line-clamp-1">
-                          {uploadFile.name}
-                        </p>
-                        <p className="text-[10px] text-slate-400 font-bold mt-1">
-                          {(uploadFile.size / 1024).toFixed(1)} KB • Ready for
-                          Ingestion
-                        </p>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setUploadFile(null);
-                          }}
-                          className="mt-4 text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline"
-                        >
-                          Remove Asset
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <div className="p-5 bg-white rounded-[24px] shadow-sm mb-4 group-hover:scale-110 transition-transform">
-                          <Upload className="w-8 h-8 text-blue-600" />
-                        </div>
-                        <p className="mb-2 text-sm text-slate-600 font-black">
-                          Drag & Drop Ingestion Asset
-                        </p>
-                        <p className="text-xs text-slate-400 font-bold">
-                          XLSX or CSV Format Only
-                        </p>
-                      </div>
-                    )}
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept=".xlsx,.xls,.csv"
-                      onChange={(e) =>
-                        setUploadFile(e.target.files?.[0] || null)
-                      }
-                    />
-                  </label>
+                  <FileUploader
+                    onFileSelect={setUploadFile}
+                    label="Choose Grade Resource"
+                    description="XLSX or CSV based on the smart template."
+                  />
                 </div>
 
                 <div className="space-y-4">
@@ -569,7 +530,7 @@ export default function GradesSection() {
                       <Zap size={10} /> Live Validation
                     </span>
                   </div>
-                  <div className="p-6 bg-slate-900 rounded-[28px] text-emerald-400 font-mono text-[10px] leading-relaxed shadow-2xl">
+                  <div className="p-6 bg-slate-900 rounded-xl text-emerald-400 font-mono text-[10px] leading-relaxed">
                     <p className="opacity-50"># Protocol Configuration:</p>
                     <p>
                       <span className="text-blue-400">Validate</span>{" "}
@@ -601,7 +562,7 @@ export default function GradesSection() {
                 <button
                   onClick={handleFileUpload}
                   disabled={!uploadFile || uploading}
-                  className="w-full bg-blue-600 text-white h-16 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-3 shadow-xl shadow-blue-100 active:scale-[0.98] disabled:opacity-50 disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
+                  className="w-full bg-blue-600 text-white h-16 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50 disabled:bg-slate-100 disabled:text-slate-400"
                 >
                   {uploading ? (
                     <Loader2 className="animate-spin w-5 h-5" />
@@ -616,7 +577,7 @@ export default function GradesSection() {
 
           {subTab === "batch" && (
             <div className="space-y-8">
-              <div className="bg-white rounded-[28px] border border-slate-100 p-8 shadow-sm flex flex-col md:flex-row items-center gap-6">
+              <div className="bg-white rounded-xl border border-slate-100 p-8 flex flex-col md:flex-row items-center gap-6">
                 <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-6 w-full text-slate-900 font-semibold text-sm">
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
@@ -631,7 +592,7 @@ export default function GradesSection() {
                             branch: e.target.value,
                           })
                         }
-                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
                       >
                         <option>CSE</option>
                         <option>ECE</option>
@@ -660,7 +621,7 @@ export default function GradesSection() {
                             year: e.target.value,
                           })
                         }
-                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
                       >
                         <option>E1</option>
                         <option>E2</option>
@@ -686,7 +647,7 @@ export default function GradesSection() {
                             semesterId: e.target.value,
                           })
                         }
-                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
                       >
                         {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                           <option key={s}>SEM-{s}</option>
@@ -703,7 +664,7 @@ export default function GradesSection() {
                       Target
                     </label>
                     <div
-                      className="flex items-center gap-3 h-[52px] bg-slate-50 border border-slate-100 rounded-2xl px-5 cursor-pointer hover:bg-white hover:border-blue-200 transition-all"
+                      className="flex items-center gap-3 h-[52px] bg-slate-50 border border-slate-100 rounded-xl px-5 cursor-pointer hover:bg-white hover:border-blue-200 transition-all"
                       onClick={() =>
                         setBatchFilters({
                           ...batchFilters,
@@ -727,7 +688,7 @@ export default function GradesSection() {
                 <button
                   onClick={() => fetchBatchGrades()}
                   disabled={loading}
-                  className="h-11 px-8 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2.5"
+                  className="h-11 px-8 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2.5"
                 >
                   {loading ? (
                     <Loader2 className="animate-spin w-4 h-4" />
@@ -790,10 +751,10 @@ export default function GradesSection() {
                           ].map((stat, i) => (
                             <div
                               key={i}
-                              className="bg-white p-7 rounded-[28px] border border-slate-100 flex items-center gap-5 shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all"
+                              className="bg-white p-7 rounded-xl border border-slate-100 flex items-center gap-5 transition-all"
                             >
                               <div
-                                className={`p-4 rounded-2xl ${stat.color} shadow-inner bg-opacity-70`}
+                                className={`p-4 rounded-xl ${stat.color} bg-opacity-70`}
                               >
                                 <stat.icon size={24} />
                               </div>
@@ -809,7 +770,7 @@ export default function GradesSection() {
                           ))}
                         </div>
 
-                        <div className="lg:col-span-2 bg-white rounded-[32px] border border-slate-100 p-10 shadow-sm space-y-10">
+                        <div className="lg:col-span-2 bg-white rounded-xl border border-slate-100 p-10 transition-all space-y-10">
                           <div className="flex justify-between items-start">
                             <div className="space-y-1.5">
                               <h4 className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.25em] leading-none">
@@ -819,7 +780,7 @@ export default function GradesSection() {
                                 Grade Distribution
                               </p>
                             </div>
-                            <div className="p-4 bg-slate-50 rounded-[20px] text-slate-400 border border-slate-100">
+                            <div className="p-4 bg-slate-50 rounded-xl text-slate-400 border border-slate-100">
                               <BarChartIcon size={20} />
                             </div>
                           </div>
@@ -878,7 +839,7 @@ export default function GradesSection() {
                           </div>
                         </div>
 
-                        <div className="bg-white rounded-[32px] border border-slate-100 p-10 shadow-sm space-y-10 flex flex-col">
+                        <div className="bg-white rounded-xl border border-slate-100 p-10 transition-all space-y-10 flex flex-col">
                           <div className="flex justify-between items-start">
                             <div className="space-y-1.5">
                               <h4 className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.25em] leading-none">
@@ -888,7 +849,7 @@ export default function GradesSection() {
                                 Composition Analysis
                               </p>
                             </div>
-                            <div className="p-4 bg-slate-50 rounded-[20px] text-slate-400 border border-slate-100">
+                            <div className="p-4 bg-slate-50 rounded-xl text-slate-400 border border-slate-100">
                               <PieChartIcon size={20} />
                             </div>
                           </div>
@@ -954,7 +915,7 @@ export default function GradesSection() {
                             Detailed Cryptographic Trace
                           </h4>
                         </div>
-                        <div className="bg-white rounded-[3.5rem] border border-slate-100 overflow-hidden shadow-sm">
+                        <div className="bg-white rounded-xl border border-slate-100 overflow-hidden transition-all">
                           <table className="w-full text-left">
                             <thead>
                               <tr className="bg-slate-50 border-b border-slate-100">
@@ -1010,7 +971,7 @@ export default function GradesSection() {
                             <button
                               disabled={page <= 1}
                               onClick={() => setPage((p) => Math.max(1, p - 1))}
-                              className="p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-90"
+                              className="p-3 rounded-xl bg-white border border-slate-100 transition-all hover:bg-slate-50 disabled:opacity-50 active:scale-90"
                             >
                               <Plus
                                 size={20}
@@ -1030,11 +991,10 @@ export default function GradesSection() {
                                     <button
                                       key={p}
                                       onClick={() => setPage(p)}
-                                      className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${
-                                        page === p
-                                          ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100"
-                                          : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
-                                      }`}
+                                      className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${page === p
+                                        ? "bg-blue-600 text-white border-blue-600"
+                                        : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
+                                        }`}
                                     >
                                       {p}
                                     </button>
@@ -1059,7 +1019,7 @@ export default function GradesSection() {
                               onClick={() =>
                                 setPage((p) => Math.min(meta.totalPages, p + 1))
                               }
-                              className="p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:bg-slate-50 disabled:opacity-50 transition-all active:scale-90"
+                              className="p-3 rounded-xl bg-white border border-slate-100 transition-all hover:bg-slate-50 disabled:opacity-50 active:scale-90"
                             >
                               <Plus
                                 size={20}
@@ -1076,9 +1036,9 @@ export default function GradesSection() {
           )}
 
           {subTab === "manual" && (
-            <div className="bg-blue-50/20 rounded-3xl border border-blue-100/50 p-8 space-y-8 shadow-sm">
+            <div className="bg-blue-50/20 rounded-xl border border-blue-100/50 p-8 space-y-8 transition-all">
               <div className="flex items-center gap-4">
-                <div className="p-3.5 bg-white text-blue-600 rounded-[20px] shadow-sm border border-blue-50">
+                <div className="p-3.5 bg-white text-blue-600 rounded-xl border border-blue-50">
                   <Plus size={22} />
                 </div>
                 <div>
@@ -1108,7 +1068,7 @@ export default function GradesSection() {
                             studentId: e.target.value.toUpperCase(),
                           })
                         }
-                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
+                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
                         placeholder="O210329"
                       />
                     </div>
@@ -1122,7 +1082,7 @@ export default function GradesSection() {
                       <select
                         value={manualDept}
                         onChange={(e) => setManualDept(e.target.value)}
-                        className="w-full pl-5 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                        className="w-full pl-5 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
                       >
                         {[
                           "CSE",
@@ -1156,7 +1116,7 @@ export default function GradesSection() {
                       <select
                         value={manualYear}
                         onChange={(e) => setManualYear(e.target.value)}
-                        className="w-full pl-5 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                        className="w-full pl-5 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
                       >
                         {["E1", "E2", "E3", "E4"].map((y) => (
                           <option key={y} value={y}>
@@ -1191,7 +1151,7 @@ export default function GradesSection() {
                             subjectId: e.target.value,
                           })
                         }
-                        className="w-full pl-12 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none disabled:opacity-50"
+                        className="w-full pl-12 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none disabled:opacity-50"
                         disabled={manualSubjectsLoading}
                       >
                         <option value="">
@@ -1238,7 +1198,7 @@ export default function GradesSection() {
                             semesterId: e.target.value,
                           })
                         }
-                        className="w-full pl-12 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                        className="w-full pl-12 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
                       >
                         {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                           <option key={s}>SEM-{s}</option>
@@ -1266,7 +1226,7 @@ export default function GradesSection() {
                             grade: e.target.value.toUpperCase(),
                           })
                         }
-                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
+                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
                         placeholder="EX, A, B..."
                       />
                     </div>
@@ -1276,7 +1236,7 @@ export default function GradesSection() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-blue-600 text-white py-5 rounded-[22px] font-semibold uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-3 shadow-xl shadow-blue-100 active:scale-[0.98]"
+                  className="w-full bg-blue-600 text-white py-5 rounded-xl font-semibold uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
                 >
                   {loading ? (
                     <Loader2 className="animate-spin w-5 h-5" />
