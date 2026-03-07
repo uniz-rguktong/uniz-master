@@ -18,7 +18,6 @@ import {
   CheckCircle2,
   ChevronDown,
   Layers,
-  FileSpreadsheet,
   Eye,
   BookOpen,
   Calendar,
@@ -37,6 +36,7 @@ import {
   BULK_DELETE_FACULTY,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
+import { FileUploader } from "../../../components/ui/FileUploader";
 
 const ROLES = [
   "teacher",
@@ -500,7 +500,7 @@ export default function FacultyManagement({
 
           {mode === "single" && (
             <>
-              <div className="flex bg-slate-100/80 p-1 rounded-full border border-slate-200/50 shadow-inner">
+              <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/50 backdrop-blur-sm shadow-none">
                 <button className="p-2.5 text-slate-500 hover:text-blue-600 transition-all">
                   <Filter size={18} />
                 </button>
@@ -521,12 +521,12 @@ export default function FacultyManagement({
                   placeholder="System Search..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-10 pr-5 h-11 bg-white border border-slate-200 rounded-full text-[11px] font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[220px] shadow-sm"
+                  className="pl-10 pr-5 h-11 bg-white border border-slate-200 rounded-xl text-[11px] font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[220px]"
                 />
               </div>
               <button
                 onClick={openAdd}
-                className="h-11 px-6 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center gap-2.5"
+                className="h-11 px-6 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center gap-2.5"
               >
                 <Plus size={16} /> Add Staff
               </button>
@@ -547,7 +547,7 @@ export default function FacultyManagement({
                   setBulkTab(t);
                   setBulkResult(null);
                 }}
-                className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${bulkTab === t ? (t === "delete" ? "bg-red-600 text-white shadow-lg shadow-red-100" : "bg-slate-900 text-white shadow-lg") : "bg-white border border-slate-200 text-slate-500 hover:border-slate-400"}`}
+                className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${bulkTab === t ? (t === "delete" ? "bg-red-600 text-white" : "bg-slate-900 text-white") : "bg-white border border-slate-200 text-slate-500 hover:border-slate-400"}`}
               >
                 {t === "add"
                   ? "📥 Bulk Add"
@@ -560,7 +560,7 @@ export default function FacultyManagement({
 
           {/* ── Bulk Add ── */}
           {bulkTab === "add" && (
-            <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm p-8 space-y-6">
+            <div className="bg-white rounded-xl border border-slate-100 p-8 space-y-6">
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-xl font-bold text-slate-900 mb-1">
@@ -583,51 +583,30 @@ export default function FacultyManagement({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-2">
-                    Upload CSV/Excel File
-                  </label>
-                  <label className="flex flex-col items-center justify-center w-full h-48 bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl cursor-pointer hover:bg-slate-100/50 hover:border-blue-400 transition-all group">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <div className="p-4 bg-white rounded-2xl shadow-sm mb-3 group-hover:scale-110 transition-transform">
-                        <FileSpreadsheet className="w-8 h-8 text-blue-600" />
-                      </div>
-                      <p className="mb-2 text-sm text-slate-600 font-bold">
-                        Click to upload or drag and drop
-                      </p>
-                      <p className="text-xs text-slate-400">
-                        CSV or Excel files only
-                      </p>
-                    </div>
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept=".csv,.xlsx,.xls"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          Papa.parse(file, {
-                            header: true,
-                            skipEmptyLines: true,
-                            complete: (results) => {
-                              if (results.data && results.data.length > 0) {
-                                // Convert back to CSV string for the textarea preview
-                                const csv = Papa.unparse(results.data);
-                                setCsvText(csv);
-                                toast.success(
-                                  `Successfully parsed ${results.data.length} rows`,
-                                );
-                              }
-                            },
-                            error: (err) => {
-                              toast.error(
-                                "Failed to parse file: " + err.message,
-                              );
-                            },
-                          });
-                        }
-                      }}
-                    />
-                  </label>
+                  <FileUploader
+                    onFileSelect={(file: File | null) => {
+                      if (file) {
+                        Papa.parse(file, {
+                          header: true,
+                          skipEmptyLines: true,
+                          complete: (results) => {
+                            if (results.data && results.data.length > 0) {
+                              const csv = Papa.unparse(results.data);
+                              setCsvText(csv);
+                              toast.success(`Successfully parsed ${results.data.length} rows`);
+                            }
+                          },
+                          error: (err) => {
+                            toast.error("Failed to parse file: " + err.message);
+                          },
+                        });
+                      } else {
+                        setCsvText("");
+                      }
+                    }}
+                    label="Upload CSV/Excel Asset"
+                    description="XLSX or CSV. Use the template for correct headers."
+                  />
                 </div>
 
                 <div className="space-y-4">
@@ -638,7 +617,7 @@ export default function FacultyManagement({
                     value={csvText}
                     onChange={(e) => setCsvText(e.target.value)}
                     rows={8}
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-mono text-xs outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all resize-none"
+                    className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-xl font-mono text-xs outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all resize-none shadow-none"
                     placeholder={`username,name,email,department,designation,role\nktejokiran,K Tejo Kiran,ktejokiran@rguktong.ac.in,CSE,Lecturer,teacher`}
                   />
                 </div>
@@ -647,7 +626,7 @@ export default function FacultyManagement({
               <button
                 onClick={handleBulkAdd}
                 disabled={bulkLoading || !csvText.trim()}
-                className="w-full h-12 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.99]"
+                className="w-full h-12 bg-blue-600 text-white rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-blue-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.99]"
               >
                 {bulkLoading ? (
                   <Loader2 className="animate-spin w-4 h-4" />
@@ -662,7 +641,7 @@ export default function FacultyManagement({
           {/* ── Bulk Update ── */}
           {bulkTab === "update" && (
             <div className="space-y-4">
-              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-center gap-3">
+              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-center gap-3">
                 <CheckSquare size={18} className="text-blue-600 shrink-0" />
                 <p className="text-sm text-blue-700 font-semibold">
                   Select faculty from the table below, then pick fields to
@@ -672,7 +651,7 @@ export default function FacultyManagement({
                   </span>
                 </p>
               </div>
-              <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm p-8 space-y-6">
+              <div className="bg-white rounded-xl border border-slate-100 p-8 space-y-6">
                 <h3 className="text-xl font-bold text-slate-900">
                   Fields to Apply to Selected
                 </h3>
@@ -690,7 +669,7 @@ export default function FacultyManagement({
                             role: e.target.value,
                           }))
                         }
-                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 appearance-none cursor-pointer"
+                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 appearance-none cursor-pointer"
                       >
                         <option value="">— No change —</option>
                         {ROLES.map((r) => (
@@ -718,7 +697,7 @@ export default function FacultyManagement({
                             department: e.target.value,
                           }))
                         }
-                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 appearance-none cursor-pointer"
+                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 appearance-none cursor-pointer"
                       >
                         <option value="">— No change —</option>
                         {DEPARTMENTS.map((d) => (
@@ -746,7 +725,7 @@ export default function FacultyManagement({
                         }))
                       }
                       placeholder="e.g. Senior Lecturer"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -762,7 +741,7 @@ export default function FacultyManagement({
                         }))
                       }
                       placeholder="Apply same name to all"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -778,7 +757,7 @@ export default function FacultyManagement({
                         }))
                       }
                       placeholder="Apply same contact to all"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -794,14 +773,14 @@ export default function FacultyManagement({
                         }))
                       }
                       placeholder="Apply same image to all"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
                     />
                   </div>
                 </div>
                 <button
                   onClick={handleBulkUpdate}
                   disabled={bulkLoading || !selectedUsernames.size}
-                  className="w-full h-12 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-40 active:scale-[0.99]"
+                  className="w-full h-12 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-40 active:scale-[0.99]"
                 >
                   {bulkLoading ? (
                     <Loader2 className="animate-spin w-4 h-4" />
@@ -817,7 +796,7 @@ export default function FacultyManagement({
           {/* ── Bulk Delete ── */}
           {bulkTab === "delete" && (
             <div className="space-y-4">
-              <div className="bg-red-50 border border-red-100 rounded-2xl p-4 flex items-center gap-3">
+              <div className="bg-red-50 border border-red-100 rounded-xl p-4 flex items-center gap-3">
                 <AlertTriangle size={18} className="text-red-500 shrink-0" />
                 <p className="text-sm text-red-700 font-semibold">
                   Select rows below then delete. This is{" "}
@@ -836,7 +815,7 @@ export default function FacultyManagement({
                   setShowDeleteConfirm(true);
                 }}
                 disabled={bulkLoading || !selectedUsernames.size}
-                className="w-full h-12 bg-red-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-red-700 transition-all flex items-center justify-center gap-2 disabled:opacity-40 shadow-lg shadow-red-100 active:scale-[0.99]"
+                className="w-full h-12 bg-red-600 text-white rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-red-700 transition-all flex items-center justify-center gap-2 disabled:opacity-40 shadow-none active:scale-[0.99]"
               >
                 {bulkLoading ? (
                   <Loader2 className="animate-spin w-4 h-4" />
@@ -851,8 +830,8 @@ export default function FacultyManagement({
               {/* Confirm Dialog */}
               {showDeleteConfirm && (
                 <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
-                  <div className="bg-white rounded-[24px] p-8 max-w-sm w-full shadow-2xl border border-red-100 mx-4">
-                    <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mb-5">
+                  <div className="bg-white rounded-xl p-8 max-w-sm w-full shadow-none border border-red-100 mx-4">
+                    <div className="w-14 h-14 bg-red-50 rounded-xl flex items-center justify-center mb-5">
                       <AlertTriangle size={28} className="text-red-500" />
                     </div>
                     <h3 className="text-xl font-black text-slate-900 mb-2">
@@ -895,7 +874,7 @@ export default function FacultyManagement({
 
           {/* Result summary */}
           {bulkResult && (
-            <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm p-6">
+            <div className="bg-white rounded-xl border border-slate-100 shadow-none p-6">
               <div className="flex items-center gap-2 mb-4">
                 <CheckCircle2 size={18} className="text-emerald-500" />
                 <h4 className="font-bold text-slate-900">Operation Result</h4>
@@ -931,31 +910,31 @@ export default function FacultyManagement({
               {bulkResult.results?.filter(
                 (r: any) => r.status === "error" || r.reason,
               ).length > 0 && (
-                <div className="max-h-36 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-1">
-                  {bulkResult.results
-                    .filter(
-                      (r: any) =>
-                        r.status !== "created" && r.status !== "updated",
-                    )
-                    .map((r: any, i: number) => (
-                      <p key={i} className="text-xs font-mono text-slate-600">
-                        <span
-                          className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
-                        >
-                          [{r.status}]
-                        </span>{" "}
-                        {r.username} {r.reason ? `— ${r.reason}` : ""}
-                      </p>
-                    ))}
-                </div>
-              )}
+                  <div className="max-h-36 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-1">
+                    {bulkResult.results
+                      .filter(
+                        (r: any) =>
+                          r.status !== "created" && r.status !== "updated",
+                      )
+                      .map((r: any, i: number) => (
+                        <p key={i} className="text-xs font-mono text-slate-600">
+                          <span
+                            className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
+                          >
+                            [{r.status}]
+                          </span>{" "}
+                          {r.username} {r.reason ? `— ${r.reason}` : ""}
+                        </p>
+                      ))}
+                  </div>
+                )}
             </div>
           )}
         </div>
       )}
 
       {/* ─── TABLE (shown in both modes) ─── */}
-      <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-100 shadow-none overflow-hidden">
         {meta.totalPages > 1 && (
           <div className="flex items-center justify-between px-10 py-4 bg-slate-50/30 border-b border-slate-100">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
@@ -965,14 +944,14 @@ export default function FacultyManagement({
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 disabled:opacity-30 hover:bg-slate-50 text-[9px] font-black uppercase tracking-widest shadow-sm"
+                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 disabled:opacity-30 hover:bg-slate-50 text-[9px] font-black uppercase tracking-widest shadow-none"
               >
                 Prev
               </button>
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 disabled:opacity-30 hover:bg-slate-50 text-[9px] font-black uppercase tracking-widest shadow-sm"
+                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 disabled:opacity-30 hover:bg-slate-50 text-[9px] font-black uppercase tracking-widest shadow-none"
               >
                 Next
               </button>
@@ -991,7 +970,7 @@ export default function FacultyManagement({
                       className="text-slate-400 hover:text-slate-700 transition-colors"
                     >
                       {selectedUsernames.size === faculty.length &&
-                      faculty.length > 0 ? (
+                        faculty.length > 0 ? (
                         <CheckSquare size={18} className="text-blue-600" />
                       ) : (
                         <Square size={18} />
@@ -1058,7 +1037,7 @@ export default function FacultyManagement({
                       <td className="px-10 py-6">
                         <div className="flex items-center gap-4">
                           <div
-                            className={`w-11 h-11 rounded-full text-white flex items-center justify-center font-bold text-sm shadow-lg border-2 border-white ring-1 ring-slate-100 overflow-hidden ${isSelected ? "bg-blue-600" : "bg-slate-900"}`}
+                            className={`w-11 h-11 rounded-full text-white flex items-center justify-center font-bold text-sm shadow-none border-2 border-white ring-1 ring-slate-100 overflow-hidden ${isSelected ? "bg-blue-600" : "bg-slate-900"}`}
                           >
                             {member.ProfileUrl ? (
                               <img
@@ -1117,14 +1096,14 @@ export default function FacultyManagement({
                                 setSelectedFaculty(member);
                                 setShowViewModal(true);
                               }}
-                              className="p-2.5 bg-slate-100 text-slate-600 rounded-full hover:bg-blue-600 hover:text-white transition-all active:scale-95 shadow-sm"
+                              className="p-2.5 bg-slate-100 text-slate-600 rounded-full hover:bg-blue-600 hover:text-white transition-all active:scale-95 shadow-none"
                               title="View Details"
                             >
                               <Eye size={16} />
                             </button>
                             <button
                               onClick={() => openEdit(member)}
-                              className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-600 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-slate-200 active:scale-95 transition-all shadow-sm"
+                              className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-600 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-slate-200 active:scale-95 transition-all shadow-none"
                             >
                               Modify
                             </button>
@@ -1135,7 +1114,7 @@ export default function FacultyManagement({
                                   member.is_suspended,
                                 )
                               }
-                              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-lg ${member.is_suspended ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-100" : "bg-slate-900 hover:bg-slate-800 text-white shadow-slate-200"}`}
+                              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-none ${member.is_suspended ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-none" : "bg-slate-900 hover:bg-slate-800 text-white shadow-none"}`}
                             >
                               {member.is_suspended ? "Reinstate" : "Suspend"}
                             </button>
@@ -1159,7 +1138,7 @@ export default function FacultyManagement({
                     className="p-24 text-center"
                   >
                     <div className="flex flex-col items-center gap-5">
-                      <div className="p-6 bg-slate-50 rounded-full border border-slate-100 shadow-inner">
+                      <div className="p-6 bg-slate-50 rounded-full border border-slate-100 shadow-none">
                         <Users size={40} className="text-slate-300" />
                       </div>
                       <p className="font-semibold text-slate-400 italic text-sm">
@@ -1182,7 +1161,7 @@ export default function FacultyManagement({
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 hover:bg-slate-50 shadow-sm"
+                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 hover:bg-slate-50 shadow-none"
               >
                 Previous
               </button>
@@ -1191,7 +1170,7 @@ export default function FacultyManagement({
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold transition-all ${page === i + 1 ? "bg-blue-600 text-white shadow-lg shadow-blue-100" : "bg-white border border-slate-200 text-slate-400 hover:border-blue-400 hover:text-blue-500"}`}
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-bold transition-all ${page === i + 1 ? "bg-blue-600 text-white shadow-none" : "bg-white border border-slate-200 text-slate-400 hover:border-blue-400 hover:text-blue-500"}`}
                   >
                     {i + 1}
                   </button>
@@ -1200,7 +1179,7 @@ export default function FacultyManagement({
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 hover:bg-slate-50 shadow-sm"
+                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 hover:bg-slate-50 shadow-none"
               >
                 Next
               </button>
@@ -1212,7 +1191,7 @@ export default function FacultyManagement({
       {/* ─── Single Add/Edit Modal ─── */}
       {showModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-lg rounded-[28px] p-10 shadow-2xl relative animate-in zoom-in-95 duration-300 border border-slate-100">
+          <div className="bg-white w-full max-w-lg rounded-xl p-10 shadow-none relative animate-in zoom-in-95 duration-300 border border-slate-100">
             <button
               onClick={() => setShowModal(false)}
               className="absolute top-8 right-8 p-2 hover:bg-slate-50 rounded-full text-slate-400"
@@ -1231,7 +1210,7 @@ export default function FacultyManagement({
               {/* Profile Picture Upload Section */}
               <div className="flex flex-col items-center gap-4 py-4 border-b border-slate-50 mb-4">
                 <div className="relative group">
-                  <div className="w-24 h-24 rounded-3xl bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden relative shadow-inner">
+                  <div className="w-24 h-24 rounded-full bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden relative shadow-none">
                     {formData.profileUrl ? (
                       <img
                         src={formData.profileUrl}
@@ -1255,7 +1234,7 @@ export default function FacultyManagement({
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all active:scale-90 border-2 border-white"
+                    className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-none hover:bg-blue-700 transition-all active:scale-90 border-2 border-white"
                   >
                     <Camera size={14} />
                   </button>
@@ -1292,7 +1271,7 @@ export default function FacultyManagement({
                         username: e.target.value.toLowerCase(),
                       })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-sm disabled:opacity-50"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-sm disabled:opacity-50"
                     placeholder="e.g. jdoe"
                   />
                 </div>
@@ -1306,7 +1285,7 @@ export default function FacultyManagement({
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                     placeholder="Prof. Surname"
                   />
                 </div>
@@ -1322,7 +1301,7 @@ export default function FacultyManagement({
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                   placeholder="faculty@rguktong.ac.in"
                 />
               </div>
@@ -1337,7 +1316,7 @@ export default function FacultyManagement({
                       onChange={(e) =>
                         setFormData({ ...formData, department: e.target.value })
                       }
-                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl font-bold outline-none"
+                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-xl font-bold outline-none"
                     >
                       {DEPARTMENTS.map((d) => (
                         <option key={d} value={d}>
@@ -1356,7 +1335,7 @@ export default function FacultyManagement({
                     onChange={(e) =>
                       setFormData({ ...formData, role: e.target.value })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold cursor-pointer"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold cursor-pointer"
                   >
                     {ROLES.map((r) => (
                       <option key={r} value={r}>
@@ -1376,7 +1355,7 @@ export default function FacultyManagement({
                   onChange={(e) =>
                     setFormData({ ...formData, designation: e.target.value })
                   }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
                   placeholder="e.g. HOD, Lecturer"
                 />
               </div>
@@ -1384,14 +1363,14 @@ export default function FacultyManagement({
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs border border-slate-200 text-slate-400 hover:bg-slate-50 transition-all active:scale-95"
+                  className="flex-1 px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs border border-slate-200 text-slate-400 hover:bg-slate-50 transition-all active:scale-95"
                 >
                   Cancel
                 </button>
                 <button
                   disabled={isSubmitting}
                   type="submit"
-                  className="flex-[2] bg-blue-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+                  className="flex-[2] bg-blue-600 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-none flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <Loader2 className="animate-spin w-4 h-4" />
@@ -1409,7 +1388,7 @@ export default function FacultyManagement({
       {/* ─── Bio View Modal ─── */}
       {showViewModal && selectedFaculty && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-2xl rounded-[32px] overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-300 border border-white/20">
+          <div className="bg-white w-full max-w-2xl rounded-xl overflow-hidden shadow-none relative animate-in zoom-in-95 duration-300 border border-white/20">
             {/* Modal Header/Profile Panel */}
             <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-10 text-white relative">
               <button
@@ -1420,7 +1399,7 @@ export default function FacultyManagement({
               </button>
 
               <div className="flex items-center gap-6">
-                <div className="w-24 h-24 rounded-3xl bg-white/10 border-4 border-white/10 overflow-hidden shadow-2xl shrink-0">
+                <div className="w-24 h-24 rounded-xl bg-white/10 border-4 border-white/10 overflow-hidden shadow-none shrink-0">
                   {selectedFaculty.ProfileUrl ? (
                     <img
                       src={selectedFaculty.ProfileUrl}
@@ -1480,7 +1459,7 @@ export default function FacultyManagement({
                 </div>
 
                 {selectedFaculty.Bio &&
-                Object.keys(selectedFaculty.Bio).length > 0 ? (
+                  Object.keys(selectedFaculty.Bio).length > 0 ? (
                   <div className="grid grid-cols-1 gap-6">
                     {Object.entries(selectedFaculty.Bio).map(
                       ([key, val]: any) => {
@@ -1489,7 +1468,7 @@ export default function FacultyManagement({
                         return (
                           <div
                             key={key}
-                            className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm"
+                            className="bg-white p-6 rounded-xl border border-slate-100 shadow-none"
                           >
                             <label className="text-[10px] font-black uppercase tracking-widest text-blue-600 block mb-3">
                               {key.replace(/_/g, " ")}
@@ -1517,7 +1496,7 @@ export default function FacultyManagement({
                     )}
                   </div>
                 ) : (
-                  <div className="text-center py-12 bg-white rounded-3xl border border-slate-100 border-dashed">
+                  <div className="text-center py-12 bg-white rounded-xl border border-slate-100 border-dashed">
                     <BookOpen
                       size={40}
                       className="mx-auto text-slate-200 mb-4"
@@ -1534,7 +1513,7 @@ export default function FacultyManagement({
             <div className="p-8 bg-white border-t border-slate-100 flex justify-end gap-3">
               <button
                 onClick={() => setShowViewModal(false)}
-                className="px-8 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg active:scale-95"
+                className="px-8 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-none active:scale-95"
               >
                 Close Profile
               </button>

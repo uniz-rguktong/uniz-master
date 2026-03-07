@@ -98,13 +98,13 @@ export default function PushNotificationSection() {
               placeholder="Subscriber Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-5 h-11 bg-white border border-slate-200 rounded-full text-[11px] font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[240px] shadow-sm"
+              className="pl-10 pr-5 h-11 bg-white border border-slate-200 rounded-xl text-[11px] font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[240px]"
             />
           </div>
 
           <button
             onClick={() => setShowSendModal(true)}
-            className="h-11 px-6 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2.5"
+            className="h-11 px-6 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2.5"
           >
             <Zap size={16} className="text-amber-300" />
             Send Broadcast
@@ -113,7 +113,7 @@ export default function PushNotificationSection() {
       </div>
 
       {/* Content Sections */}
-      <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden text-slate-900">
+      <div className="bg-white rounded-xl border border-slate-100 overflow-hidden text-slate-900 shadow-none">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -152,7 +152,7 @@ export default function PushNotificationSection() {
                   >
                     <td className="px-10 py-6">
                       <div className="flex items-center gap-4">
-                        <div className="w-11 h-11 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-200 border-2 border-white ring-1 ring-slate-100 uppercase">
+                        <div className="w-11 h-11 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm border-2 border-white ring-1 ring-slate-100 uppercase">
                           {sub.username?.[0] || "U"}
                         </div>
                         <p className="font-semibold text-slate-900 tracking-tight leading-none group-hover:text-blue-600 transition-colors">
@@ -169,7 +169,7 @@ export default function PushNotificationSection() {
                       </p>
                     </td>
                     <td className="px-10 py-6">
-                      <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 w-fit">
+                      <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-100 w-fit">
                         <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span className="text-[9px] font-bold uppercase tracking-widest">
                           Active
@@ -196,7 +196,7 @@ export default function PushNotificationSection() {
                 <tr>
                   <td colSpan={4} className="p-24 text-center">
                     <div className="flex flex-col items-center gap-5">
-                      <div className="p-6 bg-slate-50 rounded-full border border-slate-100 shadow-inner text-slate-300">
+                      <div className="p-6 bg-slate-50 rounded-xl border border-slate-100 text-slate-300">
                         <Users size={40} />
                       </div>
                       <p className="font-semibold text-slate-400 italic text-sm tracking-tight">
@@ -224,7 +224,7 @@ export default function PushNotificationSection() {
               >
                 Prev
               </button>
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-900 text-white shadow-lg text-[10px] font-bold">
+              <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-slate-900 text-white text-[10px] font-bold">
                 {page}
               </div>
               <button
@@ -245,9 +245,9 @@ export default function PushNotificationSection() {
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
             onClick={() => setShowSendModal(false)}
           />
-          <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
+          <div className="bg-white w-full max-w-xl rounded-xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
             <div className="bg-blue-600 p-8 text-white relative flex items-center gap-5">
-              <div className="p-3 bg-white/20 rounded-2xl">
+              <div className="p-3 bg-white/20 rounded-xl">
                 <Send size={26} />
               </div>
               <div>
@@ -278,7 +278,7 @@ export default function PushNotificationSection() {
                     onChange={(e) =>
                       setBroadcast({ ...broadcast, target: e.target.value })
                     }
-                    className="w-full bg-slate-50 border border-slate-100 px-5 py-3.5 rounded-2xl font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all cursor-pointer"
+                    className="w-full bg-slate-50 border border-slate-100 px-5 py-3.5 rounded-xl font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all cursor-pointer"
                   >
                     <option value="all">
                       All (Students + Faculty + Deans)
@@ -309,7 +309,7 @@ export default function PushNotificationSection() {
                         } as any)
                       }
                       placeholder="e.g. O210193"
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
                     />
                   </div>
                 )}
@@ -329,7 +329,7 @@ export default function PushNotificationSection() {
                         } as any)
                       }
                       placeholder="e.g. o21  (2021 batch)"
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
                     />
                   </div>
                 )}
@@ -346,7 +346,7 @@ export default function PushNotificationSection() {
                           year: e.target.value,
                         } as any)
                       }
-                      className="w-full bg-slate-50 border border-slate-100 px-5 py-3.5 rounded-2xl font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all cursor-pointer"
+                      className="w-full bg-slate-50 border border-slate-100 px-5 py-3.5 rounded-xl font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all cursor-pointer"
                     >
                       {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
                         <option key={y} value={y}>
@@ -370,7 +370,7 @@ export default function PushNotificationSection() {
                       setBroadcast({ ...broadcast, title: e.target.value })
                     }
                     placeholder="e.g. Campus Holiday Tomorrow"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
                   />
                 </div>
 
@@ -387,7 +387,7 @@ export default function PushNotificationSection() {
                       setBroadcast({ ...broadcast, body: e.target.value })
                     }
                     placeholder="Enter the alert content..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:border-slate-900 outline-none transition-all font-bold text-slate-900 resize-none"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:border-slate-900 outline-none transition-all font-bold text-slate-900 resize-none"
                   />
                 </div>
 
@@ -403,7 +403,7 @@ export default function PushNotificationSection() {
                       setBroadcast({ ...broadcast, image: e.target.value })
                     }
                     placeholder="https://images.unsplash.com/..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:border-slate-900 outline-none transition-all font-bold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:border-slate-900 outline-none transition-all font-bold text-slate-900"
                   />
                 </div>
               </div>
