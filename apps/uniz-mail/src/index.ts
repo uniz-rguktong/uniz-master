@@ -34,6 +34,10 @@ app.use(attributionMiddleware);
 // 2. ROUTING & GATEWAYS
 // ------------------------------------------------------------------------------
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", service: "uniz-mail-service" });
+});
+
 app.use("/", emailRoutes);
 
 // ------------------------------------------------------------------------------
