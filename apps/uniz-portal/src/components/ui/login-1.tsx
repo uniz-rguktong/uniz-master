@@ -41,7 +41,7 @@ export default function LoginScreen({
                 {/* Dynamic Image Overlay */}
                 <div className="absolute inset-0 z-0 scale-100">
                     <img
-                        src="/assets/signIn.png"
+                        src="https://res.cloudinary.com/diipfzmyj/image/upload/v1772885809/signIn_ojzi3w.png"
                         alt="UNIZ Login"
                         className="w-full h-full object-cover"
                     />

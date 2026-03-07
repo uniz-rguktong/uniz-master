@@ -208,14 +208,14 @@ export default function UpdatesSection() {
           <button
             onClick={fetchUpdates}
             disabled={loading}
-            className="w-11 h-11 flex items-center justify-center bg-slate-100/80 border border-slate-200/50 rounded-full text-slate-400 hover:text-blue-600 transition-all active:scale-95 shadow-inner"
+            className="w-11 h-11 flex items-center justify-center bg-slate-100/80 border border-slate-200/50 rounded-xl text-slate-400 hover:text-blue-600 transition-all active:scale-95"
             title="Refresh Stream"
           >
             <Loader2 size={16} className={loading ? "animate-spin" : ""} />
           </button>
           <button
             onClick={() => setShowAddModal(true)}
-            className="h-11 px-6 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2.5"
+            className="h-11 px-6 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2.5"
           >
             <Plus size={16} /> New Update
           </button>
@@ -223,7 +223,7 @@ export default function UpdatesSection() {
       </div>
 
       {/* Content Sections */}
-      <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden text-slate-900">
+      <div className="bg-white rounded-xl border border-slate-100 overflow-hidden text-slate-900 shadow-none">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -266,7 +266,7 @@ export default function UpdatesSection() {
                     <td className="px-10 py-6">
                       <div className="flex items-center gap-4">
                         <div
-                          className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-200 border-2 border-white ring-1 ring-slate-100 ${update.isVisible ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-400"}`}
+                          className={`w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm border-2 border-white ring-1 ring-slate-100 ${update.isVisible ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-400"}`}
                         >
                           <Bell size={18} />
                         </div>
@@ -303,14 +303,14 @@ export default function UpdatesSection() {
                     </td>
                     <td className="px-10 py-6">
                       {update.isVisible ? (
-                        <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 w-fit">
+                        <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-100 w-fit">
                           <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
                           <span className="text-[9px] font-bold uppercase tracking-widest">
                             Live
                           </span>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1.5 text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100 w-fit">
+                        <div className="flex items-center gap-1.5 text-slate-400 bg-slate-50 px-3 py-1 rounded-xl border border-slate-100 w-fit">
                           <span className="text-[9px] font-bold uppercase tracking-widest">
                             Draft
                           </span>
@@ -322,13 +322,13 @@ export default function UpdatesSection() {
                         <p className="text-sm font-semibold tracking-tight text-slate-700">
                           {update.createdAt
                             ? new Date(update.createdAt).toLocaleDateString(
-                                "en-GB",
-                                {
-                                  day: "2-digit",
-                                  month: "short",
-                                  year: "numeric",
-                                },
-                              )
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )
                             : "Today"}
                         </p>
                         <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
@@ -340,14 +340,14 @@ export default function UpdatesSection() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleEditClick(update)}
-                          className="p-3 bg-slate-50 text-slate-400 rounded-full hover:bg-blue-50 hover:text-blue-600 border border-slate-100 transition-all active:scale-95"
+                          className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-blue-50 hover:text-blue-600 border border-slate-100 transition-all active:scale-95 shadow-none"
                         >
                           <Edit3 size={14} />
                         </button>
                         <button
                           onClick={() => deleteUpdate(update._id || update.id)}
                           disabled={actionLoading === (update._id || update.id)}
-                          className="p-3 bg-slate-50 text-slate-400 rounded-full hover:bg-red-50 hover:text-red-600 border border-slate-100 transition-all active:scale-95"
+                          className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-red-50 hover:text-red-600 border border-slate-100 transition-all active:scale-95 shadow-none"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -359,7 +359,7 @@ export default function UpdatesSection() {
                 <tr>
                   <td colSpan={5} className="p-24 text-center">
                     <div className="flex flex-col items-center gap-5">
-                      <div className="p-6 bg-slate-50 rounded-full border border-slate-100 shadow-inner text-slate-300">
+                      <div className="p-6 bg-slate-50 rounded-xl border border-slate-100 text-slate-300">
                         <Bell size={40} />
                       </div>
                       <p className="font-semibold text-slate-400 italic text-sm tracking-tight">
@@ -367,7 +367,7 @@ export default function UpdatesSection() {
                       </p>
                       <button
                         onClick={() => setShowAddModal(true)}
-                        className="h-10 px-6 bg-slate-900 text-white rounded-full font-bold uppercase tracking-widest text-[9px] shadow-lg shadow-slate-100 hover:bg-slate-800 active:scale-95 transition-all"
+                        className="h-10 px-6 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-widest text-[9px] hover:bg-slate-800 active:scale-95 transition-all"
                       >
                         Create First Update
                       </button>
@@ -385,7 +385,7 @@ export default function UpdatesSection() {
             Broadcast Stream Monitor
           </p>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-xl">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
               <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">
                 CMS Synchronized
@@ -411,11 +411,11 @@ export default function UpdatesSection() {
               });
             }}
           />
-          <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
+          <div className="bg-white w-full max-w-xl rounded-xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
             <div
               className={`${editingUpdate ? "bg-slate-900" : "bg-blue-600"} p-8 text-white relative flex items-center gap-5 transition-colors duration-500`}
             >
-              <div className="p-3.5 bg-white/20 rounded-2xl">
+              <div className="p-3.5 bg-white/20 rounded-xl">
                 {editingUpdate ? <Edit3 size={26} /> : <Bell size={26} />}
               </div>
               <div>
@@ -458,7 +458,7 @@ export default function UpdatesSection() {
                       setNewUpdate({ ...newUpdate, title: e.target.value })
                     }
                     placeholder="e.g. Semester Registration"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
                   />
                 </div>
 
@@ -475,7 +475,7 @@ export default function UpdatesSection() {
                       setNewUpdate({ ...newUpdate, content: e.target.value })
                     }
                     placeholder="Detailed information about the update..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-semibold text-slate-900 resize-none"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-semibold text-slate-900 resize-none"
                   />
                 </div>
 
@@ -491,13 +491,13 @@ export default function UpdatesSection() {
                       setNewUpdate({ ...newUpdate, link: e.target.value })
                     }
                     placeholder="https://..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
                   />
                 </div>
 
                 {/* Link Preview Hint */}
                 {newUpdate.link && (
-                  <div className="flex items-center gap-3 p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
+                  <div className="flex items-center gap-3 p-4 bg-blue-50/50 rounded-xl border border-blue-100">
                     <AlertCircle className="text-blue-500 shrink-0" size={16} />
                     <p className="text-[10px] font-bold text-blue-700 leading-tight">
                       Students will be redirected to this link when they click
@@ -510,10 +510,10 @@ export default function UpdatesSection() {
               <button
                 disabled={!!actionLoading}
                 type="submit"
-                className={`w-full ${editingUpdate ? "bg-slate-900 shadow-slate-200" : "bg-blue-600 shadow-blue-200"} text-white py-5 rounded-2xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:opacity-90 transition-all shadow-xl flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95`}
+                className={`w-full ${editingUpdate ? "bg-slate-900" : "bg-blue-600"} text-white py-5 rounded-xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:opacity-90 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95 shadow-none`}
               >
                 {actionLoading === "creating" ||
-                actionLoading === "updating" ? (
+                  actionLoading === "updating" ? (
                   <Loader2 className="animate-spin w-5 h-5" />
                 ) : editingUpdate ? (
                   <CheckCircle2 size={18} />

@@ -131,17 +131,17 @@ export default function WebmasterDashboard() {
     <div className="flex min-h-screen bg-slate-50 relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       {/* Sidebar */}
       <aside
-        className={`bg-white border-r border-slate-100 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"} hidden md:flex flex-col premium-shadow h-screen sticky top-0`}
+        className={`bg-white border-r border-slate-100 transition-all duration-300 z-50 ${isSidebarOpen ? "w-52" : "w-16"} hidden md:flex flex-col h-screen sticky top-0`}
       >
         {/* Header with logo */}
-        <div className="flex items-center justify-center w-full p-6 bg-transparent shrink-0">
-          <span className="unifrakturcook-bold text-3xl text-slate-800 tracking-tight leading-none">
+        <div className="flex items-center justify-center w-full p-4 bg-transparent shrink-0">
+          <span className="unifrakturcook-bold text-2xl text-slate-800 tracking-tight leading-none">
             uniZ
           </span>
         </div>
 
         {/* Navigation Section */}
-        <nav className="flex-1 px-3 py-2 overflow-y-auto space-y-1 mt-2">
+        <nav className="flex-1 px-2 py-2 overflow-y-auto space-y-0.5 mt-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -151,28 +151,26 @@ export default function WebmasterDashboard() {
                 key={item.id}
                 onClick={() => setActiveTab(item.id as any)}
                 className={`
-                  w-full flex items-center space-x-3 px-4 py-3 rounded-full text-left transition-all duration-200 group relative
-                  ${
-                    isActive
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-left transition-all duration-200 group relative
+                  ${isActive
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }
                 `}
               >
-                <div className="flex items-center justify-center min-w-[24px]">
+                <div className="flex items-center justify-center min-w-[20px]">
                   <Icon
-                    size={21}
+                    size={18}
                     className={`shrink-0 transition-transform group-hover:scale-110 duration-200
-                      ${
-                        isActive
-                          ? "text-blue-600"
-                          : "text-slate-400 group-hover:text-slate-700"
+                      ${isActive
+                        ? "text-blue-600"
+                        : "text-slate-400 group-hover:text-slate-700"
                       }`}
                   />
                 </div>
                 {isSidebarOpen && (
                   <span
-                    className={`text-[13px] whitespace-nowrap tracking-tight transition-all
+                    className={`text-[12px] whitespace-nowrap tracking-tight transition-all
                       ${isActive ? "font-bold" : "font-semibold text-slate-500 group-hover:text-blue-600"}`}
                   >
                     {item.label}
@@ -184,10 +182,10 @@ export default function WebmasterDashboard() {
         </nav>
 
         {/* Bottom Section */}
-        <div className="mt-auto px-3 py-4 space-y-1 border-t border-slate-50 shrink-0">
+        <div className="mt-auto px-2 py-3 space-y-0.5 border-t border-slate-50 shrink-0">
           {/* Profile Display */}
-          <div className="flex items-center px-4 py-3 group rounded-full transition-colors">
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-blue-200 shadow-sm shrink-0 bg-blue-50 flex items-center justify-center">
+          <div className="flex items-center px-3 py-2 group rounded-xl transition-colors">
+            <div className="w-7 h-7 rounded-full overflow-hidden border border-blue-200 shrink-0 bg-blue-50 flex items-center justify-center shadow-none">
               {profilePhoto ? (
                 <img
                   src={profilePhoto}
@@ -195,14 +193,14 @@ export default function WebmasterDashboard() {
                   alt=""
                 />
               ) : (
-                <span className="text-blue-700 font-semibold text-[11px]">
+                <span className="text-blue-700 font-semibold text-[10px]">
                   {initials}
                 </span>
               )}
             </div>
             {isSidebarOpen && (
-              <div className="ml-3 flex-1 min-w-0">
-                <p className="text-[15px] font-semibold text-slate-900 truncate tracking-tight">
+              <div className="ml-2.5 flex-1 min-w-0">
+                <p className="text-[12px] font-semibold text-slate-900 truncate tracking-tight">
                   {username}
                 </p>
               </div>
@@ -212,16 +210,16 @@ export default function WebmasterDashboard() {
           {/* Logout Action */}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-full text-left transition-all duration-200 group text-red-500 hover:bg-red-50"
+            className="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-left transition-all duration-200 group text-red-500 hover:bg-red-50"
           >
-            <div className="flex items-center justify-center min-w-[24px]">
+            <div className="flex items-center justify-center min-w-[20px]">
               <LogOut
-                size={20}
+                size={17}
                 className="shrink-0 transition-transform group-hover:rotate-12"
               />
             </div>
             {isSidebarOpen && (
-              <span className="text-[15px] font-semibold">Logout</span>
+              <span className="text-[12px] font-semibold">Logout</span>
             )}
           </button>
         </div>
@@ -248,7 +246,7 @@ export default function WebmasterDashboard() {
               ref={avatarBtnRef}
               onClick={() => setProfilePopupOpen((o) => !o)}
               title="Profile"
-              className="w-11 h-11 rounded-full overflow-hidden bg-slate-200 border-2 border-white shadow-sm hover:ring-2 hover:ring-blue-400 transition-all active:scale-95 shrink-0"
+              className="w-11 h-11 rounded-full overflow-hidden bg-slate-200 border-2 border-white hover:ring-2 hover:ring-blue-400 transition-all active:scale-95 shrink-0 shadow-none"
             >
               {profilePhoto ? (
                 <img
@@ -267,7 +265,7 @@ export default function WebmasterDashboard() {
             <button
               onClick={handleLogout}
               title="Sign out"
-              className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all shadow-sm active:scale-95"
+              className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all active:scale-95 shadow-none"
             >
               <LogOut size={16} />
             </button>
