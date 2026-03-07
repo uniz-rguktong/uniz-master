@@ -209,7 +209,7 @@ export default function ProfilePopup({
           <motion.div
             ref={popupRef}
             style={{ top: position.top, right: position.right }}
-            className="fixed z-[9999] w-[380px] bg-white rounded-[20px] shadow-[0_8px_40px_rgba(0,0,0,0.18)] border border-slate-100 overflow-hidden"
+            className="fixed z-[9999] w-[380px] bg-white rounded-xl border border-slate-100 overflow-hidden shadow-none"
             initial={{ opacity: 0, y: -12, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.97 }}
@@ -227,7 +227,7 @@ export default function ProfilePopup({
               </p>
               <button
                 onClick={onClose}
-                className="absolute right-3 p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
+                className="absolute right-3 p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors shadow-none"
               >
                 <X size={15} />
               </button>
@@ -245,7 +245,7 @@ export default function ProfilePopup({
                   }}
                 >
                   <div className="w-full h-full rounded-full bg-white p-[2px]">
-                    <div className="w-full h-full rounded-full overflow-hidden bg-slate-800 flex items-center justify-center">
+                    <div className="w-full h-full rounded-full overflow-hidden bg-slate-800 flex items-center justify-center shadow-none">
                       {loading && !initialPhoto ? (
                         <Loader2
                           size={24}
@@ -276,7 +276,7 @@ export default function ProfilePopup({
                 {/* Camera button */}
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0.5 right-0.5 w-7 h-7 bg-slate-700 text-white rounded-full flex items-center justify-center border-2 border-white shadow-lg hover:bg-slate-900 transition-all active:scale-90"
+                  className="absolute bottom-0.5 right-0.5 w-7 h-7 bg-slate-700 text-white rounded-full flex items-center justify-center border-2 border-white hover:bg-slate-900 transition-all active:scale-90 shadow-none"
                 >
                   <Camera size={12} />
                 </button>
@@ -305,7 +305,7 @@ export default function ProfilePopup({
                   <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="flex items-center gap-1.5 px-5 py-2 rounded-full border-2 border-blue-500 text-blue-600 text-[12px] font-semibold hover:bg-blue-50 transition-all disabled:opacity-60"
+                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl border-2 border-blue-500 text-blue-600 text-[12px] font-semibold hover:bg-blue-50 transition-all disabled:opacity-60 shadow-none"
                   >
                     {isSaving ? (
                       <Loader2 size={13} className="animate-spin" />
@@ -325,7 +325,7 @@ export default function ProfilePopup({
                         department: profile?.department || "",
                       });
                     }}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200 text-slate-500 text-[12px] font-semibold hover:bg-slate-50 transition-all"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 text-slate-500 text-[12px] font-semibold hover:bg-slate-50 transition-all shadow-none"
                   >
                     <Ban size={12} />
                     Cancel
@@ -334,7 +334,7 @@ export default function ProfilePopup({
               ) : (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 px-6 py-2 rounded-full border border-slate-200 text-slate-700 text-[13px] font-medium hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
+                  className="flex items-center gap-2 px-6 py-2 rounded-xl border border-slate-200 text-slate-700 text-[13px] font-medium hover:bg-slate-50 hover:border-slate-300 transition-all shadow-none"
                 >
                   <Pencil size={13} className="text-slate-500" />
                   Edit Profile
@@ -413,7 +413,7 @@ export default function ProfilePopup({
               }}
               className="w-full flex items-center gap-3 px-5 py-3.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 transition-colors group"
             >
-              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-red-50 transition-colors">
+              <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center group-hover:bg-red-50 transition-colors shadow-none">
                 <LogOut
                   size={15}
                   className="text-slate-500 group-hover:text-red-500 transition-colors"
@@ -447,7 +447,7 @@ function DetailRow({
 }) {
   return (
     <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
-      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+      <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 shadow-none">
         {icon}
       </div>
       <div className="flex-1 min-w-0">

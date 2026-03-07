@@ -9,15 +9,16 @@ import {
   ChevronRight,
   Filter,
   ShieldOff,
-  UserX,
   RotateCcw,
 } from "lucide-react";
+import StudentPerformanceModal from "./StudentPerformanceModal";
+import StudentDashboard from "./StudentDashboard";
+import StudentDashboardSkeleton from "./StudentDashboardSkeleton";
 
 import {
   ADMIN_VIEW_STUDENT,
   SEARCH_STUDENTS,
   ADMIN_SUSPEND_STUDENT,
-  ADMIN_UPDATE_STUDENT,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 
@@ -27,6 +28,7 @@ export default function StudentDetails() {
   const [loading, setLoading] = useState(false);
 
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [selectedStudentFullData, setSelectedStudentFullData] = useState<any>(null);
   const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
 
   // Filter Search State
@@ -38,6 +40,9 @@ export default function StudentDetails() {
     if (!id) return;
 
     setLoading(true);
+    setSelectedStudentFullData(null);
+    setSearchResults([]);
+
     const token = localStorage.getItem("admin_token");
 
     try {
@@ -50,11 +55,9 @@ export default function StudentDetails() {
 
       const data = await res.json();
       if (data.success) {
-        setSearchResults([data.student]);
-        setSearchMode("id");
+        setSelectedStudentFullData(data.student);
       } else {
         toast.error(data.msg || "Student not found");
-        setSearchResults([]);
       }
     } catch (error) {
       toast.error("Failed to fetch student details");
@@ -65,6 +68,7 @@ export default function StudentDetails() {
 
   const handleSearchByFilter = async () => {
     setLoading(true);
+    setSelectedStudentFullData(null);
     const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(SEARCH_STUDENTS, {
@@ -137,35 +141,211 @@ export default function StudentDetails() {
     }
   };
 
-  const handleRevokeAccess = async (username: string) => {
-    if (
-      !window.confirm(
-        `PERMANENTLY REVOKE access for ${username}? This action is irreversible.`,
-      )
-    )
-      return;
-    setIsActionLoading(username + "_revoke");
-    const token = localStorage.getItem("admin_token");
-    try {
-      // Assuming DELETE on student info URL as seen in FacultyManagement
-      const res = await fetch(ADMIN_UPDATE_STUDENT(username), {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
+  const [performanceModalOpen, setPerformanceModalOpen] = useState(false);
+  const [selectedStudentName, setSelectedStudentName] = useState("");
+  const [selectedStudentId, setSelectedStudentId] = useState("");
+  const [performanceData, setPerformanceData] = useState<any>(null);
+
+  const MOCK_PERFORMANCE_DATA = {
+    grades: [
+      {
+        id: "25365db4-497b-4269-b584-a265b4093b6b",
+        semesterId: "E4-SEM-2",
+        grade: 7,
+        isRemedial: false,
+        updatedAt: "2026-03-06T18:33:38.719Z",
+        subject: {
+          code: "CSE-E4-SEM-2-04",
+          name: "Project-II",
+          credits: 6,
+          department: "CSE",
         },
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success("Access revoked successfully");
-        setSearchResults((prev) => prev.filter((s) => s.username !== username));
-      } else {
-        toast.error(data.msg || "Revocation failed");
-      }
-    } catch (error) {
-      toast.error("Error revoking access");
-    } finally {
-      setIsActionLoading(null);
-    }
+      },
+      {
+        id: "1ff4ec5b-1fcf-4317-9854-11050c96f8a8",
+        semesterId: "E4-SEM-2",
+        grade: 9,
+        isRemedial: false,
+        updatedAt: "2026-03-06T18:33:38.718Z",
+        subject: {
+          code: "CSE-E4-SEM-2-02",
+          name: "Open Elective-III",
+          credits: 3,
+          department: "CSE",
+        },
+      },
+      {
+        id: "fabbf3ef-59d0-420c-8dd4-90adddc34ea6",
+        semesterId: "E4-SEM-2",
+        grade: 6,
+        isRemedial: false,
+        updatedAt: "2026-03-06T18:33:38.719Z",
+        subject: {
+          code: "CSE-E4-SEM-2-03",
+          name: "Open Elective-IV",
+          credits: 3,
+          department: "CSE",
+        },
+      },
+      {
+        id: "c557c920-5bcf-4a9b-a1c8-5c3607310d77",
+        semesterId: "E4-SEM-2",
+        grade: 6,
+        isRemedial: false,
+        updatedAt: "2026-03-06T18:33:38.718Z",
+        subject: {
+          code: "CSE-E4-SEM-2-01",
+          name: "Elective-VI",
+          credits: 3,
+          department: "CSE",
+        },
+      },
+      {
+        id: "18e77db3-f935-4f2e-bbd3-9dba16f44144",
+        semesterId: "E4-SEM-2",
+        grade: 8,
+        isRemedial: false,
+        updatedAt: "2026-03-06T18:33:38.719Z",
+        subject: {
+          code: "CSE-E4-SEM-2-05",
+          name: "Community Service",
+          credits: 2,
+          department: "CSE",
+        },
+      },
+    ],
+    gpa_stats: {
+      "E4-SEM-2": { gpa: 7.12, status: "PASSED" },
+      "E4-SEM-1": { gpa: 9.12, status: "PASSED" },
+      "E3-SEM-2": { gpa: 8.04, status: "PASSED" },
+      "E3-SEM-1": { gpa: 8.53, status: "PASSED" },
+      "E2-SEM-2": { gpa: 8.11, status: "PASSED" },
+      "E2-SEM-1": { gpa: 7.9, status: "PASSED" },
+      "E1-SEM-2": { gpa: 9.65, status: "PASSED" },
+      "E1-SEM-1": { gpa: 7.78, status: "PASSED" },
+    },
+    cgpa: 8.26,
+    total_backlogs: 0,
+    motivation: "You're on the right track. Keep refining your study habits.",
+    attendance: [
+      {
+        id: "4fe63da6-47ec-4bd6-83e5-0f247c688b74",
+        studentId: "O210329",
+        subjectId: "6d73c70f-8363-477c-90b6-3575f4a7efe0",
+        semesterId: "E4-SEM-2",
+        totalClasses: 50,
+        attendedClasses: 49,
+        batch: "O21",
+        createdAt: "2026-03-06T18:35:37.004Z",
+        updatedAt: "2026-03-06T18:35:37.004Z",
+        subject: {
+          id: "6d73c70f-8363-477c-90b6-3575f4a7efe0",
+          code: "CSE-E4-SEM-2-02",
+          name: "Open Elective-III",
+          credits: 3,
+          department: "CSE",
+          semester: "SEM-2",
+        },
+        percentage: 98,
+      },
+      {
+        id: "11e0c592-e339-41b9-b0d7-4ef625ad6069",
+        studentId: "O210329",
+        subjectId: "f407c66f-131d-45d0-bb2b-e7f1d4b844ea",
+        semesterId: "E4-SEM-2",
+        totalClasses: 50,
+        attendedClasses: 44,
+        batch: "O21",
+        createdAt: "2026-03-06T18:35:37.005Z",
+        updatedAt: "2026-03-06T18:35:37.005Z",
+        subject: {
+          id: "f407c66f-131d-45d0-bb2b-e7f1d4b844ea",
+          code: "CSE-E4-SEM-2-04",
+          name: "Project-II",
+          credits: 6,
+          department: "CSE",
+          semester: "SEM-2",
+        },
+        percentage: 88,
+      },
+      {
+        id: "dd6ce30b-b33e-410b-9b5c-24b78e05cb9c",
+        studentId: "O210329",
+        subjectId: "fa3f4efe-cbf1-4fbc-a0c5-aa62edc658bd",
+        semesterId: "E4-SEM-2",
+        totalClasses: 50,
+        attendedClasses: 49,
+        batch: "O21",
+        createdAt: "2026-03-06T18:35:37.003Z",
+        updatedAt: "2026-03-06T18:35:37.003Z",
+        subject: {
+          id: "fa3f4efe-cbf1-4fbc-a0c5-aa62edc658bd",
+          code: "CSE-E4-SEM-2-01",
+          name: "Elective-VI",
+          credits: 3,
+          department: "CSE",
+          semester: "SEM-2",
+        },
+        percentage: 98,
+      },
+      {
+        id: "c72217b3-f342-4e3b-a49f-ae2ad20f275d",
+        studentId: "O210329",
+        subjectId: "45d053bf-8eea-4996-8040-f8bc5e2b6b6f",
+        semesterId: "E4-SEM-2",
+        totalClasses: 50,
+        attendedClasses: 42,
+        batch: "O21",
+        createdAt: "2026-03-06T18:35:37.004Z",
+        updatedAt: "2026-03-06T18:35:37.004Z",
+        subject: {
+          id: "45d053bf-8eea-4996-8040-f8bc5e2b6b6f",
+          code: "CSE-E4-SEM-2-03",
+          name: "Open Elective-IV",
+          credits: 3,
+          department: "CSE",
+          semester: "SEM-2",
+        },
+        percentage: 84,
+      },
+      {
+        id: "66661118-5788-4106-b452-dc7e890a6bff",
+        studentId: "O210329",
+        subjectId: "f3dace70-f70d-4e1d-a5b1-e100f322bcf8",
+        semesterId: "E4-SEM-2",
+        totalClasses: 50,
+        attendedClasses: 43,
+        batch: "O21",
+        createdAt: "2026-03-06T18:35:37.005Z",
+        updatedAt: "2026-03-06T18:35:37.005Z",
+        subject: {
+          id: "f3dace70-f70d-4e1d-a5b1-e100f322bcf8",
+          code: "CSE-E4-SEM-2-05",
+          name: "Community Service",
+          credits: 2,
+          department: "CSE",
+          semester: "SEM-2",
+        },
+        percentage: 86,
+      },
+    ],
+    attendance_summary: {
+      "E4-SEM-2": { total: 250, attended: 227, percentage: 90.8 },
+      "E4-SEM-1": { total: 245, attended: 213, percentage: 86.94 },
+      "E3-SEM-2": { total: 390, attended: 332, percentage: 85.13 },
+      "E3-SEM-1": { total: 444, attended: 365, percentage: 82.21 },
+      "E2-SEM-2": { total: 384, attended: 327, percentage: 85.16 },
+      "E2-SEM-1": { total: 375, attended: 303, percentage: 80.8 },
+      "E1-SEM-2": { total: 260, attended: 224, percentage: 86.15 },
+      "E1-SEM-1": { total: 335, attended: 282, percentage: 84.18 },
+    },
+  };
+
+  const handleOpenPerformance = (std: any) => {
+    setSelectedStudentName(std.name);
+    setSelectedStudentId(std.username);
+    setPerformanceData(MOCK_PERFORMANCE_DATA);
+    setPerformanceModalOpen(true);
   };
 
   return (
@@ -180,13 +360,13 @@ export default function StudentDetails() {
           </p>
         </div>
 
-        <div className="flex bg-slate-100/80 p-1 rounded-full border border-slate-200/50 backdrop-blur-sm shadow-inner group">
+        <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/50 backdrop-blur-sm shadow-none group">
           <button
             onClick={() => {
               setSearchMode("id");
               setSearchResults([]);
             }}
-            className={`px-8 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] transition-all ${searchMode === "id" ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50" : "text-slate-500 hover:text-blue-600"}`}
+            className={`px-8 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.15em] transition-all ${searchMode === "id" ? "bg-white text-blue-700 shadow-none border border-slate-200/50" : "text-slate-500 hover:text-blue-600"}`}
           >
             By ID
           </button>
@@ -195,7 +375,7 @@ export default function StudentDetails() {
               setSearchMode("filter");
               setSearchResults([]);
             }}
-            className={`px-8 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] transition-all ${searchMode === "filter" ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50" : "text-slate-500 hover:text-blue-600"}`}
+            className={`px-8 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.15em] transition-all ${searchMode === "filter" ? "bg-white text-blue-700 shadow-none border border-slate-200/50" : "text-slate-500 hover:text-blue-600"}`}
           >
             By Filter
           </button>
@@ -220,13 +400,13 @@ export default function StudentDetails() {
               placeholder="Search Student ID (e.g. O210329)"
               value={studentId}
               onChange={(e) => setStudentId(e.target.value.toUpperCase())}
-              className="w-full h-12 pl-12 pr-5 bg-white border border-slate-200 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 shadow-sm text-sm placeholder:text-slate-400 placeholder:font-medium"
+              className="w-full h-12 pl-12 pr-5 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm placeholder:text-slate-400 placeholder:font-medium"
             />
           </div>
           <button
             disabled={loading}
             type="submit"
-            className="h-12 px-8 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="h-12 px-8 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="animate-spin w-4 h-4" />
@@ -246,7 +426,7 @@ export default function StudentDetails() {
             <select
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
-              className="bg-white border border-slate-100 pl-11 pr-10 h-12 rounded-full font-bold text-[11px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 shadow-sm min-w-[180px] transition-all cursor-pointer appearance-none shadow-slate-100 hover:shadow-md"
+              className="bg-white border border-slate-100 pl-11 pr-10 h-12 rounded-xl font-bold text-[11px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 min-w-[180px] transition-all cursor-pointer appearance-none hover:bg-slate-50"
             >
               <option value="">All Branches</option>
               {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
@@ -269,7 +449,7 @@ export default function StudentDetails() {
             <select
               value={year}
               onChange={(e) => setYear(e.target.value)}
-              className="bg-white border border-slate-100 pl-11 pr-10 h-12 rounded-full font-bold text-[11px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 shadow-sm min-w-[180px] transition-all cursor-pointer appearance-none shadow-slate-100 hover:shadow-md"
+              className="bg-white border border-slate-100 pl-11 pr-10 h-12 rounded-xl font-bold text-[11px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 min-w-[180px] transition-all cursor-pointer appearance-none hover:bg-slate-50"
             >
               <option value="">All Batches</option>
               {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
@@ -285,7 +465,7 @@ export default function StudentDetails() {
           <button
             onClick={handleSearchByFilter}
             disabled={loading}
-            className="h-12 px-8 bg-blue-600 text-white rounded-full font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="h-12 px-8 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="animate-spin w-4 h-4" />
@@ -298,8 +478,16 @@ export default function StudentDetails() {
       )}
 
       <div className="space-y-8">
-        {/* Search Results Table - ALWAYS STAY VISIBLE */}
-        {searchResults.length > 0 && (
+        {/* Loading Skeleton */}
+        {loading && <StudentDashboardSkeleton />}
+
+        {/* Detailed Dashboard (ID search result) */}
+        {selectedStudentFullData && !loading && (
+          <StudentDashboard data={selectedStudentFullData} />
+        )}
+
+        {/* Search Results Table - STAY VISIBLE for Filtered search */}
+        {searchResults.length > 0 && !loading && (
           <div className="w-full animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="flex items-center justify-between px-2 mb-4">
               <h4 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
@@ -307,7 +495,7 @@ export default function StudentDetails() {
               </h4>
             </div>
 
-            <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden mb-10">
+            <div className="bg-white rounded-xl border border-slate-100 overflow-hidden mb-10">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -333,7 +521,8 @@ export default function StudentDetails() {
                     {searchResults.map((std) => (
                       <tr
                         key={std.username}
-                        className="group cursor-default transition-all hover:bg-slate-50/50"
+                        onClick={() => handleOpenPerformance(std)}
+                        className="group cursor-pointer transition-all hover:bg-slate-50/50"
                       >
                         <td className="px-8 py-5">
                           <div className="flex items-center gap-4">
@@ -390,12 +579,13 @@ export default function StudentDetails() {
                         <td className="px-8 py-5">
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() =>
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 handleToggleSuspension(
                                   std.username,
                                   std.is_suspended === true,
-                                )
-                              }
+                                );
+                              }}
                               disabled={
                                 isActionLoading === std.username + "_suspend"
                               }
@@ -417,21 +607,6 @@ export default function StudentDetails() {
                                 ? "Restore"
                                 : "Suspend"}
                             </button>
-                            <button
-                              onClick={() => handleRevokeAccess(std.username)}
-                              disabled={
-                                isActionLoading === std.username + "_revoke"
-                              }
-                              className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-all flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest"
-                              title="Revoke Access"
-                            >
-                              {isActionLoading === std.username + "_revoke" ? (
-                                <Loader2 size={14} className="animate-spin" />
-                              ) : (
-                                <UserX size={14} />
-                              )}
-                              Revoke
-                            </button>
                           </div>
                         </td>
                       </tr>
@@ -444,9 +619,9 @@ export default function StudentDetails() {
         )}
 
         {/* Empty State */}
-        {searchResults.length === 0 && !loading && (
-          <div className="p-20 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-[28px] border border-slate-100">
-            <div className="p-6 bg-slate-50 rounded-[22px] border border-slate-100 shadow-inner">
+        {searchResults.length === 0 && !selectedStudentFullData && !loading && (
+          <div className="p-20 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-xl border border-slate-100">
+            <div className="p-6 bg-slate-50 rounded-xl border border-slate-100 shadow-none">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="40"
@@ -476,6 +651,16 @@ export default function StudentDetails() {
           </div>
         )}
       </div>
+
+      {performanceModalOpen && (
+        <StudentPerformanceModal
+          isOpen={performanceModalOpen}
+          onClose={() => setPerformanceModalOpen(false)}
+          studentName={selectedStudentName}
+          studentId={selectedStudentId}
+          data={performanceData}
+        />
+      )}
     </div>
   );
 }
