@@ -97,8 +97,8 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
           BUILT_IMAGES[$IMG]=$TAG
           ((REBUILT_COUNT++))
         else
-          echo "[Error] Build failed for $IMG, skipping deployment."
-          continue
+          echo "[Error] Build failed for $IMG. Aborting deployment."
+          exit 1
         fi
       else
         TAG=${BUILT_IMAGES[$IMG]}
