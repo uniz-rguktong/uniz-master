@@ -1,12 +1,10 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ShieldCheck,
   GraduationCap,
   BellRing,
   ClipboardCheck,
-  MonitorCheck,
   ArrowRight,
-  ExternalLink,
   Zap,
   Lock,
   Server,
@@ -40,8 +38,6 @@ const FeatureCard = ({ icon, title, description, index }: any) => (
 );
 
 export default function App() {
-  const { scrollYProgress } = useScroll();
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
   const features = [
     {
