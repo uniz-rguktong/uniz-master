@@ -30,7 +30,6 @@ export default function StudentBulkSection() {
     fields: "username,name,email,branch,section",
   });
 
-
   // Bulk Upload Function
   const handleUpload = async () => {
     if (!file) return;
@@ -42,7 +41,7 @@ export default function StudentBulkSection() {
     try {
       const res = await fetch(ADMIN_STUDENT_UPLOAD, {
         method: "POST",
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
         body: formData,
       });
       const data = await res.json();
@@ -67,7 +66,9 @@ export default function StudentBulkSection() {
         const token = localStorage.getItem("admin_token");
         try {
           const res = await fetch(ADMIN_STUDENT_PROGRESS, {
-            headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+            headers: {
+              Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
+            },
           });
           const data = await res.json();
           // setProgress(data); // Removed UI
@@ -99,8 +100,14 @@ export default function StudentBulkSection() {
     );
     try {
       const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
       });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || "Export failed");
+      }
+
       const blob = await res.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -119,8 +126,14 @@ export default function StudentBulkSection() {
     try {
       const token = localStorage.getItem("admin_token");
       const res = await fetch(ADMIN_STUDENT_TEMPLATE, {
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
       });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to download template");
+      }
+
       const blob = await res.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -128,8 +141,8 @@ export default function StudentBulkSection() {
       a.download = "student_onboarding_template.xlsx";
       a.click();
       toast.success("Template downloaded");
-    } catch (error) {
-      toast.error("Failed to download template");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to download template");
     }
   };
 
@@ -183,7 +196,9 @@ export default function StudentBulkSection() {
               ) : (
                 <CheckCircle2 size={20} />
               )}
-              {uploadId ? "Processing Records..." : "Initiate Bulk Provisioning"}
+              {uploadId
+                ? "Processing Records..."
+                : "Initiate Bulk Provisioning"}
             </button>
           </div>
 
@@ -194,7 +209,6 @@ export default function StudentBulkSection() {
             <Download size={14} /> Download Sample Template (XLSX)
           </button>
         </div>
-
       ) : (
         <div className="bg-white rounded-xl border border-slate-100 p-12 text-slate-900 animate-in slide-in-from-right-8 duration-700 shadow-none transition-all">
           <div className="max-w-4xl mx-auto space-y-12">
