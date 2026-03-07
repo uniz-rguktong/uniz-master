@@ -1,42 +1,42 @@
 // Unified super-admin live feed (event + sport)
-import { getLiveEvents } from '@/actions/superAdminGetters';
-import prisma from '@/lib/prisma';
+import { getLiveEvents } from "@/actions/superAdminGetters";
+import prisma from "@/lib/prisma";
 
 export default async function UnifiedLiveAttendancePage() {
   // Fetch live events
   const liveEvents = await getLiveEvents();
   // Fetch live sports
   const liveSports = await prisma.sport.findMany({
-    where: { status: 'ONGOING', isActive: true },
+    where: { status: "ONGOING", isActive: true },
     select: {
       id: true,
       name: true,
       category: true,
-      createdAt: true
+      createdAt: true,
     },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: "desc" },
   });
 
   // Normalize and merge
   const allLive = [
-    ...liveEvents.map(e => ({
-      type: 'Event',
+    ...liveEvents.map((e) => ({
+      type: "Event",
       id: e.id,
       name: e.name,
-      category: 'Live Event',
+      category: "Live Event",
       branch: e.venue,
       date: e.startedAt,
-      status: e.status
+      status: e.status,
     })),
-    ...liveSports.map(s => ({
-      type: 'Sport',
+    ...liveSports.map((s) => ({
+      type: "Sport",
       id: s.id,
       name: s.name,
       category: s.category,
-      branch: 'General',
+      branch: "General",
       date: s.createdAt,
-      status: 'ONGOING'
-    }))
+      status: "ONGOING",
+    })),
   ];
 
   return (
@@ -60,7 +60,9 @@ export default async function UnifiedLiveAttendancePage() {
               <td>{item.name}</td>
               <td>{item.category}</td>
               <td>{item.branch}</td>
-              <td>{item.date ? new Date(item.date).toLocaleDateString() : ''}</td>
+              <td>
+                {item.date ? new Date(item.date).toLocaleDateString() : ""}
+              </td>
               <td>{item.status}</td>
             </tr>
           ))}

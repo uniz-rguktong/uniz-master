@@ -1,12 +1,21 @@
-'use client';
-import { useState, useEffect, useRef } from 'react';
-import { Building2, Mail, Phone, MapPin, Globe, Save, Upload, Trash2 } from 'lucide-react';
-import { useClub } from '@/context/ClubContext';
-import { useToast } from '@/hooks/useToast';
-import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { InfoTooltip } from '@/components/InfoTooltip';
-import Image from 'next/image';
-import { updateClubSettings } from '@/actions/clubSettingsActions';
+"use client";
+import { useState, useEffect, useRef } from "react";
+import {
+  Building2,
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Save,
+  Upload,
+  Trash2,
+} from "lucide-react";
+import { useClub } from "@/context/ClubContext";
+import { useToast } from "@/hooks/useToast";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import Image from "next/image";
+import { updateClubSettings } from "@/actions/clubSettingsActions";
 
 interface ClubSettings {
   name?: string;
@@ -32,7 +41,9 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
   const { clubDetails } = useClub();
   const { showToast } = useToast();
 
-  const [formData, setFormData] = useState(initialSettings || clubDetails || {});
+  const [formData, setFormData] = useState(
+    initialSettings || clubDetails || {},
+  );
   const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -49,7 +60,7 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     setHasChanges(true);
   };
@@ -78,7 +89,8 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
   const handleFileChange = (event: any) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      if (file.size > 2 * 1024 * 1024) {
+        // 2MB limit
         showToast("File size too large. Maximum size is 2MB.", "error");
         return;
       }
@@ -87,7 +99,7 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
       reader.onloadend = () => {
         setFormData((prev: any) => ({
           ...prev,
-          logo: reader.result as string
+          logo: reader.result as string,
         }));
         setHasChanges(true);
         showToast("Logo selected. Click save to apply changes.", "info");
@@ -101,19 +113,25 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-[28px] font-semibold text-[#1A1A1A] mb-2">Club Settings</h1>
-          <p className="text-sm text-[#6B7280]">Configure club identity and contact information</p>
+          <h1 className="text-[28px] font-semibold text-[#1A1A1A] mb-2">
+            Club Settings
+          </h1>
+          <p className="text-sm text-[#6B7280]">
+            Configure club identity and contact information
+          </p>
         </div>
 
         <button
           onClick={handleSave}
           disabled={!hasChanges || isSaving}
-          className={`flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium transition-colors shadow-sm ${hasChanges && !isSaving
-            ? "bg-[#10B981] text-white hover:bg-[#059669]"
-            : "bg-gray-200 text-gray-500 cursor-not-allowed"
-            }`}>
+          className={`flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium transition-colors shadow-sm ${
+            hasChanges && !isSaving
+              ? "bg-[#10B981] text-white hover:bg-[#059669]"
+              : "bg-gray-200 text-gray-500 cursor-not-allowed"
+          }`}
+        >
           <Save className="w-5 h-5" />
-          {isSaving ? 'Saving...' : 'Save Changes'}
+          {isSaving ? "Saving..." : "Save Changes"}
         </button>
       </div>
 
@@ -121,7 +139,10 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
         {/* Main Settings */}
         <div className="lg:col-span-2 space-y-6">
           {/* Basic Information */}
-          <div className="bg-[#F4F2F0] rounded-[18px] p-[10px] animate-card-entrance" style={{ animationDelay: '40ms' }}>
+          <div
+            className="bg-[#F4F2F0] rounded-[18px] p-[10px] animate-card-entrance"
+            style={{ animationDelay: "40ms" }}
+          >
             <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3 pl-[5px] pt-[15px] pb-[5px] flex items-center gap-2">
               Basic Information
               <InfoTooltip text="Essential club details visible to the public." />
@@ -136,9 +157,10 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
                   <input
                     type="text"
                     name="name"
-                    value={formData.name || ''}
+                    value={formData.name || ""}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                  />
                 </div>
 
                 <div>
@@ -148,9 +170,10 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
                   <input
                     type="text"
                     name="shortName"
-                    value={formData.shortName || ''}
+                    value={formData.shortName || ""}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                  />
                 </div>
 
                 <div>
@@ -160,9 +183,10 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
                   <input
                     type="text"
                     name="coordinator"
-                    value={formData.coordinator || ''}
+                    value={formData.coordinator || ""}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                  />
                 </div>
 
                 <div>
@@ -172,9 +196,10 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
                   <input
                     type="number"
                     name="establishedYear"
-                    value={formData.establishedYear || ''}
+                    value={formData.establishedYear || ""}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                  />
                 </div>
 
                 <div>
@@ -184,16 +209,20 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
                   <textarea
                     name="description"
                     rows={4}
-                    value={formData.description || ''}
+                    value={formData.description || ""}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981] resize-none" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981] resize-none"
+                  />
                 </div>
               </div>
             </div>
           </div>
 
           {/* Contact Information */}
-          <div className="bg-[#F4F2F0] rounded-[18px] p-[10px] animate-card-entrance" style={{ animationDelay: '80ms' }}>
+          <div
+            className="bg-[#F4F2F0] rounded-[18px] p-[10px] animate-card-entrance"
+            style={{ animationDelay: "80ms" }}
+          >
             <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3 pl-[5px] pt-[15px] pb-[5px] flex items-center gap-2">
               Contact Information
               <InfoTooltip text="Official communication channels for inquiries." />
@@ -211,9 +240,10 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
                   <input
                     type="email"
                     name="email"
-                    value={formData.email || ''}
+                    value={formData.email || ""}
                     readOnly
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-[#E5E7EB] rounded-lg text-sm text-gray-600 cursor-not-allowed" />
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-[#E5E7EB] rounded-lg text-sm text-gray-600 cursor-not-allowed"
+                  />
                 </div>
 
                 <div>
@@ -226,9 +256,10 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
                   <input
                     type="tel"
                     name="phone"
-                    value={formData.phone || ''}
+                    value={formData.phone || ""}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
+                    className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                  />
                 </div>
               </div>
             </div>
@@ -254,11 +285,13 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
                   className="hidden"
                 />
 
-                <div
-                  className="w-32 h-32 mx-auto mb-4 bg-[#F7F8FA] rounded-lg flex items-center justify-center border-2 border-dashed border-[#E5E7EB] overflow-hidden relative"
-                >
+                <div className="w-32 h-32 mx-auto mb-4 bg-[#F7F8FA] rounded-lg flex items-center justify-center border-2 border-dashed border-[#E5E7EB] overflow-hidden relative">
                   {formData.logo ? (
-                    <img src={formData.logo} alt="Club Logo" className="w-full h-full object-cover" />
+                    <img
+                      src={formData.logo}
+                      alt="Club Logo"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <Building2 className="w-12 h-12 text-[#9CA3AF]" />
                   )}
@@ -270,14 +303,17 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
                     className="flex items-center justify-center gap-2 px-4 py-2 bg-[#F7F8FA] hover:bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg text-sm font-medium text-[#1A1A1A] transition-colors mx-auto w-full"
                   >
                     <Upload className="w-4 h-4" />
-                    {formData.logo ? 'Change Logo' : 'Upload Logo'}
+                    {formData.logo ? "Change Logo" : "Upload Logo"}
                   </button>
                   {formData.logo && (
                     <button
                       onClick={() => {
                         setFormData((prev: any) => ({ ...prev, logo: null }));
                         setHasChanges(true);
-                        showToast("Logo removed. Click save to apply changes.", "info");
+                        showToast(
+                          "Logo removed. Click save to apply changes.",
+                          "info",
+                        );
                       }}
                       className="flex items-center justify-center gap-2 px-4 py-2 text-rose-500 hover:bg-rose-50 rounded-lg text-sm font-medium transition-colors w-full"
                     >
@@ -288,7 +324,8 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
                 </div>
               </div>
               <p className="text-xs text-[#6B7280] text-center mt-4">
-                Recommended: 500x500px, Max: 2MB<br />
+                Recommended: 500x500px, Max: 2MB
+                <br />
                 Supports JPG, PNG
               </p>
             </div>
@@ -304,18 +341,30 @@ export function ClubSettingsPage({ initialSettings }: ClubSettingsPageProps) {
               <table className="w-full">
                 <thead className="bg-[#F9FAFB] border-b border-[#F3F4F6]">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Metric</th>
-                    <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Value</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      Metric
+                    </th>
+                    <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      Value
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F3F4F6]">
                   <tr>
-                    <td className="px-6 py-4 text-sm font-medium text-[#6B7280]">Total Members</td>
-                    <td className="px-6 py-4 text-right text-sm font-bold text-[#1A1A1A]">{formData.stats?.members || 0}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-[#6B7280]">
+                      Total Members
+                    </td>
+                    <td className="px-6 py-4 text-right text-sm font-bold text-[#1A1A1A]">
+                      {formData.stats?.members || 0}
+                    </td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 text-sm font-medium text-[#6B7280]">Active Events</td>
-                    <td className="px-6 py-4 text-right text-sm font-bold text-[#1A1A1A]">{formData.stats?.events || 0}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-[#6B7280]">
+                      Active Events
+                    </td>
+                    <td className="px-6 py-4 text-right text-sm font-bold text-[#1A1A1A]">
+                      {formData.stats?.events || 0}
+                    </td>
                   </tr>
                 </tbody>
               </table>

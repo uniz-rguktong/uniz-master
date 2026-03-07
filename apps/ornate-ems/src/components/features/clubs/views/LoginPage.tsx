@@ -1,22 +1,16 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useToast } from '@/hooks/useToast';
-import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  ArrowRight
-} from 'lucide-react';
+"use client";
+import { useState, useEffect } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/useToast";
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+  SelectValue,
+} from "@/components/ui/select";
 
 export function LoginPage() {
   const router = useRouter();
@@ -24,65 +18,61 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   // Selection States
-  const [selectedRole, setSelectedRole] = useState('super_admin');
-  const [selectedClub, setSelectedClub] = useState('techexcel');
-  const [selectedBranch, setSelectedBranch] = useState('branch_cse');
-  const [selectedHHO, setSelectedHHO] = useState('hho');
-  const [selectedSports, setSelectedSports] = useState('sports_admin');
+  const [selectedRole, setSelectedRole] = useState("super_admin");
+  const [selectedClub, setSelectedClub] = useState("techexcel");
+  const [selectedBranch, setSelectedBranch] = useState("branch_cse");
+  const [selectedHHO, setSelectedHHO] = useState("hho");
+  const [selectedSports, setSelectedSports] = useState("sports_admin");
   const [isLoading, setIsLoading] = useState(false);
 
   // Credentials
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const clubs = [
-    { id: 'techexcel', name: 'TechExcel' },
-    { id: 'sarva_srujana', name: 'Sarva Srujana' },
-    { id: 'artix', name: 'Artix' },
-    { id: 'kaladharani', name: 'Kaladharani' },
-    { id: 'khelsaathi', name: 'Khelsaathi' },
-    { id: 'icro', name: 'ICRO' },
-    { id: 'pixelro', name: 'PixelRo' },
+    { id: "techexcel", name: "TechExcel" },
+    { id: "sarva_srujana", name: "Sarva Srujana" },
+    { id: "artix", name: "Artix" },
+    { id: "kaladharani", name: "Kaladharani" },
+    { id: "khelsaathi", name: "Khelsaathi" },
+    { id: "icro", name: "ICRO" },
+    { id: "pixelro", name: "PixelRo" },
   ];
 
   const branches = [
-    { id: 'branch_cse', name: 'CSE Branch' },
-    { id: 'branch_ece', name: 'ECE Branch' },
-    { id: 'branch_eee', name: 'EEE Branch' },
-    { id: 'branch_mech', name: 'MECH Branch' },
-    { id: 'branch_civil', name: 'CIVIL Branch' },
+    { id: "branch_cse", name: "CSE Branch" },
+    { id: "branch_ece", name: "ECE Branch" },
+    { id: "branch_eee", name: "EEE Branch" },
+    { id: "branch_mech", name: "MECH Branch" },
+    { id: "branch_civil", name: "CIVIL Branch" },
   ];
 
-  const hhoEntities = [
-    { id: 'hho', name: 'HHO Center' },
-  ];
+  const hhoEntities = [{ id: "hho", name: "HHO Center" }];
 
-  const sportsEntities = [
-    { id: 'sports_admin', name: 'Sports Admin' },
-  ];
+  const sportsEntities = [{ id: "sports_admin", name: "Sports Admin" }];
 
   // Auto-fill email based on Role selection
   useEffect(() => {
-    let autoEmail = '';
+    let autoEmail = "";
 
     switch (selectedRole) {
-      case 'super_admin':
-        autoEmail = 'super@admin.com';
+      case "super_admin":
+        autoEmail = "super@admin.com";
         break;
-      case 'club':
+      case "club":
         autoEmail = `${selectedClub}@clubs.com`;
         break;
-      case 'branch':
-        autoEmail = `${selectedBranch.replace('branch_', '')}@branch.com`;
+      case "branch":
+        autoEmail = `${selectedBranch.replace("branch_", "")}@branch.com`;
         break;
-      case 'hho':
-        autoEmail = 'hho@center.com';
+      case "hho":
+        autoEmail = "hho@center.com";
         break;
-      case 'sports':
-        autoEmail = 'sports@admin.com';
+      case "sports":
+        autoEmail = "sports@admin.com";
         break;
       default:
-        autoEmail = '';
+        autoEmail = "";
     }
 
     setEmail(autoEmail);
@@ -95,7 +85,7 @@ export function LoginPage() {
     try {
       // In a real app this would call next-auth signIn
       // For now we simulate logic to "mock" the user object that would be returned
-      const result = await signIn('credentials', {
+      const result = await signIn("credentials", {
         redirect: false,
         email,
         password,
@@ -107,7 +97,7 @@ export function LoginPage() {
       } else {
         showToast("Access Granted - Redirecting to Dashboard", "success");
         router.refresh();
-        router.push('/dashboard');
+        router.push("/dashboard");
       }
     } catch (error) {
       showToast("Connection Failiure", "error");
@@ -123,7 +113,6 @@ export function LoginPage() {
       {/* Auth Form */}
       <div className="w-full max-w-md relative z-10">
         <div className="w-full max-w-md space-y-8 bg-white p-8 md:p-10 rounded-[32px] shadow-2xl shadow-gray-200/50 border border-gray-100">
-
           <div className="text-center space-y-2">
             <h2 className="text-3xl font-bold text-[#1A1A1A] tracking-tight">
               Welcome Back
@@ -134,11 +123,12 @@ export function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-
             {/* Role Selection */}
             <div className="space-y-5">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-[#1A1A1A]">Select Role</label>
+                <label className="text-sm font-medium text-[#1A1A1A]">
+                  Select Role
+                </label>
                 <Select value={selectedRole} onValueChange={setSelectedRole}>
                   <SelectTrigger className="w-full h-12 bg-white border border-[#E5E7EB] rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981]">
                     <SelectValue placeholder="Select Role" />
@@ -154,15 +144,17 @@ export function LoginPage() {
               </div>
 
               {/* Club Selection (Conditional) */}
-              {selectedRole === 'club' && (
+              {selectedRole === "club" && (
                 <div className="space-y-2 animate-fade-in">
-                  <label className="text-sm font-medium text-[#1A1A1A]">Select Club</label>
+                  <label className="text-sm font-medium text-[#1A1A1A]">
+                    Select Club
+                  </label>
                   <Select value={selectedClub} onValueChange={setSelectedClub}>
                     <SelectTrigger className="w-full h-12 bg-white border border-[#E5E7EB] rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981]">
                       <SelectValue placeholder="Select Club" />
                     </SelectTrigger>
                     <SelectContent>
-                      {clubs.map(club => (
+                      {clubs.map((club) => (
                         <SelectItem key={club.id} value={club.id}>
                           {club.name}
                         </SelectItem>
@@ -173,15 +165,20 @@ export function LoginPage() {
               )}
 
               {/* Branch Selection (Conditional) */}
-              {selectedRole === 'branch' && (
+              {selectedRole === "branch" && (
                 <div className="space-y-2 animate-fade-in">
-                  <label className="text-sm font-medium text-[#1A1A1A]">Select Branch</label>
-                  <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+                  <label className="text-sm font-medium text-[#1A1A1A]">
+                    Select Branch
+                  </label>
+                  <Select
+                    value={selectedBranch}
+                    onValueChange={setSelectedBranch}
+                  >
                     <SelectTrigger className="w-full h-12 bg-white border border-[#E5E7EB] rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981]">
                       <SelectValue placeholder="Select Branch" />
                     </SelectTrigger>
                     <SelectContent>
-                      {branches.map(branch => (
+                      {branches.map((branch) => (
                         <SelectItem key={branch.id} value={branch.id}>
                           {branch.name}
                         </SelectItem>
@@ -192,15 +189,17 @@ export function LoginPage() {
               )}
 
               {/* HHO Selection (Conditional) */}
-              {selectedRole === 'hho' && (
+              {selectedRole === "hho" && (
                 <div className="space-y-2 animate-fade-in">
-                  <label className="text-sm font-medium text-[#1A1A1A]">Select HHO Entity</label>
+                  <label className="text-sm font-medium text-[#1A1A1A]">
+                    Select HHO Entity
+                  </label>
                   <Select value={selectedHHO} onValueChange={setSelectedHHO}>
                     <SelectTrigger className="w-full h-12 bg-white border border-[#E5E7EB] rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981]">
                       <SelectValue placeholder="Select HHO" />
                     </SelectTrigger>
                     <SelectContent>
-                      {hhoEntities.map(h => (
+                      {hhoEntities.map((h) => (
                         <SelectItem key={h.id} value={h.id}>
                           {h.name}
                         </SelectItem>
@@ -211,15 +210,20 @@ export function LoginPage() {
               )}
 
               {/* Sports Selection (Conditional) */}
-              {selectedRole === 'sports' && (
+              {selectedRole === "sports" && (
                 <div className="space-y-2 animate-fade-in">
-                  <label className="text-sm font-medium text-[#1A1A1A]">Select Sports Entity</label>
-                  <Select value={selectedSports} onValueChange={setSelectedSports}>
+                  <label className="text-sm font-medium text-[#1A1A1A]">
+                    Select Sports Entity
+                  </label>
+                  <Select
+                    value={selectedSports}
+                    onValueChange={setSelectedSports}
+                  >
                     <SelectTrigger className="w-full h-12 bg-white border border-[#E5E7EB] rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#10B981]/20 focus:border-[#10B981]">
                       <SelectValue placeholder="Select Entity" />
                     </SelectTrigger>
                     <SelectContent>
-                      {sportsEntities.map(s => (
+                      {sportsEntities.map((s) => (
                         <SelectItem key={s.id} value={s.id}>
                           {s.name}
                         </SelectItem>
@@ -232,7 +236,9 @@ export function LoginPage() {
 
             <div className="space-y-5">
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-[#1A1A1A]">Email Address</label>
+                <label className="text-sm font-medium text-[#1A1A1A]">
+                  Email Address
+                </label>
                 <div className="relative group">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9CA3AF] group-focus-within:text-[#10B981] transition-colors" />
                   <input
@@ -248,7 +254,9 @@ export function LoginPage() {
 
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-[#1A1A1A]">Password</label>
+                  <label className="text-sm font-medium text-[#1A1A1A]">
+                    Password
+                  </label>
                 </div>
                 <div className="relative group">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9CA3AF] group-focus-within:text-[#10B981] transition-colors" />
@@ -265,7 +273,11 @@ export function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#1A1A1A] transition-colors"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -286,8 +298,6 @@ export function LoginPage() {
               )}
             </button>
           </form>
-
-
         </div>
       </div>
     </div>

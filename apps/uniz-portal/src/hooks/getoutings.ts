@@ -18,7 +18,7 @@ export function useGetOutings(page = 1, limit = 50) {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+              Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
             },
           },
         );

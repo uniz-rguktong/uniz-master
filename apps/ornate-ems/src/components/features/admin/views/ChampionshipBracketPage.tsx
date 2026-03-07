@@ -1,90 +1,99 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { Trophy, Calendar, Users, Award, ChevronRight, Info, MapPin, Clock } from 'lucide-react';
-import { Skeleton, MetricCardSkeleton } from '@/components/ui/skeleton';
+"use client";
+import { useState, useEffect } from "react";
+import {
+  Trophy,
+  Calendar,
+  Users,
+  Award,
+  ChevronRight,
+  Info,
+  MapPin,
+  Clock,
+} from "lucide-react";
+import { Skeleton, MetricCardSkeleton } from "@/components/ui/skeleton";
 
 const bracketData = {
-  championship: 'Inter-Department Cricket Championship 2025',
-  sport: 'Cricket',
-  sportColor: '#3B82F6',
-  format: 'Single Elimination',
-  startDate: '2025-11-25',
-  endDate: '2025-11-28',
+  championship: "Inter-Department Cricket Championship 2025",
+  sport: "Cricket",
+  sportColor: "#3B82F6",
+  format: "Single Elimination",
+  startDate: "2025-11-25",
+  endDate: "2025-11-28",
   totalTeams: 8,
 
   rounds: [
     {
-      name: 'Quarter Finals',
+      name: "Quarter Finals",
       matches: [
         {
           id: 1,
-          team1: { name: 'CSE Thunder', score: '185/8', won: true },
-          team2: { name: 'EEE Lightning', score: '142/10', won: false },
-          date: '2025-11-25',
-          time: '10:00 AM',
-          status: 'completed'
+          team1: { name: "CSE Thunder", score: "185/8", won: true },
+          team2: { name: "EEE Lightning", score: "142/10", won: false },
+          date: "2025-11-25",
+          time: "10:00 AM",
+          status: "completed",
         },
         {
           id: 2,
-          team1: { name: 'ECE Warriors', score: '168/6', won: true },
-          team2: { name: 'IT Strikers', score: '165/9', won: false },
-          date: '2025-11-25',
-          time: '2:30 PM',
-          status: 'completed'
+          team1: { name: "ECE Warriors", score: "168/6", won: true },
+          team2: { name: "IT Strikers", score: "165/9", won: false },
+          date: "2025-11-25",
+          time: "2:30 PM",
+          status: "completed",
         },
         {
           id: 3,
-          team1: { name: 'Mech Strikers', score: '195/7', won: true },
-          team2: { name: 'Aero Eagles', score: '178/10', won: false },
-          date: '2025-11-26',
-          time: '10:00 AM',
-          status: 'completed'
+          team1: { name: "Mech Strikers", score: "195/7", won: true },
+          team2: { name: "Aero Eagles", score: "178/10", won: false },
+          date: "2025-11-26",
+          time: "10:00 AM",
+          status: "completed",
         },
         {
           id: 4,
-          team1: { name: 'Civil Champions', score: '156/8', won: true },
-          team2: { name: 'Chemical Kings', score: '152/9', won: false },
-          date: '2025-11-26',
-          time: '2:30 PM',
-          status: 'completed'
-        }]
-
+          team1: { name: "Civil Champions", score: "156/8", won: true },
+          team2: { name: "Chemical Kings", score: "152/9", won: false },
+          date: "2025-11-26",
+          time: "2:30 PM",
+          status: "completed",
+        },
+      ],
     },
     {
-      name: 'Semi Finals',
+      name: "Semi Finals",
       matches: [
         {
           id: 5,
-          team1: { name: 'CSE Thunder', score: null, won: null },
-          team2: { name: 'ECE Warriors', score: null, won: null },
-          date: '2025-11-27',
-          time: '10:00 AM',
-          status: 'scheduled'
+          team1: { name: "CSE Thunder", score: null, won: null },
+          team2: { name: "ECE Warriors", score: null, won: null },
+          date: "2025-11-27",
+          time: "10:00 AM",
+          status: "scheduled",
         },
         {
           id: 6,
-          team1: { name: 'Mech Strikers', score: null, won: null },
-          team2: { name: 'Civil Champions', score: null, won: null },
-          date: '2025-11-27',
-          time: '2:30 PM',
-          status: 'scheduled'
-        }]
-
+          team1: { name: "Mech Strikers", score: null, won: null },
+          team2: { name: "Civil Champions", score: null, won: null },
+          date: "2025-11-27",
+          time: "2:30 PM",
+          status: "scheduled",
+        },
+      ],
     },
     {
-      name: 'Final',
+      name: "Final",
       matches: [
         {
           id: 7,
-          team1: { name: 'TBD', score: null, won: null },
-          team2: { name: 'TBD', score: null, won: null },
-          date: '2025-11-28',
-          time: '3:00 PM',
-          status: 'pending'
-        }]
-
-    }]
-
+          team1: { name: "TBD", score: null, won: null },
+          team2: { name: "TBD", score: null, won: null },
+          date: "2025-11-28",
+          time: "3:00 PM",
+          status: "pending",
+        },
+      ],
+    },
+  ],
 };
 
 export function ChampionshipBracketPage() {
@@ -112,15 +121,28 @@ export function ChampionshipBracketPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
             <div className="flex flex-wrap items-center gap-3 mb-3">
-              <h1 className="text-2xl md:text-[32px] font-black text-[#1A1A1A] tracking-tight">{bracketData.championship}</h1>
+              <h1 className="text-2xl md:text-[32px] font-black text-[#1A1A1A] tracking-tight">
+                {bracketData.championship}
+              </h1>
               <span
                 className="px-4 py-1 rounded-full text-[10px] font-black tracking-widest text-white uppercase shadow-sm shrink-0"
-                style={{ backgroundColor: bracketData.sportColor }}>
+                style={{ backgroundColor: bracketData.sportColor }}
+              >
                 {bracketData.sport}
               </span>
             </div>
             <p className="text-sm md:text-base text-[#6B7280] font-medium">
-              {bracketData.format} • {new Date(bracketData.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(bracketData.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              {bracketData.format} •{" "}
+              {new Date(bracketData.startDate).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}{" "}
+              -{" "}
+              {new Date(bracketData.endDate).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
             </p>
           </div>
 
@@ -136,7 +158,9 @@ export function ChampionshipBracketPage() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           {isLoading ? (
-            [...Array(4)].map((_: any, i: any) => <MetricCardSkeleton key={i} />)
+            [...Array(4)].map((_: any, i: any) => (
+              <MetricCardSkeleton key={i} />
+            ))
           ) : (
             <>
               <div className="bg-[#F4F2F0] rounded-[20px] p-2">
@@ -146,8 +170,12 @@ export function ChampionshipBracketPage() {
                       <Users className="w-6 h-6 text-indigo-600" />
                     </div>
                     <div>
-                      <div className="text-[10px] font-black text-[#6B7280] uppercase tracking-wider mb-1">Total Teams</div>
-                      <div className="text-2xl font-black text-[#1A1A1A]">{bracketData.totalTeams}</div>
+                      <div className="text-[10px] font-black text-[#6B7280] uppercase tracking-wider mb-1">
+                        Total Teams
+                      </div>
+                      <div className="text-2xl font-black text-[#1A1A1A]">
+                        {bracketData.totalTeams}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -160,8 +188,12 @@ export function ChampionshipBracketPage() {
                       <Trophy className="w-6 h-6 text-emerald-600" />
                     </div>
                     <div>
-                      <div className="text-[10px] font-black text-[#6B7280] uppercase tracking-wider mb-1">Matches Done</div>
-                      <div className="text-2xl font-black text-[#10B981]">4/7</div>
+                      <div className="text-[10px] font-black text-[#6B7280] uppercase tracking-wider mb-1">
+                        Matches Done
+                      </div>
+                      <div className="text-2xl font-black text-[#10B981]">
+                        4/7
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -174,8 +206,12 @@ export function ChampionshipBracketPage() {
                       <Calendar className="w-6 h-6 text-amber-600" />
                     </div>
                     <div>
-                      <div className="text-[10px] font-black text-[#6B7280] uppercase tracking-wider mb-1">Current Phase</div>
-                      <div className="text-lg font-black text-[#1A1A1A] truncate">Semi Finals</div>
+                      <div className="text-[10px] font-black text-[#6B7280] uppercase tracking-wider mb-1">
+                        Current Phase
+                      </div>
+                      <div className="text-lg font-black text-[#1A1A1A] truncate">
+                        Semi Finals
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -188,8 +224,12 @@ export function ChampionshipBracketPage() {
                       <Award className="w-6 h-6 text-rose-600" />
                     </div>
                     <div>
-                      <div className="text-[10px] font-black text-[#6B7280] uppercase tracking-wider mb-1">Champion</div>
-                      <div className="text-lg font-black text-rose-500">TBD</div>
+                      <div className="text-[10px] font-black text-[#6B7280] uppercase tracking-wider mb-1">
+                        Champion
+                      </div>
+                      <div className="text-lg font-black text-rose-500">
+                        TBD
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -204,7 +244,9 @@ export function ChampionshipBracketPage() {
         {/* Mobile Swipe Hint */}
         <div className="flex lg:hidden items-center justify-center gap-2 mb-4 text-[#6B7280] animate-pulse">
           <Info className="w-4 h-4" />
-          <span className="text-[10px] font-bold uppercase tracking-widest">Swipe horizontally to view full bracket</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest">
+            Swipe horizontally to view full bracket
+          </span>
         </div>
 
         <div className="bg-[#F4F2F0] rounded-[32px] p-2 md:p-4">
@@ -228,15 +270,15 @@ export function ChampionshipBracketPage() {
                       {/* Matches Container */}
                       <div className="flex flex-col justify-around grow space-y-12">
                         {round.matches.map((match: any, matchIndex: any) => (
-                          <div
-                            key={match.id}
-                            className="relative"
-                          >
+                          <div key={match.id} className="relative">
                             <div
-                              className={`group relative bg-white border-2 rounded-[24px] overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl ${match.status === 'completed' ? 'border-[#10B981]' :
-                                match.status === 'scheduled' ? 'border-[#3B82F6]' :
-                                  'border-[#E5E7EB]'
-                                }`}
+                              className={`group relative bg-white border-2 rounded-[24px] overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl ${
+                                match.status === "completed"
+                                  ? "border-[#10B981]"
+                                  : match.status === "scheduled"
+                                    ? "border-[#3B82F6]"
+                                    : "border-[#E5E7EB]"
+                              }`}
                               onClick={() => setSelectedMatch(match.id)}
                             >
                               {/* Match ID & Status Badge */}
@@ -244,43 +286,76 @@ export function ChampionshipBracketPage() {
                                 <span className="text-[10px] font-black text-[#9CA3AF] uppercase tracking-wider">
                                   Match #{match.id}
                                 </span>
-                                <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${match.status === 'completed' ? 'bg-emerald-50 text-emerald-600' :
-                                  match.status === 'scheduled' ? 'bg-blue-50 text-blue-600' :
-                                    'bg-gray-50 text-gray-500'
-                                  }`}>
+                                <span
+                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                                    match.status === "completed"
+                                      ? "bg-emerald-50 text-emerald-600"
+                                      : match.status === "scheduled"
+                                        ? "bg-blue-50 text-blue-600"
+                                        : "bg-gray-50 text-gray-500"
+                                  }`}
+                                >
                                   {match.status}
                                 </span>
                               </div>
 
                               {/* Team 1 */}
-                              <div className={`px-5 py-4 border-b border-[#F3F4F6] flex items-center justify-between group/team transition-colors ${match.team1.won ? 'bg-emerald-50/50' : 'bg-white'
-                                }`}>
+                              <div
+                                className={`px-5 py-4 border-b border-[#F3F4F6] flex items-center justify-between group/team transition-colors ${
+                                  match.team1.won
+                                    ? "bg-emerald-50/50"
+                                    : "bg-white"
+                                }`}
+                              >
                                 <div className="flex items-center gap-3">
-                                  {match.team1.won && <Trophy className="w-4 h-4 text-[#10B981] shrink-0" />}
-                                  <span className={`text-sm font-black transition-colors ${match.team1.won ? 'text-emerald-700' : 'text-[#1A1A1A]'
-                                    }`}>
+                                  {match.team1.won && (
+                                    <Trophy className="w-4 h-4 text-[#10B981] shrink-0" />
+                                  )}
+                                  <span
+                                    className={`text-sm font-black transition-colors ${
+                                      match.team1.won
+                                        ? "text-emerald-700"
+                                        : "text-[#1A1A1A]"
+                                    }`}
+                                  >
                                     {match.team1.name}
                                   </span>
                                 </div>
                                 {match.team1.score && (
-                                  <span className={`text-sm font-black ${match.team1.won ? 'text-emerald-600' : 'text-[#9CA3AF]'}`}>
+                                  <span
+                                    className={`text-sm font-black ${match.team1.won ? "text-emerald-600" : "text-[#9CA3AF]"}`}
+                                  >
                                     {match.team1.score}
                                   </span>
                                 )}
                               </div>
 
                               {/* Team 2 */}
-                              <div className={`px-5 py-4 flex items-center justify-between group/team transition-colors ${match.team2.won ? 'bg-emerald-50/50' : 'bg-white'
-                                }`}>
+                              <div
+                                className={`px-5 py-4 flex items-center justify-between group/team transition-colors ${
+                                  match.team2.won
+                                    ? "bg-emerald-50/50"
+                                    : "bg-white"
+                                }`}
+                              >
                                 <div className="flex items-center gap-3">
-                                  {match.team2.won && <Trophy className="w-4 h-4 text-[#10B981] shrink-0" />}
-                                  <span className={`text-sm font-black transition-colors ${match.team2.won ? 'text-emerald-700' : 'text-[#1A1A1A]'
-                                    }`}>
+                                  {match.team2.won && (
+                                    <Trophy className="w-4 h-4 text-[#10B981] shrink-0" />
+                                  )}
+                                  <span
+                                    className={`text-sm font-black transition-colors ${
+                                      match.team2.won
+                                        ? "text-emerald-700"
+                                        : "text-[#1A1A1A]"
+                                    }`}
+                                  >
                                     {match.team2.name}
                                   </span>
                                 </div>
                                 {match.team2.score && (
-                                  <span className={`text-sm font-black ${match.team2.won ? 'text-emerald-600' : 'text-[#9CA3AF]'}`}>
+                                  <span
+                                    className={`text-sm font-black ${match.team2.won ? "text-emerald-600" : "text-[#9CA3AF]"}`}
+                                  >
                                     {match.team2.score}
                                   </span>
                                 )}
@@ -292,7 +367,10 @@ export function ChampionshipBracketPage() {
                                   <div className="flex items-center gap-3 text-[10px] font-bold text-[#6B7280]">
                                     <div className="flex items-center gap-1">
                                       <Calendar className="w-3 h-3 text-indigo-400" />
-                                      {new Date(match.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                      {new Date(match.date).toLocaleDateString(
+                                        "en-US",
+                                        { month: "short", day: "numeric" },
+                                      )}
                                     </div>
                                     <div className="flex items-center gap-1">
                                       <Clock className="w-3 h-3 text-amber-400" />
@@ -327,7 +405,9 @@ export function ChampionshipBracketPage() {
                           <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner ring-4 ring-amber-100 border-2 border-white">
                             <Trophy className="w-10 h-10 text-amber-500 animate-bounce" />
                           </div>
-                          <div className="text-lg font-black text-[#1A1A1A] leading-tight mb-2 tracking-tight">TO BE DECIDED</div>
+                          <div className="text-lg font-black text-[#1A1A1A] leading-tight mb-2 tracking-tight">
+                            TO BE DECIDED
+                          </div>
                           <div className="text-[10px] font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-3 py-1 rounded-full inline-block">
                             Final on Nov 28
                           </div>
@@ -347,23 +427,33 @@ export function ChampionshipBracketPage() {
         <div className="bg-white rounded-[20px] border border-[#E5E7EB] p-8">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="w-full lg:w-auto">
-              <h3 className="text-xs font-black text-[#1A1A1A] uppercase tracking-[0.2em] mb-4">Bracket Legend</h3>
+              <h3 className="text-xs font-black text-[#1A1A1A] uppercase tracking-[0.2em] mb-4">
+                Bracket Legend
+              </h3>
               <div className="flex flex-wrap items-center gap-y-4 gap-x-8">
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 bg-emerald-50 border-2 border-[#10B981] rounded-lg"></div>
-                  <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">Completed</span>
+                  <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">
+                    Completed
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 bg-blue-50 border-2 border-[#3B82F6] rounded-lg"></div>
-                  <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">Scheduled</span>
+                  <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">
+                    Scheduled
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 bg-white border-2 border-[#E5E7EB] rounded-lg"></div>
-                  <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">Pending</span>
+                  <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">
+                    Pending
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Trophy className="w-4 h-4 text-[#10B981]" />
-                  <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">Winner</span>
+                  <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">
+                    Winner
+                  </span>
                 </div>
               </div>
             </div>
@@ -373,8 +463,12 @@ export function ChampionshipBracketPage() {
                 <Info className="w-5 h-5 text-blue-500" />
               </div>
               <div>
-                <div className="text-[10px] font-black text-[#1A1A1A] uppercase tracking-wider">Live Tracking</div>
-                <div className="text-xs font-medium text-[#6B7280]">Scores update automatically after each session</div>
+                <div className="text-[10px] font-black text-[#1A1A1A] uppercase tracking-wider">
+                  Live Tracking
+                </div>
+                <div className="text-xs font-medium text-[#6B7280]">
+                  Scores update automatically after each session
+                </div>
               </div>
             </div>
           </div>

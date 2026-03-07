@@ -25,6 +25,7 @@ import {
   Camera,
 } from "lucide-react";
 import Papa from "papaparse";
+import axios from "axios";
 import {
   SEARCH_FACULTY,
   CREATE_FACULTY,
@@ -279,19 +280,19 @@ export default function FacultyManagement({
     if (!file) return;
 
     setIsUploading(true);
-    const formDataUpload = new FormData();
-    formDataUpload.append("file", file);
-    formDataUpload.append("upload_preset", "uniz_upload");
-
     try {
-      const res = await fetch(
-        "https://api.cloudinary.com/v1_1/dy2fjgt46/image/upload",
-        {
-          method: "POST",
-          body: formDataUpload,
-        },
+      const formDataUpload = new FormData();
+      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+      const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+      formDataUpload.append("file", file);
+      formDataUpload.append("upload_preset", uploadPreset);
+
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        formDataUpload,
       );
-      const data = await res.json();
+      const data = response.data;
       if (data.secure_url) {
         setFormData((prev) => ({ ...prev, profileUrl: data.secure_url }));
         toast.success("Profile photo uploaded!");

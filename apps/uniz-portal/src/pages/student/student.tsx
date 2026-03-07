@@ -197,7 +197,7 @@ export default function StudentProfilePage() {
       formData.append("file", file);
       formData.append(
         "upload_preset",
-        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || "uniz_upload",
+        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
       );
 
       const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;

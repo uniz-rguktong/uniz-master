@@ -1,55 +1,71 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { Shield, Users, Search, Edit, Trash2, Lock, ChevronRight, UserPlus, Fingerprint, ShieldAlert, CheckCircle2, XCircle } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useToast } from '@/hooks/useToast';
+"use client";
+import { useState, useEffect } from "react";
+import {
+  Shield,
+  Users,
+  Search,
+  Edit,
+  Trash2,
+  Lock,
+  ChevronRight,
+  UserPlus,
+  Fingerprint,
+  ShieldAlert,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/useToast";
 
 const roles = [
   {
     id: 1,
-    name: 'Super Admin',
-    description: 'Full system sovereignty with unrestricted visibility and management controls.',
+    name: "Super Admin",
+    description:
+      "Full system sovereignty with unrestricted visibility and management controls.",
     users: 2,
-    color: '#6366F1',
-    accent: 'bg-indigo-50 border-indigo-100 text-indigo-600',
+    color: "#6366F1",
+    accent: "bg-indigo-50 border-indigo-100 text-indigo-600",
     permissions: {
       events: { view: true, create: true, edit: true, delete: true },
       registrations: { view: true, create: true, edit: true, delete: true },
       sports: { view: true, create: true, edit: true, delete: true },
       content: { view: true, create: true, edit: true, delete: true },
-      settings: { view: true, create: true, edit: true, delete: true }
-    }
+      settings: { view: true, create: true, edit: true, delete: true },
+    },
   },
   {
     id: 2,
-    name: 'Administrative Entity',
-    description: 'Core management functions for events, participants, and gallery operations.',
+    name: "Administrative Entity",
+    description:
+      "Core management functions for events, participants, and gallery operations.",
     users: 8,
-    color: '#10B981',
-    accent: 'bg-emerald-50 border-emerald-100 text-emerald-600',
+    color: "#10B981",
+    accent: "bg-emerald-50 border-emerald-100 text-emerald-600",
     permissions: {
       events: { view: true, create: true, edit: true, delete: false },
       registrations: { view: true, create: true, edit: true, delete: false },
       sports: { view: true, create: true, edit: true, delete: false },
       content: { view: true, create: true, edit: true, delete: false },
-      settings: { view: true, create: false, edit: false, delete: false }
-    }
+      settings: { view: true, create: false, edit: false, delete: false },
+    },
   },
   {
     id: 3,
-    name: 'Event Coordinator',
-    description: 'Operational focus on event creation and participant lifecycle management.',
+    name: "Event Coordinator",
+    description:
+      "Operational focus on event creation and participant lifecycle management.",
     users: 14,
-    color: '#F59E0B',
-    accent: 'bg-amber-50 border-amber-100 text-amber-600',
+    color: "#F59E0B",
+    accent: "bg-amber-50 border-amber-100 text-amber-600",
     permissions: {
       events: { view: true, create: true, edit: true, delete: false },
       registrations: { view: true, create: false, edit: true, delete: false },
       sports: { view: true, create: false, edit: false, delete: false },
       content: { view: true, create: true, edit: true, delete: false },
-      settings: { view: false, create: false, edit: false, delete: false }
-    }
-  }
+      settings: { view: false, create: false, edit: false, delete: false },
+    },
+  },
 ];
 
 interface AccessControlUser {
@@ -74,16 +90,19 @@ interface AccessControlPageProps {
   initialLogs?: AccessControlLog[];
 }
 
-export function AccessControlPage({ userRole, initialUsers = [] as any[], initialLogs = [] as any[] }: AccessControlPageProps) {
-  const isSuperAdmin = userRole === 'SUPER_ADMIN';
-  const [activeTab, setActiveTab] = useState('roles');
+export function AccessControlPage({
+  userRole,
+  initialUsers = [] as any[],
+  initialLogs = [] as any[],
+}: AccessControlPageProps) {
+  const isSuperAdmin = userRole === "SUPER_ADMIN";
+  const [activeTab, setActiveTab] = useState("roles");
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [usersList, setUsersList] = useState(initialUsers);
   const [logsList, setLogsList] = useState(initialLogs);
   const { toast, showToast, hideToast } = useToast();
-
 
   useEffect(() => {
     setIsLoading(false);
@@ -91,10 +110,8 @@ export function AccessControlPage({ userRole, initialUsers = [] as any[], initia
     if (initialLogs.length > 0) setLogsList(initialLogs);
   }, [initialUsers, initialLogs]);
 
-
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto animate-page-entrance">
-
       {/* Header Section */}
       <div className="mb-8">
         <div className="flex flex-wrap items-center gap-2 text-sm text-[#6B7280] mb-3">
@@ -107,25 +124,33 @@ export function AccessControlPage({ userRole, initialUsers = [] as any[], initia
 
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <div>
-            <h1 className="text-[28px] font-semibold text-[#1A1A1A] mb-2">Access Control</h1>
-            <p className="text-sm text-[#6B7280]">Manage institutional roles and granular permission matrices</p>
+            <h1 className="text-[28px] font-semibold text-[#1A1A1A] mb-2">
+              Access Control
+            </h1>
+            <p className="text-sm text-[#6B7280]">
+              Manage institutional roles and granular permission matrices
+            </p>
           </div>
 
           {isSuperAdmin && (
             <button
               onClick={() => {
-                const label = activeTab === 'roles' ? 'Role definition modal opened' :
-                  activeTab === 'users' ? 'User enrollment modal opened' :
-                    'Audit logs exported successfully';
-                showToast(label, activeTab === 'logs' ? 'success' : 'info');
+                const label =
+                  activeTab === "roles"
+                    ? "Role definition modal opened"
+                    : activeTab === "users"
+                      ? "User enrollment modal opened"
+                      : "Audit logs exported successfully";
+                showToast(label, activeTab === "logs" ? "success" : "info");
               }}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-[#10B981] text-white rounded-lg text-sm font-medium hover:bg-[#059669] transition-all shadow-sm active:scale-95 group">
-              {activeTab === 'roles' ? (
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-[#10B981] text-white rounded-lg text-sm font-medium hover:bg-[#059669] transition-all shadow-sm active:scale-95 group"
+            >
+              {activeTab === "roles" ? (
                 <>
                   <ShieldAlert className="w-4 h-4" />
                   Define Role
                 </>
-              ) : activeTab === 'users' ? (
+              ) : activeTab === "users" ? (
                 <>
                   <UserPlus className="w-4 h-4" />
                   Enroll User
@@ -149,26 +174,61 @@ export function AccessControlPage({ userRole, initialUsers = [] as any[], initia
             <div className="px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider border bg-indigo-50 text-indigo-600 border-indigo-100">
               System Overview
             </div>
-            <p className="text-sm text-[#6B7280] hidden md:block">Key security metrics at a glance</p>
+            <p className="text-sm text-[#6B7280] hidden md:block">
+              Key security metrics at a glance
+            </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { icon: Users, label: 'Total Entities', value: '44', color: 'indigo', sub: 'Verified across system' },
-            { icon: Shield, label: 'Security Roles', value: '4', color: 'emerald', sub: 'Defined access levels' },
-            { icon: Fingerprint, label: 'Active Sessions', value: '38', color: 'amber', sub: 'Encrypted connections' },
-            { icon: Lock, label: 'Gatekeepers', value: '2', color: 'rose', sub: 'Locked accounts' }
+            {
+              icon: Users,
+              label: "Total Entities",
+              value: "44",
+              color: "indigo",
+              sub: "Verified across system",
+            },
+            {
+              icon: Shield,
+              label: "Security Roles",
+              value: "4",
+              color: "emerald",
+              sub: "Defined access levels",
+            },
+            {
+              icon: Fingerprint,
+              label: "Active Sessions",
+              value: "38",
+              color: "amber",
+              sub: "Encrypted connections",
+            },
+            {
+              icon: Lock,
+              label: "Gatekeepers",
+              value: "2",
+              color: "rose",
+              sub: "Locked accounts",
+            },
           ].map((stat: any, i: any) => (
-            <div key={i} className="bg-[#F4F2F0] rounded-[18px] pt-2 pr-2 pb-6 pl-2 flex flex-col transition-all hover:scale-[1.02] duration-300">
+            <div
+              key={i}
+              className="bg-[#F4F2F0] rounded-[18px] pt-2 pr-2 pb-6 pl-2 flex flex-col transition-all hover:scale-[1.02] duration-300"
+            >
               <div className="bg-white rounded-[16px] w-full p-6 shadow-sm border border-gray-100 flex-1 flex flex-col justify-center">
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 bg-${stat.color}-50 rounded-xl flex items-center justify-center border border-${stat.color}-100 shrink-0`}>
+                  <div
+                    className={`w-12 h-12 bg-${stat.color}-50 rounded-xl flex items-center justify-center border border-${stat.color}-100 shrink-0`}
+                  >
                     <stat.icon className={`w-6 h-6 text-${stat.color}-600`} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#7A7772] uppercase tracking-widest opacity-70 mb-1">{stat.label}</div>
-                    <div className="text-2xl font-bold text-[#1A1A1A] leading-none">{stat.value}</div>
+                    <div className="text-xs font-bold text-[#7A7772] uppercase tracking-widest opacity-70 mb-1">
+                      {stat.label}
+                    </div>
+                    <div className="text-2xl font-bold text-[#1A1A1A] leading-none">
+                      {stat.value}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -185,29 +245,38 @@ export function AccessControlPage({ userRole, initialUsers = [] as any[], initia
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
               <div className="flex bg-gray-50 p-1.5 rounded-2xl border border-gray-100 overflow-hidden">
                 <button
-                  onClick={() => setActiveTab('roles')}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === 'roles' ? 'bg-[#1A1A1A] text-white shadow-md' : 'text-[#6B7280] hover:bg-gray-200/50'
-                    }`}
+                  onClick={() => setActiveTab("roles")}
+                  className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                    activeTab === "roles"
+                      ? "bg-[#1A1A1A] text-white shadow-md"
+                      : "text-[#6B7280] hover:bg-gray-200/50"
+                  }`}
                 >
                   Roles & Permissions
                 </button>
                 <button
-                  onClick={() => setActiveTab('users')}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === 'users' ? 'bg-[#1A1A1A] text-white shadow-md' : 'text-[#6B7280] hover:bg-gray-200/50'
-                    }`}
+                  onClick={() => setActiveTab("users")}
+                  className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                    activeTab === "users"
+                      ? "bg-[#1A1A1A] text-white shadow-md"
+                      : "text-[#6B7280] hover:bg-gray-200/50"
+                  }`}
                 >
                   System Users
                 </button>
                 <button
-                  onClick={() => setActiveTab('logs')}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === 'logs' ? 'bg-[#1A1A1A] text-white shadow-md' : 'text-[#6B7280] hover:bg-gray-200/50'
-                    }`}
+                  onClick={() => setActiveTab("logs")}
+                  className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                    activeTab === "logs"
+                      ? "bg-[#1A1A1A] text-white shadow-md"
+                      : "text-[#6B7280] hover:bg-gray-200/50"
+                  }`}
                 >
                   Audit Logs
                 </button>
               </div>
 
-              {activeTab !== 'roles' && (
+              {activeTab !== "roles" && (
                 <div className="relative min-w-[300px]">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
                   <input
@@ -232,62 +301,89 @@ export function AccessControlPage({ userRole, initialUsers = [] as any[], initia
                   </div>
                 ))}
               </div>
-            ) : (
-              activeTab === 'roles' ? (
-                <div className="grid grid-cols-1 gap-8">
-                  {roles.map((role: any, idx: any) => (
-                    <div key={role.id} className="bg-[#F4F2F0] rounded-[18px] pt-2 pr-2 pb-6 pl-2 animate-card-entrance" style={{ animationDelay: `${idx * 80}ms` }}>
-                      {/* Header Bar */}
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-[12px] mt-[10px] mb-[16px]">
-                        <div className="flex items-center gap-4">
-                          <div className={`px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider border ${role.accent}`}>
-                            {role.name}
-                          </div>
-                          <span className="px-3 py-1 bg-white border border-gray-100 rounded-full text-xs font-semibold text-[#6B7280]">
-                            {role.users} Members
-                          </span>
+            ) : activeTab === "roles" ? (
+              <div className="grid grid-cols-1 gap-8">
+                {roles.map((role: any, idx: any) => (
+                  <div
+                    key={role.id}
+                    className="bg-[#F4F2F0] rounded-[18px] pt-2 pr-2 pb-6 pl-2 animate-card-entrance"
+                    style={{ animationDelay: `${idx * 80}ms` }}
+                  >
+                    {/* Header Bar */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-[12px] mt-[10px] mb-[16px]">
+                      <div className="flex items-center gap-4">
+                        <div
+                          className={`px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider border ${role.accent}`}
+                        >
+                          {role.name}
                         </div>
-                        <p className="text-sm text-[#6B7280] hidden md:block max-w-sm truncate">{role.description}</p>
-
-                        {isSuperAdmin && (
-                          <div className="flex items-center gap-2">
-                            <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-semibold hover:bg-gray-50 transition-all shadow-sm">
-                              <Edit className="w-3 h-3" />
-                              Modify
-                            </button>
-                            {role.id !== 1 && (
-                              <button className="p-1.5 bg-white border border-rose-100 text-rose-500 rounded-lg hover:bg-rose-50 transition-all shadow-sm">
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            )}
-                          </div>
-                        )}
+                        <span className="px-3 py-1 bg-white border border-gray-100 rounded-full text-xs font-semibold text-[#6B7280]">
+                          {role.users} Members
+                        </span>
                       </div>
+                      <p className="text-sm text-[#6B7280] hidden md:block max-w-sm truncate">
+                        {role.description}
+                      </p>
 
-                      {/* White Inner Card */}
-                      <div className="bg-white rounded-[14px] border border-[#E5E7EB] overflow-hidden shadow-sm">
-                        <table className="w-full text-left">
-                          <thead className="bg-white border-b border-[#F3F4F6]">
-                            <tr>
-                              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Control Module</th>
-                              {['VIEW', 'CREATE', 'EDIT', 'DELETE'].map(action => (
-                                <th key={action} className="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">{action}</th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {Object.entries(role.permissions).map(([module, perms]: [string, any], idx, arr) => (
-                              <tr key={module} className={`border-b border-[#F3F4F6] row-hover-effect hover:bg-[#FAFAFA] transition-colors ${idx === arr.length - 1 ? 'border-b-0' : ''}`}>
+                      {isSuperAdmin && (
+                        <div className="flex items-center gap-2">
+                          <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-semibold hover:bg-gray-50 transition-all shadow-sm">
+                            <Edit className="w-3 h-3" />
+                            Modify
+                          </button>
+                          {role.id !== 1 && (
+                            <button className="p-1.5 bg-white border border-rose-100 text-rose-500 rounded-lg hover:bg-rose-50 transition-all shadow-sm">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* White Inner Card */}
+                    <div className="bg-white rounded-[14px] border border-[#E5E7EB] overflow-hidden shadow-sm">
+                      <table className="w-full text-left">
+                        <thead className="bg-white border-b border-[#F3F4F6]">
+                          <tr>
+                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                              Control Module
+                            </th>
+                            {["VIEW", "CREATE", "EDIT", "DELETE"].map(
+                              (action) => (
+                                <th
+                                  key={action}
+                                  className="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                >
+                                  {action}
+                                </th>
+                              ),
+                            )}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.entries(role.permissions).map(
+                            ([module, perms]: [string, any], idx, arr) => (
+                              <tr
+                                key={module}
+                                className={`border-b border-[#F3F4F6] row-hover-effect hover:bg-[#FAFAFA] transition-colors ${idx === arr.length - 1 ? "border-b-0" : ""}`}
+                              >
                                 <td className="px-6 py-4">
                                   <div className="text-sm font-medium text-[#1A1A1A] capitalize">
                                     {module} Management
                                   </div>
                                 </td>
-                                {[perms.view, perms.create, perms.edit, perms.delete].map((allowed: any, i: number) => (
+                                {[
+                                  perms.view,
+                                  perms.create,
+                                  perms.edit,
+                                  perms.delete,
+                                ].map((allowed: any, i: number) => (
                                   <td key={i} className="px-6 py-4">
                                     <div className="flex justify-center">
                                       {allowed ? (
-                                        <div className={`w-8 h-8 rounded-[10px] flex items-center justify-center ${role.accent} bg-opacity-50`}>
+                                        <div
+                                          className={`w-8 h-8 rounded-[10px] flex items-center justify-center ${role.accent} bg-opacity-50`}
+                                        >
                                           <CheckCircle2 className="w-4 h-4" />
                                         </div>
                                       ) : (
@@ -299,40 +395,68 @@ export function AccessControlPage({ userRole, initialUsers = [] as any[], initia
                                   </td>
                                 ))}
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                            ),
+                          )}
+                        </tbody>
+                      </table>
                     </div>
-                  ))}
-                </div>
-              ) : activeTab === 'users' ? (
-                <div className="bg-[#F4F2F0] rounded-[18px] pt-2 pr-2 pb-6 pl-2">
-                  <div className="bg-white rounded-[14px] border border-[#E5E7EB] overflow-hidden shadow-sm">
-                    <table className="w-full">
-                      <thead className="bg-white border-b border-[#F3F4F6]">
-                        <tr>
-                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Identification</th>
-                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Access Tier</th>
-                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Telemetry</th>
-                          <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Controls</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {usersList.filter(u =>
-                          (u.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-                          (u.role?.toLowerCase() || '').includes(searchQuery.toLowerCase())
-                        ).map((user, idx, arr) => (
-                          <tr key={user.id} className={`border-b border-[#F3F4F6] row-hover-effect hover:bg-[#FAFAFA] transition-all animate-card-entrance ${idx === arr.length - 1 ? 'border-b-0' : ''}`} style={{ animationDelay: `${idx * 40}ms` }}>
+                  </div>
+                ))}
+              </div>
+            ) : activeTab === "users" ? (
+              <div className="bg-[#F4F2F0] rounded-[18px] pt-2 pr-2 pb-6 pl-2">
+                <div className="bg-white rounded-[14px] border border-[#E5E7EB] overflow-hidden shadow-sm">
+                  <table className="w-full">
+                    <thead className="bg-white border-b border-[#F3F4F6]">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                          Identification
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                          Access Tier
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                          Telemetry
+                        </th>
+                        <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">
+                          Controls
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {usersList
+                        .filter(
+                          (u) =>
+                            (u.name?.toLowerCase() || "").includes(
+                              searchQuery.toLowerCase(),
+                            ) ||
+                            (u.role?.toLowerCase() || "").includes(
+                              searchQuery.toLowerCase(),
+                            ),
+                        )
+                        .map((user, idx, arr) => (
+                          <tr
+                            key={user.id}
+                            className={`border-b border-[#F3F4F6] row-hover-effect hover:bg-[#FAFAFA] transition-all animate-card-entrance ${idx === arr.length - 1 ? "border-b-0" : ""}`}
+                            style={{ animationDelay: `${idx * 40}ms` }}
+                          >
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-4">
-                                <div className={`w-9 h-9 ${user.color} rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-md shadow-black/5`}>
+                                <div
+                                  className={`w-9 h-9 ${user.color} rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-md shadow-black/5`}
+                                >
                                   {user.initial}
                                 </div>
                                 <div>
-                                  <div className="text-sm font-medium text-[#1A1A1A]">{user.name}</div>
-                                  <div className="text-xs text-[#6B7280] mt-0.5">{user.email}</div>
+                                  <div className="text-sm font-medium text-[#1A1A1A]">
+                                    {user.name}
+                                  </div>
+                                  <div className="text-xs text-[#6B7280] mt-0.5">
+                                    {user.email}
+                                  </div>
                                 </div>
                               </div>
                             </td>
@@ -343,14 +467,20 @@ export function AccessControlPage({ userRole, initialUsers = [] as any[], initia
                             </td>
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-2">
-                                <div className={`w-1.5 h-1.5 rounded-full ${user.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`}></div>
-                                <span className={`text-xs font-medium uppercase tracking-wide ${user.status === 'active' ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                <div
+                                  className={`w-1.5 h-1.5 rounded-full ${user.status === "active" ? "bg-emerald-500 animate-pulse" : "bg-slate-300"}`}
+                                ></div>
+                                <span
+                                  className={`text-xs font-medium uppercase tracking-wide ${user.status === "active" ? "text-emerald-600" : "text-slate-500"}`}
+                                >
                                   {user.status}
                                 </span>
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="text-sm text-[#6B7280]">{user.lastActive}</span>
+                              <span className="text-sm text-[#6B7280]">
+                                {user.lastActive}
+                              </span>
                             </td>
                             <td className="px-6 py-4 text-right">
                               {isSuperAdmin && (
@@ -366,43 +496,77 @@ export function AccessControlPage({ userRole, initialUsers = [] as any[], initia
                             </td>
                           </tr>
                         ))}
-                      </tbody>
-                    </table>
-                  </div>
+                    </tbody>
+                  </table>
                 </div>
-              ) : (
-                <div className="bg-[#F4F2F0] rounded-[18px] pt-2 pr-2 pb-6 pl-2">
-                  <div className="bg-white rounded-[14px] border border-[#E5E7EB] overflow-hidden shadow-sm">
-                    <table className="w-full">
-                      <thead className="bg-white border-b border-[#F3F4F6]">
-                        <tr>
-                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Initiator</th>
-                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Security Action</th>
-                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Target Entity</th>
-                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Timestamp</th>
-                          <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">IP Address</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {logsList.filter(log =>
-                          (log.user?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-                          (log.action?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-                          (log.target?.toLowerCase() || '').includes(searchQuery.toLowerCase())
-                        ).map((log, idx, arr) => (
-                          <tr key={log.id} className={`border-b border-[#F3F4F6] row-hover-effect hover:bg-[#FAFAFA] transition-all animate-card-entrance ${idx === arr.length - 1 ? 'border-b-0' : ''}`} style={{ animationDelay: `${idx * 40}ms` }}>
-                            <td className="px-6 py-4 text-sm font-medium text-[#1A1A1A]">{log.user}</td>
+              </div>
+            ) : (
+              <div className="bg-[#F4F2F0] rounded-[18px] pt-2 pr-2 pb-6 pl-2">
+                <div className="bg-white rounded-[14px] border border-[#E5E7EB] overflow-hidden shadow-sm">
+                  <table className="w-full">
+                    <thead className="bg-white border-b border-[#F3F4F6]">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                          Initiator
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                          Security Action
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                          Target Entity
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                          Timestamp
+                        </th>
+                        <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">
+                          IP Address
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {logsList
+                        .filter(
+                          (log) =>
+                            (log.user?.toLowerCase() || "").includes(
+                              searchQuery.toLowerCase(),
+                            ) ||
+                            (log.action?.toLowerCase() || "").includes(
+                              searchQuery.toLowerCase(),
+                            ) ||
+                            (log.target?.toLowerCase() || "").includes(
+                              searchQuery.toLowerCase(),
+                            ),
+                        )
+                        .map((log, idx, arr) => (
+                          <tr
+                            key={log.id}
+                            className={`border-b border-[#F3F4F6] row-hover-effect hover:bg-[#FAFAFA] transition-all animate-card-entrance ${idx === arr.length - 1 ? "border-b-0" : ""}`}
+                            style={{ animationDelay: `${idx * 40}ms` }}
+                          >
+                            <td className="px-6 py-4 text-sm font-medium text-[#1A1A1A]">
+                              {log.user}
+                            </td>
                             <td className="px-6 py-4">
                               <span className="inline-flex items-center px-2.5 py-1 bg-amber-50 border border-amber-100 rounded-full text-xs font-semibold text-amber-600 tracking-wide">
                                 {log.action}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-sm text-[#6B7280]">{log.target}</td>
+                            <td className="px-6 py-4 text-sm text-[#6B7280]">
+                              {log.target}
+                            </td>
                             <td className="px-6 py-4">
                               <div className="text-sm font-medium text-[#1A1A1A]">
                                 {new Date(log.timestamp).toLocaleDateString()}
                               </div>
                               <div className="text-xs text-[#9CA3AF]">
-                                {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                {new Date(log.timestamp).toLocaleTimeString(
+                                  [],
+                                  {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                  },
+                                )}
                               </div>
                             </td>
                             <td className="px-6 py-4 text-right font-mono text-xs text-[#6B7280]">
@@ -410,11 +574,10 @@ export function AccessControlPage({ userRole, initialUsers = [] as any[], initia
                             </td>
                           </tr>
                         ))}
-                      </tbody>
-                    </table>
-                  </div>
+                    </tbody>
+                  </table>
                 </div>
-              )
+              </div>
             )}
           </div>
         </div>

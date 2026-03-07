@@ -1,5 +1,5 @@
-import { EventAnalyticsPage } from '@/components/features/admin/views/EventAnalyticsPage';
+import { EventAnalyticsPage } from "@/components/features/admin/views/EventAnalyticsPage";
 
 export default function Page() {
-    return <EventAnalyticsPage />;
+  return <EventAnalyticsPage />;
 }

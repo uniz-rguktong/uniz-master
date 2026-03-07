@@ -1,118 +1,133 @@
-import { SESClient, SendEmailCommand, SendRawEmailCommand } from '@aws-sdk/client-ses';
+import {
+  SESClient,
+  SendEmailCommand,
+  SendRawEmailCommand,
+} from "@aws-sdk/client-ses";
 
 const sesClient = new SESClient({
-    region: process.env.AWS_REGION!,
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-    },
+  region: process.env.AWS_REGION!,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
 });
 
 const FROM_EMAIL = () => process.env.SES_FROM_EMAIL!;
 
 export interface EmailAttachment {
-    filename: string;
-    content: Buffer;
-    cid?: string;
+  filename: string;
+  content: Buffer;
+  cid?: string;
 }
 
 export interface EmailActionResponse {
-    success: boolean;
-    messageId?: string;
-    error?: string;
+  success: boolean;
+  messageId?: string;
+  error?: string;
 }
 
 /**
  * Build a raw MIME message with inline attachments (used for certificate emails with QR codes).
  */
 function buildRawMimeMessage(
-    from: string,
-    to: string,
-    subject: string,
-    html: string,
-    attachments: EmailAttachment[]
+  from: string,
+  to: string,
+  subject: string,
+  html: string,
+  attachments: EmailAttachment[],
 ): string {
-    const boundary = `----=_Part_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-    const relatedBoundary = `----=_Related_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  const boundary = `----=_Part_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  const relatedBoundary = `----=_Related_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
-    const lines: string[] = [
-        `From: "Ornate EMS" <${from}>`,
-        `To: ${to}`,
-        `Subject: =?UTF-8?B?${Buffer.from(subject).toString('base64')}?=`,
-        'MIME-Version: 1.0',
-        `Content-Type: multipart/mixed; boundary="${boundary}"`,
-        '',
-        `--${boundary}`,
-        `Content-Type: multipart/related; boundary="${relatedBoundary}"`,
-        '',
-        `--${relatedBoundary}`,
-        'Content-Type: text/html; charset=UTF-8',
-        'Content-Transfer-Encoding: base64',
-        '',
-        Buffer.from(html).toString('base64').replace(/(.{76})/g, '$1\n'),
-    ];
+  const lines: string[] = [
+    `From: "Ornate EMS" <${from}>`,
+    `To: ${to}`,
+    `Subject: =?UTF-8?B?${Buffer.from(subject).toString("base64")}?=`,
+    "MIME-Version: 1.0",
+    `Content-Type: multipart/mixed; boundary="${boundary}"`,
+    "",
+    `--${boundary}`,
+    `Content-Type: multipart/related; boundary="${relatedBoundary}"`,
+    "",
+    `--${relatedBoundary}`,
+    "Content-Type: text/html; charset=UTF-8",
+    "Content-Transfer-Encoding: base64",
+    "",
+    Buffer.from(html)
+      .toString("base64")
+      .replace(/(.{76})/g, "$1\n"),
+  ];
 
-    for (const att of attachments) {
-        const mimeType = att.filename.endsWith('.png') ? 'image/png' : 'application/octet-stream';
-        lines.push(
-            `--${relatedBoundary}`,
-            `Content-Type: ${mimeType}; name="${att.filename}"`,
-            'Content-Transfer-Encoding: base64',
-            `Content-Disposition: inline; filename="${att.filename}"`,
-            ...(att.cid ? [`Content-ID: <${att.cid}>`] : []),
-            '',
-            att.content.toString('base64').replace(/(.{76})/g, '$1\n'),
-        );
-    }
+  for (const att of attachments) {
+    const mimeType = att.filename.endsWith(".png")
+      ? "image/png"
+      : "application/octet-stream";
+    lines.push(
+      `--${relatedBoundary}`,
+      `Content-Type: ${mimeType}; name="${att.filename}"`,
+      "Content-Transfer-Encoding: base64",
+      `Content-Disposition: inline; filename="${att.filename}"`,
+      ...(att.cid ? [`Content-ID: <${att.cid}>`] : []),
+      "",
+      att.content.toString("base64").replace(/(.{76})/g, "$1\n"),
+    );
+  }
 
-    lines.push(`--${relatedBoundary}--`, `--${boundary}--`);
-    return lines.join('\r\n');
+  lines.push(`--${relatedBoundary}--`, `--${boundary}--`);
+  return lines.join("\r\n");
 }
 
 export const sendCertificateEmail = async (
-    to: string,
-    subject: string,
-    html: string,
-    attachments: EmailAttachment[] = []
+  to: string,
+  subject: string,
+  html: string,
+  attachments: EmailAttachment[] = [],
 ): Promise<EmailActionResponse> => {
-    try {
-        if (attachments.length > 0) {
-            const rawMessage = buildRawMimeMessage(FROM_EMAIL(), to, subject, html, attachments);
-            const command = new SendRawEmailCommand({
-                RawMessage: { Data: new TextEncoder().encode(rawMessage) },
-            });
-            const result = await sesClient.send(command);
-            console.log('Message sent: %s', result.MessageId);
-            return { success: true, messageId: result.MessageId ?? '' };
-        }
-
-        // No attachments — use simple SendEmail
-        const command = new SendEmailCommand({
-            Source: `"Ornate EMS" <${FROM_EMAIL()}>`,
-            Destination: { ToAddresses: [to] },
-            Message: {
-                Subject: { Data: subject, Charset: 'UTF-8' },
-                Body: { Html: { Data: html, Charset: 'UTF-8' } },
-            },
-        });
-        const result = await sesClient.send(command);
-        console.log('Message sent: %s', result.MessageId);
-        return { success: true, messageId: result.MessageId ?? '' };
-    } catch (error: any) {
-        console.error('Error sending email:', error);
-        return { success: false, error: error.message };
+  try {
+    if (attachments.length > 0) {
+      const rawMessage = buildRawMimeMessage(
+        FROM_EMAIL(),
+        to,
+        subject,
+        html,
+        attachments,
+      );
+      const command = new SendRawEmailCommand({
+        RawMessage: { Data: new TextEncoder().encode(rawMessage) },
+      });
+      const result = await sesClient.send(command);
+      console.log("Message sent: %s", result.MessageId);
+      return { success: true, messageId: result.MessageId ?? "" };
     }
+
+    // No attachments — use simple SendEmail
+    const command = new SendEmailCommand({
+      Source: `"Ornate EMS" <${FROM_EMAIL()}>`,
+      Destination: { ToAddresses: [to] },
+      Message: {
+        Subject: { Data: subject, Charset: "UTF-8" },
+        Body: { Html: { Data: html, Charset: "UTF-8" } },
+      },
+    });
+    const result = await sesClient.send(command);
+    console.log("Message sent: %s", result.MessageId);
+    return { success: true, messageId: result.MessageId ?? "" };
+  } catch (error: any) {
+    console.error("Error sending email:", error);
+    return { success: false, error: error.message };
+  }
 };
 
 export const getWinnerEmailTemplate = (
-    name: string,
-    eventName: string,
-    rank: number,
-    verifyUrl: string,
-    certificateId: string
+  name: string,
+  eventName: string,
+  rank: number,
+  verifyUrl: string,
+  certificateId: string,
 ): string => {
-    const rankText = rank === 1 ? '1st Prize' : rank === 2 ? '2nd Prize' : '3rd Prize';
-    return `
+  const rankText =
+    rank === 1 ? "1st Prize" : rank === 2 ? "2nd Prize" : "3rd Prize";
+  return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h2 style="color: #333;">Congratulations, ${name}! 🎉</h2>
         <p style="color: #555;">
@@ -139,12 +154,12 @@ export const getWinnerEmailTemplate = (
 };
 
 export const getParticipationEmailTemplate = (
-    name: string,
-    eventName: string,
-    verifyUrl: string,
-    certificateId: string
+  name: string,
+  eventName: string,
+  verifyUrl: string,
+  certificateId: string,
 ): string => {
-    return `
+  return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h2 style="color: #333;">Hello ${name},</h2>
         <p style="color: #555;">
@@ -171,12 +186,12 @@ export const getParticipationEmailTemplate = (
 };
 
 export const getAnnouncementEmailTemplate = (
-    title: string,
-    content: string,
-    category: string,
-    author: string
+  title: string,
+  content: string,
+  category: string,
+  author: string,
 ): string => {
-    return `
+  return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
         <div style="background-color: #f3f4f6; padding: 10px; border-radius: 6px; margin-bottom: 20px;">
             <span style="font-size: 12px; font-weight: bold; color: #4b5563; text-transform: uppercase;">${category}</span>
@@ -198,23 +213,27 @@ export const getAnnouncementEmailTemplate = (
 };
 
 export const getSportRegistrationEmailTemplate = (
-    name: string,
-    sportName: string,
-    teamName: string,
-    teamCode: string,
-    members: { name: string; rollNumber: string; role?: string }[]
+  name: string,
+  sportName: string,
+  teamName: string,
+  teamCode: string,
+  members: { name: string; rollNumber: string; role?: string }[],
 ): string => {
-    const memberRows = members.map(m => `
+  const memberRows = members
+    .map(
+      (m) => `
         <tr>
             <td style="padding: 8px; border-bottom: 1px solid #eee; color: #555;">
                 <div style="font-weight: bold;">${m.name}</div>
-                <div style="font-size: 10px; color: #10B981; text-transform: uppercase; font-weight: bold;">${m.role || 'Member'}</div>
+                <div style="font-size: 10px; color: #10B981; text-transform: uppercase; font-weight: bold;">${m.role || "Member"}</div>
             </td>
             <td style="padding: 8px; border-bottom: 1px solid #eee; color: #555; text-align: right; vertical-align: top; font-family: monospace;">${m.rollNumber}</td>
         </tr>
-    `).join('');
+    `,
+    )
+    .join("");
 
-    return `
+  return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
         <div style="background-color: #10B981; padding: 15px; border-radius: 6px 6px 0 0; text-align: center;">
             <h2 style="color: white; margin: 0;">Registration Confirmed!</h2>
@@ -265,11 +284,11 @@ export const getSportRegistrationEmailTemplate = (
 };
 
 export const getIndividualSportRegistrationEmailTemplate = (
-    name: string,
-    sportName: string,
-    studentId: string
+  name: string,
+  sportName: string,
+  studentId: string,
 ): string => {
-    return `
+  return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
         <div style="background-color: #10B981; padding: 15px; border-radius: 6px 6px 0 0; text-align: center;">
             <h2 style="color: white; margin: 0;">Registration Confirmed!</h2>
@@ -306,21 +325,28 @@ export const getIndividualSportRegistrationEmailTemplate = (
     `;
 };
 
-export const sendEmail = async ({ to, subject, html }: { to: string; subject: string; html: string }): Promise<EmailActionResponse> => {
-    try {
-        const command = new SendEmailCommand({
-            Source: `"Ornate EMS Updates" <${FROM_EMAIL()}>`,
-            Destination: { ToAddresses: [to] },
-            Message: {
-                Subject: { Data: subject, Charset: 'UTF-8' },
-                Body: { Html: { Data: html, Charset: 'UTF-8' } },
-            },
-        });
-        const result = await sesClient.send(command);
-        return { success: true, messageId: result.MessageId ?? '' };
-    } catch (error: any) {
-        console.error('Email Send Error:', error);
-        return { success: false, error: error.message };
-    }
+export const sendEmail = async ({
+  to,
+  subject,
+  html,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+}): Promise<EmailActionResponse> => {
+  try {
+    const command = new SendEmailCommand({
+      Source: `"Ornate EMS Updates" <${FROM_EMAIL()}>`,
+      Destination: { ToAddresses: [to] },
+      Message: {
+        Subject: { Data: subject, Charset: "UTF-8" },
+        Body: { Html: { Data: html, Charset: "UTF-8" } },
+      },
+    });
+    const result = await sesClient.send(command);
+    return { success: true, messageId: result.MessageId ?? "" };
+  } catch (error: any) {
+    console.error("Email Send Error:", error);
+    return { success: false, error: error.message };
+  }
 };
-

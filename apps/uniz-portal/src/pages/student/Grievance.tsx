@@ -25,7 +25,10 @@ export default function Grievance() {
     }
 
     const myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${(token || '').replace(/"/g, '')}`);
+    myHeaders.append(
+      "Authorization",
+      `Bearer ${(token || "").replace(/"/g, "")}`,
+    );
     myHeaders.append("Content-Type", "application/json");
 
     const raw = JSON.stringify({
@@ -209,8 +212,9 @@ export default function Grievance() {
                 <div className="flex items-start gap-3">
                   <Send size={16} className="text-slate-900 mt-0.5" />
                   <p className="text-[11px] font-medium text-slate-500 leading-relaxed">
-                    Submission initializes an audit trail. Once submitted, your grievance will be reviewed by the
-                    administration and status updates will be delivered via your portal.
+                    Submission initializes an audit trail. Once submitted, your
+                    grievance will be reviewed by the administration and status
+                    updates will be delivered via your portal.
                   </p>
                 </div>
               </div>

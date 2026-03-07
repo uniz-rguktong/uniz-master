@@ -1,5 +1,5 @@
-import { DraftsPage } from '@/components/features/admin/views/DraftsPage';
+import { DraftsPage } from "@/components/features/admin/views/DraftsPage";
 
 export default function DraftsRoute() {
-    return <DraftsPage />;
+  return <DraftsPage />;
 }

@@ -266,10 +266,11 @@ export default function BannersSection() {
                     <button
                       onClick={() => toggleVisibilityAction(banner)}
                       disabled={actionLoading === bannerId}
-                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-bold uppercase tracking-widest text-[9px] transition-all border ${banner.isVisible
+                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-bold uppercase tracking-widest text-[9px] transition-all border ${
+                        banner.isVisible
                           ? "bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white"
                           : "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white"
-                        } active:scale-95 disabled:opacity-50`}
+                      } active:scale-95 disabled:opacity-50`}
                     >
                       {actionLoading === bannerId ? (
                         <Loader2 size={13} className="animate-spin" />
@@ -431,8 +432,8 @@ export default function BannersSection() {
                       alt="preview"
                       className="w-full h-full object-cover"
                       onError={(e: any) =>
-                      (e.target.src =
-                        "https://placehold.co/600x400?text=Invalid+Image+URL")
+                        (e.target.src =
+                          "https://placehold.co/600x400?text=Invalid+Image+URL")
                       }
                     />
                   </div>
@@ -445,7 +446,7 @@ export default function BannersSection() {
                 className={`w-full ${editingBanner ? "bg-slate-900 shadow-slate-200" : "bg-blue-600 shadow-blue-200"} text-white py-5 rounded-2xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:opacity-90 transition-all shadow-xl flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95`}
               >
                 {actionLoading === "creating" ||
-                  actionLoading === "updating" ? (
+                actionLoading === "updating" ? (
                   <Loader2 className="animate-spin w-5 h-5" />
                 ) : editingBanner ? (
                   <CheckCircle2 size={18} />

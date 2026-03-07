@@ -1,10 +1,15 @@
-'use client';
-import { useState } from 'react';
-import { useToast } from '@/hooks/useToast';
-import { ActionMenu } from '@/components/ActionMenu';
-import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { SportCard } from './SportCard';
-import { deleteSport, duplicateSport, setSportActive, updateSportStatus } from '@/actions/sportActions';
+"use client";
+import { useState } from "react";
+import { useToast } from "@/hooks/useToast";
+import { ActionMenu } from "@/components/ActionMenu";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { SportCard } from "./SportCard";
+import {
+  deleteSport,
+  duplicateSport,
+  setSportActive,
+  updateSportStatus,
+} from "@/actions/sportActions";
 
 interface GridSport {
   id: string;
@@ -33,7 +38,15 @@ interface SportsGridViewProps {
   onRefresh?: () => void;
 }
 
-export function SportsGridView({ sports, searchQuery, selectedFilter, onNavigate, showArchived, showDrafts, onRefresh }: SportsGridViewProps) {
+export function SportsGridView({
+  sports,
+  searchQuery,
+  selectedFilter,
+  onNavigate,
+  showArchived,
+  showDrafts,
+  onRefresh,
+}: SportsGridViewProps) {
   const { showToast } = useToast();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [sportToDelete, setSportToDelete] = useState<GridSport | null>(null);
@@ -41,9 +54,12 @@ export function SportsGridView({ sports, searchQuery, selectedFilter, onNavigate
   const safeSports = sports || [];
 
   const filteredSports = safeSports.filter((sport: any) => {
-    const matchesSearch = sport.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (sport.venue && sport.venue.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesFilter = selectedFilter === 'All' || sport.category === selectedFilter;
+    const matchesSearch =
+      sport.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (sport.venue &&
+        sport.venue.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesFilter =
+      selectedFilter === "All" || sport.category === selectedFilter;
     const matchesArchive = !!sport.isArchived === (showArchived || false);
     const matchesDraft = !!sport.isDraft === (showDrafts || false);
 
@@ -52,43 +68,50 @@ export function SportsGridView({ sports, searchQuery, selectedFilter, onNavigate
     if (showArchived) return matchesSearch && matchesFilter && sport.isArchived;
     if (showDrafts) return matchesSearch && matchesFilter && sport.isDraft;
 
-    return matchesSearch && matchesFilter && !sport.isArchived && !sport.isDraft;
+    return (
+      matchesSearch && matchesFilter && !sport.isArchived && !sport.isDraft
+    );
   });
 
   const handleEditClick = (sport: GridSport) => {
     if (onNavigate) {
       // Pass as params to handleNavigate
-      onNavigate('add-sport', { mode: 'edit', initialData: sport });
+      onNavigate("add-sport", { mode: "edit", initialData: sport });
     }
   };
 
   const handleCopySport = async (sport: GridSport) => {
     const res = await duplicateSport(sport.id);
     if (res.success) {
-      showToast('Sport duplicated successfully (Upcoming)', 'success');
+      showToast("Sport duplicated successfully (Upcoming)", "success");
       if (onRefresh) onRefresh();
     } else {
-      showToast(res.error || 'Failed to duplicate sport', 'error');
+      showToast(res.error || "Failed to duplicate sport", "error");
     }
   };
 
   const handleArchive = async (sport: GridSport) => {
     const res = await setSportActive(sport.id, !!sport.isArchived);
     if (res.success) {
-      showToast(sport.isArchived ? 'Sport restored successfully' : 'Sport archived successfully', 'success');
+      showToast(
+        sport.isArchived
+          ? "Sport restored successfully"
+          : "Sport archived successfully",
+        "success",
+      );
       if (onRefresh) onRefresh();
     } else {
-      showToast(res.error || 'Failed to update archive status', 'error');
+      showToast(res.error || "Failed to update archive status", "error");
     }
   };
 
   const handlePublish = async (sport: GridSport) => {
-    const res = await updateSportStatus(sport.id, 'UPCOMING');
+    const res = await updateSportStatus(sport.id, "UPCOMING");
     if (res.success) {
-      showToast('Sport restored to All Sports', 'success');
+      showToast("Sport restored to All Sports", "success");
       if (onRefresh) onRefresh();
     } else {
-      showToast(res.error || 'Failed to restore sport', 'error');
+      showToast(res.error || "Failed to restore sport", "error");
     }
   };
 
@@ -103,10 +126,10 @@ export function SportsGridView({ sports, searchQuery, selectedFilter, onNavigate
       if (res.success) {
         setShowDeleteDialog(false);
         setSportToDelete(null);
-        showToast('Sport deleted successfully', 'success'); // Changed to success (was error in mock)
+        showToast("Sport deleted successfully", "success"); // Changed to success (was error in mock)
         if (onRefresh) onRefresh();
       } else {
-        showToast(res.error || 'Failed to delete sport', 'error');
+        showToast(res.error || "Failed to delete sport", "error");
       }
     }
   };
@@ -115,7 +138,9 @@ export function SportsGridView({ sports, searchQuery, selectedFilter, onNavigate
     <>
       {filteredSports.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <p className="text-[#7A7772]">No sports found matching your criteria.</p>
+          <p className="text-[#7A7772]">
+            No sports found matching your criteria.
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -123,7 +148,7 @@ export function SportsGridView({ sports, searchQuery, selectedFilter, onNavigate
             <SportCard
               key={sport.id}
               sport={sport}
-              onNavigate={onNavigate ?? (() => { })}
+              onNavigate={onNavigate ?? (() => {})}
               onEdit={handleEditClick}
               onCopy={handleCopySport}
               onArchive={handleArchive}

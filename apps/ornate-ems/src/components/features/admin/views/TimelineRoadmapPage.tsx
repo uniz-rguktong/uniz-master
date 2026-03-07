@@ -1,13 +1,21 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { CheckCircle, Circle, Clock, Calendar, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Skeleton, MetricCardSkeleton } from '@/components/ui/skeleton';
-import { Modal } from '@/components/Modal';
-import { formatTimeTo12h } from '@/lib/dateUtils';
-import { ActionMenu } from '@/components/ActionMenu';
-import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { MetricCard } from '@/components/MetricCard';
-import { useToast } from '@/hooks/useToast';
+"use client";
+import { useState, useEffect } from "react";
+import {
+  CheckCircle,
+  Circle,
+  Clock,
+  Calendar,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { Skeleton, MetricCardSkeleton } from "@/components/ui/skeleton";
+import { Modal } from "@/components/Modal";
+import { formatTimeTo12h } from "@/lib/dateUtils";
+import { ActionMenu } from "@/components/ActionMenu";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { MetricCard } from "@/components/MetricCard";
+import { useToast } from "@/hooks/useToast";
 import {
   Select,
   SelectContent,
@@ -15,10 +23,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getCalendarEvents } from '@/actions/eventGetters';
-import { deleteEvent } from '@/actions/eventActions';
-import { getTasks, createTask, deleteTask as removeTask, updateTask, type TaskData } from '@/actions/taskActions';
-import { useRouter } from 'next/navigation';
+import { getCalendarEvents } from "@/actions/eventGetters";
+import { deleteEvent } from "@/actions/eventActions";
+import {
+  getTasks,
+  createTask,
+  deleteTask as removeTask,
+  updateTask,
+  type TaskData,
+} from "@/actions/taskActions";
+import { useRouter } from "next/navigation";
 
 interface TimelineEvent {
   id: string;
@@ -37,7 +51,7 @@ interface ConfirmDialogState {
   isOpen: boolean;
   title: string;
   message: string;
-  type: 'danger' | 'success' | 'warning' | 'info';
+  type: "danger" | "success" | "warning" | "info";
   onConfirm: () => void;
 }
 
@@ -46,16 +60,18 @@ export function TimelineRoadmapPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [taskFormData, setTaskFormData] = useState<any>({
-    title: '',
-    date: new Date().toISOString().split('T')[0],
-    time: '',
-    assignedTo: '',
-    priority: 'medium',
-    status: 'pending'
+    title: "",
+    date: new Date().toISOString().split("T")[0],
+    time: "",
+    assignedTo: "",
+    priority: "medium",
+    status: "pending",
   });
   const [viewingEvent, setViewingEvent] = useState<TimelineEvent | null>(null);
   const [editingEvent, setEditingEvent] = useState<TimelineEvent | null>(null);
-  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [scheduledEvents, setScheduledEvents] = useState<TimelineEvent[]>([]);
   const [dailyTasks, setDailyTasks] = useState<TaskData[]>([]);
@@ -70,35 +86,35 @@ export function TimelineRoadmapPage() {
       // Load events and tasks in parallel
       const [eventsResult, tasksResult] = await Promise.all([
         getCalendarEvents(),
-        getTasks()
+        getTasks(),
       ]);
 
       if (eventsResult.success && eventsResult.data) {
         // Transform events to match timeline format
-        const transformedEvents = eventsResult.data.map(e => ({
+        const transformedEvents = eventsResult.data.map((e) => ({
           id: e.id,
           title: e.title,
           date: e.date, // Already in YYYY-MM-DD format
-          time: e.time || 'TBD',
-          venue: e.venue || 'TBD',
-          category: e.category || 'General',
+          time: e.time || "TBD",
+          venue: e.venue || "TBD",
+          category: e.category || "General",
           participants: e.registrations || 0,
-          status: 'confirmed',
+          status: "confirmed",
           color: e.categoryColor,
-          description: e.description
+          description: e.description,
         }));
         setScheduledEvents(transformedEvents);
       } else {
-        console.error('Failed to load events:', (eventsResult as any).error);
+        console.error("Failed to load events:", (eventsResult as any).error);
       }
 
       if (tasksResult.success && tasksResult.data) {
         setDailyTasks(tasksResult.data);
       } else {
-        console.error('Failed to load tasks:', (tasksResult as any).error);
+        console.error("Failed to load tasks:", (tasksResult as any).error);
       }
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error("Error loading data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -118,7 +134,7 @@ export function TimelineRoadmapPage() {
   };
 
   const formatDate = (date: Date): string => {
-    return date.toISOString().split('T')[0] || '';
+    return date.toISOString().split("T")[0] || "";
   };
 
   const getEventsForDate = (date: Date) => {
@@ -146,35 +162,38 @@ export function TimelineRoadmapPage() {
   const handleDeleteEvent = async (event: TimelineEvent) => {
     setConfirmDialog({
       isOpen: true,
-      title: 'Delete Event',
+      title: "Delete Event",
       message: `Are you sure you want to delete "${event.title}"? This action cannot be undone.`,
-      type: 'danger',
+      type: "danger",
       onConfirm: async () => {
         try {
           const result = await deleteEvent(event.id);
           if (result.success) {
-            showToast(`${event.title} has been deleted`, 'success');
+            showToast(`${event.title} has been deleted`, "success");
             await loadEvents(); // Reload events
           } else {
-            showToast('Error: ' + (result.error || 'Failed to delete event'), 'error');
+            showToast(
+              "Error: " + (result.error || "Failed to delete event"),
+              "error",
+            );
           }
         } catch (error) {
-          console.error('Error deleting event:', error);
-          showToast('Failed to delete event', 'error');
+          console.error("Error deleting event:", error);
+          showToast("Failed to delete event", "error");
         }
         setConfirmDialog(null);
-      }
+      },
     });
   };
 
   const openAddTaskModal = (date: string) => {
     setTaskFormData({
-      title: '',
+      title: "",
       date,
-      time: '',
-      assignedTo: '',
-      priority: 'medium',
-      status: 'pending'
+      time: "",
+      assignedTo: "",
+      priority: "medium",
+      status: "pending",
     });
     setShowAddTaskModal(true);
   };
@@ -182,54 +201,58 @@ export function TimelineRoadmapPage() {
   const handleDeleteTask = (task: TaskData) => {
     setConfirmDialog({
       isOpen: true,
-      title: 'Delete Task',
+      title: "Delete Task",
       message: `Are you sure you want to delete "${task.title}"?`,
-      type: 'danger',
+      type: "danger",
       onConfirm: async () => {
         const result = await removeTask(task.id);
         if (result.success) {
-          showToast(`Task has been deleted`, 'success');
+          showToast(`Task has been deleted`, "success");
           await loadEvents();
         } else {
-          showToast(result.error || 'Failed to delete task', 'error');
+          showToast(result.error || "Failed to delete task", "error");
         }
         setConfirmDialog(null);
-      }
+      },
     });
   };
 
   const getStatusColor = (status: string): string => {
     switch (status) {
-      case 'completed':
-        return '#10B981';
-      case 'in-progress':
-        return '#3B82F6';
-      case 'confirmed':
-        return '#10B981';
-      case 'pending':
-        return '#F59E0B';
+      case "completed":
+        return "#10B981";
+      case "in-progress":
+        return "#3B82F6";
+      case "confirmed":
+        return "#10B981";
+      case "pending":
+        return "#F59E0B";
       default:
-        return '#6B7280';
+        return "#6B7280";
     }
   };
 
   const getPriorityColor = (priority: string): string => {
     switch (priority) {
-      case 'high':
-        return '#EF4444';
-      case 'medium':
-        return '#F59E0B';
-      case 'low':
-        return '#10B981';
+      case "high":
+        return "#EF4444";
+      case "medium":
+        return "#F59E0B";
+      case "low":
+        return "#10B981";
       default:
-        return '#6B7280';
+        return "#6B7280";
     }
   };
 
   const totalEvents = scheduledEvents.length;
   const totalTasks = dailyTasks.length;
-  const completedTasks = dailyTasks.filter((t: any) => t.status === 'completed').length;
-  const upcomingEvents = scheduledEvents.filter((e: any) => new Date(e.date) >= new Date()).length;
+  const completedTasks = dailyTasks.filter(
+    (t: any) => t.status === "completed",
+  ).length;
+  const upcomingEvents = scheduledEvents.filter(
+    (e: any) => new Date(e.date) >= new Date(),
+  ).length;
 
   return (
     <div className="p-4 md:p-8 animate-page-entrance">
@@ -245,22 +268,29 @@ export function TimelineRoadmapPage() {
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
           <div>
-            <h1 className="text-2xl md:text-[28px] font-semibold text-[#1A1A1A] mb-2">Event Timeline & Daily Tasks</h1>
-            <p className="text-sm text-[#6B7280]">View and manage daily events and tasks schedule</p>
+            <h1 className="text-2xl md:text-[28px] font-semibold text-[#1A1A1A] mb-2">
+              Event Timeline & Daily Tasks
+            </h1>
+            <p className="text-sm text-[#6B7280]">
+              View and manage daily events and tasks schedule
+            </p>
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-
-          </div>
+          <div className="flex items-center gap-3 w-full sm:w-auto"></div>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
           {isLoading ? (
-            [...Array(4)].map((_: any, i: any) => <MetricCardSkeleton key={i} />)
+            [...Array(4)].map((_: any, i: any) => (
+              <MetricCardSkeleton key={i} />
+            ))
           ) : (
             <>
-              <div className="animate-card-entrance" style={{ animationDelay: '50ms' }}>
+              <div
+                className="animate-card-entrance"
+                style={{ animationDelay: "50ms" }}
+              >
                 <MetricCard
                   title="Total Events"
                   value={totalEvents}
@@ -272,7 +302,10 @@ export function TimelineRoadmapPage() {
                 />
               </div>
 
-              <div className="animate-card-entrance" style={{ animationDelay: '100ms' }}>
+              <div
+                className="animate-card-entrance"
+                style={{ animationDelay: "100ms" }}
+              >
                 <MetricCard
                   title="Upcoming Events"
                   value={upcomingEvents}
@@ -284,7 +317,10 @@ export function TimelineRoadmapPage() {
                 />
               </div>
 
-              <div className="animate-card-entrance" style={{ animationDelay: '150ms' }}>
+              <div
+                className="animate-card-entrance"
+                style={{ animationDelay: "150ms" }}
+              >
                 <MetricCard
                   title="Total Tasks"
                   value={totalTasks}
@@ -296,7 +332,10 @@ export function TimelineRoadmapPage() {
                 />
               </div>
 
-              <div className="animate-card-entrance" style={{ animationDelay: '200ms' }}>
+              <div
+                className="animate-card-entrance"
+                style={{ animationDelay: "200ms" }}
+              >
                 <MetricCard
                   title="Completed Tasks"
                   value={completedTasks}
@@ -313,19 +352,32 @@ export function TimelineRoadmapPage() {
 
         {/* Timeline Header */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
-          <h2 className="text-lg font-semibold text-[#1A1A1A]">Weekly Timeline</h2>
+          <h2 className="text-lg font-semibold text-[#1A1A1A]">
+            Weekly Timeline
+          </h2>
           <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
             <button
               onClick={handlePreviousWeek}
-              className="p-2 bg-white border border-[#E5E7EB] rounded-lg hover:bg-[#F7F8FA] transition-colors">
+              className="p-2 bg-white border border-[#E5E7EB] rounded-lg hover:bg-[#F7F8FA] transition-colors"
+            >
               <ChevronLeft className="w-5 h-5 text-[#6B7280]" />
             </button>
             <span className="text-sm font-medium text-[#1A1A1A] min-w-[200px] text-center">
-              {getNext7Days()[0]?.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {getNext7Days()[6]?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              {getNext7Days()[0]?.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}{" "}
+              -{" "}
+              {getNext7Days()[6]?.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
             </span>
             <button
               onClick={handleNextWeek}
-              className="p-2 bg-white border border-[#E5E7EB] rounded-lg hover:bg-[#F7F8FA] transition-colors">
+              className="p-2 bg-white border border-[#E5E7EB] rounded-lg hover:bg-[#F7F8FA] transition-colors"
+            >
               <ChevronRight className="w-5 h-5 text-[#6B7280]" />
             </button>
           </div>
@@ -334,219 +386,289 @@ export function TimelineRoadmapPage() {
 
       {/* Timeline - All Events Grouped by Date */}
       <div className="space-y-6">
-        {isLoading ? (
-          [...Array(3)].map((_: any, i: any) => (
-            <div key={i} className="bg-[#F4F2F0] rounded-[18px] p-6 animate-pulse">
-              <Skeleton width="100%" height={240} borderRadius={18} />
-            </div>
-          ))
-        ) : (
-          getNext7Days().map((date: any, index: any) => {
-            const eventsForDay = getEventsForDate(date);
-            const tasksForDay = getTasksForDate(date);
-            const isToday = formatDate(date) === formatDate(new Date());
-            const dateStr = formatDate(date);
-
-            return (
+        {isLoading
+          ? [...Array(3)].map((_: any, i: any) => (
               <div
-                key={dateStr}
-                className="bg-[#F4F2F0] rounded-[18px] p-2.5 animate-card-entrance"
-                style={{ animationDelay: `${index * 100 + 250}ms` }}
+                key={i}
+                className="bg-[#F4F2F0] rounded-[18px] p-6 animate-pulse"
               >
-                {/* Date Header */}
-                <div className="flex items-center justify-between mb-4 px-3 mt-2">
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-14 h-14 rounded-xl flex flex-col items-center justify-center ${isToday ? 'bg-[#10B981] text-white' : 'bg-white text-[#1A1A1A]'}`}
-                      >
-                        <div className="text-xs font-medium">
-                          {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                <Skeleton width="100%" height={240} borderRadius={18} />
+              </div>
+            ))
+          : getNext7Days().map((date: any, index: any) => {
+              const eventsForDay = getEventsForDate(date);
+              const tasksForDay = getTasksForDate(date);
+              const isToday = formatDate(date) === formatDate(new Date());
+              const dateStr = formatDate(date);
+
+              return (
+                <div
+                  key={dateStr}
+                  className="bg-[#F4F2F0] rounded-[18px] p-2.5 animate-card-entrance"
+                  style={{ animationDelay: `${index * 100 + 250}ms` }}
+                >
+                  {/* Date Header */}
+                  <div className="flex items-center justify-between mb-4 px-3 mt-2">
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-14 h-14 rounded-xl flex flex-col items-center justify-center ${isToday ? "bg-[#10B981] text-white" : "bg-white text-[#1A1A1A]"}`}
+                        >
+                          <div className="text-xs font-medium">
+                            {date.toLocaleDateString("en-US", {
+                              weekday: "short",
+                            })}
+                          </div>
+                          <div className="text-xl font-bold">
+                            {date.getDate()}
+                          </div>
                         </div>
-                        <div className="text-xl font-bold">
-                          {date.getDate()}
+                        <div>
+                          <h3 className="text-lg font-semibold text-[#1A1A1A]">
+                            {date.toLocaleDateString("en-US", {
+                              weekday: "long",
+                              month: "long",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </h3>
+                          <p className="text-sm text-[#6B7280]">
+                            {eventsForDay.length} event(s) •{" "}
+                            {tasksForDay.length} task(s)
+                          </p>
                         </div>
                       </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-[#1A1A1A]">
-                          {date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
-                        </h3>
-                        <p className="text-sm text-[#6B7280]">
-                          {eventsForDay.length} event(s) • {tasksForDay.length} task(s)
+                      {isToday && (
+                        <span className="px-3 py-1.5 bg-[#10B981] text-white text-xs font-semibold rounded-full shadow-sm">
+                          Today
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => openAddTaskModal(dateStr)}
+                      className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E5E7EB] rounded-lg text-xs font-bold text-[#1A1A1A] hover:bg-[#F7F8FA] transition-colors shadow-sm whitespace-nowrap"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Add Task
+                    </button>
+                  </div>
+
+                  {/* Events & Tasks Content */}
+                  <div className="bg-white rounded-[14px] p-5">
+                    {eventsForDay.length === 0 && tasksForDay.length === 0 ? (
+                      <div className="text-center py-8 text-[#9CA3AF]">
+                        <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                        <p className="text-sm">
+                          No events or tasks scheduled for this day
                         </p>
                       </div>
-                    </div>
-                    {isToday && (
-                      <span className="px-3 py-1.5 bg-[#10B981] text-white text-xs font-semibold rounded-full shadow-sm">
-                        Today
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => openAddTaskModal(dateStr)}
-                    className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E5E7EB] rounded-lg text-xs font-bold text-[#1A1A1A] hover:bg-[#F7F8FA] transition-colors shadow-sm whitespace-nowrap"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    Add Task
-                  </button>
-                </div>
-
-                {/* Events & Tasks Content */}
-                <div className="bg-white rounded-[14px] p-5">
-                  {eventsForDay.length === 0 && tasksForDay.length === 0 ? (
-                    <div className="text-center py-8 text-[#9CA3AF]">
-                      <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                      <p className="text-sm">No events or tasks scheduled for this day</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-5">
-                      {/* Events Section */}
-                      {eventsForDay.length > 0 && (
-                        <div>
-                          <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3 flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-[#3B82F6]" />
-                            Events ({eventsForDay.length})
-                          </h4>
-                          <div className="space-y-3">
-                            {eventsForDay.map((event: any) => (
-                              <div
-                                key={event.id}
-                                className="border border-[#E5E7EB] rounded-lg p-4 hover:shadow-md transition-shadow"
-                              >
-                                <div className="flex items-start justify-between">
-                                  <div className="flex items-start gap-3 flex-1">
-                                    <div
-                                      className="w-1 h-12 rounded-full"
-                                      style={{ backgroundColor: event.color }}
+                    ) : (
+                      <div className="space-y-5">
+                        {/* Events Section */}
+                        {eventsForDay.length > 0 && (
+                          <div>
+                            <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3 flex items-center gap-2">
+                              <Calendar className="w-4 h-4 text-[#3B82F6]" />
+                              Events ({eventsForDay.length})
+                            </h4>
+                            <div className="space-y-3">
+                              {eventsForDay.map((event: any) => (
+                                <div
+                                  key={event.id}
+                                  className="border border-[#E5E7EB] rounded-lg p-4 hover:shadow-md transition-shadow"
+                                >
+                                  <div className="flex items-start justify-between">
+                                    <div className="flex items-start gap-3 flex-1">
+                                      <div
+                                        className="w-1 h-12 rounded-full"
+                                        style={{ backgroundColor: event.color }}
+                                      />
+                                      <div className="flex-1">
+                                        <h5 className="text-base font-bold text-[#1A1A1A] mb-1">
+                                          {event.title}
+                                        </h5>
+                                        <div className="flex items-center gap-4 text-xs text-[#6B7280] mb-2">
+                                          <span className="flex items-center gap-1 font-medium">
+                                            <Clock className="w-3.5 h-3.5" />
+                                            {event.time}
+                                          </span>
+                                          <span className="font-medium">•</span>
+                                          <span className="font-medium">
+                                            {event.venue}
+                                          </span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                          <span
+                                            className="px-2 py-0.5 rounded text-[10px] font-bold text-white uppercase tracking-wider"
+                                            style={{
+                                              backgroundColor: event.color,
+                                            }}
+                                          >
+                                            {event.category}
+                                          </span>
+                                          <span className="text-[11px] text-[#6B7280] font-semibold">
+                                            {event.participants} participants
+                                          </span>
+                                          <span
+                                            className="px-2 py-0.5 rounded-full text-[10px] font-bold capitalize shadow-sm"
+                                            style={{
+                                              backgroundColor: `${getStatusColor(event.status)}15`,
+                                              color: getStatusColor(
+                                                event.status,
+                                              ),
+                                            }}
+                                          >
+                                            {event.status}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <ActionMenu
+                                      actions={[
+                                        {
+                                          label: "View Details",
+                                          icon: "view",
+                                          onClick: () => setViewingEvent(event),
+                                        },
+                                        {
+                                          label: "Edit Event",
+                                          icon: "edit",
+                                          onClick: () =>
+                                            router.push(
+                                              `/events/create?id=${event.id}`,
+                                            ),
+                                        },
+                                        { divider: true },
+                                        {
+                                          label: "Delete Event",
+                                          icon: "delete",
+                                          onClick: () =>
+                                            handleDeleteEvent(event),
+                                          danger: true,
+                                        },
+                                      ]}
+                                      size="sm"
                                     />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {eventsForDay.length > 0 && tasksForDay.length > 0 && (
+                          <div className="border-t border-[#F3F4F6]" />
+                        )}
+
+                        {/* Tasks Section */}
+                        {tasksForDay.length > 0 && (
+                          <div>
+                            <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3 flex items-center gap-2">
+                              <CheckCircle className="w-4 h-4 text-[#10B981]" />
+                              Tasks ({tasksForDay.length})
+                            </h4>
+                            <div className="space-y-2">
+                              {tasksForDay.map((task: any) => (
+                                <div
+                                  key={task.id}
+                                  className="flex items-center justify-between p-3 bg-[#F9FAFB] border border-[#F3F4F6] rounded-xl hover:bg-[#F3F4F6] transition-colors"
+                                >
+                                  <div className="flex items-center gap-3 flex-1">
+                                    <div
+                                      className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                                      style={{
+                                        backgroundColor: `${getStatusColor(task.status)}15`,
+                                      }}
+                                    >
+                                      {task.status === "completed" ? (
+                                        <CheckCircle
+                                          className="w-4 h-4"
+                                          style={{
+                                            color: getStatusColor(task.status),
+                                          }}
+                                        />
+                                      ) : (
+                                        <Clock
+                                          className="w-4 h-4"
+                                          style={{
+                                            color: getStatusColor(task.status),
+                                          }}
+                                        />
+                                      )}
+                                    </div>
                                     <div className="flex-1">
-                                      <h5 className="text-base font-bold text-[#1A1A1A] mb-1">
-                                        {event.title}
+                                      <h5 className="text-sm font-bold text-[#1A1A1A] mb-0.5">
+                                        {task.title}
                                       </h5>
-                                      <div className="flex items-center gap-4 text-xs text-[#6B7280] mb-2">
-                                        <span className="flex items-center gap-1 font-medium">
-                                          <Clock className="w-3.5 h-3.5" />
-                                          {event.time}
+                                      <div className="flex items-center gap-3 text-xs text-[#6B7280]">
+                                        <span className="font-medium text-[#10B981]">
+                                          {task.time}
                                         </span>
                                         <span className="font-medium">•</span>
-                                        <span className="font-medium">{event.venue}</span>
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          className="px-2 py-0.5 rounded text-[10px] font-bold text-white uppercase tracking-wider"
-                                          style={{ backgroundColor: event.color }}
-                                        >
-                                          {event.category}
-                                        </span>
-                                        <span className="text-[11px] text-[#6B7280] font-semibold">
-                                          {event.participants} participants
+                                        <span className="font-medium">
+                                          {task.assignedTo}
                                         </span>
                                         <span
                                           className="px-2 py-0.5 rounded-full text-[10px] font-bold capitalize shadow-sm"
                                           style={{
-                                            backgroundColor: `${getStatusColor(event.status)}15`,
-                                            color: getStatusColor(event.status)
+                                            backgroundColor: `${getPriorityColor(task.priority)}15`,
+                                            color: getPriorityColor(
+                                              task.priority,
+                                            ),
                                           }}
                                         >
-                                          {event.status}
+                                          {task.priority}
                                         </span>
                                       </div>
                                     </div>
                                   </div>
                                   <ActionMenu
                                     actions={[
-                                      { label: 'View Details', icon: 'view', onClick: () => setViewingEvent(event) },
-                                      { label: 'Edit Event', icon: 'edit', onClick: () => router.push(`/events/create?id=${event.id}`) },
+                                      {
+                                        label: "Edit Task",
+                                        icon: "edit",
+                                        onClick: () =>
+                                          showToast("Edit task...", "info"),
+                                      },
+                                      {
+                                        label:
+                                          task.status === "completed"
+                                            ? "Mark Incomplete"
+                                            : "Mark Complete",
+                                        icon: "approve",
+                                        onClick: () =>
+                                          showToast(
+                                            task.status === "completed"
+                                              ? "Task marked incomplete"
+                                              : "Task completed!",
+                                            "success",
+                                          ),
+                                      },
                                       { divider: true },
-                                      { label: 'Delete Event', icon: 'delete', onClick: () => handleDeleteEvent(event), danger: true }
+                                      {
+                                        label: "Delete Task",
+                                        icon: "delete",
+                                        onClick: () => handleDeleteTask(task),
+                                        danger: true,
+                                      },
                                     ]}
                                     size="sm"
                                   />
                                 </div>
-                              </div>
-                            ))}
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      )}
-
-                      {eventsForDay.length > 0 && tasksForDay.length > 0 && (
-                        <div className="border-t border-[#F3F4F6]" />
-                      )}
-
-                      {/* Tasks Section */}
-                      {tasksForDay.length > 0 && (
-                        <div>
-                          <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3 flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-[#10B981]" />
-                            Tasks ({tasksForDay.length})
-                          </h4>
-                          <div className="space-y-2">
-                            {tasksForDay.map((task: any) => (
-                              <div
-                                key={task.id}
-                                className="flex items-center justify-between p-3 bg-[#F9FAFB] border border-[#F3F4F6] rounded-xl hover:bg-[#F3F4F6] transition-colors"
-                              >
-                                <div className="flex items-center gap-3 flex-1">
-                                  <div
-                                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                                    style={{ backgroundColor: `${getStatusColor(task.status)}15` }}
-                                  >
-                                    {task.status === 'completed' ? (
-                                      <CheckCircle className="w-4 h-4" style={{ color: getStatusColor(task.status) }} />
-                                    ) : (
-                                      <Clock className="w-4 h-4" style={{ color: getStatusColor(task.status) }} />
-                                    )}
-                                  </div>
-                                  <div className="flex-1">
-                                    <h5 className="text-sm font-bold text-[#1A1A1A] mb-0.5">
-                                      {task.title}
-                                    </h5>
-                                    <div className="flex items-center gap-3 text-xs text-[#6B7280]">
-                                      <span className="font-medium text-[#10B981]">{task.time}</span>
-                                      <span className="font-medium">•</span>
-                                      <span className="font-medium">{task.assignedTo}</span>
-                                      <span
-                                        className="px-2 py-0.5 rounded-full text-[10px] font-bold capitalize shadow-sm"
-                                        style={{
-                                          backgroundColor: `${getPriorityColor(task.priority)}15`,
-                                          color: getPriorityColor(task.priority)
-                                        }}
-                                      >
-                                        {task.priority}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                                <ActionMenu
-                                  actions={[
-                                    { label: 'Edit Task', icon: 'edit', onClick: () => showToast('Edit task...', 'info') },
-                                    {
-                                      label: task.status === 'completed' ? 'Mark Incomplete' : 'Mark Complete',
-                                      icon: 'approve',
-                                      onClick: () => showToast(task.status === 'completed' ? 'Task marked incomplete' : 'Task completed!', 'success')
-                                    },
-                                    { divider: true },
-                                    { label: 'Delete Task', icon: 'delete', onClick: () => handleDeleteTask(task), danger: true }
-                                  ]}
-                                  size="sm"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })
-        )}
+              );
+            })}
       </div>
 
-
       {/* Add Task Modal */}
-      {showAddTaskModal &&
+      {showAddTaskModal && (
         <Modal
           isOpen={true}
           onClose={() => setShowAddTaskModal(false)}
@@ -554,75 +676,98 @@ export function TimelineRoadmapPage() {
           size="md"
           onConfirm={async () => {
             if (!taskFormData.title?.trim()) {
-              showToast('Task title is required', 'error');
+              showToast("Task title is required", "error");
               return;
             }
             if (!taskFormData.assignedTo) {
-              showToast('Please select assignee', 'error');
+              showToast("Please select assignee", "error");
               return;
             }
 
             const formData = new FormData();
-            formData.append('title', taskFormData.title);
-            formData.append('date', taskFormData.date);
-            formData.append('assignedTo', taskFormData.assignedTo);
-            formData.append('priority', taskFormData.priority || 'medium');
-            formData.append('status', taskFormData.status || 'pending');
-            formData.append('time', taskFormData.time || '');
+            formData.append("title", taskFormData.title);
+            formData.append("date", taskFormData.date);
+            formData.append("assignedTo", taskFormData.assignedTo);
+            formData.append("priority", taskFormData.priority || "medium");
+            formData.append("status", taskFormData.status || "pending");
+            formData.append("time", taskFormData.time || "");
 
             const result = await createTask(formData);
 
             if (!result.success) {
-              showToast(result.error || 'Failed to add task', 'error');
+              showToast(result.error || "Failed to add task", "error");
               return;
             }
 
-            showToast('Task added successfully', 'success');
+            showToast("Task added successfully", "success");
             await loadEvents();
             setShowAddTaskModal(false);
           }}
           confirmText="Add Task"
-          confirmButtonClass="bg-[#10B981] hover:bg-[#059669]">
-
+          confirmButtonClass="bg-[#10B981] hover:bg-[#059669]"
+        >
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Task Title *</label>
+              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                Task Title *
+              </label>
               <input
                 type="text"
                 placeholder="Enter task title"
                 value={taskFormData.title}
-                onChange={(e) => setTaskFormData((prev: any) => ({ ...prev, title: e.target.value }))}
-                className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                onChange={(e) =>
+                  setTaskFormData((prev: any) => ({
+                    ...prev,
+                    title: e.target.value,
+                  }))
+                }
+                className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Task Date *</label>
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                  Task Date *
+                </label>
                 <input
                   type="date"
                   value={taskFormData.date}
                   readOnly
                   disabled
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Time</label>
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                  Time
+                </label>
                 <input
                   type="time"
-                  value={taskFormData.time || ''}
-                  onChange={(e) => setTaskFormData((prev: any) => ({ ...prev, time: e.target.value }))}
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                  value={taskFormData.time || ""}
+                  onChange={(e) =>
+                    setTaskFormData((prev: any) => ({
+                      ...prev,
+                      time: e.target.value,
+                    }))
+                  }
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Assigned To *</label>
+              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                Assigned To *
+              </label>
               <Select
-                value={taskFormData.assignedTo || ''}
-                onValueChange={(value) => setTaskFormData((prev: any) => ({ ...prev, assignedTo: value }))}
+                value={taskFormData.assignedTo || ""}
+                onValueChange={(value) =>
+                  setTaskFormData((prev: any) => ({
+                    ...prev,
+                    assignedTo: value,
+                  }))
+                }
               >
                 <SelectTrigger className="w-full h-[46px] bg-white border border-[#E5E7EB] rounded-lg text-sm focus:ring-2 focus:ring-[#10B981]">
                   <SelectValue placeholder="Select Team" />
@@ -632,17 +777,26 @@ export function TimelineRoadmapPage() {
                   <SelectItem value="Tech Team">Tech Team</SelectItem>
                   <SelectItem value="Marketing Team">Marketing Team</SelectItem>
                   <SelectItem value="Admin Team">Admin Team</SelectItem>
-                  <SelectItem value="Coordinator Team">Coordinator Team</SelectItem>
+                  <SelectItem value="Coordinator Team">
+                    Coordinator Team
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Priority *</label>
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                  Priority *
+                </label>
                 <Select
-                  value={taskFormData.priority || 'medium'}
-                  onValueChange={(value) => setTaskFormData((prev: any) => ({ ...prev, priority: value }))}
+                  value={taskFormData.priority || "medium"}
+                  onValueChange={(value) =>
+                    setTaskFormData((prev: any) => ({
+                      ...prev,
+                      priority: value,
+                    }))
+                  }
                 >
                   <SelectTrigger className="w-full h-[46px] bg-white border border-[#E5E7EB] rounded-lg text-sm focus:ring-2 focus:ring-[#10B981]">
                     <SelectValue placeholder="Select Priority" />
@@ -655,10 +809,14 @@ export function TimelineRoadmapPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Status *</label>
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                  Status *
+                </label>
                 <Select
-                  value={taskFormData.status || 'pending'}
-                  onValueChange={(value) => setTaskFormData((prev: any) => ({ ...prev, status: value }))}
+                  value={taskFormData.status || "pending"}
+                  onValueChange={(value) =>
+                    setTaskFormData((prev: any) => ({ ...prev, status: value }))
+                  }
                 >
                   <SelectTrigger className="w-full h-[46px] bg-white border border-[#E5E7EB] rounded-lg text-sm focus:ring-2 focus:ring-[#10B981]">
                     <SelectValue placeholder="Select Status" />
@@ -673,110 +831,135 @@ export function TimelineRoadmapPage() {
             </div>
           </div>
         </Modal>
-      }
+      )}
 
       {/* View Event Modal */}
-      {viewingEvent &&
+      {viewingEvent && (
         <Modal
           isOpen={true}
           onClose={() => setViewingEvent(null)}
           title="Event Details"
-          size="md">
-
+          size="md"
+        >
           <div className="space-y-4">
             <div>
               <label className="text-xs text-[#6B7280]">Event Title</label>
-              <p className="text-base font-semibold text-[#1A1A1A] mt-1">{viewingEvent.title}</p>
+              <p className="text-base font-semibold text-[#1A1A1A] mt-1">
+                {viewingEvent.title}
+              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-xs text-[#6B7280]">Date</label>
                 <p className="text-sm font-medium text-[#1A1A1A] mt-1">
-                  {new Date(viewingEvent.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                  {new Date(viewingEvent.date).toLocaleDateString("en-US", {
+                    weekday: "long",
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
                 </p>
               </div>
               <div>
                 <label className="text-xs text-[#6B7280]">Time</label>
-                <p className="text-sm font-medium text-[#1A1A1A] mt-1">{formatTimeTo12h(viewingEvent.time)}</p>
+                <p className="text-sm font-medium text-[#1A1A1A] mt-1">
+                  {formatTimeTo12h(viewingEvent.time)}
+                </p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-xs text-[#6B7280]">Category</label>
-                <p className="text-sm font-medium text-[#1A1A1A] mt-1">{viewingEvent.category}</p>
+                <p className="text-sm font-medium text-[#1A1A1A] mt-1">
+                  {viewingEvent.category}
+                </p>
               </div>
               <div>
                 <label className="text-xs text-[#6B7280]">Venue</label>
-                <p className="text-sm font-medium text-[#1A1A1A] mt-1">{viewingEvent.venue}</p>
+                <p className="text-sm font-medium text-[#1A1A1A] mt-1">
+                  {viewingEvent.venue}
+                </p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-xs text-[#6B7280]">Participants</label>
-                <p className="text-sm font-medium text-[#1A1A1A] mt-1">{viewingEvent.participants}</p>
+                <p className="text-sm font-medium text-[#1A1A1A] mt-1">
+                  {viewingEvent.participants}
+                </p>
               </div>
               <div>
                 <label className="text-xs text-[#6B7280]">Status</label>
-                <p className="text-sm font-medium text-[#1A1A1A] mt-1 capitalize">{viewingEvent.status}</p>
+                <p className="text-sm font-medium text-[#1A1A1A] mt-1 capitalize">
+                  {viewingEvent.status}
+                </p>
               </div>
             </div>
           </div>
         </Modal>
-      }
+      )}
 
       {/* Edit Event Modal */}
-      {editingEvent &&
+      {editingEvent && (
         <Modal
           isOpen={true}
           onClose={() => setEditingEvent(null)}
           title="Edit Event"
           size="lg"
           onConfirm={() => {
-            showToast('Event updated successfully', 'success');
+            showToast("Event updated successfully", "success");
             setEditingEvent(null);
           }}
           confirmText="Update Event"
-          confirmButtonClass="bg-[#10B981] hover:bg-[#059669]">
-
+          confirmButtonClass="bg-[#10B981] hover:bg-[#059669]"
+        >
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Event Title *</label>
+              <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                Event Title *
+              </label>
               <input
                 type="text"
                 defaultValue={editingEvent.title}
-                className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Event Date *</label>
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                  Event Date *
+                </label>
                 <input
                   type="date"
                   defaultValue={editingEvent.date}
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Time Slot *</label>
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                  Time Slot *
+                </label>
                 <input
                   type="text"
                   defaultValue={editingEvent.time}
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Category *</label>
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                  Category *
+                </label>
                 <select
                   defaultValue={editingEvent.category}
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]">
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                >
                   <option>Workshop</option>
                   <option>Hackathon</option>
                   <option>Quiz</option>
@@ -786,30 +969,36 @@ export function TimelineRoadmapPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Venue *</label>
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                  Venue *
+                </label>
                 <input
                   type="text"
                   defaultValue={editingEvent.venue}
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Expected Participants</label>
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                  Expected Participants
+                </label>
                 <input
                   type="number"
                   defaultValue={editingEvent.participants}
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]" />
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Status *</label>
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-2">
+                  Status *
+                </label>
                 <select
                   defaultValue={editingEvent.status}
-                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]">
-
+                  className="w-full px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
+                >
                   <option value="confirmed">Confirmed</option>
                   <option value="pending">Pending</option>
                 </select>
@@ -817,7 +1006,7 @@ export function TimelineRoadmapPage() {
             </div>
           </div>
         </Modal>
-      }
+      )}
 
       {/* Confirm Dialog */}
       {confirmDialog && (

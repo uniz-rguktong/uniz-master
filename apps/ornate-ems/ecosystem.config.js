@@ -34,51 +34,56 @@
  *      pm2 set pm2-logrotate:compress true
  */
 module.exports = {
-    apps: [
-        {
-            name: 'ornate-ems',
-            script: 'node_modules/.bin/next',
-            args: 'start --port 3000',
-            cwd: './',
+  apps: [
+    {
+      name: "ornate-ems",
+      script: "node_modules/.bin/next",
+      args: "start --port 3000",
+      cwd: "./",
 
-            // ── Cluster Configuration ──
-            // Start with 2 workers. Scale up only after monitoring
-            // memory and DB connection usage in production.
-            instances: 2,
-            exec_mode: 'cluster',
+      // ── Cluster Configuration ──
+      // Start with 2 workers. Scale up only after monitoring
+      // memory and DB connection usage in production.
+      instances: 2,
+      exec_mode: "cluster",
 
-            // ── Memory Safety ──
-            // Auto-restart worker if it exceeds 1.2GB.
-            // Prevents single-worker OOM from cascading.
-            max_memory_restart: '1200M',
+      // ── Memory Safety ──
+      // Auto-restart worker if it exceeds 1.2GB.
+      // Prevents single-worker OOM from cascading.
+      max_memory_restart: "1200M",
 
-            // ── Graceful Shutdown ──
-            // Give worker 8s to finish in-flight requests before SIGKILL.
-            // Chrome cleanup handler needs ~2-3s (browserManager.ts).
-            kill_timeout: 8000,
-            listen_timeout: 10000,
+      // ── Graceful Shutdown ──
+      // Give worker 8s to finish in-flight requests before SIGKILL.
+      // Chrome cleanup handler needs ~2-3s (browserManager.ts).
+      kill_timeout: 8000,
+      listen_timeout: 10000,
 
-            // ── Environment ──
-            env: {
-                NODE_ENV: 'production',
-                PORT: 3000,
-            },
+      // ── Environment ──
+      env: {
+        NODE_ENV: "production",
+        PORT: 3000,
+      },
 
-            // ── Crash Recovery ──
-            // If a worker crashes 10 times within 60s, stop restarting.
-            // Prevents restart storms from consuming all resources.
-            max_restarts: 10,
-            min_uptime: '10s',
+      // ── Crash Recovery ──
+      // If a worker crashes 10 times within 60s, stop restarting.
+      // Prevents restart storms from consuming all resources.
+      max_restarts: 10,
+      min_uptime: "10s",
 
-            // ── Logging ──
-            // Merge cluster worker logs into single files.
-            // PM2 handles stdout/stderr split automatically.
-            merge_logs: true,
-            log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      // ── Logging ──
+      // Merge cluster worker logs into single files.
+      // PM2 handles stdout/stderr split automatically.
+      merge_logs: true,
+      log_date_format: "YYYY-MM-DD HH:mm:ss Z",
 
-            // ── Watch (disabled for production) ──
-            watch: false,
-            ignore_watch: ['node_modules', '.next', 'public/exports', 'prisma/backups'],
-        },
-    ],
+      // ── Watch (disabled for production) ──
+      watch: false,
+      ignore_watch: [
+        "node_modules",
+        ".next",
+        "public/exports",
+        "prisma/backups",
+      ],
+    },
+  ],
 };

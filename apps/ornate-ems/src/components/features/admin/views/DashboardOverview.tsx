@@ -1,15 +1,15 @@
-'use client';
 "use client";
-import { useState, useEffect } from 'react';
-import { Calendar, Users, UserCheck, TrendingUp } from 'lucide-react';
-import { MetricCard } from '@/components/MetricCard';
-import { SalesTrendChart } from '@/components/SalesTrendChart';
-import { RevenueBreakdown } from '@/components/RevenueBreakdown';
-import { TransactionsTable } from '@/components/TransactionsTable';
-import { MetricCardSkeleton, Skeleton } from '@/components/ui/skeleton';
+"use client";
+import { useState, useEffect } from "react";
+import { Calendar, Users, UserCheck, TrendingUp } from "lucide-react";
+import { MetricCard } from "@/components/MetricCard";
+import { SalesTrendChart } from "@/components/SalesTrendChart";
+import { RevenueBreakdown } from "@/components/RevenueBreakdown";
+import { TransactionsTable } from "@/components/TransactionsTable";
+import { MetricCardSkeleton, Skeleton } from "@/components/ui/skeleton";
 
-import { getNotifications } from '@/actions/notificationActions';
-import { useToast } from '@/hooks/useToast';
+import { getNotifications } from "@/actions/notificationActions";
+import { useToast } from "@/hooks/useToast";
 
 interface DashboardUser {
   branch?: string;
@@ -31,7 +31,14 @@ interface DashboardOverviewProps {
   transactions?: unknown;
 }
 
-export function DashboardOverview({ user, initialStats, trends, salesData, revenueData, transactions }: DashboardOverviewProps) {
+export function DashboardOverview({
+  user,
+  initialStats,
+  trends,
+  salesData,
+  revenueData,
+  transactions,
+}: DashboardOverviewProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
 
@@ -41,15 +48,17 @@ export function DashboardOverview({ user, initialStats, trends, salesData, reven
         const res = await getNotifications();
         if (res.success && res.data) {
           // Filter for unread achievements
-          const unreadAchievements = res.data.filter(n => !n.isRead && n.type === 'achievement');
+          const unreadAchievements = res.data.filter(
+            (n) => !n.isRead && n.type === "achievement",
+          );
 
-          unreadAchievements.forEach(n => {
+          unreadAchievements.forEach((n) => {
             const key = `toast_shown_${n.id}`;
-            if (typeof window !== 'undefined' && !sessionStorage.getItem(key)) {
+            if (typeof window !== "undefined" && !sessionStorage.getItem(key)) {
               // Show toast
-              showToast(n.message, 'success');
+              showToast(n.message, "success");
               // Mark as shown in this session
-              sessionStorage.setItem(key, 'true');
+              sessionStorage.setItem(key, "true");
             }
           });
         }
@@ -62,15 +71,28 @@ export function DashboardOverview({ user, initialStats, trends, salesData, reven
   }, [showToast]);
 
   // Use initialStats or fallback to defaults (active participants and completion rate are placeholders in getter for now)
-  const stats = initialStats || { eventCount: 0, registrationCount: 0, activeParticipants: 0, completionRate: 0 };
+  const stats = initialStats || {
+    eventCount: 0,
+    registrationCount: 0,
+    activeParticipants: 0,
+    completionRate: 0,
+  };
 
   const title = user?.branch
-    ? `${user.branch === 'cse' ? 'Computer Science' :
-      user.branch === 'ece' ? 'Electronics & Comm.' :
-        user.branch === 'eee' ? 'Electrical & Electronics' :
-          user.branch === 'mech' ? 'Mechanical' :
-            user.branch === 'civil' ? 'Civil Engineering' : user.branch.toUpperCase()} Dashboard`
-    : 'Dashboard Overview';
+    ? `${
+        user.branch === "cse"
+          ? "Computer Science"
+          : user.branch === "ece"
+            ? "Electronics & Comm."
+            : user.branch === "eee"
+              ? "Electrical & Electronics"
+              : user.branch === "mech"
+                ? "Mechanical"
+                : user.branch === "civil"
+                  ? "Civil Engineering"
+                  : user.branch.toUpperCase()
+      } Dashboard`
+    : "Dashboard Overview";
 
   // Helper to create trend object
   const getTrend = (trendData: any) => {
@@ -148,16 +170,33 @@ export function DashboardOverview({ user, initialStats, trends, salesData, reven
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="lg:col-span-2 animate-card-entrance" style={{ animationDelay: '160ms' }}>
-          {isLoading ? <Skeleton height={340} borderRadius={16} /> : <SalesTrendChart data={salesData as any} />}
+        <div
+          className="lg:col-span-2 animate-card-entrance"
+          style={{ animationDelay: "160ms" }}
+        >
+          {isLoading ? (
+            <Skeleton height={340} borderRadius={16} />
+          ) : (
+            <SalesTrendChart data={salesData as any} />
+          )}
         </div>
-        <div className="animate-card-entrance" style={{ animationDelay: '200ms' }}>
-          {isLoading ? <Skeleton height={340} borderRadius={16} /> : <RevenueBreakdown data={revenueData as any} />}
+        <div
+          className="animate-card-entrance"
+          style={{ animationDelay: "200ms" }}
+        >
+          {isLoading ? (
+            <Skeleton height={340} borderRadius={16} />
+          ) : (
+            <RevenueBreakdown data={revenueData as any} />
+          )}
         </div>
       </div>
 
       {/* Transactions Table */}
-      <div className="animate-card-entrance" style={{ animationDelay: '240ms' }}>
+      <div
+        className="animate-card-entrance"
+        style={{ animationDelay: "240ms" }}
+      >
         {isLoading ? (
           <div className="bg-[#F4F2F0] rounded-[18px] p-[10px]">
             <div className="bg-white rounded-[14px] border border-[#E5E7EB] overflow-hidden p-6 space-y-4">

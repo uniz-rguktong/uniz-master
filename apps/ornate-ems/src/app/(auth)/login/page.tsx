@@ -1,5 +1,5 @@
-import { LoginPage } from '@/components/features/admin/views/LoginPage';
+import { LoginPage } from "@/components/features/admin/views/LoginPage";
 
 export default function LoginRoute() {
-    return <LoginPage />;
+  return <LoginPage />;
 }

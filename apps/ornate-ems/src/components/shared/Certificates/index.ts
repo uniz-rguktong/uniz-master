@@ -1,1 +1,1 @@
-export { default as CertificatesPage } from './CertificatesPage';
+export { default as CertificatesPage } from "./CertificatesPage";

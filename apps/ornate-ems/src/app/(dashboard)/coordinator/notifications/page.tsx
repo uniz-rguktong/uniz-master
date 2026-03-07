@@ -1,5 +1,5 @@
-import { NotificationsPage } from '@/components/shared/Notifications';
+import { NotificationsPage } from "@/components/shared/Notifications";
 
 export default function Page() {
-    return <NotificationsPage variant="admin" />;
+  return <NotificationsPage variant="admin" />;
 }

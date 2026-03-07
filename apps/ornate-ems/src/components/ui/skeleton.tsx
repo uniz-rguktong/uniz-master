@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { cn } from "./utils";
 
 export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -7,7 +7,14 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   borderRadius?: string | number;
 }
 
-export function Skeleton({ className, width, height, borderRadius, style, ...props }: SkeletonProps) {
+export function Skeleton({
+  className,
+  width,
+  height,
+  borderRadius,
+  style,
+  ...props
+}: SkeletonProps) {
   return (
     <div
       className={cn("skeleton-shimmer", className)}
@@ -15,9 +22,11 @@ export function Skeleton({ className, width, height, borderRadius, style, ...pro
         width: width,
         height: height,
         borderRadius: borderRadius,
-        ...style
+        ...style,
       }}
-      {...props} />);
+      {...props}
+    />
+  );
 }
 
 export function MetricCardSkeleton() {
@@ -35,7 +44,8 @@ export function MetricCardSkeleton() {
       <div className="flex justify-end px-2 h-[20px]">
         <Skeleton width={80} height={12} />
       </div>
-    </div>);
+    </div>
+  );
 }
 
 export function TableRowSkeleton() {
@@ -49,7 +59,8 @@ export function TableRowSkeleton() {
       <Skeleton width={100} height={14} />
       <Skeleton width={80} height={14} />
       <Skeleton width={60} height={24} borderRadius={20} />
-    </div>);
+    </div>
+  );
 }
 
 export function VideoCardSkeleton() {

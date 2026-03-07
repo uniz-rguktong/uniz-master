@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import { InfoTooltip } from '@/components/InfoTooltip';
-import { Skeleton } from '@/components/ui/skeleton';
+import Link from "next/link";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface StandingItem {
   branch: string;
@@ -15,10 +15,16 @@ interface ChampionshipStandingsProps {
   isLoading: boolean;
 }
 
-export function ChampionshipStandings({ data, isLoading }: ChampionshipStandingsProps) {
+export function ChampionshipStandings({
+  data,
+  isLoading,
+}: ChampionshipStandingsProps) {
   const standings = data || [];
 
-  const totalPoints = standings.reduce((sum: any, item: any) => sum + item.points, 0);
+  const totalPoints = standings.reduce(
+    (sum: any, item: any) => sum + item.points,
+    0,
+  );
   const maxPoints = Math.max(...standings.map((s: any) => s.points), 0);
 
   return (
@@ -30,7 +36,10 @@ export function ChampionshipStandings({ data, isLoading }: ChampionshipStandings
           </h3>
           <InfoTooltip text="Overall points leaderboard based on branch performance across all sports." />
         </div>
-        <Link href="/sports/points-table" className="text-sm font-bold text-[#10B981] hover:underline uppercase tracking-wider">
+        <Link
+          href="/sports/points-table"
+          className="text-sm font-bold text-[#10B981] hover:underline uppercase tracking-wider"
+        >
           View Leaderboard
         </Link>
       </div>
@@ -59,21 +68,31 @@ export function ChampionshipStandings({ data, isLoading }: ChampionshipStandings
           <>
             {/* Stats Summary */}
             <div className="mb-8">
-              <div className="text-[11px] font-bold text-[#7A7772] tracking-wider uppercase mb-1.5">OVERALL PERFORMANCE</div>
+              <div className="text-[11px] font-bold text-[#7A7772] tracking-wider uppercase mb-1.5">
+                OVERALL PERFORMANCE
+              </div>
               <div className="flex items-baseline gap-2">
                 <div className="text-2xl md:text-[32px] font-bold text-[#1A1A1A] tracking-tight">
                   {totalPoints.toLocaleString()}
                 </div>
-                <span className="text-xs font-semibold text-[#6B7280]">Total Points Dist.</span>
+                <span className="text-xs font-semibold text-[#6B7280]">
+                  Total Points Dist.
+                </span>
               </div>
-              <div className="text-[11px] text-[#9CA3AF] mt-0.5">2024-25 Season Standings</div>
+              <div className="text-[11px] text-[#9CA3AF] mt-0.5">
+                2024-25 Season Standings
+              </div>
             </div>
 
             {/* Standings List */}
             <div className="space-y-5">
               {standings.map((item: any, index: any) => {
-                const percentageOfMax = maxPoints > 0 ? (item.points / maxPoints) * 100 : 0;
-                const percentageOfTotal = totalPoints > 0 ? ((item.points / totalPoints) * 100).toFixed(1) : 0;
+                const percentageOfMax =
+                  maxPoints > 0 ? (item.points / maxPoints) * 100 : 0;
+                const percentageOfTotal =
+                  totalPoints > 0
+                    ? ((item.points / totalPoints) * 100).toFixed(1)
+                    : 0;
 
                 return (
                   <div key={item.branch} className="group cursor-pointer">
@@ -87,14 +106,16 @@ export function ChampionshipStandings({ data, isLoading }: ChampionshipStandings
                           {item.name} ({item.branch})
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-[#1A1A1A]">{item.points} pts</span>
+                      <span className="text-xs font-bold text-[#1A1A1A]">
+                        {item.points} pts
+                      </span>
                     </div>
                     <div className="relative h-2 bg-[#F3F4F6] rounded-full overflow-hidden">
                       <div
                         className="absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out group-hover:opacity-80"
                         style={{
                           backgroundColor: item.color,
-                          width: `${percentageOfMax}%`
+                          width: `${percentageOfMax}%`,
                         }}
                       />
                     </div>
@@ -103,10 +124,17 @@ export function ChampionshipStandings({ data, isLoading }: ChampionshipStandings
                         {percentageOfTotal}% of total share
                       </span>
                       <div className="flex items-center gap-1">
-                        <span className={`text-[10px] font-bold ${index === 0 ? 'text-[#F59E0B]' :
-                          index === 1 ? 'text-[#94A3B8]' :
-                            index === 2 ? 'text-[#B45309]' : 'text-[#9CA3AF]'
-                          }`}>
+                        <span
+                          className={`text-[10px] font-bold ${
+                            index === 0
+                              ? "text-[#F59E0B]"
+                              : index === 1
+                                ? "text-[#94A3B8]"
+                                : index === 2
+                                  ? "text-[#B45309]"
+                                  : "text-[#9CA3AF]"
+                          }`}
+                        >
                           RANK #{item.rank}
                         </span>
                       </div>

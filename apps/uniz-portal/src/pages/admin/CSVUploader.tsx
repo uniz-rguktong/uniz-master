@@ -80,7 +80,7 @@ export default function SpreadsheetUploader({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
         },
         body: JSON.stringify(data),
       });

@@ -1,32 +1,32 @@
-'use server';
+"use server";
 // ─────────────────────────────────────────────────────────
 // Revalidation Helpers (server-side only)
 // ─────────────────────────────────────────────────────────
 
-import { revalidateTag as _revalidateTag, revalidatePath } from 'next/cache';
+import { revalidateTag as _revalidateTag, revalidatePath } from "next/cache";
 import {
-    CACHE_TAGS,
-    EVENT_PATHS,
-    REGISTRATION_PATHS,
-    WINNER_PATHS,
-    BRAND_PATHS,
-    GALLERY_PATHS,
-    PROMO_PATHS,
-    CERTIFICATE_PATHS,
-    ANNOUNCEMENT_PATHS,
-    CLUB_SETTINGS_PATHS,
-    ADMIN_PROFILE_PATHS,
-    SETTINGS_PATHS,
-    STALL_PATHS,
-    FEST_PATHS,
-    SPORT_PATHS,
-    FIXTURE_PATHS,
-    POINTS_PATHS,
-} from '@/lib/cache-tags';
+  CACHE_TAGS,
+  EVENT_PATHS,
+  REGISTRATION_PATHS,
+  WINNER_PATHS,
+  BRAND_PATHS,
+  GALLERY_PATHS,
+  PROMO_PATHS,
+  CERTIFICATE_PATHS,
+  ANNOUNCEMENT_PATHS,
+  CLUB_SETTINGS_PATHS,
+  ADMIN_PROFILE_PATHS,
+  SETTINGS_PATHS,
+  STALL_PATHS,
+  FEST_PATHS,
+  SPORT_PATHS,
+  FIXTURE_PATHS,
+  POINTS_PATHS,
+} from "@/lib/cache-tags";
 
 // This Next.js version requires a second argument for revalidateTag.
 // We use a wrapper to simplify the API (same pattern used across codebase).
-const bustTag = (tag: string) => (_revalidateTag as any)(tag, 'max');
+const bustTag = (tag: string) => (_revalidateTag as any)(tag, "max");
 
 // ─────────────────────────────────────────────────────────
 // Entity-based revalidation helpers
@@ -39,10 +39,10 @@ const bustTag = (tag: string) => (_revalidateTag as any)(tag, 'max');
  * Call after: create/update/delete/confirm/reject/waitlist registrations.
  */
 export async function revalidateRegistrations() {
-    bustTag(CACHE_TAGS.registrations);
-    bustTag(CACHE_TAGS.dashboardStats);
-    bustTag(CACHE_TAGS.analytics);
-    REGISTRATION_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.registrations);
+  bustTag(CACHE_TAGS.dashboardStats);
+  bustTag(CACHE_TAGS.analytics);
+  REGISTRATION_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -50,13 +50,13 @@ export async function revalidateRegistrations() {
  * Call after: create/update/delete events.
  */
 export async function revalidateEvents() {
-    bustTag(CACHE_TAGS.events);
-    bustTag(CACHE_TAGS.eventDetails);
-    bustTag(CACHE_TAGS.eventsList);
-    bustTag(CACHE_TAGS.calendar);
-    bustTag(CACHE_TAGS.dashboardStats);
-    bustTag(CACHE_TAGS.todaysEvents);
-    EVENT_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.events);
+  bustTag(CACHE_TAGS.eventDetails);
+  bustTag(CACHE_TAGS.eventsList);
+  bustTag(CACHE_TAGS.calendar);
+  bustTag(CACHE_TAGS.dashboardStats);
+  bustTag(CACHE_TAGS.todaysEvents);
+  EVENT_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -64,12 +64,12 @@ export async function revalidateEvents() {
  * Call after: create/approve/reject teams.
  */
 export async function revalidateTeams() {
-    bustTag(CACHE_TAGS.teams);
-    bustTag(CACHE_TAGS.registrations);
-    revalidatePath('/dashboard', 'page');
-    revalidatePath('/branch-admin/registrations', 'page');
-    revalidatePath('/sports', 'page');
-    revalidatePath('/student', 'page');
+  bustTag(CACHE_TAGS.teams);
+  bustTag(CACHE_TAGS.registrations);
+  revalidatePath("/dashboard", "page");
+  revalidatePath("/branch-admin/registrations", "page");
+  revalidatePath("/sports", "page");
+  revalidatePath("/student", "page");
 }
 
 /**
@@ -77,8 +77,8 @@ export async function revalidateTeams() {
  * Call after: create/update/suspend/delete users.
  */
 export async function revalidateUsers() {
-    bustTag(CACHE_TAGS.users);
-    bustTag(CACHE_TAGS.admins);
+  bustTag(CACHE_TAGS.users);
+  bustTag(CACHE_TAGS.admins);
 }
 
 /**
@@ -86,10 +86,10 @@ export async function revalidateUsers() {
  * Call after: analytics snapshot updates.
  */
 export async function revalidateAnalytics() {
-    bustTag(CACHE_TAGS.analytics);
-    bustTag(CACHE_TAGS.snapshot);
-    bustTag(CACHE_TAGS.metrics);
-    bustTag(CACHE_TAGS.dashboardTrends);
+  bustTag(CACHE_TAGS.analytics);
+  bustTag(CACHE_TAGS.snapshot);
+  bustTag(CACHE_TAGS.metrics);
+  bustTag(CACHE_TAGS.dashboardTrends);
 }
 
 /**
@@ -97,10 +97,10 @@ export async function revalidateAnalytics() {
  * Call after: sports event/match updates.
  */
 export async function revalidateSports() {
-    bustTag(CACHE_TAGS.sports);
-    bustTag(CACHE_TAGS.stats);
-    bustTag(CACHE_TAGS.events);
-    SPORT_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.sports);
+  bustTag(CACHE_TAGS.stats);
+  bustTag(CACHE_TAGS.events);
+  SPORT_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -108,8 +108,8 @@ export async function revalidateSports() {
  * Call after: coordinator assignment changes.
  */
 export async function revalidateCoordinators() {
-    bustTag(CACHE_TAGS.coordinator);
-    bustTag(CACHE_TAGS.events);
+  bustTag(CACHE_TAGS.coordinator);
+  bustTag(CACHE_TAGS.events);
 }
 
 /**
@@ -117,10 +117,10 @@ export async function revalidateCoordinators() {
  * Call after: winner announcement or certificate operations.
  */
 export async function revalidateWinners() {
-    WINNER_PATHS.forEach(p => revalidatePath(p, 'page'));
-    POINTS_PATHS.forEach(p => revalidatePath(p, 'page'));
-    bustTag(CACHE_TAGS.events);
-    bustTag(CACHE_TAGS.branchPoints);
+  WINNER_PATHS.forEach((p) => revalidatePath(p, "page"));
+  POINTS_PATHS.forEach((p) => revalidatePath(p, "page"));
+  bustTag(CACHE_TAGS.events);
+  bustTag(CACHE_TAGS.branchPoints);
 }
 
 /**
@@ -128,8 +128,8 @@ export async function revalidateWinners() {
  * Call after: task create/update/delete.
  */
 export async function revalidateTasks() {
-    revalidatePath('/branch-admin/schedule/timeline', 'page');
-    revalidatePath('/sports-admin/schedule/timeline', 'page');
+  revalidatePath("/branch-admin/schedule/timeline", "page");
+  revalidatePath("/sports-admin/schedule/timeline", "page");
 }
 
 /**
@@ -137,9 +137,9 @@ export async function revalidateTasks() {
  * Call after: fixture create/update/score/delete.
  */
 export async function revalidateFixtures() {
-    bustTag(CACHE_TAGS.fixtures);
-    FIXTURE_PATHS.forEach(p => revalidatePath(p, 'page'));
-    bustTag(CACHE_TAGS.sports);
+  bustTag(CACHE_TAGS.fixtures);
+  FIXTURE_PATHS.forEach((p) => revalidatePath(p, "page"));
+  bustTag(CACHE_TAGS.sports);
 }
 
 /**
@@ -147,11 +147,11 @@ export async function revalidateFixtures() {
  * Call after: create/update/delete/duplicate sport.
  */
 export async function revalidateSportData() {
-    bustTag(CACHE_TAGS.sports);
-    bustTag(CACHE_TAGS.stats);
-    bustTag(CACHE_TAGS.branchPoints);
-    SPORT_PATHS.forEach(p => revalidatePath(p, 'page'));
-    POINTS_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.sports);
+  bustTag(CACHE_TAGS.stats);
+  bustTag(CACHE_TAGS.branchPoints);
+  SPORT_PATHS.forEach((p) => revalidatePath(p, "page"));
+  POINTS_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -160,12 +160,12 @@ export async function revalidateSportData() {
  * Also busts points-table caches because match completions affect standings.
  */
 export async function revalidateFixtureData() {
-    bustTag(CACHE_TAGS.fixtures);
-    bustTag(CACHE_TAGS.sports);
-    bustTag(CACHE_TAGS.branchPoints);
-    bustTag(CACHE_TAGS.stats);
-    FIXTURE_PATHS.forEach(p => revalidatePath(p, 'page'));
-    POINTS_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.fixtures);
+  bustTag(CACHE_TAGS.sports);
+  bustTag(CACHE_TAGS.branchPoints);
+  bustTag(CACHE_TAGS.stats);
+  FIXTURE_PATHS.forEach((p) => revalidatePath(p, "page"));
+  POINTS_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -173,9 +173,9 @@ export async function revalidateFixtureData() {
  * Call after: branch points recalculation or updates.
  */
 export async function revalidateBranchPointsData() {
-    bustTag(CACHE_TAGS.branchPoints);
-    bustTag(CACHE_TAGS.stats);
-    POINTS_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.branchPoints);
+  bustTag(CACHE_TAGS.stats);
+  POINTS_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -183,9 +183,9 @@ export async function revalidateBranchPointsData() {
  * Call after: create/update/delete/approve/reject sport registrations.
  */
 export async function revalidateSportRegistrationData() {
-    bustTag(CACHE_TAGS.sportRegistrations);
-    bustTag(CACHE_TAGS.registrations);
-    revalidatePath('/sports/all-registrations', 'page');
+  bustTag(CACHE_TAGS.sportRegistrations);
+  bustTag(CACHE_TAGS.registrations);
+  revalidatePath("/sports/all-registrations", "page");
 }
 
 /**
@@ -193,10 +193,10 @@ export async function revalidateSportRegistrationData() {
  * Call after: send message, mark read, delete messages.
  */
 export async function revalidateNotifications() {
-    revalidatePath('/notifications');
-    revalidatePath('/hho/messages');
-    revalidatePath('/branch-admin/notifications');
-    revalidatePath('/super-admin/messages');
+  revalidatePath("/notifications");
+  revalidatePath("/hho/messages");
+  revalidatePath("/branch-admin/notifications");
+  revalidatePath("/super-admin/messages");
 }
 
 /**
@@ -204,8 +204,8 @@ export async function revalidateNotifications() {
  * Call after: upload/update/delete brand logos, branding assets.
  */
 export async function revalidateBrand() {
-    bustTag(CACHE_TAGS.brandAssets);
-    BRAND_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.brandAssets);
+  BRAND_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -213,8 +213,8 @@ export async function revalidateBrand() {
  * Call after: create/update/delete albums or images.
  */
 export async function revalidateGallery() {
-    bustTag(CACHE_TAGS.gallery);
-    GALLERY_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.gallery);
+  GALLERY_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -222,8 +222,8 @@ export async function revalidateGallery() {
  * Call after: create/update/delete promo videos.
  */
 export async function revalidatePromo() {
-    bustTag(CACHE_TAGS.promo);
-    PROMO_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.promo);
+  PROMO_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -231,8 +231,8 @@ export async function revalidatePromo() {
  * Call after: distribute/generate/delete certificates or themes.
  */
 export async function revalidateCertificates() {
-    bustTag(CACHE_TAGS.certificates);
-    CERTIFICATE_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.certificates);
+  CERTIFICATE_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -240,8 +240,8 @@ export async function revalidateCertificates() {
  * Call after: create/update/delete announcements.
  */
 export async function revalidateAnnouncements() {
-    bustTag(CACHE_TAGS.announcements);
-    ANNOUNCEMENT_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.announcements);
+  ANNOUNCEMENT_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -249,8 +249,8 @@ export async function revalidateAnnouncements() {
  * Call after: update club settings, profile, notification prefs, integrations.
  */
 export async function revalidateClubSettings() {
-    bustTag(CACHE_TAGS.clubSettings);
-    CLUB_SETTINGS_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.clubSettings);
+  CLUB_SETTINGS_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -258,8 +258,8 @@ export async function revalidateClubSettings() {
  * Call after: update admin profile, avatar, settings.
  */
 export async function revalidateAdminProfile() {
-    bustTag(CACHE_TAGS.admins);
-    ADMIN_PROFILE_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.admins);
+  ADMIN_PROFILE_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -267,7 +267,7 @@ export async function revalidateAdminProfile() {
  * Call after: update HHO settings or profile.
  */
 export async function revalidateSettings() {
-    SETTINGS_PATHS.forEach(p => revalidatePath(p, 'page'));
+  SETTINGS_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -275,8 +275,8 @@ export async function revalidateSettings() {
  * Call after: create/update/delete stalls.
  */
 export async function revalidateStalls() {
-    bustTag(CACHE_TAGS.stalls);
-    STALL_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.stalls);
+  STALL_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -284,8 +284,8 @@ export async function revalidateStalls() {
  * Call after: update fest settings.
  */
 export async function revalidateFestSettings() {
-    bustTag(CACHE_TAGS.festSettings);
-    FEST_PATHS.forEach(p => revalidatePath(p, 'page'));
+  bustTag(CACHE_TAGS.festSettings);
+  FEST_PATHS.forEach((p) => revalidatePath(p, "page"));
 }
 
 /**
@@ -293,5 +293,5 @@ export async function revalidateFestSettings() {
  * Use sparingly — only for admin-level bulk operations.
  */
 export async function revalidateAll() {
-    Object.values(CACHE_TAGS).forEach(tag => bustTag(tag));
+  Object.values(CACHE_TAGS).forEach((tag) => bustTag(tag));
 }

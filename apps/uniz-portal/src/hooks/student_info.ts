@@ -42,47 +42,50 @@ export function useStudentData() {
     globalSetAuthLoading = setAuthLoading;
   }, [setStudent, setAuthLoading]);
 
-  const fetchStudentData = useCallback(async (force = false) => {
-    const token = localStorage.getItem("student_token");
-    if (!token) {
-      // No token – nothing to wait for, stop loading immediately
-      setAuthLoading(false);
-      return;
-    }
+  const fetchStudentData = useCallback(
+    async (force = false) => {
+      const token = localStorage.getItem("student_token");
+      if (!token) {
+        // No token – nothing to wait for, stop loading immediately
+        setAuthLoading(false);
+        return;
+      }
 
-    const now = Date.now();
-    // Prevent duplicate calls. If not forced, skip if less than 60s since last fetch
-    if (!force && now - lastFetchTime < 60000) {
-      return fetchPromise;
-    }
+      const now = Date.now();
+      // Prevent duplicate calls. If not forced, skip if less than 60s since last fetch
+      if (!force && now - lastFetchTime < 60000) {
+        return fetchPromise;
+      }
 
-    if (fetchPromise) return fetchPromise;
+      if (fetchPromise) return fetchPromise;
 
-    fetchPromise = apiClient<StudentInfoResponse>(STUDENT_INFO, {}, false)
-      .then((data) => {
-        if (data && data.success && data.student) {
-          lastFetchTime = Date.now();
-          if (globalSetStudent) {
-            globalSetStudent(data.student);
-          } else {
-            //@ts-ignore
-            setStudent(data.student);
+      fetchPromise = apiClient<StudentInfoResponse>(STUDENT_INFO, {}, false)
+        .then((data) => {
+          if (data && data.success && data.student) {
+            lastFetchTime = Date.now();
+            if (globalSetStudent) {
+              globalSetStudent(data.student);
+            } else {
+              //@ts-ignore
+              setStudent(data.student);
+            }
           }
-        }
-      })
-      .catch((error) => console.error("Error fetching student data:", error))
-      .finally(() => {
-        fetchPromise = null;
-        // Mark auth loading as done — the /me call has resolved (success or fail)
-        if (globalSetAuthLoading) {
-          globalSetAuthLoading(false);
-        } else {
-          setAuthLoading(false);
-        }
-      });
+        })
+        .catch((error) => console.error("Error fetching student data:", error))
+        .finally(() => {
+          fetchPromise = null;
+          // Mark auth loading as done — the /me call has resolved (success or fail)
+          if (globalSetAuthLoading) {
+            globalSetAuthLoading(false);
+          } else {
+            setAuthLoading(false);
+          }
+        });
 
-    return fetchPromise;
-  }, [setStudent, setAuthLoading]);
+      return fetchPromise;
+    },
+    [setStudent, setAuthLoading],
+  );
 
   useEffect(() => {
     fetchStudentData();

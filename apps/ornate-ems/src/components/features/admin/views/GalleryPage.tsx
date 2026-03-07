@@ -1,21 +1,19 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Plus, Upload, Grid3x3, List, Archive } from 'lucide-react';
-import { GalleryGridView } from '@/components/gallery/GalleryGridView';
-import { GalleryListView } from '@/components/gallery/GalleryListView';
-import { CategoryModal } from '@/components/gallery/CategoryModal';
-import { UploadPhotosModal } from '@/components/gallery/UploadPhotosModal';
-import { ViewGalleryModal } from '@/components/gallery/ViewGalleryModal';
+import { useState, useEffect } from "react";
+import { Plus, Upload, Grid3x3, List, Archive } from "lucide-react";
+import { GalleryGridView } from "@/components/gallery/GalleryGridView";
+import { GalleryListView } from "@/components/gallery/GalleryListView";
+import { CategoryModal } from "@/components/gallery/CategoryModal";
+import { UploadPhotosModal } from "@/components/gallery/UploadPhotosModal";
+import { ViewGalleryModal } from "@/components/gallery/ViewGalleryModal";
 
-import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { useToast } from '@/hooks/useToast';
-import { usePathname } from 'next/navigation';
-import { Skeleton } from '@/components/ui/skeleton';
-import { downloadAlbumPhotosAsZip } from '@/lib/galleryZip';
-import { uploadFileToR2 } from '@/lib/upload';
-
-
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { useToast } from "@/hooks/useToast";
+import { usePathname } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import { downloadAlbumPhotosAsZip } from "@/lib/galleryZip";
+import { uploadFileToR2 } from "@/lib/upload";
 
 import {
   getGalleryAlbums,
@@ -27,8 +25,8 @@ import {
   deleteGalleryImages,
   updateGalleryImage,
   type FormattedGalleryAlbum,
-  type FormattedGalleryImage
-} from '@/actions/galleryActions';
+  type FormattedGalleryImage,
+} from "@/actions/galleryActions";
 
 interface GalleryPageProps {
   initialAlbums?: FormattedGalleryAlbum[];
@@ -36,10 +34,12 @@ interface GalleryPageProps {
 
 export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
   const pathname = usePathname();
-  const isBranchAdminRoute = pathname?.startsWith('/branch-admin');
+  const isBranchAdminRoute = pathname?.startsWith("/branch-admin");
   const [isMounted, setIsMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(!initialAlbums || initialAlbums.length === 0);
-  const [viewType, setViewType] = useState('grid');
+  const [isLoading, setIsLoading] = useState(
+    !initialAlbums || initialAlbums.length === 0,
+  );
+  const [viewType, setViewType] = useState("grid");
   const [categories, setCategories] = useState<any[]>(initialAlbums);
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
     }
   };
   const [photos, setPhotos] = useState<any[]>([]); // This will be loaded when an album is selected or for generic view if needed.
-  // Note: Current UI assumes photos are available globally for 'Uncategorized' logic. 
+  // Note: Current UI assumes photos are available globally for 'Uncategorized' logic.
   // We might need to adjust or fetch all photos. For optimization, let's keep photos empty for now and fetch on demand in view modal.
 
   const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -83,13 +83,17 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
   const [editingCategory, setEditingCategory] = useState<any | null>(null);
   const [showViewGalleryModal, setShowViewGalleryModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
-  const [uploadCategory, setUploadCategory] = useState('All Categories');
-  const [viewMode, setViewMode] = useState('active'); // 'active' or 'archived'
+  const [uploadCategory, setUploadCategory] = useState("All Categories");
+  const [viewMode, setViewMode] = useState("active"); // 'active' or 'archived'
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [confirmAction, setConfirmAction] = useState<(() => Promise<void>) | null>(null);
+  const [confirmAction, setConfirmAction] = useState<
+    (() => Promise<void>) | null
+  >(null);
   const [showImageDeleteConfirm, setShowImageDeleteConfirm] = useState(false);
   const [imageDeleteCount, setImageDeleteCount] = useState(0);
-  const [imageDeleteResolver, setImageDeleteResolver] = useState<((value: boolean) => void) | null>(null);
+  const [imageDeleteResolver, setImageDeleteResolver] = useState<
+    ((value: boolean) => void) | null
+  >(null);
   const { showToast } = useToast();
 
   const handleCreateOrUpdateCategory = async (data: any) => {
@@ -99,28 +103,27 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
       if (editingCategory) {
         const res = await updateGalleryAlbum(editingCategory.id, data);
         if (res.success) {
-          showToast('Gallery updated successfully', 'success');
+          showToast("Gallery updated successfully", "success");
           loadData();
         } else {
-          showToast(res.error || 'Update failed', 'error');
+          showToast(res.error || "Update failed", "error");
         }
       } else {
         const res = await createGalleryAlbum(data);
         if (res.success) {
-          showToast('Gallery created successfully', 'success');
+          showToast("Gallery created successfully", "success");
           loadData();
         } else {
-          showToast(res.error || 'Creation failed', 'error');
+          showToast(res.error || "Creation failed", "error");
         }
       }
     } catch (error) {
-      showToast('Operation failed', 'error');
+      showToast("Operation failed", "error");
     } finally {
       setIsLoading(false);
       setEditingCategory(null);
     }
   };
-
 
   // For fetching photos when viewing an album
   const handleViewGallery = async (category: any) => {
@@ -132,18 +135,20 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
     try {
       const res = await getAlbumPhotos(category.id);
       if (res.success) {
-        setPhotos((res.data || []).map((photo: any) => ({
-          ...photo,
-          filename: photo.caption || '',
-          thumbnail: photo.url,
-          category: category.name
-        })));
+        setPhotos(
+          (res.data || []).map((photo: any) => ({
+            ...photo,
+            filename: photo.caption || "",
+            thumbnail: photo.url,
+            category: category.name,
+          })),
+        );
       } else {
-        showToast('Failed to load photos', 'error');
+        showToast("Failed to load photos", "error");
       }
     } catch (err) {
       console.error(err);
-      showToast('Failed to load photos', 'error');
+      showToast("Failed to load photos", "error");
     }
   };
 
@@ -151,24 +156,30 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
     try {
       const res = await getAlbumPhotos(category.id);
       if (!res.success) {
-        showToast(res.error || 'Failed to fetch photos for download', 'error');
+        showToast(res.error || "Failed to fetch photos for download", "error");
         return;
       }
 
       const albumPhotos = res.data || [];
       if (albumPhotos.length === 0) {
-        showToast('No photos available to download', 'warning');
+        showToast("No photos available to download", "warning");
         return;
       }
 
-      const { added, failed } = await downloadAlbumPhotosAsZip(category.name || 'album', albumPhotos);
+      const { added, failed } = await downloadAlbumPhotosAsZip(
+        category.name || "album",
+        albumPhotos,
+      );
       if (failed > 0) {
-        showToast(`Downloaded ZIP with ${added} photo(s). ${failed} failed.`, 'warning');
+        showToast(
+          `Downloaded ZIP with ${added} photo(s). ${failed} failed.`,
+          "warning",
+        );
       } else {
-        showToast(`Downloaded ZIP with ${added} photo(s).`, 'success');
+        showToast(`Downloaded ZIP with ${added} photo(s).`, "success");
       }
     } catch (error) {
-      showToast('Failed to download album ZIP', 'error');
+      showToast("Failed to download album ZIP", "error");
     }
   };
 
@@ -178,10 +189,9 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
 
   const allCategories = categories; // Simplify for now without uncategorized complexity unless backend supports it.
 
-
-  const filteredCategories = allCategories.filter(cat => {
-    if (cat.isUncategorized) return viewMode === 'active';
-    return viewMode === 'active' ? !cat.isArchived : cat.isArchived;
+  const filteredCategories = allCategories.filter((cat) => {
+    if (cat.isUncategorized) return viewMode === "active";
+    return viewMode === "active" ? !cat.isArchived : cat.isArchived;
   });
 
   const displayCategories = filteredCategories;
@@ -189,16 +199,21 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
   const handleArchiveCategory = async (category: any) => {
     setIsLoading(true);
     try {
-      const res = await updateGalleryAlbum(category.id, { isArchived: !category.isArchived });
+      const res = await updateGalleryAlbum(category.id, {
+        isArchived: !category.isArchived,
+      });
       if (res.success) {
-        showToast(`Gallery ${category.isArchived ? 'restored' : 'archived'} successfully`, 'success');
+        showToast(
+          `Gallery ${category.isArchived ? "restored" : "archived"} successfully`,
+          "success",
+        );
         loadData();
       } else {
-        showToast(res.error || 'Failed to update gallery', 'error');
+        showToast(res.error || "Failed to update gallery", "error");
       }
     } catch (error) {
       console.error(error);
-      showToast('Failed to update category', 'error');
+      showToast("Failed to update category", "error");
     } finally {
       setIsLoading(false);
     }
@@ -208,29 +223,32 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
     try {
       const res = await deleteGalleryImages(photoIds);
       if (res.success) {
-        showToast(`Successfully deleted ${photoIds.length} photo(s)`, 'success');
+        showToast(
+          `Successfully deleted ${photoIds.length} photo(s)`,
+          "success",
+        );
         // Refresh local photo list if in modal
-        setPhotos(prev => prev.filter(p => !photoIds.includes(p.id)));
+        setPhotos((prev) => prev.filter((p) => !photoIds.includes(p.id)));
         // Refresh albums count
         loadData();
       } else {
-        showToast(res.error || 'Failed to delete photos', 'error');
+        showToast(res.error || "Failed to delete photos", "error");
       }
     } catch (error) {
-      showToast('An error occurred during deletion', 'error');
+      showToast("An error occurred during deletion", "error");
     }
   };
 
   const downloadPhoto = (url?: string, filename?: string) => {
     if (!url) return;
-    const baseName = (filename || 'photo').trim() || 'photo';
+    const baseName = (filename || "photo").trim() || "photo";
 
     // Force .png for downloading as a viewable image
-    const cleanName = baseName.replace(/\.[^/.]+$/, "").replace(/\s+/g, '_');
+    const cleanName = baseName.replace(/\.[^/.]+$/, "").replace(/\s+/g, "_");
     const safeFilename = `${cleanName}.png`;
     const downloadUrl = `/api/branding/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(safeFilename)}&format=png`;
 
-    const anchor = document.createElement('a');
+    const anchor = document.createElement("a");
     anchor.href = downloadUrl;
     anchor.download = safeFilename;
     document.body.appendChild(anchor);
@@ -238,50 +256,58 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
     document.body.removeChild(anchor);
   };
 
-  const handleSavePhotoChanges = async (photoId: string, payload: { caption?: string }) => {
+  const handleSavePhotoChanges = async (
+    photoId: string,
+    payload: { caption?: string },
+  ) => {
     const res = await updateGalleryImage(photoId, {
       ...(payload.caption !== undefined ? { caption: payload.caption } : {}),
     });
     if (!res.success) {
-      showToast(res.error || 'Failed to save photo changes', 'error');
+      showToast(res.error || "Failed to save photo changes", "error");
       return;
     }
 
-    const nextCaption = payload.caption ?? '';
-    setPhotos(prev => prev.map(photo =>
-      photo.id === photoId
-        ? { ...photo, caption: nextCaption, filename: nextCaption }
-        : photo
-    ));
-    showToast('Photo changes saved', 'success');
+    const nextCaption = payload.caption ?? "";
+    setPhotos((prev) =>
+      prev.map((photo) =>
+        photo.id === photoId
+          ? { ...photo, caption: nextCaption, filename: nextCaption }
+          : photo,
+      ),
+    );
+    showToast("Photo changes saved", "success");
   };
 
   const handleReplacePhoto = async (photoId: string, file: File) => {
     const uploadedUrl = await uploadFileToR2(file);
     if (!uploadedUrl) {
-      showToast('Failed to upload replacement image', 'error');
+      showToast("Failed to upload replacement image", "error");
       return;
     }
 
     const res = await updateGalleryImage(photoId, { url: uploadedUrl });
     if (!res.success) {
-      showToast(res.error || 'Failed to replace photo', 'error');
+      showToast(res.error || "Failed to replace photo", "error");
       return;
     }
 
-    setPhotos(prev => prev.map(photo =>
-      photo.id === photoId
-        ? { ...photo, url: uploadedUrl, thumbnail: uploadedUrl }
-        : photo
-    ));
-    showToast('Photo replaced successfully', 'success');
+    setPhotos((prev) =>
+      prev.map((photo) =>
+        photo.id === photoId
+          ? { ...photo, url: uploadedUrl, thumbnail: uploadedUrl }
+          : photo,
+      ),
+    );
+    showToast("Photo replaced successfully", "success");
   };
 
-  const confirmDeleteWithDialog = (count: number) => new Promise<boolean>((resolve) => {
-    setImageDeleteCount(count);
-    setShowImageDeleteConfirm(true);
-    setImageDeleteResolver(() => resolve);
-  });
+  const confirmDeleteWithDialog = (count: number) =>
+    new Promise<boolean>((resolve) => {
+      setImageDeleteCount(count);
+      setShowImageDeleteConfirm(true);
+      setImageDeleteResolver(() => resolve);
+    });
 
   const resolveImageDelete = (value: boolean) => {
     if (imageDeleteResolver) imageDeleteResolver(value);
@@ -301,39 +327,49 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
             <span className="whitespace-nowrap">›</span>
             <span className="whitespace-nowrap">Content Management</span>
             <span className="whitespace-nowrap">›</span>
-            <span className="text-[#1A1A1A] font-medium whitespace-nowrap">Gallery Management</span>
+            <span className="text-[#1A1A1A] font-medium whitespace-nowrap">
+              Gallery Management
+            </span>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h1 className="text-[28px] font-semibold text-[#1A1A1A]">Gallery Management</h1>
+            <h1 className="text-[28px] font-semibold text-[#1A1A1A]">
+              Gallery Management
+            </h1>
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
               <button
                 onClick={() => setShowCategoryModal(true)}
-                className="flex items-center justify-center gap-2 px-5 py-3 bg-white border border-[#E5E7EB] rounded-lg text-sm font-medium text-[#1A1A1A] hover:bg-[#F7F8FA] transition-colors w-full sm:w-auto">
+                className="flex items-center justify-center gap-2 px-5 py-3 bg-white border border-[#E5E7EB] rounded-lg text-sm font-medium text-[#1A1A1A] hover:bg-[#F7F8FA] transition-colors w-full sm:w-auto"
+              >
                 <Plus className="w-5 h-5" />
                 New Gallery
               </button>
 
               <button
-                onClick={() => setViewMode(viewMode === 'active' ? 'archived' : 'active')}
-                className={`flex items-center justify-center gap-2 px-5 py-3 border rounded-lg text-sm font-medium transition-colors w-full sm:w-auto ${viewMode === 'archived'
-                  ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                  : 'bg-white text-[#1A1A1A] border-[#E5E7EB] hover:bg-[#F7F8FA]'
-                  }`}>
+                onClick={() =>
+                  setViewMode(viewMode === "active" ? "archived" : "active")
+                }
+                className={`flex items-center justify-center gap-2 px-5 py-3 border rounded-lg text-sm font-medium transition-colors w-full sm:w-auto ${
+                  viewMode === "archived"
+                    ? "bg-[#1A1A1A] text-white border-[#1A1A1A]"
+                    : "bg-white text-[#1A1A1A] border-[#E5E7EB] hover:bg-[#F7F8FA]"
+                }`}
+              >
                 <Archive className="w-5 h-5" />
-                {viewMode === 'active' ? 'Archived' : 'Back to Gallery'}
+                {viewMode === "active" ? "Archived" : "Back to Gallery"}
               </button>
 
               <button
                 onClick={() => {
                   if (isBranchAdminRoute) {
-                    const firstCategoryName = categories[0]?.name || 'All Categories';
+                    const firstCategoryName =
+                      categories[0]?.name || "All Categories";
                     setUploadCategory(firstCategoryName);
                   }
                   setShowUploadModal(true);
                 }}
-                className="flex items-center justify-center gap-2 px-5 py-3 bg-[#10B981] text-white rounded-lg text-sm font-medium hover:bg-[#059669] transition-colors shadow-sm w-full sm:w-auto">
-
+                className="flex items-center justify-center gap-2 px-5 py-3 bg-[#10B981] text-white rounded-lg text-sm font-medium hover:bg-[#059669] transition-colors shadow-sm w-full sm:w-auto"
+              >
                 <Upload className="w-5 h-5" />
                 Upload Photos
               </button>
@@ -346,39 +382,55 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-[#1A1A1A]">Galleries</h2>
             <div className="px-3 py-1 bg-[#F7F8FA] border border-[#E5E7EB] rounded-full">
-              <span className="text-sm text-[#6B7280]">{categories.length} galleries</span>
+              <span className="text-sm text-[#6B7280]">
+                {categories.length} galleries
+              </span>
             </div>
           </div>
 
           <div className="flex items-center gap-1 bg-white border border-[#E5E7EB] rounded-lg p-1">
             <button
-              onClick={() => setViewType('grid')}
-              className={`p-2 rounded transition-colors ${viewType === 'grid' ?
-                'bg-[#F7F8FA] text-[#1A1A1A]' :
-                'text-[#6B7280] hover:bg-[#F7F8FA]'}`
-              }>
-
+              onClick={() => setViewType("grid")}
+              className={`p-2 rounded transition-colors ${
+                viewType === "grid"
+                  ? "bg-[#F7F8FA] text-[#1A1A1A]"
+                  : "text-[#6B7280] hover:bg-[#F7F8FA]"
+              }`}
+            >
               <Grid3x3 className="w-4 h-4" />
             </button>
             <button
-              onClick={() => setViewType('list')}
-              className={`p-2 rounded transition-colors ${viewType === 'list' ?
-                'bg-[#F7F8FA] text-[#1A1A1A]' :
-                'text-[#6B7280] hover:bg-[#F7F8FA]'}`
-              }>
-
+              onClick={() => setViewType("list")}
+              className={`p-2 rounded transition-colors ${
+                viewType === "list"
+                  ? "bg-[#F7F8FA] text-[#1A1A1A]"
+                  : "text-[#6B7280] hover:bg-[#F7F8FA]"
+              }`}
+            >
               <List className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* Categories Display */}
-        <div className="animate-card-entrance" style={{ animationDelay: '200ms' }}>
+        <div
+          className="animate-card-entrance"
+          style={{ animationDelay: "200ms" }}
+        >
           {isLoading ? (
-            <div className={viewType === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
-              {[...Array(viewType === 'grid' ? 8 : 5)].map((_: any, i: any) => (
-                viewType === 'grid' ? (
-                  <div key={i} className="bg-white border border-[#E5E7EB] rounded-12 p-1 overflow-hidden">
+            <div
+              className={
+                viewType === "grid"
+                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                  : "space-y-4"
+              }
+            >
+              {[...Array(viewType === "grid" ? 8 : 5)].map((_: any, i: any) =>
+                viewType === "grid" ? (
+                  <div
+                    key={i}
+                    className="bg-white border border-[#E5E7EB] rounded-12 p-1 overflow-hidden"
+                  >
                     <Skeleton width="100%" height={160} borderRadius={8} />
                     <div className="p-3">
                       <Skeleton width="70%" height={18} className="mb-2" />
@@ -386,7 +438,10 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
                     </div>
                   </div>
                 ) : (
-                  <div key={i} className="bg-white border border-[#E5E7EB] rounded-12 p-4 flex items-center gap-4">
+                  <div
+                    key={i}
+                    className="bg-white border border-[#E5E7EB] rounded-12 p-4 flex items-center gap-4"
+                  >
                     <Skeleton width={80} height={45} borderRadius={4} />
                     <div className="flex-1">
                       <Skeleton width="40%" height={16} className="mb-2" />
@@ -395,22 +450,25 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
                     <Skeleton width={80} height={20} borderRadius={10} />
                     <Skeleton width={32} height={32} borderRadius={8} />
                   </div>
-                )
-              ))}
+                ),
+              )}
             </div>
-          ) : viewType === 'grid' ? (
+          ) : viewType === "grid" ? (
             <GalleryGridView
               categories={displayCategories as any}
               onEditCategory={(category: any) => {
                 if (category.isUncategorized) {
-                  showToast('The Uncategorized category cannot be edited directly.', 'info');
+                  showToast(
+                    "The Uncategorized category cannot be edited directly.",
+                    "info",
+                  );
                   return;
                 }
                 setEditingCategory(category);
                 setShowCategoryModal(true);
               }}
               onUploadPhotos={(catName) => {
-                setUploadCategory(catName || 'All Categories');
+                setUploadCategory(catName || "All Categories");
                 setShowUploadModal(true);
               }}
               onViewGallery={handleViewGallery}
@@ -420,14 +478,15 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
                 setConfirmAction(() => async () => {
                   const res = await deleteGalleryAlbum(category.id);
                   if (res.success) {
-                    showToast('Category deleted successfully', 'success');
+                    showToast("Category deleted successfully", "success");
                     loadData();
                   } else {
-                    showToast(res.error || 'Delete failed', 'error');
+                    showToast(res.error || "Delete failed", "error");
                   }
                 });
                 setShowConfirmDialog(true);
-              }} />
+              }}
+            />
           ) : (
             <GalleryListView
               categories={displayCategories as any}
@@ -437,7 +496,7 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
                 setShowCategoryModal(true);
               }}
               onUploadPhotos={(catName) => {
-                setUploadCategory(catName || 'All Categories');
+                setUploadCategory(catName || "All Categories");
                 setShowUploadModal(true);
               }}
               onViewGallery={handleViewGallery}
@@ -446,30 +505,31 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
                 setConfirmAction(() => async () => {
                   const res = await deleteGalleryAlbum(category.id);
                   if (res.success) {
-                    showToast('Category deleted successfully', 'success');
+                    showToast("Category deleted successfully", "success");
                     loadData();
                   } else {
-                    showToast(res.error || 'Delete failed', 'error');
+                    showToast(res.error || "Delete failed", "error");
                   }
                 });
                 setShowConfirmDialog(true);
-              }} />
+              }}
+            />
           )}
         </div>
 
         {/* Modals */}
-        {showCategoryModal &&
+        {showCategoryModal && (
           <CategoryModal
             category={editingCategory}
             onClose={() => {
               setShowCategoryModal(false);
               setEditingCategory(null);
             }}
-            onSave={handleCreateOrUpdateCategory} />
+            onSave={handleCreateOrUpdateCategory}
+          />
+        )}
 
-        }
-
-        {showUploadModal &&
+        {showUploadModal && (
           <UploadPhotosModal
             categories={categories}
             uploadedPhotos={photos}
@@ -478,10 +538,11 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
             setUploadedPhotos={setPhotos}
             onDeletePhotos={handleDeletePhotos}
             onSuccess={loadData}
-            onClose={() => setShowUploadModal(false)} />
-        }
+            onClose={() => setShowUploadModal(false)}
+          />
+        )}
 
-        {showViewGalleryModal &&
+        {showViewGalleryModal && (
           <ViewGalleryModal
             category={selectedCategory}
             photos={photos}
@@ -489,24 +550,31 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
             confirmDeletePhotos={confirmDeleteWithDialog}
             onUpdatePhoto={handleSavePhotoChanges}
             onReplacePhoto={handleReplacePhoto}
-            onDownloadPhoto={(photo) => downloadPhoto(photo.url || photo.thumbnail, photo.filename || photo.name)}
+            onDownloadPhoto={(photo) =>
+              downloadPhoto(
+                photo.url || photo.thumbnail,
+                photo.filename || photo.name,
+              )
+            }
             openPreviewOnImageClick={true}
             onClose={() => {
               setShowViewGalleryModal(false);
               setPhotos([]); // Clear photos on close
-            }} />
-        }
+            }}
+          />
+        )}
 
         <ConfirmDialog
           isOpen={showImageDeleteConfirm}
           onClose={() => resolveImageDelete(false)}
           title="Confirm Deletion"
-          message={`Are you sure you want to delete ${imageDeleteCount} photo${imageDeleteCount > 1 ? 's' : ''}? This action cannot be undone.`}
+          message={`Are you sure you want to delete ${imageDeleteCount} photo${imageDeleteCount > 1 ? "s" : ""}? This action cannot be undone.`}
           confirmLabel="Delete"
           cancelLabel="Cancel"
           type="danger"
           onConfirm={() => resolveImageDelete(true)}
-          onCancel={() => resolveImageDelete(false)} />
+          onCancel={() => resolveImageDelete(false)}
+        />
 
         <ConfirmDialog
           isOpen={showConfirmDialog}
@@ -519,8 +587,8 @@ export function GalleryPage({ initialAlbums = [] }: GalleryPageProps) {
             }
             setShowConfirmDialog(false);
           }}
-          onCancel={() => setShowConfirmDialog(false)} />
-
+          onCancel={() => setShowConfirmDialog(false)}
+        />
       </div>
     </div>
   );

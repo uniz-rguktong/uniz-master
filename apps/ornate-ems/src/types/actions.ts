@@ -22,27 +22,27 @@
  * Matches the `ActionResponse<T>` from `src/lib/api-utils.ts`.
  */
 export type ActionResult<T = unknown> =
-    | { success: true; data: T; error?: never }
-    | { success: false; error: string; data?: never };
+  | { success: true; data: T; error?: never }
+  | { success: false; error: string; data?: never };
 
 /**
  * Mutation result with optional message (used by actions that return
  * a confirmation string alongside data, e.g. "Registration deleted").
  */
 export type MutationResult<T = unknown> =
-    | { success: true; data: T; message?: string; error?: never }
-    | { success: false; error: string; data?: never; message?: never };
+  | { success: true; data: T; message?: string; error?: never }
+  | { success: false; error: string; data?: never; message?: never };
 
 /**
  * Paginated result for list endpoints.
  */
 export interface PaginatedResult<T> {
-    success: true;
-    data: T[];
-    total: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
+  success: true;
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
 
 /**
@@ -51,13 +51,13 @@ export interface PaginatedResult<T> {
  * Matches the shape already used by `registrationActions.ts`.
  */
 export interface BulkActionResult {
-    success: boolean;
-    error?: string;
-    count?: number;
-    successful?: number;
-    failed?: number;
-    errors?: string[];
-    message?: string;
+  success: boolean;
+  error?: string;
+  count?: number;
+  successful?: number;
+  failed?: number;
+  errors?: string[];
+  message?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -68,18 +68,23 @@ export interface BulkActionResult {
  * Structured error that can carry a field-level mapping for form validation.
  */
 export interface ServerActionError {
-    code: 'VALIDATION' | 'AUTH' | 'NOT_FOUND' | 'CONFLICT' | 'INTERNAL';
-    message: string;
-    /** Per-field errors for form-level feedback (mirrors Zod issue paths). */
-    fieldErrors?: Record<string, string>;
+  code: "VALIDATION" | "AUTH" | "NOT_FOUND" | "CONFLICT" | "INTERNAL";
+  message: string;
+  /** Per-field errors for form-level feedback (mirrors Zod issue paths). */
+  fieldErrors?: Record<string, string>;
 }
 
 /**
  * Form-specific action result that can surface field-level errors.
  */
 export type FormActionResult<T = unknown> =
-    | { success: true; data: T; error?: never; fieldErrors?: never }
-    | { success: false; error: string; fieldErrors?: Record<string, string>; data?: never };
+  | { success: true; data: T; error?: never; fieldErrors?: never }
+  | {
+      success: false;
+      error: string;
+      fieldErrors?: Record<string, string>;
+      data?: never;
+    };
 
 // ---------------------------------------------------------------------------
 // Auth Helpers
@@ -89,7 +94,7 @@ export type FormActionResult<T = unknown> =
  * Authenticated user shape extracted from next-auth session.
  * Re-exported from the centralized auth helper.
  */
-export type { AuthUser } from '@/lib/auth-helpers';
+export type { AuthUser } from "@/lib/auth-helpers";
 
 // ---------------------------------------------------------------------------
 // Generic Helpers
@@ -103,4 +108,6 @@ export type { AuthUser } from '@/lib/auth-helpers';
  * Usage:
  *   type Events = ExtractData<Awaited<ReturnType<typeof getEvents>>>;
  */
-export type ExtractData<T> = T extends { success: true; data: infer D } ? D : never;
+export type ExtractData<T> = T extends { success: true; data: infer D }
+  ? D
+  : never;

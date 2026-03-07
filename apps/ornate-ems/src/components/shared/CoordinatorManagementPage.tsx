@@ -1,23 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
-import {
-  Search,
-  Mail,
-  Phone,
-  Trash2,
-  Edit,
-  Loader2,
-} from 'lucide-react';
-import { useToast } from '@/hooks/useToast';
-import { Modal } from '@/components/Modal';
-import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { Search, Mail, Phone, Trash2, Edit, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/useToast";
+import { Modal } from "@/components/Modal";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import {
   deleteCoordinator,
   updateCoordinatorDetails,
   addCoordinatorQuick,
-} from '@/actions/coordinatorActions';
+} from "@/actions/coordinatorActions";
 
 // ── Types ────────────────────────────────────────────────────
 interface Coordinator {
@@ -41,12 +34,14 @@ export function CoordinatorManagementPage({
   const { showToast } = useToast();
   const [isPending, startTransition] = useTransition();
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [currentCoordinator, setCurrentCoordinator] = useState<Coordinator | null>(null);
+  const [currentCoordinator, setCurrentCoordinator] =
+    useState<Coordinator | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [coordinatorToDelete, setCoordinatorToDelete] = useState<Coordinator | null>(null);
+  const [coordinatorToDelete, setCoordinatorToDelete] =
+    useState<Coordinator | null>(null);
 
   const filteredCoordinators = initialCoordinators.filter(
     (c) =>
@@ -59,13 +54,13 @@ export function CoordinatorManagementPage({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    const name = (fd.get('name') as string).trim();
-    const email = (fd.get('email') as string).trim();
-    const phone = (fd.get('phone') as string).trim();
+    const name = (fd.get("name") as string).trim();
+    const email = (fd.get("email") as string).trim();
+    const phone = (fd.get("phone") as string).trim();
 
-    const digits = phone.replace(/\D/g, '');
+    const digits = phone.replace(/\D/g, "");
     if (digits.length > 0 && digits.length !== 10) {
-      showToast('Please enter a valid 10-digit phone number', 'error');
+      showToast("Please enter a valid 10-digit phone number", "error");
       return;
     }
 
@@ -77,25 +72,25 @@ export function CoordinatorManagementPage({
             email,
             phone,
           });
-          if (res && 'error' in res && res.error) {
-            showToast(res.error as string, 'error');
+          if (res && "error" in res && res.error) {
+            showToast(res.error as string, "error");
             return;
           }
-          showToast('Coordinator updated', 'success');
+          showToast("Coordinator updated", "success");
         } else {
           const res = await addCoordinatorQuick({ name, email, phone });
-          if (res && 'error' in res && res.error) {
-            showToast(res.error as string, 'error');
+          if (res && "error" in res && res.error) {
+            showToast(res.error as string, "error");
             return;
           }
-          showToast('Coordinator added & invite sent', 'success');
+          showToast("Coordinator added & invite sent", "success");
         }
         setIsModalOpen(false);
         setIsEditMode(false);
         setCurrentCoordinator(null);
         router.refresh(); // Re-fetch SSR data
       } catch (err: any) {
-        showToast(err?.message || 'Something went wrong', 'error');
+        showToast(err?.message || "Something went wrong", "error");
       }
     });
   };
@@ -106,16 +101,16 @@ export function CoordinatorManagementPage({
     startTransition(async () => {
       try {
         const res = await deleteCoordinator(coordinatorToDelete.id);
-        if (res && 'error' in res && res.error) {
-          showToast(res.error as string, 'error');
+        if (res && "error" in res && res.error) {
+          showToast(res.error as string, "error");
           return;
         }
-        showToast('Coordinator removed', 'success');
+        showToast("Coordinator removed", "success");
         setShowDeleteDialog(false);
         setCoordinatorToDelete(null);
         router.refresh();
       } catch (err: any) {
-        showToast(err?.message || 'Something went wrong', 'error');
+        showToast(err?.message || "Something went wrong", "error");
       }
     });
   };
@@ -142,7 +137,9 @@ export function CoordinatorManagementPage({
           <span>›</span>
           <span>Events Management</span>
           <span>›</span>
-          <span className="text-[#1A1A1A] font-medium">Coordinator Management</span>
+          <span className="text-[#1A1A1A] font-medium">
+            Coordinator Management
+          </span>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -199,7 +196,10 @@ export function CoordinatorManagementPage({
               <tbody className="divide-y divide-[#E5E7EB]">
                 {filteredCoordinators.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="py-12 text-center text-sm text-[#6B7280]">
+                    <td
+                      colSpan={5}
+                      className="py-12 text-center text-sm text-[#6B7280]"
+                    >
                       No coordinators found
                     </td>
                   </tr>
@@ -230,9 +230,9 @@ export function CoordinatorManagementPage({
                     <td className="py-4 px-6">
                       <span
                         className={`inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
-                          coordinator.status === 'Active'
-                            ? 'bg-emerald-100 text-emerald-700'
-                            : 'bg-gray-100 text-gray-600'
+                          coordinator.status === "Active"
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-gray-100 text-gray-600"
                         }`}
                       >
                         {coordinator.status}
@@ -268,7 +268,7 @@ export function CoordinatorManagementPage({
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={isEditMode ? 'Edit Coordinator' : 'Add New Coordinator'}
+        title={isEditMode ? "Edit Coordinator" : "Add New Coordinator"}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -280,7 +280,7 @@ export function CoordinatorManagementPage({
               type="text"
               required
               defaultValue={currentCoordinator?.name}
-              key={currentCoordinator?.id ?? 'new'}
+              key={currentCoordinator?.id ?? "new"}
               placeholder="e.g. Dr. John Smith"
               className="w-full px-4 py-2 border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
             />
@@ -295,7 +295,7 @@ export function CoordinatorManagementPage({
                 type="email"
                 required
                 defaultValue={currentCoordinator?.email}
-                key={`email-${currentCoordinator?.id ?? 'new'}`}
+                key={`email-${currentCoordinator?.id ?? "new"}`}
                 placeholder="john@university.edu"
                 className="w-full px-4 py-2 border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
               />
@@ -308,7 +308,7 @@ export function CoordinatorManagementPage({
                 name="phone"
                 type="tel"
                 defaultValue={currentCoordinator?.phone}
-                key={`phone-${currentCoordinator?.id ?? 'new'}`}
+                key={`phone-${currentCoordinator?.id ?? "new"}`}
                 placeholder="+91 98765-43210"
                 className="w-full px-4 py-2 border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
               />
@@ -341,7 +341,7 @@ export function CoordinatorManagementPage({
               className="flex items-center gap-2 px-5 py-2 bg-[#1A1A1A] text-white rounded-[12px] text-sm font-medium hover:bg-[#2D2D2D] transition-colors disabled:opacity-60"
             >
               {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-              {isEditMode ? 'Update' : 'Add Coordinator'}
+              {isEditMode ? "Update" : "Add Coordinator"}
             </button>
           </div>
         </form>

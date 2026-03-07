@@ -15,8 +15,8 @@ import {
   EyeOff,
 } from "lucide-react";
 
-const CLOUDINARY_UPLOAD_PRESET = "hho_unsigned";
-const CLOUDINARY_CLOUD_NAME = "dy2fjgt46";
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 import { useDropzone } from "react-dropzone";
 import {
   DndContext,

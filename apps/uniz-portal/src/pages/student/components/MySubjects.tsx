@@ -56,7 +56,7 @@ export default function MySubjects({
       const res = await apiClient<CurrentSubjectsResponse>(
         GET_CURRENT_SUBJECTS(studentId),
         {},
-        false
+        false,
       );
       setData(res);
     } catch (err) {

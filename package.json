@@ -13,6 +13,7 @@
     "prettify": "prettier --write .",
     "vault:get": "bash ./scripts/uniz-vault.sh get",
     "vault:set": "bash ./scripts/uniz-vault.sh set",
+    "vault:sync": "bash ./scripts/uniz-vault.sh sync",
     "safety-lock": "cp .git/hooks/pre-push.sample .git/hooks/pre-push && chmod +x .git/hooks/pre-push"
   },
   "dependencies": {

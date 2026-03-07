@@ -5,7 +5,7 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   {
     linterOptions: {
-      reportUnusedDisableDirectives: false
+      reportUnusedDisableDirectives: false,
     },
     rules: {
       "react-hooks/set-state-in-effect": "off",
@@ -14,8 +14,8 @@ const eslintConfig = defineConfig([
       "react/no-unescaped-entities": "off",
       "react-hooks/exhaustive-deps": "off",
       "@next/next/no-img-element": "off",
-      "import/no-anonymous-default-export": "off"
-    }
+      "import/no-anonymous-default-export": "off",
+    },
   },
   // Override default ignores of eslint-config-next.
   globalIgnores([

@@ -42,7 +42,9 @@ export default function CurriculumManager() {
       const res = await fetch(`${BASE_URL}/admin/get-curriculum`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: token ? `Bearer ${(token || '').replace(/"/g, '')}` : "",
+          Authorization: token
+            ? `Bearer ${(token || "").replace(/"/g, "")}`
+            : "",
         },
       });
       const json = await res.json();
@@ -129,7 +131,9 @@ export default function CurriculumManager() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: token ? `Bearer ${(token || '').replace(/"/g, '')}` : "",
+          Authorization: token
+            ? `Bearer ${(token || "").replace(/"/g, "")}`
+            : "",
         },
         body: JSON.stringify({ subjectsData: data }),
       });

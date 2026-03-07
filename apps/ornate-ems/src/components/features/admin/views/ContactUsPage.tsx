@@ -1,21 +1,15 @@
-'use client';
-import { useState, useEffect } from 'react';
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Send,
-  ChevronRight
-} from 'lucide-react';
-import { useToast } from '@/hooks/useToast';
-import { Skeleton } from '@/components/ui/skeleton';
+"use client";
+import { useState, useEffect } from "react";
+import { Mail, Phone, MapPin, Send, ChevronRight } from "lucide-react";
+import { useToast } from "@/hooks/useToast";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+  SelectValue,
+} from "@/components/ui/select";
 
 export function ContactUsPage() {
   const { toast, showToast, hideToast } = useToast();
@@ -32,14 +26,16 @@ export function ContactUsPage() {
     e.preventDefault();
     setIsSubmitting(true);
     setIsSubmitting(false);
-    showToast("Message sent successfully! Our team will contact you soon.", "success");
+    showToast(
+      "Message sent successfully! Our team will contact you soon.",
+      "success",
+    );
     setSubject(""); // Reset form
     e.target.reset();
   };
 
   return (
     <div className="p-4 md:p-8 animate-page-entrance">
-
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-2 text-sm text-[#6B7280] mb-3">
@@ -50,8 +46,13 @@ export function ContactUsPage() {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex-1">
-            <h1 className="text-2xl md:text-[28px] font-semibold text-[#1A1A1A] mb-2">Get in Touch</h1>
-            <p className="text-sm text-[#6B7280]">We&apos;re here to help you with any questions or technical support.</p>
+            <h1 className="text-2xl md:text-[28px] font-semibold text-[#1A1A1A] mb-2">
+              Get in Touch
+            </h1>
+            <p className="text-sm text-[#6B7280]">
+              We&apos;re here to help you with any questions or technical
+              support.
+            </p>
           </div>
         </div>
       </div>
@@ -66,7 +67,9 @@ export function ContactUsPage() {
                 <div className="px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider   text-[#7A7772] ">
                   Send us a message
                 </div>
-                <p className="text-sm text-[#6B7280] hidden md:block">We&apos;ll get back to you shortly</p>
+                <p className="text-sm text-[#6B7280] hidden md:block">
+                  We&apos;ll get back to you shortly
+                </p>
               </div>
             </div>
 
@@ -99,7 +102,9 @@ export function ContactUsPage() {
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-[#1A1A1A]">Full Name</label>
+                        <label className="text-sm font-medium text-[#1A1A1A]">
+                          Full Name
+                        </label>
                         <input
                           required
                           type="text"
@@ -108,7 +113,9 @@ export function ContactUsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-[#1A1A1A]">Email Address</label>
+                        <label className="text-sm font-medium text-[#1A1A1A]">
+                          Email Address
+                        </label>
                         <input
                           required
                           type="email"
@@ -119,22 +126,34 @@ export function ContactUsPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-[#1A1A1A]">Subject</label>
+                      <label className="text-sm font-medium text-[#1A1A1A]">
+                        Subject
+                      </label>
                       <Select value={subject} onValueChange={setSubject}>
                         <SelectTrigger className="w-full h-[42px] rounded-xl border-[#E5E7EB] bg-white focus:ring-[#10B981]">
                           <SelectValue placeholder="Select a topic..." />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="tech_support">Technical Support</SelectItem>
-                          <SelectItem value="event_customization">Event Customization</SelectItem>
-                          <SelectItem value="billing">Billing & Subscription</SelectItem>
-                          <SelectItem value="general">General Inquiry</SelectItem>
+                          <SelectItem value="tech_support">
+                            Technical Support
+                          </SelectItem>
+                          <SelectItem value="event_customization">
+                            Event Customization
+                          </SelectItem>
+                          <SelectItem value="billing">
+                            Billing & Subscription
+                          </SelectItem>
+                          <SelectItem value="general">
+                            General Inquiry
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-[#1A1A1A]">Your Message</label>
+                      <label className="text-sm font-medium text-[#1A1A1A]">
+                        Your Message
+                      </label>
                       <textarea
                         required
                         rows={6}
@@ -181,19 +200,51 @@ export function ContactUsPage() {
             </div>
           ) : (
             [
-              { icon: Mail, label: "Email Us", value: "support@visionix.ai", sub: "Response time: ~2 hours", color: "text-[#3B82F6]", bg: "bg-blue-50" },
-              { icon: Phone, label: "Call Us", value: "+1 (555) 000-1234", sub: "Mon-Fri, 9am - 6pm EST", color: "text-[#10B981]", bg: "bg-emerald-50" },
-              { icon: MapPin, label: "Visit HQ", value: "123 Tech Square, CA", sub: "Silicon Valley, 94043", color: "text-[#F59E0B]", bg: "bg-amber-50" }
+              {
+                icon: Mail,
+                label: "Email Us",
+                value: "support@visionix.ai",
+                sub: "Response time: ~2 hours",
+                color: "text-[#3B82F6]",
+                bg: "bg-blue-50",
+              },
+              {
+                icon: Phone,
+                label: "Call Us",
+                value: "+1 (555) 000-1234",
+                sub: "Mon-Fri, 9am - 6pm EST",
+                color: "text-[#10B981]",
+                bg: "bg-emerald-50",
+              },
+              {
+                icon: MapPin,
+                label: "Visit HQ",
+                value: "123 Tech Square, CA",
+                sub: "Silicon Valley, 94043",
+                color: "text-[#F59E0B]",
+                bg: "bg-amber-50",
+              },
             ].map((item: any, i: any) => (
-              <div key={i} className="bg-[#F4F2F0] rounded-[18px] pt-2 pr-2 pb-6 pl-2 flex flex-col transition-all hover:scale-[1.02] duration-300">
+              <div
+                key={i}
+                className="bg-[#F4F2F0] rounded-[18px] pt-2 pr-2 pb-6 pl-2 flex flex-col transition-all hover:scale-[1.02] duration-300"
+              >
                 <div className="bg-white rounded-[14px] border border-[#E5E7EB] p-6 shadow-sm flex items-start gap-4 flex-1">
-                  <div className={`w-12 h-12 ${item.bg} rounded-xl flex items-center justify-center shrink-0 border border-gray-100 shadow-sm`}>
+                  <div
+                    className={`w-12 h-12 ${item.bg} rounded-xl flex items-center justify-center shrink-0 border border-gray-100 shadow-sm`}
+                  >
                     <item.icon className={`w-6 h-6 ${item.color}`} />
                   </div>
                   <div>
-                    <h3 className="text-xs font-bold text-[#7A7772] uppercase tracking-widest opacity-70 mb-1">{item.label}</h3>
-                    <p className="text-sm font-bold text-[#1A1A1A]">{item.value}</p>
-                    <p className="text-[10px] text-[#6B7280] mt-0.5">{item.sub}</p>
+                    <h3 className="text-xs font-bold text-[#7A7772] uppercase tracking-widest opacity-70 mb-1">
+                      {item.label}
+                    </h3>
+                    <p className="text-sm font-bold text-[#1A1A1A]">
+                      {item.value}
+                    </p>
+                    <p className="text-[10px] text-[#6B7280] mt-0.5">
+                      {item.sub}
+                    </p>
                   </div>
                 </div>
               </div>

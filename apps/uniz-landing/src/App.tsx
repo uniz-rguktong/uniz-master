@@ -38,7 +38,6 @@ const FeatureCard = ({ icon, title, description, index }: any) => (
 );
 
 export default function App() {
-
   const features = [
     {
       icon: <GraduationCap size={28} />,

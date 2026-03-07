@@ -1,16 +1,19 @@
-import { Edit, Trash2, Upload, ArrowUpDown, Globe, Lock, Users, Eye, Archive, Image as ImageIcon } from 'lucide-react';
-import { ActionMenu } from '@/components/ActionMenu';
-import Image from 'next/image';
+import {
+  Edit,
+  Trash2,
+  Upload,
+  ArrowUpDown,
+  Globe,
+  Lock,
+  Users,
+  Eye,
+  Archive,
+  Image as ImageIcon,
+} from "lucide-react";
+import { ActionMenu } from "@/components/ActionMenu";
+import Image from "next/image";
 
-
-
-
-
-
-
-
-
-type GalleryVisibility = 'public' | 'private' | 'branch';
+type GalleryVisibility = "public" | "private" | "branch";
 
 interface GalleryCategory {
   id: string;
@@ -35,18 +38,26 @@ interface GalleryListViewProps {
 
 const isUnsupportedImage = (url?: string) => {
   if (!url) return false;
-  const ext = url.split('?')[0]?.split('.').pop()?.toLowerCase();
-  return ext === 'heic' || ext === 'heif';
+  const ext = url.split("?")[0]?.split(".").pop()?.toLowerCase();
+  return ext === "heic" || ext === "heif";
 };
 
-export function GalleryListView({ categories, isReadOnly = false, onEditCategory, onUploadPhotos, onViewGallery, onDeleteCategory, onArchiveCategory }: GalleryListViewProps) {
+export function GalleryListView({
+  categories,
+  isReadOnly = false,
+  onEditCategory,
+  onUploadPhotos,
+  onViewGallery,
+  onDeleteCategory,
+  onArchiveCategory,
+}: GalleryListViewProps) {
   const getVisibilityIcon = (visibility: GalleryVisibility) => {
     switch (visibility) {
-      case 'public':
+      case "public":
         return <Globe className="w-3 h-3" />;
-      case 'private':
+      case "private":
         return <Lock className="w-3 h-3" />;
-      case 'branch':
+      case "branch":
         return <Users className="w-3 h-3" />;
       default:
         return <Globe className="w-3 h-3" />;
@@ -55,14 +66,14 @@ export function GalleryListView({ categories, isReadOnly = false, onEditCategory
 
   const getVisibilityColor = (visibility: GalleryVisibility) => {
     switch (visibility) {
-      case 'public':
-        return 'bg-[#D1FAE5] text-[#065F46]';
-      case 'private':
-        return 'bg-[#FEE2E2] text-[#991B1B]';
-      case 'branch':
-        return 'bg-[#DBEAFE] text-[#1E40AF]';
+      case "public":
+        return "bg-[#D1FAE5] text-[#065F46]";
+      case "private":
+        return "bg-[#FEE2E2] text-[#991B1B]";
+      case "branch":
+        return "bg-[#DBEAFE] text-[#1E40AF]";
       default:
-        return 'bg-[#F3F4F6] text-[#6B7280]';
+        return "bg-[#F3F4F6] text-[#6B7280]";
     }
   };
 
@@ -93,13 +104,12 @@ export function GalleryListView({ categories, isReadOnly = false, onEditCategory
             </tr>
           </thead>
           <tbody>
-            {categories.map((category: any, index: any) =>
+            {categories.map((category: any, index: any) => (
               <tr
                 key={category.id}
                 onDoubleClick={() => onViewGallery && onViewGallery(category)}
-                className={`border-b border-[#F3F4F6] hover:bg-[#FAFAFA] transition-colors cursor-pointer ${index === categories.length - 1 ? 'border-b-0' : ''}`
-                }>
-
+                className={`border-b border-[#F3F4F6] hover:bg-[#FAFAFA] transition-colors cursor-pointer ${index === categories.length - 1 ? "border-b-0" : ""}`}
+              >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-16 h-10 relative rounded overflow-hidden bg-[#F7F8FA] flex items-center justify-center border border-[#E5E7EB]">
@@ -112,40 +122,51 @@ export function GalleryListView({ categories, isReadOnly = false, onEditCategory
                           width={64}
                           height={40}
                           unoptimized
-                          className="w-full h-full object-cover" />
+                          className="w-full h-full object-cover"
+                        />
                       )}
                     </div>
 
-                    <span className="font-medium text-sm text-[#1A1A1A]">{category.name}</span>
+                    <span className="font-medium text-sm text-[#1A1A1A]">
+                      {category.name}
+                    </span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="font-medium text-sm text-[#1A1A1A]">{category.photoCount}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm text-[#1A1A1A]">
-                    {new Date(category.dateCreated).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric'
-                    })}
+                  <div className="font-medium text-sm text-[#1A1A1A]">
+                    {category.photoCount}
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="text-sm text-[#1A1A1A]">
-                    {new Date(category.lastUpdated).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric'
-                    })}
+                    {new Date(category.dateCreated).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      },
+                    )}
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="text-sm text-[#1A1A1A]">
+                    {new Date(category.lastUpdated).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      },
+                    )}
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <span
                     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${getVisibilityColor(
-                      category.visibility
-                    )}`}>
-
+                      category.visibility,
+                    )}`}
+                  >
                     {getVisibilityIcon(category.visibility)}
                     <span className="capitalize">{category.visibility}</span>
                   </span>
@@ -155,42 +176,53 @@ export function GalleryListView({ categories, isReadOnly = false, onEditCategory
                     <ActionMenu
                       actions={[
                         {
-                          label: 'View Gallery',
-                          icon: 'view',
-                          onClick: () => onViewGallery && onViewGallery(category)
+                          label: "View Gallery",
+                          icon: "view",
+                          onClick: () =>
+                            onViewGallery && onViewGallery(category),
                         },
-                        ...(!isReadOnly ? [
-                          {
-                            label: 'Edit Category',
-                            icon: 'edit',
-                            onClick: () => onEditCategory(category)
-                          },
-                          {
-                            label: 'Upload Photos',
-                            icon: 'upload',
-                            onClick: () => onUploadPhotos && onUploadPhotos(category.name)
-                          },
-                          {
-                            label: category.isArchived ? 'Restore Category' : 'Archive Category',
-                            icon: 'archive',
-                            onClick: () => onArchiveCategory && onArchiveCategory(category)
-                          },
-                          {
-                            label: 'Delete',
-                            icon: 'delete',
-                            onClick: () => onDeleteCategory && onDeleteCategory(category),
-                            danger: true
-                          }
-                        ] : [])
-                      ]} />
-
+                        ...(!isReadOnly
+                          ? [
+                              {
+                                label: "Edit Category",
+                                icon: "edit",
+                                onClick: () => onEditCategory(category),
+                              },
+                              {
+                                label: "Upload Photos",
+                                icon: "upload",
+                                onClick: () =>
+                                  onUploadPhotos &&
+                                  onUploadPhotos(category.name),
+                              },
+                              {
+                                label: category.isArchived
+                                  ? "Restore Category"
+                                  : "Archive Category",
+                                icon: "archive",
+                                onClick: () =>
+                                  onArchiveCategory &&
+                                  onArchiveCategory(category),
+                              },
+                              {
+                                label: "Delete",
+                                icon: "delete",
+                                onClick: () =>
+                                  onDeleteCategory &&
+                                  onDeleteCategory(category),
+                                danger: true,
+                              },
+                            ]
+                          : []),
+                      ]}
+                    />
                   </div>
                 </td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
       </div>
-    </div>);
-
+    </div>
+  );
 }

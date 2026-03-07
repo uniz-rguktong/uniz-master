@@ -50,12 +50,7 @@ const accounts = emailPoolStr
       .split(",")
       .map((a) => a.split(":"))
       .filter((a) => a.length === 2)
-  : [
-      [
-        process.env.EMAIL_USER || "webadmin@rguktong.ac.in",
-        process.env.EMAIL_PASS || "kwcn zptw vagg ksbi",
-      ],
-    ];
+  : [[process.env.EMAIL_USER, process.env.EMAIL_PASS]];
 
 let currentGmailIndex = 0;
 const gmailTransporters = accounts.map(([user, pass]) =>

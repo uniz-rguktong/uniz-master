@@ -46,11 +46,7 @@ export default function RequestCard({
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4 border-b border-slate-50 pb-4">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-xl bg-slate-50 text-blue-500 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-            {type === "outing" ? (
-              <Clock size={18} />
-            ) : (
-              <Calendar size={18} />
-            )}
+            {type === "outing" ? <Clock size={18} /> : <Calendar size={18} />}
           </div>
           <div>
             <h4 className="font-semibold text-slate-900 capitalize text-[16px] tracking-tight">
@@ -62,7 +58,11 @@ export default function RequestCard({
               </span>
               <span className="w-1 h-1 rounded-full bg-slate-200"></span>
               <span className="text-[11px] font-medium text-slate-400">
-                {new Date(request.requested_time).toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' })}
+                {new Date(request.requested_time).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
               </span>
             </div>
           </div>
@@ -96,7 +96,7 @@ export default function RequestCard({
           <p className="text-lg font-semibold text-slate-900 tracking-tight">
             {type === "outing"
               ? `${request.from_time} - ${request.to_time}`
-              : `${new Date(request.from_day).toLocaleDateString("en-GB", { day: 'numeric', month: 'short' })} - ${new Date(request.to_day).toLocaleDateString("en-GB", { day: 'numeric', month: 'short' })}`}
+              : `${new Date(request.from_day).toLocaleDateString("en-GB", { day: "numeric", month: "short" })} - ${new Date(request.to_day).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`}
           </p>
         </div>
         <div>
@@ -136,22 +136,24 @@ export default function RequestCard({
             {request.approval_logs.map((log: any, i: number) => (
               <div key={i} className="text-[13px] relative group/log">
                 <span
-                  className={`absolute -left-[19.5px] top-1 w-2.5 h-2.5 rounded-full border-2 border-white ring-1 ring-slate-100 transition-all duration-300 ${log.action === "approve"
-                    ? "bg-slate-900"
-                    : log.action === "reject"
-                      ? "bg-red-500"
-                      : "bg-slate-200"
-                    }`}
+                  className={`absolute -left-[19.5px] top-1 w-2.5 h-2.5 rounded-full border-2 border-white ring-1 ring-slate-100 transition-all duration-300 ${
+                    log.action === "approve"
+                      ? "bg-slate-900"
+                      : log.action === "reject"
+                        ? "bg-red-500"
+                        : "bg-slate-200"
+                  }`}
                 ></span>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <span className="text-slate-600 font-semibold group-hover/log:text-slate-900 transition-colors">
                     <span
-                      className={`font-black uppercase text-[11px] tracking-widest ${log.action === "approve"
-                        ? "text-blue-600"
-                        : log.action === "reject"
-                          ? "text-red-500"
-                          : "text-slate-400"
-                        }`}
+                      className={`font-black uppercase text-[11px] tracking-widest ${
+                        log.action === "approve"
+                          ? "text-blue-600"
+                          : log.action === "reject"
+                            ? "text-red-500"
+                            : "text-slate-400"
+                      }`}
                     >
                       {log.action}
                     </span>{" "}

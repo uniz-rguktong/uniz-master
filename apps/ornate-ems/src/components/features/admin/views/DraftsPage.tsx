@@ -1,52 +1,62 @@
-'use client';
-import { ChevronLeft, FileText, Calendar, MapPin, Edit3, Trash2 } from 'lucide-react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useToast } from '@/hooks/useToast';
-import { ConfirmDialog } from '@/components/ConfirmDialog';
+"use client";
+import {
+  ChevronLeft,
+  FileText,
+  Calendar,
+  MapPin,
+  Edit3,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/useToast";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 
 const mockDrafts = [
   {
-    id: 'd1',
-    name: 'Untitled Event 1',
-    category: 'Workshops',
-    categoryColor: '#8B5CF6',
-    lastModified: '2 hours ago',
-    venue: 'Block A, LH-1',
+    id: "d1",
+    name: "Untitled Event 1",
+    category: "Workshops",
+    categoryColor: "#8B5CF6",
+    lastModified: "2 hours ago",
+    venue: "Block A, LH-1",
     progress: 40,
     data: {
-      eventName: 'Untitled Event 1',
-      category: 'Workshops',
-    }
+      eventName: "Untitled Event 1",
+      category: "Workshops",
+    },
   },
   {
-    id: 'd2',
-    name: 'Tech Fest 2025 Brainstorming',
-    category: 'Cultural',
-    categoryColor: '#F59E0B',
-    lastModified: '1 day ago',
-    venue: 'Online',
+    id: "d2",
+    name: "Tech Fest 2025 Brainstorming",
+    category: "Cultural",
+    categoryColor: "#F59E0B",
+    lastModified: "1 day ago",
+    venue: "Online",
     progress: 60,
     data: {
-      eventName: 'Tech Fest 2025 Brainstorming',
-      category: 'Cultural',
-      locationType: 'online'
-    }
-  }
+      eventName: "Tech Fest 2025 Brainstorming",
+      category: "Cultural",
+      locationType: "online",
+    },
+  },
 ];
 
 export function DraftsPage() {
   const router = useRouter();
 
   const onNavigate = (path: any, options?: any) => {
-    if (path === 'all-events') {
-      router.push('/dashboard/events');
-    } else if (path === 'create-event') {
-      if (options?.mode === 'edit' && options?.eventData) {
-        localStorage.setItem('editEventData', JSON.stringify(options.eventData));
+    if (path === "all-events") {
+      router.push("/dashboard/events");
+    } else if (path === "create-event") {
+      if (options?.mode === "edit" && options?.eventData) {
+        localStorage.setItem(
+          "editEventData",
+          JSON.stringify(options.eventData),
+        );
         router.push(`/dashboard/events/create?mode=${options.mode}`);
       } else {
-        router.push('/dashboard/events/create');
+        router.push("/dashboard/events/create");
       }
     } else {
       router.push(`/dashboard/${path}`);
@@ -63,14 +73,14 @@ export function DraftsPage() {
   };
 
   const handleConfirmDelete = () => {
-    setDraftsList(draftsList.filter(d => d.id !== draftToDelete.id));
+    setDraftsList(draftsList.filter((d) => d.id !== draftToDelete.id));
     setShowDeleteDialog(false);
     setDraftToDelete(null);
-    showToast('Draft deleted successfully', 'success');
+    showToast("Draft deleted successfully", "success");
   };
 
   const handleEditDraft = (draft: any) => {
-    onNavigate('create-event', { mode: 'edit', eventData: draft.data });
+    onNavigate("create-event", { mode: "edit", eventData: draft.data });
   };
 
   return (
@@ -78,7 +88,7 @@ export function DraftsPage() {
       {/* Header */}
       <div className="mb-8">
         <button
-          onClick={() => onNavigate('all-events')}
+          onClick={() => onNavigate("all-events")}
           className="flex items-center gap-2 text-sm text-[#6B7280] hover:text-[#1A1A1A] transition-colors mb-4"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -87,8 +97,12 @@ export function DraftsPage() {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-[28px] font-semibold text-[#1A1A1A] mb-2">Saved Drafts</h1>
-            <p className="text-sm text-[#6B7280]">Finish setting up your events</p>
+            <h1 className="text-[28px] font-semibold text-[#1A1A1A] mb-2">
+              Saved Drafts
+            </h1>
+            <p className="text-sm text-[#6B7280]">
+              Finish setting up your events
+            </p>
           </div>
         </div>
       </div>
@@ -108,7 +122,10 @@ export function DraftsPage() {
                   </div>
                   <span
                     className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider"
-                    style={{ backgroundColor: `${draft.categoryColor}15`, color: draft.categoryColor }}
+                    style={{
+                      backgroundColor: `${draft.categoryColor}15`,
+                      color: draft.categoryColor,
+                    }}
                   >
                     {draft.category}
                   </span>
@@ -167,12 +184,14 @@ export function DraftsPage() {
           <div className="w-16 h-16 bg-[#F7F8FA] rounded-full flex items-center justify-center mx-auto mb-4">
             <FileText className="w-8 h-8 text-[#9CA3AF]" />
           </div>
-          <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">No drafts found</h3>
+          <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
+            No drafts found
+          </h3>
           <p className="text-[#6B7280] max-w-sm mx-auto mb-8">
             You don&apos;t have any saved drafts at the moment.
           </p>
           <button
-            onClick={() => onNavigate('create-event', { mode: 'create' })}
+            onClick={() => onNavigate("create-event", { mode: "create" })}
             className="px-6 py-3 bg-[#1A1A1A] text-white rounded-lg text-sm font-medium hover:bg-[#2D2D2D] transition-colors"
           >
             Create Your First Event
@@ -191,8 +210,6 @@ export function DraftsPage() {
           confirmLabel="Delete Draft"
         />
       )}
-
-
     </div>
   );
 }

@@ -1,10 +1,22 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Trophy, Medal, Award, Plus, Edit, Trash2, Eye, Download, CheckCircle, Users, Search } from 'lucide-react';
-import { ModalContainer } from '@/components/ModalContainer';
-import { Skeleton, MetricCardSkeleton } from '@/components/ui/skeleton';
-import { MetricCard } from '@/components/MetricCard';
+import { useState, useEffect } from "react";
+import {
+  Trophy,
+  Medal,
+  Award,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  Download,
+  CheckCircle,
+  Users,
+  Search,
+} from "lucide-react";
+import { ModalContainer } from "@/components/ModalContainer";
+import { Skeleton, MetricCardSkeleton } from "@/components/ui/skeleton";
+import { MetricCard } from "@/components/MetricCard";
 import {
   Select,
   SelectContent,
@@ -12,18 +24,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { InfoTooltip } from '@/components/InfoTooltip';
-import { useToast } from '@/hooks/useToast';
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { useToast } from "@/hooks/useToast";
 import {
   createWinnerAnnouncement,
   updateWinnerAnnouncement,
   deleteWinnerAnnouncement,
-  togglePublishWinnerAnnouncement
-} from '@/actions/winnerActions';
-import { distributeCertificates } from '@/actions/certificateActions';
+  togglePublishWinnerAnnouncement,
+} from "@/actions/winnerActions";
+import { distributeCertificates } from "@/actions/certificateActions";
 
-import { getCategoryColor } from '@/lib/constants';
+import { getCategoryColor } from "@/lib/constants";
 
 interface WinnerAnnouncementsPageProps {
   initialWinners?: any[];
@@ -42,12 +54,21 @@ function getOrdinalLabel(rank: number) {
 }
 
 function inferRankFromPrize(prize: unknown): number | null {
-  const text = String(prize || '').trim().toLowerCase();
+  const text = String(prize || "")
+    .trim()
+    .toLowerCase();
   if (!text) return null;
 
-  if (text.includes('first') || text.includes('1st') || text.includes('gold')) return 1;
-  if (text.includes('second') || text.includes('2nd') || text.includes('silver')) return 2;
-  if (text.includes('third') || text.includes('3rd') || text.includes('bronze')) return 3;
+  if (text.includes("first") || text.includes("1st") || text.includes("gold"))
+    return 1;
+  if (
+    text.includes("second") ||
+    text.includes("2nd") ||
+    text.includes("silver")
+  )
+    return 2;
+  if (text.includes("third") || text.includes("3rd") || text.includes("bronze"))
+    return 3;
 
   return null;
 }
@@ -73,13 +94,19 @@ function getRankNumber(value: unknown): number | null {
 }
 
 function getRegistrationTypeLabel(eventType: unknown) {
-  const normalized = String(eventType || '').trim().toLowerCase();
-  if (!normalized) return 'Individual';
-  if (normalized.includes('team')) return 'Team';
-  return 'Individual';
+  const normalized = String(eventType || "")
+    .trim()
+    .toLowerCase();
+  if (!normalized) return "Individual";
+  if (normalized.includes("team")) return "Team";
+  return "Individual";
 }
 
-export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents = [], readOnlyFromRegistrations = false }: WinnerAnnouncementsPageProps) {
+export function WinnerAnnouncementsPage({
+  initialWinners = [],
+  availableEvents = [],
+  readOnlyFromRegistrations = false,
+}: WinnerAnnouncementsPageProps) {
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
@@ -87,7 +114,7 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
 
   const [winnersList, setWinnersList] = useState<any[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterStatus, setFilterStatus] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -99,14 +126,35 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
 
   // Form State
   const [formData, setFormData] = useState<any>({
-    eventId: '',
+    eventId: "",
     positions: [
-      { rank: 1, teamName: '', members: '', project: '', prize: '', certificate: false },
-      { rank: 2, teamName: '', members: '', project: '', prize: '', certificate: false },
-      { rank: 3, teamName: '', members: '', project: '', prize: '', certificate: false }
+      {
+        rank: 1,
+        teamName: "",
+        members: "",
+        project: "",
+        prize: "",
+        certificate: false,
+      },
+      {
+        rank: 2,
+        teamName: "",
+        members: "",
+        project: "",
+        prize: "",
+        certificate: false,
+      },
+      {
+        rank: 3,
+        teamName: "",
+        members: "",
+        project: "",
+        prize: "",
+        certificate: false,
+      },
     ],
     generateCertificates: false,
-    notifyWinners: false
+    notifyWinners: false,
   });
 
   // Transform initial data on mount
@@ -119,18 +167,20 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
       return;
     }
 
-    const transformed = initialWinners.map(w => ({
+    const transformed = initialWinners.map((w) => ({
       id: w.id,
       eventId: w.eventId,
-      eventName: w.event?.title || 'Unknown Event',
-      eventCategory: w.event?.category || 'General',
+      eventName: w.event?.title || "Unknown Event",
+      eventCategory: w.event?.category || "General",
       registrationType: getRegistrationTypeLabel(w.event?.eventType),
       categoryColor: getCategoryColor(w.event?.category),
-      eventDate: w.event?.date ? new Date(w.event.date).toISOString().split('T')[0] : '',
+      eventDate: w.event?.date
+        ? new Date(w.event.date).toISOString().split("T")[0]
+        : "",
       rankedRegistrations: w.event?.registrations || [],
       positions: w.positions || [],
       isPublished: w.isPublished,
-      publishedDate: w.publishedAt
+      publishedDate: w.publishedAt,
     }));
     setWinnersList(transformed);
     setIsLoading(false);
@@ -138,19 +188,41 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
 
   // Get events that don't have announcements yet (for create mode)
   const eventsWithoutWinners = availableEvents.filter(
-    e => !e.winnerAnnouncement && !winnersList.some(w => w.eventId === e.id)
+    (e) =>
+      !e.winnerAnnouncement && !winnersList.some((w) => w.eventId === e.id),
   );
 
   const resetForm = () => {
     setFormData({
-      eventId: '',
+      eventId: "",
       positions: [
-        { rank: 1, teamName: '', members: '', project: '', prize: '', certificate: false },
-        { rank: 2, teamName: '', members: '', project: '', prize: '', certificate: false },
-        { rank: 3, teamName: '', members: '', project: '', prize: '', certificate: false }
+        {
+          rank: 1,
+          teamName: "",
+          members: "",
+          project: "",
+          prize: "",
+          certificate: false,
+        },
+        {
+          rank: 2,
+          teamName: "",
+          members: "",
+          project: "",
+          prize: "",
+          certificate: false,
+        },
+        {
+          rank: 3,
+          teamName: "",
+          members: "",
+          project: "",
+          prize: "",
+          certificate: false,
+        },
       ],
       generateCertificates: false,
-      notifyWinners: false
+      notifyWinners: false,
     });
     setEditingId(null);
   };
@@ -158,19 +230,21 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
   const handleEdit = (winner: any) => {
     setFormData({
       eventId: winner.eventId,
-      positions: [1, 2, 3].map(rank => {
+      positions: [1, 2, 3].map((rank) => {
         const pos = winner.positions.find((p: any) => p.rank === rank);
         return {
           rank,
-          teamName: pos?.teamName || '',
-          members: Array.isArray(pos?.members) ? pos.members.join(', ') : (pos?.members || ''),
-          project: pos?.project || '',
-          prize: pos?.prize || '',
-          certificate: pos?.certificate || false
+          teamName: pos?.teamName || "",
+          members: Array.isArray(pos?.members)
+            ? pos.members.join(", ")
+            : pos?.members || "",
+          project: pos?.project || "",
+          prize: pos?.prize || "",
+          certificate: pos?.certificate || false,
         };
       }),
       generateCertificates: false,
-      notifyWinners: false
+      notifyWinners: false,
     });
     setEditingId(winner.id);
     setShowCreateModal(true);
@@ -186,9 +260,9 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
     const result = await deleteWinnerAnnouncement(deleteId);
     if (result.success) {
       setWinnersList((prev: any) => prev.filter((w: any) => w.id !== deleteId));
-      showToast('Winner announcement deleted', 'success');
+      showToast("Winner announcement deleted", "success");
     } else {
-      showToast((result as any).error || 'Failed to delete', 'error');
+      showToast((result as any).error || "Failed to delete", "error");
     }
     setShowConfirmDialog(false);
     setIsSaving(false);
@@ -198,48 +272,67 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
     const newStatus = !winner.isPublished;
     const result = await togglePublishWinnerAnnouncement(winner.id, newStatus);
     if (result.success) {
-      setWinnersList((prev: any) => prev.map((w: any) =>
-        w.id === winner.id ? { ...w, isPublished: newStatus, publishedDate: newStatus ? new Date().toISOString() : null } : w
-      ));
-      showToast(newStatus ? 'Published successfully' : 'Unpublished', 'success');
+      setWinnersList((prev: any) =>
+        prev.map((w: any) =>
+          w.id === winner.id
+            ? {
+                ...w,
+                isPublished: newStatus,
+                publishedDate: newStatus ? new Date().toISOString() : null,
+              }
+            : w,
+        ),
+      );
+      showToast(
+        newStatus ? "Published successfully" : "Unpublished",
+        "success",
+      );
     } else {
-      showToast((result as any).error || 'Failed to update', 'error');
+      showToast((result as any).error || "Failed to update", "error");
     }
   };
 
   const handleDownload = (winner: any) => {
-    showToast(`Downloading data for ${winner.eventName}...`, 'info');
+    showToast(`Downloading data for ${winner.eventName}...`, "info");
   };
 
   const handleSave = async (publish = true) => {
     if (!formData.eventId) {
-      showToast('Please select an event', 'error');
+      showToast("Please select an event", "error");
       return;
     }
 
     setIsSaving(true);
 
     // Transform positions
-    const newPositions = formData.positions.map((p: any) => ({
-      rank: p.rank,
-      teamName: p.teamName || null,
-      members: p.members.split(',').map((m: any) => m.trim()).filter(Boolean),
-      project: p.project || null,
-      prize: p.prize || '',
-      certificate: formData.generateCertificates
-    })).filter((p: any) => p.teamName || p.members.length > 0);
+    const newPositions = formData.positions
+      .map((p: any) => ({
+        rank: p.rank,
+        teamName: p.teamName || null,
+        members: p.members
+          .split(",")
+          .map((m: any) => m.trim())
+          .filter(Boolean),
+        project: p.project || null,
+        prize: p.prize || "",
+        certificate: formData.generateCertificates,
+      }))
+      .filter((p: any) => p.teamName || p.members.length > 0);
 
     if (newPositions.length === 0) {
-      showToast('Please add at least one winner', 'error');
+      showToast("Please add at least one winner", "error");
       setIsSaving(false);
       return;
     }
 
     // Validation: Ensure email is provided for distribution
     for (const pos of newPositions) {
-      const hasEmail = pos.members.some((m: any) => m.includes('@'));
+      const hasEmail = pos.members.some((m: any) => m.includes("@"));
       if (!hasEmail) {
-        showToast(`Rank ${pos.rank}: Please provide a valid email (Gmail) for certificate distribution.`, 'error');
+        showToast(
+          `Rank ${pos.rank}: Please provide a valid email (Gmail) for certificate distribution.`,
+          "error",
+        );
         setIsSaving(false);
         return;
       }
@@ -251,83 +344,99 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
         result = await updateWinnerAnnouncement(editingId, {
           eventId: formData.eventId,
           positions: newPositions,
-          isPublished: publish
+          isPublished: publish,
         });
       } else {
         result = await createWinnerAnnouncement({
           eventId: formData.eventId,
           positions: newPositions,
-          isPublished: publish
+          isPublished: publish,
         });
       }
 
       if (result.success) {
         // Find the event details for UI update
-        const selectedEvent = availableEvents.find(e => e.id === formData.eventId);
+        const selectedEvent = availableEvents.find(
+          (e) => e.id === formData.eventId,
+        );
 
         if (editingId) {
-          setWinnersList(prev => prev.map(w =>
-            w.id === editingId ? {
-              ...w,
-              eventId: formData.eventId,
-              eventName: selectedEvent?.title || 'Unknown',
-              eventCategory: selectedEvent?.category || 'General',
-              categoryColor: getCategoryColor(selectedEvent?.category),
-              eventDate: selectedEvent?.date ? new Date(selectedEvent.date).toISOString().split('T')[0] : '',
-              positions: newPositions,
-              isPublished: publish,
-              publishedDate: publish ? new Date().toISOString() : null
-            } : w
-          ));
-          showToast('Announcement updated', 'success');
+          setWinnersList((prev) =>
+            prev.map((w) =>
+              w.id === editingId
+                ? {
+                    ...w,
+                    eventId: formData.eventId,
+                    eventName: selectedEvent?.title || "Unknown",
+                    eventCategory: selectedEvent?.category || "General",
+                    categoryColor: getCategoryColor(selectedEvent?.category),
+                    eventDate: selectedEvent?.date
+                      ? new Date(selectedEvent.date).toISOString().split("T")[0]
+                      : "",
+                    positions: newPositions,
+                    isPublished: publish,
+                    publishedDate: publish ? new Date().toISOString() : null,
+                  }
+                : w,
+            ),
+          );
+          showToast("Announcement updated", "success");
         } else {
           const newWinner = {
             id: (result.data as any).id,
             eventId: formData.eventId,
-            eventName: selectedEvent?.title || 'Unknown',
-            eventCategory: selectedEvent?.category || 'General',
+            eventName: selectedEvent?.title || "Unknown",
+            eventCategory: selectedEvent?.category || "General",
             categoryColor: getCategoryColor(selectedEvent?.category),
-            eventDate: selectedEvent?.date ? new Date(selectedEvent.date).toISOString().split('T')[0] : '',
+            eventDate: selectedEvent?.date
+              ? new Date(selectedEvent.date).toISOString().split("T")[0]
+              : "",
             positions: newPositions,
             isPublished: publish,
-            publishedDate: publish ? new Date().toISOString() : null
+            publishedDate: publish ? new Date().toISOString() : null,
           };
-          setWinnersList(prev => [newWinner, ...prev]);
-          showToast(publish ? 'Winners announced successfully' : 'Saved as draft', 'success');
+          setWinnersList((prev) => [newWinner, ...prev]);
+          showToast(
+            publish ? "Winners announced successfully" : "Saved as draft",
+            "success",
+          );
         }
 
         // Check for auto-distribution
-        if (publish && (formData.generateCertificates || formData.notifyWinners)) {
-          showToast('Initiating certificate distribution...', 'info');
+        if (
+          publish &&
+          (formData.generateCertificates || formData.notifyWinners)
+        ) {
+          showToast("Initiating certificate distribution...", "info");
           try {
             const distResult = await distributeCertificates(formData.eventId);
             if (distResult.success) {
-              showToast('Certificates distributed and emails sent!', 'success');
+              showToast("Certificates distributed and emails sent!", "success");
             } else {
-              showToast('Distribution warning: ' + distResult.error, 'warning');
+              showToast("Distribution warning: " + distResult.error, "warning");
             }
           } catch (err) {
             console.error(err);
-            showToast('Failed to auto-distribute certificates', 'warning');
+            showToast("Failed to auto-distribute certificates", "warning");
           }
         }
 
         setShowCreateModal(false);
         resetForm();
       } else {
-        showToast((result as any).error || 'Failed to save', 'error');
+        showToast((result as any).error || "Failed to save", "error");
       }
     } catch (error) {
-      showToast('An unexpected error occurred', 'error');
+      showToast("An unexpected error occurred", "error");
     } finally {
       setIsSaving(false);
     }
   };
 
   const filteredWinners = winnersList.filter((w: any) => {
-    if (filterStatus === 'all') return true;
-    if (filterStatus === 'published') return w.isPublished;
-    if (filterStatus === 'draft') return !w.isPublished;
+    if (filterStatus === "all") return true;
+    if (filterStatus === "published") return w.isPublished;
+    if (filterStatus === "draft") return !w.isPublished;
     return true;
   });
 
@@ -357,24 +466,32 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
           <span>›</span>
           <span>Content Management</span>
           <span>›</span>
-          <span className="text-[#1A1A1A] font-medium">Winner Announcements</span>
+          <span className="text-[#1A1A1A] font-medium">
+            Winner Announcements
+          </span>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <div>
-            <h1 className="text-[28px] font-semibold text-[#1A1A1A] mb-2">Winner Announcements</h1>
+            <h1 className="text-[28px] font-semibold text-[#1A1A1A] mb-2">
+              Winner Announcements
+            </h1>
             <p className="text-sm text-[#6B7280]">
               {readOnlyFromRegistrations
-                ? 'Winners are fetched from ranked registrations. Use All Registrations → Actions → Announce Winners.'
-                : 'Announce and manage event winners and prizes'}
+                ? "Winners are fetched from ranked registrations. Use All Registrations → Actions → Announce Winners."
+                : "Announce and manage event winners and prizes"}
             </p>
           </div>
 
           {!readOnlyFromRegistrations && (
             <button
-              onClick={() => { resetForm(); setShowCreateModal(true); }}
+              onClick={() => {
+                resetForm();
+                setShowCreateModal(true);
+              }}
               disabled={eventsWithoutWinners.length === 0}
-              className="flex items-center justify-center gap-2 px-5 py-3 bg-[#10B981] text-white rounded-lg text-sm font-medium hover:bg-[#059669] transition-colors shadow-sm w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed">
+              className="flex items-center justify-center gap-2 px-5 py-3 bg-[#10B981] text-white rounded-lg text-sm font-medium hover:bg-[#059669] transition-colors shadow-sm w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <Plus className="w-5 h-5" />
               Announce Winners
             </button>
@@ -384,7 +501,9 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
           {isLoading ? (
-            [...Array(4)].map((_: any, i: any) => <MetricCardSkeleton key={i} />)
+            [...Array(4)].map((_: any, i: any) => (
+              <MetricCardSkeleton key={i} />
+            ))
           ) : (
             <>
               <MetricCard
@@ -407,7 +526,10 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
 
               <MetricCard
                 title="Total Winners"
-                value={winnersList.reduce((sum: any, w: any) => sum + (w.positions?.length || 0), 0)}
+                value={winnersList.reduce(
+                  (sum: any, w: any) => sum + (w.positions?.length || 0),
+                  0,
+                )}
                 icon={Users}
                 iconBgColor="#F5F3FF"
                 iconColor="#8B5CF6"
@@ -416,7 +538,13 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
 
               <MetricCard
                 title="Certificates Issued"
-                value={winnersList.reduce((sum: any, w: any) => sum + (w.positions?.filter((p: any) => p.certificate)?.length || 0), 0)}
+                value={winnersList.reduce(
+                  (sum: any, w: any) =>
+                    sum +
+                    (w.positions?.filter((p: any) => p.certificate)?.length ||
+                      0),
+                  0,
+                )}
                 icon={Award}
                 iconBgColor="#FEF3C7"
                 iconColor="#F59E0B"
@@ -428,14 +556,16 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
 
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-3">
-          {['all', 'published', 'draft'].map((status: any) => (
+          {["all", "published", "draft"].map((status: any) => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors capitalize ${filterStatus === status ?
-                'bg-[#1A1A1A] text-white' :
-                'bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]'}`
-              }>
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors capitalize ${
+                filterStatus === status
+                  ? "bg-[#1A1A1A] text-white"
+                  : "bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F7F8FA]"
+              }`}
+            >
               {status}
             </button>
           ))}
@@ -446,7 +576,10 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
       <div className="space-y-8">
         {isLoading ? (
           [...Array(2)].map((_: any, i: any) => (
-            <div key={i} className="bg-white rounded-xl overflow-hidden animate-pulse">
+            <div
+              key={i}
+              className="bg-white rounded-xl overflow-hidden animate-pulse"
+            >
               <div className="px-6 py-4 bg-[rgb(244,242,240)] flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Skeleton className="w-10 h-10 rounded-lg" />
@@ -466,13 +599,21 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
         ) : filteredWinners.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-xl border border-[#E5E7EB]">
             <Trophy className="w-12 h-12 text-[#D1D5DB] mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">No Winner Announcements</h3>
-            <p className="text-sm text-[#6B7280] mb-6">Get started by announcing winners for your completed events.</p>
+            <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
+              No Winner Announcements
+            </h3>
+            <p className="text-sm text-[#6B7280] mb-6">
+              Get started by announcing winners for your completed events.
+            </p>
             {!readOnlyFromRegistrations && (
               <button
-                onClick={() => { resetForm(); setShowCreateModal(true); }}
+                onClick={() => {
+                  resetForm();
+                  setShowCreateModal(true);
+                }}
                 disabled={eventsWithoutWinners.length === 0}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#10B981] text-white rounded-lg text-sm font-medium hover:bg-[#059669] transition-colors disabled:opacity-50">
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#10B981] text-white rounded-lg text-sm font-medium hover:bg-[#059669] transition-colors disabled:opacity-50"
+              >
                 <Plus className="w-4 h-4" />
                 Announce Winners
               </button>
@@ -494,7 +635,8 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
                       </h3>
                       <span
                         className="px-2.5 py-0.5 rounded-full text-xs font-semibold text-white"
-                        style={{ backgroundColor: event.categoryColor }}>
+                        style={{ backgroundColor: event.categoryColor }}
+                      >
                         {event.eventCategory}
                       </span>
                       <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EEF2FF] text-[#3730A3]">
@@ -512,16 +654,27 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
                       )}
                     </div>
                     <div className="text-xs text-[#6B7280] mt-1">
-                      Event Date: {event.eventDate ? new Date(event.eventDate).toLocaleDateString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric'
-                      }) : 'N/A'}
+                      Event Date:{" "}
+                      {event.eventDate
+                        ? new Date(event.eventDate).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "long",
+                              day: "numeric",
+                              year: "numeric",
+                            },
+                          )
+                        : "N/A"}
                       {event.publishedDate && (
                         <span>
-                          {' • '}Published: {new Date(event.publishedDate).toLocaleDateString('en-US', {
-                            month: 'short', day: 'numeric'
-                          })}
+                          {" • "}Published:{" "}
+                          {new Date(event.publishedDate).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                            },
+                          )}
                         </span>
                       )}
                     </div>
@@ -532,33 +685,38 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
                   {!event.isPublished && (
                     <button
                       onClick={() => handleTogglePublish(event)}
-                      className="px-4 py-2 bg-[#10B981] text-white rounded-lg text-sm font-medium hover:bg-[#059669] transition-colors">
+                      className="px-4 py-2 bg-[#10B981] text-white rounded-lg text-sm font-medium hover:bg-[#059669] transition-colors"
+                    >
                       Publish
                     </button>
                   )}
                   {event.isPublished && (
                     <button
                       onClick={() => handleTogglePublish(event)}
-                      className="px-4 py-2 bg-white hover:bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg text-sm font-medium transition-colors text-[#6B7280]">
+                      className="px-4 py-2 bg-white hover:bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg text-sm font-medium transition-colors text-[#6B7280]"
+                    >
                       Unpublish
                     </button>
                   )}
                   {!readOnlyFromRegistrations && (
                     <button
                       onClick={() => handleEdit(event)}
-                      className="p-2 bg-white hover:bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg transition-colors">
+                      className="p-2 bg-white hover:bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg transition-colors"
+                    >
                       <Edit className="w-4 h-4 text-[#6B7280]" />
                     </button>
                   )}
                   <button
                     onClick={() => handleDownload(event)}
-                    className="p-2 bg-white hover:bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg transition-colors">
+                    className="p-2 bg-white hover:bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg transition-colors"
+                  >
                     <Download className="w-4 h-4 text-[#6B7280]" />
                   </button>
                   {!readOnlyFromRegistrations && (
                     <button
                       onClick={() => handleDelete(event.id)}
-                      className="p-2 bg-white hover:bg-[#FEE2E2] border border-[#E5E7EB] rounded-lg transition-colors">
+                      className="p-2 bg-white hover:bg-[#FEE2E2] border border-[#E5E7EB] rounded-lg transition-colors"
+                    >
                       <Trash2 className="w-4 h-4 text-[#EF4444]" />
                     </button>
                   )}
@@ -570,8 +728,9 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
                 <div className="bg-white rounded-[12px] p-4 space-y-4">
                   {event.positions?.map((position: any, index: number) => (
                     <div
-                      key={`${position.rank || 'position'}-${index}`}
-                      className="bg-white rounded-xl border border-[#E5E7EB] p-6">
+                      key={`${position.rank || "position"}-${index}`}
+                      className="bg-white rounded-xl border border-[#E5E7EB] p-6"
+                    >
                       <div className="flex flex-col sm:flex-row sm:items-center gap-6">
                         {/* Rank Badge */}
                         <div className="flex flex-row sm:flex-col items-center gap-4 sm:gap-0">
@@ -593,42 +752,73 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
                           {(() => {
                             const rankNumber = getRankNumber(position.rank);
                             const registrationPeople = rankNumber
-                              ? (event.rankedRegistrations || []).filter((r: any) => Number(r.rank) === rankNumber)
+                              ? (event.rankedRegistrations || []).filter(
+                                  (r: any) => Number(r.rank) === rankNumber,
+                                )
                               : [];
-                            const registrationLabel = event.registrationType === 'Team'
-                              ? (() => {
-                                const allMembers = registrationPeople.flatMap((r: any) => {
-                                  const teamMembers = Array.isArray(r?.team?.members) ? r.team.members : [];
-                                  if (teamMembers.length > 0) {
-                                    return teamMembers.map((member: any) => `${member.name} (${member.rollNumber})`);
-                                  }
-                                  if (r.studentName || r.studentId) {
-                                    return [`${r.studentName} (${r.studentId})`];
-                                  }
-                                  return [];
-                                });
+                            const registrationLabel =
+                              event.registrationType === "Team"
+                                ? (() => {
+                                    const allMembers =
+                                      registrationPeople.flatMap((r: any) => {
+                                        const teamMembers = Array.isArray(
+                                          r?.team?.members,
+                                        )
+                                          ? r.team.members
+                                          : [];
+                                        if (teamMembers.length > 0) {
+                                          return teamMembers.map(
+                                            (member: any) =>
+                                              `${member.name} (${member.rollNumber})`,
+                                          );
+                                        }
+                                        if (r.studentName || r.studentId) {
+                                          return [
+                                            `${r.studentName} (${r.studentId})`,
+                                          ];
+                                        }
+                                        return [];
+                                      });
 
-                                return Array.from(new Set(allMembers)).join(', ');
-                              })()
-                              : registrationPeople
-                                .map((r: any) => `${r.studentName} (${r.studentId})`)
-                                .join(', ');
-                            const fallbackMembers = Array.isArray(position.members) ? position.members.join(', ') : position.members;
-                            const detailsText = registrationLabel || fallbackMembers;
+                                    return Array.from(new Set(allMembers)).join(
+                                      ", ",
+                                    );
+                                  })()
+                                : registrationPeople
+                                    .map(
+                                      (r: any) =>
+                                        `${r.studentName} (${r.studentId})`,
+                                    )
+                                    .join(", ");
+                            const fallbackMembers = Array.isArray(
+                              position.members,
+                            )
+                              ? position.members.join(", ")
+                              : position.members;
+                            const detailsText =
+                              registrationLabel || fallbackMembers;
 
                             if (!detailsText) return null;
 
                             return (
                               <div className="flex flex-wrap items-center gap-2 mb-2">
-                                <span className="text-sm font-medium text-[#1A1A1A]">Students:</span>
-                                <span className="text-sm text-[#6B7280]">{detailsText}</span>
+                                <span className="text-sm font-medium text-[#1A1A1A]">
+                                  Students:
+                                </span>
+                                <span className="text-sm text-[#6B7280]">
+                                  {detailsText}
+                                </span>
                               </div>
                             );
                           })()}
                           {position.project && (
                             <div className="flex flex-wrap items-center gap-2 mb-2">
-                              <span className="text-sm font-medium text-[#1A1A1A]">Project:</span>
-                              <span className="text-sm text-[#6B7280]">{position.project}</span>
+                              <span className="text-sm font-medium text-[#1A1A1A]">
+                                Project:
+                              </span>
+                              <span className="text-sm text-[#6B7280]">
+                                {position.project}
+                              </span>
                             </div>
                           )}
                           <div className="flex flex-wrap items-center gap-4 mt-3">
@@ -656,7 +846,7 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
       </div>
 
       {/* Create/Edit Modal */}
-      {!readOnlyFromRegistrations && showCreateModal &&
+      {!readOnlyFromRegistrations && showCreateModal && (
         <ModalContainer
           isOpen={true}
           onClose={() => setShowCreateModal(false)}
@@ -667,26 +857,33 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
               <button
                 onClick={() => setShowCreateModal(false)}
                 disabled={isSaving}
-                className="flex-1 px-6 py-2.5 bg-white border border-[#E5E7EB] rounded-[10px] text-[16px] font-normal text-[#1A1A1A] hover:bg-[#F7F8FA] transition-colors disabled:opacity-50">
+                className="flex-1 px-6 py-2.5 bg-white border border-[#E5E7EB] rounded-[10px] text-[16px] font-normal text-[#1A1A1A] hover:bg-[#F7F8FA] transition-colors disabled:opacity-50"
+              >
                 Cancel
               </button>
-              {!editingId &&
+              {!editingId && (
                 <button
                   onClick={() => handleSave(false)}
                   disabled={isSaving}
-                  className="px-6 py-2.5 bg-[#F7F8FA] border border-[#E5E7EB] rounded-[10px] text-[16px] font-normal text-[#1A1A1A] hover:bg-[#F3F4F6] transition-colors disabled:opacity-50">
-                  {isSaving ? 'Saving...' : 'Save as Draft'}
+                  className="px-6 py-2.5 bg-[#F7F8FA] border border-[#E5E7EB] rounded-[10px] text-[16px] font-normal text-[#1A1A1A] hover:bg-[#F3F4F6] transition-colors disabled:opacity-50"
+                >
+                  {isSaving ? "Saving..." : "Save as Draft"}
                 </button>
-              }
+              )}
               <button
                 onClick={() => handleSave(true)}
                 disabled={isSaving}
-                className="flex-1 px-6 py-2.5 bg-[#10B981] text-white rounded-[10px] text-[16px] font-normal hover:bg-[#059669] transition-colors disabled:opacity-50">
-                {isSaving ? 'Saving...' : (editingId ? 'Save Changes' : 'Publish Winners')}
+                className="flex-1 px-6 py-2.5 bg-[#10B981] text-white rounded-[10px] text-[16px] font-normal hover:bg-[#059669] transition-colors disabled:opacity-50"
+              >
+                {isSaving
+                  ? "Saving..."
+                  : editingId
+                    ? "Save Changes"
+                    : "Publish Winners"}
               </button>
             </div>
-          }>
-
+          }
+        >
           <div className="space-y-4">
             {/* Event Selection */}
             <div>
@@ -695,22 +892,32 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
               </label>
               <Select
                 value={formData.eventId}
-                onValueChange={(val) => setFormData({ ...formData, eventId: val })}
+                onValueChange={(val) =>
+                  setFormData({ ...formData, eventId: val })
+                }
                 disabled={editingId != null}
               >
                 <SelectTrigger className="w-full h-[46px] bg-white border border-[#E5E7EB] rounded-lg text-sm focus:ring-2 focus:ring-[#1A1A1A]">
                   <SelectValue placeholder="Choose an event..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {(editingId ? availableEvents : eventsWithoutWinners).map(event => (
-                    <SelectItem key={event.id} value={event.id}>
-                      {event.title} {event.category ? `(${event.category})` : ''} - {event.date ? new Date(event.date).toLocaleDateString() : ''}
-                    </SelectItem>
-                  ))}
+                  {(editingId ? availableEvents : eventsWithoutWinners).map(
+                    (event) => (
+                      <SelectItem key={event.id} value={event.id}>
+                        {event.title}{" "}
+                        {event.category ? `(${event.category})` : ""} -{" "}
+                        {event.date
+                          ? new Date(event.date).toLocaleDateString()
+                          : ""}
+                      </SelectItem>
+                    ),
+                  )}
                 </SelectContent>
               </Select>
               {eventsWithoutWinners.length === 0 && !editingId && (
-                <p className="text-xs text-[#F59E0B] mt-1">All your events already have winner announcements.</p>
+                <p className="text-xs text-[#F59E0B] mt-1">
+                  All your events already have winner announcements.
+                </p>
               )}
             </div>
 
@@ -719,7 +926,8 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
               <div key={idx} className="border-t border-[#E5E7EB] pt-4">
                 <h4 className="text-sm font-semibold text-[#1A1A1A] mb-4 flex items-center gap-2">
                   {getRankIcon(idx + 1)}
-                  {idx + 1}{idx === 0 ? 'st' : idx === 1 ? 'nd' : 'rd'} Place Winner
+                  {idx + 1}
+                  {idx === 0 ? "st" : idx === 1 ? "nd" : "rd"} Place Winner
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
                   <input
@@ -731,7 +939,8 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
                       setFormData({ ...formData, positions: newPos });
                     }}
                     placeholder="Team/Student Name"
-                    className="px-4 py-3 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]" />
+                    className="px-4 py-3 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                  />
 
                   <input
                     type="text"
@@ -742,7 +951,8 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
                       setFormData({ ...formData, positions: newPos });
                     }}
                     placeholder="Prize (e.g., $1000, Trophy)"
-                    className="px-4 py-3 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]" />
+                    className="px-4 py-3 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                  />
                 </div>
                 <input
                   type="text"
@@ -753,7 +963,8 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
                     setFormData({ ...formData, positions: newPos });
                   }}
                   placeholder="Team Members (Gmail/Email required for certificate distribution)"
-                  className="w-full mt-3 px-4 py-3 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]" />
+                  className="w-full mt-3 px-4 py-3 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                />
                 <input
                   type="text"
                   value={formData.positions[idx].project}
@@ -763,7 +974,8 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
                     setFormData({ ...formData, positions: newPos });
                   }}
                   placeholder="Project Name (optional)"
-                  className="w-full mt-3 px-4 py-3 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]" />
+                  className="w-full mt-3 px-4 py-3 bg-white border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                />
               </div>
             ))}
 
@@ -773,10 +985,20 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
                 type="checkbox"
                 id="generateCertificates"
                 checked={formData.generateCertificates}
-                onChange={(e) => setFormData({ ...formData, generateCertificates: e.target.checked })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    generateCertificates: e.target.checked,
+                  })
+                }
                 className="w-4 h-4 rounded border-[#E5E7EB]"
               />
-              <label htmlFor="generateCertificates" className="text-sm text-[#1A1A1A]">Generate certificates automatically</label>
+              <label
+                htmlFor="generateCertificates"
+                className="text-sm text-[#1A1A1A]"
+              >
+                Generate certificates automatically
+              </label>
             </div>
 
             <div className="flex items-center gap-2">
@@ -784,14 +1006,18 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
                 type="checkbox"
                 id="notifyWinners"
                 checked={formData.notifyWinners}
-                onChange={(e) => setFormData({ ...formData, notifyWinners: e.target.checked })}
+                onChange={(e) =>
+                  setFormData({ ...formData, notifyWinners: e.target.checked })
+                }
                 className="w-4 h-4 rounded border-[#E5E7EB]"
               />
-              <label htmlFor="notifyWinners" className="text-sm text-[#1A1A1A]">Send email notifications to winners</label>
+              <label htmlFor="notifyWinners" className="text-sm text-[#1A1A1A]">
+                Send email notifications to winners
+              </label>
             </div>
           </div>
         </ModalContainer>
-      }
+      )}
 
       <ConfirmDialog
         isOpen={showConfirmDialog}
@@ -801,8 +1027,6 @@ export function WinnerAnnouncementsPage({ initialWinners = [], availableEvents =
         onConfirm={confirmDelete}
         type="danger"
       />
-
-
     </div>
   );
 }

@@ -1,3 +1,3 @@
-export { default as RegistrationsTable } from './RegistrationsTable';
-export * from './types';
-export * from './configs';
+export { default as RegistrationsTable } from "./RegistrationsTable";
+export * from "./types";
+export * from "./configs";

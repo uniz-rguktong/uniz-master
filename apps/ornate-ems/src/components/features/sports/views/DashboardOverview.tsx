@@ -1,12 +1,20 @@
-'use client';
 "use client";
-import { useState, useEffect } from 'react';
-import { Trophy, Users, CheckCircle2, Calendar, Target, Activity, Zap } from 'lucide-react';
-import { MetricCard } from '@/components/MetricCard';
-import { MetricCardSkeleton, Skeleton } from '@/components/ui/skeleton';
-import { ChampionshipStandings } from '../components/ChampionshipStandings';
-import { UpcomingMatches } from '../components/UpcomingMatches';
-import { getSportsDashboardStats } from '@/actions/sportGetters';
+"use client";
+import { useState, useEffect } from "react";
+import {
+  Trophy,
+  Users,
+  CheckCircle2,
+  Calendar,
+  Target,
+  Activity,
+  Zap,
+} from "lucide-react";
+import { MetricCard } from "@/components/MetricCard";
+import { MetricCardSkeleton, Skeleton } from "@/components/ui/skeleton";
+import { ChampionshipStandings } from "../components/ChampionshipStandings";
+import { UpcomingMatches } from "../components/UpcomingMatches";
+import { getSportsDashboardStats } from "@/actions/sportGetters";
 
 interface DashboardUser {
   id?: string;
@@ -54,7 +62,7 @@ export function DashboardOverview({ user }: DashboardOverviewProps) {
     matchesCompleted: 0,
     totalMatches: 0,
     activeTournaments: 0,
-    categoryBreakdown: []
+    categoryBreakdown: [],
   });
 
   const [standings, setStandings] = useState<DashboardStanding[]>([]);
@@ -69,14 +77,15 @@ export function DashboardOverview({ user }: DashboardOverviewProps) {
       if (res.success) {
         setStats(res.stats as any);
       } else {
-        console.error('Failed to fetch dashboard stats', res.error);
+        console.error("Failed to fetch dashboard stats", res.error);
       }
       setIsLoading(false);
     }
 
     async function fetchStandings() {
       setIsStandingsLoading(true);
-      const { getOverallBranchStandings } = await import('@/actions/fixtureActions');
+      const { getOverallBranchStandings } =
+        await import("@/actions/fixtureActions");
       const res = await getOverallBranchStandings();
       if (res.success) {
         setStandings(res.data as any);
@@ -86,7 +95,7 @@ export function DashboardOverview({ user }: DashboardOverviewProps) {
 
     async function fetchUpcoming() {
       setIsMatchesLoading(true);
-      const { getUpcomingMatches } = await import('@/actions/fixtureActions');
+      const { getUpcomingMatches } = await import("@/actions/fixtureActions");
       const res = await getUpcomingMatches(5);
       if (res.success) {
         setUpcomingMatches((res.data || []) as any);
@@ -113,8 +122,13 @@ export function DashboardOverview({ user }: DashboardOverviewProps) {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-2xl md:text-[28px] font-semibold text-[#1A1A1A] mb-2">{title}</h1>
-            <p className="text-sm text-[#6B7280]">Central command for sports tournaments, activity, and branch performance tracking.</p>
+            <h1 className="text-2xl md:text-[28px] font-semibold text-[#1A1A1A] mb-2">
+              {title}
+            </h1>
+            <p className="text-sm text-[#6B7280]">
+              Central command for sports tournaments, activity, and branch
+              performance tracking.
+            </p>
           </div>
         </div>
       </div>
@@ -172,17 +186,24 @@ export function DashboardOverview({ user }: DashboardOverviewProps) {
 
       {/* Section 2: Championship */}
       <div className="mb-10">
-        <div className="animate-card-entrance" style={{ animationDelay: '160ms' }}>
-          <ChampionshipStandings data={standings} isLoading={isStandingsLoading} />
+        <div
+          className="animate-card-entrance"
+          style={{ animationDelay: "160ms" }}
+        >
+          <ChampionshipStandings
+            data={standings}
+            isLoading={isStandingsLoading}
+          />
         </div>
       </div>
 
       {/* Section 3: Timeline (Full Width) */}
-      <div className="mb-10 animate-card-entrance" style={{ animationDelay: '240ms' }}>
+      <div
+        className="mb-10 animate-card-entrance"
+        style={{ animationDelay: "240ms" }}
+      >
         <UpcomingMatches data={upcomingMatches} isLoading={isMatchesLoading} />
       </div>
-
-
-    </div >
+    </div>
   );
 }

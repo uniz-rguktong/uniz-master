@@ -7,9 +7,11 @@ This directory contains seed data for the certificate template themes used in th
 The certificate system has **two distinct sections**:
 
 ### 1. **Template Themes** (Section 2 in UI)
+
 These are the overall design themes that determine the visual style of certificates.
 
 ### 2. **Certificate Templates** (Section 3 in UI - "Theme Templates")
+
 These are the actual certificate background images for each prize category.
 
 ---
@@ -19,6 +21,7 @@ These are the actual certificate background images for each prize category.
 The system includes **3 certificate template themes** that define the overall design aesthetic:
 
 ### 1. **Classic Elegant**
+
 - **Style:** Serif Typography, Gold Accents
 - **Colors:** Black → Gold
   - `#1A1A1A` (Black)
@@ -27,6 +30,7 @@ The system includes **3 certificate template themes** that define the overall de
 - **Use Case:** Formal events, academic ceremonies, traditional competitions
 
 ### 2. **Modern Tech**
+
 - **Style:** Minimalist, Geometric Patterns
 - **Colors:** Blue → Green
   - `#3B82F6` (Blue)
@@ -35,6 +39,7 @@ The system includes **3 certificate template themes** that define the overall de
 - **Use Case:** Tech events, hackathons, innovation competitions
 
 ### 3. **Vibrant Sport**
+
 - **Style:** Bold Typography, Dynamic Lines
 - **Colors:** Red → Orange
   - `#EF4444` (Red)
@@ -102,18 +107,20 @@ The certificate configuration workflow in **HHO Dashboard → Content Management
 ## Color Palette Reference
 
 ### Template Themes
-| Template | Primary | Secondary |
-|----------|---------|-----------|
-| Classic Elegant | #1A1A1A (Black) | #D4AF37 (Gold) |
-| Modern Tech | #3B82F6 (Blue) | #10B981 (Green) |
-| Vibrant Sport | #EF4444 (Red) | #F59E0B (Orange) |
+
+| Template        | Primary         | Secondary        |
+| --------------- | --------------- | ---------------- |
+| Classic Elegant | #1A1A1A (Black) | #D4AF37 (Gold)   |
+| Modern Tech     | #3B82F6 (Blue)  | #10B981 (Green)  |
+| Vibrant Sport   | #EF4444 (Red)   | #F59E0B (Orange) |
 
 ### Certificate Backgrounds
-| Certificate | Color |
-|-------------|-------|
-| Gold | #D4AF37 |
-| Silver | #C0C0C0 |
-| Bronze | #CD7F32 |
+
+| Certificate   | Color   |
+| ------------- | ------- |
+| Gold          | #D4AF37 |
+| Silver        | #C0C0C0 |
+| Bronze        | #CD7F32 |
 | Participation | #3B82F6 |
 
 ---
