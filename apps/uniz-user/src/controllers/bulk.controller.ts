@@ -150,12 +150,10 @@ export const uploadStudents = async (req: any, res: Response) => {
     const worksheet = workbook.getWorksheet(1);
 
     if (!worksheet)
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Spreadsheet contains no worksheets or is empty",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Spreadsheet contains no worksheets or is empty",
+      });
 
     const rows: any[] = [];
     const headerRow = worksheet.getRow(1);
@@ -216,12 +214,29 @@ export const uploadStudents = async (req: any, res: Response) => {
               );
               if (!found) return "";
               const val = row[found];
-              if (val && typeof val === "object") {
-                return (val as any).text
-                  ? String((val as any).text).trim()
-                  : "";
+
+              if (val === null || val === undefined) return "";
+
+              // Handle ExcelJS Specific Objects (Hyperlinks, RichText, Formulas)
+              if (typeof val === "object") {
+                // Hyperlink: { text: '...', hyperlink: '...' }
+                if ("text" in val) return String(val.text || "").trim();
+                // Formula: { formula: '...', result: '...' }
+                if ("result" in val) return String(val.result || "").trim();
+                // RichText: { richText: [...] }
+                if ("richText" in val && Array.isArray((val as any).richText)) {
+                  return (val as any).richText
+                    .map((rt: any) => rt.text || "")
+                    .join("")
+                    .trim();
+                }
+                // Fallback for other objects
+                return String(val).trim() === "[object Object]"
+                  ? ""
+                  : String(val).trim();
               }
-              return val ? String(val).trim() : "";
+
+              return String(val).trim();
             };
 
             const id = getVal([
@@ -489,7 +504,12 @@ export const exportStudentsSelective = async (
 
     // Add Data
     students.forEach((s) => {
-      const dataRow = exportFields.map((f) => (s as any)[f]);
+      const dataRow = exportFields.map((f) => {
+        const val = (s as any)[f];
+        if (val === null || val === undefined) return "";
+        const strVal = String(val).trim();
+        return strVal === "[object Object]" ? "" : strVal;
+      });
       worksheet.addRow(dataRow);
     });
 
