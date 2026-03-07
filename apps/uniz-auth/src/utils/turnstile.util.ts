@@ -1,11 +1,24 @@
+/**
+ * ==============================================================================
+ * UNIZ AUTH SERVICE - SECURITY GATEKEEPER (TURNSTILE)
+ * ==============================================================================
+ * This utility handles the backend verification of Cloudflare Turnstile tokens
+ * to prevent automated bot attacks on authentication endpoints.
+ * ==============================================================================
+ */
+
 import axios from "axios";
 
 /**
- * Verifies a Cloudflare Turnstile token.
+ * Verifies a Cloudflare Turnstile token against the Cloudflare API.
+ *
+ * DESIGN PATTERN: Fail-Safe
+ * If the secret key is missing, we log a warning but allow the request to
+ * proceed to prevent complete service lockout due to misconfiguration.
  *
  * @param token The turnstile token from the client
- * @param clientIp The IP address of the client (optional but recommended)
- * @returns boolean indicating if the token is valid
+ * @param clientIp The IP address of the client (optional but recommended for risk analysis)
+ * @returns boolean indicating if the token is valid or verification is skipped
  */
 export const verifyTurnstileToken = async (
   token: string,

@@ -1,3 +1,12 @@
+/**
+ * ==============================================================================
+ * UNIZ PORTAL - UNIFIED AUTHENTICATION INTERFACE
+ * ==============================================================================
+ * Central sign-in orchestration for Students, Faculty, and Admin. Handles
+ * multi-step authentication, OTP delivery channels, and role-based routing.
+ * ==============================================================================
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { Input } from "../../components/Input";
@@ -38,6 +47,10 @@ interface SigninResponse {
   role?: string;
 }
 
+// ------------------------------------------------------------------------------
+// 1. STATE CONFIGURATION & IDENTITY CONTEXT
+// ------------------------------------------------------------------------------
+
 export default function Signin({ type }: SigninProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -52,6 +65,10 @@ export default function Signin({ type }: SigninProps) {
   const setAdmin = useSetRecoilState<any>(adminUsername);
   const setAuth = useSetRecoilState(is_authenticated);
   const navigate = useNavigate();
+
+  // ------------------------------------------------------------------------------
+  // 2. LIFECYCLE & IDENTITY SYNCHRONIZATION
+  // ------------------------------------------------------------------------------
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -81,6 +98,10 @@ export default function Signin({ type }: SigninProps) {
     setStep("signin");
     setIsLoading(false);
   }, [type]);
+
+  // ------------------------------------------------------------------------------
+  // 3. AUTHENTICATION ORCHESTRATORS (LOGIN/OTP/RESET)
+  // ------------------------------------------------------------------------------
 
   const sendDataToBackend = async () => {
     if (username.trim() === "" || password.trim() === "") {
@@ -286,6 +307,10 @@ export default function Signin({ type }: SigninProps) {
       setIsLoading(false);
     }
   };
+
+  // ------------------------------------------------------------------------------
+  // 4. UI RENDER ENGINE
+  // ------------------------------------------------------------------------------
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
