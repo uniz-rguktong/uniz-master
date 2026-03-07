@@ -1,0 +1,638 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../src/lib/generated/client"
+  binaryTargets = ["native", "windows", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Admin {
+  id                     String                @id @default(cuid())
+  name                   String?
+  email                  String                @unique
+  password               String
+  role                   UserRole
+  branch                 String?
+  clubId                 String?
+  createdAt              DateTime              @default(now())
+  bio                    String?
+  designation            String?
+  notificationSettings   Json?
+  phone                  String?
+  preferences            Json?
+  profilePicture         String?
+  coordinatorToken       String?               @unique
+  coordinatorTokenExpiry DateTime?
+  announcementsCreated   Announcement[]        @relation("AnnouncementCreator")
+  awardsCreated          BestOutgoingStudent[] @relation("AwardCreator")
+  logosCreated           BrandLogo[]           @relation("LogoCreator")
+  eventsCreated          Event[]               @relation("EventCreator")
+  albumsCreated          GalleryAlbum[]        @relation("AlbumCreator")
+  promoVideosCreated     PromoVideo[]          @relation("VideoCreator")
+  tasksCreated           Task[]                @relation("TaskCreator")
+  assignedEvents         Event[]               @relation("EventCoordinators")
+
+  @@index([role])
+  @@index([branch])
+  @@index([clubId])
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String?
+  email         String         @unique
+  password      String
+  role          UserRole       @default(STUDENT)
+  branch        String?
+  currentYear   String?
+  phone         String?
+  createdAt     DateTime       @default(now())
+  stdid         String?        @unique @db.VarChar
+  registrations Registration[]
+  leaderOf      Team[]         @relation("TeamLeader")
+  teamMembers   TeamMember[]
+}
+
+model Event {
+  id                   String              @id @default(cuid())
+  title                String
+  description          String
+  date                 DateTime
+  venue                String
+  category             String?
+  creatorId            String
+  posterUrl            String?
+  additionalImages     String[]
+  registrationOpen     Boolean             @default(true)
+  fee                  String?             @default("Free")
+  price                Float               @default(0)
+  maxCapacity          Int                 @default(100)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  certificateIssuedAt  DateTime?
+  certificateStatus    String              @default("DRAFT")
+  certificateTemplates Json?
+  certificateTheme     String?
+  customFields         Json?
+  documents            Json?
+  eligibility          Json?
+  endDate              DateTime?
+  endTime              String?
+  eventType            String?
+  locationType         String?             @default("physical")
+  minParticipants      Int?
+  prizes               Json?
+  rules                String?
+  shortDescription     String?
+  startTime            String?
+  teamSizeMax          Int?
+  teamSizeMin          Int?
+  time                 String?
+  waitlistEnabled      Boolean             @default(false)
+  paymentGateway       String?             @default("All Methods")
+  status               EventStatus         @default(DRAFT)
+  creator              Admin               @relation("EventCreator", fields: [creatorId], references: [id])
+  registrations        Registration[]
+  teams                Team[]
+  winnerAnnouncement   WinnerAnnouncement?
+  assignedCoordinators Admin[]             @relation("EventCoordinators")
+
+  @@index([creatorId])
+  @@index([date])
+  @@index([status])
+  @@index([category])
+  @@index([category, status])
+}
+
+model Registration {
+  id                  String             @id @default(cuid())
+  eventId             String
+  userId              String?
+  studentName         String
+  studentId           String
+  status              RegistrationStatus @default(PENDING)
+  paymentStatus       PaymentStatus      @default(PENDING)
+  amount              Float              @default(0)
+  transactionId       String?
+  screenshotUrl       String?
+  createdAt           DateTime           @default(now())
+  certificateIssuedAt DateTime?
+  certificateType     String?
+  certificateUrl      String?
+  rank                Int?
+  email               String?
+  phone               String?
+  branch              String?
+  year                String?
+  section             String?
+  event               Event              @relation(fields: [eventId], references: [id])
+  user                User?              @relation(fields: [userId], references: [id])
+  team                Team?
+
+  @@unique([eventId, studentId])
+  @@index([eventId, status])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([status])
+  @@index([paymentStatus])
+}
+
+model Team {
+  id             String             @id @default(cuid())
+  teamName       String
+  teamCode       String             @unique
+  eventId        String?
+  leaderId       String
+  leaderName     String
+  leaderEmail    String
+  leaderPhone    String?
+  status         RegistrationStatus @default(PENDING)
+  paymentStatus  PaymentStatus      @default(PENDING)
+  amount         Float              @default(0)
+  transactionId  String?
+  screenshotUrl  String?
+  registrationId String?            @unique
+  isLocked       Boolean            @default(false)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  sportTeam      SportTeam?
+  event          Event?             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  leader         User               @relation("TeamLeader", fields: [leaderId], references: [id])
+  registration   Registration?      @relation(fields: [registrationId], references: [id])
+  members        TeamMember[]
+
+  @@index([eventId])
+  @@index([eventId, status])
+  @@index([leaderId])
+}
+
+model TeamMember {
+  id                  String             @id @default(cuid())
+  teamId              String
+  userId              String?
+  name                String
+  email               String
+  phone               String?
+  rollNumber          String?
+  department          String?
+  year                String?
+  section             String?
+  role                TeamRole           @default(MEMBER)
+  status              MemberStatus       @default(ACCEPTED)
+  joinedAt            DateTime           @default(now())
+  sportRegistrationId String?            @unique
+  sportRegistration   SportRegistration? @relation(fields: [sportRegistrationId], references: [id])
+  team                Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user                User?              @relation(fields: [userId], references: [id])
+
+  @@unique([teamId, email])
+  @@index([teamId])
+  @@index([sportRegistrationId])
+}
+
+model AnalyticsSnapshot {
+  id                        String   @id @default(cuid())
+  snapshotDate              DateTime @unique @default(now()) @db.Date
+  totalOnlineRegistrations  Int      @default(0)
+  totalOfflineRegistrations Int      @default(0)
+  totalAttendance           Int      @default(0)
+  totalRevenue              Float    @default(0)
+  avgAttendanceRate         Float    @default(0)
+  totalEvents               Int      @default(0)
+  createdAt                 DateTime @default(now())
+  activeParticipants        Int      @default(0)
+  cancelledRegistrations    Int      @default(0)
+  completionRate            Float    @default(0)
+  confirmedRegistrations    Int      @default(0)
+  pendingRegistrations      Int      @default(0)
+  pendingRevenue            Float    @default(0)
+  waitlistRegistrations     Int      @default(0)
+}
+
+model PromoVideo {
+  id         String   @id @default(cuid())
+  title      String
+  url        String
+  platform   String   @default("YouTube")
+  thumbnail  String?
+  status     String   @default("active")
+  views      Int      @default(0)
+  duration   String?
+  uploadDate DateTime @default(now())
+  creatorId  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  category   String   @default("video")
+  creator    Admin    @relation("VideoCreator", fields: [creatorId], references: [id])
+}
+
+model BrandLogo {
+  id         String   @id @default(cuid())
+  name       String
+  type       String
+  format     String
+  size       String?
+  dimensions String?
+  url        String
+  status     String   @default("active")
+  uploadDate DateTime @default(now())
+  thumbnail  String?
+  creatorId  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  creator    Admin    @relation("LogoCreator", fields: [creatorId], references: [id])
+}
+
+model GalleryAlbum {
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  coverImage  String?
+  creatorId   String
+  tags        String[]
+  isArchived  Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  creator     Admin          @relation("AlbumCreator", fields: [creatorId], references: [id])
+  images      GalleryImage[]
+
+  @@index([creatorId])
+}
+
+model GalleryImage {
+  id         String       @id @default(cuid())
+  url        String
+  caption    String?
+  albumId    String
+  uploadedAt DateTime     @default(now())
+  album      GalleryAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+}
+
+model Announcement {
+  id             String   @id @default(cuid())
+  title          String
+  content        String
+  category       String
+  isPinned       Boolean  @default(false)
+  targetAudience String
+  expiryDate     DateTime
+  status         String   @default("active")
+  viewCount      Int      @default(0)
+  creatorId      String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  creator        Admin    @relation("AnnouncementCreator", fields: [creatorId], references: [id])
+
+  @@index([creatorId])
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
+  time        String?
+  assignedTo  String
+  priority    String   @default("medium")
+  status      String   @default("pending")
+  creatorId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  creator     Admin    @relation("TaskCreator", fields: [creatorId], references: [id])
+}
+
+model WinnerAnnouncement {
+  id          String    @id @default(cuid())
+  eventId     String    @unique
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  positions   Json
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  event       Event     @relation(fields: [eventId], references: [id])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  action      String
+  entityType  String
+  entityId    String
+  metadata    Json?
+  performedBy String
+  ipAddress   String?
+  userAgent   String?
+  timestamp   DateTime @default(now())
+
+  @@index([performedBy])
+  @@index([action])
+  @@index([entityId])
+}
+
+model Notification {
+  id            String   @id @default(cuid())
+  senderId      String
+  senderName    String
+  senderRole    String
+  senderBranch  String?
+  recipientId   String
+  recipientName String?
+  recipientRole String?
+  message       String
+  isRead        Boolean  @default(false)
+  isStarred     Boolean  @default(false)
+  isArchived    Boolean  @default(false)
+  priority      String   @default("medium")
+  type          String   @default("admin")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([recipientId])
+  @@index([recipientId, isRead])
+  @@index([senderId])
+  @@index([createdAt])
+}
+
+model CertificateTheme {
+  id        String   @id
+  name      String
+  preview   String
+  colors    String[]
+  style     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sport {
+  id                   String                   @id @default(cuid())
+  name                 String
+  gender               SportGender
+  category             SportCategory            @default(TEAM)
+  format               SportFormat              @default(KNOCKOUT)
+  status               SportStatus              @default(UPCOMING)
+  description          String?
+  icon                 String?
+  bannerUrl            String?
+  winnerPoints         Int                      @default(0)
+  runnerUpPoints       Int                      @default(0)
+  participationPoints  Int                      @default(0)
+  awards               String[]
+  maxTeamsPerBranch    Int?
+  minPlayersPerTeam    Int?
+  maxPlayersPerTeam    Int?
+  rules                String?
+  eligibility          String[]
+  registrationDeadline DateTime?
+  matchDuration        Int?
+  certificateStatus    String                   @default("DRAFT")
+  certificateIssuedAt  DateTime?
+  certificateTheme     String?
+  certificateTemplates Json?
+  isActive             Boolean                  @default(true)
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+  branchPoints         BranchPoints[]
+  matches              Match[]
+  registrations        SportRegistration[]
+  teams                SportTeam[]
+  winnerAnnouncement   SportWinnerAnnouncement?
+
+  @@unique([name, gender])
+  @@index([name, gender])
+  @@index([status])
+  @@index([isActive])
+}
+
+model SportTeam {
+  id        String   @id @default(cuid())
+  sportId   String
+  teamId    String   @unique
+  createdAt DateTime @default(now())
+  sport     Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([sportId])
+}
+
+model Match {
+  id         String       @id @default(cuid())
+  round      String
+  matchId    String?
+  team1Id    String?
+  team1Name  String?
+  team2Id    String?
+  team2Name  String?
+  time       String?
+  venue      String?
+  score1     String?
+  score2     String?
+  note       String?
+  referee    String?
+  matchOrder Int          @default(0)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  sportId    String
+  date       DateTime?
+  status     MatchStatus  @default(PENDING)
+  winner     MatchWinner?
+  sport      Sport        @relation(fields: [sportId], references: [id], onDelete: Cascade)
+
+  @@index([sportId])
+  @@index([sportId, status])
+  @@index([status])
+  @@index([date])
+  @@index([matchId])
+}
+
+model FestSettings {
+  id                 String    @id @default("singleton")
+  festName           String    @default("ORNATE 2K26")
+  tagline            String?   @default("Innovation Meets Culture")
+  logoUrl            String?
+  brochureUrl        String?
+  description        String?   @default("The biggest technical and cultural fest of RGUKT Ongole...")
+  startDate          DateTime?
+  endDate            DateTime?
+  venue              String?   @default("RGUKT Ongole Campus")
+  registrationOpen   Boolean   @default(true)
+  maintenanceMode    Boolean   @default(false)
+  guestRegistration  Boolean   @default(true)
+  emailNotifications Boolean   @default(true)
+  instagramUrl       String?
+  youtubeUrl         String?
+  supportEmail       String?
+  updatedAt          DateTime  @updatedAt
+}
+
+model BestOutgoingStudent {
+  id              String   @id @default(cuid())
+  name            String
+  rollNumber      String
+  photo           String?
+  branch          String
+  year            String   @default("IV")
+  cgpa            Float
+  achievements    String[]
+  placementStatus String?
+  company         String?
+  package         String?
+  gender          String
+  awardYear       Int
+  isPublished     Boolean  @default(true)
+  isOverall       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  creatorId       String?
+  creator         Admin?   @relation("AwardCreator", fields: [creatorId], references: [id])
+
+  @@index([awardYear])
+  @@index([branch])
+  @@index([isPublished])
+}
+
+model Stall {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        String   @default("Other")
+  owner       String   @default("-")
+  bidAmount   String   @default("-")
+  status      String   @default("Vacant")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String   @default("No description available.")
+  price       String   @default("-")
+  stallNo     String   @default("-")
+  teamSize    String   @default("-")
+}
+
+model SportRegistration {
+  id          String             @id @default(cuid())
+  sportId     String
+  studentName String
+  studentId   String
+  email       String?
+  phone       String?
+  branch      String?
+  year        String?
+  section     String?
+  status      RegistrationStatus @default(PENDING)
+  createdAt   DateTime           @default(now())
+  sport       Sport              @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  teamMember  TeamMember?
+
+  @@unique([sportId, studentId])
+  @@index([sportId, status])
+  @@index([branch])
+  @@index([createdAt])
+}
+
+model SportWinnerAnnouncement {
+  id          String    @id @default(cuid())
+  sportId     String    @unique
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  positions   Json
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  sport       Sport     @relation(fields: [sportId], references: [id], onDelete: Cascade)
+}
+
+model BranchPoints {
+  id               String  @id @default(cuid())
+  sportId          String
+  branch           String
+  points           Int     @default(0)
+  manualAdjustment Int     @default(0)
+  adjustmentReason String?
+  sport            Sport   @relation(fields: [sportId], references: [id], onDelete: Cascade)
+
+  @@unique([sportId, branch])
+  @@index([sportId])
+  @@index([branch])
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  BRANCH_ADMIN
+  CLUB_COORDINATOR
+  SPORTS_ADMIN
+  HHO
+  STUDENT
+  EVENT_COORDINATOR
+  BRANCH_SPORTS_ADMIN
+}
+
+enum SportGender {
+  MALE
+  FEMALE
+  MIXED
+}
+
+enum SportCategory {
+  INDIVIDUAL
+  TEAM
+}
+
+enum SportFormat {
+  KNOCKOUT
+  LEAGUE
+  GROUP_KNOCKOUT
+}
+
+enum MatchStatus {
+  PENDING
+  SCHEDULED
+  LIVE
+  COMPLETED
+}
+
+enum RegistrationStatus {
+  PENDING
+  CONFIRMED
+  WAITLISTED
+  ATTENDED
+  CANCELLED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum TeamRole {
+  LEADER
+  MEMBER
+  VICE_CAPTAIN
+}
+
+enum MemberStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum SportStatus {
+  UPCOMING
+  REGISTRATION_OPEN
+  ONGOING
+  COMPLETED
+}
+
+enum MatchWinner {
+  TEAM1
+  TEAM2
+  DRAW
+}
