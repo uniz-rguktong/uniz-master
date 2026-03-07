@@ -131,13 +131,31 @@ export const uploadStudents = async (req: any, res: Response) => {
       .status(400)
       .json({ success: false, message: "Excel file required" });
 
+  // Basic validation: Check if the file buffer is at least readable and has ZIP signature (for .xlsx)
+  if (
+    req.file.buffer.length < 4 ||
+    req.file.buffer.readUInt32BE(0) !== 0x504b0304
+  ) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "Invalid file format. Please ensure you are uploading a valid .xlsx spreadsheet (not a renamed text file).",
+      details: "File header does not match expected OpenXML signature.",
+    });
+  }
+
   try {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(req.file.buffer);
     const worksheet = workbook.getWorksheet(1);
 
     if (!worksheet)
-      return res.status(400).json({ success: false, message: "Empty file" });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Spreadsheet contains no worksheets or is empty",
+        });
 
     const rows: any[] = [];
     const headerRow = worksheet.getRow(1);
