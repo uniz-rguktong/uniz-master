@@ -6,20 +6,35 @@ description: Build, Deploy and Verify UniZ services on VPS (K3s)
 
 ### 1. Synchronize Source Code
 
-Push local changes to Github and pull them on the VPS.
+Push local changes to GitHub. The VPS will pull these changes during the deployment workflow.
 
 ```bash
-git add . && git commit -m "deploy: automated update" && git push origin main && \
-ssh -o StrictHostKeyChecking=no root@76.13.241.174 "cd /root/uniz-master && git pull origin main"
+git add . && git commit -m "infra: manual deployment pipeline" && git push origin main
 ```
 
+### 2. Manual Deployment (GitHub Actions)
+
+Trigger the deployment from the GitHub Web UI or CLI. This is the **preferred method** as it includes permission checks.
+
 ```bash
-# Recommended: Deploy with unique tags to bypass containerd caching
-TAG=local-$(date +%s)
-ssh -o StrictHostKeyChecking=no root@76.13.241.174 "cd /root/uniz-master && \
-docker build --no-cache -t <SERVICE_IMAGE>:$TAG apps/<SOURCE_DIR> && \
-docker save <SERVICE_IMAGE>:$TAG | /usr/local/bin/k3s ctr images import - && \
-kubectl set image deployment/<DEPLOYMENT_NAME> <CONTAINER_NAME>=<SERVICE_IMAGE>:$TAG"
+gh workflow run "Manual VPS Deployment" -f commit_message="Deploying bug fix"
+```
+
+### 3. Build & Deploy Logic (Atomic Safety)
+
+The system uses a **Build-then-Deploy** strategy. Images are built directly on the VPS to ensure environment parity.
+
+1.  **Build**: Script builds the Docker image.
+2.  **Validation**: If the build fails, the script **aborts immediately** (does not deploy).
+3.  **Deployment**: If success, images are imported to K3s image store and deployments are restarted.
+
+```bash
+# Scripted logic inside deploy.sh:
+if docker build ...; then
+  k3s ctr images import ...
+else
+  exit 1 # Abort
+fi
 ```
 
 ### 4. Verify System Health
