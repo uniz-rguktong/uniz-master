@@ -124,13 +124,17 @@ export default function StudentDetails() {
       const data = await res.json();
       if (data.success) {
         toast.success(`Account status updated`);
+        const newStatus = !currentSuspendedStatus;
         setSearchResults((prev) =>
           prev.map((s) =>
             s.username === username
-              ? { ...s, is_suspended: !currentSuspendedStatus }
+              ? { ...s, is_suspended: newStatus }
               : s,
           ),
         );
+        if (selectedStudentFullData?.username === username) {
+          setSelectedStudentFullData((prev: any) => ({ ...prev, is_suspended: newStatus }));
+        }
       } else {
         toast.error(data.msg || "Action failed");
       }
@@ -483,7 +487,10 @@ export default function StudentDetails() {
 
         {/* Detailed Dashboard (ID search result) */}
         {selectedStudentFullData && !loading && (
-          <StudentDashboard data={selectedStudentFullData} />
+          <StudentDashboard
+            data={selectedStudentFullData}
+            onStatusToggle={(uname, status) => handleToggleSuspension(uname, status)}
+          />
         )}
 
         {/* Search Results Table - STAY VISIBLE for Filtered search */}

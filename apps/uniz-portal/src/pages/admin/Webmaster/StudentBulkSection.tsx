@@ -12,6 +12,7 @@ import {
   ADMIN_STUDENT_UPLOAD,
   ADMIN_STUDENT_PROGRESS,
   ADMIN_STUDENT_EXPORT,
+  ADMIN_STUDENT_TEMPLATE,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { FileUploader } from "../../../components/ui/FileUploader";
@@ -21,6 +22,7 @@ export default function StudentBulkSection() {
   const [uploadId, setUploadId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"upload" | "export">("upload");
+  const [uploadSuccess, setUploadSuccess] = useState<boolean | null>(null);
 
   // Export State
   const [exportParams, setExportParams] = useState({
@@ -28,7 +30,6 @@ export default function StudentBulkSection() {
     year: "E1",
     fields: "username,name,email,branch,section",
   });
-
 
   // Bulk Upload Function
   const handleUpload = async () => {
@@ -39,9 +40,10 @@ export default function StudentBulkSection() {
     formData.append("file", file);
 
     try {
+      setUploadSuccess(null);
       const res = await fetch(ADMIN_STUDENT_UPLOAD, {
         method: "POST",
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
         body: formData,
       });
       const data = await res.json();
@@ -49,6 +51,7 @@ export default function StudentBulkSection() {
         setUploadId(data.uploadId || "checking");
         toast.info("Upload started. Monitoring progress...");
       } else {
+        setUploadSuccess(false);
         toast.error(data.msg || "Upload failed");
       }
     } catch (error) {
@@ -66,16 +69,20 @@ export default function StudentBulkSection() {
         const token = localStorage.getItem("admin_token");
         try {
           const res = await fetch(ADMIN_STUDENT_PROGRESS, {
-            headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+            headers: {
+              Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
+            },
           });
           const data = await res.json();
           // setProgress(data); // Removed UI
           if (data.status === "completed" || data.status === "done") {
             setUploadId(null);
+            setUploadSuccess(true);
             clearInterval(interval);
             toast.success("Bulk provisioning completed successfully");
           } else if (data.status === "failed" || data.status === "error") {
             setUploadId(null);
+            setUploadSuccess(false);
             clearInterval(interval);
             toast.error("Bulk provisioning failed");
           }
@@ -98,8 +105,14 @@ export default function StudentBulkSection() {
     );
     try {
       const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
       });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || "Export failed");
+      }
+
       const blob = await res.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -111,6 +124,30 @@ export default function StudentBulkSection() {
       toast.error("Export failed");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDownloadTemplate = async () => {
+    try {
+      const token = localStorage.getItem("admin_token");
+      const res = await fetch(ADMIN_STUDENT_TEMPLATE, {
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to download template");
+      }
+
+      const blob = await res.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = "student_onboarding_template.xlsx";
+      a.click();
+      toast.success("Template downloaded");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to download template");
     }
   };
 
@@ -143,13 +180,16 @@ export default function StudentBulkSection() {
       </div>
 
       {activeTab === "upload" ? (
-        <div className="max-w-4xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="max-w-4xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-4">
           {/* Upload Step */}
           <div className="bg-white p-6 md:p-8 rounded-xl border border-slate-100 shadow-none space-y-6 transition-all">
             <FileUploader
-              onFileSelect={setFile}
+              onFileSelect={(f) => { setFile(f); setUploadSuccess(null); }}
               label="Choose Student Records"
               description="Upload XLSX or CSV with mandatory fields (username, name, email)."
+              isUploading={loading || !!uploadId}
+              isSuccess={uploadSuccess === true}
+              isError={uploadSuccess === false}
             />
 
             <button
@@ -164,13 +204,19 @@ export default function StudentBulkSection() {
               ) : (
                 <CheckCircle2 size={20} />
               )}
-              {uploadId ? "Processing Records..." : "Initiate Bulk Provisioning"}
+              {uploadId
+                ? "Processing Records..."
+                : "Initiate Bulk Provisioning"}
             </button>
-
-
           </div>
-        </div>
 
+          <button
+            onClick={handleDownloadTemplate}
+            className="w-full flex items-center justify-center gap-2 py-4 bg-slate-50 text-slate-500 rounded-xl border border-slate-200 border-dashed hover:bg-slate-100 hover:text-blue-600 transition-all font-bold uppercase tracking-widest text-[10px]"
+          >
+            <Download size={14} /> Download Sample Template (XLSX)
+          </button>
+        </div>
       ) : (
         <div className="bg-white rounded-xl border border-slate-100 p-12 text-slate-900 animate-in slide-in-from-right-8 duration-700 shadow-none transition-all">
           <div className="max-w-4xl mx-auto space-y-12">
@@ -255,7 +301,7 @@ export default function StudentBulkSection() {
               </div>
             </div>
 
-            <div className="pt-8 space-y-8">
+            <div className="pt-8 space-y-6">
               <button
                 onClick={handleExport}
                 disabled={loading}
@@ -268,6 +314,14 @@ export default function StudentBulkSection() {
                 )}
                 Generate Excel Report
               </button>
+
+              <button
+                onClick={handleDownloadTemplate}
+                className="w-full flex items-center justify-center gap-2 py-4 bg-slate-50/50 text-slate-400 rounded-xl border border-slate-100 border-dashed hover:bg-slate-50 hover:text-blue-600 transition-all font-bold uppercase tracking-widest text-[9px]"
+              >
+                <Download size={14} /> Need a template? Download Sample
+              </button>
+
               <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] opacity-60">
                 Secure export protocol active • All access events timestamped
               </p>

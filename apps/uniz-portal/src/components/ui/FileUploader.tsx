@@ -1,7 +1,7 @@
 import { Button } from "./button"
 import { Input } from "./input"
 import { useImageUpload } from "../../hooks/use-image-upload"
-import { FileUp, X, Upload, Trash2, FileText, FileSpreadsheet } from "lucide-react"
+import { FileUp, X, Upload, Trash2, FileText, FileSpreadsheet, Loader2, CheckCircle2 } from "lucide-react"
 import { useCallback, useState } from "react"
 import { cn } from "@/lib/utils"
 
@@ -10,13 +10,19 @@ interface FileUploaderProps {
     accept?: string;
     label?: string;
     description?: string;
+    isUploading?: boolean;
+    isSuccess?: boolean;
+    isError?: boolean;
 }
 
 export function FileUploader({
     onFileSelect,
     accept = ".xlsx,.xls,.csv",
     label = "File Upload",
-    description = "Supported formats: XLSX, XLS, CSV"
+    description = "Supported formats: XLSX, XLS, CSV",
+    isUploading,
+    isSuccess,
+    isError
 }: FileUploaderProps) {
     const {
         previewUrl,
@@ -79,11 +85,33 @@ export function FileUploader({
 
     return (
         <div className="w-full space-y-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
-            <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-900 tracking-tight">{label}</h3>
-                <p className="text-sm text-slate-500 font-medium">
-                    {description}
-                </p>
+            <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                    <h3 className="text-lg font-bold text-slate-900 tracking-tight">{label}</h3>
+                    <p className="text-sm text-slate-500 font-medium">
+                        {description}
+                    </p>
+                </div>
+                <div className="flex items-center gap-3">
+                    {isUploading && (
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-100 animate-in fade-in slide-in-from-right-2">
+                            <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Uploading</span>
+                            <Loader2 className="h-3.5 w-3.5 text-emerald-500 animate-spin" />
+                        </div>
+                    )}
+                    {isSuccess && !isUploading && (
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500 rounded-lg shadow-sm animate-in zoom-in-95">
+                            <span className="text-[10px] font-bold text-white uppercase tracking-widest">Success</span>
+                            <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                        </div>
+                    )}
+                    {isError && !isUploading && (
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500 rounded-lg shadow-sm animate-in head-shake">
+                            <span className="text-[10px] font-bold text-white uppercase tracking-widest">Failed</span>
+                            <X className="h-3.5 w-3.5 text-white" />
+                        </div>
+                    )}
+                </div>
             </div>
 
             <Input

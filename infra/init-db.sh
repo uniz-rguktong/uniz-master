@@ -1,4 +1,11 @@
 #!/bin/bash
+# ==============================================================================
+# UNIZ INFRASTRUCTURE - DATABASE INITIALIZATION ENGINE
+# ==============================================================================
+# Author: UNIZ Engineering
+# Description: Automatically bootstraps microservice-specific databases 
+#              from a comma-separated list of names provided via env.
+# ==============================================================================
 
 set -e
 set -u

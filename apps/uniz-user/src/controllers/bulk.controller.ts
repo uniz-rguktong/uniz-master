@@ -8,7 +8,7 @@ import { redis } from "../utils/redis.util";
 
 const prisma = new PrismaClient();
 const AUTH_SERVICE_URL =
-  process.env.AUTH_SERVICE_URL || "http://localhost:3001";
+  process.env.AUTH_SERVICE_URL || "http://uniz-auth-service:3001";
 
 const BRANCH_MAP: Record<string, string> = {
   "COMPUTER SCIENCE AND ENGINEERING": "CSE",
@@ -131,13 +131,29 @@ export const uploadStudents = async (req: any, res: Response) => {
       .status(400)
       .json({ success: false, message: "Excel file required" });
 
+  // Basic validation: Check if the file buffer is at least readable and has ZIP signature (for .xlsx)
+  if (
+    req.file.buffer.length < 4 ||
+    req.file.buffer.readUInt32BE(0) !== 0x504b0304
+  ) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "Invalid file format. Please ensure you are uploading a valid .xlsx spreadsheet (not a renamed text file).",
+      details: "File header does not match expected OpenXML signature.",
+    });
+  }
+
   try {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(req.file.buffer);
     const worksheet = workbook.getWorksheet(1);
 
     if (!worksheet)
-      return res.status(400).json({ success: false, message: "Empty file" });
+      return res.status(400).json({
+        success: false,
+        message: "Spreadsheet contains no worksheets or is empty",
+      });
 
     const rows: any[] = [];
     const headerRow = worksheet.getRow(1);
@@ -185,8 +201,12 @@ export const uploadStudents = async (req: any, res: Response) => {
       let failCount = 0;
       const errors: any[] = [];
 
-      const CHUNK_SIZE = 5;
+      const CHUNK_SIZE = 20;
+      console.log(`[Bulk] Starting ingestion for ${total} students...`);
       for (let i = 0; i < total; i += CHUNK_SIZE) {
+        console.log(
+          `[Bulk] Processing chunk ${Math.floor(i / CHUNK_SIZE) + 1} (${i} to ${Math.min(i + CHUNK_SIZE, total)})...`,
+        );
         const chunk = rows.slice(i, i + CHUNK_SIZE);
 
         await Promise.all(
@@ -198,12 +218,29 @@ export const uploadStudents = async (req: any, res: Response) => {
               );
               if (!found) return "";
               const val = row[found];
-              if (val && typeof val === "object") {
-                return (val as any).text
-                  ? String((val as any).text).trim()
-                  : "";
+
+              if (val === null || val === undefined) return "";
+
+              // Handle ExcelJS Specific Objects (Hyperlinks, RichText, Formulas)
+              if (typeof val === "object") {
+                // Hyperlink: { text: '...', hyperlink: '...' }
+                if ("text" in val) return String(val.text || "").trim();
+                // Formula: { formula: '...', result: '...' }
+                if ("result" in val) return String(val.result || "").trim();
+                // RichText: { richText: [...] }
+                if ("richText" in val && Array.isArray((val as any).richText)) {
+                  return (val as any).richText
+                    .map((rt: any) => rt.text || "")
+                    .join("")
+                    .trim();
+                }
+                // Fallback for other objects
+                return String(val).trim() === "[object Object]"
+                  ? ""
+                  : String(val).trim();
               }
-              return val ? String(val).trim() : "";
+
+              return String(val).trim();
             };
 
             const id = getVal([
@@ -288,6 +325,7 @@ export const uploadStudents = async (req: any, res: Response) => {
                   },
                   {
                     headers: { "x-internal-secret": SECRET },
+                    timeout: 5000, // Add timeout to prevent hanging the loop
                   },
                 );
               } catch (authErr: any) {
@@ -368,9 +406,15 @@ export const uploadStudents = async (req: any, res: Response) => {
         };
 
         await prisma.uploadHistory.create({ data: historyData });
+        console.log(
+          `[Bulk] Successfully recorded upload history for ${user.username}.`,
+        );
       } catch (hErr) {
         console.error("Failed to record upload history:", hErr);
       }
+      console.log(
+        `[Bulk] Ingestion complete for ${user.username}. Final success: ${successCount}, Fail: ${failCount}`,
+      );
     };
 
     runIngestion();
@@ -471,7 +515,12 @@ export const exportStudentsSelective = async (
 
     // Add Data
     students.forEach((s) => {
-      const dataRow = exportFields.map((f) => (s as any)[f]);
+      const dataRow = exportFields.map((f) => {
+        const val = (s as any)[f];
+        if (val === null || val === undefined) return "";
+        const strVal = String(val).trim();
+        return strVal === "[object Object]" ? "" : strVal;
+      });
       worksheet.addRow(dataRow);
     });
 
