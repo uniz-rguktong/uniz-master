@@ -17,12 +17,12 @@ import { apiClient } from "../../api/apiClient";
 import {
   User,
   Lock,
-  Mail,
   KeyRound,
   ArrowLeft,
-  GraduationCap,
   ChevronLeft,
+  Chrome,
 } from "lucide-react";
+import LoginScreen from "../../components/ui/login-1";
 
 type SigninProps = {
   type: "student" | "admin" | "faculty";
@@ -290,70 +290,63 @@ export default function Signin({ type }: SigninProps) {
     if (step === "verifyOtp") resetPassword();
   };
 
+  const getHeroTitle = () => {
+
+    return null;
+  };
+
+  const dashboardLabel = type === "student" ? "Student Login" : type === "faculty" ? "Faculty Portal" : "Administrator Portal";
+
   return (
-    <div className="flex items-center justify-center bg-white relative min-h-screen">
+    <div className="min-h-screen bg-white relative">
       <Button
         variant="ghost"
-        className="absolute top-4 left-4 p-2 text-slate-500 hover:text-slate-900 transition-colors"
+        className="absolute top-8 left-8 p-2 text-white hover:text-white/80 transition-all z-50 flex items-center gap-2 font-bold"
         onClick={() => navigate("/")}
       >
-        <ChevronLeft className="w-6 h-6" />{" "}
-        <span className="sr-only">Back to Home</span>
+        <ChevronLeft className="w-5 h-5" />
+        Back to Home
       </Button>
 
-      <div className="w-full max-w-md bg-white border border-white shadow-xl rounded-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-        <div className="bg-slate-900 p-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-800 mb-3 ring-4 ring-slate-800/50">
-            {step === "signin" ? (
-              <User className="w-6 h-6 text-white" />
-            ) : step === "forgot" ? (
-              <Mail className="w-6 h-6 text-white" />
-            ) : type === "faculty" ? (
-              <GraduationCap className="w-6 h-6 text-white" />
-            ) : (
-              <KeyRound className="w-6 h-6 text-white" />
-            )}
-          </div>
-          <h2 className="text-xl font-bold text-white tracking-tight">
-            {step === "signin"
-              ? type === "student"
-                ? "Student Login"
-                : type === "faculty"
-                  ? "Faculty Portal"
-                  : "Administrator"
-              : step === "forgot"
-                ? "Reset Password"
-                : "New Credentials"}
-          </h2>
-          <p className="text-slate-400 text-sm mt-2">
-            {step === "signin"
-              ? "Enter your credentials to access the portal"
-              : step === "forgot"
-                ? "We'll send an OTP to your registered devices"
-                : "Enter the 6-digit verification code"}
-          </p>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-3">
+      <LoginScreen
+        isLogin={step === "signin"}
+        title={
+          step === "signin"
+            ? dashboardLabel
+            : step === "forgot"
+              ? "Reset Password"
+              : "New Credentials"
+        }
+        subtitle={
+          step === "signin"
+            ? "Enter your credentials to access the portal"
+            : step === "forgot"
+              ? "We'll send an OTP to your registered ID"
+              : "Verify your identity to proceed"
+        }
+        heroTitle={getHeroTitle() || undefined}
+        bottomText="Rgukt Ongole"
+      >
+        <form onSubmit={handleSubmit} className="space-y-5">
           {step === "signin" && (
             <div className="space-y-4">
               <Input
-                label="Username"
+                label="Username / ID"
                 icon={<User className="w-4 h-4" />}
                 value={username}
                 onChange={(e) => setUsername(e.target.value.toUpperCase())}
                 placeholder={
                   type === "student"
-                    ? "University ID"
+                    ? "University ID (e.g. O210001)"
                     : type === "faculty"
-                      ? "Staff ID / Email"
+                      ? "Staff ID"
                       : "Admin ID"
                 }
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck={false}
                 autoComplete="off"
+                className="h-12"
               />
               <Input
                 label="Password"
@@ -362,38 +355,59 @@ export default function Signin({ type }: SigninProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
+                className="h-12"
               />
-              <div className="pt-2">
-                <Button
-                  className="w-full"
-                  size="lg"
-                  isLoading={isLoading}
-                  type="submit"
-                >
-                  Sign In
-                </Button>
-              </div>
 
-              <div className="text-center pt-2">
+              <div className="flex items-center justify-end">
                 <button
                   type="button"
-                  className="text-sm text-slate-900 hover:text-black font-bold uppercase tracking-widest underline transition-all"
+                  className="text-sm text-blue-600 hover:text-blue-700 font-bold transition-all"
                   onClick={() => setStep("forgot")}
                 >
                   Forgot password?
                 </button>
               </div>
+
+              <Button
+                className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[15px] font-bold shadow-xl shadow-slate-200"
+                size="lg"
+                isLoading={isLoading}
+                type="submit"
+              >
+                Sign In
+              </Button>
+
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-100"></div>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white px-2 text-slate-400 font-medium">Or continue with</span>
+                </div>
+              </div>
+
+              <Button
+                variant="outline"
+                className="w-full h-12 border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-[15px] font-bold flex items-center justify-center gap-2"
+                size="lg"
+                type="button"
+                onClick={() => toast.info("Google Sign-In is coming soon!")}
+              >
+                <Chrome className="w-5 h-5 text-blue-500" />
+                Sign in with Google
+              </Button>
+
               {type === "admin" && (
                 <div className="text-center pt-2">
                   <button
                     type="button"
-                    className="text-sm text-slate-900 hover:text-black font-bold uppercase tracking-widest underline transition-all opacity-50 hover:opacity-100"
+                    className="text-[11px] text-slate-400 hover:text-slate-600 font-bold uppercase tracking-widest transition-all"
                     onClick={() => {
                       setUsername("security");
                       setPassword("security@uniz");
                     }}
                   >
-                    Quick Login (Security)
+                    Quick Access (Security)
                   </button>
                 </div>
               )}
@@ -403,7 +417,7 @@ export default function Signin({ type }: SigninProps) {
           {step === "forgot" && (
             <div className="space-y-4">
               <Input
-                label="University ID"
+                label="Student / Staff ID"
                 icon={<User className="w-4 h-4" />}
                 value={username}
                 onChange={(e) => setUsername(e.target.value.toUpperCase())}
@@ -411,25 +425,24 @@ export default function Signin({ type }: SigninProps) {
                 autoCorrect="off"
                 spellCheck={false}
                 autoComplete="off"
-                placeholder="Enter your ID"
+                placeholder="Enter your ID to receive OTP"
+                className="h-12"
               />
-              <div className="pt-2">
-                <Button
-                  className="w-full"
-                  size="lg"
-                  isLoading={isLoading}
-                  onClick={requestOtp}
-                >
-                  Send OTP
-                </Button>
-              </div>
-              <div className="text-center pt-2">
+              <Button
+                className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[15px] font-bold"
+                size="lg"
+                isLoading={isLoading}
+                onClick={requestOtp}
+              >
+                Send OTP
+              </Button>
+              <div className="text-center">
                 <button
                   type="button"
-                  className="inline-flex items-center text-sm text-slate-500 hover:text-slate-700 font-medium transition-all group"
+                  className="inline-flex items-center text-sm text-slate-500 hover:text-slate-900 font-bold transition-all group"
                   onClick={() => setStep("signin")}
                 >
-                  <ArrowLeft className="w-3 h-3 mr-1 group-hover:-translate-x-1 transition-transform" />{" "}
+                  <ArrowLeft className="w-3 h-3 mr-1.5 group-hover:-translate-x-1 transition-transform" />
                   Back to Login
                 </button>
               </div>
@@ -439,63 +452,64 @@ export default function Signin({ type }: SigninProps) {
           {step === "verifyOtp" && (
             <div className="space-y-4">
               <Input
-                label="One-Time Password"
+                label="Verification Code"
                 icon={<KeyRound className="w-4 h-4" />}
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
                 placeholder="Enter 6-digit OTP"
+                className="h-12"
                 disabled={!!resetToken}
               />
 
               {!resetToken && (
-                <div className="pt-2">
+                <div className="space-y-4">
                   <Button
-                    className="w-full"
+                    className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[15px] font-bold"
                     size="lg"
                     isLoading={isLoading}
                     onClick={handleVerifyOtp}
                   >
                     Verify OTP
                   </Button>
-                  <div className="text-center pt-4">
+                  <div className="text-center">
                     <button
                       type="button"
-                      className="text-xs text-slate-500 hover:text-slate-900 font-bold uppercase tracking-widest underline transition-all"
+                      className="text-[11px] text-slate-500 hover:text-slate-900 font-bold uppercase tracking-widest underline transition-all"
                       onClick={requestEmailOtp}
                       disabled={isLoading}
                     >
-                      Didn't receive code? Try Email
+                      Resend via Email
                     </button>
                   </div>
                 </div>
               )}
 
               {!!resetToken && (
-                <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
                   <Input
-                    label="New Password"
+                    label="New Secure Password"
                     type="password"
                     icon={<Lock className="w-4 h-4" />}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="New strong password"
+                    placeholder="Min. 6 characters"
+                    className="h-12"
                   />
-                  <div className="pt-2">
-                    <Button
-                      className="w-full"
-                      size="lg"
-                      isLoading={isLoading}
-                      onClick={resetPassword}
-                    >
-                      Update Password
-                    </Button>
-                  </div>
+                  <Button
+                    className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[15px] font-bold"
+                    size="lg"
+                    isLoading={isLoading}
+                    onClick={resetPassword}
+                  >
+                    Set New Password
+                  </Button>
                 </div>
               )}
             </div>
           )}
         </form>
-      </div>
+      </LoginScreen>
     </div>
   );
 }
+

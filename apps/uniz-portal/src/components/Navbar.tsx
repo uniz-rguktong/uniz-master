@@ -1,60 +1,98 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import { is_authenticated, student } from "../store";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useStudentData } from "../hooks/student_info";
-import { Button } from "./Button";
 import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  LogOut,
-  Building2,
+  ChevronDown,
+  Users,
   BookOpen,
-  Microscope,
+  Calendar,
+  ClipboardList,
+  Code,
+  Cpu,
+  Settings,
+  Zap,
+  Building,
+  MapPin,
+  ShieldCheck,
   GraduationCap,
-  Shield,
-  Phone,
-  Library,
-  FileText,
+  Mail,
+  ExternalLink,
+  ChevronRight,
+  LogOut,
+  User as UserIcon,
 } from "lucide-react";
-import { isMaintenance } from "../App";
-// import { useWebSocket } from "../hooks/useWebSocket";
-// import { cn } from "../utils/cn";
 
-const UserSkeleton = () => (
-  <div className="flex items-center space-x-3 animate-pulse">
-    <div className="bg-slate-200 rounded-full h-9 w-9"></div>
-    <div className="space-y-1">
-      <div className="bg-slate-200 h-3 w-24 rounded"></div>
-      <div className="bg-slate-200 h-2 w-32 rounded"></div>
-    </div>
+const NavItem = ({ label, hasDropdown, activeDropdown, setActiveDropdown, menuData, navigate }: any) => (
+  <div
+    className="relative"
+    onMouseEnter={() => hasDropdown && setActiveDropdown(label)}
+    onMouseLeave={() => hasDropdown && setActiveDropdown(null)}
+  >
+    <button
+      className={`flex items-center gap-1.5 px-4 py-2 text-[14px] font-semibold transition-all duration-300 ${activeDropdown === label ? "text-slate-900 bg-slate-50 rounded-lg" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50/50 rounded-lg"
+        }`}
+    >
+      {label}
+      {hasDropdown && (
+        <ChevronDown
+          size={13}
+          className={`transition-transform duration-300 ${activeDropdown === label ? "rotate-180" : ""}`}
+        />
+      )}
+    </button>
+
+    <AnimatePresence>
+      {activeDropdown === label && hasDropdown && (
+        <motion.div
+          initial={{ opacity: 0, y: 10, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 10, scale: 0.98 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+          className="absolute left-1/2 -translate-x-1/2 top-full pt-3 z-[100]"
+        >
+          <div className={`bg-white rounded-[28px] shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-slate-100 p-6 ${label === "Departments" ? "w-[840px]" : "w-[640px]"}`}>
+            <div className={`grid gap-2 ${label === "Departments" ? "grid-cols-3" : "grid-cols-2"}`}>
+              {menuData[label]?.map((item: any) => (
+                <button
+                  key={item.title}
+                  onClick={() => {
+                    navigate(item.path);
+                    setActiveDropdown(null);
+                  }}
+                  className="flex items-start gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all group text-left"
+                >
+                  <div className="mt-0.5 p-2 bg-slate-50 border border-slate-100/50 rounded-xl group-hover:bg-white group-hover:shadow-md transition-all text-slate-400 group-hover:text-slate-900 shrink-0">
+                    <item.icon size={18} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[14px] font-bold text-slate-900 mb-0.5 flex items-center gap-1.5">
+                      {item.title}
+                      <ExternalLink size={10} className="opacity-0 group-hover:opacity-40 transition-opacity" />
+                    </h4>
+                    <p className="text-[12px] text-slate-500 font-medium leading-normal line-clamp-2">
+                      {item.desc}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   </div>
 );
 
 export default function Navbar() {
   const [isAuth, setAuth] = useRecoilState(is_authenticated);
   const user = useRecoilValue(student);
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  // const { isConnected } = useWebSocket(undefined);
-
-  // Safely parse admin name
-  const rawAdminName = localStorage.getItem("username");
-  const adminName = rawAdminName ? rawAdminName.replace(/^"|"$/g, "") : null;
-
-  useEffect(() => {
-    if (user?.name || user?.email) {
-      setIsLoading(false);
-    }
-  }, [user]);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   useStudentData();
-
-  const getInitials = (name: string | null | undefined) => {
-    if (!name) return "U";
-    if (name.startsWith("Warden")) return "W";
-    const parts = name.split(" ");
-    if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-    return name[0].toUpperCase();
-  };
 
   const logout = () => {
     localStorage.removeItem("student_token");
@@ -70,309 +108,180 @@ export default function Navbar() {
       localStorage.getItem("student_token")) ||
     (localStorage.getItem("student_token") && user);
 
-  const isAdminAuthenticated =
-    (isAuth.is_authnticated &&
-      isAuth.type === "admin" &&
-      localStorage.getItem("admin_token")) ||
-    (localStorage.getItem("admin_token") && adminName);
+  const menuData: any = {
+    Academics: [
+      {
+        title: "Faculty",
+        desc: "Meet our dedicated academic experts and researchers.",
+        icon: Users,
+        path: "/academics/faculty",
+      },
+      {
+        title: "Rules & Regulations",
+        desc: "Comprehensive guidelines for institutional conduct.",
+        icon: BookOpen,
+        path: "/academics/rules",
+      },
+      {
+        title: "Academic Calendar",
+        desc: "Key dates and milestones for the academic year.",
+        icon: Calendar,
+        path: "/academics/calendar",
+      },
+      {
+        title: "Exam Cell",
+        desc: "Examination schedules, results, and notifications.",
+        icon: ClipboardList,
+        path: "/examcell",
+      },
+    ],
+    Departments: [
+      {
+        title: "Computer Science",
+        desc: "Innovating the future of engineering and AI.",
+        icon: Code,
+        path: "/departments/cse",
+      },
+      {
+        title: "Electronics & Comm.",
+        desc: "Advancing communication technologies.",
+        icon: Cpu,
+        path: "/departments/ece",
+      },
+      {
+        title: "Mechanical Eng.",
+        desc: "Engineering the physical world of tomorrow.",
+        icon: Settings,
+        path: "/departments/mech",
+      },
+      {
+        title: "Electrical Eng.",
+        desc: "Powering systems and sustainable energy.",
+        icon: Zap,
+        path: "/departments/eee",
+      },
+      {
+        title: "Civil Engineering",
+        desc: "Building sustainable infrastructure.",
+        icon: Building,
+        path: "/departments/civil",
+      },
+    ],
+    Campus: [
+      {
+        title: "Infrastructure",
+        desc: "Explore our state-of-the-art campus facilities.",
+        icon: MapPin,
+        path: "/institute/campus",
+      },
+      {
+        title: "Administration",
+        desc: "Our leadership and organizational structure.",
+        icon: ShieldCheck,
+        path: "/institute/administration",
+      },
+      {
+        title: "Alumni Network",
+        desc: "Connecting with our global community.",
+        icon: GraduationCap,
+        path: "/institute/alumni",
+      },
+      {
+        title: "Contact Us",
+        desc: "Get in touch with our institutional helpdesk.",
+        icon: Mail,
+        path: "/contact-us",
+      },
+    ],
+  };
 
   return (
-    <header className="flex flex-col w-full top-0 z-50 font-sans shadow-xl">
-      <nav className="bg-white border-b border-gray-100 py-4 md:py-6 relative z-20">
-        <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
-          {/* Brand Section */}
-          <Link to="/" className="flex items-center gap-4 group py-1">
-            <img
-              src="/assets/ongole_logo.png"
-              className="w-14 h-14 md:w-20 md:h-20 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
-              alt="Ongole Logo"
+    <header className="sticky top-0 z-[100] bg-white/70 backdrop-blur-2xl border-b border-slate-100 px-8">
+      <div className="max-w-7xl mx-auto flex items-center justify-between h-16">
+        <div className="flex items-center gap-8">
+          {/* Logo */}
+          <Link
+            to="/"
+            className="flex items-center gap-3 cursor-pointer group"
+          >
+            <div className="flex items-center justify-center bg-transparent shrink-0">
+              <span className="unifrakturcook-bold text-3xl text-slate-800 tracking-tight leading-none">
+                uniZ
+              </span>
+            </div>
+          </Link>
+
+          {/* Nav Menu Items */}
+          <nav className="hidden lg:flex items-center gap-1">
+            <NavItem
+              label="Academics"
+              hasDropdown
+              activeDropdown={activeDropdown}
+              setActiveDropdown={setActiveDropdown}
+              menuData={menuData}
+              navigate={navigate}
             />
-            <div className="flex flex-col justify-center">
-              <h1 className="font-serif font-bold text-lg md:text-2xl text-[#800000] leading-none tracking-tight uppercase">
-                Rajiv Gandhi University of Knowledge Technologies
-              </h1>
-              <p className="text-[10px] md:text-xs text-slate-500 font-bold tracking-widest mt-1.5 uppercase hidden md:block">
-                Catering to the Educational Needs of Gifted Rural Youth of
-                Andhra Pradesh
-              </p>
-              <p className="text-[10px] md:text-xs text-slate-500 font-bold tracking-widest mt-0.5 uppercase hidden md:block">
-                (Established by the Govt of Andhra Pradesh and recognizes as per
-                section 2(f),12(B) of UGC Act 1956)
-              </p>
-            </div>
-          </Link>
+            <NavItem
+              label="Departments"
+              hasDropdown
+              activeDropdown={activeDropdown}
+              setActiveDropdown={setActiveDropdown}
+              menuData={menuData}
+              navigate={navigate}
+            />
+            <NavItem
+              label="Campus"
+              hasDropdown
+              activeDropdown={activeDropdown}
+              setActiveDropdown={setActiveDropdown}
+              menuData={menuData}
+              navigate={navigate}
+            />
+            <button
+              onClick={() => navigate("/examcell")}
+              className="px-4 py-2 text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all rounded-lg"
+            >
+              Exams
+            </button>
+          </nav>
+        </div>
 
-          {/* Right Section: Gov Logos & Auth */}
-          <div className="flex items-center gap-6">
-            {/* Decorative Gov Elements (Desktop Only) */}
-            <div className="hidden xl:flex items-center gap-6 opacity-100 p-2">
-              <img
-                src="/assets/make_in_india.png"
-                alt="Make In India"
-                className="h-14 w-auto object-contain hover:scale-105 transition-transform duration-300 cursor-pointer drop-shadow-sm mix-blend-multiply"
-              />
-
-              <img
-                src="/assets/naac.png"
-                alt="NAAC A+ Grade"
-                className="h-14 w-14 object-contain hover:scale-105 transition-transform duration-300 cursor-pointer drop-shadow-sm mix-blend-multiply"
-              />
-            </div>
-
-            {/* Search & Auth */}
+        <div className="flex items-center gap-5">
+          {isAuthenticated ? (
             <div className="flex items-center gap-3">
-              {isAuthenticated ? (
-                isLoading ? (
-                  <UserSkeleton />
-                ) : (
-                  <div className="flex items-center gap-3 pl-1 pr-1 py-1 rounded-full border border-slate-200 bg-white hover:border-[#800000]/30 transition-colors shadow-sm ml-2">
-                    <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold border-2 border-white shadow overflow-hidden">
-                      {user?.profile_url ? (
-                        <img
-                          src={user.profile_url}
-                          alt={user.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-[#800000] text-xs">
-                          {getInitials(user?.name)}
-                        </span>
-                      )}
-                    </div>
-                    <div className="hidden sm:block pr-3">
-                      <p className="text-sm font-bold text-slate-800 leading-tight">
-                        {user?.name}
-                      </p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={logout}
-                      className="hidden sm:flex hover:bg-red-50 text-slate-400 hover:text-[#800000] rounded-full w-9 h-9 p-0"
-                    >
-                      <LogOut size={16} />
-                    </Button>
-                  </div>
-                )
-              ) : isAdminAuthenticated ? (
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold text-[#800000]">
-                    {adminName}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={logout}
-                    className="border-[#800000] text-[#800000] hover:bg-[#800000] hover:text-white transition-colors h-9 text-xs"
-                  >
-                    Logout
-                  </Button>
+              <button
+                onClick={() => navigate("/student/profile")}
+                className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 transition-all group"
+              >
+                <div className="w-7 h-7 rounded-full bg-slate-900 flex items-center justify-center text-[10px] font-bold text-white overflow-hidden">
+                  {user?.profile_url ? (
+                    <img src={user.profile_url} className="w-full h-full object-cover" />
+                  ) : (
+                    <UserIcon size={14} />
+                  )}
                 </div>
-              ) : (
-                !isMaintenance && (
-                  <button
-                    onClick={() => navigate("/student/signin")}
-                    className="bg-[#800000] hover:bg-[#600000] text-white shadow-md shadow-red-900/10 px-8 rounded-md tracking-wide font-bold uppercase text-xs h-10 ml-2 transition-all"
-                  >
-                    Login
-                  </button>
-                )
-              )}
+                <span className="text-[13px] font-bold text-slate-800">
+                  {user?.name?.split(" ")[0]}
+                </span>
+              </button>
+              <button
+                onClick={logout}
+                className="w-9 h-9 flex items-center justify-center rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                title="Sign out"
+              >
+                <LogOut size={16} />
+              </button>
             </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Navigation Strip */}
-      <div className="bg-white border-b border-gray-200 py-2 hidden lg:block shadow-[0_4px_6px_-1px_rgba(0,0,0,0.02)] relative z-10">
-        <div className="container mx-auto px-4 flex justify-between items-center text-[11px] font-bold text-slate-500 uppercase tracking-widest relative">
-          {/* The Institute Dropdown */}
-          <div className="relative group/dropdown">
-            <span className="flex items-center gap-2 cursor-pointer hover:text-[#800000] transition-colors group-hover/dropdown:text-[#800000] py-1">
-              <span className="text-[#800000] group-hover/dropdown:text-[#800000] transition-colors">
-                <Building2 size={16} />
-              </span>{" "}
-              The Institute
-            </span>
-            <div className="absolute left-1/2 -translate-x-1/2 mt-0 pt-2 w-56 hidden group-hover/dropdown:block z-50">
-              <div className="bg-white border border-slate-100 shadow-xl rounded-lg overflow-hidden flex flex-col">
-                <Link
-                  to="/institute/campus"
-                  className="px-4 py-3 hover:bg-slate-50 text-slate-600 hover:text-[#800000] transition-colors text-[11px] font-bold border-b border-slate-50"
-                >
-                  Campus
-                </Link>
-                <Link
-                  to="/institute/administration"
-                  className="px-4 py-3 hover:bg-slate-50 text-slate-600 hover:text-[#800000] transition-colors text-[11px] font-bold border-b border-slate-50"
-                >
-                  Administration
-                </Link>
-                <Link
-                  to="/institute/alumni"
-                  className="px-4 py-3 hover:bg-slate-50 text-slate-600 hover:text-[#800000] transition-colors text-[11px] font-bold"
-                >
-                  Alumni
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Academics Dropdown */}
-          <div className="relative group/dropdown">
-            <span className="flex items-center gap-2 cursor-pointer hover:text-[#800000] transition-colors group-hover/dropdown:text-[#800000] py-1">
-              <span className="text-[#800000] group-hover/dropdown:text-[#800000] transition-colors">
-                <BookOpen size={16} />
-              </span>{" "}
-              Academics
-            </span>
-            <div className="absolute left-1/2 -translate-x-1/2 mt-0 pt-2 w-64 hidden group-hover/dropdown:block z-50">
-              <div className="bg-white border border-slate-100 shadow-xl rounded-lg overflow-hidden flex flex-col">
-                <Link
-                  to="/academics/faculty"
-                  className="px-4 py-3 hover:bg-slate-50 text-slate-600 hover:text-[#800000] transition-colors text-[11px] font-bold border-b border-slate-50"
-                >
-                  Faculty
-                </Link>
-                <Link
-                  to="/academics/rules"
-                  className="px-4 py-3 hover:bg-slate-50 text-slate-600 hover:text-[#800000] transition-colors text-[11px] font-bold border-b border-slate-50"
-                >
-                  Rules and Regulations
-                </Link>
-                <Link
-                  to="/academics/calendar"
-                  className="px-4 py-3 hover:bg-slate-50 text-slate-600 hover:text-[#800000] transition-colors text-[11px] font-bold"
-                >
-                  Academic Calender
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Departments Dropdown */}
-          <div className="relative group/dropdown">
-            <span className="flex items-center gap-2 cursor-pointer hover:text-[#800000] transition-colors group-hover/dropdown:text-[#800000] py-1">
-              <span className="text-[#800000] group-hover/dropdown:text-[#800000] transition-colors">
-                <Microscope size={16} />
-              </span>{" "}
-              Departments
-            </span>
-            <div className="absolute left-1/2 -translate-x-1/2 mt-0 pt-2 w-72 hidden group-hover/dropdown:block z-50">
-              <div className="bg-white border border-slate-100 shadow-xl rounded-lg overflow-hidden flex flex-col">
-                <Link
-                  to="/departments/civil"
-                  className="px-4 py-3 hover:bg-slate-50 text-slate-600 hover:text-[#800000] transition-colors text-[11px] font-bold border-b border-slate-50"
-                >
-                  Civil Engineering
-                </Link>
-                <Link
-                  to="/departments/cse"
-                  className="px-4 py-3 hover:bg-slate-50 text-slate-600 hover:text-[#800000] transition-colors text-[11px] font-bold border-b border-slate-50"
-                >
-                  Computer Science Engineering
-                </Link>
-                <Link
-                  to="/departments/mech"
-                  className="px-4 py-3 hover:bg-slate-50 text-slate-600 hover:text-[#800000] transition-colors text-[11px] font-bold border-b border-slate-50"
-                >
-                  Mechanical Engineering
-                </Link>
-                <Link
-                  to="/departments/ece"
-                  className="px-4 py-3 hover:bg-slate-50 text-slate-600 hover:text-[#800000] transition-colors text-[11px] font-bold border-b border-slate-50"
-                >
-                  Electronics and Communication Engineering
-                </Link>
-                <Link
-                  to="/departments/eee"
-                  className="px-4 py-3 hover:bg-slate-50 text-slate-600 hover:text-[#800000] transition-colors text-[11px] font-bold"
-                >
-                  Electrical and Electronics Engineering
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <Link
-            to="/examcell"
-            className="flex items-center gap-2 cursor-pointer hover:text-[#800000] transition-colors group py-1"
-          >
-            <span className="text-[#800000] group-hover:text-[#800000] transition-colors">
-              <FileText size={16} />
-            </span>{" "}
-            Examcell
-          </Link>
-
-          {/* External Links */}
-          <a
-            href="https://campushub.sreecharandesu.in/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 cursor-pointer hover:text-[#800000] transition-colors group py-1"
-          >
-            <span className="text-[#800000] group-hover:text-[#800000] transition-colors">
-              <GraduationCap size={16} />
-            </span>{" "}
-            Campus Hub
-          </a>
-
-          <a
-            href="https://campusschield.sreecharandesu.in/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 cursor-pointer hover:text-[#800000] transition-colors group py-1"
-          >
-            <span className="text-[#800000] group-hover:text-[#800000] transition-colors">
-              <Shield size={16} />
-            </span>{" "}
-            Campus Shield
-          </a>
-
-          <Link
-            to="/library"
-            className="flex items-center gap-2 cursor-pointer hover:text-[#800000] transition-colors group py-1"
-          >
-            <span className="text-[#800000] group-hover:text-[#800000] transition-colors">
-              <Library size={16} />
-            </span>{" "}
-            Grievance
-          </Link>
-
-          {/* Contact Us */}
-          <Link
-            to="/contact-us"
-            className="flex items-center gap-2 cursor-pointer hover:text-[#800000] transition-colors group py-1"
-          >
-            <span className="text-[#800000] group-hover:text-[#800000] transition-colors">
-              <Phone size={16} />
-            </span>{" "}
-            Contact Us
-          </Link>
-        </div>
-      </div>
-
-      {/* News Ticker / Updates Strip */}
-      <div className="bg-slate-50 border-b border-slate-200 py-1 flex items-center overflow-hidden h-8">
-        <div className="flex-1 overflow-hidden relative h-full flex items-center ml-4">
-          <div className="whitespace-nowrap animate-[marquee_25s_linear_infinite] text-[11px] font-bold text-slate-700 uppercase tracking-wide flex gap-12">
-            <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>{" "}
-              Semester registrations for AY 2025-26 open now
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-500"></span> Annual
-              Sports Meet scheduled for next week
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500"></span>{" "}
-              Examination results for E1/E2 released
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-yellow-500"></span> New
-              block inauguration by Hon'ble Minister
-            </span>
-          </div>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate("/student/signin")}
+                className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[14px] font-bold shadow-2xl shadow-slate-200 hover:bg-slate-800 transition-all active:scale-95 flex items-center gap-1.5"
+              >
+                Get started <ChevronRight size={14} className="mt-0.5" />
+              </button>
+            </>
+          )}
         </div>
       </div>
     </header>
