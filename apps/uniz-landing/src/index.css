@@ -1,8 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 
 :root {
-  --primary: #001f3f; /* Deep Navy from Exam Cell theme */
-  --accent: #800000; /* University Maroon */
+  --primary: #001f3f;
+  --accent: #800000;
   --background: #ffffff;
   --surface: #f8fafc;
   --text-main: #0f172a;
@@ -35,30 +39,23 @@ body {
   padding: 0 2rem;
 }
 
-h1,
-h2,
-h3,
-h4 {
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-  transition: all 0.2s ease;
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  font-family: inherit;
-  transition: all 0.2s ease;
-}
-
 .glass {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Custom button hover effect */
+.btn-premium {
+  @apply relative overflow-hidden transition-all duration-300 active:scale-95;
+}
+
+.btn-premium::after {
+  content: "";
+  @apply absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300;
+}
+
+.btn-premium:hover::after {
+  @apply opacity-100;
 }
