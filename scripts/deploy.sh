@@ -69,6 +69,15 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   done
 
   echo "[K8s] Applying Kubernetes configurations..."
+  # If we have secrets in environment variables (e.g. on VPS), use them to fill the template
+  if [ -f "infra/core-infra/kubernetes/base/secrets.yaml.template" ]; then
+    echo "[Vault] Generating secrets from template..."
+    # Export all variables from /root/uniz-secrets.env to ensure envsubst sees them
+    if [ -f "/root/uniz-secrets.env" ]; then
+      export $(grep -v '^#' /root/uniz-secrets.env | xargs)
+    fi
+    envsubst < infra/core-infra/kubernetes/base/secrets.yaml.template > infra/core-infra/kubernetes/base/secrets.yaml
+  fi
   kubectl apply -k infra/core-infra/kubernetes/base/
 
   REBUILT_COUNT=0
