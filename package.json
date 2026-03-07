@@ -10,7 +10,10 @@
     "watch": "ssh -o StrictHostKeyChecking=no root@76.13.241.174 \"watch -n 1 'kubectl get hpa; echo; kubectl get pods'\"",
     "clean": "rm -rf logs/ *.log",
     "install:all": "for d in apps/uniz-* infra/core-infra; do (cd $d && npm install && npm audit fix); done",
-    "prettify": "prettier --write ."
+    "prettify": "prettier --write .",
+    "vault:get": "bash ./scripts/uniz-vault.sh get",
+    "vault:set": "bash ./scripts/uniz-vault.sh set",
+    "safety-lock": "cp .git/hooks/pre-push.sample .git/hooks/pre-push && chmod +x .git/hooks/pre-push"
   },
   "dependencies": {
     "axios": "^1.13.4",
