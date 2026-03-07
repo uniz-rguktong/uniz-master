@@ -1,0 +1,10 @@
+var R=require("../../../../chunks/[turbopack]_runtime.js")("server/app/api/auth/[...nextauth]/route.js")
+R.c("server/chunks/[root-of-the-server]__3d06f5fd._.js")
+R.c("server/chunks/a29c7_next_fdc3649a._.js")
+R.c("server/chunks/a29c7_next-auth_055e3ae9._.js")
+R.c("server/chunks/a29c7_openid-client_79972065._.js")
+R.c("server/chunks/a29c7_jose_dist_node_cjs_c704e83e._.js")
+R.c("server/chunks/[root-of-the-server]__c29fd4a5._.js")
+R.c("server/chunks/36160__next-internal_server_app_api_auth_[___nextauth]_route_actions_89671021.js")
+R.m("[project]/apps/ornate-ems/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/apps/ornate-ems/src/app/api/auth/[...nextauth]/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)")
+module.exports=R.m("[project]/apps/ornate-ems/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/apps/ornate-ems/src/app/api/auth/[...nextauth]/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports
