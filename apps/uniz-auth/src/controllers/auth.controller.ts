@@ -78,7 +78,7 @@ export const login = async (req: Request, res: Response) => {
     let department = "";
     try {
       const rawUserUrl = (
-        process.env.USER_SERVICE_URL || "http://localhost:3002"
+        process.env.USER_SERVICE_URL || "http://uniz-user-service:3002"
       ).trim();
       const USER_SERVICE = rawUserUrl.endsWith("/health")
         ? rawUserUrl.slice(0, -7)
@@ -92,6 +92,7 @@ export const login = async (req: Request, res: Response) => {
         `${USER_SERVICE}/admin/${userType}/${normalizedUsername}`,
         {
           headers: { "x-internal-secret": INTERNAL_SECRET },
+          timeout: 5000,
         },
       );
       department =
@@ -236,7 +237,10 @@ export const requestOtp = async (req: Request, res: Response) => {
         const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
         const userRes = await axios.get(
           `${USER_SERVICE}/admin/student/${username}`,
-          { headers: { "x-internal-secret": SECRET } },
+          {
+            headers: { "x-internal-secret": SECRET },
+            timeout: 5000,
+          },
         );
         if (userRes.data?.student?.email) email = userRes.data.student.email;
       } catch (e) {}
@@ -318,7 +322,10 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
       const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
       const userRes = await axios.get(
         `${USER_SERVICE}/admin/student/${username}`,
-        { headers: { "x-internal-secret": SECRET } },
+        {
+          headers: { "x-internal-secret": SECRET },
+          timeout: 5000,
+        },
       );
       if (userRes.data?.student?.email) email = userRes.data.student.email;
     } catch (e) {}
