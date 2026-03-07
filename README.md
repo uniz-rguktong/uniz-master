@@ -1,112 +1,102 @@
-<div align="center">
-  <!-- <img src="https://res.cloudinary.com/dy2fjgt46/image/upload/v1771604895/rguktongole_logo_kbpaui.jpg" alt="UniZ Logo" width="120" /> -->
+# UniZ | University Intelligence Engine
 
-# UniZ
+[![System Build Status](https://github.com/uniz-rguktong/uniz-master/actions/workflows/main.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/main.yml)
+[![Core Infrastructure Tests](https://github.com/uniz-rguktong/uniz-master/actions/workflows/tests.yml/badge.svg)](https://github.com/uniz-rguktong/uniz-master/actions/workflows/tests.yml)
 
-### High-Performance University Management Ecosystem
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-**The digital backbone for enterprise-scale educational administration, built on a robust microservices architecture.**
+> **UNIZ SYSTEMS OPERATIONS 2026**
+> _The digital backbone for enterprise-scale educational administration, built on a robust, self-healing microservices architecture._
 
-[![Stack](https://img.shields.io/badge/Stack-Node.js%20|%20TypeScript%20|%20Docker-blue?style=for-the-badge)](https://nodejs.org/)
-[![Deployment](https://img.shields.io/badge/Deployment-VPS%20|%20Nginx%20|%20SSL-800000?style=for-the-badge)](https://api.uniz.rguktong.in)
-[![Database](https://img.shields.io/badge/Database-PostgreSQL%20|%20Prisma%20|%20Redis-4169E1?style=for-the-badge)](https://www.postgresql.org/)
+## High-Performance Ecosystem Architecture
 
-[Explore API](https://api.uniz.rguktong.in/api/v1/system/health) • [Documentation](./docs) • [Infrastructure](./infra/core-infra)
-
-</div>
-
-
----
-
-## 🏛️ Ecosystem Architecture
-
-UniZ is a **monorepo-managed microservices ecosystem** designed for high availability, sub-50ms latency, and enterprise-grade security.
-
-- **Edge Gateway**: Centralized Nginx routing with SSL termination and edge-level CORS management.
-- **Core Engine**: Bounded-context microservices handling Auth, Academics, Outpasses, and CMS.
-- **Data Layer**: High-performance PostgreSQL 17 cluster with Redis-backed message queuing and caching.
-- **Automated Workflow**: Hierarchical approval systems (Caretaker → Warden → Director) and automated grade/attendance auditing.
-
-### System Map
+UniZ is a monorepo-managed microservices ecosystem designed for high availability, low latency, and enterprise-grade security. The system runs on a K3s cluster, ensuring automated scaling and resilience.
 
 ```mermaid
 graph TD
-    User([End Users]) -->|HTTPS/TLS| Nginx{Nginx Edge Proxy}
-
-    subgraph "Core Microservices"
-        Nginx -->|/auth| Auth[Auth Service]
-        Nginx -->|/profile| UserS[User Service]
-        Nginx -->|/academics| Acad[Academics Service]
-        Nginx -->|/requests| Out[Outpass Service]
-        Nginx -->|/files| File[Files Service]
+    subgraph Users ["Access Layer"]
+        Student["Student Portal"]
+        Admin["Admin/Faculty Portal"]
     end
 
-    subgraph "Infrastructure"
-        Auth & UserS & Acad & Out & File --> DB[(PostgreSQL 17)]
-        Auth & UserS & Acad & Out --> Redis[(Redis Cache/MQ)]
+    subgraph Edge ["Edge Layer"]
+        Nginx["Nginx Ingress / Gateway"]
+        Auth_Edge["JWT & RBAC Validation"]
     end
 
-    subgraph "Background Processing"
-        Cron[Cron Service] -.->|Pulse| Redis
-        Redis -.-> Mail[Mail Service]
-        Redis -.-> Notif[Push Service]
+    subgraph Services ["Core Microservices"]
+        Academics["Academics"]
+        Auth["Auth Service"]
+        Profiles["User/Profile Service"]
+        Outpass["Outpass & Approval Engine"]
+        Mail["Mail & Notification Service"]
     end
+
+    subgraph Data ["Persistence & State"]
+        PG[(PostgreSQL 17)]
+        Redis[(Redis Cache & Queue)]
+    end
+
+    Student & Admin -->|TLS| Nginx
+    Nginx --> Auth_Edge
+    Auth_Edge --> Academics & Auth & Profiles & Outpass
+    Academics & Profiles & Outpass -->|Prisma| PG
+    Auth & Mail --> Redis
+    Redis -.->|Event Pulse| Mail
 ```
 
-## 🛠️ Microservice Directory
+## Key Innovation: Edge-First Security & Self-Healing
 
-| Service              | Responsibility                              | Port   |
-| :------------------- | :------------------------------------------ | :----- |
-| **`uniz-auth`**      | Identity, RBAC, & JWT State Management      | `3001` |
-| **`uniz-user`**      | Profiles & High-Speed CMS Content           | `3002` |
-| **`uniz-outpass`**   | Approval Workflows & Grievance Tracking     | `3003` |
-| **`uniz-academics`** | Grade Auditing, Attendance & Bulk Ingestion | `3004` |
-| **`uniz-gateway`**   | Application-level Routing & Aggregation     | `3000` |
-| **`uniz-mail`**      | Asynchronous Transactional Email Engine     | `3006` |
+1.  **Edge Gateway**: Centralized Nginx routing with edge-level CORS management and SSL termination, isolating internal services in a private Kubernetes network.
+2.  **Horizontal Scalability**: Leveraging K3s HPA to dynamically provision resources during traffic spikes.
+3.  **Atomic Data Integrity**: Prisma-backed PostgreSQL 17 cluster ensuring ACID compliance across academic workflows.
+4.  **Asynchronous Efficiency**: Moving heavy tasks like distribution and auditing to Redis-backed background workers.
+
+## Technology Stack
+
+| Layer                | Technology           | Purpose                                              |
+| :------------------- | :------------------- | :--------------------------------------------------- |
+| **Logic**            | Node.js (TypeScript) | Scalable, type-safe microservice implementation.     |
+| **Data Engine**      | PostgreSQL 17        | Relational storage for critical academic records.    |
+| **ORM**              | Prisma               | Type-safe database access and automated migrations.  |
+| **Caching/MQ**       | Redis                | Session persistence and asynchronous job queuing.    |
+| **Containerization** | Docker               | Isolated, reproducible service environments.         |
+| **Orchestration**    | K3s (Kubernetes)     | Production cluster management and auto-scaling.      |
+| **CI/CD**            | GitHub Actions       | Automated build, test, and VPS deployment pipelines. |
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js v20+
+- Docker & Docker Compose
+- Git
+
+### Local Development
+
+1.  **Initial Setup**:
+    ```bash
+    npm run install:all
+    npm run setup
+    ```
+2.  **Infrastructure**:
+    ```bash
+    npm run db:reset-migrate
+    ```
+3.  **Run Services**:
+    ```bash
+    npm run dev
+    ```
+    Access the system health check at `https://api.uniz.rguktong.in/api/v1/system/health`.
 
 ---
 
-## ⚡ Quick Start
-
-### 1. Prerequisites
-
-- **Node.js** v20+
-- **Docker** & Docker Compose
-- **Git**
-
-### 2. Installation
-
-```bash
-# Clone and install dependencies
-git clone https://github.com/uniz-rguktong/uniz-master.git
-cd uniz-master
-npm run install:all
-
-# Setup local infrastructure
-cp infra/core-infra/.env.example infra/core-infra/.env
-npm run setup
-npm run db:reset-migrate
-```
-
-### 3. Execution
-
-```bash
-# Launch development containers
-npm run dev
-```
-
----
-
-## 🔒 Security & Deployment
-
-- **Identity**: Stateless JWT with Role-Based Access Control (RBAC).
-- **Network**: Services isolated in private Docker networks; only Nginx is exposed.
-- **Safety**: Immutable production directories with `chattr` bit-locking on the VPS.
-- **Edge**: Centralized CORS & Header sanitization at the Nginx layer for maximum security.
-
----
-
-<div align="center">
-  <p><b>UniZ Systems Operations - 2026</b></p>
-  <i>Empowering higher education through agentic-first engineering.</i>
-</div>
+<p align="center">
+  Built with dedication by <b>SreeCharan</b> | 2026
+</p>
