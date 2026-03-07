@@ -21,6 +21,7 @@ import {
   ArrowLeft,
   ChevronLeft,
   Chrome,
+  AlertCircle,
 } from "lucide-react";
 import LoginScreen from "../../components/ui/login-1";
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -376,8 +377,13 @@ export default function Signin({ type }: SigninProps) {
                 </div>
               ) : (
                 import.meta.env.DEV && (
-                  <div className="text-center py-2 text-[10px] text-amber-600 font-medium">
-                    ⚠️ Turnstile Disabled (No Site Key)
+                  <div className="flex justify-center py-2">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 border border-amber-100 rounded-full">
+                      <AlertCircle className="w-3 h-3 text-amber-600" />
+                      <span className="text-[10px] text-amber-700 font-bold tracking-tight uppercase">
+                        Turnstile Bypass (Dev Mode)
+                      </span>
+                    </div>
                   </div>
                 )
               )}
