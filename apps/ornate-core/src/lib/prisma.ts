@@ -108,7 +108,74 @@ const prismaClientSingleton = () => {
             );
           }
 
-          return query(inputArgs);
+          if (
+            process.env.DATABASE_URL?.includes("dummy") ||
+            process.env.DATABASE_URL?.includes("localhost:5432")
+          ) {
+            logger.debug(
+              { model, action: "findMany" },
+              "Bypassing findMany for dummy database during build",
+            );
+            return [];
+          }
+
+          try {
+            return await query(inputArgs);
+          } catch (error: any) {
+            if (
+              error.name === "PrismaClientInitializationError" &&
+              process.env.DATABASE_URL?.includes("dummy")
+            ) {
+              logger.warn(
+                { model },
+                "DB connection failed during build, returning empty array",
+              );
+              return [];
+            }
+            throw error;
+          }
+        },
+        async findUnique({ model, args, query }) {
+          if (process.env.DATABASE_URL?.includes("dummy")) return null;
+          try {
+            return await query(args);
+          } catch (error: any) {
+            if (
+              error.name === "PrismaClientInitializationError" &&
+              process.env.DATABASE_URL?.includes("dummy")
+            ) {
+              return null;
+            }
+            throw error;
+          }
+        },
+        async findFirst({ model, args, query }) {
+          if (process.env.DATABASE_URL?.includes("dummy")) return null;
+          try {
+            return await query(args);
+          } catch (error: any) {
+            if (
+              error.name === "PrismaClientInitializationError" &&
+              process.env.DATABASE_URL?.includes("dummy")
+            ) {
+              return null;
+            }
+            throw error;
+          }
+        },
+        async count({ model, args, query }) {
+          if (process.env.DATABASE_URL?.includes("dummy")) return 0;
+          try {
+            return await query(args);
+          } catch (error: any) {
+            if (
+              error.name === "PrismaClientInitializationError" &&
+              process.env.DATABASE_URL?.includes("dummy")
+            ) {
+              return 0;
+            }
+            throw error;
+          }
         },
       },
     },
