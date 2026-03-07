@@ -1,20 +1,42 @@
 #!/bin/bash
 
-# 1. Push code to GitHub
-echo "[Push] Pushing code to GitHub..."
-MSG=${1:-"chore: deployment update $(date +'%Y-%m-%d %H:%M:%S')"}
-git add .
-git commit -m "$MSG" || echo "No changes to commit"
-git push origin main
-
 # 2. Deploy to VPS
-echo "[Deploy] Starting VPS Deployment..."
-ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
-  cd /root/uniz-master
+# Check if we are running locally (on developer machine) or directly on VPS
+VPS_RUN=false
+for arg in "$@"; do
+  if [ "$arg" == "--vps-run" ]; then
+    VPS_RUN=true
+    break
+  fi
+done
+
+if [ "$VPS_RUN" == "true" ]; then
+  echo "[Deploy] Detected direct VPS execution..."
+  # When running on VPS, we skip the SSH wrapper and just run the logic below
+else
+  # 1. Push code to GitHub (Only if not on VPS)
+  echo "[Push] Pushing code to GitHub..."
+  MSG=${1:-"chore: deployment update $(date +'%Y-%m-%d %H:%M:%S')"}
+  git add .
+  git commit -m "$MSG" || echo "No changes to commit"
+  git push origin main
+
+  echo "[Deploy] Starting VPS Deployment..."
+  ssh -o StrictHostKeyChecking=no root@76.13.241.174 "bash /root/uniz-master/scripts/deploy.sh --vps-run '$MSG'"
   
-  echo "[Git] Fetching latest code..."
-  git fetch origin main
-  git reset --hard origin/main
+  echo "[Health] Quick check on API health..."
+  curl -s -o /dev/null -w "%{http_code}" https://api.uniz.rguktong.in/api/v1/system/health || true
+  echo -e "\n[Done] Deployment Pipeline Complete!"
+  exit 0
+fi
+
+# THE CORE DEPLOYMENT LOGIC (Runs on VPS)
+# Everything below this line is executed on the VPS environment.
+
+cd /root/uniz-master
+echo "[Git] Fetching latest code..."
+git fetch origin main
+git reset --hard origin/main
   NEW_HEAD=$(git rev-parse HEAD)
   echo "[Git] Latest Commit: $(git log -1 --format='%h - %s')"
 
@@ -169,7 +191,6 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     sleep 10
   done
   kubectl get pods
-EOF
 
 echo "[Health] Quick check on API health..."
 curl -s -o /dev/null -w "%{http_code}" https://api.uniz.rguktong.in/api/v1/system/health || true
