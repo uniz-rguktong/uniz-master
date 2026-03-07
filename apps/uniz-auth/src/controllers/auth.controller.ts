@@ -14,10 +14,21 @@ import { comparePassword, hashPassword } from "../utils/password.util";
 import { ErrorCode } from "../shared/error-codes";
 import { UserRole } from "../shared/roles.enum";
 import { UAParser } from "ua-parser-js";
+import { verifyTurnstileToken } from "../utils/turnstile.util";
 
 export const login = async (req: Request, res: Response) => {
   const username = (req.body.username || "").trim(); // Case-insensitive: handled by Prisma mode:"insensitive" below
   const password = req.body.password;
+  const captchaToken = req.body.captchaToken;
+
+  // Cloudflare Turnstile Verification
+  const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+  if (!isHuman) {
+    return res.status(400).json({
+      code: "AUTH_CAPTCHA_FAILED",
+      message: "Security verification failed. Please try again.",
+    });
+  }
 
   try {
     const user = await prisma.authCredential.findFirst({

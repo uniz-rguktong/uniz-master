@@ -23,6 +23,7 @@ import {
   Chrome,
 } from "lucide-react";
 import LoginScreen from "../../components/ui/login-1";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 type SigninProps = {
   type: "student" | "admin" | "faculty";
@@ -42,6 +43,7 @@ export default function Signin({ type }: SigninProps) {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [step, setStep] = useState<"signin" | "forgot" | "verifyOtp">("signin");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [resetToken, setResetToken] = useRecoilState(resetTokenState);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -108,6 +110,7 @@ export default function Signin({ type }: SigninProps) {
               ? username.trim().toUpperCase()
               : username.trim(),
           password: password.trim(),
+          captchaToken: captchaToken,
         }),
       });
 
@@ -291,11 +294,15 @@ export default function Signin({ type }: SigninProps) {
   };
 
   const getHeroTitle = () => {
-
     return null;
   };
 
-  const dashboardLabel = type === "student" ? "Student Login" : type === "faculty" ? "Faculty Portal" : "Administrator Portal";
+  const dashboardLabel =
+    type === "student"
+      ? "Student Login"
+      : type === "faculty"
+        ? "Faculty Portal"
+        : "Administrator Portal";
 
   return (
     <div className="min-h-screen bg-white relative">
@@ -358,6 +365,15 @@ export default function Signin({ type }: SigninProps) {
                 className="h-12"
               />
 
+              <div className="flex justify-center py-2">
+                <Turnstile
+                  siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                  onSuccess={(token) => setCaptchaToken(token)}
+                  onExpire={() => setCaptchaToken(null)}
+                  onError={() => setCaptchaToken(null)}
+                />
+              </div>
+
               <div className="flex items-center justify-end">
                 <button
                   type="button"
@@ -369,10 +385,11 @@ export default function Signin({ type }: SigninProps) {
               </div>
 
               <Button
-                className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[15px] font-bold shadow-xl shadow-slate-200"
+                className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[15px] font-bold shadow-xl shadow-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 size="lg"
                 isLoading={isLoading}
                 type="submit"
+                disabled={!captchaToken}
               >
                 Sign In
               </Button>
@@ -382,7 +399,9 @@ export default function Signin({ type }: SigninProps) {
                   <div className="w-full border-t border-slate-100"></div>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-slate-400 font-medium">Or continue with</span>
+                  <span className="bg-white px-2 text-slate-400 font-medium">
+                    Or continue with
+                  </span>
                 </div>
               </div>
 
@@ -512,4 +531,3 @@ export default function Signin({ type }: SigninProps) {
     </div>
   );
 }
-
