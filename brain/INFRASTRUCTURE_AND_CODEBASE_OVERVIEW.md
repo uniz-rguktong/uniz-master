@@ -71,15 +71,18 @@ The infrastructure has transitioned from a "Dumb Pipe" setup to **Edge-Managed R
 
 ## 4. Common Workflows
 
-### Deployment
+### Manual Deployment (Preferred)
 
-Deployment is often done by pushing code and running a sync script, or manually updating Docker services on the VPS.
+Deployment is managed via **GitHub Actions** with manual triggers to ensure oversight and authorization.
 
-- **VPS IP**: `76.13.241.174`
-- **Manual update**:
-  ```bash
-  ssh root@... "cd ~/uniz-infrastructure && docker compose -f docker-compose.prod.yml up -d --build <service>"
-  ```
+- **Workflow**: `Manual VPS Deployment` (`.github/workflows/deploy.yml`)
+- **Trigger**: `workflow_dispatch` (Manual button or `gh` CLI).
+- **Security**: Restricted to authorized users (SreeCharan).
+- **Safety**: Uses a **Build-then-Deploy** atomic logic. If the `docker build` fails on the VPS, the process aborts before any production services are restarted.
+
+```bash
+gh workflow run "Manual VPS Deployment" -f commit_message="Update v1.1"
+```
 
 ---
 
