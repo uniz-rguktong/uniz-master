@@ -64,6 +64,11 @@ function sync_local_envs() {
         IFS=':' read -r APP_DIR VARS <<< "$item"
         ENV_PATH="apps/$APP_DIR/.env"
         
+        if [ ! -f "$ENV_PATH" ] && [ -f "$ENV_PATH.example" ]; then
+            echo "   -> Initializing $APP_DIR/.env from example..."
+            cp "$ENV_PATH.example" "$ENV_PATH"
+        fi
+        
         if [ -f "$ENV_PATH" ]; then
             echo "   -> Syncing $APP_DIR..."
             IFS=',' read -ra ADDR <<< "$VARS"
