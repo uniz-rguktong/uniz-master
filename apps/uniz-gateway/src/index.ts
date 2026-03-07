@@ -179,7 +179,7 @@ app.get("/api/v1/system/health", async (req, res) => {
 });
 
 // 5. The Heavy Lifter: Streaming Proxy with Path Rewriting
-app.all("/api/v1/:service/*", cacheMiddleware, (req, res) => {
+app.all("/api/v1/:service/(.*)", cacheMiddleware, (req, res) => {
   const service = (req.params.service as string).toLowerCase();
   const target = serviceMap[service];
 
