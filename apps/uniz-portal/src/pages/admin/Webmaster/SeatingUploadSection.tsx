@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Upload,
   FileDown,
   CheckCircle2,
   AlertCircle,
-  X,
   Loader2,
   Info,
   ChevronDown,
@@ -17,6 +16,7 @@ import {
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient, downloadFile } from "../../../api/apiClient";
+import { FileUploader } from "../../../components/ui/FileUploader";
 
 export default function SeatingUploadSection() {
   const [file, setFile] = useState<File | null>(null);
@@ -56,13 +56,7 @@ export default function SeatingUploadSection() {
     fetchSemesters();
   }, []);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (f) {
-      setFile(f);
-      setResult(null);
-    }
-  };
+
 
   const handleUpload = async () => {
     if (!file || !semesterId) {
@@ -121,7 +115,7 @@ export default function SeatingUploadSection() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-6 bg-white p-7 rounded-[28px] border border-slate-100 shadow-sm animate-in slide-in-from-top-4 duration-500">
+      <div className="flex flex-col gap-6 bg-white p-7 rounded-xl border border-slate-100 shadow-none animate-in slide-in-from-top-4 duration-500">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="space-y-2">
             <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
@@ -131,7 +125,7 @@ export default function SeatingUploadSection() {
               <select
                 value={semesterId}
                 onChange={(e) => setSemesterId(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
                 disabled={semestersLoading}
               >
                 {semestersLoading ? (
@@ -159,7 +153,7 @@ export default function SeatingUploadSection() {
               <select
                 value={branch}
                 onChange={(e) => setBranch(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
               >
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
                   (b) => (
@@ -184,7 +178,7 @@ export default function SeatingUploadSection() {
               <select
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
               >
                 {["E1", "E2", "E3", "E4"].map((y) => (
                   <option key={y} value={y}>
@@ -207,7 +201,7 @@ export default function SeatingUploadSection() {
               <select
                 value={examName}
                 onChange={(e) => setExamName(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-full focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
               >
                 {["MID-1", "MID-2", "SEM-END", "REMEDIAL"].map((e) => (
                   <option key={e} value={e}>
@@ -226,7 +220,7 @@ export default function SeatingUploadSection() {
         <div className="flex justify-end pt-2 border-t border-slate-50">
           <button
             onClick={downloadTemplate}
-            className="h-11 px-6 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-full text-blue-700 font-bold uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2.5 active:scale-95 shadow-sm"
+            className="h-11 px-6 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-xl text-blue-700 font-bold uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2.5 active:scale-95 shadow-none"
           >
             <FileDown size={14} /> Download Template
           </button>
@@ -235,52 +229,19 @@ export default function SeatingUploadSection() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
-          <div
-            className={`
-            border-4 border-dashed rounded-3xl p-12 text-center transition-all relative
-            ${file ? "border-blue-600 bg-blue-50/30" : "border-slate-100 hover:border-blue-200 bg-white"}
-          `}
-          >
-            <input
-              type="file"
-              id="file-upload"
-              className="hidden"
-              onChange={handleFileSelect}
-              accept=".xlsx,.csv"
-            />
-            <label
-              htmlFor="file-upload"
-              className="cursor-pointer flex flex-col items-center gap-5"
-            >
-              <div
-                className={`p-6 rounded-[28px] transition-all duration-300 ${file ? "bg-blue-600 text-white shadow-xl shadow-blue-200 scale-105" : "bg-slate-50 text-slate-300 group-hover:bg-blue-50 group-hover:text-blue-500"}`}
-              >
-                <Upload size={48} />
-              </div>
-              <div>
-                <p className="text-xl font-semibold text-slate-900 tracking-tight leading-none mb-2">
-                  {file ? file.name : `Select seating file`}
-                </p>
-                <p className="text-slate-400 font-medium text-[15px]">
-                  Supports XLSX, XLS or CSV files
-                </p>
-              </div>
-            </label>
-
-            {file && (
-              <button
-                onClick={() => setFile(null)}
-                className="absolute top-6 right-6 p-2 bg-white rounded-full shadow-md text-red-500 hover:scale-110 transition-transform"
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
+          <FileUploader
+            onFileSelect={(f: File | null) => {
+              setFile(f);
+              setResult(null);
+            }}
+            label="Choose Seating Layout"
+            description="Supports XLSX, XLS or CSV files."
+          />
 
           <button
             disabled={!file || loading || !semesterId}
             onClick={handleUpload}
-            className="w-full bg-blue-600 text-white py-5 rounded-[24px] font-semibold uppercase tracking-[0.2em] text-[11px] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 active:scale-95"
+            className="w-full bg-blue-600 text-white py-5 rounded-xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:bg-blue-700 transition-all shadow-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 active:scale-95"
           >
             {loading ? (
               <Loader2 className="animate-spin w-5 h-5" />
@@ -294,15 +255,14 @@ export default function SeatingUploadSection() {
         <div className="space-y-6">
           {result ? (
             <div
-              className={`p-8 rounded-2xl border animate-in slide-in-from-right-8 duration-500 h-full ${
-                result.success
-                  ? "bg-emerald-50 border-emerald-100"
-                  : "bg-red-50 border-red-100"
-              }`}
+              className={`p-8 rounded-xl border animate-in slide-in-from-right-8 duration-500 h-full shadow-none ${result.success
+                ? "bg-emerald-50 border-emerald-100"
+                : "bg-red-50 border-red-100"
+                }`}
             >
               <div className="flex items-center gap-4 mb-6">
                 <div
-                  className={`p-3.5 rounded-2xl ${result.success ? "bg-emerald-500 text-white shadow-lg shadow-emerald-200" : "bg-red-500 text-white shadow-lg shadow-red-200"}`}
+                  className={`p-3.5 rounded-xl ${result.success ? "bg-emerald-500 text-white shadow-none" : "bg-red-500 text-white shadow-none"}`}
                 >
                   {result.success ? (
                     <CheckCircle2 size={26} />
@@ -323,7 +283,7 @@ export default function SeatingUploadSection() {
                     <p className="text-emerald-800 font-medium">
                       {result.message}
                     </p>
-                    <div className="p-4 bg-white/50 rounded-2xl border border-emerald-200/50">
+                    <div className="p-4 bg-white/50 rounded-xl border border-emerald-200/50 shadow-none">
                       <p className="text-[10px] uppercase font-semibold text-emerald-600 tracking-widest mb-1.5 leading-none">
                         Immediate Update
                       </p>
@@ -339,8 +299,8 @@ export default function SeatingUploadSection() {
               </div>
             </div>
           ) : (
-            <div className="p-8 rounded-[28px] bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center h-full shadow-inner">
-              <div className="p-5 bg-white rounded-2xl shadow-sm text-slate-300 mb-8 border border-slate-100">
+            <div className="p-8 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center h-full shadow-none">
+              <div className="p-5 bg-white rounded-xl shadow-none text-slate-300 mb-8 border border-slate-100">
                 <Info size={32} />
               </div>
               <h3 className="text-xl font-semibold text-slate-900 mb-2 tracking-tight">

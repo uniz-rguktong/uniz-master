@@ -4,7 +4,7 @@ import { Briefcase } from "lucide-react";
 export default function TendersSection() {
   return (
     <div className="p-8 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-      <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center text-slate-200">
+      <div className="w-24 h-24 bg-slate-50 rounded-xl flex items-center justify-center text-slate-200">
         <Briefcase size={48} strokeWidth={1} />
       </div>
       <div>

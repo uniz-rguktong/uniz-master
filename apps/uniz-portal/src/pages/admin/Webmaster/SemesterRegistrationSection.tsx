@@ -27,11 +27,11 @@ interface Semester {
   id: string;
   name: string;
   status:
-    | "DRAFT"
-    | "DEAN_REVIEW"
-    | "APPROVED"
-    | "REGISTRATION_OPEN"
-    | "REGISTRATION_CLOSED";
+  | "DRAFT"
+  | "DEAN_REVIEW"
+  | "APPROVED"
+  | "REGISTRATION_OPEN"
+  | "REGISTRATION_CLOSED";
   _count?: { registrations: number };
   createdAt: string;
 }
@@ -337,7 +337,7 @@ export default function SemesterRegistrationSection({
             {isAdmin && (
               <button
                 onClick={() => setShowNewModal(true)}
-                className="flex items-center gap-3 px-8 py-4 bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-[24px] font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-blue-200 border-2 border-white/20"
+                className="flex items-center gap-3 px-8 py-4 bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-none border-2 border-white/20"
               >
                 <Zap size={18} />
                 Start New Event
@@ -349,7 +349,7 @@ export default function SemesterRegistrationSection({
             {semesters.map((sem) => (
               <div
                 key={sem.id}
-                className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm hover:shadow-2xl hover:translate-y-[-4px] transition-all group relative overflow-hidden"
+                className="bg-white rounded-xl border border-slate-100 p-8 shadow-none transition-all group relative overflow-hidden"
               >
                 <div
                   className={`absolute top-0 right-0 w-32 h-32 opacity-[0.03] transition-transform duration-1000 group-hover:rotate-12 ${sem.status === "REGISTRATION_OPEN" ? "text-emerald-500" : "text-blue-500"}`}
@@ -359,18 +359,17 @@ export default function SemesterRegistrationSection({
 
                 <div className="flex items-start justify-between mb-8">
                   <div
-                    className={`p-4 rounded-[20px] shadow-inner ${sem.status === "REGISTRATION_OPEN" ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-400"}`}
+                    className={`p-4 rounded-xl shadow-none ${sem.status === "REGISTRATION_OPEN" ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-400"}`}
                   >
                     <Clock size={28} />
                   </div>
                   <span
-                    className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
-                      sem.status === "REGISTRATION_OPEN"
-                        ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                        : sem.status === "DEAN_REVIEW"
-                          ? "bg-amber-50 text-amber-600 border-amber-100"
-                          : "bg-slate-50 text-slate-400 border-slate-100"
-                    }`}
+                    className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${sem.status === "REGISTRATION_OPEN"
+                      ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                      : sem.status === "DEAN_REVIEW"
+                        ? "bg-amber-50 text-amber-600 border-amber-100"
+                        : "bg-slate-50 text-slate-400 border-slate-100"
+                      }`}
                   >
                     {sem.status.replace("_", " ")}
                   </span>
@@ -402,7 +401,7 @@ export default function SemesterRegistrationSection({
                 <div className="flex flex-col gap-3">
                   <button
                     onClick={() => viewDetails(sem)}
-                    className="w-full flex items-center justify-center gap-2 py-4 bg-slate-50 text-slate-600 rounded-[20px] font-bold text-sm hover:bg-blue-50 hover:text-blue-600 transition-all"
+                    className="w-full flex items-center justify-center gap-2 py-4 bg-slate-50 text-slate-600 rounded-xl font-bold text-sm hover:bg-blue-50 hover:text-blue-600 transition-all"
                   >
                     Review Allocations <ChevronRight size={16} />
                   </button>
@@ -414,7 +413,7 @@ export default function SemesterRegistrationSection({
                           onClick={() =>
                             updateStatus(sem.id, "REGISTRATION_OPEN")
                           }
-                          className="flex-1 py-4 bg-blue-600 text-white rounded-[20px] font-bold text-xs hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
+                          className="flex-1 py-4 bg-blue-600 text-white rounded-xl font-bold text-xs hover:bg-blue-700 transition-all shadow-none"
                         >
                           Open Enrollment
                         </button>
@@ -424,14 +423,14 @@ export default function SemesterRegistrationSection({
                           onClick={() =>
                             updateStatus(sem.id, "REGISTRATION_CLOSED")
                           }
-                          className="flex-1 py-4 bg-slate-900 text-white rounded-[20px] font-bold text-xs hover:bg-slate-800 transition-all"
+                          className="flex-1 py-4 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition-all"
                         >
                           Close Enrollment
                         </button>
                       )}
                       <button
                         onClick={() => deleteSemester(sem.id)}
-                        className="p-4 bg-red-50 text-red-500 rounded-[24px] hover:bg-red-500 hover:text-white transition-all border border-red-100 flex items-center justify-center"
+                        className="p-4 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all border border-red-100 flex items-center justify-center"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -441,7 +440,7 @@ export default function SemesterRegistrationSection({
               </div>
             ))}
             {semesters.length === 0 && (
-              <div className="col-span-full py-20 bg-white rounded-[40px] border border-dashed border-slate-200 text-center">
+              <div className="col-span-full py-20 bg-white rounded-xl border border-dashed border-slate-200 text-center">
                 <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Zap className="text-slate-300" size={32} />
                 </div>
@@ -458,11 +457,11 @@ export default function SemesterRegistrationSection({
       ) : (
         selectedSem && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex items-center justify-between bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
+            <div className="flex items-center justify-between bg-white p-8 rounded-xl border border-slate-100 shadow-none">
               <div className="flex items-center gap-6">
                 <button
                   onClick={() => setActiveTab("list")}
-                  className="p-3 bg-slate-50 rounded-2xl text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-all border border-transparent hover:border-blue-100"
+                  className="p-3 bg-slate-50 rounded-xl text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-all border border-transparent hover:border-blue-100"
                 >
                   <ChevronRight className="rotate-180" size={24} />
                 </button>
@@ -479,7 +478,7 @@ export default function SemesterRegistrationSection({
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => downloadExport("allocations")}
-                  className="flex items-center gap-3 px-6 py-4 bg-slate-100 text-slate-600 rounded-[20px] font-bold text-sm hover:bg-slate-200 transition-all"
+                  className="flex items-center gap-3 px-6 py-4 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all"
                 >
                   <Download size={18} />
                   Export
@@ -488,7 +487,7 @@ export default function SemesterRegistrationSection({
                   activeViewTab === "allocations" && (
                     <button
                       onClick={() => setShowAddSubjectModal(true)}
-                      className="flex items-center gap-3 px-6 py-4 bg-blue-50 text-blue-600 rounded-[20px] font-bold text-sm hover:bg-blue-100 transition-all"
+                      className="flex items-center gap-3 px-6 py-4 bg-blue-50 text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-100 transition-all"
                     >
                       <Plus size={18} />
                       Add Subject
@@ -497,19 +496,19 @@ export default function SemesterRegistrationSection({
                 {(role === "webmaster" ||
                   role === "dean" ||
                   role === "hod") && (
-                  <button
-                    onClick={approveAllocation}
-                    disabled={loading}
-                    className={`flex items-center gap-3 px-8 py-4 ${role === "dean" ? "bg-slate-900" : "bg-blue-600 shadow-blue-100"} text-white rounded-[20px] font-extrabold text-sm hover:opacity-90 transition-all shadow-xl`}
-                  >
-                    <ShieldCheck size={18} />
-                    {role === "dean"
-                      ? "Approve Rollout"
-                      : role === "hod"
-                        ? "Confirm Registration"
-                        : "Global Override"}
-                  </button>
-                )}
+                    <button
+                      onClick={approveAllocation}
+                      disabled={loading}
+                      className={`flex items-center gap-3 px-8 py-4 ${role === "dean" ? "bg-slate-900" : "bg-blue-600 shadow-none"} text-white rounded-xl font-extrabold text-sm hover:opacity-90 transition-all shadow-none`}
+                    >
+                      <ShieldCheck size={18} />
+                      {role === "dean"
+                        ? "Approve Rollout"
+                        : role === "hod"
+                          ? "Confirm Registration"
+                          : "Global Override"}
+                    </button>
+                  )}
               </div>
             </div>
 
@@ -517,13 +516,13 @@ export default function SemesterRegistrationSection({
               <div className="flex gap-4">
                 <button
                   onClick={() => setActiveViewTab("allocations")}
-                  className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${activeViewTab === "allocations" ? "bg-blue-600 text-white shadow-lg" : "bg-white text-slate-400 border border-slate-100"}`}
+                  className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${activeViewTab === "allocations" ? "bg-blue-600 text-white shadow-none" : "bg-white text-slate-400 border border-slate-100"}`}
                 >
                   Allocations
                 </button>
                 <button
                   onClick={() => setActiveViewTab("registrations")}
-                  className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${activeViewTab === "registrations" ? "bg-blue-600 text-white shadow-lg" : "bg-white text-slate-400 border border-slate-100"}`}
+                  className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${activeViewTab === "registrations" ? "bg-blue-600 text-white shadow-none" : "bg-white text-slate-400 border border-slate-100"}`}
                 >
                   Registrations
                 </button>
@@ -559,7 +558,7 @@ export default function SemesterRegistrationSection({
             </div>
 
             {activeViewTab === "allocations" ? (
-              <div className="bg-white rounded-[40px] border border-slate-100 overflow-hidden shadow-2xl shadow-slate-100/50">
+              <div className="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-none">
                 <table className="w-full text-left">
                   <thead>
                     <tr className="border-b border-slate-50 bg-slate-50/30 font-black uppercase tracking-widest text-[10px] text-slate-400">
@@ -575,7 +574,7 @@ export default function SemesterRegistrationSection({
                       >
                         <td className="px-8 py-6">
                           <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400">
+                            <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400">
                               <BookOpen size={20} />
                             </div>
                             <div>
@@ -612,7 +611,7 @@ export default function SemesterRegistrationSection({
                 </table>
               </div>
             ) : (
-              <div className="bg-white rounded-[40px] border border-slate-100 overflow-hidden">
+              <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
                 <table className="w-full text-left font-bold">
                   <thead>
                     <tr className="border-b border-slate-50 bg-slate-50/30 text-[10px] text-slate-400 uppercase tracking-widest">
@@ -648,9 +647,9 @@ export default function SemesterRegistrationSection({
       {/* New Event Modal */}
       {showNewModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-xl rounded-[40px] p-10 shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="bg-white w-full max-w-xl rounded-xl p-10 shadow-none animate-in zoom-in-95 duration-300">
             <div className="flex items-center gap-4 mb-8">
-              <div className="p-4 bg-blue-50 text-blue-600 rounded-3xl">
+              <div className="p-4 bg-blue-50 text-blue-600 rounded-xl">
                 <Zap size={32} />
               </div>
               <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">
@@ -666,7 +665,7 @@ export default function SemesterRegistrationSection({
                   type="text"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="w-full px-6 py-5 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-[24px] font-bold text-slate-900 outline-none"
+                  className="w-full px-6 py-5 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-xl font-bold text-slate-900 outline-none"
                 />
               </div>
               <div>
@@ -680,11 +679,11 @@ export default function SemesterRegistrationSection({
                       onClick={() =>
                         selectedBranches.includes(b)
                           ? setSelectedBranches(
-                              selectedBranches.filter((x) => x !== b),
-                            )
+                            selectedBranches.filter((x) => x !== b),
+                          )
                           : setSelectedBranches([...selectedBranches, b])
                       }
-                      className={`py-3 rounded-2xl font-bold text-xs border transition-all ${selectedBranches.includes(b) ? "bg-blue-600 text-white shadow-lg" : "bg-slate-50 text-slate-400 border-slate-100"}`}
+                      className={`py-3 rounded-xl font-bold text-xs border transition-all ${selectedBranches.includes(b) ? "bg-blue-600 text-white shadow-none" : "bg-slate-50 text-slate-400 border-slate-100"}`}
                     >
                       {b}
                     </button>
@@ -694,14 +693,14 @@ export default function SemesterRegistrationSection({
               <div className="flex gap-4 pt-4">
                 <button
                   onClick={() => setShowNewModal(false)}
-                  className="flex-1 py-5 bg-slate-50 text-slate-500 rounded-[24px] font-bold"
+                  className="flex-1 py-5 bg-slate-50 text-slate-500 rounded-xl font-bold"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={initSemester}
                   disabled={loading}
-                  className="flex-2 px-10 py-5 bg-slate-900 text-white rounded-[24px] font-bold shadow-xl shadow-slate-200"
+                  className="flex-2 px-10 py-5 bg-slate-900 text-white rounded-xl font-bold shadow-none"
                 >
                   Start Rolling 🚀
                 </button>
@@ -714,7 +713,7 @@ export default function SemesterRegistrationSection({
       {/* Manual Subject Add Modal */}
       {showAddSubjectModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl p-10 space-y-8 animate-in zoom-in-95 duration-300">
+          <div className="bg-white rounded-xl w-full max-w-lg overflow-hidden shadow-none p-10 space-y-8 animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-start">
               <h3 className="text-2xl font-black text-slate-900 italic">
                 Manual subject add
@@ -734,13 +733,13 @@ export default function SemesterRegistrationSection({
                 <input
                   type="text"
                   placeholder="Search code/name..."
-                  className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none text-sm"
+                  className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-xl font-bold text-slate-900 outline-none text-sm"
                   value={subjectSearchQuery}
                   onChange={(e) => setSubjectSearchQuery(e.target.value)}
                 />
                 <select
                   size={5}
-                  className="w-full px-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-700 outline-none text-xs appearance-none"
+                  className="w-full px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-700 outline-none text-xs appearance-none"
                   value={addSubjectData.subjectId}
                   onChange={(e) =>
                     setAddSubjectData({
@@ -775,7 +774,7 @@ export default function SemesterRegistrationSection({
                   Engineering Year
                 </label>
                 <select
-                  className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none"
+                  className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-xl font-bold text-slate-900 outline-none"
                   value={addSubjectData.academicYear}
                   onChange={(e) =>
                     setAddSubjectData({
@@ -794,14 +793,14 @@ export default function SemesterRegistrationSection({
               <div className="flex gap-4 pt-4">
                 <button
                   onClick={() => setShowAddSubjectModal(false)}
-                  className="flex-1 py-5 bg-slate-50 text-slate-500 rounded-2xl font-bold"
+                  className="flex-1 py-5 bg-slate-50 text-slate-500 rounded-xl font-bold"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={addSubjectToRollout}
                   disabled={loading || !addSubjectData.subjectId}
-                  className="flex-2 px-10 py-5 bg-slate-900 text-white rounded-2xl font-bold shadow-xl"
+                  className="flex-2 px-10 py-5 bg-slate-900 text-white rounded-xl font-bold shadow-none"
                 >
                   {loading ? "Adding..." : "Confirm Add 🎓"}
                 </button>
@@ -814,7 +813,7 @@ export default function SemesterRegistrationSection({
       {/* Edit Allocation Modal */}
       {editingAllocation && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl p-10 space-y-8 animate-in zoom-in-95 duration-300">
+          <div className="bg-white rounded-xl w-full max-w-lg overflow-hidden shadow-none p-10 space-y-8 animate-in zoom-in-95 duration-300">
             <h3 className="text-2xl font-black text-slate-900 italic">
               Adjust Subject
             </h3>
@@ -828,7 +827,7 @@ export default function SemesterRegistrationSection({
                     customName: e.target.value,
                   })
                 }
-                className="w-full px-6 py-4 bg-slate-50 rounded-2xl font-bold"
+                className="w-full px-6 py-4 bg-slate-50 rounded-xl font-bold"
                 placeholder="Subject Name"
               />
               <input
@@ -840,11 +839,11 @@ export default function SemesterRegistrationSection({
                     customCredits: parseInt(e.target.value),
                   })
                 }
-                className="w-full px-6 py-4 bg-slate-50 rounded-2xl font-bold"
+                className="w-full px-6 py-4 bg-slate-50 rounded-xl font-bold"
                 placeholder="Credits"
               />
 
-              <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 rounded-[24px] border border-slate-100">
+              <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 rounded-xl border border-slate-100">
                 <input
                   type="checkbox"
                   id="isMandatory"
@@ -866,7 +865,7 @@ export default function SemesterRegistrationSection({
               </div>
 
               {!editFormData.isMandatory && (
-                <div className="space-y-6 p-6 bg-blue-50/50 rounded-[32px] border border-blue-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="space-y-6 p-6 bg-blue-50/50 rounded-xl border border-blue-100 animate-in fade-in slide-in-from-top-2 duration-300">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-blue-600 px-1 block">
                       Elective Group Name
@@ -880,7 +879,7 @@ export default function SemesterRegistrationSection({
                           electiveGroupId: e.target.value,
                         })
                       }
-                      className="w-full px-6 py-4 bg-white border border-blue-100 rounded-2xl font-bold text-slate-900 outline-none"
+                      className="w-full px-6 py-4 bg-white border border-blue-100 rounded-xl font-bold text-slate-900 outline-none"
                       placeholder="e.g. Professional Elective-I"
                     />
                   </div>
@@ -897,7 +896,7 @@ export default function SemesterRegistrationSection({
                           electiveLimit: parseInt(e.target.value),
                         })
                       }
-                      className="w-full px-6 py-4 bg-white border border-blue-100 rounded-2xl font-bold text-slate-900 outline-none"
+                      className="w-full px-6 py-4 bg-white border border-blue-100 rounded-xl font-bold text-slate-900 outline-none"
                       placeholder="How many courses from this group?"
                       min={1}
                     />
@@ -907,13 +906,13 @@ export default function SemesterRegistrationSection({
               <div className="flex gap-4 pt-4">
                 <button
                   onClick={() => setEditingAllocation(null)}
-                  className="flex-1 py-5 bg-slate-50 text-slate-500 rounded-2xl font-bold"
+                  className="flex-1 py-5 bg-slate-50 text-slate-500 rounded-xl font-bold"
                 >
                   Discard
                 </button>
                 <button
                   onClick={saveAllocation}
-                  className="flex-2 px-10 py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-xl"
+                  className="flex-2 px-10 py-5 bg-blue-600 text-white rounded-xl font-bold shadow-none"
                 >
                   Save Changes
                 </button>
