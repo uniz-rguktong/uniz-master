@@ -96,7 +96,7 @@ export default function SystemLogsSection() {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="flex bg-slate-100/80 p-1 rounded-full border border-slate-200/50 backdrop-blur-sm">
+          <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/50 backdrop-blur-sm shadow-none">
             <button
               onClick={fetchHistory}
               title="Refresh Logs"
@@ -125,7 +125,7 @@ export default function SystemLogsSection() {
                 setFilterType(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-10 pr-10 h-11 bg-white border border-slate-200 rounded-full text-[10px] font-bold uppercase tracking-[0.1em] outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[160px] shadow-sm hover:shadow-md appearance-none cursor-pointer text-slate-600"
+              className="pl-10 pr-10 h-11 bg-white border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-[0.1em] outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[160px] shadow-none appearance-none cursor-pointer text-slate-600"
             >
               <option value="ALL">All Assets</option>
               <option value="STUDENTS">Students</option>
@@ -151,13 +151,13 @@ export default function SystemLogsSection() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-11 pr-5 h-12 bg-white border border-slate-200 rounded-full text-sm font-medium outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[240px] shadow-sm shadow-slate-100 placeholder:text-slate-400"
+              className="pl-11 pr-5 h-12 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[240px] shadow-none placeholder:text-slate-400"
             />
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden text-slate-900">
+      <div className="bg-white rounded-xl border border-slate-100 shadow-none overflow-hidden text-slate-900">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -213,7 +213,7 @@ export default function SystemLogsSection() {
                     >
                       <td className="px-10 py-6">
                         <div className="flex items-center gap-4">
-                          <div className="w-11 h-11 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-200 border-2 border-white ring-1 ring-slate-100 uppercase">
+                          <div className="w-11 h-11 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm border-2 border-white ring-1 ring-slate-100 uppercase shadow-none">
                             {log.uploadedBy?.[0] || "U"}
                           </div>
                           <div className="flex flex-col">
@@ -277,13 +277,13 @@ export default function SystemLogsSection() {
                       <td className="px-10 py-6">
                         <div className="w-fit">
                           {log.status === "COMPLETED" ? (
-                            <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+                            <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-100">
                               <span className="text-[9px] font-bold uppercase tracking-widest">
                                 Completed
                               </span>
                             </div>
                           ) : (
-                            <div className="flex items-center gap-1.5 text-blue-500 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+                            <div className="flex items-center gap-1.5 text-blue-500 bg-blue-50 px-3 py-1 rounded-xl border border-blue-100">
                               <span className="text-[9px] font-bold uppercase tracking-widest">
                                 {log.status || "PROCESSING"}
                               </span>
@@ -318,7 +318,7 @@ export default function SystemLogsSection() {
                 <tr>
                   <td colSpan={5} className="p-24 text-center">
                     <div className="flex flex-col items-center gap-5">
-                      <div className="p-6 bg-slate-50 rounded-full border border-slate-100 shadow-inner text-slate-300">
+                      <div className="p-6 bg-slate-50 rounded-xl border border-slate-100 shadow-none text-slate-300">
                         <AlertCircle size={40} />
                       </div>
                       <p className="font-semibold text-slate-400 italic text-sm tracking-tight">
@@ -360,7 +360,7 @@ export default function SystemLogsSection() {
                     <button
                       key={num}
                       onClick={() => setCurrentPage(num)}
-                      className={`w-8 h-8 rounded-lg text-[10px] font-bold transition-all ${currentPage === num ? "bg-slate-900 text-white shadow-lg" : "text-slate-500 hover:bg-slate-100"}`}
+                      className={`w-8 h-8 rounded-xl text-[10px] font-bold transition-all ${currentPage === num ? "bg-slate-900 text-white shadow-none" : "text-slate-500 hover:bg-slate-100"}`}
                     >
                       {num}
                     </button>
