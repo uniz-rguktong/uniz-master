@@ -1,3 +1,12 @@
+/**
+ * ==============================================================================
+ * UNIZ PORTAL - MAIN APPLICATION INTERFACE
+ * ==============================================================================
+ * Central orchestration hub for the UniZ Frontend. Handles dynamic routing,
+ * PWA lifecycle, global state guards, and high-performance component tree.
+ * ==============================================================================
+ */
+
 import { Suspense, lazy } from "react";
 import { Route, Routes, Link, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
@@ -9,7 +18,10 @@ import { useIsAuth } from "./hooks/is_authenticated";
 import { Construction, FileQuestion, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "./components/Button";
 
-// Lazy imports
+// ------------------------------------------------------------------------------
+// 1. DYNAMIC COMPONENT REGISTRY (LAZY LOADING)
+// ------------------------------------------------------------------------------
+
 const Home = lazy(() => import("./pages/home"));
 const Signin = lazy(() => import("./pages/auth/CommonSignin"));
 const Admin = lazy(() => import("./pages/admin/index"));
@@ -48,6 +60,10 @@ const Mech = lazy(() => import("./pages/departments/Mech"));
 const ECE = lazy(() => import("./pages/departments/ECE"));
 const EEE = lazy(() => import("./pages/departments/EEE"));
 const ExamCell = lazy(() => import("./pages/ExamCell"));
+
+// ------------------------------------------------------------------------------
+// 2. SYSTEM STATE GUARDS
+// ------------------------------------------------------------------------------
 
 export const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === "true";
 
@@ -129,6 +145,10 @@ const MaintenanceGuard = ({ children }: { children: JSX.Element }) => {
 
 import { InstallPWA } from "./components/InstallPWA";
 
+// ------------------------------------------------------------------------------
+// 3. MAIN APPLICATION ORCHESTRATOR
+// ------------------------------------------------------------------------------
+
 export default function App() {
   return (
     <>
@@ -149,7 +169,11 @@ export default function App() {
 
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
-          {/* Public & Auth */}
+          {/* 
+            --------------------------------------------------------------------
+            ROUTE REGISTRY: PUBLIC & AUTHENTICATION
+            --------------------------------------------------------------------
+          */}
           <Route
             path="/"
             element={
@@ -171,7 +195,11 @@ export default function App() {
             }
           />
 
-          {/* Institute Routes */}
+          {/* 
+            --------------------------------------------------------------------
+            ROUTE REGISTRY: INSTITUTE INFORMATION
+            --------------------------------------------------------------------
+          */}
           <Route
             path="/institute/campus"
             element={
@@ -197,7 +225,11 @@ export default function App() {
             }
           />
 
-          {/* Academics Routes */}
+          {/* 
+            --------------------------------------------------------------------
+            ROUTE REGISTRY: ACADEMIC POLICIES & CALENDAR
+            --------------------------------------------------------------------
+          */}
           <Route
             path="/academics/faculty"
             element={
@@ -223,7 +255,11 @@ export default function App() {
             }
           />
 
-          {/* Department Routes */}
+          {/* 
+            --------------------------------------------------------------------
+            ROUTE REGISTRY: DEPARTMENTAL PORTALS
+            --------------------------------------------------------------------
+          */}
           <Route
             path="/departments/civil"
             element={
@@ -301,7 +337,11 @@ export default function App() {
             }
           />
 
-          {/* Student Protected Routes */}
+          {/* 
+            --------------------------------------------------------------------
+            ROUTE REGISTRY: STUDENT PROTECTED ECOSYSTEM
+            --------------------------------------------------------------------
+          */}
           <Route
             path="/student"
             element={
@@ -427,7 +467,11 @@ export default function App() {
             }
           />
 
-          {/* Admin Protected Routes */}
+          {/* 
+            --------------------------------------------------------------------
+            ROUTE REGISTRY: ADMINISTRATIVE CONTROL CENTER
+            --------------------------------------------------------------------
+          */}
           <Route
             path="/admin"
             element={
@@ -559,7 +603,11 @@ export default function App() {
             }
           />
 
-          {/* Faculty Routes */}
+          {/* 
+            --------------------------------------------------------------------
+            ROUTE REGISTRY: FACULTY & ACADEMIC MANAGEMENT
+            --------------------------------------------------------------------
+          */}
           <Route
             path="/faculty"
             element={
