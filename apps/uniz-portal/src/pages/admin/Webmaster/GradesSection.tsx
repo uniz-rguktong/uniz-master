@@ -1012,8 +1012,8 @@ export default function GradesSection() {
                                       key={p}
                                       onClick={() => setPage(p)}
                                       className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${page === p
-                                          ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100"
-                                          : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
+                                        ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100"
+                                        : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
                                         }`}
                                     >
                                       {p}

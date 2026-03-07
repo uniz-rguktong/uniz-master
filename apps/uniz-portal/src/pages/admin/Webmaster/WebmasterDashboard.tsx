@@ -1,22 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Users,
   BookOpen,
   CalendarCheck,
   GraduationCap,
   LogOut,
-  Menu,
-  ChevronRight,
   LayoutDashboard,
   Layout,
   Bell,
   Activity,
   Smartphone,
-  UserCircle,
-  Settings,
+  Lock,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import ProfilePopup from "./ProfilePopup";
+import SecuritySection from "./SecuritySection";
+import WebmasterOverview from "./WebmasterOverview";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import StudentDetails from "./StudentDetails";
@@ -50,11 +49,18 @@ export default function WebmasterDashboard() {
     | "faculty_mgmt"
     | "semester_mgmt"
     | "system_logs"
+    | "security"
   >("dashboard");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const isSidebarOpen = true;
+  const [profilePopupOpen, setProfilePopupOpen] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [profileName, setProfileName] = useState<string | null>(null);
+  const [profileEmail, setProfileEmail] = useState<string | null>(null);
+  const avatarBtnRef = useRef<HTMLButtonElement>(null);
 
   const username = localStorage.getItem("username") || "Webmaster";
-  const navigate = useNavigate();
+
+  const initials = username[0]?.toUpperCase() ?? "W";
 
   const navItems = [
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
@@ -71,6 +77,7 @@ export default function WebmasterDashboard() {
     { id: "faculty_mgmt", label: "Staff Management", icon: Users },
     { id: "semester_mgmt", label: "Semester Rollout", icon: Layout },
     { id: "system_logs", label: "System & Logs", icon: Activity },
+    { id: "security", label: "Security", icon: Lock },
   ];
 
   const { logout } = useLogout();
@@ -108,54 +115,12 @@ export default function WebmasterDashboard() {
         return <SemesterRegistration />;
       case "system_logs":
         return <SystemLogsSection />;
+      case "security":
+        return <SecuritySection username={username} />;
       default:
         return (
-          <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
-            <div className="bg-gradient-to-br from-slate-900 to-[#1e293b] rounded-[28px] py-6 px-10 text-white shadow-2xl shadow-slate-200 relative overflow-hidden group">
-              <div className="relative z-10 space-y-2.5">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 backdrop-blur-md">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span className="text-[8px] font-bold uppercase tracking-widest text-emerald-400">
-                    System Secure
-                  </span>
-                </div>
-                <div>
-                  <h1 className="text-3xl font-semibold tracking-[-0.03em] mb-1.5 leading-none">
-                    Welcome, {username}
-                  </h1>
-                  <p className="text-slate-400 font-medium text-[15px] opacity-90 max-w-lg leading-relaxed">
-                    Institutional Governance Engine. Orchestrate campus
-                    operations with precision through your administrative
-                    terminal.
-                  </p>
-                </div>
-              </div>
-              <div className="absolute right-0 bottom-0 opacity-[0.03] translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform duration-1000">
-                <LayoutDashboard size={280} />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {navItems.slice(1).map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id as any)}
-                  className="bg-white p-5 rounded-[28px] border border-slate-100 shadow-sm text-left transition-all group flex flex-col justify-between min-h-[150px]"
-                >
-                  <div className="p-3.5 rounded-2xl bg-slate-50 text-slate-400 mb-4 inline-block transition-all duration-300 shadow-inner">
-                    <item.icon size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-[14px] mb-1 leading-tight transition-colors">
-                      {item.label}
-                    </h3>
-                    <p className="text-[8px] text-slate-400 uppercase tracking-[0.2em] font-black opacity-60 group-hover:text-blue-500 transition-colors">
-                      Initialize Module
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
+          <div className="animate-in fade-in duration-500">
+            <WebmasterOverview username={username} />
           </div>
         );
     }
@@ -219,10 +184,12 @@ export default function WebmasterDashboard() {
         <div className="mt-auto px-3 py-4 space-y-1 border-t border-slate-50 shrink-0">
           {/* Profile Display */}
           <div className="flex items-center px-4 py-3 group rounded-full transition-colors">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center border border-blue-200 shadow-sm overflow-hidden shrink-0">
-              <span className="text-blue-700 font-semibold text-[11px]">
-                {username[0].toUpperCase()}
-              </span>
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-blue-200 shadow-sm shrink-0 bg-blue-50 flex items-center justify-center">
+              {profilePhoto ? (
+                <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
+              ) : (
+                <span className="text-blue-700 font-semibold text-[11px]">{initials}</span>
+              )}
             </div>
             {isSidebarOpen && (
               <div className="ml-3 flex-1 min-w-0">
@@ -253,48 +220,65 @@ export default function WebmasterDashboard() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto max-h-screen">
-        <header className="bg-white/95 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-100/80 p-5 px-8 flex justify-between items-center shadow-sm shadow-slate-50/50">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="w-10 h-10 flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full hover:bg-white hover:shadow-lg transition-all md:flex hidden text-slate-400 hover:text-blue-600 active:scale-95"
-          >
-            {isSidebarOpen ? <Menu size={18} /> : <ChevronRight size={18} />}
-          </button>
+        {/* New minimal header */}
+        <header className=" sticky top-0 z-40 px-8 py-4 flex items-center justify-end">
+          {/* Right group: name+email → avatar → logout */}
           <div className="flex items-center gap-3">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold text-slate-900 leading-none">
-                {username}
+            {/* Name + email — left of avatar */}
+            <div className="text-right">
+              <p className="text-[15px] font-bold text-slate-900 leading-tight tracking-tight">
+                {profileName || username}
               </p>
-              <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
-                System Administrator
+              <p className="text-[11px] text-slate-400 font-medium mt-0.5 lowercase">
+                {profileEmail || `${username}@rguktong.ac.in`}
               </p>
             </div>
+
+            {/* Circular profile photo — opens popup */}
             <button
-              onClick={() => navigate("/admin/profile")}
-              title="My Profile"
-              className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-blue-600 transition-colors"
+              ref={avatarBtnRef}
+              onClick={() => setProfilePopupOpen((o) => !o)}
+              title="Profile"
+              className="w-11 h-11 rounded-full overflow-hidden bg-slate-200 border-2 border-white shadow-sm hover:ring-2 hover:ring-blue-400 transition-all active:scale-95 shrink-0"
             >
-              <UserCircle size={22} />
+              {profilePhoto ? (
+                <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-bold text-sm">
+                  {initials}
+                </div>
+              )}
             </button>
+
+            {/* Logout button */}
             <button
-              onClick={() => navigate("/admin/settings")}
-              title="Security Settings"
-              className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-blue-600 transition-colors"
+              onClick={handleLogout}
+              title="Sign out"
+              className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all shadow-sm active:scale-95"
             >
-              <Settings size={20} />
+              <LogOut size={16} />
             </button>
-            <div
-              onClick={() => navigate("/admin/profile")}
-              className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center font-semibold text-blue-600 cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
-              title="Go to Profile"
-            >
-              {username[0].toUpperCase()}
-            </div>
           </div>
         </header>
+
+        {/* Profile popup portal */}
+        <ProfilePopup
+          username={username}
+          anchorRef={avatarBtnRef as React.RefObject<HTMLElement>}
+          open={profilePopupOpen}
+          onClose={() => setProfilePopupOpen(false)}
+          onProfileUpdate={(p) => {
+            setProfilePhoto(p.profile_url ?? null);
+            setProfileName(p.name ?? null);
+            setProfileEmail(p.email ?? null);
+          }}
+          onLogout={handleLogout}
+          initialPhoto={profilePhoto}
+        />
 
         <div className="max-w-7xl mx-auto">{renderContent()}</div>
       </main>
     </div>
   );
 }
+

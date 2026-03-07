@@ -1,26 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Search,
-  User,
-  Mail,
-  GraduationCap,
-  MapPin,
-  Phone,
   Calendar,
   Hash,
   Loader2,
   LayoutList,
-  Trash2,
-  Users,
-  X,
   ChevronRight,
   Filter,
-  ShieldAlert,
-  ShieldCheck,
-  Pencil,
-  Save,
+  ShieldOff,
+  UserX,
+  RotateCcw,
 } from "lucide-react";
+
 import {
   ADMIN_VIEW_STUDENT,
   SEARCH_STUDENTS,
@@ -34,26 +26,8 @@ export default function StudentDetails() {
   const [studentId, setStudentId] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const role = (localStorage.getItem("admin_role") || "admin").replace(
-    /"/g,
-    "",
-  );
-  const isWebmaster = role === "webmaster";
-
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [activeDetailTab, setActiveDetailTab] = useState<
-    "profile" | "academics" | "outpass"
-  >("profile");
-  const [editFormData, setEditFormData] = useState({
-    branch: "",
-    year: "",
-    gender: "",
-    phone_number: "",
-    room_number: "",
-  });
 
   // Filter Search State
   const [branch, setBranch] = useState("CSE");
@@ -120,36 +94,12 @@ export default function StudentDetails() {
     }
   };
 
-  const fetchFullDetails = async (username: string) => {
-    setLoading(true);
-    const token = localStorage.getItem("admin_token");
-    try {
-      const res = await fetch(ADMIN_VIEW_STUDENT(username.toUpperCase()), {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-        },
-      });
-      const data = await res.json();
-      if (data.success) {
-        setSelectedStudent(data.student);
-      } else {
-        toast.error(data.msg || "Failed to fetch full details");
-      }
-    } catch (error) {
-      toast.error("Error fetching student profile");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleToggleSuspension = async (
-    e: React.MouseEvent,
     username: string,
     currentSuspendedStatus: boolean,
   ) => {
-    e.stopPropagation();
-    setIsActionLoading(username);
+    if (!window.confirm(`${currentSuspendedStatus ? "Restore" : "Suspend"} access for ${username}?`)) return;
+    setIsActionLoading(username + "_suspend");
     const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(ADMIN_SUSPEND_STUDENT(username), {
@@ -172,66 +122,40 @@ export default function StudentDetails() {
               : s,
           ),
         );
-        if (selectedStudent?.username === username) {
-          setSelectedStudent((prev: any) => ({
-            ...prev,
-            is_suspended: !currentSuspendedStatus,
-          }));
-        }
       } else {
         toast.error(data.msg || "Action failed");
       }
     } catch (error) {
-      toast.error("Error toggling suspension");
+      toast.error("Error updating suspension status");
     } finally {
       setIsActionLoading(null);
     }
   };
 
-  const handleUpdateStudent = async () => {
-    if (!selectedStudent) return;
-    setLoading(true);
+  const handleRevokeAccess = async (username: string) => {
+    if (!window.confirm(`PERMANENTLY REVOKE access for ${username}? This action is irreversible.`)) return;
+    setIsActionLoading(username + "_revoke");
     const token = localStorage.getItem("admin_token");
     try {
-      const res = await fetch(ADMIN_UPDATE_STUDENT(selectedStudent.username), {
-        method: "PUT",
+      // Assuming DELETE on student info URL as seen in FacultyManagement
+      const res = await fetch(ADMIN_UPDATE_STUDENT(username), {
+        method: "DELETE",
         headers: {
           Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-          "Content-Type": "application/json",
         },
-        body: JSON.stringify(editFormData),
       });
       const data = await res.json();
       if (data.success) {
-        toast.success("Student details updated");
-        setIsEditing(false);
-        fetchFullDetails(selectedStudent.username);
-        setSearchResults((prev) =>
-          prev.map((s) =>
-            s.username === selectedStudent.username
-              ? { ...s, ...editFormData }
-              : s,
-          ),
-        );
+        toast.success("Access revoked successfully");
+        setSearchResults((prev) => prev.filter((s) => s.username !== username));
       } else {
-        toast.error(data.msg || "Update failed");
+        toast.error(data.msg || "Revocation failed");
       }
     } catch (error) {
-      toast.error("Error updating student");
+      toast.error("Error revoking access");
     } finally {
-      setLoading(false);
+      setIsActionLoading(null);
     }
-  };
-
-  const startEditing = () => {
-    setEditFormData({
-      branch: selectedStudent.branch || "",
-      year: selectedStudent.year || "",
-      gender: selectedStudent.gender || "M",
-      phone_number: selectedStudent.phone_number || "",
-      room_number: selectedStudent.roomno || "",
-    });
-    setIsEditing(true);
   };
 
   return (
@@ -251,8 +175,6 @@ export default function StudentDetails() {
             onClick={() => {
               setSearchMode("id");
               setSearchResults([]);
-              setSelectedStudent(null);
-              setIsEditing(false);
             }}
             className={`px-8 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] transition-all ${searchMode === "id" ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50" : "text-slate-500 hover:text-blue-600"}`}
           >
@@ -262,8 +184,6 @@ export default function StudentDetails() {
             onClick={() => {
               setSearchMode("filter");
               setSearchResults([]);
-              setSelectedStudent(null);
-              setIsEditing(false);
             }}
             className={`px-8 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] transition-all ${searchMode === "filter" ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50" : "text-slate-500 hover:text-blue-600"}`}
           >
@@ -367,595 +287,118 @@ export default function StudentDetails() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div
-          className={`space-y-4 ${selectedStudent ? "lg:col-span-5" : "lg:col-span-12"}`}
-        >
-          {searchResults.length > 0 && (
-            <div className="flex items-center justify-between px-2">
+      <div className="space-y-8">
+        {/* Search Results Table - ALWAYS STAY VISIBLE */}
+        {searchResults.length > 0 && (
+          <div className="w-full animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="flex items-center justify-between px-2 mb-4">
               <h4 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Search Results ({searchResults.length})
+                Institutional Records Found ({searchResults.length})
               </h4>
             </div>
-          )}
 
-          <div className="space-y-3">
-            {searchResults.map((std) => (
-              <div
-                key={std.username}
-                onClick={() => fetchFullDetails(std.username)}
-                className={`
-                                    group flex items-center justify-between p-4 px-6 bg-white border rounded-[28px] transition-all cursor-pointer hover:shadow-xl hover:translate-y-[-2px]
-                                    ${selectedStudent?.username === std.username ? "border-blue-600 ring-4 ring-blue-600/5 shadow-2xl shadow-blue-100" : "border-slate-100 hover:border-blue-100 shadow-sm shadow-slate-50"}
-                                `}
-              >
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`w-12 h-12 rounded-[18px] flex items-center justify-center transition-colors ${selectedStudent?.username === std.username ? "bg-blue-600 text-white shadow-lg shadow-blue-100" : "bg-slate-50 text-slate-400 group-hover:bg-blue-600 group-hover:text-white"}`}
-                  >
-                    <User size={22} />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-900 tracking-tight text-[17px] leading-tight">
-                      {std.name}
-                    </p>
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <span className="text-[9px] font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100 leading-none">
-                        {std.username}
-                      </span>
-                      <span className="w-1 h-1 rounded-full bg-slate-200"></span>
-                      <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest leading-none">
-                        {std.branch}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  {isWebmaster && (
-                    <button
-                      onClick={(e) =>
-                        handleToggleSuspension(
-                          e,
-                          std.username,
-                          std.is_suspended === true,
-                        )
-                      }
-                      className={`p-3 rounded-xl transition-all border ${std.is_suspended !== true
-                          ? "text-slate-400 hover:text-red-500 hover:bg-red-50 border-transparent hover:border-red-100"
-                          : "text-emerald-500 bg-emerald-50 border-emerald-100 hover:bg-emerald-100"
-                        }`}
-                    >
-                      {isActionLoading === std.username ? (
-                        <Loader2 size={18} className="animate-spin" />
-                      ) : std.is_suspended !== true ? (
-                        <Trash2 size={18} />
-                      ) : (
-                        <ShieldCheck size={18} />
-                      )}
-                    </button>
-                  )}
-                  <ChevronRight
-                    size={18}
-                    className={`text-slate-300 transition-transform ${selectedStudent?.username === std.username ? "translate-x-1 text-blue-600" : ""}`}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {searchResults.length === 0 && !loading && (
-            <div className="p-20 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-[28px] border border-slate-100">
-              <div className="p-6 bg-slate-50 rounded-[22px] border border-slate-100 shadow-inner">
-                <Users size={40} className="text-slate-300" />
-              </div>
-              <div>
-                <p className="font-semibold text-slate-900 text-lg tracking-tight">
-                  No results found
-                </p>
-                <p className="text-[13px] font-medium text-slate-400 mt-1 italic leading-relaxed max-w-[200px]">
-                  Adjust your criteria or enter a student ID
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {selectedStudent && (
-          <div className="lg:col-span-7 animate-in fade-in zoom-in-95 duration-500 sticky top-24 h-fit">
-            <div className="bg-white rounded-[28px] border border-slate-100 shadow-2xl overflow-hidden">
-              <div className="bg-blue-600 p-8 text-white relative">
-                <div className="absolute top-6 right-6 flex items-center gap-2">
-                  {isWebmaster && (
-                    <button
-                      onClick={() =>
-                        isEditing ? setIsEditing(false) : startEditing()
-                      }
-                      className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white"
-                    >
-                      {isEditing ? <X size={20} /> : <Pencil size={18} />}
-                    </button>
-                  )}
-                  <button
-                    onClick={() => {
-                      setSelectedStudent(null);
-                      setIsEditing(false);
-                    }}
-                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-6">
-                  <div className="w-24 h-24 rounded-3xl border-4 border-white/20 overflow-hidden bg-white/10 flex items-center justify-center shrink-0">
-                    {selectedStudent.profile_url ? (
-                      <img
-                        src={selectedStudent.profile_url}
-                        className="w-full h-full object-cover"
-                        alt=""
-                      />
-                    ) : (
-                      <User size={48} className="text-white/40" />
-                    )}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-4">
-                      <h3 className="text-2xl font-semibold tracking-[-0.02em]">
-                        {selectedStudent.name}
-                      </h3>
-                      <span
-                        className={`px-3.5 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-widest ${selectedStudent.is_suspended !== true ? "bg-emerald-500 text-white shadow-lg shadow-emerald-600/20" : "bg-red-500 text-white shadow-lg shadow-red-600/20"}`}
+            <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden mb-10">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-50 bg-slate-50/20">
+                      <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Student</th>
+                      <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Credentials</th>
+                      <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</th>
+                      <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Contact</th>
+                      <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {searchResults.map((std) => (
+                      <tr
+                        key={std.username}
+                        className="group cursor-default transition-all hover:bg-slate-50/50"
                       >
-                        {selectedStudent.is_suspended !== true
-                          ? "Active"
-                          : "Suspended"}
-                      </span>
-                    </div>
-                    <p className="text-blue-100 font-semibold uppercase tracking-[0.2em] text-[10px] mt-3 opacity-70">
-                      {selectedStudent.username}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Detail Tabs */}
-                <div className="flex bg-white/10 backdrop-blur-md mt-6 p-1 rounded-[20px] border border-white/10">
-                  <button
-                    onClick={() => setActiveDetailTab("profile")}
-                    className={`flex-1 py-3.5 rounded-[16px] text-[10px] font-bold uppercase tracking-widest transition-all ${activeDetailTab === "profile" ? "bg-white text-blue-600 shadow-xl" : "text-white/60 hover:text-white"}`}
-                  >
-                    Profile
-                  </button>
-                  <button
-                    onClick={() => setActiveDetailTab("academics")}
-                    className={`flex-1 py-3.5 rounded-[16px] text-[10px] font-bold uppercase tracking-widest transition-all ${activeDetailTab === "academics" ? "bg-white text-blue-600 shadow-xl" : "text-white/60 hover:text-white"}`}
-                  >
-                    Academic Stats
-                  </button>
-                  <button
-                    onClick={() => setActiveDetailTab("outpass")}
-                    className={`flex-1 py-3.5 rounded-[16px] text-[10px] font-bold uppercase tracking-widest transition-all ${activeDetailTab === "outpass" ? "bg-white text-blue-600 shadow-xl" : "text-white/60 hover:text-white"}`}
-                  >
-                    Security Log
-                  </button>
-                </div>
+                        <td className="px-8 py-5">
+                          <div className="flex items-center gap-4">
+                            <div className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm bg-slate-800 text-white border-2 border-white ring-1 ring-slate-100 uppercase transition-all overflow-hidden shrink-0">
+                              {std.profile_url ? (
+                                <img src={std.profile_url} alt="" className="w-full h-full object-cover" />
+                              ) : (
+                                std.name?.[0] || "U"
+                              )}
+                            </div>
+                            <div className="flex flex-col">
+                              <p className="font-bold text-slate-900 tracking-tight leading-none mb-1.5">{std.name}</p>
+                              <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 leading-none">ID: {std.username}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-8 py-5">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-black uppercase tracking-widest border border-blue-100">{std.branch}</span>
+                            <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[9px] font-black uppercase tracking-widest border border-indigo-100">{std.year}</span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-5">
+                          <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border ${std.is_suspended !== true ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-red-50 text-red-500 border-red-100"}`}>
+                            <span className={`w-1 h-1 rounded-full ${std.is_suspended !== true ? "bg-emerald-500" : "bg-red-500"}`}></span>
+                            <span className="text-[9px] font-bold uppercase tracking-widest">{std.is_suspended !== true ? "Active" : "Suspended"}</span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-5">
+                          <p className="text-xs font-semibold text-slate-600 tracking-tight">{std.email}</p>
+                        </td>
+                        <td className="px-8 py-5">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleToggleSuspension(std.username, std.is_suspended === true)}
+                              disabled={isActionLoading === std.username + "_suspend"}
+                              className={`p-2 rounded-lg transition-all flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest ${std.is_suspended === true ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100" : "bg-amber-50 text-amber-600 hover:bg-amber-100"}`}
+                              title={std.is_suspended === true ? "Restore Access" : "Suspend Access"}
+                            >
+                              {isActionLoading === std.username + "_suspend" ? (
+                                <Loader2 size={14} className="animate-spin" />
+                              ) : std.is_suspended === true ? (
+                                <RotateCcw size={14} />
+                              ) : (
+                                <ShieldOff size={14} />
+                              )}
+                              {std.is_suspended === true ? "Restore" : "Suspend"}
+                            </button>
+                            <button
+                              onClick={() => handleRevokeAccess(std.username)}
+                              disabled={isActionLoading === std.username + "_revoke"}
+                              className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-all flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest"
+                              title="Revoke Access"
+                            >
+                              {isActionLoading === std.username + "_revoke" ? (
+                                <Loader2 size={14} className="animate-spin" />
+                              ) : (
+                                <UserX size={14} />
+                              )}
+                              Revoke
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-
-              {activeDetailTab === "profile" && (
-                <>
-                  {isEditing ? (
-                    <div className="p-8 space-y-6 bg-white">
-                      <div className="grid grid-cols-2 gap-6">
-                        <div className="space-y-2.5">
-                          <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                            Branch
-                          </label>
-                          <select
-                            value={editFormData.branch}
-                            onChange={(e) =>
-                              setEditFormData({
-                                ...editFormData,
-                                branch: e.target.value,
-                              })
-                            }
-                            className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all cursor-pointer"
-                          >
-                            {[
-                              "CSE",
-                              "ECE",
-                              "EEE",
-                              "MECH",
-                              "CIVIL",
-                              "CHEM",
-                              "MME",
-                            ].map((b) => (
-                              <option key={b}>{b}</option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="space-y-2.5">
-                          <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                            Year
-                          </label>
-                          <select
-                            value={editFormData.year}
-                            onChange={(e) =>
-                              setEditFormData({
-                                ...editFormData,
-                                year: e.target.value,
-                              })
-                            }
-                            className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all cursor-pointer"
-                          >
-                            {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
-                              <option key={y}>{y}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-6">
-                        <div className="space-y-2.5">
-                          <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                            Gender
-                          </label>
-                          <select
-                            value={editFormData.gender}
-                            onChange={(e) =>
-                              setEditFormData({
-                                ...editFormData,
-                                gender: e.target.value,
-                              })
-                            }
-                            className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all cursor-pointer"
-                          >
-                            <option value="M">Male</option>
-                            <option value="F">Female</option>
-                            <option value="O">Other</option>
-                          </select>
-                        </div>
-                        <div className="space-y-2.5">
-                          <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                            Phone
-                          </label>
-                          <input
-                            type="tel"
-                            value={editFormData.phone_number}
-                            onChange={(e) =>
-                              setEditFormData({
-                                ...editFormData,
-                                phone_number: e.target.value,
-                              })
-                            }
-                            className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all"
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2.5">
-                        <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                          Room Number
-                        </label>
-                        <input
-                          type="text"
-                          value={editFormData.room_number}
-                          onChange={(e) =>
-                            setEditFormData({
-                              ...editFormData,
-                              room_number: e.target.value,
-                            })
-                          }
-                          className="w-full h-12 px-5 bg-slate-50 border border-slate-100 rounded-[18px] focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-semibold text-slate-900 transition-all"
-                        />
-                      </div>
-                      <div className="pt-4 flex gap-4">
-                        <button
-                          onClick={() => setIsEditing(false)}
-                          className="flex-1 h-12 flex items-center justify-center rounded-[18px] font-semibold text-sm bg-slate-50 text-slate-600 border border-slate-100 hover:bg-slate-100 transition-all active:scale-[0.98]"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={handleUpdateStudent}
-                          disabled={loading}
-                          className="flex-1 h-12 flex items-center justify-center rounded-[18px] font-semibold text-sm bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all active:scale-[0.98] disabled:opacity-50 gap-2"
-                        >
-                          {loading ? (
-                            <Loader2 className="animate-spin w-4 h-4" />
-                          ) : (
-                            <Save size={18} />
-                          )}{" "}
-                          Save Changes
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-white">
-                      <DetailItem
-                        icon={Mail}
-                        label="Email Address"
-                        value={selectedStudent.email}
-                      />
-                      <DetailItem
-                        icon={Phone}
-                        label="Phone Number"
-                        value={selectedStudent.phone_number || "Not provided"}
-                      />
-                      <DetailItem
-                        icon={MapPin}
-                        label="Room & Address"
-                        value={`${selectedStudent.roomno || "Not Assigned"}, Dept: ${selectedStudent.department || selectedStudent.branch}`}
-                      />
-                      <DetailItem
-                        icon={Calendar}
-                        label="Date of Birth"
-                        value={selectedStudent.date_of_birth || "Not provided"}
-                      />
-                      <DetailItem
-                        icon={GraduationCap}
-                        label="Campus Status"
-                        value={
-                          selectedStudent.is_in_campus
-                            ? "Present in Campus"
-                            : "Outside Campus"
-                        }
-                      />
-                      <DetailItem
-                        icon={Users}
-                        label="Parental Guardian"
-                        value={selectedStudent.father_name || "Not provided"}
-                      />
-
-                      {isWebmaster && (
-                        <div className="md:col-span-2 pt-4">
-                          <button
-                            onClick={(e) =>
-                              handleToggleSuspension(
-                                e,
-                                selectedStudent.username,
-                                selectedStudent.is_suspended === true,
-                              )
-                            }
-                            disabled={
-                              isActionLoading === selectedStudent.username
-                            }
-                            className={`w-full ${selectedStudent.is_suspended === true ? "uniz-primary-btn bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20 hover:shadow-emerald-600/30" : "uniz-primary-btn bg-red-600 hover:bg-red-700 shadow-red-600/20 hover:shadow-red-600/30"}`}
-                          >
-                            {isActionLoading === selectedStudent.username ? (
-                              <Loader2 size={16} className="animate-spin" />
-                            ) : selectedStudent.is_suspended === true ? (
-                              <ShieldCheck size={16} />
-                            ) : (
-                              <ShieldAlert size={16} />
-                            )}
-                            {selectedStudent.is_suspended === true
-                              ? "Restore Student Access"
-                              : "Suspend Student Access"}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </>
-              )}
-
-              {activeDetailTab === "academics" && (
-                <div className="p-8 space-y-8 bg-slate-50/30 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  {/* Key Stats Grid */}
-                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div className="p-6 bg-white border border-slate-100 rounded-[28px] shadow-sm hover:shadow-md transition-all">
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-2">
-                        CGPA
-                      </p>
-                      <h4 className="text-4xl font-black text-slate-900 leading-none">
-                        {selectedStudent.cgpa || "0.00"}
-                      </h4>
-                      <p className="text-[10px] font-medium text-slate-400 mt-2 italic">
-                        Cumulative Performance
-                      </p>
-                    </div>
-                    <div className="p-6 bg-white border border-slate-100 rounded-[28px] shadow-sm hover:shadow-md transition-all">
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 mb-2">
-                        Attendance
-                      </p>
-                      <h4 className="text-4xl font-black text-slate-900 leading-none">
-                        {selectedStudent.attendance_summary?.overall_percent ||
-                          "0"}
-                        %
-                      </h4>
-                      <p className="text-[10px] font-medium text-slate-400 mt-2 italic">
-                        Campus Presence
-                      </p>
-                    </div>
-                    <div className="p-6 bg-white border border-slate-100 rounded-[28px] shadow-sm hover:shadow-md transition-all col-span-2 lg:col-span-1">
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600 mb-2">
-                        Incompletes
-                      </p>
-                      <h4 className="text-4xl font-black text-slate-900 leading-none">
-                        {selectedStudent.total_backlogs || 0}
-                      </h4>
-                      <p className="text-[10px] font-medium text-slate-400 mt-2 italic">
-                        Pending Credits
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Motivation Banner (If available) */}
-                  {selectedStudent.motivation && (
-                    <div className="p-5 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-[24px] text-white flex items-center gap-4 shadow-lg shadow-blue-100">
-                      <div className="p-3 bg-white/20 rounded-xl">
-                        <GraduationCap size={20} className="text-amber-300" />
-                      </div>
-                      <div>
-                        <p className="text-[9px] font-black uppercase tracking-widest text-blue-100 opacity-70">
-                          Saber Intelligence Insight
-                        </p>
-                        <p className="font-bold text-sm leading-tight mt-0.5">
-                          {selectedStudent.motivation}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Detailed Data */}
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between px-2">
-                      <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                        Subject Breakdown
-                      </h5>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-3">
-                      {selectedStudent.grades?.length > 0 ? (
-                        selectedStudent.grades.map((g: any, i: number) => (
-                          <div
-                            key={i}
-                            className="bg-white p-5 rounded-[22px] border border-slate-100 flex items-center justify-between group hover:border-blue-200 transition-all"
-                          >
-                            <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center font-bold text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                                {g.grade >= 10 ? "EX" : g.grade}
-                              </div>
-                              <div>
-                                <p className="font-bold text-slate-900 text-sm">
-                                  {g.subject.name}
-                                </p>
-                                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-0.5">
-                                  {g.subject.code} • {g.subject.credits} Credits
-                                </p>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1.5 justify-end">
-                                <span
-                                  className={`w-1.5 h-1.5 rounded-full ${g.grade >= 5 ? "bg-emerald-500" : "bg-red-500"}`}
-                                ></span>
-                                <p
-                                  className={`text-[11px] font-black uppercase tracking-widest ${g.grade >= 5 ? "text-emerald-600" : "text-red-600"}`}
-                                >
-                                  {g.grade >= 5 ? "Passed" : "Remedial"}
-                                </p>
-                              </div>
-                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                                {g.semesterId}
-                              </p>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="p-12 text-center bg-white rounded-[28px] border border-slate-100">
-                          <LayoutList
-                            className="mx-auto text-slate-200 mb-4"
-                            size={32}
-                          />
-                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
-                            No academic records found
-                            <br />
-                            for this student
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeDetailTab === "outpass" && (
-                <div className="p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="flex items-center justify-between px-2">
-                    <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      Movement History
-                    </h5>
-                  </div>
-
-                  <div className="space-y-4">
-                    {selectedStudent.outpass_history?.length > 0 ? (
-                      selectedStudent.outpass_history.map(
-                        (op: any, i: number) => (
-                          <div
-                            key={i}
-                            className="relative pl-8 border-l-2 border-slate-100 pb-2 last:pb-0"
-                          >
-                            <div
-                              className={`absolute left-[-9px] top-0 w-4 h-4 rounded-full border-2 border-white shadow-sm ${op.status === "APPROVED" ? "bg-emerald-500" : "bg-slate-300"}`}
-                            ></div>
-                            <div className="bg-white p-5 rounded-[22px] border border-slate-100 shadow-sm">
-                              <div className="flex justify-between items-start">
-                                <div>
-                                  <p className="font-bold text-slate-900 text-sm">
-                                    {op.type.toUpperCase()}
-                                  </p>
-                                  <p className="text-[11px] font-medium text-slate-500 mt-1">
-                                    {op.reason}
-                                  </p>
-                                </div>
-                                <span
-                                  className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${op.status === "APPROVED" ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-400"}`}
-                                >
-                                  {op.status}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-4 mt-4 pt-3 border-t border-slate-50">
-                                <div className="flex items-center gap-1.5 text-slate-400">
-                                  <Calendar size={12} />
-                                  <span className="text-[10px] font-bold tabular-nums">
-                                    From:{" "}
-                                    {new Date(op.fromDate).toLocaleDateString()}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-1.5 text-slate-400">
-                                  <Calendar size={12} />
-                                  <span className="text-[10px] font-bold tabular-nums">
-                                    To:{" "}
-                                    {new Date(op.toDate).toLocaleDateString()}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ),
-                      )
-                    ) : (
-                      <div className="p-12 text-center bg-white rounded-[28px] border border-slate-100 border-dashed">
-                        <MapPin
-                          className="mx-auto text-slate-200 mb-4"
-                          size={32}
-                        />
-                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                          No movement logs recorded
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
-      </div>
-    </div>
-  );
-}
 
-function DetailItem({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: any;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="p-6 rounded-[22px] border border-slate-100 bg-slate-50/20 flex items-start gap-5 transition-all hover:bg-slate-50">
-      <div className="p-2.5 bg-white rounded-xl text-slate-400 border border-slate-100 shadow-sm">
-        <Icon size={18} />
-      </div>
-      <div>
-        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-1.5 leading-none">
-          {label}
-        </p>
-        <p className="font-semibold text-slate-900 text-[15px] leading-tight break-all">
-          {value}
-        </p>
+        {/* Empty State */}
+        {searchResults.length === 0 && !loading && (
+          <div className="p-20 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-[28px] border border-slate-100">
+            <div className="p-6 bg-slate-50 rounded-[22px] border border-slate-100 shadow-inner">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users text-slate-300"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+            </div>
+            <div>
+              <p className="font-semibold text-slate-900 text-lg tracking-tight">Search for a student to begin</p>
+              <p className="text-[13px] font-medium text-slate-400 mt-1 italic">Records will appear in high-fidelity list view</p>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
