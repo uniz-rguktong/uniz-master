@@ -7,6 +7,7 @@ import {
   AlertCircle,
   Filter,
   ChevronDown,
+  Download,
 } from "lucide-react";
 import { ADMIN_UPLOAD_HISTORY, TRIGGER_CRON } from "../../../api/endpoints";
 import { toast } from "react-toastify";
@@ -29,7 +30,7 @@ export default function SystemLogsSection() {
     const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(ADMIN_UPLOAD_HISTORY, {
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
       });
       const data = await res.json();
       if (data.success) {
@@ -47,7 +48,7 @@ export default function SystemLogsSection() {
     const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(TRIGGER_CRON, {
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
       });
       const data = await res.json();
       if (data.success) {
@@ -191,97 +192,128 @@ export default function SystemLogsSection() {
                     </tr>
                   ))
               ) : paginatedHistory.length > 0 ? (
-                paginatedHistory.map((log: any, idx: number) => (
-                  <tr
-                    key={log.id || idx}
-                    className="hover:bg-slate-50/30 transition-all group"
-                  >
-                    <td className="px-10 py-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-11 h-11 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-200 border-2 border-white ring-1 ring-slate-100 uppercase">
-                          {log.uploadedBy?.[0] || "U"}
+                paginatedHistory.map((log: any, idx: number) => {
+                  const errorsJson =
+                    typeof log.errors === "string"
+                      ? JSON.parse(log.errors)
+                      : log.errors;
+                  const downloadUrl =
+                    errorsJson?.fileUrl ||
+                    (log.filename?.startsWith("http") ? log.filename : null);
+                  const displayFilename =
+                    errorsJson?.originalName ||
+                    (log.filename?.startsWith("http")
+                      ? "Uploaded_File"
+                      : log.filename);
+
+                  return (
+                    <tr
+                      key={log.id || idx}
+                      className="hover:bg-slate-50/30 transition-all group"
+                    >
+                      <td className="px-10 py-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-11 h-11 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-200 border-2 border-white ring-1 ring-slate-100 uppercase">
+                            {log.uploadedBy?.[0] || "U"}
+                          </div>
+                          <div className="flex flex-col">
+                            <p className="font-semibold text-slate-900 tracking-tight leading-none mb-1">
+                              {log.uploadedBy || "System"}
+                            </p>
+                            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 leading-none">
+                              ID: {log.id?.slice(0, 8) || "AUDIT"}
+                            </p>
+                          </div>
                         </div>
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="flex flex-col gap-1.5">
+                          <div className="flex items-center gap-2">
+                            <p
+                              className="text-sm font-semibold text-slate-800 tracking-tight truncate max-w-[200px]"
+                              title={displayFilename}
+                            >
+                              {displayFilename || "Automated sync"}
+                            </p>
+                            {downloadUrl && (
+                              <a
+                                href={downloadUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                title="Download Source File"
+                                className="text-slate-400 hover:text-blue-600 transition-colors bg-white hover:bg-slate-50 p-1.5 rounded-md border border-slate-200"
+                              >
+                                <Download size={14} />
+                              </a>
+                            )}
+                          </div>
+                          <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-bold uppercase tracking-wider w-fit border border-blue-100">
+                            {log.type || "NONE"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-bold text-slate-900">
+                              {log.totalRows || 0}
+                            </p>
+                            <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">
+                              Rows
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1">
+                              <span className="w-1 h-1 rounded-full bg-emerald-500"></span>{" "}
+                              {log.successCount || 0}
+                            </span>
+                            <span className="text-[10px] font-bold text-red-400 flex items-center gap-1">
+                              <span className="w-1 h-1 rounded-full bg-red-400"></span>{" "}
+                              {log.failCount || 0}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="w-fit">
+                          {log.status === "COMPLETED" ? (
+                            <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+                              <span className="text-[9px] font-bold uppercase tracking-widest">
+                                Completed
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5 text-blue-500 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+                              <span className="text-[9px] font-bold uppercase tracking-widest">
+                                {log.status || "PROCESSING"}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-10 py-6">
                         <div className="flex flex-col">
-                          <p className="font-semibold text-slate-900 tracking-tight leading-none mb-1">
-                            {log.uploadedBy || "System"}
+                          <p className="text-sm font-semibold tracking-tight text-slate-700">
+                            {new Date(log.createdAt).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )}
                           </p>
-                          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 leading-none">
-                            ID: {log.id?.slice(0, 8) || "AUDIT"}
+                          <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
+                            {new Date(log.createdAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
                           </p>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-10 py-6">
-                      <div className="flex flex-col gap-1">
-                        <p
-                          className="text-sm font-semibold text-slate-800 tracking-tight truncate max-w-[200px]"
-                          title={log.filename}
-                        >
-                          {log.filename || "Automated sync"}
-                        </p>
-                        <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-bold uppercase tracking-wider w-fit border border-blue-100">
-                          {log.type || "NONE"}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-10 py-6">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-bold text-slate-900">
-                            {log.totalRows || 0}
-                          </p>
-                          <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">
-                            Rows
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1">
-                            <span className="w-1 h-1 rounded-full bg-emerald-500"></span>{" "}
-                            {log.successCount || 0}
-                          </span>
-                          <span className="text-[10px] font-bold text-red-400 flex items-center gap-1">
-                            <span className="w-1 h-1 rounded-full bg-red-400"></span>{" "}
-                            {log.failCount || 0}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-10 py-6">
-                      <div className="w-fit">
-                        {log.status === "COMPLETED" ? (
-                          <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
-                            <span className="text-[9px] font-bold uppercase tracking-widest">
-                              Completed
-                            </span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-1.5 text-blue-500 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
-                            <span className="text-[9px] font-bold uppercase tracking-widest">
-                              {log.status || "PROCESSING"}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-10 py-6">
-                      <div className="flex flex-col">
-                        <p className="text-sm font-semibold tracking-tight text-slate-700">
-                          {new Date(log.createdAt).toLocaleDateString("en-GB", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </p>
-                        <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
-                          {new Date(log.createdAt).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
                   <td colSpan={5} className="p-24 text-center">

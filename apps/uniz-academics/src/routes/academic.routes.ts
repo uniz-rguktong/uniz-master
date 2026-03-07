@@ -36,7 +36,13 @@ import {
   deleteSemester,
   deleteAllocation,
   getRegistrations,
+  getSemesterOverview,
 } from "../controllers/registration.controller";
+import {
+  getSeatingTemplate,
+  uploadSeating,
+  getStudentSeating,
+} from "../controllers/seating.controller";
 import {
   getFaculties,
   getFacultyProfile,
@@ -104,6 +110,7 @@ router.get("/semester", getSemesters);
 router.post("/semester/init", initSemester);
 router.patch("/semester/status/:id", updateSemesterStatus);
 router.put("/semester/status/:id", updateSemesterStatus);
+router.get("/semester/overview", getSemesterOverview);
 router.delete("/semester/:id", deleteSemester);
 
 router.get("/dean/review/:branch", getDeanAllocations);
@@ -126,6 +133,9 @@ router.get("/faculty/:id", getFacultyProfile);
 router.post("/faculty", createFaculty);
 router.put("/faculty/:id", updateFaculty);
 router.delete("/faculty/:id", deleteFaculty);
-router.patch("/faculty/:id/role", updateFacultyRole);
+// Seating Arrangement
+router.get("/seating/student", getStudentSeating);
+router.get("/seating/template", getSeatingTemplate);
+router.post("/seating/upload", upload.single("file"), uploadSeating);
 
 export default router;

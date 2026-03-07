@@ -17,7 +17,7 @@ spec:
       containers:
         - name: mail-service
           image: uniz-mail-service:local
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3006
           env:

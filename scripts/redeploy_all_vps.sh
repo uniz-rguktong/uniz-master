@@ -14,12 +14,12 @@ SERVICES=(
   "uniz-portal:uniz-portal:uniz-portal"
 )
 
-echo "🚀 Starting Full System Redeploy on VPS..."
+echo "[Push] Starting Full System Redeploy on VPS..."
 
 for item in "${SERVICES[@]}"; do
   IFS=':' read -r IMAGE DIR DEPLOY <<< "$item"
-  echo "📦 Building and Deploying $DEPLOY..."
+  echo "[Build] Building and Deploying $DEPLOY..."
   ssh -o StrictHostKeyChecking=no root@76.13.241.174 "cd /root/uniz-master && docker build -t $IMAGE:local apps/$DIR && docker save $IMAGE:local | /usr/local/bin/k3s ctr images import - && kubectl rollout restart deployment $DEPLOY"
 done
 
-echo "✅ All services successfully rolled out!"
+echo "[OK] All services successfully rolled out!"

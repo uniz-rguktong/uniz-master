@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration Details</title>
+    <style>
+      body {
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        color: #1a1a1a;
+        margin: 0;
+        padding: 60px;
+        background-color: #fff;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-45deg);
+        font-size: 150px;
+        color: rgba(0, 0, 0, 0.03);
+        z-index: 0;
+        white-space: nowrap;
+        font-weight: 900;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 40px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .logo {
+        font-size: 28px;
+        font-weight: 800;
+        color: #1a1a1a;
+        letter-spacing: -1px;
+      }
+
+      .badge {
+        padding: 6px 16px;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .badge-confirmed {
+        background-color: #d1fae5;
+        color: #065f46;
+      }
+
+      .badge-waitlisted {
+        background-color: #fef3c7;
+        color: #92400e;
+      }
+
+      .section {
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #f3f4f6;
+        padding-bottom: 8px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .field {
+        margin-bottom: 10px;
+      }
+
+      .label {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-bottom: 2px;
+      }
+
+      .value {
+        font-size: 15px;
+        font-weight: 500;
+        color: #1a1a1a;
+      }
+
+      .qr-section {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+      }
+
+      .qr-code {
+        width: 120px;
+        height: 120px;
+        border: 1px solid #e5e7eb;
+        padding: 5px;
+        border-radius: 10px;
+      }
+
+      .footer {
+        margin-top: 60px;
+        text-align: center;
+        font-size: 12px;
+        color: #9ca3af;
+        border-top: 2px dashed #f3f4f6;
+        padding-top: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div className="container">
+      <div className="watermark">{{status}}</div>
+
+      <div className="header">
+        <div className="logo">Ornate-EMS</div>
+        <div className="{`badge" badge-{{status_lower}}`}>{{status}}</div>
+      </div>
+
+      <div className="section">
+        <div className="section-title">Registration Info</div>
+        <div className="grid">
+          <div className="field">
+            <div className="label">Registration ID</div>
+            <div className="value">#{{registration_id}}</div>
+          </div>
+          <div className="field">
+            <div className="label">Date Generated</div>
+            <div className="value">{{generated_date}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="section">
+        <div className="section-title">Student Details</div>
+        <div className="grid">
+          <div className="field">
+            <div className="label">Full Name</div>
+            <div className="value">{{student_name}}</div>
+          </div>
+          <div className="field">
+            <div className="label">Roll Number</div>
+            <div className="value">{{roll_number}}</div>
+          </div>
+          <div className="field">
+            <div className="label">E-mail Address</div>
+            <div className="value">{{email}}</div>
+          </div>
+          <div className="field">
+            <div className="label">Phone Number</div>
+            <div className="value">{{phone}}</div>
+          </div>
+          <div className="field">
+            <div className="label">Year / Branch</div>
+            <div className="value">{{year}} / {{branch}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="section">
+        <div className="section-title">Event Details</div>
+        <div className="grid">
+          <div className="field">
+            <div className="label">Event Name</div>
+            <div className="value">{{event_name}}</div>
+          </div>
+          <div className="field">
+            <div className="label">Category</div>
+            <div className="value">{{category}}</div>
+          </div>
+          <div className="field">
+            <div className="label">Event Date</div>
+            <div className="value">{{event_date}}</div>
+          </div>
+          <div className="field">
+            <div className="label">Venue</div>
+            <div className="value">{{venue}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="qr-section">
+        <img src="{{qr_code}}" className="qr-code" alt="Verification QR Code" />
+      </div>
+
+      <div className="footer">
+        Thank you for registering with Ornate-EMS. Please present this document
+        at the venue.
+      </div>
+    </div>
+  </body>
+</html>

@@ -11,7 +11,7 @@ spec:
           containers:
             - name: storage-cleaner
               image: uniz-cron-service:local
-              imagePullPolicy: Never
+              imagePullPolicy: IfNotPresent
               command:
                 [
                   "node",

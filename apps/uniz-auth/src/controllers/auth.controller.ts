@@ -51,11 +51,40 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const normalizedUsername = user.username.toUpperCase();
+    let department = "";
+    try {
+      const rawUserUrl = (
+        process.env.USER_SERVICE_URL || "http://localhost:3002"
+      ).trim();
+      const USER_SERVICE = rawUserUrl.endsWith("/health")
+        ? rawUserUrl.slice(0, -7)
+        : rawUserUrl;
+      const INTERNAL_SECRET = (
+        process.env.INTERNAL_SECRET || "uniz-core"
+      ).trim();
+
+      const userType = user.role === UserRole.STUDENT ? "student" : "faculty";
+      const userRes = await axios.get(
+        `${USER_SERVICE}/admin/${userType}/${normalizedUsername}`,
+        {
+          headers: { "x-internal-secret": INTERNAL_SECRET },
+        },
+      );
+      department =
+        userRes.data?.[userType]?.department ||
+        userRes.data?.[userType]?.branch ||
+        "";
+    } catch (e) {
+      console.warn(
+        `[AUTH] Could not fetch department for ${normalizedUsername}`,
+      );
+    }
 
     const token = signToken({
       id: user.id,
       username: normalizedUsername,
       role: user.role as UserRole,
+      department,
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
     });
@@ -599,18 +628,19 @@ export const signup = async (req: Request, res: Response) => {
 
     if (existing) {
       if (isInternal) {
-        // Upsert behavior for internal services
-        const updated = await prisma.authCredential.update({
-          where: { id: existing.id },
-          data: {
-            passwordHash: hashedPassword,
-            role: role || existing.role,
-          },
-        });
+        // For internal bulk-upload calls: NEVER reset the password of an
+        // existing user. Only update the role if it changed.
+        // Resetting the password would lock out students who already changed theirs.
+        if (role && role !== existing.role) {
+          await prisma.authCredential.update({
+            where: { id: existing.id },
+            data: { role },
+          });
+        }
         return res.json({
           success: true,
-          message: "Credential updated",
-          id: updated.id,
+          message: "Credential already exists (skipped password reset)",
+          id: existing.id,
         });
       }
 

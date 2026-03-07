@@ -321,8 +321,14 @@ export const updateAllocation = async (
   res: Response,
 ) => {
   const { id } = req.params;
-  const { customName, customCredits, isApproved } = req.body;
-
+  const {
+    customName,
+    customCredits,
+    isApproved,
+    isMandatory,
+    electiveGroupId,
+    electiveLimit,
+  } = req.body;
   try {
     const allocation = await prisma.branchAllocation.update({
       where: { id },
@@ -330,7 +336,12 @@ export const updateAllocation = async (
         customName,
         customCredits: customCredits ? Number(customCredits) : undefined,
         isApproved: isApproved !== undefined ? isApproved : undefined,
-      },
+        isMandatory: isMandatory !== undefined ? isMandatory : undefined,
+        electiveGroupId:
+          electiveGroupId !== undefined ? electiveGroupId : undefined,
+        electiveLimit:
+          electiveLimit !== undefined ? Number(electiveLimit) : undefined,
+      } as any,
     });
     res.json({ success: true, allocation });
   } catch (e: any) {
@@ -530,7 +541,86 @@ export const registerSubjects = async (
       return res.status(403).json({ error: "Registration is not open" });
     }
 
-    // 2. Perform subject registration
+    // 2. Fetch student details to get branch (department)
+    let studentBranch = (user as any).department;
+    if (!studentBranch) {
+      try {
+        const studentRes = await axios.get(
+          `${GATEWAY_URL}/profile/student/me`,
+          {
+            headers: { Authorization: req.headers.authorization },
+          },
+        );
+        studentBranch = studentRes.data?.department || studentRes.data?.branch;
+      } catch (err) {
+        console.warn(
+          "Failed to fetch student branch, falling back to subject branch check",
+        );
+      }
+    }
+
+    const allocations = await prisma.branchAllocation.findMany({
+      where: {
+        semesterId: sem.id,
+        ...(studentBranch
+          ? { branch: { equals: studentBranch, mode: "insensitive" } }
+          : {}),
+        isApproved: true,
+      },
+      include: { subject: true },
+    });
+
+    // If we didn't have studentBranch, infer it from the first allocation for validation
+    if (!studentBranch && allocations.length > 0) {
+      studentBranch = allocations[0].branch;
+    }
+
+    // Check mandatory subjects
+    const mandatoryMissing = allocations
+      .filter((a: any) => a.isMandatory)
+      .filter((a) => !subjectIds.includes(a.subjectId));
+
+    if (mandatoryMissing.length > 0) {
+      return res.status(400).json({
+        error: `Missing mandatory subjects: ${mandatoryMissing.map((m) => m.subject.name).join(", ")}`,
+      });
+    }
+
+    // Check elective group limits
+    const electiveGroups: Record<
+      string,
+      { limit: number; names: string[]; selectedCount: number }
+    > = {};
+    allocations.forEach((a: any) => {
+      if (a.electiveGroupId && a.electiveGroupId.trim() !== "") {
+        if (!electiveGroups[a.electiveGroupId]) {
+          electiveGroups[a.electiveGroupId] = {
+            limit: a.electiveLimit || 1,
+            names: [],
+            selectedCount: 0,
+          };
+        }
+        electiveGroups[a.electiveGroupId].names.push(a.subject.name);
+        if (subjectIds.includes(a.subjectId)) {
+          electiveGroups[a.electiveGroupId].selectedCount++;
+        }
+      }
+    });
+
+    for (const [groupId, group] of Object.entries(electiveGroups)) {
+      if (group.selectedCount > group.limit) {
+        return res.status(400).json({
+          error: `Group ${groupId}: You can only select ${group.limit} subjects from: ${group.names.join(", ")}`,
+        });
+      }
+      if (group.selectedCount < group.limit) {
+        return res.status(400).json({
+          error: `Group ${groupId}: Please select exactly ${group.limit} subjects from: ${group.names.join(", ")}`,
+        });
+      }
+    }
+
+    // 3. Perform subject registration
     await Promise.all(
       subjectIds.map((id: string) =>
         prisma.registration.upsert({
@@ -770,5 +860,132 @@ export const getRegistrations = async (
   } catch (error) {
     console.error("Get Registrations Error:", error);
     res.status(500).json({ error: "Failed to fetch registrations" });
+  }
+};
+/**
+ * @desc Get summary of the current semester for the logged-in user
+ */
+export const getSemesterOverview = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+  try {
+    // 1. Get the latest active semester
+    const activeSem = await prisma.academicSemester.findFirst({
+      where: {
+        status: {
+          in: [
+            "DEAN_REVIEW",
+            "REGISTRATION_OPEN",
+            "REGISTRATION_CLOSED",
+            "APPROVED",
+          ],
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (!activeSem) {
+      return res.json({ semester: null, data: null });
+    }
+
+    if (user.role === "student") {
+      // For Students: Show registered subjects
+      const registrations = await prisma.registration.findMany({
+        where: {
+          studentId: user.username,
+          semesterId: activeSem.id,
+          status: "REGISTERED",
+        },
+        include: { subject: true },
+      });
+
+      const totalCredits = registrations.reduce(
+        (acc, r) => acc + r.subject.credits,
+        0,
+      );
+
+      return res.json({
+        semester: activeSem,
+        role: "student",
+        data: {
+          registrations: registrations.map((r) => ({
+            id: r.id,
+            subjectCode: r.subject.code,
+            subjectName: r.subject.name,
+            credits: r.subject.credits,
+            registeredAt: r.createdAt,
+          })),
+          summary: {
+            subjectCount: registrations.length,
+            totalCredits,
+          },
+        },
+      });
+    } else {
+      // For Admins/Faculty: Show branch-wise summary
+      const branchAllocations = await prisma.branchAllocation.findMany({
+        where: {
+          semesterId: activeSem.id,
+        },
+        include: { subject: true },
+      });
+
+      // Group by branch
+      const branchSummary: Record<string, any> = {};
+      branchAllocations.forEach((alloc) => {
+        if (!branchSummary[alloc.branch]) {
+          branchSummary[alloc.branch] = {
+            subjectCount: 0,
+            totalCredits: 0,
+            academicYears: new Set(),
+            subjects: [],
+          };
+        }
+        branchSummary[alloc.branch].subjects.push({
+          code: alloc.subject.code,
+          name: alloc.customName || alloc.subject.name,
+          credits: alloc.customCredits || alloc.subject.credits,
+          year: alloc.academicYear,
+          isApproved: alloc.isApproved,
+          status: alloc.status,
+          isMandatory: (alloc as any).isMandatory,
+          electiveGroupId: (alloc as any).electiveGroupId,
+          electiveLimit: (alloc as any).electiveLimit,
+        });
+        branchSummary[alloc.branch].subjectCount++;
+        branchSummary[alloc.branch].totalCredits +=
+          alloc.customCredits || alloc.subject.credits;
+        if (alloc.academicYear)
+          branchSummary[alloc.branch].academicYears.add(alloc.academicYear);
+      });
+
+      // Convert Sets to Arrays for JSON
+      const finalBranchSummary = Object.entries(branchSummary).map(
+        ([branch, details]) => ({
+          branch,
+          ...details,
+          academicYears: Array.from(details.academicYears).sort(),
+        }),
+      );
+
+      return res.json({
+        semester: activeSem,
+        role: user.role,
+        data: {
+          branches: finalBranchSummary,
+          summary: {
+            totalBranches: finalBranchSummary.length,
+            totalSubjects: branchAllocations.length,
+          },
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Semester Overview Error:", error);
+    res.status(500).json({ error: "Failed to fetch semester overview" });
   }
 };

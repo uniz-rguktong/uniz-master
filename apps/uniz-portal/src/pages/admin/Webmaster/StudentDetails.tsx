@@ -297,6 +297,7 @@ export default function StudentDetails() {
               </h4>
             </div>
 
+<<<<<<< HEAD
             <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden mb-10">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
@@ -314,6 +315,136 @@ export default function StudentDetails() {
                       <tr
                         key={std.username}
                         className="group cursor-default transition-all hover:bg-slate-50/50"
+=======
+          <div className="space-y-3">
+            {searchResults.map((std) => (
+              <div
+                key={std.username}
+                onClick={() => fetchFullDetails(std.username)}
+                className={`
+                                    group flex items-center justify-between p-4 px-6 bg-white border rounded-[28px] transition-all cursor-pointer hover:shadow-xl hover:translate-y-[-2px]
+                                    ${selectedStudent?.username === std.username ? "border-blue-600 ring-4 ring-blue-600/5 shadow-2xl shadow-blue-100" : "border-slate-100 hover:border-blue-100 shadow-sm shadow-slate-50"}
+                                `}
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`w-12 h-12 rounded-[18px] flex items-center justify-center transition-colors ${selectedStudent?.username === std.username ? "bg-blue-600 text-white shadow-lg shadow-blue-100" : "bg-slate-50 text-slate-400 group-hover:bg-blue-600 group-hover:text-white"}`}
+                  >
+                    <User size={22} />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900 tracking-tight text-[17px] leading-tight">
+                      {std.name}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <span className="text-[9px] font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100 leading-none">
+                        {std.username}
+                      </span>
+                      <span className="w-1 h-1 rounded-full bg-slate-200"></span>
+                      <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest leading-none">
+                        {std.branch}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  {isWebmaster && (
+                    <button
+                      onClick={(e) =>
+                        handleToggleSuspension(
+                          e,
+                          std.username,
+                          std.is_suspended === true,
+                        )
+                      }
+                      className={`p-3 rounded-xl transition-all border ${
+                        std.is_suspended !== true
+                          ? "text-slate-400 hover:text-red-500 hover:bg-red-50 border-transparent hover:border-red-100"
+                          : "text-emerald-500 bg-emerald-50 border-emerald-100 hover:bg-emerald-100"
+                      }`}
+                    >
+                      {isActionLoading === std.username ? (
+                        <Loader2 size={18} className="animate-spin" />
+                      ) : std.is_suspended !== true ? (
+                        <Trash2 size={18} />
+                      ) : (
+                        <ShieldCheck size={18} />
+                      )}
+                    </button>
+                  )}
+                  <ChevronRight
+                    size={18}
+                    className={`text-slate-300 transition-transform ${selectedStudent?.username === std.username ? "translate-x-1 text-blue-600" : ""}`}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {searchResults.length === 0 && !loading && (
+            <div className="p-20 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-[28px] border border-slate-100">
+              <div className="p-6 bg-slate-50 rounded-[22px] border border-slate-100 shadow-inner">
+                <Users size={40} className="text-slate-300" />
+              </div>
+              <div>
+                <p className="font-semibold text-slate-900 text-lg tracking-tight">
+                  No results found
+                </p>
+                <p className="text-[13px] font-medium text-slate-400 mt-1 italic leading-relaxed max-w-[200px]">
+                  Adjust your criteria or enter a student ID
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {selectedStudent && (
+          <div className="lg:col-span-7 animate-in fade-in zoom-in-95 duration-500 sticky top-24 h-fit">
+            <div className="bg-white rounded-[28px] border border-slate-100 shadow-2xl overflow-hidden">
+              <div className="bg-blue-600 p-8 text-white relative">
+                <div className="absolute top-6 right-6 flex items-center gap-2">
+                  {isWebmaster && (
+                    <button
+                      onClick={() =>
+                        isEditing ? setIsEditing(false) : startEditing()
+                      }
+                      className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white"
+                    >
+                      {isEditing ? <X size={20} /> : <Pencil size={18} />}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      setSelectedStudent(null);
+                      setIsEditing(false);
+                    }}
+                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-6">
+                  <div className="w-24 h-24 rounded-3xl border-4 border-white/20 overflow-hidden bg-white/10 flex items-center justify-center shrink-0">
+                    {selectedStudent.profile_url ? (
+                      <img
+                        src={selectedStudent.profile_url}
+                        className="w-full h-full object-cover"
+                        alt=""
+                      />
+                    ) : (
+                      <User size={48} className="text-white/40" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-4">
+                      <h3 className="text-2xl font-semibold tracking-[-0.02em]">
+                        {selectedStudent.name}
+                      </h3>
+                      <span
+                        className={`px-3.5 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-widest ${selectedStudent.is_suspended !== true ? "bg-emerald-500 text-white shadow-lg shadow-emerald-600/20" : "bg-red-500 text-white shadow-lg shadow-red-600/20"}`}
+>>>>>>> origin/main
                       >
                         <td className="px-8 py-5">
                           <div className="flex items-center gap-4">

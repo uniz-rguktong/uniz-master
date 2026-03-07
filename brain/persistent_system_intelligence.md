@@ -173,20 +173,19 @@ _(This section to be expanded as APIs are indexed)_
 
 ## 7. Deployment Layer
 
-- **Registry**: Docker Hub (`desusreecharan/uniz-*`)
-- **Pipeline**:
-
-```bash
-TAG=local-$(date +%s)
-ssh -o StrictHostKeyChecking=no root@76.13.241.174 "cd /root/uniz-master && docker build --no-cache -t <SERVICE_IMAGE>:$TAG apps/<SOURCE_DIR> && docker save <SERVICE_IMAGE>:$TAG | /usr/local/bin/k3s ctr images import - && kubectl set image deployment/<DEPLOYMENT_NAME> <CONTAINER_NAME>=<SERVICE_IMAGE>:$TAG"
-```
-
-- **Hotfix Workflow**:
-  1.  Create local patch file (`gateway_patch.ts`).
-  2.  `cat patch | ssh root@host "cat > ..."`
-  3.  Build image locally on VPS.
-  4.  Restart container.
+- **Registry**: Local Build on VPS (Domestic paritied builds).
+- **Pipeline**: GitHub Actions Manual Trigger (`deploy.yml`).
+- **Safety Protocol**: **Build-then-Deploy**.
+  - Script (`deploy.sh`) attempts `docker build`.
+  - If exit code != 0, script executes `exit 1` instantly.
+  - Zero downtime is maintained as old pods remain running if build fails.
+- **Workflow**:
+  1. Push code to `main`.
+  2. Run `gh workflow run "Manual VPS Deployment"`.
+  3. GitHub Actions authenticates via secrets (`VPS_IP`, `VPS_USER`, `VPS_PASSWORD`).
+  4. Script pulls and builds on VPS.
+  5. Script imports and restarts K8s deployments.
 
 ---
 
-**Last Updated**: 2026-03-05
+**Last Updated**: 2026-03-07

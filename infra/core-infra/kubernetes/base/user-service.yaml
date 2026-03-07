@@ -17,7 +17,7 @@ spec:
       containers:
         - name: user-service
           image: uniz-user-service:local
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3002
           env:

@@ -230,7 +230,8 @@ export default function RequestComp({ type }: RequestCompProps) {
                   Authorization Note
                 </p>
                 <p className="text-slate-500 font-medium text-xs leading-relaxed">
-                  Terminal requests are vetted by faculty. All fields are mandatory for successful processing.
+                  Terminal requests are vetted by faculty. All fields are
+                  mandatory for successful processing.
                 </p>
               </div>
             </div>

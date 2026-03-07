@@ -13,10 +13,9 @@ const GATEWAY_URL = (
 
 const getHeaders = (token: string) => ({ headers: { Authorization: token } });
 
-import { mapGradeToPoint } from "../utils/helpers.util";
+import { mapGradeToPoint, getGpaDialogue } from "../utils/helpers.util";
 import { randomUUID } from "crypto";
 import { redis, notificationQueue } from "../utils/redis.util";
-import { generateMotivation } from "../utils/ai.util";
 import { processNextBatch } from "../services/upload.service";
 import { generateResultPdf, generateAttendancePdf } from "../utils/pdf.util";
 
@@ -363,7 +362,7 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
 
   try {
     const isFiltered = sem || y;
-    const cacheKey = `grades:${targetStudentId.toUpperCase()}`;
+    const cacheKey = `grades_v3:${targetStudentId.toUpperCase()}`;
 
     if (!isFiltered) {
       const cached = await redis.get(cacheKey);
@@ -401,6 +400,8 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
           id: true,
           semesterId: true,
           grade: true,
+          isRemedial: true,
+          updatedAt: true,
           subject: {
             select: {
               code: true,
@@ -460,43 +461,6 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
       }
     }
 
-    // 2. Generate AI Motivational Message
-    let motivation = "";
-    const motivationCacheKey = `motivation:${targetStudentId}:${semester || "all"}:${year || "all"}`;
-    const cachedMotivation = await redis.get(motivationCacheKey);
-
-    if (cachedMotivation) {
-      motivation = cachedMotivation;
-    } else {
-      let attSummary = null;
-      if (attendance.length > 0) {
-        const total = attendance.reduce(
-          (acc, curr) => acc + curr.totalClasses,
-          0,
-        );
-        const attended = attendance.reduce(
-          (acc, curr) => acc + curr.attendedClasses,
-          0,
-        );
-        const percent = total > 0 ? Math.round((attended / total) * 100) : 0;
-        attSummary = {
-          overallPercentage: percent,
-          status: percent >= 75 ? "GOOD" : "POOR",
-        };
-      }
-
-      // OPTIMIZATION: Don't await the AI call.
-      // Return empty motivation now, but trigger background generation to populate cache for the NEXT refresh.
-      // This makes the API feel instant.
-      generateMotivation(gpaResults, attSummary)
-        .then((mot) => redis.setex(motivationCacheKey, 43200, mot))
-        .catch((err) =>
-          console.error("Background motivation failed:", err.message),
-        );
-
-      motivation = "Fetching your personalized advice... (Refresh in a moment)";
-    }
-
     // Calculate Overall CGPA and Backlogs
     let totalEarnedPoints = 0;
     let totalWeightedCredits = 0;
@@ -516,6 +480,12 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
       totalWeightedCredits > 0
         ? parseFloat((totalEarnedPoints / totalWeightedCredits).toFixed(2))
         : 0;
+
+    // 2. Generate GPA-based Motivational Message
+    // Find the latest semester GPA to provide a relevant dialogue
+    const latestSemId = Object.keys(gpaResults).sort().pop();
+    const gpaForDialogue = latestSemId ? gpaResults[latestSemId].gpa : cgpa;
+    const motivation = getGpaDialogue(gpaForDialogue);
 
     const responsePayload = {
       success: true,
@@ -1656,7 +1626,8 @@ export const getGradesTemplate = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { branch, year, semesterId, subjectCode, remedialsOnly } = req.query;
+  const { branch, year, semesterId, subjectCode, remedialsOnly, batch } =
+    req.query;
   const token = req.headers.authorization;
 
   try {
@@ -1695,7 +1666,8 @@ export const getGradesTemplate = async (
         `${GATEWAY_URL}/profile/student/search`,
         {
           branch,
-          year,
+          year: !batch ? year : undefined,
+          batch: batch || undefined,
           limit: 10000, // High limit for all students
         },
         getHeaders(token!),
@@ -1811,18 +1783,42 @@ export const uploadGrades = async (req: any, res: Response) => {
     });
 
     const total = rows.length;
-    // If rows > 2000, consider chunking or storing in Blob storage.
-    // Assuming < 2000 rows as per requirements.
+
+    // Upload to Cloudinary
+    let fileUrl = null;
+    try {
+      const FormData = require("form-data");
+      const form = new FormData();
+      form.append("file", req.file.buffer, req.file.originalname);
+      const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+      const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+
+      form.append("upload_preset", uploadPreset);
+      form.append(
+        "public_id",
+        `uniz/grades_${req.file.originalname.replace(".xlsx", "")}_${Date.now()}`,
+      );
+
+      const resUpload = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
+        form,
+        { headers: form.getHeaders() },
+      );
+      fileUrl = resUpload.data.secure_url;
+    } catch (err) {
+      console.warn("[Academics] Cloudinary grades upload failed:", err);
+    }
 
     // Create Job Payload
     const uploadId = randomUUID();
     const job = {
-      jobId: uploadId, // Use uploadId as jobId for consistency
-      uploadId, // Add explicit uploadId field
+      jobId: uploadId,
+      uploadId,
+      fileUrl, // Store CDN Link
       type: "GRADES",
       rows,
       total,
-      user: { username: user.username }, // Minimal user info needed
+      user: { username: user.username },
       filename: req.file.originalname,
       createdAt: Date.now(),
     };
@@ -1922,7 +1918,7 @@ export const getAttendanceTemplate = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { branch, year, semesterId } = req.query;
+  const { branch, year, semesterId, batch } = req.query;
   const token = req.headers.authorization;
 
   try {
@@ -1930,7 +1926,8 @@ export const getAttendanceTemplate = async (
       `${GATEWAY_URL}/profile/student/search`,
       {
         branch,
-        year,
+        year: !batch ? year : undefined,
+        batch: batch || undefined,
         limit: 10000,
       },
       getHeaders(token!),
@@ -2042,11 +2039,37 @@ export const uploadAttendance = async (req: any, res: Response) => {
 
     const total = rows.length;
 
+    // Upload to Cloudinary
+    let fileUrl = null;
+    try {
+      const FormData = require("form-data");
+      const form = new FormData();
+      form.append("file", req.file.buffer, req.file.originalname);
+      const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+      const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+
+      form.append("upload_preset", uploadPreset);
+      form.append(
+        "public_id",
+        `uniz/attendance_${req.file.originalname.replace(".xlsx", "")}_${Date.now()}`,
+      );
+
+      const resUpload = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
+        form,
+        { headers: form.getHeaders() },
+      );
+      fileUrl = resUpload.data.secure_url;
+    } catch (err) {
+      console.warn("[Academics] Cloudinary attendance upload failed:", err);
+    }
+
     // Create Job Payload
     const uploadId = randomUUID();
     const job = {
       jobId: uploadId,
       uploadId,
+      fileUrl, // Store CDN Link
       type: "ATTENDANCE",
       rows,
       total,
@@ -2218,6 +2241,7 @@ export const downloadGrades = async (
       semesterId,
       grades: grades.map((g) => ({
         grade: g.grade,
+        isRemedial: g.isRemedial,
         subject: {
           code: g.subject.code,
           name: g.subject.name,

@@ -8,6 +8,7 @@ export const JwtPayloadSchema = z.object({
   iat: z.number().optional(),
   exp: z.number().optional(),
   jti: z.string().optional(),
+  department: z.string().optional(),
 });
 
 export type JwtPayload = z.infer<typeof JwtPayloadSchema>;

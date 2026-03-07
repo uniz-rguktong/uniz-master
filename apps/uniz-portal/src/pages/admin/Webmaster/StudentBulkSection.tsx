@@ -9,11 +9,9 @@ import {
   Download,
   History,
   ChevronDown,
-  FileSpreadsheet,
 } from "lucide-react";
 import {
   ADMIN_STUDENT_UPLOAD,
-  ADMIN_STUDENT_TEMPLATE,
   ADMIN_STUDENT_PROGRESS,
   ADMIN_STUDENT_EXPORT,
 } from "../../../api/endpoints";
@@ -33,23 +31,7 @@ export default function StudentBulkSection() {
     fields: "username,name,email,branch,section",
   });
 
-  // Template Function
-  const downloadTemplate = async () => {
-    const token = localStorage.getItem("admin_token");
-    try {
-      const res = await fetch(ADMIN_STUDENT_TEMPLATE, {
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
-      });
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "student_upload_template.xlsx";
-      a.click();
-    } catch (error) {
-      toast.error("Failed to download template");
-    }
-  };
+
   // Bulk Upload Function
   const handleUpload = async () => {
     if (!file) return;
@@ -141,121 +123,83 @@ export default function StudentBulkSection() {
           </p>
         </div>
 
-        <div className="flex flex-col items-end gap-3">
-          <div className="flex bg-slate-100/80 p-1.5 rounded-full border border-slate-200/60 backdrop-blur-sm shadow-inner">
-            <button
-              onClick={() => setActiveTab("upload")}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "upload" ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
-            >
-              <Upload size={14} /> Bulk Upload
-            </button>
-            <button
-              onClick={() => setActiveTab("export")}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "export" ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
-            >
-              <Download size={14} /> Batch Export
-            </button>
-          </div>
-          {/* Download Template button moved here */}
+        <div className="flex bg-slate-100/80 p-1.5 rounded-full border border-slate-200/60 backdrop-blur-sm shadow-inner">
           <button
-            onClick={downloadTemplate}
-            className="flex items-center gap-2 px-4 py-1.5 text-blue-600 hover:text-blue-700 transition-all font-bold uppercase tracking-widest text-[9px] border border-blue-100 bg-blue-50/50 rounded-full hover:bg-blue-50"
+            onClick={() => setActiveTab("upload")}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "upload" ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
           >
-            <FileSpreadsheet size={12} /> Download Template
+            <Upload size={14} /> Bulk Upload
+          </button>
+          <button
+            onClick={() => setActiveTab("export")}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "export" ? "bg-white text-blue-700 shadow-lg shadow-blue-100/50 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
+          >
+            <Download size={14} /> Batch Export
           </button>
         </div>
       </div>
 
       {activeTab === "upload" ? (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-7">
-            <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden transition-all hover:shadow-xl">
-              <div className="p-8 border-b border-slate-50 bg-slate-50/30">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-100">
-                    <Upload size={22} />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold tracking-tight text-slate-900">
-                      Record Synchronization
-                    </h3>
-                    <p className="text-slate-400 text-xs font-medium mt-1 uppercase tracking-widest">
-                      Upload XLSX/CSV to update student profiles
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-8 space-y-6">
+        <div className="max-w-4xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+          {/* Upload Step */}
+          <div className="bg-white p-6 md:p-8 rounded-[40px] border border-slate-100 shadow-xl space-y-6 transition-all hover:shadow-2xl">
+            <div
+              className={`
+                border-4 border-dashed rounded-[32px] p-8 md:p-12 text-center transition-all relative
+                ${file ? "border-blue-600 bg-blue-50/50 shadow-inner" : "border-slate-100 hover:border-blue-200 bg-slate-50/30 hover:bg-slate-50/50"}
+              `}
+            >
+              <input
+                type="file"
+                id="bulk-student-file"
+                className="hidden"
+                accept=".xlsx,.xls,.csv"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+              />
+              <label
+                htmlFor="bulk-student-file"
+                className="cursor-pointer flex flex-col items-center gap-6"
+              >
                 <div
-                  className={`
-                    border-4 border-dashed rounded-[32px] p-12 text-center transition-all relative group
-                    ${file ? "border-emerald-500 bg-emerald-50/30" : "border-slate-100 hover:border-blue-200 bg-slate-50/30"}
-                  `}
+                  className={`p-6 rounded-[28px] transition-all duration-500 ${file ? "bg-blue-600 text-white animate-pulse shadow-2xl shadow-blue-200" : "bg-white text-slate-300 shadow-xl border border-slate-50"}`}
                 >
-                  <input
-                    type="file"
-                    id="bulk-student-file"
-                    className="hidden"
-                    accept=".xlsx,.xls,.csv"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  />
-                  <label
-                    htmlFor="bulk-student-file"
-                    className="cursor-pointer flex flex-col items-center gap-5"
-                  >
-                    <div
-                      className={`p-7 rounded-[28px] transition-all duration-500 transform group-hover:scale-110 ${file ? "bg-emerald-500 text-white shadow-xl shadow-emerald-100" : "bg-white text-slate-300 shadow-sm border border-slate-100"}`}
-                    >
-                      {file ? <CheckCircle2 size={36} /> : <FileSpreadsheet size={36} />}
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-2xl font-bold text-slate-900 tracking-tight">
-                        {file ? file.name : "Select Data Asset"}
-                      </p>
-                      <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">
-                        {file ? "File ready for commit" : "Drag and drop or click to browse"}
-                      </p>
-                    </div>
-                  </label>
-                  {file && (
-                    <button
-                      onClick={() => setFile(null)}
-                      className="absolute top-6 right-6 p-2.5 bg-white rounded-full shadow-lg text-red-500 hover:bg-red-50 hover:scale-110 transition-all border border-slate-100"
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
+                  <Upload size={32} />
                 </div>
-
-                <div className="flex items-center gap-4 p-5 bg-blue-50/50 rounded-2xl border border-blue-100/50">
-                  <div className="p-2 bg-blue-600 rounded-lg text-white">
-                    <History size={14} />
-                  </div>
-                  <p className="text-[11px] text-blue-800 font-bold leading-relaxed">
-                    System ensures schema integrity before ingestion. Supports up to 5,000 records per batch.
+                <div className="space-y-2">
+                  <p className="text-2xl font-bold text-slate-900 tracking-tight">
+                    {file ? file.name : "Choose XLSX File"}
+                  </p>
+                  <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em]">
+                    Maximum 5000 records per upload
                   </p>
                 </div>
-
+              </label>
+              {file && (
                 <button
-                  onClick={handleUpload}
-                  disabled={!file || loading || !!uploadId}
-                  className="w-full h-16 bg-blue-600 text-white rounded-[24px] font-black uppercase tracking-widest text-xs shadow-2xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98] disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
+                  onClick={() => setFile(null)}
+                  className="absolute top-6 right-6 p-3 bg-white rounded-full shadow-2xl text-red-500 hover:scale-110 hover:bg-red-50 transition-all border border-red-50"
                 >
-                  {loading ? (
-                    <Loader2 className="animate-spin w-5 h-5" />
-                  ) : (
-                    <Upload size={20} />
-                  )}
-                  {loading ? "Initializing..." : "Commit Batch Records"}
+                  <X size={16} />
                 </button>
-              </div>
+              )}
             </div>
-          </div>
-          {/* Progress UI integrated inside the card or below it */}
-          <div className="lg:col-span-5">
+
+            <button
+              onClick={handleUpload}
+              disabled={!file || loading || !!uploadId}
+              className="w-full h-16 bg-blue-600 text-white rounded-[24px] font-bold uppercase tracking-[0.2em] text-[11px] shadow-xl shadow-blue-100 hover:bg-blue-700 hover:scale-[1.01] transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
+            >
+              {loading ? (
+                <Loader2 className="animate-spin w-5 h-5" />
+              ) : (
+                <CheckCircle2 size={20} />
+              )}
+              Initiate Bulk Provisioning
+            </button>
+
+            {/* Progress UI integrated inside the card or below it */}
             {(progress || uploadId) && (
-              <div className="pt-10 lg:pt-0 animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="pt-10 border-t border-slate-100 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="bg-slate-900 rounded-[32px] p-8 text-white space-y-8 relative overflow-hidden">
                   <div className="flex items-center justify-between relative z-10">
                     <div className="flex items-center gap-4">

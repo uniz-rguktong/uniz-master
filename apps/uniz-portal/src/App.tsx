@@ -30,6 +30,9 @@ const UpdateStatus = lazy(() => import("./components/UpdateStudentStatus"));
 const AddFaculty = lazy(() => import("./pages/admin/AddFaculty"));
 const SecurityPortal = lazy(() => import("./pages/admin/SecurityPortal"));
 const AdminProfile = lazy(() => import("./pages/admin/Profile"));
+const CurrentSemesterAdmin = lazy(
+  () => import("./pages/admin/CurrentSemesterAdmin"),
+);
 const ContactUs = lazy(() => import("./pages/ContactUs"));
 
 // Public Info Pages
@@ -404,6 +407,16 @@ export default function App() {
             }
           />
           <Route
+            path="/student/current-semester"
+            element={
+              <MaintenanceGuard>
+                <PageTransition>
+                  <Sidebar content="currentSemester" />
+                </PageTransition>
+              </MaintenanceGuard>
+            }
+          />
+          <Route
             path="/student/grievance"
             element={
               <MaintenanceGuard>
@@ -436,6 +449,14 @@ export default function App() {
             element={
               <PageTransition>
                 <AddGrades />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/admin/current-semester"
+            element={
+              <PageTransition>
+                <CurrentSemesterAdmin />
               </PageTransition>
             }
           />

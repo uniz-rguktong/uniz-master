@@ -29,6 +29,7 @@ import {
   STUDENT_HISTORY,
   REQUEST_OUTING,
   REQUEST_OUTPASS,
+  GET_STUDENT_SEATING,
 } from "../../api/endpoints";
 import { motion, AnimatePresence } from "framer-motion";
 import RequestCard from "../../components/RequestCard";
@@ -38,6 +39,7 @@ import { useWebSocket } from "../../hooks/useWebSocket";
 import { InfoCard } from "./components/InfoCard";
 import AcademicRecord from "./components/AcademicRecord";
 import MySubjects from "./components/MySubjects";
+import SeatingArrangement from "./components/SeatingArrangement";
 import { Student } from "../../types";
 
 export const enableOutingsAndOutpasses = false;
@@ -195,13 +197,13 @@ export default function StudentProfilePage() {
       formData.append("file", file);
       formData.append(
         "upload_preset",
-        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || "uniz_upload",
+        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
       );
 
       const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
       const res = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        { method: "POST", body: formData }
+        { method: "POST", body: formData },
       );
       const data = await res.json();
 
@@ -242,7 +244,10 @@ export default function StudentProfilePage() {
     Object.keys(fields).forEach((key) => {
       const typedKey = key as keyof typeof fields;
       // Compare current field value with initial value
-      if (fields[typedKey] !== initialFields[typedKey as keyof typeof initialFields]) {
+      if (
+        fields[typedKey] !==
+        initialFields[typedKey as keyof typeof initialFields]
+      ) {
         updatedFields[key] = fields[typedKey];
       }
     });
@@ -347,6 +352,79 @@ export default function StudentProfilePage() {
     }
   };
 
+  // Seating Summary Widget
+  const SeatingSummaryWidget = () => {
+    const [seating, setSeating] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchSeating = async () => {
+        try {
+          const data = await apiClient<any>(GET_STUDENT_SEATING);
+          if (data && data.seating) {
+            setSeating(data.seating);
+          }
+        } catch (err) {
+          console.error("Failed to fetch seating summary", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchSeating();
+    }, []);
+
+    if (loading || seating.length === 0) return null;
+
+    const now = new Date();
+    const upcoming = seating
+      .filter((s) => s.date && new Date(s.date) >= now)
+      .sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      )[0];
+
+    if (!upcoming) return null;
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-slate-900 rounded-[24px] p-6 text-white shadow-xl shadow-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-white/10"
+      >
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md text-blue-400">
+            <Calendar size={24} />
+          </div>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              Upcoming Examination
+            </p>
+            <h3 className="text-lg font-bold leading-tight pt-1">
+              {upcoming.subjectName}
+            </h3>
+            <p className="text-xs text-slate-300 font-medium">
+              {upcoming.examName} •{" "}
+              {new Date(upcoming.date).toLocaleDateString("en-GB")}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="flex-1 md:flex-none px-5 py-3 bg-white/10 rounded-2xl text-center border border-white/5">
+            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-0.5">
+              Hall
+            </p>
+            <p className="text-xl font-black">{upcoming.room}</p>
+          </div>
+          <button
+            onClick={() => setActiveTab("seating")}
+            className="flex-1 md:flex-none px-6 py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all"
+          >
+            View Full Plan
+          </button>
+        </div>
+      </motion.div>
+    );
+  };
+
   if (!user && !isLoading)
     return (
       <div className="flex h-screen items-center justify-center text-slate-400 font-medium">
@@ -445,7 +523,9 @@ export default function StudentProfilePage() {
                   disabled={isSubmitting}
                   className="uniz-primary-btn h-auto px-4 py-1.5 text-xs inline-flex items-center"
                 >
-                  {isSubmitting && <Loader2 className="w-3 h-3 animate-spin mr-1" />}{" "}
+                  {isSubmitting && (
+                    <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                  )}{" "}
                   Save
                 </button>
               </>
@@ -471,8 +551,10 @@ export default function StudentProfilePage() {
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />
+                  ) : user?.name ? (
+                    user.name.charAt(0).toUpperCase()
                   ) : (
-                    user?.name ? user.name.charAt(0).toUpperCase() : "S"
+                    "S"
                   )}
 
                   {/* Dark blurry overlay — contained fully inside the circle */}
@@ -490,7 +572,10 @@ export default function StudentProfilePage() {
                           WebkitBackdropFilter: "blur(6px)",
                         }}
                       >
-                        <Loader2 className="w-9 h-9 text-white animate-spin" strokeWidth={2} />
+                        <Loader2
+                          className="w-9 h-9 text-white animate-spin"
+                          strokeWidth={2}
+                        />
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -504,7 +589,10 @@ export default function StudentProfilePage() {
                 className="absolute bottom-[-1px] right-2 w-8 h-8 bg-[#e8f0fe] border-[1.5px] border-[#4285f4] rounded-full flex items-center justify-center text-[#174ea6] hover:bg-blue-100 transition-all z-20 cursor-pointer shadow-sm hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Update Profile Photo"
               >
-                <Camera className="w-[18px] h-[18px] overflow-hidden" strokeWidth={2.5} />
+                <Camera
+                  className="w-[18px] h-[18px] overflow-hidden"
+                  strokeWidth={2.5}
+                />
               </button>
 
               <input
@@ -526,13 +614,21 @@ export default function StudentProfilePage() {
                   className="flex items-center justify-center w-8 h-8 rounded-full bg-transparent text-slate-400 hover:bg-slate-100 hover:text-[#5455ea] transition-all"
                   title="Edit Profile"
                 >
-                  <Pencil className="w-[18px] h-[18px] shrink-0" strokeWidth={2} />
+                  <Pencil
+                    className="w-[18px] h-[18px] shrink-0"
+                    strokeWidth={2}
+                  />
                 </button>
               )}
             </div>
             <p className="text-[#3c4043] font-medium text-[13px] tracking-tight text-center relative mb-3.5 flex items-center justify-center gap-1">
-              {user?.email || (user?.username + "@rguktong.ac.in")}
-              <BadgeCheck className="w-[15px] h-[15px] text-[#2ebd59]" fill="#2ebd59" fillOpacity={0.15} strokeWidth={2.5} />
+              {user?.email || user?.username + "@rguktong.ac.in"}
+              <BadgeCheck
+                className="w-[15px] h-[15px] text-[#2ebd59]"
+                fill="#2ebd59"
+                fillOpacity={0.15}
+                strokeWidth={2.5}
+              />
             </p>
 
             {/* Badges */}
@@ -563,6 +659,7 @@ export default function StudentProfilePage() {
               "personal",
               "academic",
               "registration",
+              "seating",
               "family",
               enableOutingsAndOutpasses ? "permissions" : "",
             ]
@@ -572,8 +669,8 @@ export default function StudentProfilePage() {
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
                   className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${activeTab === tab
-                    ? "text-cyan-900"
-                    : "text-slate-400 hover:text-slate-600"
+                      ? "text-cyan-900"
+                      : "text-slate-400 hover:text-slate-600"
                     }`}
                 >
                   {tab}
@@ -598,17 +695,20 @@ export default function StudentProfilePage() {
             transition={{ duration: 0.15 }}
           >
             {activeTab === "personal" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {personalFields.map((f) => (
-                  <InfoCard
-                    key={f.name}
-                    {...f}
-                    value={fields[f.name]}
-                    isEditing={isEditing}
-                    isLoading={isLoading}
-                    onValueChange={handleFieldChange}
-                  />
-                ))}
+              <div className="space-y-6">
+                <SeatingSummaryWidget />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {personalFields.map((f) => (
+                    <InfoCard
+                      key={f.name}
+                      {...f}
+                      value={fields[f.name]}
+                      isEditing={isEditing}
+                      isLoading={isLoading}
+                      onValueChange={handleFieldChange}
+                    />
+                  ))}
+                </div>
               </div>
             )}
 
@@ -647,6 +747,10 @@ export default function StudentProfilePage() {
                 branch={user?.branch}
                 year={user?.year}
               />
+            )}
+
+            {activeTab === "seating" && (
+              <SeatingArrangement studentId={user?.username} />
             )}
 
             {activeTab === "family" && (

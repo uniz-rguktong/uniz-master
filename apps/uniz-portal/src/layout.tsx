@@ -17,6 +17,7 @@ export function Layout({ children }: LayoutProps) {
   });
 
   const shouldHideNavbar =
+    location.pathname === "/" ||
     location.pathname.startsWith("/student") ||
     location.pathname.startsWith("/admin") ||
     ["/studyspace", "/campushub"].includes(location.pathname);

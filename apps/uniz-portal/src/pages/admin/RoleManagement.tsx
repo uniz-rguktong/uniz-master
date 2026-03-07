@@ -54,7 +54,7 @@ export default function RoleManagement() {
 
   const token = localStorage.getItem("admin_token");
   const headers = {
-    Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+    Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
     "Content-Type": "application/json",
   };
 

@@ -75,6 +75,7 @@ export default function GradesSection() {
     semesterId: "SEM-1",
     subjectCode: "",
     remedialsOnly: false,
+    batch: "",
   });
   const [templateSubjects, setTemplateSubjects] = useState<any[]>([]);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
@@ -157,7 +158,7 @@ export default function GradesSection() {
   const handleDownloadTemplate = async () => {
     setLoading(true);
     try {
-      const { branch, year, semesterId, subjectCode, remedialsOnly } =
+      const { branch, year, semesterId, subjectCode, remedialsOnly, batch } =
         templateFilters;
       const url = GET_GRADES_TEMPLATE(
         branch,
@@ -165,6 +166,7 @@ export default function GradesSection() {
         semesterId,
         subjectCode,
         remedialsOnly,
+        batch,
       );
       const token = (localStorage.getItem("admin_token") || "").replace(
         /"/g,
@@ -450,6 +452,23 @@ export default function GradesSection() {
                         </option>
                       ))}
                     </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      Batch (e.g. O21)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="OPTIONAL"
+                      value={templateFilters.batch}
+                      onChange={(e) =>
+                        setTemplateFilters({
+                          ...templateFilters,
+                          batch: e.target.value,
+                        })
+                      }
+                      className="w-full h-14 px-6 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-widest text-slate-600"
+                    />
                   </div>
                 </div>
 
@@ -1011,10 +1030,18 @@ export default function GradesSection() {
                                     <button
                                       key={p}
                                       onClick={() => setPage(p)}
+<<<<<<< HEAD
                                       className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${page === p
                                         ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100"
                                         : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
                                         }`}
+=======
+                                      className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${
+                                        page === p
+                                          ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100"
+                                          : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
+                                      }`}
+>>>>>>> origin/main
                                     >
                                       {p}
                                     </button>

@@ -14,6 +14,7 @@ export const FORGOT_PASS_ENDPOINT = `${BASE_URL}/auth/otp/request`;
 export const REQUEST_OTP_EMAIL_ENDPOINT = `${BASE_URL}/auth/otp/request-email`;
 export const VERIFY_OTP_ENDPOINT = `${BASE_URL}/auth/otp/verify`;
 export const SET_NEW_PASS_ENDPOINT = `${BASE_URL}/auth/password/reset`;
+export const CHANGE_PASS_ENDPOINT = `${BASE_URL}/auth/password/change`;
 
 // Profile (User Service)
 export const STUDENT_INFO = `${BASE_URL}/profile/student/me`;
@@ -97,8 +98,9 @@ export const GET_ATTENDANCE_TEMPLATE = (
   branch: string,
   year: string,
   semesterId: string,
+  batch?: string,
 ) =>
-  `${BASE_URL}/academics/attendance/template?branch=${branch}&year=${year}&semesterId=${semesterId}`;
+  `${BASE_URL}/academics/attendance/template?branch=${branch}&year=${year}&semesterId=${semesterId}${batch ? `&batch=${batch}` : ""}`;
 
 export const GET_GRADES_TEMPLATE = (
   branch: string,
@@ -106,8 +108,9 @@ export const GET_GRADES_TEMPLATE = (
   semesterId: string,
   subjectCode: string,
   remedialsOnly: boolean,
+  batch?: string,
 ) =>
-  `${BASE_URL}/academics/grades/template?branch=${branch}&year=${year}&semesterId=${semesterId}&subjectCode=${subjectCode}&remedialsOnly=${remedialsOnly}`;
+  `${BASE_URL}/academics/grades/template?branch=${branch}&year=${year}&semesterId=${semesterId}&subjectCode=${subjectCode}&remedialsOnly=${remedialsOnly}${batch ? `&batch=${batch}` : ""}`;
 
 export const ADMIN_SUSPEND_STUDENT = (id: string) =>
   `${BASE_URL}/profile/admin/student/${id}/suspend`;
@@ -122,11 +125,13 @@ export const ADMIN_STUDENT_EXPORT = (
   branch?: string,
   year?: string,
   fields?: string,
+  batch?: string,
 ) => {
   let url = `${BASE_URL}/profile/admin/student/export?`;
   if (branch) url += `branch=${branch}&`;
   if (year) url += `year=${year}&`;
   if (fields) url += `fields=${fields}&`;
+  if (batch) url += `batch=${batch}&`;
   return url.endsWith("&") || url.endsWith("?") ? url.slice(0, -1) : url;
 };
 
@@ -187,3 +192,15 @@ export const REGISTER_SUBJECTS = `${BASE_URL}/academics/student/register`;
 export const GET_CURRENT_SUBJECTS = (studentId: string) =>
   `${BASE_URL}/academics/student/current/${studentId}`;
 export const GET_REGISTRATIONS = `${BASE_URL}/academics/registrations`;
+export const GET_SEMESTER_OVERVIEW = `${BASE_URL}/academics/semester/overview`;
+
+// Seating Arrangement
+export const GET_SEATING_TEMPLATE = (
+  semesterId: string,
+  branch: string,
+  year: string,
+  examName: string,
+) =>
+  `${BASE_URL}/academics/seating/template?semesterId=${semesterId}&branch=${branch}&year=${year}&examName=${examName}`;
+export const UPLOAD_SEATING = `${BASE_URL}/academics/seating/upload`;
+export const GET_STUDENT_SEATING = `${BASE_URL}/academics/seating/student`;

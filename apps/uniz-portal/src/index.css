@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -165,7 +165,9 @@
   }
 
   .premium-shadow {
-    box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.04), 0 4px 12px -2px rgba(0, 0, 0, 0.02);
+    box-shadow:
+      0 8px 32px -4px rgba(0, 0, 0, 0.04),
+      0 4px 12px -2px rgba(0, 0, 0, 0.02);
   }
 
   @keyframes marquee {
@@ -179,7 +181,6 @@
   }
 
   @keyframes iconBounce {
-
     0%,
     100% {
       transform: translateY(0);

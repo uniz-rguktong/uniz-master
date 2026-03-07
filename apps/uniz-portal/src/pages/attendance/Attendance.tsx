@@ -13,7 +13,7 @@ import { GET_ATTENDANCE, DOWNLOAD_ATTENDANCE } from "../../api/endpoints";
 import { downloadFile } from "../../api/apiClient";
 
 interface AttendanceRecord {
-  subject: string | { name: string;[key: string]: any };
+  subject: string | { name: string; [key: string]: any };
   totalClasses: number;
   attendedClasses: number;
   percentage: string | number;
@@ -193,10 +193,11 @@ export default function Attendance() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-semibold hover:bg-slate-50 transition-colors ${selectedYear === year
+                      className={`p-3 cursor-pointer text-sm font-semibold hover:bg-slate-50 transition-colors ${
+                        selectedYear === year
                           ? "bg-slate-950 text-white"
                           : "text-slate-600"
-                        }`}
+                      }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setSelectedSemester(
@@ -326,8 +327,8 @@ export default function Attendance() {
 
               {/* Content */}
               {!attendanceData.attendance ||
-                !Array.isArray(attendanceData.attendance) ||
-                attendanceData.attendance.length === 0 ? (
+              !Array.isArray(attendanceData.attendance) ||
+              attendanceData.attendance.length === 0 ? (
                 <div className="bg-slate-50 rounded-xl p-8 text-center border border-slate-200">
                   <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm border border-slate-100">
                     <AlertCircle size={28} className="text-slate-400" />
@@ -381,15 +382,16 @@ export default function Attendance() {
                                 </td>
                                 <td className="px-4 py-2 text-center">
                                   <span
-                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${parseFloat(String(record.percentage)) >=
-                                        75
+                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                      parseFloat(String(record.percentage)) >=
+                                      75
                                         ? "bg-blue-600 text-white"
                                         : parseFloat(
-                                          String(record.percentage),
-                                        ) >= 65
+                                              String(record.percentage),
+                                            ) >= 65
                                           ? "bg-slate-200 text-slate-700"
                                           : "bg-slate-100 text-slate-400"
-                                      }`}
+                                    }`}
                                   >
                                     {record.percentage}%
                                   </span>
@@ -435,38 +437,43 @@ export default function Attendance() {
           )}
 
         {/* Not Logged In State — only show AFTER /me has resolved */}
-        {!authLoading && !user?.username && !isLoading && !resultsFetched && (<div className="bg-slate-50/50 border border-slate-100 rounded-xl p-12 text-center">
-          <div className="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-50">
-            <AlertCircle size={32} className="text-slate-300" />
+        {!authLoading && !user?.username && !isLoading && !resultsFetched && (
+          <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-12 text-center">
+            <div className="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-50">
+              <AlertCircle size={32} className="text-slate-300" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2 text-slate-800">
+              Authorization Required
+            </h3>
+            <p className="text-slate-500 mb-8 max-w-xs mx-auto text-xs font-medium leading-relaxed">
+              Please authenticate to access your institutional attendance
+              terminal.
+            </p>
+            <button className="h-[46px] px-8 bg-slate-950 text-white rounded-xl font-bold text-sm transition-all hover:bg-black active:scale-[0.98]">
+              Sign In to Continue
+            </button>
           </div>
-          <h3 className="text-lg font-semibold mb-2 text-slate-800">
-            Authorization Required
-          </h3>
-          <p className="text-slate-500 mb-8 max-w-xs mx-auto text-xs font-medium leading-relaxed">
-            Please authenticate to access your institutional attendance
-            terminal.
-          </p>
-          <button className="h-[46px] px-8 bg-slate-950 text-white rounded-xl font-bold text-sm transition-all hover:bg-black active:scale-[0.98]">
-            Sign In to Continue
-          </button>
-        </div>
         )}
 
         {/* Empty State — only show after /me resolved and user is known */}
-        {!authLoading && user?.username && !isLoading && !resultsFetched && !error && (
-          <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-12 text-center">
-            <div className="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-50">
-              <Award size={32} className="text-slate-300" />
+        {!authLoading &&
+          user?.username &&
+          !isLoading &&
+          !resultsFetched &&
+          !error && (
+            <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-12 text-center">
+              <div className="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-50">
+                <Award size={32} className="text-slate-300" />
+              </div>
+              <h3 className="text-base font-semibold mb-2 text-slate-800">
+                No Snapshot Selected
+              </h3>
+              <p className="text-slate-500 mb-6 max-w-xs mx-auto font-medium text-xs leading-relaxed">
+                Specify an academic year and semester to generate your
+                attendance matrix.
+              </p>
             </div>
-            <h3 className="text-base font-semibold mb-2 text-slate-800">
-              No Snapshot Selected
-            </h3>
-            <p className="text-slate-500 mb-6 max-w-xs mx-auto font-medium text-xs leading-relaxed">
-              Specify an academic year and semester to generate your attendance
-              matrix.
-            </p>
-          </div>
-        )}
+          )}
       </div>
     </div>
   );

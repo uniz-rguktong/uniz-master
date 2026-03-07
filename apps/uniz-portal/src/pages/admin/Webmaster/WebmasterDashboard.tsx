@@ -2,7 +2,6 @@
 import { useState, useRef } from "react";
 import {
   Users,
-  BookOpen,
   CalendarCheck,
   GraduationCap,
   LogOut,
@@ -12,6 +11,7 @@ import {
   Activity,
   Smartphone,
   Lock,
+  ScanLine,
 } from "lucide-react";
 import ProfilePopup from "./ProfilePopup";
 import SecuritySection from "./SecuritySection";
@@ -19,10 +19,9 @@ import WebmasterOverview from "./WebmasterOverview";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import StudentDetails from "./StudentDetails";
-import SubjectManagement from "./SubjectManagement";
-import UploadSection from "./UploadSection";
+import UnifiedAcademicManager from "./UnifiedAcademicManager";
 import FacultyManagement from "./FacultyManagement";
-import SemesterRegistration from "./SemesterRegistrationSection";
+import UploadSection from "./UploadSection";
 
 import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";
@@ -38,7 +37,7 @@ export default function WebmasterDashboard() {
     | "dashboard"
     | "student"
     | "student_bulk"
-    | "subjects"
+    | "academic_mgmt"
     | "attendance"
     | "grades"
     | "banners"
@@ -47,9 +46,9 @@ export default function WebmasterDashboard() {
     | "push_alerts"
     | "grades_mgmt"
     | "faculty_mgmt"
-    | "semester_mgmt"
     | "system_logs"
     | "security"
+    | "exam_seating"
   >("dashboard");
   const isSidebarOpen = true;
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
@@ -66,7 +65,7 @@ export default function WebmasterDashboard() {
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
     { id: "student", label: "Student Details", icon: Users },
     { id: "student_bulk", label: "Student Bulk Ops", icon: Users },
-    { id: "subjects", label: "Manage Subjects", icon: BookOpen },
+    { id: "academic_mgmt", label: "Academic Rollout", icon: Layout },
     { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
     { id: "grades", label: "Grades Upload", icon: GraduationCap },
     { id: "banners", label: "Home Banners", icon: Layout },
@@ -74,8 +73,8 @@ export default function WebmasterDashboard() {
     { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
     // { id: "tenders", label: "Tenders", icon: Briefcase },
     { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
+    { id: "exam_seating", label: "Exam Seating", icon: ScanLine },
     { id: "faculty_mgmt", label: "Staff Management", icon: Users },
-    { id: "semester_mgmt", label: "Semester Rollout", icon: Layout },
     { id: "system_logs", label: "System & Logs", icon: Activity },
     { id: "security", label: "Security", icon: Lock },
   ];
@@ -92,8 +91,8 @@ export default function WebmasterDashboard() {
         return <StudentDetails />;
       case "student_bulk":
         return <StudentBulkSection />;
-      case "subjects":
-        return <SubjectManagement />;
+      case "academic_mgmt":
+        return <UnifiedAcademicManager />;
       case "attendance":
         return <UploadSection type="attendance" />;
       case "grades":
@@ -111,8 +110,6 @@ export default function WebmasterDashboard() {
         return <GradesSection />;
       case "faculty_mgmt":
         return <FacultyManagement />;
-      case "semester_mgmt":
-        return <SemesterRegistration />;
       case "system_logs":
         return <SystemLogsSection />;
       case "security":

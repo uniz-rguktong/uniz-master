@@ -39,7 +39,13 @@ export default function CourseRegistration({
     try {
       const data = await apiClient<any>(GET_AVAILABLE_SUBJECTS(branch, year));
       if (data) {
-        setAvailable(data.subjects || []);
+        const subs = data.subjects || [];
+        setAvailable(subs);
+        // Auto-select mandatory subjects
+        const mandatoryIds = subs
+          .filter((s: any) => s.isMandatory)
+          .map((s: any) => s.subjectId);
+        setSelectedIds(mandatoryIds);
         setAlreadyRegistered(data.alreadyRegistered || false);
         setIsOpen(data.isOpen ?? true);
         setSemesterName(data.semester?.name || "");
@@ -55,13 +61,65 @@ export default function CourseRegistration({
     fetchAvailable();
   }, []);
 
-  const toggleSubject = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
-    );
+  const toggleSubject = (id: string, groupId?: string, limit?: number) => {
+    const sub = available.find((s) => s.subjectId === id);
+    if (sub?.isMandatory) return; // Cannot toggle mandatory
+
+    setSelectedIds((prev) => {
+      const isSelected = prev.includes(id);
+      if (isSelected) {
+        return prev.filter((i) => i !== id);
+      } else {
+        if (groupId && groupId.trim() !== "" && limit) {
+          // Check how many are already selected in this group
+          const groupSubs = available
+            .filter((s) => s.electiveGroupId === groupId)
+            .map((s) => s.subjectId);
+          const selectedInGroup = prev.filter((i) => groupSubs.includes(i));
+          if (selectedInGroup.length >= limit) {
+            if (limit === 1 && selectedInGroup.length === 1) {
+              // Auto-swap for single choice electives
+              return [...prev.filter((i) => !groupSubs.includes(i)), id];
+            }
+            toast.warning(
+              `You can only select ${limit} course(s) from this elective group.`,
+            );
+            return prev;
+          }
+        }
+        return [...prev, id];
+      }
+    });
   };
 
   const handleRegister = async () => {
+    // Validate elective group requirements
+    const groups: Record<
+      string,
+      { limit: number; selected: number; name: string }
+    > = {};
+    available.forEach((s) => {
+      if (s.electiveGroupId && s.electiveGroupId.trim() !== "") {
+        if (!groups[s.electiveGroupId]) {
+          groups[s.electiveGroupId] = {
+            limit: s.electiveLimit || 1,
+            selected: 0,
+            name: s.electiveGroupId,
+          };
+        }
+        if (selectedIds.includes(s.subjectId)) {
+          groups[s.electiveGroupId].selected++;
+        }
+      }
+    });
+
+    for (const g of Object.values(groups)) {
+      if (g.selected < g.limit) {
+        toast.error(`Please select ${g.limit} course(s) from ${g.name} group.`);
+        return;
+      }
+    }
+
     if (selectedIds.length === 0) {
       toast.warning("Please select at least one subject");
       return;
@@ -82,8 +140,8 @@ export default function CourseRegistration({
   };
 
   const totalCredits = available
-    .filter((s) => selectedIds.includes(s.id))
-    .reduce((acc, s) => acc + (s.subject?.credits || 0), 0);
+    .filter((s) => selectedIds.includes(s.subjectId))
+    .reduce((acc, s) => acc + (s.customCredits || s.subject?.credits || 0), 0);
 
   if (loading) {
     return (
@@ -147,7 +205,9 @@ export default function CourseRegistration({
           Semester Not Started
         </h3>
         <p className="text-[14px] text-slate-500 font-medium leading-relaxed">
-          The registration window is currently closed. Kick back, relax, and enjoy your break. We'll alert you the moment your new courses are ready!
+          The registration window is currently closed. Kick back, relax, and
+          enjoy your break. We'll alert you the moment your new courses are
+          ready!
         </p>
       </div>
     );
@@ -198,50 +258,75 @@ export default function CourseRegistration({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {available.map((sub) => {
-          const isSelected = selectedIds.includes(sub.subject?.id);
+          const isSelected = selectedIds.includes(
+            sub.subject?.id || sub.subjectId,
+          );
           return (
             <button
-              key={sub.subject?.id}
-              onClick={() => toggleSubject(sub.subject?.id)}
-              className={`p-6 rounded-[32px] border-2 transition-all flex items-start gap-4 text-left group overflow-hidden relative ${isSelected
-                ? "bg-white border-blue-600 shadow-xl shadow-blue-50"
-                : "bg-white border-slate-50 hover:border-slate-200"
-                }`}
+              key={sub.subject?.id || sub.subjectId}
+              onClick={() =>
+                toggleSubject(
+                  sub.subject?.id || sub.subjectId,
+                  sub.electiveGroupId,
+                  sub.electiveLimit,
+                )
+              }
+              className={`p-6 rounded-[32px] border-2 transition-all flex items-start gap-4 text-left group overflow-hidden relative ${
+                isSelected
+                  ? "bg-white border-blue-600 shadow-xl shadow-blue-50"
+                  : "bg-white border-slate-50 hover:border-slate-200"
+              }`}
             >
               <div
-                className={`p-4 rounded-xl transition-all ${isSelected
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-50 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-600"
-                  }`}
+                className={`p-4 rounded-xl transition-all ${
+                  isSelected
+                    ? "bg-blue-600 text-white"
+                    : "bg-slate-50 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-600"
+                }`}
               >
                 <BookOpen size={24} />
               </div>
 
               <div className="flex-1 space-y-1.5 min-w-0">
                 <div className="flex items-center justify-between">
-                  <span
-                    className={`text-[10px] font-black uppercase tracking-widest transition-colors ${isSelected ? "text-blue-600" : "text-slate-300"
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
+                        isSelected ? "text-blue-600" : "text-slate-300"
                       }`}
-                  >
-                    {sub.subject?.code}
-                  </span>
+                    >
+                      {sub.subject?.code}
+                    </span>
+                    {sub.isMandatory && (
+                      <span className="px-2 py-0.5 bg-red-50 text-red-600 rounded-md text-[8px] font-black uppercase tracking-tighter border border-red-100">
+                        Mandatory
+                      </span>
+                    )}
+                    {sub.electiveGroupId && (
+                      <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-[8px] font-black uppercase tracking-tighter border border-blue-100">
+                        Group: {sub.electiveGroupId}
+                      </span>
+                    )}
+                  </div>
                   <div
-                    className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${isSelected
-                      ? "bg-amber-50 text-amber-600 border-amber-100"
-                      : "bg-slate-50 text-slate-400 border-slate-100"
-                      }`}
+                    className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${
+                      isSelected
+                        ? "bg-amber-50 text-amber-600 border-amber-100"
+                        : "bg-slate-50 text-slate-400 border-slate-100"
+                    }`}
                   >
                     <CreditCard size={10} />
                     <span className="text-[10px] font-black">
-                      {sub.subject?.credits}C
+                      {sub.customCredits || sub.subject?.credits}C
                     </span>
                   </div>
                 </div>
                 <h4
-                  className={`text-lg font-black tracking-tight leading-tight truncate transition-colors ${isSelected ? "text-slate-900" : "text-slate-400"
-                    }`}
+                  className={`text-lg font-black tracking-tight leading-tight truncate transition-colors ${
+                    isSelected ? "text-slate-900" : "text-slate-400"
+                  }`}
                 >
-                  {sub.subject?.name}
+                  {sub.customName || sub.subject?.name}
                 </h4>
                 {sub.faculty && (
                   <p className="text-[10px] text-slate-400 font-bold italic">

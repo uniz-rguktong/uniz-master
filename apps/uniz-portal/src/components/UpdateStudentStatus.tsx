@@ -69,7 +69,7 @@ export default function UpdateStatus() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${(token || '').replace(/"/g, '')}`,
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
         },
         body: bodyData,
       });

@@ -17,7 +17,7 @@ spec:
       containers:
         - name: gateway-api
           image: uniz-gateway-api:local
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
           envFrom:
@@ -34,7 +34,7 @@ spec:
               memory: "256Mi"
           livenessProbe:
             httpGet:
-              path: /health
+              path: /gateway-status
               port: 3000
             initialDelaySeconds: 15
             periodSeconds: 15
@@ -42,7 +42,7 @@ spec:
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /health
+              path: /gateway-status
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 5

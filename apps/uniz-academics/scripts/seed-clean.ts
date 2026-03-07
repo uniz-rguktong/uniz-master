@@ -477,16 +477,13 @@ const subjectsData: any = {
     "Sem - 2": {
       CSE: {
         names: [
-          "Discrete Mathematics",
-          "Engineering Physics",
-          "Managerial Economics and Finance Analysis",
-          "Object Oriented Programming through Java",
-          "Data Structures",
-          "Engineering Physics Lab",
-          "Object Oriented Programming through Java Lab",
-          "Data Structures Lab",
+          "Elective-VI",
+          "Open Elective-III",
+          "Open Elective-IV",
+          "Project-II",
+          "Community Service",
         ],
-        credits: [4, 4, 3, 4, 3, 1.5, 1.5, 1.5],
+        credits: [3, 3, 3, 6, 2],
       },
       ECE: {
         names: [

@@ -18,6 +18,7 @@ import {
   ScanLine,
   LayoutGrid,
   UserCircle,
+  Layers,
 } from "lucide-react";
 import { useLogout } from "../../hooks/useLogout";
 import { motion } from "framer-motion";
@@ -141,6 +142,12 @@ export default function Admin() {
       show: isDean || isHOD,
       items: [
         {
+          onClick: () => navigate("/admin/current-semester"),
+          title: "Current Session",
+          subtitle: "Ongoing Academic Meta",
+          Icon: Layers,
+        },
+        {
           onClick: () => navigate("/admin/addgrades"),
           title: "Academic Records",
           subtitle: "Upload Grades",
@@ -166,39 +173,39 @@ export default function Admin() {
       items: [
         ...(isDean
           ? [
-            {
-              onClick: () => navigate("/admin/addfaculty"),
-              title: "Faculty",
-              subtitle: "Manage Staff",
-              Icon: UserPlus,
-            },
-            {
-              onClick: () => navigate("/admin/addstudents"),
-              title: "Students",
-              subtitle: "Import CSV",
-              Icon: UserPlus,
-            },
-          ]
+              {
+                onClick: () => navigate("/admin/addfaculty"),
+                title: "Faculty",
+                subtitle: "Manage Staff",
+                Icon: UserPlus,
+              },
+              {
+                onClick: () => navigate("/admin/addstudents"),
+                title: "Students",
+                subtitle: "Import CSV",
+                Icon: UserPlus,
+              },
+            ]
           : []),
         ...(isDirector
           ? [
-            {
-              onClick: () => navigate("/admin/roles"),
-              title: "Roles",
-              subtitle: "Permissions",
-              Icon: UserCog,
-            },
-          ]
+              {
+                onClick: () => navigate("/admin/roles"),
+                title: "Roles",
+                subtitle: "Permissions",
+                Icon: UserCog,
+              },
+            ]
           : []),
         ...(isSecurity
           ? [
-            {
-              onClick: () => navigate("/admin/searchstudents"),
-              title: "Search",
-              subtitle: "Find Students",
-              Icon: Search,
-            },
-          ]
+              {
+                onClick: () => navigate("/admin/searchstudents"),
+                title: "Search",
+                subtitle: "Find Students",
+                Icon: Search,
+              },
+            ]
           : []),
       ],
     },
@@ -214,13 +221,13 @@ export default function Admin() {
         },
         ...(isDean
           ? [
-            {
-              onClick: () => navigate("/admin/banners"),
-              title: "Banners",
-              subtitle: "Site Visuals",
-              Icon: ImageIcon,
-            },
-          ]
+              {
+                onClick: () => navigate("/admin/banners"),
+                title: "Banners",
+                subtitle: "Site Visuals",
+                Icon: ImageIcon,
+              },
+            ]
           : []),
       ],
     },
