@@ -8,7 +8,7 @@ import { redis } from "../utils/redis.util";
 
 const prisma = new PrismaClient();
 const AUTH_SERVICE_URL =
-  process.env.AUTH_SERVICE_URL || "http://localhost:3001";
+  process.env.AUTH_SERVICE_URL || "http://uniz-auth-service:3001";
 
 const BRANCH_MAP: Record<string, string> = {
   "COMPUTER SCIENCE AND ENGINEERING": "CSE",
@@ -321,6 +321,7 @@ export const uploadStudents = async (req: any, res: Response) => {
                   },
                   {
                     headers: { "x-internal-secret": SECRET },
+                    timeout: 5000, // Add timeout to prevent hanging the loop
                   },
                 );
               } catch (authErr: any) {
