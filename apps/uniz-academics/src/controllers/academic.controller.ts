@@ -1853,46 +1853,30 @@ export const uploadGrades = async (req: any, res: Response) => {
     // Enqueue
     await redis.rpush("job:queue", JSON.stringify(job));
 
-    // START PROCESSING IMMEDIATELY (Reliable start on Vercel)
-    // We process the first batch in the current request context AND await it.
-    // This ensures the progress is updated and the recursive trigger is fired
-    // before the serverless function terminates.
-    console.log(
-      `[Academics] Starting first batch for ${user.username} inline...`,
-    );
+    // Non-blocking trigger via background call
     try {
-      const result = await processNextBatch();
+      // Trigger Processing asynchronously via local endpoint (Reliable start without hanging)
+      console.log(`[Academics] Starting first grades batch trigger...`);
 
-      // If there are more batches, trigger the queue worker to continue
-      if (result && result.status === "continued") {
-        const port = process.env.PORT || 3004;
-        let url = `http://localhost:${port}/api/queue/process`;
+      const port = process.env.PORT || 3004;
+      const triggerUrl = `http://localhost:${port}/api/queue/process?lb_init=${Math.random().toString(36).substring(7)}`;
 
-        const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
-
-        // Loop Buster: Add random param to avoid 508 Loop Detected
-        const triggerUrl = `${url}?lb=${Math.random().toString(36).substring(7)}`;
-
-        // Fire and forget trigger to background the processing
-        axios
-          .post(
-            triggerUrl,
-            {},
-            {
-              headers: { "x-internal-secret": INTERNAL_SECRET },
-              timeout: 5000,
+      axios
+        .post(
+          triggerUrl,
+          {},
+          {
+            headers: {
+              "x-internal-secret": process.env.INTERNAL_SECRET || "uniz-core",
             },
-          )
-          .catch((err) =>
-            console.warn(
-              `[Academics] Background trigger poke (Grades): ${err.message}`,
-            ),
+            timeout: 2000,
+          },
+        )
+        .catch((e) => {
+          console.error(
+            `[Academics] Failed to trigger initial grades worker: ${e.message}`,
           );
-
-        // Increased delay to ensure request is dispatched and proxy "rests"
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        console.log(`[Academics] Successfully triggered queue worker`);
-      }
+        });
     } catch (e) {
       console.error("First batch inline error:", e);
     }
@@ -2104,43 +2088,30 @@ export const uploadAttendance = async (req: any, res: Response) => {
     // Enqueue
     await redis.rpush("job:queue", JSON.stringify(job));
 
-    // START PROCESSING IMMEDIATELY
-    console.log(
-      `[Academics] Starting first attendance batch for ${user.username} inline...`,
-    );
+    // Non-blocking trigger via background call
     try {
-      const result = await processNextBatch();
+      // Trigger Processing asynchronously via local endpoint (Reliable start without hanging)
+      console.log(`[Academics] Starting first attendance batch trigger...`);
 
-      // If there are more batches, trigger the queue worker to continue
-      if (result && result.status === "continued") {
-        const port = process.env.PORT || 3004;
-        let url = `http://localhost:${port}/api/queue/process`;
+      const port = process.env.PORT || 3004;
+      const triggerUrl = `http://localhost:${port}/api/queue/process?lb_init=${Math.random().toString(36).substring(7)}`;
 
-        const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
-
-        // Loop Buster: Add random param to avoid 508 Loop Detected
-        const triggerUrl = `${url}?lb=${Math.random().toString(36).substring(7)}`;
-
-        // Fire and forget trigger to background the processing
-        axios
-          .post(
-            triggerUrl,
-            {},
-            {
-              headers: { "x-internal-secret": INTERNAL_SECRET },
-              timeout: 5000,
+      axios
+        .post(
+          triggerUrl,
+          {},
+          {
+            headers: {
+              "x-internal-secret": process.env.INTERNAL_SECRET || "uniz-core",
             },
-          )
-          .catch((err) =>
-            console.warn(
-              `[Academics] Background trigger poke (Attendance): ${err.message}`,
-            ),
+            timeout: 2000,
+          },
+        )
+        .catch((e) => {
+          console.error(
+            `[Academics] Failed to trigger initial attendance worker: ${e.message}`,
           );
-
-        // Increased delay to ensure request is dispatched
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        console.log(`[Academics] Successfully triggered queue worker`);
-      }
+        });
     } catch (e) {
       console.error("First attendance batch inline error:", e);
     }
