@@ -53,7 +53,8 @@ export async function processNextStudentBatch() {
   let failCount = initialFail;
   let errors = initialErrors;
 
-  const BATCHES_PER_RUN = 20;
+  // Process up to 6 batches (300 rows) in one execution to provide frequent UI updates
+  const BATCHES_PER_RUN = 6;
   const CHUNK_SIZE = 50;
   let processedInThisRun = 0;
 
