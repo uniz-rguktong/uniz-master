@@ -1665,7 +1665,10 @@ export const getGradesTemplate = async (
       const profilesRes = await axios.post(
         `${GATEWAY_URL}/profile/student/search`,
         {
-          branch,
+          branch:
+            branch && String(branch).toUpperCase() !== "ALL"
+              ? branch
+              : undefined,
           year:
             !batch || String(batch).toUpperCase() === "ALL" ? year : undefined,
           batch:
@@ -1677,10 +1680,12 @@ export const getGradesTemplate = async (
       students = profilesRes.data.students || [];
     }
 
-    // Fetch matching subjects if not specific
     const subjects = await prisma.subject.findMany({
       where: {
-        department: (branch as string) || undefined,
+        department:
+          branch && String(branch).toUpperCase() !== "ALL"
+            ? (branch as string)
+            : undefined,
         semester: (semesterId as string) || undefined,
         code: { contains: (year as string) || undefined, mode: "insensitive" },
       },
@@ -1927,7 +1932,8 @@ export const getAttendanceTemplate = async (
     const profilesRes = await axios.post(
       `${GATEWAY_URL}/profile/student/search`,
       {
-        branch,
+        branch:
+          branch && String(branch).toUpperCase() !== "ALL" ? branch : undefined,
         year:
           !batch || String(batch).toUpperCase() === "ALL" ? year : undefined,
         batch:
@@ -1950,10 +1956,12 @@ export const getAttendanceTemplate = async (
       ],
     ];
 
-    // Fetch matching subjects
     const subjects = await prisma.subject.findMany({
       where: {
-        department: (branch as string) || undefined,
+        department:
+          branch && String(branch).toUpperCase() !== "ALL"
+            ? (branch as string)
+            : undefined,
         semester: (semesterId as string) || undefined,
         code: { contains: (year as string) || undefined, mode: "insensitive" },
       },
