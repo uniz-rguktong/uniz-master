@@ -230,12 +230,12 @@ export default function SeatingUploadSection() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
           <FileUploader
-            onFileSelect={(f) => { setFile(f); setResult(null); }}
+            onFileSelect={(f: File | null) => {
+              setFile(f);
+              setResult(null);
+            }}
             label="Choose Seating Layout"
             description="Supports XLSX, XLS or CSV files."
-            isUploading={loading}
-            isSuccess={result?.success === true}
-            isError={result?.success === false}
           />
 
           <button
