@@ -75,3 +75,4 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+// Force Rebuild: Build-time asset URL injection phase.
