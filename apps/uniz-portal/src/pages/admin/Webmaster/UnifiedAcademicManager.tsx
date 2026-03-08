@@ -136,8 +136,12 @@ export default function UnifiedAcademicManager() {
 
   useEffect(() => {
     const fetchBatches = async () => {
-      const res = await apiClient<string[]>("/api/v1/profile/admin/batches");
-      if (res) setAvailableBatches(res);
+      const res = await apiClient<any>("/api/v1/profile/admin/batches");
+      if (res) {
+        // Handle both direct array and wrapped { batches: [] } response
+        const batches = Array.isArray(res) ? res : res.batches || [];
+        setAvailableBatches(batches);
+      }
     };
     fetchBatches();
   }, []);
