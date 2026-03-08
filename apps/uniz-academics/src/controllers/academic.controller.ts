@@ -1865,17 +1865,8 @@ export const uploadGrades = async (req: any, res: Response) => {
 
       // If there are more batches, trigger the queue worker to continue
       if (result && result.status === "continued") {
-        const protocol = req.protocol || "http";
-        const host = req.get("host");
-        let url = `${protocol}://${host}/api/queue/process`;
-
-        // Local development gateway handling
-        if (
-          host?.includes("localhost:3000") ||
-          host?.includes("127.0.0.1:3000")
-        ) {
-          url = `${protocol}://${host}/api/v1/academics/api/queue/process`;
-        }
+        const port = process.env.PORT || 3004;
+        let url = `http://localhost:${port}/api/queue/process`;
 
         const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
 
@@ -2122,17 +2113,8 @@ export const uploadAttendance = async (req: any, res: Response) => {
 
       // If there are more batches, trigger the queue worker to continue
       if (result && result.status === "continued") {
-        const protocol = req.protocol || "http";
-        const host = req.get("host");
-        let url = `${protocol}://${host}/api/queue/process`;
-
-        // Local development gateway handling
-        if (
-          host?.includes("localhost:3000") ||
-          host?.includes("127.0.0.1:3000")
-        ) {
-          url = `${protocol}://${host}/api/v1/academics/api/queue/process`;
-        }
+        const port = process.env.PORT || 3004;
+        let url = `http://localhost:${port}/api/queue/process`;
 
         const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
 
