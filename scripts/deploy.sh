@@ -9,12 +9,18 @@ git push origin main
 
 # 2. Deploy to VPS
 echo "[Deploy] Starting VPS Deployment..."
-ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
+
+# Check if we are already on the target VPS to avoid recursive SSH
+if [[ "$(hostname -I)" == *"76.13.241.174"* ]] || [ -f "/root/uniz-secrets.env" ]; then
+  echo "[Deploy] Running directly on VPS context..."
+  
   cd /root/uniz-master
   
-  echo "[Git] Fetching latest code..."
-  git fetch origin main
-  git reset --hard origin/main
+  echo "[Git] Updating repository..."
+  # When running on VPS, we already updated git in the GH Action or we do it here
+  # But if we are here, we might want to ensure we are on the right commit
+  # git fetch origin main
+  # git reset --hard origin/main
   NEW_HEAD=$(git rev-parse HEAD)
   echo "[Git] Latest Commit: $(git log -1 --format='%h - %s')"
 
