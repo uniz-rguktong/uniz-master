@@ -369,9 +369,13 @@ export const searchStudents = async (
         mode: "insensitive",
       };
     }
-    if (branch) where.branch = branch;
-    if (year) where.year = year;
-    if (gender) where.gender = gender;
+    if (branch && String(branch).toUpperCase() !== "ALL") {
+      where.branch = { equals: branch, mode: "insensitive" };
+    }
+    if (year && String(year).toUpperCase() !== "ALL") {
+      where.year = { equals: year, mode: "insensitive" };
+    }
+    if (gender && String(gender).toUpperCase() !== "ALL") where.gender = gender;
     if (isSuspended !== undefined)
       where.isSuspended = isSuspended === true || isSuspended === "true";
     if (req.body.isPresentInCampus !== undefined) {
