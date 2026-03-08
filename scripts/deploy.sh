@@ -4,7 +4,7 @@
 echo "[Push] Pushing code to GitHub..."
 MSG=${1:-"chore: deployment update $(date +'%Y-%m-%d %H:%M:%S')"}
 
-# Only try to commit/push if we are in a git repo and NOT on the VPS
+# Only try to commit/push if we are NOT on the VPS
 if [ ! -f "/root/uniz-secrets.env" ]; then
   git add .
   git commit -m "$MSG" || echo "No changes to commit"
@@ -15,7 +15,6 @@ fi
 deploy_logic() {
   cd /root/uniz-master
   
-  # When running on VPS, we might want to ensure we have latest (though GH Action already does fetch/reset)
   echo "[Git] Latest Commit: $(git log -1 --format='%h - %s')"
   NEW_HEAD=$(git rev-parse HEAD)
 
@@ -28,7 +27,8 @@ deploy_logic() {
   fi
 
   # Detect changed files relative to last successful build
-  CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD || git show --name-only --format="")
+  # If we are on a fresh clone or force, we might want to handle it
+  CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git show --name-only --format="" 2>/dev/null || echo "")
   
   # Service mapping: "folder_name:image_name:deployment_name:container_name"
   ALL_SERVICES=(
@@ -52,12 +52,12 @@ deploy_logic() {
 
   # Prevent kubectl apply from overwriting current images with :local
   echo "[Infra] Preserving current image tags..."
-  # Reset kustomization images if they were already there
-  sed -i '/images:/d' infra/core-infra/kubernetes/base/kustomization.yaml
-  sed -i '/newName:/d' infra/core-infra/kubernetes/base/kustomization.yaml
-  sed -i '/newTag:/d' infra/core-infra/kubernetes/base/kustomization.yaml
+  K_FILE="infra/core-infra/kubernetes/base/kustomization.yaml"
+  # Use a temporary file to rebuild kustomization.yaml to be safe
+  sed -n '/^images:/q;p' "$K_FILE" > "$K_FILE.tmp"
   
-  echo "images:" >> infra/core-infra/kubernetes/base/kustomization.yaml
+  echo "images:" >> "$K_FILE.tmp"
+  IMAGE_CONFIGURED=false
   for s in "${ALL_SERVICES[@]}"; do
     IFS=':' read -r DIR IMG DEP CON <<< "$s"
     if [[ "$DEP" == *"job"* ]]; then
@@ -68,11 +68,20 @@ deploy_logic() {
     if [ -n "$CURRENT_IMG" ] && [[ "$CURRENT_IMG" != *":local" ]]; then
       IMG_REPO="${CURRENT_IMG%:*}"
       IMG_TAG="${CURRENT_IMG##*:}"
-      echo "  - name: ${IMG}:local" >> infra/core-infra/kubernetes/base/kustomization.yaml
-      echo "    newName: $IMG_REPO" >> infra/core-infra/kubernetes/base/kustomization.yaml
-      echo "    newTag: $IMG_TAG" >> infra/core-infra/kubernetes/base/kustomization.yaml
+      echo "  - name: ${IMG}:local" >> "$K_FILE.tmp"
+      echo "    newName: $IMG_REPO" >> "$K_FILE.tmp"
+      echo "    newTag: $IMG_TAG" >> "$K_FILE.tmp"
+      IMAGE_CONFIGURED=true
     fi
   done
+  
+  if [ "$IMAGE_CONFIGURED" = true ]; then
+    mv "$K_FILE.tmp" "$K_FILE"
+  else
+    # If no images found (maybe first deployment), just keep the clean version without images block
+    sed -n '/^images:/q;p' "$K_FILE.tmp" > "$K_FILE"
+    rm "$K_FILE.tmp"
+  fi
 
   echo "[K8s] Applying Kubernetes configurations..."
   if [ -f "infra/core-infra/kubernetes/base/secrets.yaml.template" ]; then
@@ -86,7 +95,6 @@ deploy_logic() {
         export "$key"="$value"
       done < /root/uniz-secrets.env
     fi
-    # Use envsubst to hydrate secrets
     envsubst < infra/core-infra/kubernetes/base/secrets.yaml.template > infra/core-infra/kubernetes/base/secrets.yaml
   fi
   
@@ -102,7 +110,7 @@ deploy_logic() {
     
     if [ "$FORCE_ALL" == "true" ]; then
        SHOULD_BUILD=true
-    elif echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
+    elif [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
       echo "[Build] Change detected in $DIR"
       SHOULD_BUILD=true
     fi
@@ -173,6 +181,7 @@ else
     cd /root/uniz-master
     git fetch origin main
     git reset --hard origin/main
+    # Fixed the nested quote issue by using simple arguments
     /bin/bash ./scripts/deploy.sh "remote-trigger"
 EOF
 fi
