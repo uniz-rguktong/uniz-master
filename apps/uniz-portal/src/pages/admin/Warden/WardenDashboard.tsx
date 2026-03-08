@@ -5,6 +5,8 @@ import {
   LogOut,
   LayoutDashboard,
   Search,
+  ChevronLeft,
+  Menu,
 } from "lucide-react";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
@@ -32,6 +34,12 @@ export default function WardenDashboard() {
   const isMale = rawRole === "warden_male";
   const portalLabel = isMale ? "M-Warden Portal" : "F-Warden Portal";
   const systemLabel = isMale ? "Boys Hostel Secure" : "Girls Hostel Secure";
+
+  const navItems = [
+    { id: "dashboard", label: "Overview", icon: LayoutDashboard },
+    { id: "approve_outing", label: "Approve Outings", icon: CheckCircle2 },
+    { id: "approve_outpass", label: "Approve Outpasses", icon: CheckCircle2 },
+  ];
 
   // Fetch profile on mount
   useEffect(() => {
@@ -303,7 +311,12 @@ export default function WardenDashboard() {
               <div className="flex items-center justify-center min-w-[22px]">
                 <LogOut size={20} className="text-slate-400 group-hover:text-red-500 transition-colors" />
               </div>
-            )}
+              {isSidebarOpen && (
+                <span className="text-[13.5px] font-semibold whitespace-nowrap tracking-tight leading-none">
+                  Sign Out
+                </span>
+              )}
+            </button>
           </div>
         </nav>
 
@@ -334,9 +347,11 @@ export default function WardenDashboard() {
               )}
             </div>
             {isSidebarOpen && (
-              <span className="text-[15px] font-semibold">Logout</span>
+              <span className="text-[13.5px] font-semibold whitespace-nowrap tracking-tight leading-none ml-auto mr-2">
+                Sign Out
+              </span>
             )}
-          </button>
+          </div>
         </div>
       </aside>
 

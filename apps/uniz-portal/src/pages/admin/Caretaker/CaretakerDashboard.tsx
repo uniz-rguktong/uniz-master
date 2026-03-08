@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   CheckCircle2,
   RefreshCcw,
@@ -7,6 +7,7 @@ import {
   Menu,
   ChevronRight,
   LayoutDashboard,
+  Search,
 } from "lucide-react";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
@@ -34,6 +35,13 @@ export default function CaretakerDashboard() {
   const isMale = rawRole === "caretaker_male";
   const portalLabel = isMale ? "M-Caretaker Portal" : "F-Caretaker Portal";
   const systemLabel = isMale ? "Boys Hostel Secure" : "Girls Hostel Secure";
+
+  const navItems = [
+    { id: "dashboard", label: "Overview", icon: LayoutDashboard },
+    { id: "approve_outing", label: "Approve Outings", icon: CheckCircle2 },
+    { id: "approve_outpass", label: "Approve Outpasses", icon: CheckCircle2 },
+    { id: "status_update", label: "Status Update", icon: RefreshCcw },
+  ];
 
   // Fetch profile on mount
   useEffect(() => {
@@ -284,7 +292,12 @@ export default function CaretakerDashboard() {
               <div className="flex items-center justify-center min-w-[22px]">
                 <LogOut size={20} className="text-slate-400 group-hover:text-red-500 transition-colors" />
               </div>
-            )}
+              {isSidebarOpen && (
+                <span className="text-[13.5px] font-semibold whitespace-nowrap tracking-tight leading-none">
+                  Logout System
+                </span>
+              )}
+            </button>
           </div>
         </nav>
 
@@ -314,10 +327,7 @@ export default function CaretakerDashboard() {
                 </div>
               )}
             </div>
-            {isSidebarOpen && (
-              <span className="text-[15px] font-semibold">Logout</span>
-            )}
-          </button>
+          </div>
         </div>
       </aside>
 
@@ -374,7 +384,7 @@ export default function CaretakerDashboard() {
         </header>
 
         <div className="max-w-7xl mx-auto">{renderContent()}</div>
-      </main>
-    </div>
+      </main >
+    </div >
   );
 }
