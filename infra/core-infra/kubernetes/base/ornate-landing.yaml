@@ -20,8 +20,10 @@ spec:
           envFrom:
             - configMapRef:
                 name: uniz-config
+            - configMapRef:
+                name: ornate-landing-config
             - secretRef:
-                name: uniz-secrets
+                name: ornate-landing-secrets
 ---
 apiVersion: v1
 kind: Service
