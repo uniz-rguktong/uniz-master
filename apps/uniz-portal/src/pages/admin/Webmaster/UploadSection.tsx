@@ -143,34 +143,43 @@ export default function UploadSection({ type }: { type: UploadType }) {
     let interval: any;
     if (uploadId) {
       interval = setInterval(async () => {
+        const token = (
+          localStorage.getItem("admin_token") ||
+          localStorage.getItem("faculty_token") ||
+          ""
+        ).replace(/"/g, "");
         try {
-          const res = await apiClient<any>(ACADEMICS_PROGRESS(uploadId), {
-            showToast: false,
-          } as any);
-          if (res && res.success && res.progress) {
-            setProgress(res.progress);
+          const cb = Date.now();
+          const res = await fetch(`${ACADEMICS_PROGRESS(uploadId)}&_cb=${cb}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await res.json(); // Parse the response
+          if (data && data.success && data.progress) {
+            setProgress(data.progress);
             if (
-              res.progress.status === "completed" ||
-              res.progress.status === "done" ||
-              res.progress.status === "error" ||
-              res.progress.status === "failed"
+              data.progress.status === "completed" ||
+              data.progress.status === "done" ||
+              data.progress.status === "error" ||
+              data.progress.status === "failed"
             ) {
               setUploadId(null);
               clearInterval(interval);
               if (
-                res.progress.status === "completed" ||
-                res.progress.status === "done"
+                data.progress.status === "completed" ||
+                data.progress.status === "done"
               ) {
                 setResult({
                   success: true,
-                  processed: res.progress.processed,
-                  total: res.progress.total,
+                  processed: data.progress.processed,
+                  total: data.progress.total,
                 });
                 toast.success("Synchronization completed successfully");
               } else {
                 setResult({
                   success: false,
-                  msg: res.progress.message || "Synchronization failed",
+                  msg: data.progress.message || "Synchronization failed",
                 });
                 toast.error("Synchronization failed");
               }
