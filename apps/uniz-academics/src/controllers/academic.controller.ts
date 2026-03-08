@@ -71,14 +71,11 @@ export const getUploadProgress = async (
           Date.now() - (progress.lastActive || 0) > 15000;
 
         if (isStuck) {
+          const PORT = process.env.PORT || 3004;
+          const triggerUrl = `http://localhost:${PORT}/api/academics/queue/process?lb_poll=${Math.random().toString(36).substring(7)}`;
           console.log(
-            `[Academics] 🚨 Job ${uploadId} appears stuck. Jump-starting via Progress Poll...`,
+            `[Academics] 🚨 Job ${uploadId} appears stuck. Jump-starting via Progress Poll (Internal): ${triggerUrl}`,
           );
-          // Fire and forget a trigger request to ourselves to avoid blocking the user
-          // FIX: Use localhost for internal route access, as /api/queue is not exposed via public Gateway/Nginx
-          const port = process.env.PORT || 3004;
-          const triggerUrl = `http://localhost:${port}/api/queue/process?lb_poll=${Math.random().toString(36).substring(7)}`;
-
           axios
             .post(
               triggerUrl,
@@ -1862,7 +1859,7 @@ export const uploadGrades = async (req: any, res: Response) => {
       console.log(`[Academics] Starting first grades batch trigger...`);
 
       const port = process.env.PORT || 3004;
-      const triggerUrl = `http://localhost:${port}/api/queue/process?lb_init=${Math.random().toString(36).substring(7)}`;
+      const triggerUrl = `http://localhost:${port}/api/academics/queue/process?lb_init=${Math.random().toString(36).substring(7)}`;
 
       axios
         .post(
@@ -2102,7 +2099,7 @@ export const uploadAttendance = async (req: any, res: Response) => {
       console.log(`[Academics] Starting first attendance batch trigger...`);
 
       const port = process.env.PORT || 3004;
-      const triggerUrl = `http://localhost:${port}/api/queue/process?lb_init=${Math.random().toString(36).substring(7)}`;
+      const triggerUrl = `http://localhost:${port}/api/academics/queue/process?lb_init=${Math.random().toString(36).substring(7)}`;
 
       axios
         .post(
