@@ -2254,6 +2254,12 @@ export const downloadGrades = async (
       `attachment; filename="RESULTS_${targetStudentId}_${semesterId}.pdf"`,
     );
     res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate",
+    );
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
     res.send(pdfBuffer);
   } catch (error: any) {
     console.error("PDF Download Error:", error);
@@ -2350,6 +2356,12 @@ export const downloadAttendance = async (
       `attachment; filename="ATTENDANCE_${targetStudentId}_${semesterId}.pdf"`,
     );
     res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate",
+    );
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
     res.send(pdfBuffer);
   } catch (error: any) {
     console.error("PDF Download Error:", error);
