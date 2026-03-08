@@ -2,9 +2,9 @@
 import { S3Client } from "@aws-sdk/client-s3";
 
 if (
-  !process.env.R2_ENDPOINT ||
-  !process.env.R2_ACCESS_KEY_ID ||
-  !process.env.R2_SECRET_ACCESS_KEY
+  process.env.NODE_ENV === "production" &&
+  !process.env.R2_ENDPOINT &&
+  !process.env.CI
 ) {
   console.warn(
     "[R2] Environment variables not set. Storage operations will fail at runtime.",
