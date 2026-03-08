@@ -58,13 +58,14 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // 'unsafe-eval' needed by GSAP, 'unsafe-inline' by Next.js runtime
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev",
-              "media-src 'self' blob: https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev",
-              "worker-src blob:", // Required by Three.js
-              "connect-src 'self' https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev",
+              "img-src 'self' data: blob: https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev https://*.cloudinary.com",
+              "media-src 'self' blob: https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev https://*.cloudinary.com",
+              "worker-src 'self' blob:", // Required by Three.js
+              "connect-src 'self' https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev https://*.cloudinary.com",
+              "frame-src 'self' https://challenges.cloudflare.com",
               "frame-ancestors 'none'",
             ].join("; "),
           },
