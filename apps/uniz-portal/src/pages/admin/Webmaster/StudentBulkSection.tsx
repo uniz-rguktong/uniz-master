@@ -12,7 +12,6 @@ import {
   ADMIN_STUDENT_UPLOAD,
   ADMIN_STUDENT_PROGRESS,
   ADMIN_STUDENT_EXPORT,
-  ADMIN_STUDENT_TEMPLATE,
   GET_AVAILABLE_BATCHES,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
