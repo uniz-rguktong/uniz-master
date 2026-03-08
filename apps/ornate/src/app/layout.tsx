@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from 'next';
+import type { Metadata } from "next";
 import { Orbitron } from 'next/font/google';
 import './globals.css';
 import SmoothScroll from '@/components/Layout/SmoothScroll';
@@ -53,14 +53,6 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "Ornate",
   },
-};
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  viewportFit: 'cover',
 };
 
 export default function RootLayout({

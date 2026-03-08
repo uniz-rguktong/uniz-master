@@ -3,12 +3,8 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { registerRateLimiter } from '@/lib/rate-limit';
 import { sendWelcomeEmail } from '@/lib/email';
-import { Redis } from "@upstash/redis";
+import { redis } from '@/lib/redis';
 
-const redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL!,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
 
 export async function POST(req: NextRequest) {
     // Rate limit registrations by IP
