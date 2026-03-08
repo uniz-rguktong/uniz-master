@@ -97,7 +97,9 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
         const randomColors = new Float32Array(particleCount);
 
         const loader = new SVGLoader();
-        loader.load(getAssetUrl('/assets/logo.svg'), (data) => {
+        // Always load logo.svg from local /public to avoid CORS issues with SVGLoader's fetch.
+        // The CDN R2 bucket lacks Access-Control-Allow-Origin headers for this file.
+        loader.load('/assets/logo.svg', (data) => {
             const paths = data.paths;
             const logoPoints: THREE.Vector3[] = [];
 
@@ -338,7 +340,11 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
             gsap.to(".intro-loader", { opacity: 0, duration: 0.5, delay: 2.5 });
 
             // 9. Morph into the Header Logo
-            const targetLogo = document.getElementById('header-logo');
+            const tDesktop = document.getElementById('header-logo');
+            const tMobile = document.getElementById('header-logo-mobile');
+            // Choose the one that is actually visible/rendered (width > 0)
+            const targetLogo = (tMobile && tMobile.getBoundingClientRect().width > 0) ? tMobile : tDesktop;
+
             let targetScreenX = 46;
             let targetScreenY = 46;
             let targetLogoWidth = 28;
@@ -400,7 +406,19 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
                 ease: 'power2.inOut'
             }, 5.1);
 
-        });
+        },
+            undefined, // onProgress — no-op
+            () => {
+                // onError fallback: SVG failed to load (CORS or 404).
+                // Skip the logo animation and call onComplete after a short delay
+                // so the page is not permanently stuck on the loading screen.
+                if (!isMounted) return;
+                console.warn('[IntroAnimation] logo.svg failed to load — skipping intro animation.');
+                setTimeout(() => {
+                    if (!isMounted) return;
+                    gsap.to(containerRef.current, { opacity: 0, duration: 0.6, ease: 'power2.inOut', onComplete });
+                }, 800);
+            });
 
         // --- RENDER LOOP ---
         const clock = new THREE.Clock();
