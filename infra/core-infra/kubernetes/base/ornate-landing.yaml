@@ -19,9 +19,9 @@ spec:
             - containerPort: 3000
           envFrom:
             - configMapRef:
-                name: uniz-config
+                name: ornate-landing-config
             - secretRef:
-                name: uniz-secrets
+                name: ornate-landing-secrets
 ---
 apiVersion: v1
 kind: Service
