@@ -122,8 +122,8 @@ git reset --hard origin/main
       IMG_REPO="${CURRENT_IMG%:*}"
       IMG_TAG="${CURRENT_IMG##*:}"
       
-      # Only preserve if it's a timestamped local tag (e.g. local-1234 or fixed-1234)
-      if [[ "$IMG_TAG" == "local-"* ]] || [[ "$IMG_TAG" == "fixed-"* ]]; then
+      # Only preserve if it's a versioned tag (any tag with a - usually)
+      if [[ "$IMG_TAG" == *"-"* ]]; then
         echo "  - name: ${IMG}:local" >> infra/core-infra/kubernetes/base/kustomization.yaml
         echo "    newName: $IMG_REPO" >> infra/core-infra/kubernetes/base/kustomization.yaml
         echo "    newTag: $IMG_TAG" >> infra/core-infra/kubernetes/base/kustomization.yaml
