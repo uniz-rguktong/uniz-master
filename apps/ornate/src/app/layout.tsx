@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Orbitron } from 'next/font/google';
 import './globals.css';
 import SmoothScroll from '@/components/Layout/SmoothScroll';
@@ -26,18 +26,19 @@ export const metadata: Metadata = {
     apple: 'https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets/Ornate_LOGO.svg',
   },
   manifest: '/manifest.json',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover'
-  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'Ornate',
   }
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
