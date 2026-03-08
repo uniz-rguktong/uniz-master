@@ -21,6 +21,7 @@ export default function StudentBulkSection() {
   const [file, setFile] = useState<File | null>(null);
   const [uploadId, setUploadId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"upload" | "export">("upload");
 
   // Export State
@@ -73,7 +74,7 @@ export default function StudentBulkSection() {
             },
           });
           const data = await res.json();
-          // setProgress(data); // Removed UI
+          setProgress(data);
           if (data.status === "completed" || data.status === "done") {
             setUploadId(null);
             clearInterval(interval);
@@ -188,6 +189,29 @@ export default function StudentBulkSection() {
                 ? "Processing Records..."
                 : "Initiate Bulk Provisioning"}
             </button>
+
+            {progress && uploadId && (
+              <div className="bg-slate-50 p-6 rounded-xl border border-slate-100 flex flex-col items-center justify-center text-center animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <div className="flex justify-between w-full mb-3 px-1">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                    Onboarding Status: {progress.status || "Starting..."}
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600">
+                    {progress.percent || 0}%
+                  </span>
+                </div>
+                <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden mb-3">
+                  <div
+                    className="bg-blue-600 h-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(37,99,235,0.3)]"
+                    style={{ width: `${progress.percent || 0}%` }}
+                  />
+                </div>
+                <div className="flex justify-between w-full px-1 text-[9px] font-bold uppercase tracking-[0.1em] text-slate-400">
+                  <span>Processed: {progress.processed || 0}</span>
+                  <span>Total: {progress.total || 0}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ) : (
