@@ -1,19 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import {
   Users,
   BookOpen,
   CalendarCheck,
   GraduationCap,
   LogOut,
+  Menu,
+  ChevronRight,
   LayoutDashboard,
   Activity,
-  Search,
-  Layout,
+  UserCircle,
+  Settings,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
-import ProfilePopup from "../ProfilePopup";
 import StudentDetails from "../Webmaster/StudentDetails";
 import SubjectManagement from "../Webmaster/SubjectManagement";
 import UploadSection from "../Webmaster/UploadSection";
@@ -22,7 +24,6 @@ import StudentBulkSection from "../Webmaster/StudentBulkSection";
 import SystemLogsSection from "../Webmaster/SystemLogsSection";
 import SemesterRegistrationSection from "../Webmaster/SemesterRegistrationSection";
 import FacultyManagement from "../Webmaster/FacultyManagement";
-import WebmasterOverview from "../Webmaster/WebmasterOverview";
 
 export default function DeanDashboard() {
   useIsAuth();
@@ -39,23 +40,14 @@ export default function DeanDashboard() {
     | "system_logs"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [profilePopupOpen, setProfilePopupOpen] = useState(false);
-  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
-  const [profileName, setProfileName] = useState<string | null>(null);
-  const [profileEmail, setProfileEmail] = useState<string | null>(null);
-  const avatarBtnRef = useRef<HTMLButtonElement>(null);
-  const headerAvatarRef = useRef<HTMLButtonElement>(null);
-  const [activeAnchor, setActiveAnchor] =
-    useState<React.RefObject<HTMLElement>>(headerAvatarRef);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const username = localStorage.getItem("username") || "Dean";
+  const navigate = useNavigate();
+
   const role = (localStorage.getItem("admin_role") || "admin").replace(
     /"/g,
     "",
   );
-  const firstName = username.split(" ")[0];
-
   const roleLabel =
     role === "hod"
       ? "HOD Portal"
@@ -63,56 +55,17 @@ export default function DeanDashboard() {
         ? "SWO Portal"
         : "Dean Portal";
 
-  // Fetch profile on mount
-  useEffect(() => {
-    const token = (localStorage.getItem("admin_token") || "").replace(/"/g, "");
-    if (token) {
-      import("../../../api/endpoints").then(({ BASE_URL }) => {
-        fetch(`${BASE_URL}/profile/admin/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.success && data.data) {
-              setProfilePhoto(data.data.profile_url ?? null);
-              setProfileName(data.data.name ?? null);
-              setProfileEmail(data.data.email ?? null);
-            }
-          })
-          .catch(() => {});
-      });
-    }
-  }, []);
-
-  const navGroups = [
-    {
-      group: null,
-      items: [{ id: "dashboard", label: "Overview", icon: LayoutDashboard }],
-    },
-    {
-      group: "Students",
-      items: [
-        { id: "student", label: "Student Details", icon: Users },
-        { id: "student_bulk", label: "Student Bulk Ops", icon: Users },
-      ],
-    },
-    {
-      group: "Academic",
-      items: [
-        { id: "subjects", label: "Manage Subjects", icon: BookOpen },
-        { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
-        { id: "grades", label: "Grades Upload", icon: GraduationCap },
-        { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
-        { id: "semester_review", label: "Course Review", icon: Layout },
-      ],
-    },
-    {
-      group: "Management",
-      items: [
-        { id: "faculty", label: "Faculty Management", icon: Users },
-        { id: "system_logs", label: "System & Logs", icon: Activity },
-      ],
-    },
+  const navItems = [
+    { id: "dashboard", label: "Overview", icon: LayoutDashboard },
+    { id: "student", label: "Student Details", icon: Users },
+    { id: "student_bulk", label: "Student Bulk Ops", icon: Users },
+    { id: "subjects", label: "Manage Subjects", icon: BookOpen },
+    { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
+    { id: "grades", label: "Grades Upload", icon: GraduationCap },
+    { id: "grades_mgmt", label: "Grade Management", icon: GraduationCap },
+    { id: "semester_review", label: "Course Review", icon: CalendarCheck },
+    { id: "faculty", label: "Faculty Management", icon: Users },
+    { id: "system_logs", label: "System & Logs", icon: Activity },
   ];
 
   const { logout } = useLogout();
@@ -160,295 +113,171 @@ export default function DeanDashboard() {
         return <SystemLogsSection />;
       default:
         return (
-          <div className="animate-in fade-in duration-500">
-            <WebmasterOverview username={username} />
+          <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20">
+            <div className="bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-700 rounded-[28px] py-6 px-10 text-white shadow-2xl shadow-blue-200/50 relative overflow-hidden group">
+              <div className="relative z-10 space-y-2.5">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 backdrop-blur-md">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-200 animate-pulse"></span>
+                  <span className="text-[8px] font-bold uppercase tracking-widest text-blue-100">
+                    RGUKT Ongole • Academic Portal
+                  </span>
+                </div>
+                <div>
+                  <h1 className="text-3xl font-semibold tracking-[-0.03em] mb-1.5 leading-none">
+                    Welcome back, {username}
+                  </h1>
+                  <p className="text-blue-100/80 font-medium text-[15px] max-w-lg mt-4 leading-relaxed">
+                    Monitor institutional performance and manage academic
+                    operations from your central command.
+                  </p>
+                </div>
+              </div>
+              <div className="absolute right-0 bottom-0 opacity-[0.03] translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform duration-1000">
+                <LayoutDashboard size={280} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {navItems.slice(1).map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id as any)}
+                  className="bg-white p-5 rounded-[28px] border border-slate-100 shadow-sm text-left transition-all group flex flex-col justify-between min-h-[150px]"
+                >
+                  <div className="p-3.5 rounded-2xl bg-slate-50 text-slate-400 mb-4 inline-block transition-all duration-300 shadow-inner">
+                    <item.icon size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-[14px] mb-1 leading-tight transition-colors">
+                      {item.label}
+                    </h3>
+                    <p className="text-[8px] text-slate-400 uppercase tracking-[0.2em] font-black opacity-60 group-hover:text-blue-500 transition-colors">
+                      Initialize Module
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         );
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+    <div className="flex min-h-screen bg-[#F8FAFC] relative overflow-hidden selection:bg-blue-100 selection:text-blue-900">
       {/* Sidebar */}
       <aside
-        className={`bg-white transition-all duration-300 z-50 ${isSidebarOpen ? "w-[315px]" : "w-24"} hidden md:flex flex-col h-screen sticky top-0 border-r border-slate-200/60 shadow-[4px_0_24px_rgba(0,0,0,0.02)]`}
+        className={`bg-white border-r border-slate-100 transition-all duration-300 z-50 ${
+          isSidebarOpen ? "w-72" : "w-20"
+        } hidden md:flex flex-col premium-shadow h-screen sticky top-0`}
       >
-        {/* Toggle Button */}
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="absolute -right-3.5 top-1/2 -translate-y-1/2 bg-white border border-slate-200 rounded-full p-1.5 shadow-md text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all z-50 hidden lg:block"
-        >
-          {isSidebarOpen ? (
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          ) : (
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m9 18 6-6-6-6" />
-            </svg>
+        <div className="p-6 flex items-center gap-4 border-b border-slate-50 shrink-0">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[14px] flex items-center justify-center shrink-0 shadow-lg shadow-blue-100 border-2 border-white rotate-[-3deg]">
+            <span className="text-white font-semibold text-xl rotate-[3deg]">
+              {roleLabel[0]}
+            </span>
+          </div>
+          {isSidebarOpen && (
+            <div className="flex flex-col animate-in fade-in slide-in-from-left-2 duration-300">
+              <span className="font-semibold text-slate-900 text-lg tracking-tight leading-none">
+                Dean Portal
+              </span>
+              <span className="text-[9px] uppercase tracking-[0.25em] text-blue-600/70 font-bold mt-1.5 px-0.5 leading-none">
+                Academic Management
+              </span>
+            </div>
           )}
-        </button>
-
-        {/* Sidebar Branding */}
-        <div className="px-4 pt-6 pb-2">
-          <div className="flex items-center justify-center">
-            <h1
-              className={`unifrakturcook-bold ${isSidebarOpen ? "text-4xl" : "text-3xl"} text-slate-900 tracking-tight transition-all duration-300`}
-            >
-              {isSidebarOpen ? "uniZ" : "Z"}
-            </h1>
-          </div>
         </div>
 
-        {/* Search Style */}
-        <div className="px-5 py-4">
-          <div className="relative group">
-            <Search
-              className={`absolute ${isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2"} top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600 transition-colors`}
-              size={16}
-            />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isSidebarOpen ? "Search operations..." : ""}
-              className={`w-full bg-slate-50 border border-slate-200/60 rounded-xl ${isSidebarOpen ? "pl-10 pr-8" : "px-0"} py-2 text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all font-medium`}
-            />
-            {isSidebarOpen && (
-              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-slate-200/60 rounded text-[9px] font-bold text-slate-400 uppercase">
-                /
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Navigation Section */}
-        <nav
-          className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-2 overflow-y-auto space-y-6 custom-sidebar-scroll`}
-        >
-          {(() => {
-            const filteredGroups = navGroups
-              .map((group) => ({
-                ...group,
-                items: group.items.filter((item) =>
-                  item.label.toLowerCase().includes(searchQuery.toLowerCase()),
-                ),
-              }))
-              .filter((group) => group.items.length > 0);
-
-            if (filteredGroups.length === 0 && searchQuery) {
-              return (
-                <div className="flex flex-col items-center justify-center py-10 text-center">
-                  <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
-                    <Search size={20} className="text-slate-300" />
-                  </div>
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-4">
-                    No operations found
-                  </p>
-                </div>
-              );
-            }
-
-            return filteredGroups.map((group, gIdx) => (
-              <div key={gIdx} className="space-y-1.5">
-                {group.group && isSidebarOpen && (
-                  <h4 className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">
-                    {group.group}
-                  </h4>
-                )}
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = activeTab === item.id;
-
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => setActiveTab(item.id as any)}
-                      title={!isSidebarOpen ? item.label : ""}
-                      className={`
-                        w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group relative
-                        ${
-                          isActive
-                            ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
-                            : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
-                        }
-                      `}
-                    >
-                      <div className="flex items-center justify-center min-w-[22px]">
-                        <Icon
-                          size={20}
-                          className={`shrink-0 transition-colors
-                            ${
-                              isActive
-                                ? "text-blue-600"
-                                : "text-slate-400 group-hover:text-slate-600"
-                            }`}
-                        />
-                      </div>
-                      {isSidebarOpen && (
-                        <span
-                          className={`text-[13.5px] whitespace-nowrap tracking-tight leading-none
-                            ${isActive ? "font-bold" : "font-semibold"}`}
-                        >
-                          {item.label}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            ));
-          })()}
-
-          {/* Special Logout Item (at the bottom of nav list) */}
-          <div className="pt-2">
+        <nav className="flex-1 p-3 space-y-1 mt-4 overflow-y-auto no-scrollbar">
+          {navItems.map((item) => (
             <button
-              onClick={handleLogout}
-              className={`
-                w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group hover:bg-red-50 hover:text-red-500 text-slate-500
-              `}
-              title={!isSidebarOpen ? "Logout" : ""}
+              key={item.id}
+              onClick={() => setActiveTab(item.id as any)}
+              className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-[20px] transition-all duration-300 group ${
+                activeTab === item.id
+                  ? "bg-blue-600 text-white shadow-xl shadow-blue-100"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+              }`}
             >
-              <div className="flex items-center justify-center min-w-[22px]">
-                <LogOut
-                  size={20}
-                  className="text-slate-400 group-hover:text-red-500 transition-colors"
-                />
-              </div>
+              <item.icon
+                size={20}
+                className={`shrink-0 transition-transform group-hover:scale-110 ${activeTab === item.id ? "text-white" : "text-slate-400"}`}
+              />
               {isSidebarOpen && (
-                <span className="text-[13.5px] font-semibold whitespace-nowrap tracking-tight leading-none">
-                  Logout System
+                <span
+                  className={`text-[14px] tracking-tight transition-all ${activeTab === item.id ? "font-semibold" : "font-medium"}`}
+                >
+                  {item.label}
                 </span>
               )}
+              {isSidebarOpen && activeTab === item.id && (
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-100 animate-pulse" />
+              )}
             </button>
-          </div>
+          ))}
         </nav>
 
-        {/* User Info Style (Back to minimal) */}
-        <div className="mt-auto border-t border-slate-200/60 p-3 pb-5">
-          <div
-            onClick={() => {
-              setActiveAnchor(avatarBtnRef);
-              setProfilePopupOpen(true);
-            }}
-            className={`flex items-center ${isSidebarOpen ? "justify-start px-2" : "justify-center"} py-1.5 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group`}
+        <div className="p-4 border-t border-slate-50 shrink-0">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3.5 px-4 py-3 rounded-full text-red-500 hover:bg-red-50 transition-all group"
           >
-            <div className="flex items-center gap-3 min-w-0">
-              <button
-                ref={avatarBtnRef}
-                className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-slate-100 flex items-center justify-center shadow-sm ring-1 ring-slate-200/60 transition-transform group-hover:scale-105"
-              >
-                {profilePhoto ? (
-                  <img
-                    src={profilePhoto}
-                    className="w-full h-full object-cover"
-                    alt=""
-                  />
-                ) : (
-                  <span className="text-slate-600 font-bold text-[10px] leading-tight text-center px-1 truncate">
-                    {firstName}
-                  </span>
-                )}
-              </button>
-              {isSidebarOpen && (
-                <div className="min-w-0">
-                  <p className="text-[13px] font-bold text-slate-900 truncate leading-tight">
-                    {profileName || username}
-                  </p>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate mt-0.5">
-                    {roleLabel}
-                  </p>
-                </div>
-              )}
+            <div className="min-w-[20px] flex justify-center">
+              <LogOut
+                size={20}
+                className="shrink-0 transition-transform group-hover:rotate-12"
+              />
             </div>
-          </div>
+            {isSidebarOpen && (
+              <span className="text-[14px] font-semibold">Sign Out</span>
+            )}
+          </button>
         </div>
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto max-h-screen">
-        {/* New minimal header */}
-        <header className=" sticky top-0 z-40 px-10 py-5 flex items-center justify-end bg-white/40 backdrop-blur-md border-b border-white/20">
-          {/* Right group: name+email → avatar → logout */}
-          <div className="flex items-center gap-4">
-            {/* Name + email — left of avatar */}
-            <div className="text-right">
-              <p className="text-[15px] font-bold text-slate-900 leading-tight tracking-tight">
-                {profileName || username}
+        <header className="bg-white/70 backdrop-blur-md sticky top-0 z-40 border-b border-slate-100 h-[72px] px-8 flex justify-between items-center glass-panel">
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2.5 hover:bg-blue-50 rounded-xl transition-all md:block hidden text-slate-400 hover:text-blue-600 border border-transparent hover:border-blue-100"
+          >
+            {isSidebarOpen ? <Menu size={20} /> : <ChevronRight size={20} />}
+          </button>
+          <div className="flex items-center gap-3">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-semibold text-slate-900 leading-none tracking-tight">
+                {username}
               </p>
-              <p className="text-[11px] text-slate-400 font-bold mt-0.5 lowercase tracking-tight">
-                {profileEmail || `${username}@rguktong.ac.in`}
+              <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-widest mt-1.5 opacity-70">
+                {roleLabel}
               </p>
             </div>
-
-            {/* Circular profile photo — opens popup */}
             <button
-              ref={headerAvatarRef}
-              onClick={() => {
-                setActiveAnchor(headerAvatarRef);
-                setProfilePopupOpen(true);
-              }}
-              title="Profile"
-              className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 hover:ring-blue-400 transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50"
+              onClick={() => navigate("/admin/profile")}
+              title="My Profile"
+              className="p-2 rounded-full hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
             >
-              {profilePhoto ? (
-                <img
-                  src={profilePhoto}
-                  className="w-full h-full object-cover"
-                  alt=""
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-bold text-[10px] leading-tight text-center px-1 truncate">
-                  {firstName}
-                </div>
-              )}
+              <UserCircle size={22} />
             </button>
-
-            {/* Logout button */}
             <button
-              onClick={handleLogout}
-              title="Sign out"
-              className="w-11 h-11 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all active:scale-95 shadow-sm"
+              onClick={() => navigate("/admin/settings")}
+              title="Security Settings"
+              className="p-2 rounded-full hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
             >
-              <LogOut size={18} />
+              <Settings size={20} />
             </button>
+            <div
+              onClick={() => navigate("/admin/profile")}
+              className="w-11 h-11 rounded-[14px] bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center font-semibold text-blue-700 shadow-inner cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
+            >
+              {(username || "D")[0].toUpperCase()}
+            </div>
           </div>
         </header>
 
-        {/* Profile popup portal */}
-        <ProfilePopup
-          username={username}
-          anchorRef={activeAnchor}
-          open={profilePopupOpen}
-          onClose={() => setProfilePopupOpen(false)}
-          onProfileUpdate={(p) => {
-            setProfilePhoto(p.profile_url ?? null);
-            setProfileName(p.name ?? null);
-            setProfileEmail(p.email ?? null);
-          }}
-          onLogout={handleLogout}
-          initialPhoto={profilePhoto}
-        />
-
-        <div className="max-w-7xl mx-auto">{renderContent()}</div>
+        <div className="max-w-7xl mx-auto p-4 md:p-0">{renderContent()}</div>
       </main>
     </div>
   );

@@ -1,26 +1,15 @@
-/**
- * ==============================================================================
- * UNIZ AUTH SERVICE - SECURITY GATEKEEPER (TURNSTILE)
- * ==============================================================================
- * This utility handles the backend verification of Cloudflare Turnstile tokens
- * to prevent automated bot attacks on authentication endpoints.
- * ==============================================================================
- */
-
 import axios from "axios";
 
 /**
- * Verifies a Cloudflare Turnstile token against the Cloudflare API.
+ * Verifies a Cloudflare Turnstile token.
  *
  * @param token The turnstile token from the client
- * @param clientIp The IP address of the client
- * @param origin The request origin (to allow bypassing in dev/localhost)
- * @returns boolean indicating if the token is valid or verification is skipped
+ * @param clientIp The IP address of the client (optional but recommended)
+ * @returns boolean indicating if the token is valid
  */
 export const verifyTurnstileToken = async (
   token: string,
   clientIp?: string,
-  origin?: string,
 ): Promise<boolean> => {
   const secretKey = process.env.TURNSTILE_SECRET_KEY;
 
@@ -29,28 +18,6 @@ export const verifyTurnstileToken = async (
       "[TURNSTILE] TURNSTILE_SECRET_KEY not configured. Skipping verification.",
     );
     return true; // Don't block if not configured, but log a warning
-  }
-
-  // ALLOW BYPASS FOR LOCAL DEVELOPMENT
-  // 1. If hitting from a dev environment
-  // 2. If hitting from localhost (even if hitting production backend)
-  // 3. If using the Cloudflare "Always Pass" dummy token
-  const isLocalhost =
-    origin &&
-    (origin.includes("localhost") ||
-      origin.includes("127.0.0.1") ||
-      origin.includes("0.0.0.0"));
-
-  if (
-    process.env.NODE_ENV !== "production" ||
-    process.env.DOCKER_ENV !== "true" ||
-    isLocalhost ||
-    token === "1x00000000000000000000AA"
-  ) {
-    console.log(
-      `[TURNSTILE] Bypass condition met. (Localhost: ${!!isLocalhost}, NODE_ENV: ${process.env.NODE_ENV}, Token: ${token.substring(0, 10)}...)`,
-    );
-    return true;
   }
 
   if (!token) {
