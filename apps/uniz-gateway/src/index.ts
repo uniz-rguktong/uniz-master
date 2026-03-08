@@ -9,19 +9,11 @@ import httpProxy from "http-proxy";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const isK8s =
-  process.env.KUBERNETES_SERVICE_HOST || process.env.DOCKER_ENV === "true";
-
-// Initialize Redis with fast-fail defaults for local dev
-const redis = new Redis(
-  process.env.REDIS_URL ||
-    (isK8s ? "redis://uniz-redis:6379" : "redis://127.0.0.1:6379"),
-  {
-    maxRetriesPerRequest: 1,
-    connectTimeout: 2000,
-    lazyConnect: true, // Don't block startup
-  },
-);
+// Initialize Redis for High-Speed Caching
+const redis = new Redis(process.env.REDIS_URL || "redis://uniz-redis:6379", {
+  maxRetriesPerRequest: 3,
+  retryStrategy: (times) => Math.min(times * 50, 2000),
+});
 
 redis.on("error", (err) =>
   console.error("[Redis] Connection Error:", err.message),
@@ -49,12 +41,7 @@ app.use(compression());
 
 const allowedOrigins = process.env.CLIENT_URL
   ? process.env.CLIENT_URL.split(",").map((origin) => origin.trim())
-  : [
-      "http://localhost:5173",
-      "http://localhost:3000",
-      "http://127.0.0.1:5173",
-      "http://127.0.0.1:3000",
-    ];
+  : ["http://localhost:5173", "http://localhost:3000"];
 
 // 2. Optimized CORS
 app.use((req, res, next) => {
@@ -132,59 +119,37 @@ const cacheMiddleware = async (
   next();
 };
 
-const localHost = process.env.LOCAL_IP || "localhost";
-
 const serviceMap: Record<string, string> = {
   auth:
     process.env.AUTH_SERVICE_URL ||
-    (isK8s
-      ? "http://uniz-auth-service.default.svc.cluster.local:3001"
-      : `http://${localHost}:3001`),
+    "http://uniz-auth-service.default.svc.cluster.local:3001",
   profile:
     process.env.USER_SERVICE_URL ||
-    (isK8s
-      ? "http://uniz-user-service.default.svc.cluster.local:3002"
-      : `http://${localHost}:3002`),
+    "http://uniz-user-service.default.svc.cluster.local:3002",
   cms:
     process.env.USER_SERVICE_URL ||
-    (isK8s
-      ? "http://uniz-user-service.default.svc.cluster.local:3002"
-      : `http://${localHost}:3002`),
+    "http://uniz-user-service.default.svc.cluster.local:3002",
   academics:
     process.env.ACADEMICS_SERVICE_URL ||
-    (isK8s
-      ? "http://uniz-academics-service.default.svc.cluster.local:3004"
-      : `http://${localHost}:3004`),
+    "http://uniz-academics-service.default.svc.cluster.local:3004",
   requests:
     process.env.OUTPASS_SERVICE_URL ||
-    (isK8s
-      ? "http://uniz-outpass-service.default.svc.cluster.local:3003"
-      : `http://${localHost}:3003`),
+    "http://uniz-outpass-service.default.svc.cluster.local:3003",
   files:
     process.env.FILES_SERVICE_URL ||
-    (isK8s
-      ? "http://uniz-files-service.default.svc.cluster.local:3005"
-      : `http://${localHost}:3005`),
+    "http://uniz-files-service.default.svc.cluster.local:3005",
   mail:
     process.env.MAIL_SERVICE_URL ||
-    (isK8s
-      ? "http://uniz-mail-service.default.svc.cluster.local:3006"
-      : `http://${localHost}:3006`),
+    "http://uniz-mail-service.default.svc.cluster.local:3006",
   notifications:
     process.env.NOTIFICATION_SERVICE_URL ||
-    (isK8s
-      ? "http://uniz-notification-service.default.svc.cluster.local:3007"
-      : `http://${localHost}:3007`),
+    "http://uniz-notification-service.default.svc.cluster.local:3007",
   cron:
     process.env.CRON_SERVICE_URL ||
-    (isK8s
-      ? "http://uniz-cron-service.default.svc.cluster.local:3008"
-      : `http://${localHost}:3008`),
+    "http://uniz-cron-service.default.svc.cluster.local:3008",
   grievance:
     process.env.OUTPASS_SERVICE_URL ||
-    (isK8s
-      ? "http://uniz-outpass-service.default.svc.cluster.local:3003"
-      : `http://${localHost}:3003`),
+    "http://uniz-outpass-service.default.svc.cluster.local:3003",
 };
 
 // 4. Standard Health Endpoints (Fast path)
@@ -236,16 +201,7 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
   }
 
   // GET Cache Lookup + Fetch
-  const isExcluded =
-    req.url.includes("progress") ||
-    req.url.includes("status") ||
-    req.url.includes("semester") ||
-    req.url.includes("allocation");
-  if (
-    req.method === "GET" &&
-    !isExcluded &&
-    req.headers["cache-control"] !== "no-cache"
-  ) {
+  if (req.method === "GET" && req.headers["cache-control"] !== "no-cache") {
     try {
       const cached = await redis.get(cacheKey);
       if (cached) {
@@ -261,19 +217,13 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
       const targetUrl = `${target.replace(/\/$/, "")}/${path}`;
       const response = await axios.get(targetUrl, {
         headers: { ...req.headers, host: new URL(target).host },
-        responseType: "arraybuffer", // Use arraybuffer to prevent binary corruption (Excel, Images, etc.)
+        responseType: "text",
         validateStatus: () => true,
-        timeout: 30000, // 30s timeout to prevent gateway hangs
       });
 
-      const contentType = response.headers["content-type"] || "";
-      const isBinary = /image|video|audio|pdf|excel|spreadsheet|zip/i.test(
-        contentType,
-      );
-
-      if (response.status === 200 && !isBinary) {
+      if (response.status === 200) {
         const respToCache = {
-          data: response.data.toString("utf-8"),
+          data: response.data,
           headers: response.headers,
           status: response.status,
         };
