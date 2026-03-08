@@ -251,29 +251,30 @@ export const uploadStudents = async (req: any, res: Response) => {
     // 5. Enqueue Job
     await redis.rpush("student:job:queue", JSON.stringify(job));
 
-    // 6. Trigger Processing Inline (Reliable start)
+    // 6. Trigger Processing asynchronously via local endpoint (Reliable start without hanging)
     console.log(
-      `[Bulk] Enqueued student upload ${uploadId}. Starting worker...`,
+      `[Bulk] Enqueued student upload ${uploadId}. Triggering background worker...`,
     );
-    const result = await processNextStudentBatch();
 
-    if (result && result.status === "continued") {
-      const port = process.env.PORT || 3002;
-      const triggerUrl = `http://localhost:${port}/api/queue/process?lb=${Math.random().toString(36).substring(7)}`;
+    const port = process.env.PORT || 3002;
+    const triggerUrl = `http://localhost:${port}/api/queue/process?lb_init=${Math.random().toString(36).substring(7)}`;
 
-      axios
-        .post(
-          triggerUrl,
-          {},
-          {
-            headers: {
-              "x-internal-secret": process.env.INTERNAL_SECRET || "uniz-core",
-            },
-            timeout: 5000,
+    axios
+      .post(
+        triggerUrl,
+        {},
+        {
+          headers: {
+            "x-internal-secret": process.env.INTERNAL_SECRET || "uniz-core",
           },
-        )
-        .catch((e) => {});
-    }
+          timeout: 2000,
+        },
+      )
+      .catch((e) => {
+        console.error(
+          `[Bulk] Failed to trigger initial student worker: ${e.message}`,
+        );
+      });
 
     return res.status(202).json({
       success: true,
