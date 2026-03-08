@@ -1,37 +1,21 @@
 #!/bin/bash
-# ==============================================================================
-# UNIZ INFRASTRUCTURE - SECURE VAULT MANAGEMENT TOOL
-# ==============================================================================
-# Author: UNIZ Engineering
-# Description: Orchestrates secret synchronization between Local Dev & VPS.
-# Features: Batch Sync, App-specific Mapping, Remote State Retrieval.
-# ==============================================================================
 
-# ------------------------------------------------------------------------------
-# 1. CONFIGURATION & STATE
-# ------------------------------------------------------------------------------
+# UniZ Vault Management Tool
+# This tool handles secure secret synchronization between local dev and VPS.
 
 VPS_IP="76.13.241.174"
 REMOTE_SECRETS_PATH="/root/uniz-secrets.env"
 LOCAL_SECRETS_BAK="infra/core-infra/kubernetes/base/secrets.yaml.bak"
 
-# ------------------------------------------------------------------------------
-# 2. SECURITY & AUTHORIZATION
-# ------------------------------------------------------------------------------
-
 function check_auth() {
-    # CRITICAL: BatchMode=yes prevents the script from hanging on password prompts.
-    # Access is strictly controlled via pre-authorized SSH keys on the VPS.
+    # Check if we can SSH into the VPS without manual password entry
+    # This ensures only authorized devs with the SSH key can manage secrets
     ssh -o ConnectTimeout=5 -o BatchMode=yes root@$VPS_IP "echo 'Auth OK'" &>/dev/null
     if [ $? -ne 0 ]; then
         echo "❌ [Auth] Authorization failed. You must have the authorized SSH key to use the vault."
         exit 1
     fi
 }
-
-# ------------------------------------------------------------------------------
-# 3. REMOTE STATE MANAGEMENT (FETCH/PUSH)
-# ------------------------------------------------------------------------------
 
 function get_secrets() {
     check_auth
@@ -51,10 +35,6 @@ function set_secrets() {
     echo "🚀 [Vault] Secrets updated on VPS. Deploy to apply changes."
 }
 
-# ------------------------------------------------------------------------------
-# 4. APP-LEVEL SECRET PROPAGATION
-# ------------------------------------------------------------------------------
-
 function sync_local_envs() {
     if [ ! -f "secrets.env" ]; then
         echo "❌ [Vault] secrets.env not found. Run 'get' first."
@@ -65,9 +45,8 @@ function sync_local_envs() {
     # Load secrets into environment for this script session
     export $(grep -v '^#' secrets.env | xargs)
 
-    # SECRETS MAPPING REGISTRY
-    # Defines how global secrets are distributed to microservice-specific .env files.
-    # Format: folder:var1,target_var=source_var,var3...
+    # List of apps to sync with full variable mappings
+    # Format: folder:var1,var2=MASTER_VAR,var3
     APPS=(
         "uniz-portal:VITE_API_URL,VITE_MAINTENANCE_MODE,VITE_CLOUDINARY_CLOUD_NAME=CLOUDINARY_CLOUD_NAME,VITE_CLOUDINARY_UPLOAD_PRESET=CLOUDINARY_UPLOAD_PRESET,VITE_SCRAPER_URL,VITE_TURNSTILE_SITE_KEY"
         "uniz-auth:JWT_SECURITY_KEY,DATABASE_URL=AUTH_DATABASE_URL,REDIS_URL,INTERNAL_SECRET,USER_SERVICE_URL,GATEWAY_URL,EMAIL_USER,EMAIL_PASS,TURNSTILE_SECRET_KEY"
