@@ -190,7 +190,7 @@ export const createAllocation = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { semesterId, branch, subjectId, academicYear } = req.body;
+  const { semesterId, branch, subjectId, academicYear, batch } = req.body;
   const user = req.user;
 
   try {
@@ -209,6 +209,7 @@ export const createAllocation = async (
         branch: branch.toUpperCase(),
         subjectId,
         academicYear: academicYear || "E4", // Default or derived
+        batch: batch || "",
         status: "DEAN_PENDING",
       } as any,
       include: {
@@ -282,7 +283,7 @@ export const getDeanAllocations = async (
   const { branch } = req.params;
 
   try {
-    const { semesterId, year } = req.query;
+    const { semesterId, year, batch } = req.query;
 
     let targetSemId;
     if (semesterId) {
@@ -310,6 +311,13 @@ export const getDeanAllocations = async (
     if (year) {
       whereClause.academicYear = {
         equals: year as string,
+        mode: "insensitive",
+      };
+    }
+
+    if (batch && batch !== "all") {
+      whereClause.batch = {
+        equals: batch as string,
         mode: "insensitive",
       };
     }
