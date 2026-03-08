@@ -379,20 +379,6 @@ export default function UpdatesSection() {
           </table>
         </div>
 
-        {/* Sync Status Footer */}
-        <div className="px-10 py-5 bg-slate-50/30 border-t border-slate-50 flex items-center justify-between">
-          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-            Broadcast Stream Monitor
-          </p>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-xl">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">
-                CMS Synchronized
-              </span>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Add Update Modal */}
