@@ -1,22 +1,9 @@
-/**
- * ==============================================================================
- * UNIZ MICROSERVICES - ACADEMICS & CURRICULUM ENGINE
- * ==============================================================================
- * Entry point for the Academics Service. Responsible for grade management,
- * attendance tracking, and asynchronous academic data ingestion.
- * ==============================================================================
- */
-
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import { redis } from "./utils/redis.util";
-
-// ------------------------------------------------------------------------------
-// 1. INITIALIZATION & MIDDLEWARE
-// ------------------------------------------------------------------------------
 
 dotenv.config();
 
@@ -38,10 +25,6 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", service: "uniz-academics-service" });
 });
 
-// ------------------------------------------------------------------------------
-// 2. ROUTING & DATA PIPELINES
-// ------------------------------------------------------------------------------
-
 import academicRoutes from "./routes/academic.routes";
 import queueRoutes from "./routes/queue.routes";
 
@@ -50,10 +33,6 @@ app.use("/api/queue", queueRoutes);
 
 // General Academic Routes (With Auth Middleware)
 app.use("/", academicRoutes);
-
-// ------------------------------------------------------------------------------
-// 3. INFRASTRUCTURE & SELF-HEALING WORKERS
-// ------------------------------------------------------------------------------
 
 // Startup self-healing: Check for stuck jobs
 import { processNextBatch } from "./services/upload.service";
@@ -75,10 +54,6 @@ const startWorker = async () => {
   }
 };
 setTimeout(startWorker, 5000); // Wait for services to be ready
-
-// ------------------------------------------------------------------------------
-// 4. ERROR ORCHESTRATION
-// ------------------------------------------------------------------------------
 
 // 404 Handler
 app.use((req, res) => {
@@ -106,19 +81,11 @@ app.use(
   },
 );
 
-// ------------------------------------------------------------------------------
-// 5. SERVER BOOTSTRAP
-// ------------------------------------------------------------------------------
-
 const server = app.listen(PORT, () => {
   console.log(`Academics Service running on port ${PORT}`);
   server.keepAliveTimeout = 65000;
   server.headersTimeout = 66000;
 });
-
-// ------------------------------------------------------------------------------
-// 6. SYSTEM SIGNAL HANDLERS (GRACEFUL TERMINATION)
-// ------------------------------------------------------------------------------
 
 // Graceful Shutdown Handler
 process.on("SIGTERM", async () => {
