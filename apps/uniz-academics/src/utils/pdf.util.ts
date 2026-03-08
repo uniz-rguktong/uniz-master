@@ -77,7 +77,11 @@ const createPdfBuffer = async (
   draw: (doc: InstanceType<typeof PDFDocument>) => Promise<void> | void,
 ): Promise<Buffer> => {
   return new Promise<Buffer>((resolve, reject) => {
-    const doc = new PDFDocument({ size: "A4", margin: PAGE_MARGIN });
+    const doc = new PDFDocument({
+      size: "A4",
+      margin: PAGE_MARGIN,
+      compress: false,
+    });
     const chunks: any[] = [];
     doc.on("data", (chunk: any) => chunks.push(chunk));
     doc.on("end", () => resolve(Buffer.concat(chunks)));
