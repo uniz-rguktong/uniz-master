@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // --- Performance ---
   compress: true,
+  output: "standalone",
 
   // --- Security: remove fingerprinting header ---
   poweredByHeader: false,
