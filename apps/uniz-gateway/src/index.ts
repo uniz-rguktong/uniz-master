@@ -236,7 +236,11 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
   }
 
   // GET Cache Lookup + Fetch
-  const isExcluded = req.url.includes("progress") || req.url.includes("status");
+  const isExcluded =
+    req.url.includes("progress") ||
+    req.url.includes("status") ||
+    req.url.includes("semester") ||
+    req.url.includes("allocation");
   if (
     req.method === "GET" &&
     !isExcluded &&
