@@ -148,6 +148,9 @@ export default function StudentProfilePage() {
     motherAddress: userData?.mother_address || "",
     fatherPhoneNumber: userData?.father_phonenumber || "",
     motherPhoneNumber: userData?.mother_phonenumber || "",
+    // New Fields from Allocation Data
+    category: userData?.category || "",
+    campus: userData?.campus || "",
   });
 
   // Init Data
@@ -464,6 +467,18 @@ export default function StudentProfilePage() {
       name: "dateOfBirth",
       editable: true,
       type: "date",
+    },
+    {
+      icon: <Briefcase className="w-4 h-4" />,
+      label: "Admission Category",
+      name: "category",
+      editable: true,
+    },
+    {
+      icon: <MapPin className="w-4 h-4" />,
+      label: "Campus",
+      name: "campus",
+      editable: true,
     },
   ];
 
