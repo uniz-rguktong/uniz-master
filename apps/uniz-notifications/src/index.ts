@@ -1,14 +1,3 @@
-/**
- * ==============================================================================
- * UNIZ MICROSERVICES - NOTIFICATION ENGINE & PDF ORCHESTRATOR
- * ==============================================================================
- * Advanced service for asynchronous task delivery. Orchestrates:
- * 1. High-fidelity PDF generation (Results/Attendance reports)
- * 2. Multi-channel targeted Web Push delivery
- * 3. High-througput job queuing via BullMQ & Redis
- * ==============================================================================
- */
-
 import { Queue, Worker, Job } from "bullmq";
 import IORedis from "ioredis";
 import dotenv from "dotenv";
@@ -25,10 +14,7 @@ import axios from "axios";
 const USER_SERVICE_URL =
   process.env.USER_SERVICE_URL || "http://uniz-user-service:3002";
 
-// ------------------------------------------------------------------------------
-// 1. PDF DOCUMENT GENERATION UTILITIES
-// ------------------------------------------------------------------------------
-
+// --- PDF UTILS (pure Node, styled like official result sheets) ---
 const PAGE_MARGIN = 40;
 
 const createPdfBuffer = async (
@@ -521,9 +507,7 @@ const generateAttendancePdf = async (data: any): Promise<Buffer> => {
       );
   });
 };
-// ------------------------------------------------------------------------------
-// 2. DISPATCHER & CONNECTION INITIALIZATION
-// ------------------------------------------------------------------------------
+// --- END PDF UTILS ---
 
 dotenv.config();
 
@@ -531,9 +515,11 @@ const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 const connection = new IORedis(REDIS_URL, { maxRetriesPerRequest: null });
 connection.on("error", (err) => console.error("Redis connection error:", err));
 
-// ------------------------------------------------------------------------------
-// 3. TARGETED WEB PUSH INFRASTRUCTURE
-// ------------------------------------------------------------------------------
+// --- EMAIL DELIVERY REMOVED (Policy: OTP Only) ---
+// Notifications now only use Targeted Web Push.
+// --- END EMAIL DELIVERY SETUP ---
+
+// --- WEB PUSH SETUP ---
 const publicVapidKey =
   process.env.VAPID_PUBLIC_KEY ||
   "BBUDnL9QZfs1W_wmn1kCW7U81ISk0isqNro00JEIamFsQaMGqC3AO8nnK32jY94o3zCg0Thuz-Le1o3mH3Z8Thc";
@@ -626,10 +612,20 @@ const sendWebPush = async (
 // Policy: No active emails from notification service.
 // Primary email provider (SES) is in uniz-mail for OTPs.
 
-// ------------------------------------------------------------------------------
-// 4. BULLMQ JOB WORKER ORCHESTRATION
-// ------------------------------------------------------------------------------
+// Queue handle used by HTTP test endpoint to enqueue test jobs
+const notificationQueue = new Queue("notification-queue", {
+  connection,
+});
 
+// Email templates removed. Policy: Only PUSH notifications.
+// Result PDFs are still generated and can be downloaded from portal.
+// --- END TEMPLATES ---
+
+// NOTE: Jobs are enqueued with their BullMQ job name used as the "type"
+// (e.g. "EMAIL", "RESULTS", "ATTENDANCE_REPORT"). The original implementation
+// looked at job.data.type instead, so RESULTS/ATTENDANCE_REPORT jobs were never
+// processed and no emails were sent. The worker now switches on job.name and
+// derives the recipient from job.data.recipient or job.data.username.
 console.log(
   "[NotificationWorker] Initializing Worker for notification-queue...",
 );

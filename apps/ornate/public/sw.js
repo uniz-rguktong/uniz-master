@@ -9,9 +9,7 @@ self.addEventListener('install', (event) => {
         caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll([
                 '/',
-                '/manifest.json',
-                '/icon-192.png',
-                '/icon-512.png'
+                '/manifest.json'
             ]);
         })
     );
