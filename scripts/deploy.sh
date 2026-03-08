@@ -150,7 +150,7 @@ git reset --hard origin/main
     fi
     envsubst < infra/core-infra/kubernetes/base/secrets.yaml.template > infra/core-infra/kubernetes/base/secrets.yaml
   fi
-  export NEXT_PUBLIC_ASSETS_URL="https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev"
+  export NEXT_PUBLIC_ASSETS_URL="https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
   kubectl apply -k infra/core-infra/kubernetes/base/
 
   # ----------------------------------------------------------------------------
