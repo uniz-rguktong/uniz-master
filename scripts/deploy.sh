@@ -150,6 +150,7 @@ git reset --hard origin/main
     fi
     envsubst < infra/core-infra/kubernetes/base/secrets.yaml.template > infra/core-infra/kubernetes/base/secrets.yaml
   fi
+  export NEXT_PUBLIC_ASSETS_URL="https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev"
   kubectl apply -k infra/core-infra/kubernetes/base/
 
   # ----------------------------------------------------------------------------
@@ -185,6 +186,8 @@ git reset --hard origin/main
         BUILD_ARGS=""
         if [[ "$DIR" == "uniz-portal" ]]; then
           BUILD_ARGS="--build-arg VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg VITE_API_URL=$VITE_API_URL --build-arg VITE_CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME --build-arg VITE_CLOUDINARY_UPLOAD_PRESET=$CLOUDINARY_UPLOAD_PRESET"
+        elif [[ "$DIR" == "ornate" ]]; then
+          BUILD_ARGS="--build-arg NEXT_PUBLIC_ASSETS_URL=$NEXT_PUBLIC_ASSETS_URL --build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY"
         fi
 
         if docker build --no-cache --platform linux/amd64 $BUILD_ARGS -t $IMG:$TAG $BUILD_CONTEXT; then
