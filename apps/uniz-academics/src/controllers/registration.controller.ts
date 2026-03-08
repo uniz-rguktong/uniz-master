@@ -267,6 +267,12 @@ export const getSemesters = async (
       orderBy: { createdAt: "desc" },
       include: { _count: { select: { registrations: true } } },
     });
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate",
+    );
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
     res.json(semesters);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch semesters" });
@@ -944,6 +950,12 @@ export const getSemesterOverview = async (
     });
 
     if (!activeSem) {
+      res.setHeader(
+        "Cache-Control",
+        "no-store, no-cache, must-revalidate, proxy-revalidate",
+      );
+      res.setHeader("Pragma", "no-cache");
+      res.setHeader("Expires", "0");
       return res.json({ semester: null, data: null });
     }
 
@@ -963,6 +975,12 @@ export const getSemesterOverview = async (
         0,
       );
 
+      res.setHeader(
+        "Cache-Control",
+        "no-store, no-cache, must-revalidate, proxy-revalidate",
+      );
+      res.setHeader("Pragma", "no-cache");
+      res.setHeader("Expires", "0");
       return res.json({
         semester: activeSem,
         role: "student",
@@ -1027,6 +1045,12 @@ export const getSemesterOverview = async (
         }),
       );
 
+      res.setHeader(
+        "Cache-Control",
+        "no-store, no-cache, must-revalidate, proxy-revalidate",
+      );
+      res.setHeader("Pragma", "no-cache");
+      res.setHeader("Expires", "0");
       return res.json({
         semester: activeSem,
         role: user.role,
