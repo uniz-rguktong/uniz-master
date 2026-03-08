@@ -22,7 +22,19 @@ export const login = async (req: Request, res: Response) => {
   const captchaToken = req.body.captchaToken;
 
   // Cloudflare Turnstile Verification
-  const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+  let isHuman = false;
+
+  // Local development backend override (allows devs hitting prod to bypass Turnstile)
+  const DEV_BYPASS_TOKEN = "uniz_dev_bypass_token_2026";
+  if (captchaToken === DEV_BYPASS_TOKEN) {
+    isHuman = true;
+    console.log(
+      "[AUTH-DEBUG] Turnstile bypassed for local development request",
+    );
+  } else {
+    isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+  }
+
   if (!isHuman) {
     return res.status(400).json({
       code: "AUTH_CAPTCHA_FAILED",
