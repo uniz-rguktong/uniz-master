@@ -551,10 +551,8 @@ export default function StudentProfilePage() {
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />
-                  ) : user?.name ? (
-                    user.name.charAt(0).toUpperCase()
                   ) : (
-                    "S"
+                    <span className="text-xl md:text-2xl font-black uppercase tracking-tight truncate px-2 leading-none">{user?.name?.split(" ")[0] || "S"}</span>
                   )}
 
                   {/* Dark blurry overlay — contained fully inside the circle */}
@@ -668,11 +666,10 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                  className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${
-                    activeTab === tab
-                      ? "text-cyan-900"
-                      : "text-slate-400 hover:text-slate-600"
-                  }`}
+                  className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${activeTab === tab
+                    ? "text-cyan-900"
+                    : "text-slate-400 hover:text-slate-600"
+                    }`}
                 >
                   {tab}
                   {activeTab === tab && (
