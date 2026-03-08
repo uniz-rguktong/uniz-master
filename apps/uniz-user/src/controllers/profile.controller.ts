@@ -523,16 +523,59 @@ export const getAdminProfile = async (
       });
     }
 
-    profile = await prisma.adminProfile.upsert({
+    const inferDept = (uname: string): string => {
+      const parts = uname.toUpperCase().split("_");
+      const branches = [
+        "CSE",
+        "ECE",
+        "ME",
+        "CE",
+        "MME",
+        "CHEM",
+        "CHE",
+        "EE",
+        "EEE",
+        "CIVIL",
+        "MET",
+        "MEC",
+      ];
+      if (parts.length > 1) {
+        const last = parts[parts.length - 1];
+        if (branches.includes(last)) return last;
+      }
+      return "";
+    };
+
+    const existingProfile = await prisma.adminProfile.findUnique({
       where: { username: user.username },
-      update: {},
-      create: {
-        username: user.username,
-        role: user.role as string,
-        name: user.username.charAt(0).toUpperCase() + user.username.slice(1),
-        email: `${user.username}@rguktong.ac.in`, // Fallback email
-      },
     });
+
+    if (existingProfile) {
+      if (!existingProfile.department) {
+        const inferred = inferDept(user.username);
+        if (inferred) {
+          profile = await prisma.adminProfile.update({
+            where: { id: existingProfile.id },
+            data: { department: inferred },
+          });
+        } else {
+          profile = existingProfile;
+        }
+      } else {
+        profile = existingProfile;
+      }
+    } else {
+      const inferred = inferDept(user.username);
+      profile = await prisma.adminProfile.create({
+        data: {
+          username: user.username,
+          role: user.role as string,
+          name: user.username.charAt(0).toUpperCase() + user.username.slice(1),
+          email: `${user.username}@rguktong.ac.in`,
+          department: inferred || "",
+        },
+      });
+    }
     return res.json({
       success: true,
       data: mapAdminProfile(profile),
