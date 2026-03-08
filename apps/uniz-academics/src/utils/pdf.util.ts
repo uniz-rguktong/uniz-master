@@ -36,7 +36,7 @@ export interface AttendanceData {
   }[];
 }
 
-const CACHE_DIR = path.join(process.cwd(), "cache");
+const CACHE_DIR = "/tmp/uniz-cache";
 const CACHE_PATH = path.join(CACHE_DIR, "university_logo.jpg");
 let logoBuffer: Buffer | null = null;
 
@@ -55,7 +55,10 @@ const fetchLogo = async () => {
   }
 
   try {
-    const response = await axios.get(logoUrl, { responseType: "arraybuffer" });
+    const response = await axios.get(logoUrl, {
+      responseType: "arraybuffer",
+      timeout: 3000,
+    });
     logoBuffer = Buffer.from(response.data);
     if (!fs.existsSync(CACHE_DIR)) {
       fs.mkdirSync(CACHE_DIR, { recursive: true });
@@ -150,10 +153,8 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
     // 2. Header
     if (logo) {
       doc.image(logo, width / 2 - 35, 40, { width: 70 });
-      doc.y = 120; // Absolute spacing
-    } else {
-      doc.moveDown(2);
     }
+    doc.y = 120; // Maintain consistent start regardless of logo
 
     doc
       .fillColor(PRIMARY_MAROON)
@@ -386,10 +387,8 @@ export const generateAttendancePdf = async (
 
     if (logo) {
       doc.image(logo, width / 2 - 35, 40, { width: 70 });
-      doc.y = 120;
-    } else {
-      doc.moveDown(2);
     }
+    doc.y = 120;
 
     doc
       .fillColor(PRIMARY_MAROON)
@@ -466,11 +465,17 @@ export const generateAttendancePdf = async (
     doc.fillColor("#000000").font("Helvetica").fontSize(9);
 
     records.forEach((r, idx) => {
-      const nameText = cleanSubjectName(r.subject.name);
+      const nameText = cleanSubjectName(r.subject?.name || "N/A");
       const nameHeight = doc.heightOfString(nameText, {
         width: tWidths.name - 24,
       });
       const rowHeight = Math.max(24, nameHeight + 12);
+
+      // Page break logic
+      if (tableY + rowHeight > height - 100) {
+        doc.addPage();
+        tableY = PAGE_MARGIN;
+      }
 
       if (idx % 2 === 1)
         doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill(HEADER_TINT);
