@@ -131,7 +131,7 @@ export const getAvailableBatches = async (req: Request, res: Response) => {
       .sort();
 
     const uniqueBatches = Array.from(new Set(batches));
-    return res.json({ success: true, batches: uniqueBatches });
+    return res.json(uniqueBatches);
   } catch (e) {
     return res
       .status(500)
