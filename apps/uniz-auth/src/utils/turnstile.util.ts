@@ -31,17 +31,24 @@ export const verifyTurnstileToken = async (
     return true; // Don't block if not configured, but log a warning
   }
 
-  const isProductionDomain =
-    origin && (origin.includes("rguktong.in") || origin.includes("uniz.in"));
+  // ALLOW BYPASS FOR LOCAL DEVELOPMENT
+  // 1. If hitting from a dev environment
+  // 2. If hitting from localhost (even if hitting production backend)
+  // 3. If using the Cloudflare "Always Pass" dummy token
+  const isLocalhost =
+    origin &&
+    (origin.includes("localhost") ||
+      origin.includes("127.0.0.1") ||
+      origin.includes("0.0.0.0"));
 
   if (
     process.env.NODE_ENV !== "production" ||
     process.env.DOCKER_ENV !== "true" ||
-    !isProductionDomain ||
+    isLocalhost ||
     token === "1x00000000000000000000AA"
   ) {
     console.log(
-      `[TURNSTILE] Bypass condition met. (Production Domain: ${!!isProductionDomain}, Origin: ${origin}, Token: ${token?.substring(0, 10)}...)`,
+      `[TURNSTILE] Bypass condition met. (Localhost: ${!!isLocalhost}, NODE_ENV: ${process.env.NODE_ENV}, Token: ${token.substring(0, 10)}...)`,
     );
     return true;
   }
