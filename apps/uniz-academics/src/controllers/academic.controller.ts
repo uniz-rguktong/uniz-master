@@ -1665,9 +1665,14 @@ export const getGradesTemplate = async (
       const profilesRes = await axios.post(
         `${GATEWAY_URL}/profile/student/search`,
         {
-          branch,
-          year: !batch ? year : undefined,
-          batch: batch || undefined,
+          branch:
+            branch && String(branch).toUpperCase() !== "ALL"
+              ? branch
+              : undefined,
+          year:
+            !batch || String(batch).toUpperCase() === "ALL" ? year : undefined,
+          batch:
+            batch && String(batch).toUpperCase() !== "ALL" ? batch : undefined,
           limit: 10000, // High limit for all students
         },
         getHeaders(token!),
@@ -1675,10 +1680,12 @@ export const getGradesTemplate = async (
       students = profilesRes.data.students || [];
     }
 
-    // Fetch matching subjects if not specific
     const subjects = await prisma.subject.findMany({
       where: {
-        department: (branch as string) || undefined,
+        department:
+          branch && String(branch).toUpperCase() !== "ALL"
+            ? (branch as string)
+            : undefined,
         semester: (semesterId as string) || undefined,
         code: { contains: (year as string) || undefined, mode: "insensitive" },
       },
@@ -1925,9 +1932,12 @@ export const getAttendanceTemplate = async (
     const profilesRes = await axios.post(
       `${GATEWAY_URL}/profile/student/search`,
       {
-        branch,
-        year: !batch ? year : undefined,
-        batch: batch || undefined,
+        branch:
+          branch && String(branch).toUpperCase() !== "ALL" ? branch : undefined,
+        year:
+          !batch || String(batch).toUpperCase() === "ALL" ? year : undefined,
+        batch:
+          batch && String(batch).toUpperCase() !== "ALL" ? batch : undefined,
         limit: 10000,
       },
       getHeaders(token!),
@@ -1946,10 +1956,12 @@ export const getAttendanceTemplate = async (
       ],
     ];
 
-    // Fetch matching subjects
     const subjects = await prisma.subject.findMany({
       where: {
-        department: (branch as string) || undefined,
+        department:
+          branch && String(branch).toUpperCase() !== "ALL"
+            ? (branch as string)
+            : undefined,
         semester: (semesterId as string) || undefined,
         code: { contains: (year as string) || undefined, mode: "insensitive" },
       },
