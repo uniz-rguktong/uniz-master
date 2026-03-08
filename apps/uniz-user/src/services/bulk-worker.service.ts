@@ -101,6 +101,9 @@ export async function processNextStudentBatch() {
         const phone = getVal(["phone", "mobile", "contact"]);
         const batchCol = getVal(["batch", "acad_batch", "academic_batch"]);
 
+        const category = getVal(["category", "admission category", "caste"]);
+        const campus = getVal(["campus", "center", "location"]);
+
         if (!id) {
           failCount++;
           errors.push({ row: "unknown", error: "Missing Student ID" });
@@ -134,6 +137,8 @@ export async function processNextStudentBatch() {
               section: finalSection,
               batch: finalBatch,
               phone,
+              category,
+              campus,
               updatedAt: new Date(),
             },
             create: {
@@ -147,6 +152,8 @@ export async function processNextStudentBatch() {
               section: finalSection,
               batch: finalBatch,
               phone,
+              category,
+              campus,
             },
           });
           successCount++;
