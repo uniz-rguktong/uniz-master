@@ -1,13 +1,17 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+  output          = "../src/lib/generated/client"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["ornate_landing"]
 }
 
 model Admin {
+  @@schema("ornate_landing")
   id                           String                @id
   name                         String?
   email                        String                @unique
@@ -39,6 +43,7 @@ model Admin {
 }
 
 model AnalyticsSnapshot {
+  @@schema("ornate_landing")
   id                        String   @id
   snapshotDate              DateTime @unique @default(now()) @db.Date
   totalOnlineRegistrations  Int      @default(0)
@@ -58,6 +63,7 @@ model AnalyticsSnapshot {
 }
 
 model Announcement {
+  @@schema("ornate_landing")
   id             String   @id
   title          String
   content        String
@@ -76,6 +82,7 @@ model Announcement {
 }
 
 model AuditLog {
+  @@schema("ornate_landing")
   id          String   @id
   action      String
   entityType  String
@@ -92,6 +99,7 @@ model AuditLog {
 }
 
 model BestOutgoingStudent {
+  @@schema("ornate_landing")
   id              String   @id
   name            String
   rollNumber      String
@@ -118,6 +126,7 @@ model BestOutgoingStudent {
 }
 
 model BranchPoints {
+  @@schema("ornate_landing")
   id               String  @id
   sportId          String
   branch           String
@@ -132,6 +141,7 @@ model BranchPoints {
 }
 
 model BrandLogo {
+  @@schema("ornate_landing")
   id         String   @id
   name       String
   type       String
@@ -149,6 +159,7 @@ model BrandLogo {
 }
 
 model CertificateTheme {
+  @@schema("ornate_landing")
   id        String   @id
   name      String
   preview   String
@@ -159,6 +170,7 @@ model CertificateTheme {
 }
 
 model Event {
+  @@schema("ornate_landing")
   id                           String              @id
   title                        String
   description                  String
@@ -210,6 +222,7 @@ model Event {
 }
 
 model FestSettings {
+  @@schema("ornate_landing")
   id                 String    @id @default("singleton")
   festName           String    @default("ORNATE 2K26")
   tagline            String?   @default("Innovation Meets Culture")
@@ -230,6 +243,7 @@ model FestSettings {
 }
 
 model GalleryAlbum {
+  @@schema("ornate_landing")
   id           String         @id
   title        String
   description  String?
@@ -246,6 +260,7 @@ model GalleryAlbum {
 }
 
 model GalleryImage {
+  @@schema("ornate_landing")
   id           String       @id
   url          String
   caption      String?
@@ -255,6 +270,7 @@ model GalleryImage {
 }
 
 model Match {
+  @@schema("ornate_landing")
   id         String       @id
   round      String
   matchId    String?
@@ -285,6 +301,7 @@ model Match {
 }
 
 model Notification {
+  @@schema("ornate_landing")
   id            String   @id
   senderId      String
   senderName    String
@@ -309,6 +326,7 @@ model Notification {
 }
 
 model PromoVideo {
+  @@schema("ornate_landing")
   id         String   @id
   title      String
   url        String
@@ -326,6 +344,7 @@ model PromoVideo {
 }
 
 model Registration {
+  @@schema("ornate_landing")
   id                  String             @id
   eventId             String
   userId              String?
@@ -359,6 +378,7 @@ model Registration {
 }
 
 model Sport {
+  @@schema("ornate_landing")
   id                      String                   @id
   name                    String
   gender                  SportGender
@@ -399,6 +419,7 @@ model Sport {
 }
 
 model SportRegistration {
+  @@schema("ornate_landing")
   id          String             @id
   sportId     String
   studentName String
@@ -420,6 +441,7 @@ model SportRegistration {
 }
 
 model SportTeam {
+  @@schema("ornate_landing")
   id        String   @id
   sportId   String
   teamId    String   @unique
@@ -431,6 +453,7 @@ model SportTeam {
 }
 
 model SportWinnerAnnouncement {
+  @@schema("ornate_landing")
   id          String    @id
   sportId     String    @unique
   isPublished Boolean   @default(false)
@@ -442,6 +465,7 @@ model SportWinnerAnnouncement {
 }
 
 model Stall {
+  @@schema("ornate_landing")
   id          Int      @id @default(autoincrement())
   name        String
   type        String   @default("Other")
@@ -457,6 +481,7 @@ model Stall {
 }
 
 model Task {
+  @@schema("ornate_landing")
   id          String   @id
   title       String
   description String?
@@ -472,6 +497,7 @@ model Task {
 }
 
 model Team {
+  @@schema("ornate_landing")
   id             String             @id
   teamName       String
   teamCode       String             @unique
@@ -501,6 +527,7 @@ model Team {
 }
 
 model TeamMember {
+  @@schema("ornate_landing")
   id                  String             @id
   teamId              String
   userId              String?
@@ -525,6 +552,7 @@ model TeamMember {
 }
 
 model User {
+  @@schema("ornate_landing")
   id           String         @id
   name         String?
   email        String         @unique
@@ -541,6 +569,7 @@ model User {
 }
 
 model WinnerAnnouncement {
+  @@schema("ornate_landing")
   id          String    @id
   eventId     String    @unique
   isPublished Boolean   @default(false)
@@ -552,6 +581,7 @@ model WinnerAnnouncement {
 }
 
 enum EventStatus {
+  @@schema("ornate_landing")
   DRAFT
   PUBLISHED
   ONGOING
@@ -560,6 +590,7 @@ enum EventStatus {
 }
 
 enum MatchStatus {
+  @@schema("ornate_landing")
   PENDING
   SCHEDULED
   LIVE
@@ -567,24 +598,28 @@ enum MatchStatus {
 }
 
 enum MatchWinner {
+  @@schema("ornate_landing")
   TEAM1
   TEAM2
   DRAW
 }
 
 enum MemberStatus {
+  @@schema("ornate_landing")
   PENDING
   ACCEPTED
   DECLINED
 }
 
 enum PaymentStatus {
+  @@schema("ornate_landing")
   PENDING
   PAID
   FAILED
 }
 
 enum RegistrationStatus {
+  @@schema("ornate_landing")
   PENDING
   CONFIRMED
   WAITLISTED
@@ -594,23 +629,27 @@ enum RegistrationStatus {
 }
 
 enum SportCategory {
+  @@schema("ornate_landing")
   INDIVIDUAL
   TEAM
 }
 
 enum SportFormat {
+  @@schema("ornate_landing")
   KNOCKOUT
   LEAGUE
   GROUP_KNOCKOUT
 }
 
 enum SportGender {
+  @@schema("ornate_landing")
   MALE
   FEMALE
   MIXED
 }
 
 enum SportStatus {
+  @@schema("ornate_landing")
   UPCOMING
   REGISTRATION_OPEN
   ONGOING
@@ -618,12 +657,14 @@ enum SportStatus {
 }
 
 enum TeamRole {
+  @@schema("ornate_landing")
   LEADER
   MEMBER
   VICE_CAPTAIN
 }
 
 enum UserRole {
+  @@schema("ornate_landing")
   SUPER_ADMIN
   BRANCH_ADMIN
   CLUB_COORDINATOR
