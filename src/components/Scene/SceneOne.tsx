@@ -1,13 +1,15 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, lazy, Suspense } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 
-import SplitText from '@/components/UI/SplitText';
+
 import TextType from '@/components/UI/TextType';
-import AuthForm from '@/components/UI/AuthForm';
+// AuthForm is lazy-loaded so its JS bundle is not parsed until the user is
+// near scene-1f. This avoids a parse + paint spike on load.
+const AuthForm = lazy(() => import('@/components/UI/AuthForm'));
 import ScrollIndicators from '@/components/UI/ScrollIndicators';
 import { useRouter } from 'next/navigation';
 import { getAssetUrl } from '@/lib/assets';
@@ -15,34 +17,39 @@ import { getAssetUrl } from '@/lib/assets';
 gsap.registerPlugin(ScrollTrigger);
 
 /**
- * Text7Block — renders text-7 as a single animated block.
- * Entire h2 fades + drifts up together (no per-char/word splitting).
- * Container-level exit is handled by the parent frame-based GSAP.
+ * MorphText — dialogue text that morphs in on mount and morphs out on unmount.
+ * Enter: blurry blob → sharp readable text (opacity 0 + blur(40px) + scale(1.12) → visible).
+ * Exit: handled by the parent GSAP tween targeting the container (.scene-Xt-text).
  */
-function Text7Block() {
+function MorphText({ children, className }: { children: React.ReactNode; className: string }) {
     const ref = useRef<HTMLHeadingElement>(null);
     useEffect(() => {
         const el = ref.current;
         if (!el) return;
-        // Pin invisible before first paint
-        gsap.set(el, { opacity: 0, y: 50, filter: 'blur(6px)' });
-        // One-shot entry: whole block rises and sharpens together
+        // Morph in: blob sharpens into clean text
         gsap.to(el, {
             opacity: 1,
-            y: 0,
             filter: 'blur(0px)',
-            duration: 1.2,
-            ease: 'power3.out',
-            delay: 0.05,
+            scale: 1,
+            duration: 1.0,
+            ease: 'power2.out',
+            delay: 0.04,
+            clearProps: 'willChange',
         });
         return () => { gsap.killTweensOf(el); };
     }, []);
     return (
         <h2
             ref={ref}
-            className="text-center text-3xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-white leading-[1.1]"
+            className={className}
+            style={{
+                opacity: 0,
+                filter: 'blur(40px)',
+                transform: 'scale(1.15)',
+                willChange: 'filter, transform, opacity'
+            }}
         >
-            Planets for each branch, stars for your talents, and fun that&apos;s out of this world.
+            {children}
         </h2>
     );
 }
@@ -69,8 +76,10 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
     const imagesRef = useRef<(HTMLImageElement | null)[]>(new Array(TOTAL_FRAMES).fill(null));
     const [isLoaded, setIsLoaded] = useState(false);
     const [showWormhole, setShowWormhole] = useState(false);
+    // Ref guard so setShowWormhole never fires on every RAF tick — only on threshold crossing.
+    const wormholeShownRef = useRef(false);
     const [isWarpingActive, setIsWarpingActive] = useState(false);
-    const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+    const [authMode, setAuthMode] = useState<'login' | 'register'>('register');
     const [showScene1aText, setShowScene1aText] = useState(false);
     const [showScene1bText, setShowScene1bText] = useState(false);
     const [showScene3Text, setShowScene3Text] = useState(false);
@@ -114,22 +123,30 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
     const text4ExitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const text5ExitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+    // Flag that gates ALL text logic during a warp jump.
+    // When true, the onUpdate skips every text show/hide block.
+    const isWarpingRef = useRef(false);
+
     // Show Scene 1A text 2 seconds after intro logo animation completes
     // Implement 15 frames per second auto-scroll down the scene.
     useEffect(() => {
         if (!introComplete) return;
         const timer = setTimeout(() => setShowScene1aText(true), 2000);
 
-        let scrollInterval: ReturnType<typeof setInterval>;
-        let isAutoScrolling = true;
+        let scrollInterval: ReturnType<typeof setInterval> | null = null;
+        let resumeTimer: ReturnType<typeof setTimeout> | null = null;
+        let isAutoScrolling = false;
 
         const startAutoScroll = () => {
-            if (!isAutoScrolling) return;
+            if (isAutoScrolling) return;
+            isAutoScrolling = true;
+
             // 15 FPS = 66.67ms per tick
             const fps = 15;
             const msPerFrame = 1000 / fps;
             // 720 frames total over 48 seconds
 
+            if (scrollInterval) clearInterval(scrollInterval);
             scrollInterval = setInterval(() => {
                 if (!containerRef.current) return;
                 const totalScroll = containerRef.current.scrollHeight - window.innerHeight;
@@ -139,30 +156,45 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
                 if (window.scrollY < totalScroll) {
                     window.scrollBy({ top: pixelsPerTick, behavior: 'instant' });
                 } else {
-                    clearInterval(scrollInterval);
+                    if (scrollInterval) clearInterval(scrollInterval);
+                    isAutoScrolling = false;
                 }
             }, msPerFrame);
         };
 
         // Delay until initial texts and animations settle
-        const scrollTimer = setTimeout(startAutoScroll, 2500);
+        const initialScrollTimer = setTimeout(startAutoScroll, 2500);
 
         const handleUserInterrupt = () => {
-            isAutoScrolling = false;
-            clearInterval(scrollInterval);
-            window.removeEventListener('wheel', handleUserInterrupt);
-            window.removeEventListener('touchstart', handleUserInterrupt);
+            if (isAutoScrolling) {
+                isAutoScrolling = false;
+                if (scrollInterval) {
+                    clearInterval(scrollInterval);
+                    scrollInterval = null;
+                }
+            }
+
+            // Reset the resume timer on every user interaction
+            if (resumeTimer) clearTimeout(resumeTimer);
+
+            // Resume auto-scroll after 1 second of inactivity
+            resumeTimer = setTimeout(() => {
+                startAutoScroll();
+            }, 1000);
         };
 
         window.addEventListener('wheel', handleUserInterrupt, { passive: true });
         window.addEventListener('touchstart', handleUserInterrupt, { passive: true });
+        window.addEventListener('touchmove', handleUserInterrupt, { passive: true });
 
         return () => {
             clearTimeout(timer);
-            clearTimeout(scrollTimer);
-            clearInterval(scrollInterval);
+            clearTimeout(initialScrollTimer);
+            if (scrollInterval) clearInterval(scrollInterval);
+            if (resumeTimer) clearTimeout(resumeTimer);
             window.removeEventListener('wheel', handleUserInterrupt);
             window.removeEventListener('touchstart', handleUserInterrupt);
+            window.removeEventListener('touchmove', handleUserInterrupt);
         };
     }, [introComplete]);
 
@@ -302,374 +334,300 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
                 render(frameIndex);
 
                 // Show wormhole video as the background for the Auth section (Scene 1F Ending)
-                if (self.progress > 0.94) {
+                // Guard with a ref so setState fires exactly once, not on every RAF tick.
+                if (self.progress > 0.94 && !wormholeShownRef.current) {
+                    wormholeShownRef.current = true;
                     setShowWormhole(true);
-                } else {
+                } else if (self.progress <= 0.94 && wormholeShownRef.current) {
+                    wormholeShownRef.current = false;
                     setShowWormhole(false);
                 }
 
-                // ── TEXT-1 EXIT ──────────────────────────────────────────────
-                // Frame 050 of scene-1a (index 49): fast clean char wave exit
+                // ── WARP GUARD ──────────────────────────────────────────────
+                // During a warp-drive jump (instant scroll to bottom) GSAP fires
+                // onUpdate for every frame in a single tick. Skip all text logic
+                // so no dialogue gets mounted in the flash.
+                if (isWarpingRef.current) return;
+
+                // ── TEXT-1 SHOW/EXIT (state-based, not GSAP-only) ───────────────
+                // Enter morph is handled by MorphText on mount.
+                // Exit: simple fade out, unmount at frame 65.
                 if (frameIndex >= 49 && !text1FadeStartedRef.current) {
                     text1FadeStartedRef.current = true;
-                    const isLg = window.innerWidth >= 1024;
-                    gsap.to(isLg ? ".scene-1a-text .split-word" : ".scene-1a-text .split-char", {
-                        opacity: 0,
-                        y: isLg ? -25 : 40,
-                        filter: isLg ? 'blur(8px)' : 'blur(0px)',
-                        duration: isLg ? 0.5 : 0.35,
-                        ease: isLg ? "power3.in" : "power3.out",
-                        stagger: { each: isLg ? 0.05 : 0.025, from: isLg ? "end" : "start" },
-                    });
+                    gsap.to(".scene-1a-text", { opacity: 0, duration: 0.35, ease: "power2.out" });
                 }
-                // Scroll-back reset: before frame 040, restore chars
+                // Unmount Text-1 once faded (frame 65)
+                if (frameIndex >= 65 && showScene1aText) {
+                    setShowScene1aText(false);
+                }
+                // Scroll-back: re-show Text-1 before frame 40
                 if (frameIndex < 40 && text1FadeStartedRef.current) {
                     text1FadeStartedRef.current = false;
-                    const isLg = window.innerWidth >= 1024;
-                    gsap.to(isLg ? ".scene-1a-text .split-word" : ".scene-1a-text .split-char", {
-                        opacity: 1, y: 0, filter: 'blur(0px)',
-                        duration: isLg ? 0.5 : 0.35,
-                        ease: isLg ? "power3.out" : "power3.out",
-                        stagger: { each: isLg ? 0.05 : 0.025, from: isLg ? "start" : "end" },
-                    });
+                    setShowScene1aText(true);
+                    gsap.to(".scene-1a-text", { opacity: 1, duration: 0.35, ease: "power2.out" });
                 }
 
                 // ── TEXT-2 ENTER ─────────────────────────────────────────────
-                // Frame 080 of scene-1a (index 79): mount Text-2 → SplitText fires on mount
-                if (frameIndex >= 79 && frameIndex < 190 && !text2ShownRef.current) {
+                // Enters at frame 79 (after Text-1 is fully gone at 65)
+                if (frameIndex >= 79 && frameIndex < 164 && !text2ShownRef.current) {
                     text2ShownRef.current = true;
                     text2HideStartedRef.current = false;
                     setShowScene1bText(true);
                 }
-                // Scroll-back: before 065 or past buffer, unmount Text-2
-                if ((frameIndex < 65 || frameIndex >= 190) && text2ShownRef.current) {
+                // Scroll-back: unmount Text-2 completely
+                if ((frameIndex < 60 || frameIndex >= 186) && text2ShownRef.current) {
                     text2ShownRef.current = false;
                     text2HideStartedRef.current = false;
                     setShowScene1bText(false);
                 }
 
                 // ── TEXT-2 EXIT ──────────────────────────────────────────────
-                // Frame 045 of scene-1b (global index 164 = 120+44): fast clean char wave exit
                 if (frameIndex >= 164 && text2ShownRef.current && !text2HideStartedRef.current) {
                     text2HideStartedRef.current = true;
-                    const isLg = window.innerWidth >= 1024;
-                    gsap.to(isLg ? ".scene-1b-text .split-word" : ".scene-1b-text .split-char", {
-                        opacity: 0,
-                        y: isLg ? -25 : 40,
-                        filter: isLg ? 'blur(8px)' : 'blur(0px)',
-                        duration: isLg ? 0.5 : 0.35,
-                        ease: isLg ? "power3.in" : "power3.out",
-                        stagger: { each: isLg ? 0.05 : 0.025, from: isLg ? "end" : "start" },
-                    });
+                    gsap.to(".scene-1b-text", { opacity: 0, duration: 0.35, ease: "power2.out" });
                 }
-                // Scroll-back: before frame 150, restore Text-2 chars
-                if (frameIndex < 150 && text2HideStartedRef.current) {
+                // Scroll-back: restore Text-2
+                if (frameIndex < 155 && text2HideStartedRef.current) {
                     text2HideStartedRef.current = false;
-                    const isLg = window.innerWidth >= 1024;
-                    gsap.to(isLg ? ".scene-1b-text .split-word" : ".scene-1b-text .split-char", {
-                        opacity: 1, y: 0, filter: 'blur(0px)',
-                        duration: isLg ? 0.5 : 0.35,
-                        ease: isLg ? "power3.out" : "power3.out",
-                        stagger: { each: isLg ? 0.05 : 0.025, from: isLg ? "start" : "end" },
-                    });
+                    setShowScene1bText(true);
+                    text2ShownRef.current = true;
+                    gsap.to(".scene-1b-text", { opacity: 1, duration: 0.35, ease: "power2.out" });
                 }
 
                 // ── TEXT-3 ENTER ──────────────────────────────────────────────
-                // Scene-1b frame _067 (global index 186 = 120+66): mount Text-3
-                if (frameIndex >= 186 && frameIndex < 250 && !text3ShownRef.current) {
+                if (frameIndex >= 186 && frameIndex < 223 && !text3ShownRef.current) {
                     text3ShownRef.current = true;
                     text3HideStartedRef.current = false;
                     setShowScene3Text(true);
                 }
-                // Scroll-back: before 175 or past buffer, unmount Text-3
-                if ((frameIndex < 175 || frameIndex >= 250) && text3ShownRef.current) {
+                // Scroll-back: unmount Text-3
+                if ((frameIndex < 170 || frameIndex >= 283) && text3ShownRef.current) {
                     text3ShownRef.current = false;
                     text3HideStartedRef.current = false;
                     setShowScene3Text(false);
                 }
 
                 // ── TEXT-3 EXIT ──────────────────────────────────────────────
-                // Scene-1b frame _104 (global index 223 = 120+103): fast clean char wave exit
                 if (frameIndex >= 223 && text3ShownRef.current && !text3HideStartedRef.current) {
                     text3HideStartedRef.current = true;
-                    const isLg = window.innerWidth >= 1024;
-                    gsap.to(isLg ? ".scene-3-text .split-word" : ".scene-3-text .split-char", {
-                        opacity: 0,
-                        y: isLg ? -25 : 40,
-                        filter: isLg ? 'blur(8px)' : 'blur(0px)',
-                        duration: isLg ? 0.5 : 0.35,
-                        ease: isLg ? "power3.in" : "power3.out",
-                        stagger: { each: isLg ? 0.05 : 0.025, from: isLg ? "end" : "start" },
-                    });
+                    gsap.to(".scene-3-text", { opacity: 0, duration: 0.35, ease: "power2.out" });
                 }
-                // Scroll-back: before frame 212, restore Text-3 chars
-                if (frameIndex < 212 && text3HideStartedRef.current) {
+                // Scroll-back: restore Text-3
+                if (frameIndex < 215 && text3HideStartedRef.current) {
                     text3HideStartedRef.current = false;
-                    const isLg = window.innerWidth >= 1024;
-                    gsap.to(isLg ? ".scene-3-text .split-word" : ".scene-3-text .split-char", {
-                        opacity: 1, y: 0, filter: 'blur(0px)',
-                        duration: isLg ? 0.5 : 0.35,
-                        ease: isLg ? "power3.out" : "power3.out",
-                        stagger: { each: isLg ? 0.05 : 0.025, from: isLg ? "start" : "end" },
-                    });
+                    setShowScene3Text(true);
+                    text3ShownRef.current = true;
+                    gsap.to(".scene-3-text", { opacity: 1, duration: 0.35, ease: "power2.out" });
                 }
 
                 // ── TEXT-4 ENTER ──────────────────────────────────────────────
-                // Scene-1c frame _044 (global index 283 = 240+43): mount Text-4
-                if (frameIndex >= 283 && frameIndex < 330 && !text4ShownRef.current) {
+                if (frameIndex >= 283 && frameIndex < 305 && !text4ShownRef.current) {
                     text4ShownRef.current = true;
                     text4HideStartedRef.current = false;
                     setShowScene4Text(true);
+                    if (text4ExitTimerRef.current) clearTimeout(text4ExitTimerRef.current);
+                    text4ExitTimerRef.current = setTimeout(() => {
+                        if (!text4ShownRef.current || text4HideStartedRef.current) return;
+                        text4HideStartedRef.current = true;
+                        gsap.to(".scene-4-text", {
+                            opacity: 0, duration: 0.35, ease: "power2.out",
+                            onComplete: () => { text4ShownRef.current = false; setShowScene4Text(false); }
+                        });
+                    }, 2000);
                 }
-                // Scroll-back: before 273 or past buffer, unmount Text-4
-                if ((frameIndex < 273 || frameIndex >= 330) && text4ShownRef.current) {
+                // Scroll-back: unmount Text-4
+                if ((frameIndex < 265 || frameIndex >= 320) && text4ShownRef.current) {
                     text4ShownRef.current = false;
                     text4HideStartedRef.current = false;
                     setShowScene4Text(false);
                 }
 
                 // ── TEXT-4 EXIT ──────────────────────────────────────────────
-                // Frame-based fallback exit for fast-scroll. Words blur-fade down (reverse of entry).
                 if (frameIndex >= 305 && text4ShownRef.current && !text4HideStartedRef.current) {
                     text4HideStartedRef.current = true;
                     if (text4ExitTimerRef.current) clearTimeout(text4ExitTimerRef.current);
-                    gsap.to(".scene-4-text .split-word", {
-                        opacity: 0, y: -25, filter: 'blur(8px)',
-                        duration: 0.5, ease: "power3.in",
-                        stagger: { each: 0.05, from: "end" },
-                    });
+                    gsap.to(".scene-4-text", { opacity: 0, duration: 0.35, ease: "power2.out" });
                 }
-                // Scroll-back: before frame 294, restore Text-4 words smoothly
-                if (frameIndex < 294 && text4HideStartedRef.current) {
+                // Scroll-back: restore Text-4
+                if (frameIndex < 295 && text4HideStartedRef.current) {
                     text4HideStartedRef.current = false;
                     if (text4ExitTimerRef.current) clearTimeout(text4ExitTimerRef.current);
-                    gsap.to(".scene-4-text .split-word", {
-                        opacity: 1, y: 0, filter: 'blur(0px)',
-                        duration: 0.5, ease: "power3.out", stagger: { each: 0.05, from: "start" },
-                    });
+                    setShowScene4Text(true);
+                    text4ShownRef.current = true;
+                    gsap.to(".scene-4-text", { opacity: 1, duration: 0.35, ease: "power2.out" });
                 }
 
                 // ── TEXT-5 ENTER ──────────────────────────────────────────────
-                // Delayed to enter after Text-4 completely exits
-                if (frameIndex >= 320 && frameIndex < 370 && !text5ShownRef.current) {
+                if (frameIndex >= 320 && frameIndex < 345 && !text5ShownRef.current) {
                     text5ShownRef.current = true;
                     text5HideStartedRef.current = false;
                     setShowScene5Text(true);
+                    if (text5ExitTimerRef.current) clearTimeout(text5ExitTimerRef.current);
+                    text5ExitTimerRef.current = setTimeout(() => {
+                        if (!text5ShownRef.current || text5HideStartedRef.current) return;
+                        text5HideStartedRef.current = true;
+                        gsap.to(".scene-5-text", {
+                            opacity: 0, duration: 0.35, ease: "power2.out",
+                            onComplete: () => { text5ShownRef.current = false; setShowScene5Text(false); }
+                        });
+                    }, 2000);
                 }
-                // Scroll-back buffer for Text-5
-                if ((frameIndex < 310 || frameIndex >= 370) && text5ShownRef.current) {
+                // Scroll-back: unmount Text-5
+                if ((frameIndex < 305 || frameIndex >= 374) && text5ShownRef.current) {
                     text5ShownRef.current = false;
                     text5HideStartedRef.current = false;
                     setShowScene5Text(false);
                 }
 
                 // ── TEXT-5 EXIT ──────────────────────────────────────────────
-                // Frame-based fallback exit for fast-scroll. Words blur-fade down (reverse of entry).
                 if (frameIndex >= 345 && text5ShownRef.current && !text5HideStartedRef.current) {
                     text5HideStartedRef.current = true;
                     if (text5ExitTimerRef.current) clearTimeout(text5ExitTimerRef.current);
-                    gsap.to(".scene-5-text .split-word", {
-                        opacity: 0, y: -25, filter: 'blur(8px)',
-                        duration: 0.5, ease: "power3.in",
-                        stagger: { each: 0.05, from: "end" },
-                    });
+                    gsap.to(".scene-5-text", { opacity: 0, duration: 0.35, ease: "power2.out" });
                 }
-                // Scroll-back: restore Text-5 words smoothly
+                // Scroll-back: restore Text-5
                 if (frameIndex < 335 && text5HideStartedRef.current) {
                     text5HideStartedRef.current = false;
                     if (text5ExitTimerRef.current) clearTimeout(text5ExitTimerRef.current);
-                    gsap.to(".scene-5-text .split-word", {
-                        opacity: 1, y: 0, filter: 'blur(0px)',
-                        duration: 0.5, ease: "power3.out", stagger: { each: 0.05, from: "start" },
-                    });
+                    setShowScene5Text(true);
+                    text5ShownRef.current = true;
+                    gsap.to(".scene-5-text", { opacity: 1, duration: 0.35, ease: "power2.out" });
                 }
 
                 // ── TEXT-6 ENTER ──────────────────────────────────────────────
-                // Scene-1d frame _015 (global index 374 = 360+14): mount Text-6
-                if (frameIndex >= 374 && frameIndex < 440 && !text6ShownRef.current) {
+                if (frameIndex >= 374 && frameIndex < 419 && !text6ShownRef.current) {
                     text6ShownRef.current = true;
                     text6HideStartedRef.current = false;
                     setShowScene6Text(true);
                 }
-                // Scroll-back: before 363 or past buffer, unmount Text-6
-                if ((frameIndex < 363 || frameIndex >= 440) && text6ShownRef.current) {
+                // Scroll-back: unmount Text-6
+                if ((frameIndex < 360 || frameIndex >= 440) && text6ShownRef.current) {
                     text6ShownRef.current = false;
                     text6HideStartedRef.current = false;
                     setShowScene6Text(false);
                 }
 
                 // ── TEXT-6 EXIT ──────────────────────────────────────────────
-                // Scene-1d frame _060 (global index 419 = 360+59): smooth char-wave exit
                 if (frameIndex >= 419 && text6ShownRef.current && !text6HideStartedRef.current) {
                     text6HideStartedRef.current = true;
-                    const isLg = window.innerWidth >= 1024;
-                    gsap.to(isLg ? ".scene-6-text .split-word" : ".scene-6-text .split-char", {
-                        opacity: 0,
-                        y: isLg ? -25 : 40,
-                        filter: isLg ? 'blur(8px)' : 'blur(0px)',
-                        duration: isLg ? 0.5 : 0.35,
-                        ease: isLg ? "power3.in" : "power3.out",
-                        stagger: { each: isLg ? 0.05 : 0.025, from: isLg ? "end" : "start" },
-                    });
+                    gsap.to(".scene-6-text", { opacity: 0, duration: 0.35, ease: "power2.out" });
                 }
-                // Scroll-back: before frame 408, restore Text-6 chars smoothly
-                if (frameIndex < 408 && text6HideStartedRef.current) {
+                // Scroll-back: restore Text-6
+                if (frameIndex < 410 && text6HideStartedRef.current) {
                     text6HideStartedRef.current = false;
-                    const isLg = window.innerWidth >= 1024;
-                    gsap.to(isLg ? ".scene-6-text .split-word" : ".scene-6-text .split-char", {
-                        opacity: 1, y: 0, filter: 'blur(0px)',
-                        duration: isLg ? 0.5 : 0.35,
-                        ease: isLg ? "power3.out" : "power3.out",
-                        stagger: { each: isLg ? 0.05 : 0.025, from: isLg ? "start" : "end" },
-                    });
+                    setShowScene6Text(true);
+                    text6ShownRef.current = true;
+                    gsap.to(".scene-6-text", { opacity: 1, duration: 0.35, ease: "power2.out" });
                 }
 
                 // ── TEXT-7 ENTER ──────────────────────────────────────────────
-                // Scene-1d frame _070 (global index 429 = 360+69): mount Text-7
-                if (frameIndex >= 429 && frameIndex < 500 && !text7ShownRef.current) {
+                if (frameIndex >= 440 && frameIndex < 479 && !text7ShownRef.current) {
                     text7ShownRef.current = true;
                     text7HideStartedRef.current = false;
                     setShowScene7Text(true);
                 }
-                // Scroll-back: before 418 or past buffer, unmount Text-7
-                if ((frameIndex < 418 || frameIndex >= 500) && text7ShownRef.current) {
+                // Scroll-back: unmount Text-7
+                if ((frameIndex < 425 || frameIndex >= 509) && text7ShownRef.current) {
                     text7ShownRef.current = false;
                     text7HideStartedRef.current = false;
                     setShowScene7Text(false);
                 }
 
                 // ── TEXT-7 EXIT ──────────────────────────────────────────────
-                // Scene-1d frame _120 (global index 479): whole container fades out at once
                 if (frameIndex >= 479 && text7ShownRef.current && !text7HideStartedRef.current) {
                     text7HideStartedRef.current = true;
-                    const isLg = window.innerWidth >= 1024;
-                    if (isLg) {
-                        gsap.to(".scene-7-text .split-word", { opacity: 0, y: -25, filter: 'blur(8px)', duration: 0.5, ease: "power3.in", stagger: { each: 0.05, from: "end" } });
-                    } else {
-                        gsap.to(".scene-7-text", { opacity: 0, y: -20, duration: 0.8, ease: "power2.inOut" });
-                    }
+                    gsap.to(".scene-7-text", { opacity: 0, duration: 0.35, ease: "power2.out" });
                 }
-                // Scroll-back: before frame 468, restore Text-7 container at once
-                if (frameIndex < 468 && text7HideStartedRef.current) {
+                // Scroll-back: restore Text-7
+                if (frameIndex < 470 && text7HideStartedRef.current) {
                     text7HideStartedRef.current = false;
-                    const isLg = window.innerWidth >= 1024;
-                    if (isLg) {
-                        gsap.to(".scene-7-text .split-word", { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5, ease: "power3.out", stagger: { each: 0.05, from: "start" } });
-                    } else {
-                        gsap.to(".scene-7-text", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" });
-                    }
+                    setShowScene7Text(true);
+                    text7ShownRef.current = true;
+                    gsap.to(".scene-7-text", { opacity: 1, duration: 0.35, ease: "power2.out" });
                 }
 
                 // ── TEXT-8 ENTER ──────────────────────────────────────────────
-                // Scene-1e frame _030 (global index 509 = 480+29): mount Text-8
-                if (frameIndex >= 509 && frameIndex < 590 && !text8ShownRef.current) {
+                if (frameIndex >= 509 && frameIndex < 569 && !text8ShownRef.current) {
                     text8ShownRef.current = true;
                     text8HideStartedRef.current = false;
                     setShowScene8Text(true);
                 }
-                // Scroll-back: before 498 or past buffer, unmount Text-8
-                if ((frameIndex < 498 || frameIndex >= 590) && text8ShownRef.current) {
+                // Scroll-back: unmount Text-8
+                if ((frameIndex < 495 || frameIndex >= 595) && text8ShownRef.current) {
                     text8ShownRef.current = false;
                     text8HideStartedRef.current = false;
                     setShowScene8Text(false);
                 }
 
                 // ── TEXT-8 EXIT ──────────────────────────────────────────────
-                // Scene-1e frame _090 (global index 569 = 480+89): smooth char-wave exit
                 if (frameIndex >= 569 && text8ShownRef.current && !text8HideStartedRef.current) {
                     text8HideStartedRef.current = true;
-                    const isLg = window.innerWidth >= 1024;
-                    gsap.to(isLg ? ".scene-8-text .split-word" : ".scene-8-text .split-char", {
-                        opacity: 0,
-                        y: isLg ? -25 : 40,
-                        filter: isLg ? 'blur(8px)' : 'blur(0px)',
-                        duration: isLg ? 0.5 : 0.35,
-                        ease: isLg ? "power3.in" : "power3.out",
-                        stagger: { each: isLg ? 0.05 : 0.025, from: isLg ? "end" : "start" },
-                    });
+                    gsap.to(".scene-8-text", { opacity: 0, duration: 0.35, ease: "power2.out" });
                 }
-                // Scroll-back: before frame 558, restore Text-8 chars smoothly
-                if (frameIndex < 558 && text8HideStartedRef.current) {
+                // Scroll-back: restore Text-8
+                if (frameIndex < 560 && text8HideStartedRef.current) {
                     text8HideStartedRef.current = false;
-                    const isLg = window.innerWidth >= 1024;
-                    gsap.to(isLg ? ".scene-8-text .split-word" : ".scene-8-text .split-char", {
-                        opacity: 1, y: 0, filter: 'blur(0px)',
-                        duration: isLg ? 0.5 : 0.35,
-                        ease: isLg ? "power3.out" : "power3.out",
-                        stagger: { each: isLg ? 0.05 : 0.025, from: isLg ? "start" : "end" },
-                    });
+                    setShowScene8Text(true);
+                    text8ShownRef.current = true;
+                    gsap.to(".scene-8-text", { opacity: 1, duration: 0.35, ease: "power2.out" });
                 }
 
                 // ── TEXT-9 ENTER ──────────────────────────────────────────────
-                // Scene-1e frame _116 (global index 595 = 480+115): mount Text-9
-                if (frameIndex >= 595 && frameIndex < 660 && !text9ShownRef.current) {
+                if (frameIndex >= 595 && frameIndex < 644 && !text9ShownRef.current) {
                     text9ShownRef.current = true;
                     text9HideStartedRef.current = false;
                     setShowScene9Text(true);
+
+                    if (typeof requestIdleCallback !== 'undefined') {
+                        requestIdleCallback(() => { import('@/components/UI/AuthForm'); }, { timeout: 3000 });
+                    } else {
+                        setTimeout(() => { import('@/components/UI/AuthForm'); }, 500);
+                    }
                 }
-                // Scroll-back: before 584 or past buffer, unmount Text-9
-                if ((frameIndex < 584 || frameIndex >= 660) && text9ShownRef.current) {
+                // Scroll-back: unmount Text-9
+                if ((frameIndex < 580 || frameIndex >= 660) && text9ShownRef.current) {
                     text9ShownRef.current = false;
                     text9HideStartedRef.current = false;
                     setShowScene9Text(false);
                 }
 
                 // ── TEXT-9 EXIT ──────────────────────────────────────────────
-                // Scene-1f frame _045 (global index 644 = 600+44): container fade-out
                 if (frameIndex >= 644 && text9ShownRef.current && !text9HideStartedRef.current) {
                     text9HideStartedRef.current = true;
-                    const isLg = window.innerWidth >= 1024;
-                    if (isLg) {
-                        gsap.to(".scene-9-text .split-word", { opacity: 0, y: -25, filter: 'blur(8px)', duration: 0.5, ease: "power3.in", stagger: { each: 0.05, from: "end" } });
-                    } else {
-                        gsap.to(".scene-9-text", { opacity: 0, y: 20, duration: 0.5, ease: "power3.out" });
-                    }
+                    gsap.to(".scene-9-text", { opacity: 0, duration: 0.35, ease: "power2.out" });
                 }
-                // Scroll-back: before frame 633, restore Text-9 container
-                if (frameIndex < 633 && text9HideStartedRef.current) {
+                // Scroll-back: restore Text-9
+                if (frameIndex < 635 && text9HideStartedRef.current) {
                     text9HideStartedRef.current = false;
-                    const isLg = window.innerWidth >= 1024;
-                    if (isLg) {
-                        gsap.to(".scene-9-text .split-word", { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5, ease: "power3.out", stagger: { each: 0.05, from: "start" } });
-                    } else {
-                        gsap.to(".scene-9-text", { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" });
-                    }
+                    setShowScene9Text(true);
+                    text9ShownRef.current = true;
+                    gsap.to(".scene-9-text", { opacity: 1, duration: 0.35, ease: "power2.out" });
                 }
 
                 // ── TEXT-10 ENTER ─────────────────────────────────────────────
-                // Scene-1f frame _061 (global index 660 = 600+60): mount Text-10
-                if (frameIndex >= 660 && frameIndex < 740 && !text10ShownRef.current) {
+                if (frameIndex >= 660 && frameIndex < 713 && !text10ShownRef.current) {
                     text10ShownRef.current = true;
                     text10HideStartedRef.current = false;
                     setShowScene10Text(true);
                 }
-                // Scroll-back: before 649 or past buffer, unmount Text-10
-                if ((frameIndex < 649 || frameIndex >= 740) && text10ShownRef.current) {
+                // Scroll-back: unmount Text-10
+                if ((frameIndex < 645 || frameIndex >= 740) && text10ShownRef.current) {
                     text10ShownRef.current = false;
                     text10HideStartedRef.current = false;
                     setShowScene10Text(false);
                 }
 
                 // ── TEXT-10 EXIT ─────────────────────────────────────────────
-                // Scene-1f frame _114 (global index 713 = 600+113): container fade-out
                 if (frameIndex >= 713 && text10ShownRef.current && !text10HideStartedRef.current) {
                     text10HideStartedRef.current = true;
-                    const isLg = window.innerWidth >= 1024;
-                    if (isLg) {
-                        gsap.to(".scene-10-text .split-word", { opacity: 0, y: -25, filter: 'blur(8px)', duration: 0.5, ease: "power3.in", stagger: { each: 0.05, from: "end" } });
-                    } else {
-                        gsap.to(".scene-10-text", { opacity: 0, y: 20, duration: 0.5, ease: "power3.out" });
-                    }
+                    gsap.to(".scene-10-text", { opacity: 0, duration: 0.35, ease: "power2.out" });
                 }
-                // Scroll-back: before frame 702, restore Text-10 container
-                if (frameIndex < 702 && text10HideStartedRef.current) {
+                // Scroll-back: restore Text-10
+                if (frameIndex < 705 && text10HideStartedRef.current) {
                     text10HideStartedRef.current = false;
-                    const isLg = window.innerWidth >= 1024;
-                    if (isLg) {
-                        gsap.to(".scene-10-text .split-word", { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5, ease: "power3.out", stagger: { each: 0.05, from: "start" } });
-                    } else {
-                        gsap.to(".scene-10-text", { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" });
-                    }
+                    setShowScene10Text(true);
+                    text10ShownRef.current = true;
+                    gsap.to(".scene-10-text", { opacity: 1, duration: 0.35, ease: "power2.out" });
                 }
             }
         });
@@ -699,8 +657,47 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
         window.addEventListener('resize', handleResize);
 
         // Listen for Warp Drive Telemetry from Header
-        const handleWarpStart = () => setIsWarpingActive(true);
-        const handleWarpEnd = () => setIsWarpingActive(false);
+        const handleWarpStart = () => {
+            // 1. Gate onUpdate so no text logic runs during the jump
+            isWarpingRef.current = true;
+            setIsWarpingActive(true);
+
+            // 2. Hide every dialogue instantly and lock all refs so
+            //    the instant-scroll onUpdate can't re-show them.
+            if (text4ExitTimerRef.current) clearTimeout(text4ExitTimerRef.current);
+            if (text5ExitTimerRef.current) clearTimeout(text5ExitTimerRef.current);
+
+            setShowScene1aText(false);
+            setShowScene1bText(false);
+            setShowScene3Text(false);
+            setShowScene4Text(false);
+            setShowScene5Text(false);
+            setShowScene6Text(false);
+            setShowScene7Text(false);
+            setShowScene8Text(false);
+            setShowScene9Text(false);
+            setShowScene10Text(false);
+
+            // Mark every ref as "already shown AND already hidden" so no
+            // show/exit conditions can fire at the bottom frame after warp-end.
+            // Logic: show-condition = !ShownRef → true blocks it.
+            //        exit-condition  = ShownRef && !HideStarted → HideStarted=true blocks it.
+            text1FadeStartedRef.current = true;
+            text2ShownRef.current = true; text2HideStartedRef.current = true;
+            text3ShownRef.current = true; text3HideStartedRef.current = true;
+            text4ShownRef.current = true; text4HideStartedRef.current = true;
+            text5ShownRef.current = true; text5HideStartedRef.current = true;
+            text6ShownRef.current = true; text6HideStartedRef.current = true;
+            text7ShownRef.current = true; text7HideStartedRef.current = true;
+            text8ShownRef.current = true; text8HideStartedRef.current = true;
+            text9ShownRef.current = true; text9HideStartedRef.current = true;
+            text10ShownRef.current = true; text10HideStartedRef.current = true;
+        };
+        const handleWarpEnd = () => {
+            setIsWarpingActive(false);
+            // Re-enable text logic now that we're at the end (auth form frame)
+            isWarpingRef.current = false;
+        };
         const handleAuthMode = (e: Event) => setAuthMode((e as CustomEvent).detail.mode);
         window.addEventListener('warp-start', handleWarpStart);
         window.addEventListener('warp-end', handleWarpEnd);
@@ -717,20 +714,55 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
     // Removed blocking loading screen to prevent layout shifts
 
     const handleAuthSuccess = () => {
-        // Pre-fetch home in background while the video plays to satisfy the "preload" requirement
+        // Pre-fetch home in background while the video plays
         router.prefetch('/home');
 
-        gsap.to(".scene-1f-auth", {
+        // Step 1: Force the wormhole visible immediately regardless of scroll position.
+        // On mobile the user may not have scrolled to the 0.94 threshold.
+        wormholeShownRef.current = true;
+        setShowWormhole(true);
+        if (wormholeVideoRef.current) {
+            wormholeVideoRef.current.currentTime = 0;
+        }
+
+        // Step 2: Immediately remove pointer-events so the form can't accept input
+        // while it's fading — critical on mobile where touch can re-focus inputs.
+        gsap.set('.scene-1f-auth', { pointerEvents: 'none' });
+
+        // Also clear any lingering text overlays
+        setShowScene10Text(false);
+        setShowScene1aText(false);
+
+        const tl = gsap.timeline();
+
+        // Fade out the auth form — also slide up slightly for a clean exit
+        tl.to('.scene-1f-auth', {
             opacity: 0,
-            duration: 0.5,
-            ease: "power1.out",
+            y: -24,
+            duration: 0.45,
+            ease: 'power2.in',
             onComplete: () => {
-                // Hide UI elements
-                window.dispatchEvent(new Event('wormhole-start'));
-                // The video is already visible as the background, now we just play it
-                if (wormholeVideoRef.current) {
-                    wormholeVideoRef.current.play();
-                }
+                // Set display:none after fade so it's fully removed from layout.
+                // Prevents residual layout impact on mobile viewports.
+                gsap.set('.scene-1f-auth', { display: 'none' });
+            },
+        }, 0);
+
+        // Fade canvas out so only the wormhole video shows
+        tl.to(canvasRef.current, {
+            opacity: 0,
+            duration: 0.4,
+            ease: 'power2.in',
+        }, 0);
+
+        // Step 3: Dispatch header-hide event and play the wormhole video
+        tl.call(() => {
+            window.dispatchEvent(new Event('wormhole-start'));
+            if (wormholeVideoRef.current) {
+                wormholeVideoRef.current.play().catch(() => {
+                    // Autoplay blocked (e.g. iOS low-power mode) — navigate directly
+                    router.push('/home');
+                });
             }
         });
     };
@@ -764,262 +796,111 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
 
                 <div className={`absolute inset-0 z-10 grid place-items-center pointer-events-none transition-opacity duration-[50ms] ${isWarpingActive ? 'opacity-0' : 'opacity-100'}`}>
 
-                    {/* SCENE 1A CONTENT (Earth) — appears 2s after intro logo animation */}
                     {showScene1aText && (
-                        <div className="scene-1a-text col-start-1 row-start-1 self-start justify-self-center mt-[20vh] landscape:max-md:mt-[30vh] md:self-start md:justify-self-center md:ml-0 md:mt-[30vh] lg:self-start lg:justify-self-center lg:mt-[25vh] lg:ml-0 max-w-[90vw] sm:max-w-2xl lg:max-w-none px-4">
-                            <SplitText
-                                text="College fests on Earth have become... boring."
-                                className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md"
-                                delay={isDesktop ? 60 : 60}
-                                duration={isDesktop ? 0.5 : 0.6}
-                                ease={isDesktop ? "power3.out" : "power4.out"}
-                                splitType={isDesktop ? "words" : "chars"}
-                                from={isDesktop ? { opacity: 0, y: 25, filter: 'blur(8px)' } : { opacity: 0, y: 40 }}
-                                to={isDesktop ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 1, y: 0 }}
-                                threshold={0.1}
-                                rootMargin="-100px"
-                                tag="h2"
-                                textAlign="center"
-                            />
-                        </div>
+                        <>
+                            <div className="scene-1a-text col-start-1 row-start-1 self-start justify-self-center mt-[20vh] landscape:max-md:mt-[30vh] md:self-start md:justify-self-center md:ml-0 md:mt-[30vh] lg:self-start lg:justify-self-center lg:mt-[25vh] lg:ml-0 max-w-[90vw] sm:max-w-2xl lg:max-w-none px-4">
+                                <MorphText className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md">
+                                    College fests on Earth have become... boring.
+                                </MorphText>
+                            </div>
+
+                            {/* Scroll Indicator */}
+                            <div className="scene-1a-text col-start-1 row-start-1 self-end justify-self-center mb-[8vh] sm:mb-[10vh] flex flex-col items-center gap-3">
+                                <span className="text-[10px] sm:text-[11px] tracking-[0.4em] font-black text-[#A3FF12] uppercase animate-pulse drop-shadow-[0_0_10px_rgba(163,255,18,0.6)]">
+                                    Scroll to sequence
+                                </span>
+                                <div className="w-[20px] h-[32px] sm:w-[24px] sm:h-[38px] rounded-full border border-[#A3FF12]/50 flex justify-center py-1.5 shadow-[0_0_20px_rgba(163,255,18,0.2)]">
+                                    <div className="w-[3px] h-[6px] rounded-full bg-[#A3FF12] animate-[bounce_1.5s_infinite] shadow-[0_0_12px_rgba(163,255,18,1)]" />
+                                </div>
+                            </div>
+                        </>
                     )}
 
                     {/* SCENE 1B CONTENT (Campus) — appears when entering scene 1B, exits smoothly before 1C */}
                     {showScene1bText && (
                         <div className="scene-1b-text col-start-1 row-start-1 place-self-center max-w-[90vw] sm:max-w-2xl lg:max-w-none px-4">
-                            <SplitText
-                                text={"Same stage.\nSame tents,\nSame samosas."}
-                                className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md whitespace-pre-line"
-                                delay={isDesktop ? 60 : 60}
-                                duration={isDesktop ? 0.5 : 0.6}
-                                ease={isDesktop ? "power3.out" : "power4.out"}
-                                splitType={isDesktop ? "words" : "chars"}
-                                from={isDesktop ? { opacity: 0, y: 25, filter: 'blur(8px)' } : { opacity: 0, y: 40 }}
-                                to={isDesktop ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 1, y: 0 }}
-                                threshold={0.1}
-                                rootMargin="-100px"
-                                tag="h2"
-                                textAlign="center"
-                            />
+                            <MorphText className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md whitespace-pre-line">
+                                {"Same stage.\nSame tents,\nSame samosas."}
+                            </MorphText>
                         </div>
                     )}
 
                     {/* SCENE 1B TEXT-3 — appears at scene-1b frame _067, exits at _104 */}
                     {showScene3Text && (
                         <div className="scene-3-text col-start-1 row-start-1 self-start justify-self-center mt-[33vh] landscape:max-md:mt-[33vh] landscape:max-md:place-self-start landscape:max-md:mb-0 md:self-start md:justify-self-center md:mt-[25vh] md:mb-0 lg:self-start lg:justify-self-center lg:mt-[77vh] lg:mb-0 max-w-[90vw] sm:max-w-3xl lg:max-w-none px-4 sm:px-8">
-                            <SplitText
-                                text={"So... we decided to do something\nno college has never done..."}
-                                className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md whitespace-pre-line"
-                                delay={isDesktop ? 60 : 60}
-                                duration={isDesktop ? 0.5 : 0.6}
-                                ease={isDesktop ? "power3.out" : "power4.out"}
-                                splitType={isDesktop ? "words" : "chars"}
-                                from={isDesktop ? { opacity: 0, y: 25, filter: 'blur(8px)' } : { opacity: 0, y: 40 }}
-                                to={isDesktop ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 1, y: 0 }}
-                                threshold={0.1}
-                                rootMargin="-100px"
-                                tag="h2"
-                                textAlign="center"
-                            />
+                            <MorphText className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md whitespace-pre-line">
+                                {"So... we decided to do something\nno college has never done..."}
+                            </MorphText>
                         </div>
                     )}
 
                     {/* SCENE 1C TEXT-4 — appears at scene-1c frame _044, auto-exits after 2.5s */}
                     {showScene4Text && (
                         <div className="scene-4-text col-start-1 row-start-1 self-start justify-self-center mt-[25vh] md:self-start md:justify-self-center md:mt-[35vh] md:mr-0 lg:self-start lg:justify-self-center lg:mt-[30vh] lg:ml-0 max-w-[90vw] sm:max-w-2xl lg:max-w-none px-4">
-                            <SplitText
-                                text="What if ORNATE didn't stay on the ground?"
-                                className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md"
-                                delay={isDesktop ? 60 : 60}
-                                duration={isDesktop ? 0.5 : 0.6}
-                                ease={isDesktop ? "power3.out" : "power4.out"}
-                                splitType="words"
-                                from={{ opacity: 0, y: 25, filter: 'blur(8px)' }}
-                                to={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                                threshold={0.1}
-                                rootMargin="-100px"
-                                tag="h2"
-                                textAlign="center"
-                                onLetterAnimationComplete={() => {
-                                    if (text4ExitTimerRef.current) clearTimeout(text4ExitTimerRef.current);
-                                    text4ExitTimerRef.current = setTimeout(() => {
-                                        if (!text4ShownRef.current || text4HideStartedRef.current) return;
-                                        text4HideStartedRef.current = true;
-                                        gsap.to('.scene-4-text .split-word', {
-                                            opacity: 0, y: -25, filter: 'blur(8px)',
-                                            duration: 0.9, ease: 'power2.in',
-                                            stagger: { each: 0.05, from: 'end' },
-                                        });
-                                    }, 2000);
-                                }}
-                            />
+                            <MorphText className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md">
+                                What if ORNATE didn&apos;t stay on the ground?
+                            </MorphText>
                         </div>
                     )}
 
                     {/* SCENE 1C TEXT-5 — appears at scene-1c frame _072, auto-exits after 2.5s */}
                     {showScene5Text && (
                         <div className="scene-5-text col-start-1 row-start-1 self-start justify-self-center mt-[25vh] md:self-start md:justify-self-center md:mt-[35vh] md:ml-0 lg:self-start lg:justify-self-center lg:mt-[30vh] lg:mr-0 max-w-[90vw] sm:max-w-3xl lg:max-w-none px-4">
-                            <SplitText
-                                text="What if every branch had its own world?"
-                                className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md"
-                                delay={isDesktop ? 60 : 60}
-                                duration={isDesktop ? 0.5 : 0.6}
-                                ease={isDesktop ? "power3.out" : "power4.out"}
-                                splitType="words"
-                                from={{ opacity: 0, y: 25, filter: 'blur(8px)' }}
-                                to={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                                threshold={0.1}
-                                rootMargin="-100px"
-                                tag="h2"
-                                textAlign="center"
-                                onLetterAnimationComplete={() => {
-                                    if (text5ExitTimerRef.current) clearTimeout(text5ExitTimerRef.current);
-                                    text5ExitTimerRef.current = setTimeout(() => {
-                                        if (!text5ShownRef.current || text5HideStartedRef.current) return;
-                                        text5HideStartedRef.current = true;
-                                        gsap.to('.scene-5-text .split-word', {
-                                            opacity: 0, y: -25, filter: 'blur(8px)',
-                                            duration: 0.9, ease: 'power2.in',
-                                            stagger: { each: 0.05, from: 'end' },
-                                        });
-                                    }, 2000);
-                                }}
-                            />
+                            <MorphText className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md">
+                                What if every branch had its own world?
+                            </MorphText>
                         </div>
                     )}
 
                     {/* SCENE 1D TEXT-6 — appears at scene-1d frame _001, exits at _025 */}
                     {showScene6Text && (
                         <div className="scene-6-text col-start-1 row-start-1 self-start justify-self-center mt-[25vh] md:self-start md:justify-self-center md:mt-[30vh] lg:place-self-start lg:justify-self-center lg:mt-[15vh] max-w-[90vw] sm:max-w-3xl lg:max-w-xl px-4 sm:px-8">
-                            <SplitText
-                                text="Yes, we’re taking ORNATE to space!"
-                                className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md"
-                                delay={isDesktop ? 60 : 60}
-                                duration={isDesktop ? 0.5 : 0.6}
-                                ease={isDesktop ? "power3.out" : "power4.out"}
-                                splitType={isDesktop ? "words" : "chars"}
-                                from={isDesktop ? { opacity: 0, y: 25, filter: 'blur(8px)' } : { opacity: 0, y: 40 }}
-                                to={isDesktop ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 1, y: 0 }}
-                                threshold={0.1}
-                                rootMargin="-100px"
-                                tag="h2"
-                                textAlign="center"
-                            />
+                            <MorphText className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md">
+                                Yes, we&apos;re taking ORNATE to space!
+                            </MorphText>
                         </div>
                     )}
 
                     {/* SCENE 1D TEXT-7 — appears at scene-1d frame _030, exits all-at-once */}
                     {showScene7Text && (
                         <div className="scene-7-text col-start-1 row-start-1 place-self-center max-w-[90vw] sm:max-w-3xl lg:max-w-none px-4 sm:px-8">
-                            <SplitText
-                                text={"Planets for each branch,\nStars for your talents,\nand fun that's out of this world."}
-                                className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md whitespace-pre-line"
-                                delay={isDesktop ? 60 : 60}
-                                duration={isDesktop ? 0.5 : 0.6}
-                                ease={isDesktop ? "power3.out" : "power4.out"}
-                                splitType={isDesktop ? "words" : "chars"}
-                                from={isDesktop ? { opacity: 0, y: 25, filter: 'blur(8px)' } : { opacity: 0, y: 40 }}
-                                to={isDesktop ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 1, y: 0 }}
-                                threshold={0.1}
-                                rootMargin="-100px"
-                                tag="h2"
-                                textAlign="center"
-                            />
+                            <MorphText className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md whitespace-pre-line">
+                                {"Planets for each branch,\nStars for your talents,\nand fun that's out of this world."}
+                            </MorphText>
                         </div>
                     )}
 
                     {/* SCENE 1E TEXT-8 — appears at scene-1e frame _030, exits at _090 */}
                     {showScene8Text && (
                         <div className="scene-8-text col-start-1 row-start-1 place-self-center landscape:max-md:place-self-end landscape:max-md:mb-[15vh] md:self-start md:justify-self-center md:mt-[85vh] md:mr-0 lg:self-start lg:justify-self-center lg:mt-[83vh] lg:mr-0 max-w-[90vw] sm:max-w-2xl lg:max-w-none px-4">
-                            <SplitText
-                                text="You’ve been selected to join the mission"
-                                className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md"
-                                delay={isDesktop ? 60 : 60}
-                                duration={isDesktop ? 0.5 : 0.6}
-                                ease={isDesktop ? "power3.out" : "power4.out"}
-                                splitType={isDesktop ? "words" : "chars"}
-                                from={isDesktop ? { opacity: 0, y: 25, filter: 'blur(8px)' } : { opacity: 0, y: 40 }}
-                                to={isDesktop ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 1, y: 0 }}
-                                threshold={0.1}
-                                rootMargin="-100px"
-                                tag="h2"
-                                textAlign="center"
-                            />
+                            <MorphText className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md">
+                                You&apos;ve been selected to join the mission
+                            </MorphText>
                         </div>
                     )}
 
                     {/* SCENE 1E TEXT-9 — appears at scene-1e frame _116, exits at scene-1f _045 */}
                     {showScene9Text && (
                         <div className="scene-9-text col-start-1 row-start-1 place-self-center max-w-[90vw] sm:max-w-3xl px-4 sm:px-8 text-center">
-                            {isDesktop ? (
-                                <SplitText
-                                    text="Your space suit and ship are ready"
-                                    className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md"
-                                    delay={isDesktop ? 60 : 60}
-                                    duration={isDesktop ? 0.5 : 0.6}
-                                    ease={isDesktop ? "power3.out" : "power4.out"}
-                                    splitType="words"
-                                    from={{ opacity: 0, y: 25, filter: 'blur(8px)' }}
-                                    to={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                                    threshold={0.1}
-                                    rootMargin="-100px"
-                                    tag="h2"
-                                    textAlign="center"
-                                />
-                            ) : (
-                                <TextType
-                                    text="Your space suit and ship are ready"
-                                    as="h2"
-                                    typingSpeed={60}
-                                    deletingSpeed={40}
-                                    pauseDuration={999999}
-                                    loop={false}
-                                    showCursor
-                                    cursorCharacter="_"
-                                    cursorBlinkDuration={0.5}
-                                    className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md"
-                                />
-                            )}
+                            <MorphText className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md">
+                                Your space suit and ship are ready
+                            </MorphText>
                         </div>
                     )}
 
                     {/* SCENE 1F TEXT-10 — appears at scene-1f frame _061, exits at _114 */}
                     {showScene10Text && (
                         <div className="scene-10-text col-start-1 row-start-1 self-start justify-self-center mt-[25vh] md:self-start md:justify-self-center md:mt-[30vh] md:mb-0 md:ml-0 lg:self-start lg:justify-self-center lg:mt-[25vh] lg:mb-0 lg:ml-0 max-w-[90vw] sm:max-w-2xl lg:max-w-none px-4">
-                            {isDesktop ? (
-                                <SplitText
-                                    text="But first... you need to register"
-                                    className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md"
-                                    delay={isDesktop ? 60 : 60}
-                                    duration={isDesktop ? 0.5 : 0.6}
-                                    ease={isDesktop ? "power3.out" : "power4.out"}
-                                    splitType="words"
-                                    from={{ opacity: 0, y: 25, filter: 'blur(8px)' }}
-                                    to={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                                    threshold={0.1}
-                                    rootMargin="-100px"
-                                    tag="h2"
-                                    textAlign="center"
-                                />
-                            ) : (
-                                <TextType
-                                    text="But first... you need to register"
-                                    as="h2"
-                                    typingSpeed={60}
-                                    deletingSpeed={40}
-                                    pauseDuration={999999}
-                                    loop={false}
-                                    showCursor
-                                    cursorCharacter="_"
-                                    cursorBlinkDuration={0.5}
-                                    className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md"
-                                />
-                            )}
+                            <MorphText className="text-center text-2xl sm:text-4xl lg:text-5xl xl:text-6xl landscape:max-md:text-xl landscape:max-lg:text-2xl font-bold tracking-tighter text-white leading-tight drop-shadow-md">
+                                But first... you need to register
+                            </MorphText>
                         </div>
                     )}
 
-                    <div className="scene-1f-auth opacity-0 col-start-1 row-start-1 w-full flex justify-center items-start pt-[5vh] px-4 sm:px-8 pointer-events-none z-50">
-                        <AuthForm initialMode={authMode} onSuccess={handleAuthSuccess} />
+                    <div className="scene-1f-auth opacity-0 col-start-1 row-start-1 w-full flex justify-center items-start pt-[2vh] sm:pt-[5vh] px-3 sm:px-8 pointer-events-none z-50">
+                        <Suspense fallback={null}>
+                            <AuthForm initialMode={authMode} onSuccess={handleAuthSuccess} />
+                        </Suspense>
                     </div>
                 </div>
             </div>
