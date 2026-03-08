@@ -119,9 +119,8 @@ export default function SpreadsheetUploader({
       <button
         onClick={handleUpload}
         disabled={loading || !data.length}
-        className={`px-4 py-2 rounded-lg text-white ${
-          loading ? "bg-gray-500" : "bg-black hover:bg-gray-800"
-        }`}
+        className={`px-4 py-2 rounded-lg text-white ${loading ? "bg-gray-500" : "bg-black hover:bg-gray-800"
+          }`}
       >
         {loading ? "Uploading..." : "Upload"}
       </button>
