@@ -19,23 +19,63 @@ export default function CaretakerDashboard() {
     "dashboard" | "approve_outing" | "approve_outpass" | "status_update"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [profilePopupOpen, setProfilePopupOpen] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [profileName, setProfileName] = useState<string | null>(null);
+  const [profileEmail, setProfileEmail] = useState<string | null>(null);
+  const avatarBtnRef = useRef<HTMLButtonElement>(null);
+  const headerAvatarRef = useRef<HTMLButtonElement>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const rawRole = (localStorage.getItem("admin_role") || "caretaker").replace(
-    /"/g,
-    "",
-  );
-  const username =
-    localStorage.getItem("username")?.replace(/"/g, "") || "Caretaker";
+  const rawRole = (localStorage.getItem("admin_role") || "caretaker").replace(/"/g, "");
+  const username = localStorage.getItem("username")?.replace(/"/g, "") || "Caretaker";
+  const firstName = username.split(" ")[0];
 
   const isMale = rawRole === "caretaker_male";
-  const portalLabel = isMale ? "M-CARETAKER PORTAL" : "F-CARETAKER PORTAL";
+  const portalLabel = isMale ? "M-Caretaker Portal" : "F-Caretaker Portal";
   const systemLabel = isMale ? "Boys Hostel Secure" : "Girls Hostel Secure";
 
-  const navItems = [
-    { id: "dashboard", label: "Overview", icon: LayoutDashboard },
-    { id: "approve_outing", label: "Approve Outings", icon: CheckCircle2 },
-    { id: "approve_outpass", label: "Approve Outpasses", icon: CheckCircle2 },
-    { id: "status_update", label: "Status Update", icon: RefreshCcw },
+  // Fetch profile on mount
+  useEffect(() => {
+    const token = (localStorage.getItem("admin_token") || "").replace(/"/g, "");
+    if (token) {
+      import("../../../api/endpoints").then(({ BASE_URL }) => {
+        fetch(`${BASE_URL}/profile/admin/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success && data.data) {
+              setProfilePhoto(data.data.profile_url ?? null);
+              setProfileName(data.data.name ?? null);
+              setProfileEmail(data.data.email ?? null);
+            }
+          })
+          .catch(() => { });
+      });
+    }
+  }, []);
+
+  const navGroups = [
+    {
+      group: null,
+      items: [
+        { id: "dashboard", label: "Overview", icon: LayoutDashboard },
+      ]
+    },
+    {
+      group: "Approvals",
+      items: [
+        { id: "approve_outing", label: "Approve Outings", icon: CheckCircle2 },
+        { id: "approve_outpass", label: "Approve Outpasses", icon: CheckCircle2 },
+      ]
+    },
+    {
+      group: "Students",
+      items: [
+        { id: "status_update", label: "Status Update", icon: RefreshCcw },
+      ]
+    }
   ];
 
   const { logout } = useLogout();
@@ -109,19 +149,46 @@ export default function CaretakerDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+    <div className={`flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 ${isMale ? "selection:bg-blue-100 selection:text-blue-900" : "selection:bg-rose-100 selection:text-rose-900"}`}>
       {/* Sidebar */}
       <aside
         className={`bg-white border-r border-slate-100 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"} hidden md:flex flex-col premium-shadow h-screen sticky top-0`}
       >
-        {/* Header with logo */}
-        <div className="flex items-center space-x-3.5 p-6 bg-transparent shrink-0">
-          <div className="w-14 h-14 flex items-center justify-center p-1 shrink-0">
-            <img
-              src="/assets/ongole_logo.png"
-              className="h-full w-full object-contain"
-              alt="Ongole Logo"
+        {/* Toggle Button */}
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="absolute -right-3.5 top-1/2 -translate-y-1/2 bg-white border border-slate-200 rounded-full p-1.5 shadow-md text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all z-50 hidden lg:block"
+        >
+          {isSidebarOpen ? (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+          )}
+        </button>
+
+        {/* Sidebar Branding */}
+        <div className="px-4 pt-6 pb-2">
+          <div className="flex items-center justify-center">
+            <h1 className={`unifrakturcook-bold ${isSidebarOpen ? "text-4xl" : "text-3xl"} text-slate-900 tracking-tight transition-all duration-300`}>
+              {isSidebarOpen ? "uniZ" : "Z"}
+            </h1>
+          </div>
+        </div>
+
+        {/* Search Style */}
+        <div className="px-5 py-4">
+          <div className="relative group">
+            <Search className={`absolute ${isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2"} top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600 transition-colors`} size={16} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={isSidebarOpen ? "Search operations..." : ""}
+              className={`w-full bg-slate-50 border border-slate-200/60 rounded-xl ${isSidebarOpen ? "pl-10 pr-8" : "px-0"} py-2 text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all font-medium`}
             />
+            {isSidebarOpen && (
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-slate-200/60 rounded text-[9px] font-bold text-slate-400 uppercase">/</div>
+            )}
           </div>
           {isSidebarOpen && (
             <div className="flex flex-col animate-in fade-in duration-500">
@@ -138,76 +205,114 @@ export default function CaretakerDashboard() {
         </div>
 
         {/* Navigation Section */}
-        <nav className="flex-1 px-3 py-2 overflow-y-auto space-y-1 mt-2">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
+        <nav className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-2 overflow-y-auto space-y-6 custom-sidebar-scroll`}>
+          {(() => {
+            const filteredGroups = navGroups.map(group => ({
+              ...group,
+              items: group.items.filter(item =>
+                item.label.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+            })).filter(group => group.items.length > 0);
 
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id as any)}
-                className={`
-                  w-full flex items-center space-x-3 px-4 py-3 rounded-full text-left transition-all duration-200 group relative
-                  ${
-                    isActive
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                  }
-                `}
-              >
-                <div className="flex items-center justify-center min-w-[24px]">
-                  <Icon
-                    size={21}
-                    className={`shrink-0 transition-transform group-hover:scale-110 duration-200
-                      ${
-                        isActive
-                          ? "text-blue-600"
-                          : "text-slate-400 group-hover:text-slate-700"
-                      }`}
-                  />
+            if (filteredGroups.length === 0 && searchQuery) {
+              return (
+                <div className="flex flex-col items-center justify-center py-10 text-center">
+                  <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                    <Search size={20} className="text-slate-300" />
+                  </div>
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-4">No operations found</p>
                 </div>
-                {isSidebarOpen && (
-                  <span
-                    className={`text-[13px] whitespace-nowrap tracking-tight transition-all
-                      ${isActive ? "font-bold" : "font-semibold text-slate-500 group-hover:text-blue-600"}`}
-                  >
-                    {item.label}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+              );
+            }
 
-        {/* Bottom Section */}
-        <div className="mt-auto px-3 py-4 space-y-1 border-t border-slate-50 shrink-0">
-          {/* Profile Display */}
-          <div className="flex items-center px-4 py-3 group rounded-full transition-colors">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center border border-blue-200 shadow-sm overflow-hidden shrink-0">
-              <span className="text-blue-700 font-semibold text-[11px]">
-                {username[0].toUpperCase()}
-              </span>
-            </div>
-            {isSidebarOpen && (
-              <div className="ml-3 flex-1 min-w-0">
-                <p className="text-[15px] font-semibold text-slate-900 truncate tracking-tight">
-                  {username}
-                </p>
+            return filteredGroups.map((group, gIdx) => (
+              <div key={gIdx} className="space-y-1.5">
+                {group.group && isSidebarOpen && (
+                  <h4 className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{group.group}</h4>
+                )}
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id as any)}
+                      title={!isSidebarOpen ? item.label : ""}
+                      className={`
+                        w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group relative
+                        ${isActive
+                          ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
+                          : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
+                        }
+                      `}
+                    >
+                      <div className="flex items-center justify-center min-w-[22px]">
+                        <Icon
+                          size={20}
+                          className={`shrink-0 transition-colors
+                            ${isActive
+                              ? isMale ? "text-blue-600" : "text-rose-600"
+                              : "text-slate-400 group-hover:text-slate-600"
+                            }`}
+                        />
+                      </div>
+                      {isSidebarOpen && (
+                        <span
+                          className={`text-[13.5px] whitespace-nowrap tracking-tight leading-none
+                            ${isActive ? "font-bold" : "font-semibold"}`}
+                        >
+                          {item.label}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            ));
+          })()}
+
+          {/* Special Logout Item (at the bottom of nav list) */}
+          <div className="pt-2">
+            <button
+              onClick={handleLogout}
+              className={`
+                w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group hover:bg-red-50 hover:text-red-500 text-slate-500
+              `}
+              title={!isSidebarOpen ? "Logout" : ""}
+            >
+              <div className="flex items-center justify-center min-w-[22px]">
+                <LogOut size={20} className="text-slate-400 group-hover:text-red-500 transition-colors" />
               </div>
             )}
           </div>
+        </nav>
 
-          {/* Logout Action */}
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-full text-left transition-all duration-200 group text-red-500 hover:bg-red-50"
+        {/* User Info Style (Back to minimal) */}
+        <div className="mt-auto border-t border-slate-200/60 p-3 pb-5">
+          <div
+            onClick={() => {
+              setProfilePopupOpen(true);
+            }}
+            className={`flex items-center ${isSidebarOpen ? "justify-start px-2" : "justify-center"} py-1.5 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group`}
           >
-            <div className="flex items-center justify-center min-w-[24px]">
-              <LogOut
-                size={20}
-                className="shrink-0 transition-transform group-hover:rotate-12"
-              />
+            <div className="flex items-center gap-3 min-w-0">
+              <button
+                ref={avatarBtnRef}
+                className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-slate-100 flex items-center justify-center shadow-sm ring-1 ring-slate-200/60 transition-transform group-hover:scale-105"
+              >
+                {profilePhoto ? (
+                  <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
+                ) : (
+                  <span className="text-slate-600 font-bold text-[10px] leading-tight text-center px-1 truncate">{firstName}</span>
+                )}
+              </button>
+              {isSidebarOpen && (
+                <div className="min-w-0">
+                  <p className="text-[13px] font-bold text-slate-900 truncate leading-tight">{profileName || username}</p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate mt-0.5">{portalLabel}</p>
+                </div>
+              )}
             </div>
             {isSidebarOpen && (
               <span className="text-[15px] font-semibold">Logout</span>
@@ -234,9 +339,37 @@ export default function CaretakerDashboard() {
                 Student Housing Caretaker
               </p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center font-semibold text-blue-600">
-              {username[0].toUpperCase()}
-            </div>
+
+            {/* Circular profile photo — opens popup */}
+            <button
+              ref={headerAvatarRef}
+              onClick={() => {
+                setProfilePopupOpen(true);
+              }}
+              title="Profile"
+              className={`w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 ${isMale ? "hover:ring-blue-400" : "hover:ring-rose-400"} transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50`}
+            >
+              {profilePhoto ? (
+                <img
+                  src={profilePhoto}
+                  className="w-full h-full object-cover"
+                  alt=""
+                />
+              ) : (
+                <div className={`w-full h-full flex items-center justify-center ${isMale ? "bg-blue-600" : "bg-rose-600"} text-white font-bold text-[10px] leading-tight text-center px-1 truncate`}>
+                  {firstName}
+                </div>
+              )}
+            </button>
+
+            {/* Logout button */}
+            <button
+              onClick={handleLogout}
+              title="Sign out"
+              className="w-11 h-11 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all active:scale-95 shadow-sm"
+            >
+              <LogOut size={18} />
+            </button>
           </div>
         </header>
 

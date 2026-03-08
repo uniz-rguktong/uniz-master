@@ -373,9 +373,7 @@ export const approveBranchAllocation = async (
         whereClause.branch = { equals: branch, mode: "insensitive" };
       }
       if (year) {
-        whereClause.subject = {
-          semester: { startsWith: year, mode: "insensitive" },
-        };
+        whereClause.academicYear = { equals: year, mode: "insensitive" };
       }
     }
 
