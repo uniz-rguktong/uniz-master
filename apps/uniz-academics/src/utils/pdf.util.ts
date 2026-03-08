@@ -41,8 +41,8 @@ const CACHE_PATH = path.join(CACHE_DIR, "university_logo.jpg");
 let cachedLogo: string | null = null;
 const getLogo = async (): Promise<string | null> => {
   if (cachedLogo) return cachedLogo;
-  const logoUrl = process.env.INSTITUTION_LOGO_URL;
-  if (!logoUrl) return null;
+  const logoUrl =
+    "https://res.cloudinary.com/dy2fjgt46/image/upload/v1771604895/rguktongole_logo_kbpaui.jpg";
 
   try {
     const response = await axios.get(logoUrl, {
