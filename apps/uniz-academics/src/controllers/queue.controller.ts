@@ -30,21 +30,8 @@ export const processQueue = async (req: Request, res: Response) => {
     // CRITICAL: Trigger next batch BEFORE sending response
     // Otherwise Vercel terminates the function immediately after res.json()
     if (result.status === "continued") {
-      const protocol =
-        req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
-      const host = req.headers["host"] || "localhost:3004";
-      let url = `${protocol}://${host}/api/queue/process`;
-
-      // Local development gateway handling
-      if (
-        host?.includes("localhost:3000") ||
-        host?.includes("127.0.0.1:3000")
-      ) {
-        url = `${protocol}://${host}/api/v1/academics/api/queue/process`;
-      } else if (host?.includes("localhost") || host?.includes("127.0.0.1")) {
-        // Direct internal call should use the canonical path
-        url = `${protocol}://${host}/api/queue/process`;
-      }
+      const port = process.env.PORT || 3004;
+      const url = `http://localhost:${port}/api/queue/process`;
 
       // Loop Buster: Add random param to avoid 508 Loop Detected
       const triggerUrl = `${url}?lb=${Math.random().toString(36).substring(7)}`;
