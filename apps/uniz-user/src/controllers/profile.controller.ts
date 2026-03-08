@@ -87,17 +87,17 @@ const mapStudentProfile = (profile: any) => ({
 
 const mapFacultyProfile = (profile: any) => ({
   id: profile.id,
-  Username: profile.username,
-  Name: profile.name,
-  Email: profile.email,
-  Department: profile.department,
-  Designation: profile.designation,
-  Role: profile.role,
-  Contact: profile.contact,
-  ProfileUrl: profile.profileUrl,
-  Bio: profile.bio || {},
+  username: profile.username,
+  name: profile.name,
+  email: profile.email,
+  department: profile.department,
+  designation: profile.designation,
+  role: profile.role,
+  contact: profile.contact,
+  profile_url: profile.profileUrl,
+  bio: profile.bio || {},
   is_suspended: profile.isSuspended || false,
-  CreatedAt: profile.createdAt,
+  created_at: profile.createdAt,
 });
 
 const mapAdminProfile = (profile: any) => ({
@@ -420,6 +420,48 @@ export const getFacultyProfile = async (
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to fetch faculty profile",
+    });
+  }
+};
+
+export const getFacultyProfileByAdmin = async (req: Request, res: Response) => {
+  const { username } = req.params;
+  const internalSecret = req.headers["x-internal-secret"];
+
+  // Allow either admin role OR internal secret
+  if (internalSecret !== (process.env.INTERNAL_SECRET || "uniz-core")) {
+    const authReq = req as AuthenticatedRequest;
+    if (
+      !authReq.user ||
+      !["webmaster", "dean", "hod"].includes(authReq.user.role)
+    ) {
+      return res
+        .status(403)
+        .json({ code: "AUTH_FORBIDDEN", message: "Access denied" });
+    }
+  }
+
+  try {
+    const profile = await prisma.facultyProfile.findFirst({
+      where: { username: { equals: username, mode: "insensitive" } },
+    });
+
+    if (!profile) {
+      return res.status(404).json({
+        code: ErrorCode.RESOURCE_NOT_FOUND,
+        message: "Faculty profile not found",
+      });
+    }
+
+    return res.json({
+      success: true,
+      faculty: mapFacultyProfile(profile),
+    });
+  } catch (error) {
+    console.error(`[Profile] Error fetching faculty ${username}:`, error);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Internal server error",
     });
   }
 };

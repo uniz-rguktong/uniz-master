@@ -96,6 +96,7 @@ git reset --hard origin/main
     "uniz-user:uniz-user-service:uniz-user-service:user-service"
     "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
     "ornate-core:ornate-core:ornate-core:ornate-core"
+    "ornate:ornate-landing:ornate-landing:ornate-landing"
   )
 
   # ----------------------------------------------------------------------------
@@ -174,6 +175,8 @@ git reset --hard origin/main
         BUILD_ARGS=""
         if [[ "$DIR" == "uniz-portal" ]]; then
           BUILD_ARGS="--build-arg VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg VITE_API_URL=$VITE_API_URL --build-arg VITE_CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME --build-arg VITE_CLOUDINARY_UPLOAD_PRESET=$CLOUDINARY_UPLOAD_PRESET"
+        elif [[ "$DIR" == "ornate" ]]; then
+          BUILD_ARGS="--build-arg NEXT_PUBLIC_ASSETS_URL=$NEXT_PUBLIC_ASSETS_URL"
         fi
 
         if docker build --no-cache --platform linux/amd64 $BUILD_ARGS -t $IMG:$TAG $BUILD_CONTEXT; then

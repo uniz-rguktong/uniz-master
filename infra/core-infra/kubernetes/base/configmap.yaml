@@ -43,3 +43,15 @@ data:
   R2_PUBLIC_DOMAIN: "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev"
   AWS_REGION: "ap-south-1"
   SES_FROM_EMAIL: "no-reply-ems@rguktong.in"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ornate-landing-config
+data:
+  NODE_ENV: "production"
+  NEXTAUTH_URL: "https://ornate.rguktong.in"
+  NEXT_PUBLIC_ASSETS_URL: "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
+  AWS_REGION: "ap-south-1"
+  SES_FROM_EMAIL: "no-reply-ems@rguktong.in"
+  R2_PUBLIC_DOMAIN: "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev"
