@@ -87,17 +87,17 @@ const mapStudentProfile = (profile: any) => ({
 
 const mapFacultyProfile = (profile: any) => ({
   id: profile.id,
-  Username: profile.username,
-  Name: profile.name,
-  Email: profile.email,
-  Department: profile.department,
-  Designation: profile.designation,
-  Role: profile.role,
-  Contact: profile.contact,
-  ProfileUrl: profile.profileUrl,
-  Bio: profile.bio || {},
+  username: profile.username,
+  name: profile.name,
+  email: profile.email,
+  department: profile.department,
+  designation: profile.designation,
+  role: profile.role,
+  contact: profile.contact,
+  profile_url: profile.profileUrl,
+  bio: profile.bio || {},
   is_suspended: profile.isSuspended || false,
-  CreatedAt: profile.createdAt,
+  created_at: profile.createdAt,
 });
 
 const mapAdminProfile = (profile: any) => ({
