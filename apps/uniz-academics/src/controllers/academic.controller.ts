@@ -1791,30 +1791,33 @@ export const uploadGrades = async (req: any, res: Response) => {
 
     const total = rows.length;
 
-    // Upload to Cloudinary
+    // 1. Upload to Cloudinary (BACKGROUND)
     let fileUrl = null;
-    try {
-      const FormData = require("form-data");
-      const form = new FormData();
-      form.append("file", req.file.buffer, req.file.originalname);
-      const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-      const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+    const uploadToCloudinary = async (buffer: Buffer, filename: string) => {
+      try {
+        const FormData = require("form-data");
+        const form = new FormData();
+        form.append("file", buffer, filename);
+        const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+        form.append("upload_preset", uploadPreset);
 
-      form.append("upload_preset", uploadPreset);
-      form.append(
-        "public_id",
-        `uniz/grades_${req.file.originalname.replace(".xlsx", "")}_${Date.now()}`,
-      );
+        const resUpload = await axios.post(
+          `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
+          form,
+          { headers: form.getHeaders() },
+        );
+        return resUpload.data.secure_url;
+      } catch (err) {
+        console.warn("[Academics] Cloudinary grades backup failed:", err);
+        return null;
+      }
+    };
 
-      const resUpload = await axios.post(
-        `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
-        form,
-        { headers: form.getHeaders() },
-      );
-      fileUrl = resUpload.data.secure_url;
-    } catch (err) {
-      console.warn("[Academics] Cloudinary grades upload failed:", err);
-    }
+    // Fire and forget
+    uploadToCloudinary(req.file.buffer, req.file.originalname).then((url) => {
+      fileUrl = url;
+    });
 
     // Create Job Payload
     const uploadId = randomUUID();
@@ -2026,30 +2029,35 @@ export const uploadAttendance = async (req: any, res: Response) => {
 
     const total = rows.length;
 
-    // Upload to Cloudinary
+    // 1. Upload to Cloudinary (BACKGROUND)
     let fileUrl = null;
-    try {
-      const FormData = require("form-data");
-      const form = new FormData();
-      form.append("file", req.file.buffer, req.file.originalname);
-      const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-      const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+    const uploadToCloudinaryAtt = async (buffer: Buffer, filename: string) => {
+      try {
+        const FormData = require("form-data");
+        const form = new FormData();
+        form.append("file", buffer, filename);
+        const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+        form.append("upload_preset", uploadPreset);
 
-      form.append("upload_preset", uploadPreset);
-      form.append(
-        "public_id",
-        `uniz/attendance_${req.file.originalname.replace(".xlsx", "")}_${Date.now()}`,
-      );
+        const resUpload = await axios.post(
+          `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
+          form,
+          { headers: form.getHeaders() },
+        );
+        return resUpload.data.secure_url;
+      } catch (err) {
+        console.warn("[Academics] Cloudinary attendance backup failed:", err);
+        return null;
+      }
+    };
 
-      const resUpload = await axios.post(
-        `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
-        form,
-        { headers: form.getHeaders() },
-      );
-      fileUrl = resUpload.data.secure_url;
-    } catch (err) {
-      console.warn("[Academics] Cloudinary attendance upload failed:", err);
-    }
+    // Fire and forget
+    uploadToCloudinaryAtt(req.file.buffer, req.file.originalname).then(
+      (url) => {
+        fileUrl = url;
+      },
+    );
 
     // Create Job Payload
     const uploadId = randomUUID();
