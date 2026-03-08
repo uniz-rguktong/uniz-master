@@ -40,4 +40,4 @@ jobs:
             git reset --hard origin/main
 
             # Run the same localized deploy script the user uses locally
-            /bin/bash ./scripts/deploy.sh --vps-run "${{ github.event.inputs.commit_message }}"
+            /bin/bash ./scripts/deploy.sh "${{ github.event.inputs.commit_message }}"

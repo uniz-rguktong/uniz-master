@@ -126,9 +126,6 @@ export default function FacultyManagement({
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedFaculty, setSelectedFaculty] = useState<any>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [bulkUploadSuccess, setBulkUploadSuccess] = useState<boolean | null>(
-    null,
-  );
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   /* ─── Fetch ─── */
@@ -251,14 +248,14 @@ export default function FacultyManagement({
 
   const openEdit = (member: any) => {
     setFormData({
-      username: member.username,
-      name: member.name,
-      email: member.email,
-      department: member.department,
-      role: member.role || "teacher",
-      designation: member.designation,
-      contact: member.contact || "",
-      profileUrl: member.profile_url || "",
+      username: member.Username,
+      name: member.Name,
+      email: member.Email,
+      department: member.Department,
+      role: member.Role || "teacher",
+      designation: member.Designation,
+      contact: member.Contact || "",
+      profileUrl: member.ProfileUrl || "",
     });
     setEditMode(true);
     setShowModal(true);
@@ -320,7 +317,7 @@ export default function FacultyManagement({
   const toggleAll = () => {
     if (selectedUsernames.size === faculty.length)
       setSelectedUsernames(new Set());
-    else setSelectedUsernames(new Set(faculty.map((f) => f.username)));
+    else setSelectedUsernames(new Set(faculty.map((f) => f.Username)));
   };
 
   /* ─── CSV template download ─── */
@@ -359,7 +356,6 @@ export default function FacultyManagement({
     }
     setBulkLoading(true);
     setBulkResult(null);
-    setBulkUploadSuccess(null);
     try {
       const res = await fetch(BULK_CREATE_FACULTY, {
         method: "POST",
@@ -372,17 +368,12 @@ export default function FacultyManagement({
       const data = await res.json();
       if (data.success) {
         setBulkResult(data);
-        setBulkUploadSuccess(true);
         toast.success(
           `Done: ${data.summary.created} created, ${data.summary.skipped} skipped, ${data.summary.errors} errors`,
         );
         fetchFaculty();
-      } else {
-        setBulkUploadSuccess(false);
-        toast.error(data.message || "Bulk add failed");
-      }
+      } else toast.error(data.message || "Bulk add failed");
     } catch {
-      setBulkUploadSuccess(false);
       toast.error("Network error");
     } finally {
       setBulkLoading(false);
@@ -594,7 +585,6 @@ export default function FacultyManagement({
                 <div className="space-y-4">
                   <FileUploader
                     onFileSelect={(file: File | null) => {
-                      setBulkUploadSuccess(null);
                       if (file) {
                         Papa.parse(file, {
                           header: true,
@@ -603,9 +593,7 @@ export default function FacultyManagement({
                             if (results.data && results.data.length > 0) {
                               const csv = Papa.unparse(results.data);
                               setCsvText(csv);
-                              toast.success(
-                                `Successfully parsed ${results.data.length} rows`,
-                              );
+                              toast.success(`Successfully parsed ${results.data.length} rows`);
                             }
                           },
                           error: (err) => {
@@ -618,9 +606,6 @@ export default function FacultyManagement({
                     }}
                     label="Upload CSV/Excel Asset"
                     description="XLSX or CSV. Use the template for correct headers."
-                    isUploading={bulkLoading}
-                    isSuccess={bulkUploadSuccess === true}
-                    isError={bulkUploadSuccess === false}
                   />
                 </div>
 
@@ -925,24 +910,24 @@ export default function FacultyManagement({
               {bulkResult.results?.filter(
                 (r: any) => r.status === "error" || r.reason,
               ).length > 0 && (
-                <div className="max-h-36 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-1">
-                  {bulkResult.results
-                    .filter(
-                      (r: any) =>
-                        r.status !== "created" && r.status !== "updated",
-                    )
-                    .map((r: any, i: number) => (
-                      <p key={i} className="text-xs font-mono text-slate-600">
-                        <span
-                          className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
-                        >
-                          [{r.status}]
-                        </span>{" "}
-                        {r.username} {r.reason ? `— ${r.reason}` : ""}
-                      </p>
-                    ))}
-                </div>
-              )}
+                  <div className="max-h-36 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-1">
+                    {bulkResult.results
+                      .filter(
+                        (r: any) =>
+                          r.status !== "created" && r.status !== "updated",
+                      )
+                      .map((r: any, i: number) => (
+                        <p key={i} className="text-xs font-mono text-slate-600">
+                          <span
+                            className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
+                          >
+                            [{r.status}]
+                          </span>{" "}
+                          {r.username} {r.reason ? `— ${r.reason}` : ""}
+                        </p>
+                      ))}
+                  </div>
+                )}
             </div>
           )}
         </div>
@@ -985,7 +970,7 @@ export default function FacultyManagement({
                       className="text-slate-400 hover:text-slate-700 transition-colors"
                     >
                       {selectedUsernames.size === faculty.length &&
-                      faculty.length > 0 ? (
+                        faculty.length > 0 ? (
                         <CheckSquare size={18} className="text-blue-600" />
                       ) : (
                         <Square size={18} />
@@ -1026,13 +1011,13 @@ export default function FacultyManagement({
                   ))
               ) : faculty.length > 0 ? (
                 faculty.map((member) => {
-                  const isSelected = selectedUsernames.has(member.username);
+                  const isSelected = selectedUsernames.has(member.Username);
                   return (
                     <tr
                       key={member.id}
                       onClick={() =>
                         mode === "bulk"
-                          ? toggleSelect(member.username)
+                          ? toggleSelect(member.Username)
                           : undefined
                       }
                       className={`transition-all group ${mode === "bulk" ? "cursor-pointer select-none" : ""} ${isSelected ? "bg-blue-50/60 hover:bg-blue-50" : "hover:bg-slate-50/30"}`}
@@ -1054,43 +1039,43 @@ export default function FacultyManagement({
                           <div
                             className={`w-11 h-11 rounded-full text-white flex items-center justify-center font-bold text-sm shadow-none border-2 border-white ring-1 ring-slate-100 overflow-hidden ${isSelected ? "bg-blue-600" : "bg-slate-900"}`}
                           >
-                            {member.profile_url ? (
+                            {member.ProfileUrl ? (
                               <img
-                                src={member.profile_url}
-                                alt={member.name}
+                                src={member.ProfileUrl}
+                                alt={member.Name}
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              member.name?.[0] || member.username?.[0]
+                              member.Name?.[0] || member.Username?.[0]
                             )}
                           </div>
                           <div className="flex flex-col">
                             <p className="font-bold text-slate-900 tracking-tight leading-none mb-1.5">
-                              {member.name}
+                              {member.Name}
                             </p>
                             <div className="flex items-center gap-2">
                               <Mail size={10} className="text-slate-300" />
                               <p className="text-[10px] font-medium text-slate-400 leading-none">
-                                {member.email}
+                                {member.Email}
                               </p>
                             </div>
                             <p className="text-[9px] font-mono text-slate-300 mt-1">
-                              {member.username}
+                              {member.Username}
                             </p>
                           </div>
                         </div>
                       </td>
                       <td className="px-10 py-6">
                         <p className="text-xs font-black text-slate-600 uppercase tracking-wide">
-                          {member.designation || "Lecturer"}
+                          {member.Designation || "Lecturer"}
                         </p>
                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                          {member.department}
+                          {member.Department}
                         </p>
                       </td>
                       <td className="px-10 py-6">
                         <span className="px-3 py-1 bg-slate-50 rounded-lg text-slate-500 font-semibold uppercase tracking-widest text-[9px] border border-slate-100">
-                          {member.role?.toUpperCase() || "FACULTY"}
+                          {member.Role?.toUpperCase() || "FACULTY"}
                         </span>
                       </td>
                       <td className="px-10 py-6">
@@ -1125,7 +1110,7 @@ export default function FacultyManagement({
                             <button
                               onClick={() =>
                                 handleSuspend(
-                                  member.username,
+                                  member.Username,
                                   member.is_suspended,
                                 )
                               }
@@ -1134,7 +1119,7 @@ export default function FacultyManagement({
                               {member.is_suspended ? "Reinstate" : "Suspend"}
                             </button>
                             <button
-                              onClick={() => handleDelete(member.username)}
+                              onClick={() => handleDelete(member.Username)}
                               className="p-2.5 bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all active:scale-90 border border-red-100"
                               title="Delete"
                             >
@@ -1415,46 +1400,46 @@ export default function FacultyManagement({
 
               <div className="flex items-center gap-6">
                 <div className="w-24 h-24 rounded-xl bg-white/10 border-4 border-white/10 overflow-hidden shadow-none shrink-0">
-                  {selectedFaculty.profile_url ? (
+                  {selectedFaculty.ProfileUrl ? (
                     <img
-                      src={selectedFaculty.profile_url}
-                      alt={selectedFaculty.name}
+                      src={selectedFaculty.ProfileUrl}
+                      alt={selectedFaculty.Name}
                       className="w-full h-full object-cover"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-3xl font-black bg-blue-600">
-                      {selectedFaculty.name?.[0]}
+                      {selectedFaculty.Name?.[0]}
                     </div>
                   )}
                 </div>
                 <div>
                   <h3 className="text-3xl font-black tracking-tight leading-none mb-2">
-                    {selectedFaculty.name}
+                    {selectedFaculty.Name}
                   </h3>
                   <p className="text-blue-400 font-black uppercase tracking-widest text-[10px] flex items-center gap-2">
                     <span className="px-2 py-0.5 bg-blue-500/20 rounded">
-                      {selectedFaculty.designation || "Lecturer"}
+                      {selectedFaculty.Designation || "Lecturer"}
                     </span>
                     <span className="text-slate-500">•</span>
-                    <span>{selectedFaculty.department} Department</span>
+                    <span>{selectedFaculty.Department} Department</span>
                   </p>
                   <div className="flex items-center gap-4 mt-4 text-slate-400 text-xs">
                     <div className="flex items-center gap-1.5">
                       <Mail size={12} className="text-blue-400" />
-                      {selectedFaculty.email}
+                      {selectedFaculty.Email}
                     </div>
-                    {selectedFaculty.contact && (
+                    {selectedFaculty.Contact && (
                       <div className="flex items-center gap-1.5">
                         <Plus size={12} className="text-emerald-400" />
-                        {selectedFaculty.contact}
+                        {selectedFaculty.Contact}
                       </div>
                     )}
-                    {selectedFaculty.created_at && (
+                    {selectedFaculty.CreatedAt && (
                       <div className="flex items-center gap-1.5">
                         <Calendar size={12} className="text-amber-400" />
                         Joined{" "}
                         {new Date(
-                          selectedFaculty.created_at,
+                          selectedFaculty.CreatedAt,
                         ).toLocaleDateString()}
                       </div>
                     )}
@@ -1474,7 +1459,7 @@ export default function FacultyManagement({
                 </div>
 
                 {selectedFaculty.Bio &&
-                Object.keys(selectedFaculty.Bio).length > 0 ? (
+                  Object.keys(selectedFaculty.Bio).length > 0 ? (
                   <div className="grid grid-cols-1 gap-6">
                     {Object.entries(selectedFaculty.Bio).map(
                       ([key, val]: any) => {

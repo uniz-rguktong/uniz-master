@@ -5,6 +5,7 @@ import {
   Plus,
   Loader2,
   CheckCircle2,
+  Clock,
   Play,
   RotateCcw,
   BookOpen,
@@ -13,7 +14,6 @@ import {
   ShieldCheck,
   AlertCircle,
   Trash2,
-  Coffee,
 } from "lucide-react";
 import {
   SEMESTERS,
@@ -267,21 +267,22 @@ export default function SemesterRegistration() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center h-96 bg-white rounded-xl border-dashed border-2 border-slate-100 p-12 text-center animate-in fade-in duration-700">
-          <div className="w-24 h-24 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-white shadow-none">
-            <Coffee size={40} strokeWidth={2.5} />
+        <div className="flex flex-col items-center justify-center h-80 bg-white rounded-xl border-2 border-dashed border-slate-100 p-12 text-center">
+          <div className="w-20 h-20 bg-slate-50 rounded-xl flex items-center justify-center text-slate-200 mb-6">
+            <Clock size={40} />
           </div>
-          <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight italic">
-            Relaxation levels are dangerously high.
+          <h3 className="text-xl font-black text-slate-900 mb-2 mt-2">
+            No Active Workflow
           </h3>
-          <p className="text-slate-500 font-medium max-w-md mb-10 leading-relaxed font-outfit">
-            Campus vibes: 100% chill. Students are relaxing… but don't worry, semester registration will take care of that.
+          <p className="text-slate-400 font-medium max-w-sm mb-8 font-outfit">
+            Start the academic session by initializing a new semester with
+            branch-level subject allocations.
           </p>
           <button
             onClick={() => setShowInitModal(true)}
-            className="px-10 py-5 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-black transition-all active:scale-95 shadow-none"
+            className="bg-slate-900 text-white px-8 py-3.5 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-800 transition-all shadow-none"
           >
-            Initiate Semester Initialization
+            Start Initialization
           </button>
         </div>
       )}
@@ -350,8 +351,8 @@ export default function SemesterRegistration() {
                             )
                           }
                           className={`px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${selectedBranches.includes(branch)
-                            ? "bg-blue-600 text-white shadow-none scale-105"
-                            : "bg-slate-50 text-slate-400 border border-slate-100 hover:border-blue-200"
+                              ? "bg-blue-600 text-white shadow-none scale-105"
+                              : "bg-slate-50 text-slate-400 border border-slate-100 hover:border-blue-200"
                             }`}
                         >
                           {branch}
