@@ -48,9 +48,13 @@ export default function DeanDashboard() {
     /"/g,
     "",
   );
+  const department = (localStorage.getItem("department") || "").replace(
+    /"/g,
+    "",
+  );
   const roleLabel =
     role === "hod"
-      ? "HOD Portal"
+      ? `HOD Portal ${department ? `- ${department}` : ""}`
       : role === "swo" || role === "dsw"
         ? "SWO Portal"
         : "Dean Portal";
@@ -91,9 +95,9 @@ export default function DeanDashboard() {
       case "semester_review":
         return (
           <SemesterRegistrationSection
-            isAdmin={role === "webmaster"}
+            isAdmin={role === "webmaster" || role === "dean"}
             branch={
-              role === "dean"
+              role === "dean" || role === "webmaster"
                 ? "all"
                 : localStorage.getItem("department") || "CSE"
             }
