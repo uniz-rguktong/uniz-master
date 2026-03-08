@@ -539,29 +539,40 @@ export const registerSubjects = async (
       return res.status(403).json({ error: "Registration is not open" });
     }
 
-    // 2. Fetch student details to get branch (department)
+    // 2. Fetch student details to get branch (department) and year
     let studentBranch = (user as any).department;
-    if (!studentBranch) {
-      try {
-        const studentRes = await axios.get(
-          `${GATEWAY_URL}/profile/student/me`,
-          {
-            headers: { Authorization: req.headers.authorization },
-          },
-        );
-        studentBranch = studentRes.data?.department || studentRes.data?.branch;
-      } catch (err) {
-        console.warn(
-          "Failed to fetch student branch, falling back to subject branch check",
-        );
+    let studentYear = (user as any).year; // Usually not in the token
+
+    try {
+      const studentRes = await axios.get(`${GATEWAY_URL}/profile/student/me`, {
+        headers: { Authorization: req.headers.authorization },
+      });
+      console.log(`[ACADEMICS] Registration profile fetch:`, studentRes.data);
+
+      const profileData = studentRes.data?.student || studentRes.data;
+      if (profileData) {
+        studentBranch =
+          profileData.department || profileData.branch || studentBranch;
+        studentYear = profileData.year || studentYear;
       }
+    } catch (err) {
+      console.warn(
+        "Failed to fetch student profile details, falling back to basic checks",
+      );
     }
+
+    console.log(
+      `[ACADEMICS] Validating registration for Branch: ${studentBranch}, Year: ${studentYear}`,
+    );
 
     const allocations = await prisma.branchAllocation.findMany({
       where: {
         semesterId: sem.id,
         ...(studentBranch
           ? { branch: { equals: studentBranch, mode: "insensitive" } }
+          : {}),
+        ...(studentYear
+          ? { academicYear: { equals: studentYear, mode: "insensitive" } }
           : {}),
         isApproved: true,
       },
@@ -581,6 +592,7 @@ export const registerSubjects = async (
     if (mandatoryMissing.length > 0) {
       return res.status(400).json({
         error: `Missing mandatory subjects: ${mandatoryMissing.map((m) => m.subject.name).join(", ")}`,
+        attribution: "SABER", // matching error structure
       });
     }
 
@@ -655,12 +667,18 @@ export const registerSubjects = async (
 
         try {
           const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
+          const updateData: any = {
+            year: academicYear,
+            semester: academicSem,
+          };
+
+          if (firstSubject.department) {
+            updateData.branch = firstSubject.department;
+          }
+
           const updateRes = await axios.put(
             `${GATEWAY_URL}/profile/admin/student/${user.username}`,
-            {
-              year: academicYear,
-              semester: academicSem,
-            },
+            updateData,
             {
               headers: {
                 Authorization: req.headers.authorization,
@@ -669,7 +687,7 @@ export const registerSubjects = async (
             },
           );
           console.log(
-            `✅ Student ${user.username} profile updated to ${academicYear} ${academicSem}`,
+            `✅ Student ${user.username} profile updated to ${academicYear} ${academicSem} (${updateData.branch || "no branch update"})`,
           );
         } catch (profileError: any) {
           console.warn("User Profile Update Failed:", profileError.message);
