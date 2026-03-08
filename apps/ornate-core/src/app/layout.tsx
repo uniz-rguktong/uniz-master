@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: {
     template: "%s | Ornate Core",
-    default: "Ornate Core | Admin",
+    default: "Ornate Core — Event Management System",
   },
   description:
     "Comprehensive multi-portal event management system for institutional event planning, registration, certificates, and analytics.",

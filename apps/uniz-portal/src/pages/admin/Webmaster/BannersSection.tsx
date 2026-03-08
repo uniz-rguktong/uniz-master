@@ -267,8 +267,8 @@ export default function BannersSection() {
                       onClick={() => toggleVisibilityAction(banner)}
                       disabled={actionLoading === bannerId}
                       className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-bold uppercase tracking-widest text-[9px] transition-all border ${banner.isVisible
-                        ? "bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white"
-                        : "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white"
+                          ? "bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white"
+                          : "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white"
                         } active:scale-95 disabled:opacity-50`}
                     >
                       {actionLoading === bannerId ? (

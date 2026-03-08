@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Orbitron } from "next/font/google";
-import "./globals.css";
-import SmoothScroll from "@/components/Layout/SmoothScroll";
-import { getAssetUrl } from "@/lib/assets";
+import { Orbitron } from 'next/font/google';
+import './globals.css';
+import SmoothScroll from '@/components/Layout/SmoothScroll';
+import { getAssetUrl } from '@/lib/assets';
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -43,13 +43,11 @@ export const metadata: Metadata = {
       "Join the ultimate spacefest journey. A revolutionary college festival experience beyond the stars.",
   },
   icons: {
-    icon: "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets/Ornate_LOGO.svg",
-    shortcut:
-      "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets/Ornate_LOGO.svg",
-    apple:
-      "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets/Ornate_LOGO.svg",
+    icon: 'https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets/Ornate_LOGO.svg',
+    shortcut: 'https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets/Ornate_LOGO.svg',
+    apple: 'https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets/Ornate_LOGO.svg',
   },
-  manifest: "/manifest.json",
+  manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
