@@ -68,6 +68,21 @@ export const initSemester = async (
             },
           });
 
+          // Infer batch from AY (e.g. AY 2024-25 -> 24)
+          let inferredBatch = "";
+          const ayMatch = academicSemester.match(/AY\s*(\d{4})/i);
+          if (ayMatch) {
+            const startYear = parseInt(ayMatch[1]);
+            const yearIndex = parseInt(yearSuffix.substring(1)); // E1 -> 1
+            if (yearSuffix.startsWith("E")) {
+              const entryYear = startYear - (yearIndex - 1);
+              inferredBatch = "O" + entryYear.toString().substring(2);
+            } else if (yearSuffix.startsWith("P")) {
+              const entryYear = startYear - (yearIndex - 1);
+              inferredBatch = "P" + entryYear.toString().substring(2);
+            }
+          }
+
           if (subjects.length > 0) {
             await prisma.branchAllocation.createMany({
               data: subjects.map(
@@ -77,6 +92,7 @@ export const initSemester = async (
                     subjectId: s.id,
                     semesterId: semester.id,
                     academicYear: yearSuffix,
+                    batch: inferredBatch,
                     isApproved: false,
                   }) as any,
               ),
@@ -174,7 +190,7 @@ export const createAllocation = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { semesterId, branch, subjectId, academicYear } = req.body;
+  const { semesterId, branch, subjectId, academicYear, batch } = req.body;
   const user = req.user;
 
   try {
@@ -193,6 +209,7 @@ export const createAllocation = async (
         branch: branch.toUpperCase(),
         subjectId,
         academicYear: academicYear || "E4", // Default or derived
+        batch: batch || "",
         status: "DEAN_PENDING",
       } as any,
       include: {
@@ -266,7 +283,7 @@ export const getDeanAllocations = async (
   const { branch } = req.params;
 
   try {
-    const { semesterId, year } = req.query;
+    const { semesterId, year, batch } = req.query;
 
     let targetSemId;
     if (semesterId) {
@@ -294,6 +311,13 @@ export const getDeanAllocations = async (
     if (year) {
       whereClause.academicYear = {
         equals: year as string,
+        mode: "insensitive",
+      };
+    }
+
+    if (batch && batch !== "all") {
+      whereClause.batch = {
+        equals: batch as string,
         mode: "insensitive",
       };
     }
@@ -539,29 +563,42 @@ export const registerSubjects = async (
       return res.status(403).json({ error: "Registration is not open" });
     }
 
-    // 2. Fetch student details to get branch (department)
+    // 2. Fetch student details to get branch (department) and year
     let studentBranch = (user as any).department;
-    if (!studentBranch) {
-      try {
-        const studentRes = await axios.get(
-          `${GATEWAY_URL}/profile/student/me`,
-          {
-            headers: { Authorization: req.headers.authorization },
-          },
-        );
-        studentBranch = studentRes.data?.department || studentRes.data?.branch;
-      } catch (err) {
-        console.warn(
-          "Failed to fetch student branch, falling back to subject branch check",
-        );
+    let studentYear = (user as any).year;
+    let studentBatch = "";
+
+    try {
+      const studentRes = await axios.get(`${GATEWAY_URL}/profile/student/me`, {
+        headers: { Authorization: req.headers.authorization },
+      });
+      console.log(`[ACADEMICS] Registration profile fetch:`, studentRes.data);
+
+      const profileData = studentRes.data?.student || studentRes.data;
+      if (profileData) {
+        studentBranch =
+          profileData.department || profileData.branch || studentBranch;
+        studentYear = profileData.year || studentYear;
+        studentBatch = profileData.batch || "";
       }
+    } catch (err) {
+      console.warn(
+        "Failed to fetch student profile details, falling back to basic checks",
+      );
     }
+
+    console.log(
+      `[ACADEMICS] Validating registration for Branch: ${studentBranch}, Year: ${studentYear}`,
+    );
 
     const allocations = await prisma.branchAllocation.findMany({
       where: {
         semesterId: sem.id,
         ...(studentBranch
           ? { branch: { equals: studentBranch, mode: "insensitive" } }
+          : {}),
+        ...(studentYear
+          ? { academicYear: { equals: studentYear, mode: "insensitive" } }
           : {}),
         isApproved: true,
       },
@@ -581,6 +618,7 @@ export const registerSubjects = async (
     if (mandatoryMissing.length > 0) {
       return res.status(400).json({
         error: `Missing mandatory subjects: ${mandatoryMissing.map((m) => m.subject.name).join(", ")}`,
+        attribution: "SABER", // matching error structure
       });
     }
 
@@ -629,12 +667,13 @@ export const registerSubjects = async (
               semesterId: sem.id,
             },
           },
-          update: { status: "REGISTERED" },
+          update: { status: "REGISTERED", batch: studentBatch } as any,
           create: {
             studentId: user.username,
             subjectId: id,
             semesterId: sem.id,
-          },
+            batch: studentBatch,
+          } as any,
         }),
       ),
     );
@@ -655,12 +694,18 @@ export const registerSubjects = async (
 
         try {
           const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";
+          const updateData: any = {
+            year: academicYear,
+            semester: academicSem,
+          };
+
+          if (firstSubject.department) {
+            updateData.branch = firstSubject.department;
+          }
+
           const updateRes = await axios.put(
             `${GATEWAY_URL}/profile/admin/student/${user.username}`,
-            {
-              year: academicYear,
-              semester: academicSem,
-            },
+            updateData,
             {
               headers: {
                 Authorization: req.headers.authorization,
@@ -669,7 +714,7 @@ export const registerSubjects = async (
             },
           );
           console.log(
-            `✅ Student ${user.username} profile updated to ${academicYear} ${academicSem}`,
+            `✅ Student ${user.username} profile updated to ${academicYear} ${academicSem} (${updateData.branch || "no branch update"})`,
           );
         } catch (profileError: any) {
           console.warn("User Profile Update Failed:", profileError.message);
@@ -743,7 +788,7 @@ export const exportAcademicData = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { type, branch, semesterId } = req.query;
+  const { type, branch, semesterId, batch } = req.query;
 
   try {
     const workbook = new ExcelJS.Workbook();
@@ -752,23 +797,31 @@ export const exportAcademicData = async (
     if (type === "registrations") {
       worksheet.columns = [
         { header: "Student ID", key: "studentId" },
+        { header: "Batch", key: "batch" },
         { header: "Subject Code", key: "code" },
         { header: "Subject Name", key: "name" },
         { header: "Status", key: "status" },
         { header: "Registered At", key: "createdAt" },
       ];
 
+      const whereClause: any = {
+        semesterId: semesterId as string,
+        subject: { department: branch ? (branch as string) : undefined },
+      };
+
+      if (batch && batch !== "all") {
+        whereClause.batch = { equals: batch as string, mode: "insensitive" };
+      }
+
       const data = await prisma.registration.findMany({
-        where: {
-          semesterId: semesterId as string,
-          subject: { department: branch ? (branch as string) : undefined },
-        },
+        where: whereClause,
         include: { subject: true },
       });
 
       data.forEach((r) => {
         worksheet.addRow({
           studentId: r.studentId,
+          batch: (r as any).batch || "",
           code: r.subject.code,
           name: r.subject.name,
           status: r.status,
@@ -820,7 +873,7 @@ export const getRegistrations = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { branch, semesterId } = req.query;
+  const { branch, semesterId, batch } = req.query;
 
   try {
     const where: any = {};
@@ -843,6 +896,10 @@ export const getRegistrations = async (
       where.subject = {
         department: { equals: branch as string, mode: "insensitive" },
       };
+    }
+
+    if (batch && batch !== "all") {
+      where.batch = { equals: batch as string, mode: "insensitive" };
     }
 
     const registrations = await prisma.registration.findMany({

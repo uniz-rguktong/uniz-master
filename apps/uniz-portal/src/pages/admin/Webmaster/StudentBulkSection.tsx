@@ -12,6 +12,7 @@ import {
   ADMIN_STUDENT_UPLOAD,
   ADMIN_STUDENT_PROGRESS,
   ADMIN_STUDENT_EXPORT,
+  GET_AVAILABLE_BATCHES,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { FileUploader } from "../../../components/ui/FileUploader";
@@ -27,8 +28,9 @@ export default function StudentBulkSection() {
     branch: "CSE",
     year: "E1",
     fields: "username,name,email,branch,section",
+    batch: "ALL",
   });
-
+  const [availableBatches, setAvailableBatches] = useState<string[]>([]);
 
   // Bulk Upload Function
   const handleUpload = async () => {
@@ -41,7 +43,7 @@ export default function StudentBulkSection() {
     try {
       const res = await fetch(ADMIN_STUDENT_UPLOAD, {
         method: "POST",
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
         body: formData,
       });
       const data = await res.json();
@@ -66,7 +68,9 @@ export default function StudentBulkSection() {
         const token = localStorage.getItem("admin_token");
         try {
           const res = await fetch(ADMIN_STUDENT_PROGRESS, {
-            headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+            headers: {
+              Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
+            },
           });
           const data = await res.json();
           // setProgress(data); // Removed UI
@@ -84,21 +88,37 @@ export default function StudentBulkSection() {
         }
       }, 2000);
     }
-    return () => clearInterval(interval);
+    fetchBatches();
   }, [uploadId]);
+
+  const fetchBatches = async () => {
+    try {
+      const token = localStorage.getItem("admin_token");
+      const res = await fetch(GET_AVAILABLE_BATCHES, {
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAvailableBatches(data.batches);
+      }
+    } catch (e) {
+      console.error("Failed to fetch batches", e);
+    }
+  };
 
   // Export Function
   const handleExport = async () => {
     setLoading(true);
     const token = localStorage.getItem("admin_token");
     const url = ADMIN_STUDENT_EXPORT(
-      exportParams.branch,
-      exportParams.year,
+      exportParams.branch === "ALL" ? undefined : exportParams.branch,
+      exportParams.year === "ALL" ? undefined : exportParams.year,
       exportParams.fields,
+      exportParams.batch === "ALL" ? undefined : exportParams.batch,
     );
     try {
       const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${(token || '').replace(/"/g, '')}` },
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
       });
       const blob = await res.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
@@ -164,13 +184,12 @@ export default function StudentBulkSection() {
               ) : (
                 <CheckCircle2 size={20} />
               )}
-              {uploadId ? "Processing Records..." : "Initiate Bulk Provisioning"}
+              {uploadId
+                ? "Processing Records..."
+                : "Initiate Bulk Provisioning"}
             </button>
-
-
           </div>
         </div>
-
       ) : (
         <div className="bg-white rounded-xl border border-slate-100 p-12 text-slate-900 animate-in slide-in-from-right-8 duration-700 shadow-none transition-all">
           <div className="max-w-4xl mx-auto space-y-12">
@@ -204,7 +223,7 @@ export default function StudentBulkSection() {
                     }
                     className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
                   >
-                    <option value="">All Departments</option>
+                    <option value="ALL">All Departments</option>
                     {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
                       (b) => (
                         <option key={b}>{b}</option>
@@ -229,9 +248,38 @@ export default function StudentBulkSection() {
                     }
                     className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
                   >
-                    <option value="">All Batches</option>
+                    <option value="ALL">All Years</option>
                     {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
                       <option key={y}>{y}</option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    size={16}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
+                  Batch Focus
+                </label>
+                <div className="relative group">
+                  <select
+                    value={exportParams.batch}
+                    onChange={(e) =>
+                      setExportParams({
+                        ...exportParams,
+                        batch: e.target.value,
+                      })
+                    }
+                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
+                  >
+                    <option value="ALL">All Batches</option>
+                    {availableBatches.map((b) => (
+                      <option key={b} value={b}>
+                        {b}
+                      </option>
                     ))}
                   </select>
                   <ChevronDown

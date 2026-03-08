@@ -3,20 +3,20 @@
 # 1. Push code to GitHub
 echo "[Push] Pushing code to GitHub..."
 MSG=${1:-"chore: deployment update $(date +'%Y-%m-%d %H:%M:%S')"}
-git add .
-git commit -m "$MSG" || echo "No changes to commit"
-git push origin main
 
-# 2. Deploy to VPS
-echo "[Deploy] Starting VPS Deployment..."
-ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
+# Only try to commit/push if we are NOT on the VPS
+if [ ! -f "/root/uniz-secrets.env" ]; then
+  git add .
+  git commit -m "$MSG" || echo "No changes to commit"
+  git push origin main
+fi
+
+# 2. Deploy Logic
+deploy_logic() {
   cd /root/uniz-master
   
-  echo "[Git] Fetching latest code..."
-  git fetch origin main
-  git reset --hard origin/main
-  NEW_HEAD=$(git rev-parse HEAD)
   echo "[Git] Latest Commit: $(git log -1 --format='%h - %s')"
+  NEW_HEAD=$(git rev-parse HEAD)
 
   # Force rebuild all if requested
   FORCE_ALL=false
@@ -27,7 +27,8 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
   fi
 
   # Detect changed files relative to last successful build
-  CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD || git show --name-only --format="")
+  # If we are on a fresh clone or force, we might want to handle it
+  CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git show --name-only --format="" 2>/dev/null || echo "")
   
   # Service mapping: "folder_name:image_name:deployment_name:container_name"
   ALL_SERVICES=(
@@ -46,11 +47,17 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     "uniz-user:uniz-user-service:uniz-user-service:user-service"
     "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
     "ornate-core:ornate-core:ornate-core:ornate-core"
+    "ornate:ornate-landing:ornate-landing:ornate-landing"
   )
 
   # Prevent kubectl apply from overwriting current images with :local
   echo "[Infra] Preserving current image tags..."
-  echo "images:" >> infra/core-infra/kubernetes/base/kustomization.yaml
+  K_FILE="infra/core-infra/kubernetes/base/kustomization.yaml"
+  # Use a temporary file to rebuild kustomization.yaml to be safe
+  sed -n '/^images:/q;p' "$K_FILE" > "$K_FILE.tmp"
+  
+  echo "images:" >> "$K_FILE.tmp"
+  IMAGE_CONFIGURED=false
   for s in "${ALL_SERVICES[@]}"; do
     IFS=':' read -r DIR IMG DEP CON <<< "$s"
     if [[ "$DEP" == *"job"* ]]; then
@@ -59,25 +66,30 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
       CURRENT_IMG=$(kubectl get deployment "$DEP" -o jsonpath="{.spec.template.spec.containers[?(@.name=='$CON')].image}" 2>/dev/null)
     fi
     if [ -n "$CURRENT_IMG" ] && [[ "$CURRENT_IMG" != *":local" ]]; then
-      # CURRENT_IMG comes out like docker.io/library/uniz-academics-service:local-12345
       IMG_REPO="${CURRENT_IMG%:*}"
       IMG_TAG="${CURRENT_IMG##*:}"
-      echo "  - name: ${IMG}:local" >> infra/core-infra/kubernetes/base/kustomization.yaml
-      echo "    newName: $IMG_REPO" >> infra/core-infra/kubernetes/base/kustomization.yaml
-      echo "    newTag: $IMG_TAG" >> infra/core-infra/kubernetes/base/kustomization.yaml
+      echo "  - name: ${IMG}:local" >> "$K_FILE.tmp"
+      echo "    newName: $IMG_REPO" >> "$K_FILE.tmp"
+      echo "    newTag: $IMG_TAG" >> "$K_FILE.tmp"
+      IMAGE_CONFIGURED=true
     fi
   done
+  
+  if [ "$IMAGE_CONFIGURED" = true ]; then
+    mv "$K_FILE.tmp" "$K_FILE"
+  else
+    # If no images found (maybe first deployment), just keep the clean version without images block
+    sed -n '/^images:/q;p' "$K_FILE.tmp" > "$K_FILE"
+    rm "$K_FILE.tmp"
+  fi
 
   echo "[K8s] Applying Kubernetes configurations..."
-  # If we have secrets in environment variables (e.g. on VPS), use them to fill the template
   if [ -f "infra/core-infra/kubernetes/base/secrets.yaml.template" ]; then
     echo "[Vault] Generating secrets from template..."
-    # Export all variables from /root/uniz-secrets.env to ensure envsubst sees them
     if [ -f "/root/uniz-secrets.env" ]; then
       while IFS='=' read -r key value || [ -n "$key" ]; do
         [[ "$key" =~ ^#.*$ ]] && continue
         [[ "$key" =~ ^[[:space:]]*$ ]] && continue
-        # Strip quotes if they exist in the value
         value="${value%\"}"
         value="${value#\"}"
         export "$key"="$value"
@@ -85,6 +97,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     fi
     envsubst < infra/core-infra/kubernetes/base/secrets.yaml.template > infra/core-infra/kubernetes/base/secrets.yaml
   fi
+  
   export NEXT_PUBLIC_ASSETS_URL="https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
   kubectl apply -k infra/core-infra/kubernetes/base/
 
@@ -97,7 +110,7 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     
     if [ "$FORCE_ALL" == "true" ]; then
        SHOULD_BUILD=true
-    elif echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
+    elif [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
       echo "[Build] Change detected in $DIR"
       SHOULD_BUILD=true
     fi
@@ -131,49 +144,48 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
         echo "[Build] Using built image for $IMG with tag $TAG"
       fi
 
-      echo "[Deploy] Deploying $IMG:$TAG to $DEP..."
+      echo "[Deploy] Updating $DEP to use $IMG:$TAG..."
       if [[ "$DEP" == *"job"* ]]; then
         kubectl set image "cronjob/$DEP" "$CON=docker.io/library/$IMG:$TAG"
       else
         if kubectl set image "deployment/$DEP" "$CON=docker.io/library/$IMG:$TAG"; then
           kubectl rollout restart "deployment/$DEP"
         else
-          echo "[Warning] Deployment upgrade failed for $DEP, check container name $CON"
+          echo "[Warning] Deployment update failed for $DEP"
         fi
       fi
     fi
   done
 
   if [ $REBUILT_COUNT -gt 0 ] || [ "$FORCE_ALL" == "true" ]; then
-    echo "[Cleanup] Cleaning up dangling Docker components..."
+    echo "[Cleanup] Docker & K3s Image Pruning..."
     docker system prune -f
     docker image prune -a -f --filter "until=24h"
-    
-    echo "[Cleanup] Pruning old K3s images..."
-    # Remove images with 'local-' tag that are not currently used by any pod
     USED_IMAGES=$(kubectl get pods,deployments,cronjobs -A -o jsonpath='{..image}' | tr ' ' '\n' | sort -u)
     k3s ctr images ls -q | grep "local-" | while read -r img; do
       if ! echo "$USED_IMAGES" | grep -q "$img"; then
-        echo "[Cleanup] Removing unused K3s image: $img"
         k3s ctr images rm "$img" || true
       fi
     done
-    
     echo "[OK] Redeployed $REBUILT_COUNT services."
-  else
-    echo "[OK] No services needed updating."
   fi
-  
-  echo "[Health] Stabilization & Health Check..."
-  for i in {1..6}; do
-    INIT_COUNT=$(kubectl get pods --no-headers | grep -v 'Running\|Completed' | wc -l | xargs)
-    echo "Check $i/6: $INIT_COUNT pods still initializing..."
-    if [ "$INIT_COUNT" == "0" ]; then break; fi
-    sleep 10
-  done
-  kubectl get pods
-EOF
+}
 
-echo "[Health] Quick check on API health..."
+# Execution
+if [ -f "/root/uniz-secrets.env" ]; then
+  echo "[Deploy] Running directly on VPS context..."
+  deploy_logic
+else
+  echo "[Deploy] Triggering VPS Deployment via SSH..."
+  ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
+    cd /root/uniz-master
+    git fetch origin main
+    git reset --hard origin/main
+    # Fixed the nested quote issue by using simple arguments
+    /bin/bash ./scripts/deploy.sh "remote-trigger"
+EOF
+fi
+
+echo "[Health] Checking API Status..."
 curl -s -o /dev/null -w "%{http_code}" https://api.uniz.rguktong.in/api/v1/system/health || true
-echo -e "\n[Done] Deployment Pipeline Complete!"
+echo -e "\n[Done] Process Complete!"

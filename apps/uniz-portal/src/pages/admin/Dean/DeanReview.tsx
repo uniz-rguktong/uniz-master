@@ -15,6 +15,8 @@ import {
   Plus,
   Trash2,
   X,
+  Users,
+  BookText,
 } from "lucide-react";
 import { DEAN_REVIEW, APPROVE_ALLOCATION } from "../../../api/endpoints";
 import { toast } from "react-toastify";
@@ -29,6 +31,8 @@ interface Allocation {
   customName: string | null;
   customCredits: number | null;
   isApproved: boolean;
+  batch?: string;
+  academicYear: string;
   subject: {
     id: string;
     name: string;
@@ -46,9 +50,13 @@ export default function DeanReview() {
   const [editing, setEditing] = useState<Allocation | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [allSubjects, setAllSubjects] = useState<any[]>([]);
+  const [filterYear, setFilterYear] = useState("all");
+  const [filterBatch, setFilterBatch] = useState("all");
+  const [availableBatches, setAvailableBatches] = useState<string[]>([]);
   const [newAllocData, setNewAllocData] = useState({
     subjectId: "",
     academicYear: "E4",
+    batch: "",
   });
 
   // Get department from localStorage (AdminInfo)
@@ -68,12 +76,20 @@ export default function DeanReview() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [allocData, subjectsData] = await Promise.all([
-        apiClient<any[]>(DEAN_REVIEW(department)),
+      const yearQuery = filterYear !== "all" ? `year=${filterYear}` : "";
+      const batchQuery = filterBatch !== "all" ? `batch=${filterBatch}` : "";
+      const query = [yearQuery, batchQuery].filter(Boolean).join("&");
+
+      const [allocData, subjectsData, batchesData] = await Promise.all([
+        apiClient<any[]>(
+          `${DEAN_REVIEW(department)}${query ? `?${query}` : ""}`,
+        ),
         apiClient<any[]>("/api/v1/academics/subjects"),
+        apiClient<string[]>("/api/v1/profile/admin/batches"),
       ]);
       setAllocations(allocData || []);
       setAllSubjects(subjectsData || []);
+      setAvailableBatches(batchesData || []);
     } catch (error) {
       toast.error("Failed to fetch data");
     } finally {
@@ -83,7 +99,7 @@ export default function DeanReview() {
 
   useEffect(() => {
     fetchData();
-  }, [department]);
+  }, [department, filterYear, filterBatch]);
 
   const handleApprove = async (allocationId: string) => {
     setApproving(allocationId);
@@ -173,6 +189,38 @@ export default function DeanReview() {
             Review and finalize subjects for the current semester registration
             rollout.
           </p>
+          <div className="flex gap-4 mt-6">
+            <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-2xl border border-slate-100 shadow-sm">
+              <Users size={14} className="text-slate-400" />
+              <select
+                value={filterYear}
+                onChange={(e) => setFilterYear(e.target.value)}
+                className="font-black text-[10px] uppercase tracking-widest text-slate-700 outline-none border-none bg-transparent"
+              >
+                <option value="all">All Years</option>
+                {["E1", "E2", "E3", "E4"].map((y) => (
+                  <option key={y} value={y}>
+                    {y} Engineering
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-2xl border border-slate-100 shadow-sm">
+              <BookText size={14} className="text-slate-400" />
+              <select
+                value={filterBatch}
+                onChange={(e) => setFilterBatch(e.target.value)}
+                className="font-black text-[10px] uppercase tracking-widest text-slate-700 outline-none border-none bg-transparent"
+              >
+                <option value="all">All Batches</option>
+                {availableBatches.map((b) => (
+                  <option key={b} value={b}>
+                    Batch {b}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
         <div className="flex items-center gap-4">
           <button
@@ -297,6 +345,24 @@ export default function DeanReview() {
                   </span>
                   <span className="font-bold text-slate-600 text-xs">
                     {alloc.subject.semester}
+                  </span>
+                </div>
+                {alloc.batch && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
+                      Batch
+                    </span>
+                    <span className="font-bold text-slate-600 text-xs">
+                      {alloc.batch}
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
+                    Year
+                  </span>
+                  <span className="font-bold text-slate-600 text-xs text-blue-600">
+                    {alloc.academicYear}
                   </span>
                 </div>
                 {!alloc.isApproved && (
@@ -457,6 +523,29 @@ export default function DeanReview() {
                   {["E1", "E2", "E3", "E4"].map((y) => (
                     <option key={y} value={y}>
                       {y} Engineering
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
+                  Student Batch (Optional)
+                </label>
+                <select
+                  value={newAllocData.batch}
+                  onChange={(e) =>
+                    setNewAllocData({
+                      ...newAllocData,
+                      batch: e.target.value,
+                    })
+                  }
+                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 appearance-none focus:bg-white focus:border-blue-600 outline-none transition-all shadow-sm"
+                >
+                  <option value="">Infer from Year</option>
+                  {availableBatches.map((b) => (
+                    <option key={b} value={b}>
+                      Batch {b}
                     </option>
                   ))}
                 </select>
