@@ -194,6 +194,7 @@ export async function processNextStudentBatch() {
         percent: Math.round((processedCount / total) * 100),
         etaSeconds: 0,
         errors: errors.slice(-20),
+        lastActive: Date.now(),
       }),
     );
   }
