@@ -22,6 +22,7 @@ export const UPDATE_DETAILS = `${BASE_URL}/profile/student/update`;
 export const FACULTY_INFO = `${BASE_URL}/profile/faculty/me`;
 export const ADMIN_INFO = `${BASE_URL}/profile/admin/me`;
 export const SEARCH_STUDENTS = `${BASE_URL}/profile/student/search`;
+export const GET_AVAILABLE_BATCHES = `${BASE_URL}/profile/admin/batches`;
 
 // Outpass (Requests Service)
 export const REQUEST_OUTING = `${BASE_URL}/requests/outing`;

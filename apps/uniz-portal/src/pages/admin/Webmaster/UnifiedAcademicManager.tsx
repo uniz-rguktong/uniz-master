@@ -37,11 +37,11 @@ interface Semester {
   id: string;
   name: string;
   status:
-  | "DRAFT"
-  | "DEAN_REVIEW"
-  | "APPROVED"
-  | "REGISTRATION_OPEN"
-  | "REGISTRATION_CLOSED";
+    | "DRAFT"
+    | "DEAN_REVIEW"
+    | "APPROVED"
+    | "REGISTRATION_OPEN"
+    | "REGISTRATION_CLOSED";
   _count?: { registrations: number };
   createdAt: string;
 }
@@ -50,6 +50,7 @@ interface Allocation {
   id: string;
   branch: string;
   academicYear: string;
+  batch?: string;
   subject: { name: string; code: string; credits: number; id: string };
   isApproved: boolean;
   customName?: string;
@@ -104,10 +105,13 @@ export default function UnifiedAcademicManager() {
   >("allocations");
   const [filterBranch, setFilterBranch] = useState("all");
   const [filterYear, setFilterYear] = useState("all");
+  const [filterBatch, setFilterBatch] = useState("all");
+  const [availableBatches, setAvailableBatches] = useState<string[]>([]);
   const [showAddAllocModal, setShowAddAllocModal] = useState(false);
   const [addAllocData, setAddAllocData] = useState({
     subjectId: "",
     academicYear: "E1",
+    batch: "",
     branch: "all",
   });
 
@@ -121,7 +125,22 @@ export default function UnifiedAcademicManager() {
       if (rolloutView === "allocations") fetchAllocations();
       else fetchRegistrations();
     }
-  }, [activeTab, selectedSem, rolloutView, filterBranch, filterYear]);
+  }, [
+    activeTab,
+    selectedSem,
+    rolloutView,
+    filterBranch,
+    filterYear,
+    filterBatch,
+  ]);
+
+  useEffect(() => {
+    const fetchBatches = async () => {
+      const res = await apiClient<string[]>("/api/v1/profile/admin/batches");
+      if (res) setAvailableBatches(res);
+    };
+    fetchBatches();
+  }, []);
 
   // --- Actions: Catalog ---
   const fetchSemesters = async () => {
@@ -230,8 +249,9 @@ export default function UnifiedAcademicManager() {
     setLoading(true);
     try {
       const yearQuery = filterYear !== "all" ? `&year=${filterYear}` : "";
+      const batchQuery = filterBatch !== "all" ? `&batch=${filterBatch}` : "";
       const res = await apiClient<Allocation[]>(
-        `${DEAN_REVIEW(filterBranch)}?semesterId=${selectedSem.id}${yearQuery}`,
+        `${DEAN_REVIEW(filterBranch)}?semesterId=${selectedSem.id}${yearQuery}${batchQuery}`,
       );
       if (res) setRolloutAllocations(res);
     } finally {
@@ -245,8 +265,9 @@ export default function UnifiedAcademicManager() {
     try {
       const branchQuery =
         filterBranch !== "all" ? `&branch=${filterBranch}` : "";
+      const batchQuery = filterBatch !== "all" ? `&batch=${filterBatch}` : "";
       const res = await apiClient<any[]>(
-        `${GET_REGISTRATIONS}?semesterId=${selectedSem.id}${branchQuery}`,
+        `${GET_REGISTRATIONS}?semesterId=${selectedSem.id}${branchQuery}${batchQuery}`,
       );
       if (res) setRolloutRegistrations(res);
     } finally {
@@ -298,6 +319,7 @@ export default function UnifiedAcademicManager() {
           branch: filterBranch,
           semesterId: selectedSem?.id,
           year: filterYear !== "all" ? filterYear : undefined,
+          batch: filterBatch !== "all" ? filterBatch : undefined,
         }),
       });
       toast.success("Rollout phase advanced");
@@ -362,9 +384,10 @@ export default function UnifiedAcademicManager() {
               onClick={() => setActiveTab(tabId)}
               className={`
                 flex items-center gap-3 px-8 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all
-                ${activeTab === tabId
-                  ? "bg-white text-blue-600 border border-slate-100"
-                  : "text-slate-400 hover:text-slate-900 hover:bg-white/80"
+                ${
+                  activeTab === tabId
+                    ? "bg-white text-blue-600 border border-slate-100"
+                    : "text-slate-400 hover:text-slate-900 hover:bg-white/80"
                 }
                 ${tabId === "rollout" && !selectedSem ? "opacity-30 cursor-not-allowed" : ""}
               `}
@@ -397,10 +420,11 @@ export default function UnifiedAcademicManager() {
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span
-                      className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${sem.status === "REGISTRATION_OPEN"
-                        ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                        : "bg-slate-50 text-slate-400 border-slate-100"
-                        }`}
+                      className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${
+                        sem.status === "REGISTRATION_OPEN"
+                          ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                          : "bg-slate-50 text-slate-400 border-slate-100"
+                      }`}
                     >
                       {sem.status.replace("_", " ")}
                     </span>
@@ -437,6 +461,26 @@ export default function UnifiedAcademicManager() {
                 </div>
               </div>
             ))}
+            {semesters.length === 0 && (
+              <div className="col-span-full py-24 bg-white rounded-xl border-dashed border-2 border-slate-100 p-12 text-center animate-in fade-in zoom-in-95 duration-700">
+                <div className="w-24 h-24 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-white shadow-none">
+                  <BookOpen size={40} strokeWidth={2.5} />
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight italic">
+                  Relaxation levels are dangerously high.
+                </h3>
+                <p className="text-slate-500 font-medium max-w-md mx-auto mb-10 leading-relaxed">
+                  Campus vibes: 100% chill. Students are relaxing… but don't
+                  worry, semester registration is loading to take care of that.
+                </p>
+                <button
+                  onClick={() => setShowNewSemModal(true)}
+                  className="px-10 py-5 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-black transition-all active:scale-95 shadow-none"
+                >
+                  Initiate New Rollout
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -559,10 +603,11 @@ export default function UnifiedAcademicManager() {
                           : "REGISTRATION_OPEN",
                       )
                     }
-                    className={`h-14 px-10 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all ${selectedSem.status === "REGISTRATION_OPEN"
-                      ? "bg-red-50/10 text-red-500 border border-red-500/30 hover:bg-red-500 hover:text-white"
-                      : "bg-emerald-600 text-white hover:bg-emerald-700"
-                      }`}
+                    className={`h-14 px-10 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all ${
+                      selectedSem.status === "REGISTRATION_OPEN"
+                        ? "bg-red-50/10 text-red-500 border border-red-500/30 hover:bg-red-500 hover:text-white"
+                        : "bg-emerald-600 text-white hover:bg-emerald-700"
+                    }`}
                   >
                     {selectedSem.status === "REGISTRATION_OPEN"
                       ? "Suspend Enrollment"
@@ -585,10 +630,11 @@ export default function UnifiedAcademicManager() {
                   <button
                     key={v}
                     onClick={() => setRolloutView(v)}
-                    className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${rolloutView === v
-                      ? "text-blue-600"
-                      : "text-slate-400 hover:text-slate-600"
-                      }`}
+                    className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${
+                      rolloutView === v
+                        ? "text-blue-600"
+                        : "text-slate-400 hover:text-slate-600"
+                    }`}
                   >
                     {v}
                     {rolloutView === v && (
@@ -625,6 +671,21 @@ export default function UnifiedAcademicManager() {
                     {["E1", "E2", "E3", "E4"].map((y) => (
                       <option key={y} value={y}>
                         {y} Engineering
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-slate-100 shadow-none">
+                  <BookText size={14} className="text-slate-400" />
+                  <select
+                    value={filterBatch}
+                    onChange={(e) => setFilterBatch(e.target.value)}
+                    className="font-black text-[10px] uppercase tracking-widest text-slate-700 outline-none border-none bg-transparent"
+                  >
+                    <option value="all">All Batches</option>
+                    {availableBatches.map((b) => (
+                      <option key={b} value={b}>
+                        Batch {b}
                       </option>
                     ))}
                   </select>
@@ -682,6 +743,11 @@ export default function UnifiedAcademicManager() {
                             <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
                               {item.academicYear}
                             </span>
+                            {item.batch && (
+                              <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                                {item.batch}
+                              </span>
+                            )}
                           </div>
                         </td>
                         <td className="px-10 py-6">
@@ -711,6 +777,7 @@ export default function UnifiedAcademicManager() {
                   <thead>
                     <tr className="bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">
                       <th className="px-10 py-6">Enrolled Student</th>
+                      <th className="px-10 py-6">Batch</th>
                       <th className="px-10 py-6">Allocated Course</th>
                       <th className="px-10 py-6">Timestamp</th>
                     </tr>
@@ -730,6 +797,11 @@ export default function UnifiedAcademicManager() {
                               {reg.studentId}
                             </p>
                           </div>
+                        </td>
+                        <td className="px-10 py-6">
+                          <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                            {reg.batch || "N/A"}
+                          </span>
                         </td>
                         <td className="px-10 py-6">
                           <div className="space-y-1">
@@ -754,15 +826,15 @@ export default function UnifiedAcademicManager() {
                 rolloutAllocations.length === 0) ||
                 (rolloutView === "registrations" &&
                   rolloutRegistrations.length === 0)) && (
-                  <div className="p-32 text-center">
-                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
-                      <X size={40} />
-                    </div>
-                    <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
-                      Zero activity detected for these parameters.
-                    </p>
+                <div className="p-32 text-center">
+                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                    <X size={40} />
                   </div>
-                )}
+                  <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
+                    Zero activity detected for these parameters.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -814,10 +886,11 @@ export default function UnifiedAcademicManager() {
                             : [...prev, b],
                         )
                       }
-                      className={`h-14 rounded-xl font-black text-xs transition-all border ${selectedBranches.includes(b)
-                        ? "bg-slate-900 text-white border-slate-900 shadow-none"
-                        : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-300"
-                        }`}
+                      className={`h-14 rounded-xl font-black text-xs transition-all border ${
+                        selectedBranches.includes(b)
+                          ? "bg-slate-900 text-white border-slate-900 shadow-none"
+                          : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-300"
+                      }`}
                     >
                       {b}
                     </button>

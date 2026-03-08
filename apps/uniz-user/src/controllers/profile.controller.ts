@@ -79,6 +79,7 @@ const mapStudentProfile = (profile: any) => ({
   mother_email: profile.motherEmail,
   father_address: profile.fatherAddress,
   mother_address: profile.motherAddress,
+  batch: profile.batch,
   profile_url: profile.profileUrl,
   created_at: profile.createdAt,
   updated_at: profile.updatedAt,
@@ -99,20 +100,44 @@ const mapFacultyProfile = (profile: any) => ({
   CreatedAt: profile.createdAt,
 });
 
-const mapAdminProfile = (profile: any) => ({
-  id: profile.id,
-  username: profile.username,
-  name: profile.name,
-  email: profile.email,
-  contact: profile.contact,
-  profile_url: profile.profileUrl,
-  role: profile.role,
-  bio: profile.bio || "",
-  designation: profile.designation || "",
-  department: profile.department || "",
-  created_at: profile.createdAt,
-  updated_at: profile.updatedAt,
-});
+const mapAdminProfile = (profile: any) => {
+  return {
+    id: profile.id,
+    username: profile.username,
+    name: profile.name,
+    email: profile.email,
+    profile_url: profile.profileUrl,
+    role: profile.role,
+    department: profile.department,
+    designation: profile.designation,
+    bio: profile.bio,
+    created_at: profile.createdAt,
+    updated_at: profile.updatedAt,
+  };
+};
+
+export const getAvailableBatches = async (req: Request, res: Response) => {
+  try {
+    // Collect first 3 chars of all students and unique them.
+    const students = await prisma.studentProfile.findMany({
+      select: { batch: true },
+      distinct: ["batch"],
+      where: { batch: { not: "" } },
+    });
+
+    const batches = students
+      .map((s) => s.batch.toUpperCase())
+      .filter((b) => b.length >= 3)
+      .sort();
+
+    const uniqueBatches = Array.from(new Set(batches));
+    return res.json({ success: true, batches: uniqueBatches });
+  } catch (e) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch batches" });
+  }
+};
 
 export const getStudentProfile = async (
   req: AuthenticatedRequest,
@@ -342,15 +367,19 @@ export const searchStudents = async (
         { name: { contains: username, mode: "insensitive" } },
       ];
     }
-    if (batch) {
-      where.username = {
-        startsWith: String(batch).toUpperCase(),
+    if (batch && String(batch).toUpperCase() !== "ALL") {
+      where.batch = {
+        equals: String(batch).toUpperCase(),
         mode: "insensitive",
       };
     }
-    if (branch) where.branch = branch;
-    if (year) where.year = year;
-    if (gender) where.gender = gender;
+    if (branch && String(branch).toUpperCase() !== "ALL") {
+      where.branch = { equals: branch, mode: "insensitive" };
+    }
+    if (year && String(year).toUpperCase() !== "ALL") {
+      where.year = { equals: year, mode: "insensitive" };
+    }
+    if (gender && String(gender).toUpperCase() !== "ALL") where.gender = gender;
     if (isSuspended !== undefined)
       where.isSuspended = isSuspended === true || isSuspended === "true";
     if (req.body.isPresentInCampus !== undefined) {
@@ -480,16 +509,59 @@ export const getAdminProfile = async (
       });
     }
 
-    profile = await prisma.adminProfile.upsert({
+    const inferDept = (uname: string): string => {
+      const parts = uname.toUpperCase().split("_");
+      const branches = [
+        "CSE",
+        "ECE",
+        "ME",
+        "CE",
+        "MME",
+        "CHEM",
+        "CHE",
+        "EE",
+        "EEE",
+        "CIVIL",
+        "MET",
+        "MEC",
+      ];
+      if (parts.length > 1) {
+        const last = parts[parts.length - 1];
+        if (branches.includes(last)) return last;
+      }
+      return "";
+    };
+
+    const existingProfile = await prisma.adminProfile.findUnique({
       where: { username: user.username },
-      update: {},
-      create: {
-        username: user.username,
-        role: user.role as string,
-        name: user.username.charAt(0).toUpperCase() + user.username.slice(1),
-        email: `${user.username}@rguktong.ac.in`, // Fallback email
-      },
     });
+
+    if (existingProfile) {
+      if (!existingProfile.department) {
+        const inferred = inferDept(user.username);
+        if (inferred) {
+          profile = await prisma.adminProfile.update({
+            where: { id: existingProfile.id },
+            data: { department: inferred },
+          });
+        } else {
+          profile = existingProfile;
+        }
+      } else {
+        profile = existingProfile;
+      }
+    } else {
+      const inferred = inferDept(user.username);
+      profile = await prisma.adminProfile.create({
+        data: {
+          username: user.username,
+          role: user.role as string,
+          name: user.username.charAt(0).toUpperCase() + user.username.slice(1),
+          email: `${user.username}@rguktong.ac.in`,
+          department: inferred || "",
+        },
+      });
+    }
     return res.json({
       success: true,
       data: mapAdminProfile(profile),
