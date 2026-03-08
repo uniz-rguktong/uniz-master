@@ -557,7 +557,8 @@ export const registerSubjects = async (
 
     // 2. Fetch student details to get branch (department) and year
     let studentBranch = (user as any).department;
-    let studentYear = (user as any).year; // Usually not in the token
+    let studentYear = (user as any).year;
+    let studentBatch = "";
 
     try {
       const studentRes = await axios.get(`${GATEWAY_URL}/profile/student/me`, {
@@ -570,6 +571,7 @@ export const registerSubjects = async (
         studentBranch =
           profileData.department || profileData.branch || studentBranch;
         studentYear = profileData.year || studentYear;
+        studentBatch = profileData.batch || "";
       }
     } catch (err) {
       console.warn(
@@ -657,12 +659,13 @@ export const registerSubjects = async (
               semesterId: sem.id,
             },
           },
-          update: { status: "REGISTERED" },
+          update: { status: "REGISTERED", batch: studentBatch } as any,
           create: {
             studentId: user.username,
             subjectId: id,
             semesterId: sem.id,
-          },
+            batch: studentBatch,
+          } as any,
         }),
       ),
     );
@@ -777,7 +780,7 @@ export const exportAcademicData = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { type, branch, semesterId } = req.query;
+  const { type, branch, semesterId, batch } = req.query;
 
   try {
     const workbook = new ExcelJS.Workbook();
@@ -786,23 +789,31 @@ export const exportAcademicData = async (
     if (type === "registrations") {
       worksheet.columns = [
         { header: "Student ID", key: "studentId" },
+        { header: "Batch", key: "batch" },
         { header: "Subject Code", key: "code" },
         { header: "Subject Name", key: "name" },
         { header: "Status", key: "status" },
         { header: "Registered At", key: "createdAt" },
       ];
 
+      const whereClause: any = {
+        semesterId: semesterId as string,
+        subject: { department: branch ? (branch as string) : undefined },
+      };
+
+      if (batch && batch !== "all") {
+        whereClause.batch = { equals: batch as string, mode: "insensitive" };
+      }
+
       const data = await prisma.registration.findMany({
-        where: {
-          semesterId: semesterId as string,
-          subject: { department: branch ? (branch as string) : undefined },
-        },
+        where: whereClause,
         include: { subject: true },
       });
 
       data.forEach((r) => {
         worksheet.addRow({
           studentId: r.studentId,
+          batch: (r as any).batch || "",
           code: r.subject.code,
           name: r.subject.name,
           status: r.status,
@@ -854,7 +865,7 @@ export const getRegistrations = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { branch, semesterId } = req.query;
+  const { branch, semesterId, batch } = req.query;
 
   try {
     const where: any = {};
@@ -877,6 +888,10 @@ export const getRegistrations = async (
       where.subject = {
         department: { equals: branch as string, mode: "insensitive" },
       };
+    }
+
+    if (batch && batch !== "all") {
+      where.batch = { equals: batch as string, mode: "insensitive" };
     }
 
     const registrations = await prisma.registration.findMany({
