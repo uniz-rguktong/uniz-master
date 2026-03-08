@@ -87,6 +87,19 @@ export async function processNextBatch() {
     allSubjects.map((s) => [s.code.trim().toUpperCase(), s]),
   );
 
+  const getVal = (row: any, keys: string[]) => {
+    const rowKeys = Object.keys(row);
+    const found = rowKeys.find((k) => {
+      const normalized = k.trim().toLowerCase().replace(/\s+/g, " ");
+      return keys.some(
+        (target) =>
+          normalized === target.toLowerCase() ||
+          normalized.includes(target.toLowerCase()),
+      );
+    });
+    return found ? String(row[found]).trim() : "";
+  };
+
   if (processedInThisRun === 0) {
     console.log(
       `[Worker] [${uploadId}] Normalized Subject Map size: ${subjectMap.size}.`,
@@ -109,37 +122,44 @@ export async function processNextBatch() {
       await Promise.all(
         currentBatch.map(async (row: any) => {
           try {
-            const getVal = (keys: string[]) => {
-              const found = Object.keys(row).find((k) =>
-                keys.includes(k.trim().toLowerCase()),
-              );
-              return found ? String(row[found]).trim() : "";
-            };
-
-            const studentId = getVal([
+            const studentId = getVal(row, [
               "student id",
               "studentid",
               "id",
             ]).toUpperCase();
-            const code = getVal([
+            const code = getVal(row, [
               "subject code",
               "subjectcode",
               "code",
             ]).toUpperCase();
-            const semesterId = getVal([
+            const semesterId = getVal(row, [
               "semester id",
               "semesterid",
               "semester",
             ]);
-            const rawGrade = getVal([
+            const rawGrade = getVal(row, [
               "grade (ex, a, b, c, d, e, r)",
               "grade (0-10)",
               "grade",
             ]);
-            const batchCol = getVal(["batch", "acad_batch", "academic_batch"]);
+            const batchCol = getVal(row, [
+              "batch",
+              "acad_batch",
+              "academic_batch",
+            ]);
 
-            if (!studentId || !code) throw new Error(`Missing fields`);
+            if (!studentId || !code) {
+              console.warn(
+                `[Worker] Missing studentId/code in row:`,
+                JSON.stringify(row),
+              );
+              throw new Error(`Missing fields`);
+            }
             const grade = mapGradeToPoint(rawGrade);
+            console.log(
+              `[Worker] Processing: Student=${studentId}, Subject=${code}, RawGrade=[${rawGrade}], Mapped=${grade}`,
+            );
+
             const subject = subjectMap.get(code);
             if (!subject) throw new Error(`Subject [${code}] not found`);
 
@@ -204,6 +224,7 @@ export async function processNextBatch() {
 
             // Cache Invalidation
             await redis.del(`grades:${studentId}`);
+            await redis.del(`grades_v3:${studentId.toUpperCase()}`);
             await redis.del(`profile:v2:${studentId}`);
           } catch (err: any) {
             if (failCount === 0) {
@@ -229,31 +250,24 @@ export async function processNextBatch() {
       await Promise.all(
         currentBatch.map(async (row: any) => {
           try {
-            const getVal = (keys: string[]) => {
-              const found = Object.keys(row).find((k) =>
-                keys.includes(k.trim().toLowerCase()),
-              );
-              return found ? String(row[found]).trim() : "";
-            };
-
-            const studentId = getVal([
+            const studentId = getVal(row, [
               "student id",
               "studentid",
               "id",
             ]).toUpperCase();
-            const code = getVal([
+            const code = getVal(row, [
               "subject code",
               "subjectcode",
               "code",
             ]).toUpperCase();
-            const semesterId = getVal([
+            const semesterId = getVal(row, [
               "semester id",
               "semesterid",
               "semester",
             ]);
             const attended =
               parseInt(
-                getVal([
+                getVal(row, [
                   "total classes attended",
                   "attended classes",
                   "attended",
@@ -261,9 +275,17 @@ export async function processNextBatch() {
               ) || 0;
             const totalClasses =
               parseInt(
-                getVal(["total classes occurred", "total classes", "total"]),
+                getVal(row, [
+                  "total classes occurred",
+                  "total classes",
+                  "total",
+                ]),
               ) || 0;
-            const batchCol = getVal(["batch", "acad_batch", "academic_batch"]);
+            const batchCol = getVal(row, [
+              "batch",
+              "acad_batch",
+              "academic_batch",
+            ]);
 
             if (!studentId || !code)
               throw new Error("Missing Student ID or Subject Code");
