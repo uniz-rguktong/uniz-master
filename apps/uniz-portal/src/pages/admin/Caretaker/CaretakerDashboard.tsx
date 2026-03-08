@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   CheckCircle2,
   RefreshCcw,
@@ -7,6 +7,7 @@ import {
   Menu,
   ChevronRight,
   LayoutDashboard,
+  Search,
 } from "lucide-react";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
@@ -19,16 +20,18 @@ export default function CaretakerDashboard() {
     "dashboard" | "approve_outing" | "approve_outpass" | "status_update"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [profilePopupOpen, setProfilePopupOpen] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
-  const [profileEmail, setProfileEmail] = useState<string | null>(null);
   const avatarBtnRef = useRef<HTMLButtonElement>(null);
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const rawRole = (localStorage.getItem("admin_role") || "caretaker").replace(/"/g, "");
-  const username = localStorage.getItem("username")?.replace(/"/g, "") || "Caretaker";
+  const rawRole = (localStorage.getItem("admin_role") || "caretaker").replace(
+    /"/g,
+    "",
+  );
+  const username =
+    localStorage.getItem("username")?.replace(/"/g, "") || "Caretaker";
   const firstName = username.split(" ")[0];
 
   const isMale = rawRole === "caretaker_male";
@@ -48,10 +51,9 @@ export default function CaretakerDashboard() {
             if (data.success && data.data) {
               setProfilePhoto(data.data.profile_url ?? null);
               setProfileName(data.data.name ?? null);
-              setProfileEmail(data.data.email ?? null);
             }
           })
-          .catch(() => { });
+          .catch(() => {});
       });
     }
   }, []);
@@ -59,24 +61,28 @@ export default function CaretakerDashboard() {
   const navGroups = [
     {
       group: null,
-      items: [
-        { id: "dashboard", label: "Overview", icon: LayoutDashboard },
-      ]
+      items: [{ id: "dashboard", label: "Overview", icon: LayoutDashboard }],
     },
     {
       group: "Approvals",
       items: [
         { id: "approve_outing", label: "Approve Outings", icon: CheckCircle2 },
-        { id: "approve_outpass", label: "Approve Outpasses", icon: CheckCircle2 },
-      ]
+        {
+          id: "approve_outpass",
+          label: "Approve Outpasses",
+          icon: CheckCircle2,
+        },
+      ],
     },
     {
       group: "Students",
       items: [
         { id: "status_update", label: "Status Update", icon: RefreshCcw },
-      ]
-    }
+      ],
+    },
   ];
+
+  const navItems = navGroups.flatMap((group) => group.items);
 
   const { logout } = useLogout();
 
@@ -149,7 +155,9 @@ export default function CaretakerDashboard() {
   };
 
   return (
-    <div className={`flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 ${isMale ? "selection:bg-blue-100 selection:text-blue-900" : "selection:bg-rose-100 selection:text-rose-900"}`}>
+    <div
+      className={`flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 ${isMale ? "selection:bg-blue-100 selection:text-blue-900" : "selection:bg-rose-100 selection:text-rose-900"}`}
+    >
       {/* Sidebar */}
       <aside
         className={`bg-white border-r border-slate-100 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"} hidden md:flex flex-col premium-shadow h-screen sticky top-0`}
@@ -160,16 +168,40 @@ export default function CaretakerDashboard() {
           className="absolute -right-3.5 top-1/2 -translate-y-1/2 bg-white border border-slate-200 rounded-full p-1.5 shadow-md text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all z-50 hidden lg:block"
         >
           {isSidebarOpen ? (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m15 18-6-6 6-6" />
+            </svg>
           ) : (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
           )}
         </button>
 
         {/* Sidebar Branding */}
         <div className="px-4 pt-6 pb-2">
           <div className="flex items-center justify-center">
-            <h1 className={`unifrakturcook-bold ${isSidebarOpen ? "text-4xl" : "text-3xl"} text-slate-900 tracking-tight transition-all duration-300`}>
+            <h1
+              className={`unifrakturcook-bold ${isSidebarOpen ? "text-4xl" : "text-3xl"} text-slate-900 tracking-tight transition-all duration-300`}
+            >
               {isSidebarOpen ? "uniZ" : "Z"}
             </h1>
           </div>
@@ -178,7 +210,10 @@ export default function CaretakerDashboard() {
         {/* Search Style */}
         <div className="px-5 py-4">
           <div className="relative group">
-            <Search className={`absolute ${isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2"} top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600 transition-colors`} size={16} />
+            <Search
+              className={`absolute ${isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2"} top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600 transition-colors`}
+              size={16}
+            />
             <input
               type="text"
               value={searchQuery}
@@ -187,7 +222,9 @@ export default function CaretakerDashboard() {
               className={`w-full bg-slate-50 border border-slate-200/60 rounded-xl ${isSidebarOpen ? "pl-10 pr-8" : "px-0"} py-2 text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all font-medium`}
             />
             {isSidebarOpen && (
-              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-slate-200/60 rounded text-[9px] font-bold text-slate-400 uppercase">/</div>
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-slate-200/60 rounded text-[9px] font-bold text-slate-400 uppercase">
+                /
+              </div>
             )}
           </div>
           {isSidebarOpen && (
@@ -205,14 +242,18 @@ export default function CaretakerDashboard() {
         </div>
 
         {/* Navigation Section */}
-        <nav className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-2 overflow-y-auto space-y-6 custom-sidebar-scroll`}>
+        <nav
+          className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-2 overflow-y-auto space-y-6 custom-sidebar-scroll`}
+        >
           {(() => {
-            const filteredGroups = navGroups.map(group => ({
-              ...group,
-              items: group.items.filter(item =>
-                item.label.toLowerCase().includes(searchQuery.toLowerCase())
-              )
-            })).filter(group => group.items.length > 0);
+            const filteredGroups = navGroups
+              .map((group) => ({
+                ...group,
+                items: group.items.filter((item) =>
+                  item.label.toLowerCase().includes(searchQuery.toLowerCase()),
+                ),
+              }))
+              .filter((group) => group.items.length > 0);
 
             if (filteredGroups.length === 0 && searchQuery) {
               return (
@@ -220,7 +261,9 @@ export default function CaretakerDashboard() {
                   <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
                     <Search size={20} className="text-slate-300" />
                   </div>
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-4">No operations found</p>
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-4">
+                    No operations found
+                  </p>
                 </div>
               );
             }
@@ -228,7 +271,9 @@ export default function CaretakerDashboard() {
             return filteredGroups.map((group, gIdx) => (
               <div key={gIdx} className="space-y-1.5">
                 {group.group && isSidebarOpen && (
-                  <h4 className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{group.group}</h4>
+                  <h4 className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">
+                    {group.group}
+                  </h4>
                 )}
                 {group.items.map((item) => {
                   const Icon = item.icon;
@@ -241,9 +286,10 @@ export default function CaretakerDashboard() {
                       title={!isSidebarOpen ? item.label : ""}
                       className={`
                         w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group relative
-                        ${isActive
-                          ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
-                          : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
+                        ${
+                          isActive
+                            ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
+                            : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
                         }
                       `}
                     >
@@ -251,9 +297,12 @@ export default function CaretakerDashboard() {
                         <Icon
                           size={20}
                           className={`shrink-0 transition-colors
-                            ${isActive
-                              ? isMale ? "text-blue-600" : "text-rose-600"
-                              : "text-slate-400 group-hover:text-slate-600"
+                            ${
+                              isActive
+                                ? isMale
+                                  ? "text-blue-600"
+                                  : "text-rose-600"
+                                : "text-slate-400 group-hover:text-slate-600"
                             }`}
                         />
                       </div>
@@ -282,18 +331,18 @@ export default function CaretakerDashboard() {
               title={!isSidebarOpen ? "Logout" : ""}
             >
               <div className="flex items-center justify-center min-w-[22px]">
-                <LogOut size={20} className="text-slate-400 group-hover:text-red-500 transition-colors" />
+                <LogOut
+                  size={20}
+                  className="text-slate-400 group-hover:text-red-500 transition-colors"
+                />
               </div>
-            )}
+            </button>
           </div>
         </nav>
 
         {/* User Info Style (Back to minimal) */}
         <div className="mt-auto border-t border-slate-200/60 p-3 pb-5">
           <div
-            onClick={() => {
-              setProfilePopupOpen(true);
-            }}
             className={`flex items-center ${isSidebarOpen ? "justify-start px-2" : "justify-center"} py-1.5 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group`}
           >
             <div className="flex items-center gap-3 min-w-0">
@@ -302,22 +351,32 @@ export default function CaretakerDashboard() {
                 className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-slate-100 flex items-center justify-center shadow-sm ring-1 ring-slate-200/60 transition-transform group-hover:scale-105"
               >
                 {profilePhoto ? (
-                  <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
+                  <img
+                    src={profilePhoto}
+                    className="w-full h-full object-cover"
+                    alt=""
+                  />
                 ) : (
-                  <span className="text-slate-600 font-bold text-[10px] leading-tight text-center px-1 truncate">{firstName}</span>
+                  <span className="text-slate-600 font-bold text-[10px] leading-tight text-center px-1 truncate">
+                    {firstName}
+                  </span>
                 )}
               </button>
               {isSidebarOpen && (
                 <div className="min-w-0">
-                  <p className="text-[13px] font-bold text-slate-900 truncate leading-tight">{profileName || username}</p>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate mt-0.5">{portalLabel}</p>
+                  <p className="text-[13px] font-bold text-slate-900 truncate leading-tight">
+                    {profileName || username}
+                  </p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate mt-0.5">
+                    {portalLabel}
+                  </p>
                 </div>
               )}
             </div>
             {isSidebarOpen && (
-              <span className="text-[15px] font-semibold">Logout</span>
+              <span className="text-[15px] font-semibold">Profile</span>
             )}
-          </button>
+          </div>
         </div>
       </aside>
 
@@ -343,9 +402,6 @@ export default function CaretakerDashboard() {
             {/* Circular profile photo — opens popup */}
             <button
               ref={headerAvatarRef}
-              onClick={() => {
-                setProfilePopupOpen(true);
-              }}
               title="Profile"
               className={`w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 ${isMale ? "hover:ring-blue-400" : "hover:ring-rose-400"} transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50`}
             >
@@ -356,7 +412,9 @@ export default function CaretakerDashboard() {
                   alt=""
                 />
               ) : (
-                <div className={`w-full h-full flex items-center justify-center ${isMale ? "bg-blue-600" : "bg-rose-600"} text-white font-bold text-[10px] leading-tight text-center px-1 truncate`}>
+                <div
+                  className={`w-full h-full flex items-center justify-center ${isMale ? "bg-blue-600" : "bg-rose-600"} text-white font-bold text-[10px] leading-tight text-center px-1 truncate`}
+                >
                   {firstName}
                 </div>
               )}
