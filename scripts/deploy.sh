@@ -166,6 +166,9 @@ git reset --hard origin/main
     
     if [ "$FORCE_ALL" == "true" ]; then
        SHOULD_BUILD=true
+    elif [[ "$COMMIT_MSG" == *"[force build $DIR]"* ]] || [[ "$COMMIT_MSG" == *"[force build $IMG]"* ]]; then
+      echo "[Build] Force rebuild requested for $IMG via commit tag."
+      SHOULD_BUILD=true
     elif echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
       echo "[Build] Change detected in $DIR"
       SHOULD_BUILD=true
