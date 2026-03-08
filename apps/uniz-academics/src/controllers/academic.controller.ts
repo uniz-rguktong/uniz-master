@@ -1666,8 +1666,10 @@ export const getGradesTemplate = async (
         `${GATEWAY_URL}/profile/student/search`,
         {
           branch,
-          year: !batch ? year : undefined,
-          batch: batch || undefined,
+          year:
+            !batch || String(batch).toUpperCase() === "ALL" ? year : undefined,
+          batch:
+            batch && String(batch).toUpperCase() !== "ALL" ? batch : undefined,
           limit: 10000, // High limit for all students
         },
         getHeaders(token!),
@@ -1926,8 +1928,10 @@ export const getAttendanceTemplate = async (
       `${GATEWAY_URL}/profile/student/search`,
       {
         branch,
-        year: !batch ? year : undefined,
-        batch: batch || undefined,
+        year:
+          !batch || String(batch).toUpperCase() === "ALL" ? year : undefined,
+        batch:
+          batch && String(batch).toUpperCase() !== "ALL" ? batch : undefined,
         limit: 10000,
       },
       getHeaders(token!),
