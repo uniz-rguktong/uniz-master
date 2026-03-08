@@ -5,6 +5,7 @@ import ExcelJS from "exceljs";
 import axios from "axios";
 import { UserRole } from "../shared/roles.enum";
 import { redis } from "../utils/redis.util";
+import { processNextStudentBatch } from "../services/bulk-worker.service";
 
 const prisma = new PrismaClient();
 const AUTH_SERVICE_URL =
@@ -181,243 +182,98 @@ export const uploadStudents = async (req: any, res: Response) => {
 
     const startTime = Date.now();
 
-    // Background Execution Handler
-    const runIngestion = async () => {
-      let successCount = 0;
-      let failCount = 0;
-      const errors: any[] = [];
+    // 1. Upload the raw buffer to Cloudinary for historical backup
+    let cloudinaryUrl = null;
+    try {
+      const FormData = require("form-data");
+      const form = new FormData();
+      form.append("file", req.file.buffer, req.file.originalname);
+      const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+      const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+      form.append("upload_preset", uploadPreset);
 
-      const CHUNK_SIZE = 20;
-      console.log(`[Bulk] Starting ingestion for ${total} students...`);
+      const resUpload = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
+        form,
+        { headers: form.getHeaders() },
+      );
+      cloudinaryUrl = resUpload.data.secure_url;
+    } catch (cloudErr) {
+      console.warn("Cloudinary student backup failed:", cloudErr);
+    }
 
-      // PRE-SCAN: Identify Majority Batch (Majority Rule)
-      const prefixes: Record<string, number> = {};
-      rows.forEach((row) => {
-        const rowId = (
-          Object.values(row).find((v) =>
-            /^[A-Z]\d{2,}/i.test(String(v || "")),
-          ) || ""
-        )
-          .toString()
-          .toUpperCase();
-        if (rowId && rowId.length >= 3) {
-          const prefix = rowId.substring(0, 3);
-          if (/^[A-Z]\d{2}$/.test(prefix)) {
-            prefixes[prefix] = (prefixes[prefix] || 0) + 1;
-          }
+    // 2. PRE-SCAN: Identify Majority Batch
+    const prefixes: Record<string, number> = {};
+    rows.forEach((row) => {
+      const rowId = (
+        Object.values(row).find((v) => /^[A-Z]\d{2,}/i.test(String(v || ""))) ||
+        ""
+      )
+        .toString()
+        .toUpperCase();
+      if (rowId && rowId.length >= 3) {
+        const prefix = rowId.substring(0, 3);
+        if (/^[A-Z]\d{2}$/.test(prefix)) {
+          prefixes[prefix] = (prefixes[prefix] || 0) + 1;
         }
-      });
-      const majorityBatch =
-        Object.keys(prefixes).sort((a, b) => prefixes[b] - prefixes[a])[0] ||
-        "";
-      for (let i = 0; i < total; i += CHUNK_SIZE) {
-        const chunk = rows.slice(i, i + CHUNK_SIZE);
-
-        await Promise.all(
-          chunk.map(async (row, indexInChunk) => {
-            const globalIndex = i + indexInChunk;
-            const getVal = (keys: string[]) => {
-              const found = Object.keys(row).find((k) =>
-                keys.includes(k.trim().toLowerCase()),
-              );
-              if (!found) return "";
-              const val = row[found];
-              if (val && typeof val === "object") {
-                return (val as any).text
-                  ? String((val as any).text).trim()
-                  : "";
-              }
-              return val ? String(val).trim() : "";
-            };
-
-            const id = getVal([
-              "student id",
-              "studentid",
-              "student_id",
-              "id",
-              "username",
-            ]).toUpperCase();
-            const name = getVal(["name", "student name", "student_name"]);
-            const email = getVal(["email", "mail", "student_email"]);
-            const gender = getVal(["gender", "sex"]);
-            const branch = mapBranch(
-              getVal(["branch", "department", "allocation_branch"]),
-            );
-            const year = getVal([
-              "year",
-              "class",
-              "academic_year",
-            ]).toUpperCase();
-            const section = getVal(["section", "sec"]).toUpperCase();
-            const phone = getVal(["phone", "mobile", "contact"]);
-            const batchCol = getVal(["batch", "acad_batch", "academic_batch"]);
-
-            // Derive defaults
-            const finalEmail =
-              email || (id ? `${id.toLowerCase()}@rguktong.ac.in` : "");
-            const finalYear = year || "E1"; // Default to E1 for branch allocation newcomers
-            const finalSection =
-              !section || section === "UNKNOWN" || section === "GENERAL"
-                ? Math.floor(Math.random() * 4 + 1).toString()
-                : section;
-
-            // BATCH LOGIC:
-            // 1. If explicit batch provided in row, use it.
-            // 2. If row ID starts with a valid prefix (e.g. O21), use that prefix.
-            // 3. Fallback to the majority batch identified for this entire upload.
-            let finalBatch = batchCol;
-            if (!finalBatch && id) {
-              const prefix = id.substring(0, 3);
-              if (/^[A-Z]\d{2}$/.test(prefix)) {
-                finalBatch = prefix;
-              }
-            }
-            if (!finalBatch) finalBatch = majorityBatch;
-            finalBatch = finalBatch.toUpperCase();
-
-            if (!id) {
-              failCount++;
-              errors.push({
-                row: globalIndex + 2,
-                error: "Missing Student ID",
-              });
-              return;
-            }
-
-            try {
-              // 1. Upsert Profile
-              await prisma.studentProfile.upsert({
-                where: { username: id },
-                update: {
-                  name,
-                  email: finalEmail,
-                  gender,
-                  branch,
-                  year: finalYear,
-                  section: finalSection,
-                  batch: finalBatch,
-                  phone,
-                  updatedAt: new Date(),
-                },
-                create: {
-                  id,
-                  username: id,
-                  name,
-                  email: finalEmail,
-                  gender,
-                  branch,
-                  year: finalYear,
-                  section: finalSection,
-                  batch: finalBatch,
-                  phone,
-                },
-              });
-              successCount++;
-
-              // Cache Invalidation
-              await redis.del(`profile:v2:${id}`);
-
-              // 2. Create/Update Auth Credential
-              try {
-                const SECRET = (
-                  process.env.INTERNAL_SECRET || "uniz-core"
-                ).trim();
-                await axios.post(
-                  `${AUTH_SERVICE_URL}/signup`,
-                  {
-                    username: id,
-                    password: `${id}@rguktong`, // Updated default password policy
-                    role: "student",
-                    email: email,
-                  },
-                  {
-                    headers: { "x-internal-secret": SECRET },
-                  },
-                );
-              } catch (authErr: any) {
-                console.warn(
-                  `Failed to sync auth for ${id}: ${authErr.message}`,
-                );
-              }
-            } catch (dbErr: any) {
-              failCount++;
-              errors.push({ row: globalIndex + 2, id, error: dbErr.message });
-            }
-          }),
-        );
-
-        const processedCount = Math.min(i + CHUNK_SIZE, total);
-        const elapsed = Math.max(Date.now() - startTime, 1);
-        const avgTimePerItem = elapsed / processedCount;
-        const remaining = total - processedCount;
-        const etaSeconds = Math.ceil((avgTimePerItem * remaining) / 1000);
-
-        await redis.setex(
-          `student:upload:progress:${user.username}`,
-          600,
-          JSON.stringify({
-            status: processedCount >= total ? "done" : "processing",
-            processed: processedCount,
-            total,
-            success: successCount,
-            fail: failCount,
-            percent: Math.round((processedCount / total) * 100),
-            etaSeconds: processedCount >= total ? 0 : Math.max(etaSeconds, 1),
-            errors: errors.slice(-20),
-          }),
-        );
       }
+    });
+    const majorityBatch =
+      Object.keys(prefixes).sort((a, b) => prefixes[b] - prefixes[a])[0] || "";
 
-      // Upload the raw buffer to Cloudinary for historical download access
-      let cloudinaryUrl = null;
-      try {
-        const FormData = require("form-data");
-        const form = new FormData();
-        form.append("file", req.file.buffer, req.file.originalname);
-        const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-        const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
-        form.append("upload_preset", uploadPreset);
-
-        // Use the Cloudinary REST API matching the frontend
-        const resUpload = await axios.post(
-          `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
-          form,
-          { headers: form.getHeaders() },
-        );
-        cloudinaryUrl = resUpload.data.secure_url;
-      } catch (cloudErr) {
-        console.warn("Failed to backup file to Cloudinary:", cloudErr);
-      }
-
-      // Record in UploadHistory
-      try {
-        const historyData: any = {
-          type: "STUDENTS",
-          filename: cloudinaryUrl ? cloudinaryUrl : req.file.originalname, // We'll store URL in filename if available
-          totalRows: total,
-          successCount,
-          failCount,
-          errors: {
-            fileUrl: cloudinaryUrl,
-            originalName: req.file.originalname,
-            rowErrors: errors.slice(0, 100),
-          },
-          uploadedBy: user.username,
-          status:
-            failCount === 0
-              ? "COMPLETED"
-              : successCount > 0
-                ? "PARTIAL"
-                : "FAILED",
-        };
-
-        await prisma.uploadHistory.create({ data: historyData });
-      } catch (hErr) {
-        console.error("Failed to record upload history:", hErr);
-      }
+    // 3. Create Job Payload
+    const uploadId = require("crypto").randomUUID();
+    const job = {
+      uploadId,
+      username: user.username,
+      fileUrl: cloudinaryUrl,
+      rows,
+      total,
+      majorityBatch,
+      startTime: Date.now(),
     };
 
-    runIngestion();
+    // 4. Initialize progress in Redis
+    await redis.setex(
+      `student:upload:progress:${user.username}`,
+      3600,
+      JSON.stringify({
+        status: "queued",
+        processed: 0,
+        total,
+        success: 0,
+        fail: 0,
+        percent: 0,
+        etaSeconds: 0,
+      }),
+    );
+
+    // 5. Enqueue Job
+    await redis.rpush("student:job:queue", JSON.stringify(job));
+
+    // 6. Trigger Processing Inline (Reliable start)
+    console.log(
+      `[Bulk] Enqueued student upload ${uploadId}. Starting worker...`,
+    );
+    const result = await processNextStudentBatch();
+
+    if (result && result.status === "continued") {
+      const port = process.env.PORT || 3002;
+      const triggerUrl = `http://localhost:${port}/api/queue/process?lb=${Math.random().toString(36).substring(7)}`;
+
+      axios
+        .post(
+          triggerUrl,
+          {},
+          {
+            headers: {
+              "x-internal-secret": process.env.INTERNAL_SECRET || "uniz-core",
+            },
+            timeout: 5000,
+          },
+        )
+        .catch((e) => {});
+    }
 
     return res.status(202).json({
       success: true,
