@@ -68,7 +68,8 @@ export default function StudentBulkSection() {
       interval = setInterval(async () => {
         const token = localStorage.getItem("admin_token");
         try {
-          const res = await fetch(ADMIN_STUDENT_PROGRESS, {
+          const cb = Date.now();
+          const res = await fetch(`${ADMIN_STUDENT_PROGRESS}?_cb=${cb}`, {
             headers: {
               Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
             },
@@ -90,6 +91,7 @@ export default function StudentBulkSection() {
       }, 2000);
     }
     fetchBatches();
+    return () => clearInterval(interval);
   }, [uploadId]);
 
   const fetchBatches = async () => {
