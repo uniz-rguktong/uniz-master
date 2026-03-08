@@ -37,11 +37,11 @@ interface Semester {
   id: string;
   name: string;
   status:
-  | "DRAFT"
-  | "DEAN_REVIEW"
-  | "APPROVED"
-  | "REGISTRATION_OPEN"
-  | "REGISTRATION_CLOSED";
+    | "DRAFT"
+    | "DEAN_REVIEW"
+    | "APPROVED"
+    | "REGISTRATION_OPEN"
+    | "REGISTRATION_CLOSED";
   _count?: { registrations: number };
   createdAt: string;
 }
@@ -50,6 +50,7 @@ interface Allocation {
   id: string;
   branch: string;
   academicYear: string;
+  batch?: string;
   subject: { name: string; code: string; credits: number; id: string };
   isApproved: boolean;
   customName?: string;
@@ -106,10 +107,13 @@ export default function UnifiedAcademicManager() {
   >("allocations");
   const [filterBranch, setFilterBranch] = useState("all");
   const [filterYear, setFilterYear] = useState("all");
+  const [filterBatch, setFilterBatch] = useState("all");
+  const [availableBatches, setAvailableBatches] = useState<string[]>([]);
   const [showAddAllocModal, setShowAddAllocModal] = useState(false);
   const [addAllocData, setAddAllocData] = useState({
     subjectId: "",
     academicYear: "E1",
+    batch: "",
     branch: "all",
   });
 
@@ -124,7 +128,22 @@ export default function UnifiedAcademicManager() {
       if (rolloutView === "allocations") fetchAllocations();
       else fetchRegistrations();
     }
-  }, [activeTab, selectedSem, rolloutView, filterBranch, filterYear]);
+  }, [
+    activeTab,
+    selectedSem,
+    rolloutView,
+    filterBranch,
+    filterYear,
+    filterBatch,
+  ]);
+
+  useEffect(() => {
+    const fetchBatches = async () => {
+      const res = await apiClient<string[]>("/api/v1/profile/admin/batches");
+      if (res) setAvailableBatches(res);
+    };
+    fetchBatches();
+  }, []);
 
   // --- Actions: Catalog ---
   const fetchSemesters = async () => {
@@ -233,8 +252,9 @@ export default function UnifiedAcademicManager() {
     setLoading(true);
     try {
       const yearQuery = filterYear !== "all" ? `&year=${filterYear}` : "";
+      const batchQuery = filterBatch !== "all" ? `&batch=${filterBatch}` : "";
       const res = await apiClient<Allocation[]>(
-        `${DEAN_REVIEW(filterBranch)}?semesterId=${selectedSem.id}${yearQuery}`,
+        `${DEAN_REVIEW(filterBranch)}?semesterId=${selectedSem.id}${yearQuery}${batchQuery}`,
       );
       if (res) setRolloutAllocations(res);
     } finally {
@@ -248,8 +268,9 @@ export default function UnifiedAcademicManager() {
     try {
       const branchQuery =
         filterBranch !== "all" ? `&branch=${filterBranch}` : "";
+      const batchQuery = filterBatch !== "all" ? `&batch=${filterBatch}` : "";
       const res = await apiClient<any[]>(
-        `${GET_REGISTRATIONS}?semesterId=${selectedSem.id}${branchQuery}`,
+        `${GET_REGISTRATIONS}?semesterId=${selectedSem.id}${branchQuery}${batchQuery}`,
       );
       if (res) setRolloutRegistrations(res);
     } finally {
@@ -301,6 +322,7 @@ export default function UnifiedAcademicManager() {
           branch: filterBranch,
           semesterId: selectedSem?.id,
           year: filterYear !== "all" ? filterYear : undefined,
+          batch: filterBatch !== "all" ? filterBatch : undefined,
         }),
       });
       toast.success("Rollout phase advanced");
@@ -364,9 +386,10 @@ export default function UnifiedAcademicManager() {
               onClick={() => setActiveTab(tabId)}
               className={`
                 flex items-center gap-3 px-8 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all
-                ${activeTab === tabId
-                  ? "bg-white text-blue-600 border border-slate-100"
-                  : "text-slate-400 hover:text-slate-900 hover:bg-white/80"
+                ${
+                  activeTab === tabId
+                    ? "bg-white text-blue-600 border border-slate-100"
+                    : "text-slate-400 hover:text-slate-900 hover:bg-white/80"
                 }
                 ${tabId === "rollout" && !selectedSem ? "opacity-30 cursor-not-allowed" : ""}
               `}
@@ -399,10 +422,11 @@ export default function UnifiedAcademicManager() {
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span
-                      className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border ${sem.status === "REGISTRATION_OPEN"
-                        ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                        : "bg-slate-50 text-slate-400 border-slate-100"
-                        }`}
+                      className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border ${
+                        sem.status === "REGISTRATION_OPEN"
+                          ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                          : "bg-slate-50 text-slate-400 border-slate-100"
+                      }`}
                     >
                       {sem.status.replace("_", " ")}
                     </span>
@@ -448,7 +472,8 @@ export default function UnifiedAcademicManager() {
                   Relaxation levels are dangerously high.
                 </h3>
                 <p className="text-slate-500 font-medium max-w-md mx-auto mb-10 leading-relaxed">
-                  Campus vibes: 100% chill. Students are relaxing… but don't worry, semester registration is loading to take care of that.
+                  Campus vibes: 100% chill. Students are relaxing… but don't
+                  worry, semester registration is loading to take care of that.
                 </p>
                 <button
                   onClick={() => setShowNewSemModal(true)}
@@ -508,60 +533,64 @@ export default function UnifiedAcademicManager() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {loading ? (
-                Array.from({ length: 10 }).map((_, i) => (
-                  <div key={i} className="bg-slate-50/50 border border-slate-100 rounded-xl p-4 h-40 animate-pulse flex flex-col gap-4">
-                    <div className="flex justify-between">
-                      <div className="w-8 h-8 bg-slate-200 rounded-lg"></div>
-                      <div className="w-12 h-4 bg-slate-200 rounded"></div>
-                    </div>
-                    <div className="h-4 bg-slate-200 rounded w-3/4"></div>
-                    <div className="mt-auto h-3 bg-slate-200 rounded w-1/2"></div>
-                  </div>
-                ))
-              ) : (
-                allSubjects
-                  .slice((subPage - 1) * SUB_ITEMS_PER_PAGE, subPage * SUB_ITEMS_PER_PAGE)
-                  .map((sub, i) => (
+              {loading
+                ? Array.from({ length: 10 }).map((_, i) => (
                     <div
                       key={i}
-                      className="bg-white border border-slate-100 rounded-xl p-4 flex flex-col h-full"
+                      className="bg-slate-50/50 border border-slate-100 rounded-xl p-4 h-40 animate-pulse flex flex-col gap-4"
                     >
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="w-8 h-8 bg-blue-50 rounded-lg text-blue-600 flex items-center justify-center">
-                          <BookText size={16} />
-                        </div>
-                        <span className="px-2 py-0.5 bg-slate-50 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400 border border-slate-100">
-                          {sub.code}
-                        </span>
+                      <div className="flex justify-between">
+                        <div className="w-8 h-8 bg-slate-200 rounded-lg"></div>
+                        <div className="w-12 h-4 bg-slate-200 rounded"></div>
                       </div>
-                      <h3 className="text-[13px] font-bold text-slate-900 leading-snug mb-3 min-h-[40px] line-clamp-2">
-                        {sub.name}
-                      </h3>
-                      <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-50">
-                        <div className="text-[8px] font-black uppercase tracking-widest text-slate-400">
-                          {sub.department} • {sub.credits}C
-                        </div>
-                        <button
-                          onClick={() => {
-                            setEditingSub(sub);
-                            setNewSub({
-                              name: sub.name,
-                              code: sub.code,
-                              credits: sub.credits,
-                              department: sub.department,
-                              semester: sub.semester,
-                            });
-                            setShowSubModal(true);
-                          }}
-                          className="p-1.5 text-slate-300 hover:text-blue-600 transition-colors"
-                        >
-                          <Edit3 size={14} />
-                        </button>
-                      </div>
+                      <div className="h-4 bg-slate-200 rounded w-3/4"></div>
+                      <div className="mt-auto h-3 bg-slate-200 rounded w-1/2"></div>
                     </div>
                   ))
-              )}
+                : allSubjects
+                    .slice(
+                      (subPage - 1) * SUB_ITEMS_PER_PAGE,
+                      subPage * SUB_ITEMS_PER_PAGE,
+                    )
+                    .map((sub, i) => (
+                      <div
+                        key={i}
+                        className="bg-white border border-slate-100 rounded-xl p-4 flex flex-col h-full"
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="w-8 h-8 bg-blue-50 rounded-lg text-blue-600 flex items-center justify-center">
+                            <BookText size={16} />
+                          </div>
+                          <span className="px-2 py-0.5 bg-slate-50 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400 border border-slate-100">
+                            {sub.code}
+                          </span>
+                        </div>
+                        <h3 className="text-[13px] font-bold text-slate-900 leading-snug mb-3 min-h-[40px] line-clamp-2">
+                          {sub.name}
+                        </h3>
+                        <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-50">
+                          <div className="text-[8px] font-black uppercase tracking-widest text-slate-400">
+                            {sub.department} • {sub.credits}C
+                          </div>
+                          <button
+                            onClick={() => {
+                              setEditingSub(sub);
+                              setNewSub({
+                                name: sub.name,
+                                code: sub.code,
+                                credits: sub.credits,
+                                department: sub.department,
+                                semester: sub.semester,
+                              });
+                              setShowSubModal(true);
+                            }}
+                            className="p-1.5 text-slate-300 hover:text-blue-600 transition-colors"
+                          >
+                            <Edit3 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
             </div>
 
             {/* Pagination Controls */}
@@ -569,26 +598,32 @@ export default function UnifiedAcademicManager() {
               <div className="flex items-center justify-center gap-2 pt-6">
                 <button
                   disabled={subPage === 1}
-                  onClick={() => setSubPage(prev => prev - 1)}
+                  onClick={() => setSubPage((prev) => prev - 1)}
                   className="p-2 px-4 bg-white border border-slate-200 rounded-lg text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                 >
                   Prev
                 </button>
-                {Array.from({ length: Math.ceil(allSubjects.length / SUB_ITEMS_PER_PAGE) }).map((_, i) => (
+                {Array.from({
+                  length: Math.ceil(allSubjects.length / SUB_ITEMS_PER_PAGE),
+                }).map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setSubPage(i + 1)}
-                    className={`w-8 h-8 rounded-lg font-black text-[10px] transition-all ${subPage === i + 1
-                      ? "bg-slate-900 text-white shadow-md shadow-black/10"
-                      : "bg-white border border-slate-200 text-slate-400 hover:text-slate-900"
-                      }`}
+                    className={`w-8 h-8 rounded-lg font-black text-[10px] transition-all ${
+                      subPage === i + 1
+                        ? "bg-slate-900 text-white shadow-md shadow-black/10"
+                        : "bg-white border border-slate-200 text-slate-400 hover:text-slate-900"
+                    }`}
                   >
                     {i + 1}
                   </button>
                 ))}
                 <button
-                  disabled={subPage === Math.ceil(allSubjects.length / SUB_ITEMS_PER_PAGE)}
-                  onClick={() => setSubPage(prev => prev + 1)}
+                  disabled={
+                    subPage ===
+                    Math.ceil(allSubjects.length / SUB_ITEMS_PER_PAGE)
+                  }
+                  onClick={() => setSubPage((prev) => prev + 1)}
                   className="p-2 px-4 bg-white border border-slate-200 rounded-lg text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                 >
                   Next
@@ -627,10 +662,11 @@ export default function UnifiedAcademicManager() {
                           : "REGISTRATION_OPEN",
                       )
                     }
-                    className={`h-14 px-10 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all ${selectedSem.status === "REGISTRATION_OPEN"
-                      ? "bg-red-50/10 text-red-500 border border-red-500/30 hover:bg-red-500 hover:text-white"
-                      : "bg-emerald-600 text-white hover:bg-emerald-700"
-                      }`}
+                    className={`h-14 px-10 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all ${
+                      selectedSem.status === "REGISTRATION_OPEN"
+                        ? "bg-red-50/10 text-red-500 border border-red-500/30 hover:bg-red-500 hover:text-white"
+                        : "bg-emerald-600 text-white hover:bg-emerald-700"
+                    }`}
                   >
                     {selectedSem.status === "REGISTRATION_OPEN"
                       ? "Suspend Enrollment"
@@ -653,10 +689,11 @@ export default function UnifiedAcademicManager() {
                   <button
                     key={v}
                     onClick={() => setRolloutView(v)}
-                    className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${rolloutView === v
-                      ? "text-blue-600"
-                      : "text-slate-400 hover:text-slate-600"
-                      }`}
+                    className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${
+                      rolloutView === v
+                        ? "text-blue-600"
+                        : "text-slate-400 hover:text-slate-600"
+                    }`}
                   >
                     {v}
                     {rolloutView === v && (
@@ -693,6 +730,21 @@ export default function UnifiedAcademicManager() {
                     {["E1", "E2", "E3", "E4"].map((y) => (
                       <option key={y} value={y}>
                         {y} Engineering
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-slate-100 shadow-none">
+                  <BookText size={14} className="text-slate-400" />
+                  <select
+                    value={filterBatch}
+                    onChange={(e) => setFilterBatch(e.target.value)}
+                    className="font-black text-[10px] uppercase tracking-widest text-slate-700 outline-none border-none bg-transparent"
+                  >
+                    <option value="all">All Batches</option>
+                    {availableBatches.map((b) => (
+                      <option key={b} value={b}>
+                        Batch {b}
                       </option>
                     ))}
                   </select>
@@ -750,6 +802,11 @@ export default function UnifiedAcademicManager() {
                             <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
                               {item.academicYear}
                             </span>
+                            {item.batch && (
+                              <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                                {item.batch}
+                              </span>
+                            )}
                           </div>
                         </td>
                         <td className="px-10 py-6">
@@ -779,6 +836,7 @@ export default function UnifiedAcademicManager() {
                   <thead>
                     <tr className="bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">
                       <th className="px-10 py-6">Enrolled Student</th>
+                      <th className="px-10 py-6">Batch</th>
                       <th className="px-10 py-6">Allocated Course</th>
                       <th className="px-10 py-6">Timestamp</th>
                     </tr>
@@ -798,6 +856,11 @@ export default function UnifiedAcademicManager() {
                               {reg.studentId}
                             </p>
                           </div>
+                        </td>
+                        <td className="px-10 py-6">
+                          <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                            {reg.batch || "N/A"}
+                          </span>
                         </td>
                         <td className="px-10 py-6">
                           <div className="space-y-1">
@@ -822,15 +885,15 @@ export default function UnifiedAcademicManager() {
                 rolloutAllocations.length === 0) ||
                 (rolloutView === "registrations" &&
                   rolloutRegistrations.length === 0)) && (
-                  <div className="p-32 text-center">
-                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
-                      <X size={40} />
-                    </div>
-                    <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
-                      Zero activity detected for these parameters.
-                    </p>
+                <div className="p-32 text-center">
+                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                    <X size={40} />
                   </div>
-                )}
+                  <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
+                    Zero activity detected for these parameters.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -882,10 +945,11 @@ export default function UnifiedAcademicManager() {
                             : [...prev, b],
                         )
                       }
-                      className={`h-14 rounded-xl font-black text-xs transition-all border ${selectedBranches.includes(b)
-                        ? "bg-slate-900 text-white border-slate-900 shadow-none"
-                        : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-300"
-                        }`}
+                      className={`h-14 rounded-xl font-black text-xs transition-all border ${
+                        selectedBranches.includes(b)
+                          ? "bg-slate-900 text-white border-slate-900 shadow-none"
+                          : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-300"
+                      }`}
                     >
                       {b}
                     </button>
