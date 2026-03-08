@@ -83,6 +83,9 @@ const mapStudentProfile = (profile: any) => ({
   profile_url: profile.profileUrl,
   created_at: profile.createdAt,
   updated_at: profile.updatedAt,
+  // New Fields
+  category: profile.category,
+  campus: profile.campus,
 });
 
 const mapFacultyProfile = (profile: any) => ({
