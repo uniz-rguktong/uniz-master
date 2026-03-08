@@ -16,6 +16,7 @@ import {
   GET_GRADES_TEMPLATE,
   GET_SUBJECTS,
   ACADEMICS_PROGRESS,
+  GET_AVAILABLE_BATCHES,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient, downloadFile } from "../../../api/apiClient";
@@ -37,11 +38,11 @@ export default function UploadSection({ type }: { type: UploadType }) {
   const [remedialsOnly, setRemedialsOnly] = useState(false);
   const [batch, setBatch] = useState("");
 
-  // Dynamic subject list
   const [subjects, setSubjects] = useState<{ code: string; name: string }[]>(
     [],
   );
   const [subjectsLoading, setSubjectsLoading] = useState(false);
+  const [availableBatches, setAvailableBatches] = useState<string[]>([]);
 
   // Fetch subjects whenever branch or semester changes (only for grades upload)
   useEffect(() => {
@@ -81,7 +82,21 @@ export default function UploadSection({ type }: { type: UploadType }) {
     fetchSubjects();
   }, [branch, semester, type]);
 
-
+  useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        const res = await apiClient<{ success: boolean; batches: string[] }>(
+          GET_AVAILABLE_BATCHES,
+        );
+        if (res && res.success) {
+          setAvailableBatches(res.batches);
+        }
+      } catch (e) {
+        console.error("Failed to fetch batches", e);
+      }
+    };
+    fetchBatches();
+  }, []);
 
   const handleUpload = async () => {
     if (!file) return;
@@ -173,13 +188,13 @@ export default function UploadSection({ type }: { type: UploadType }) {
       type === "attendance"
         ? GET_ATTENDANCE_TEMPLATE(branch, year, semester, batch)
         : GET_GRADES_TEMPLATE(
-          branch,
-          year,
-          semester,
-          subjectCode,
-          remedialsOnly,
-          batch,
-        );
+            branch,
+            year,
+            semester,
+            subjectCode,
+            remedialsOnly,
+            batch,
+          );
     const fileName = `${type}_${branch}_${year}_${semester}_template.xlsx`;
     await downloadFile(url, fileName);
   };
@@ -195,8 +210,10 @@ export default function UploadSection({ type }: { type: UploadType }) {
         </p>
       </div>
 
-      <div className="flex flex-col gap-6 bg-white p-7 rounded-xl border border-slate-100 shadow-none animate-in slide-in-from-top-4 duration-500">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="bg-white p-7 rounded-2xl border border-slate-100 shadow-none animate-in slide-in-from-top-4 duration-500 space-y-8">
+        <div
+          className={`grid grid-cols-1 md:grid-cols-3 ${type === "grades" ? "lg:grid-cols-7" : "lg:grid-cols-6"} gap-4 items-end`}
+        >
           <div className="space-y-2">
             <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
               Branch
@@ -207,6 +224,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 onChange={(e) => setBranch(e.target.value)}
                 className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
               >
+                <option value="ALL">ALL BRANCHES</option>
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
                   (b) => (
                     <option key={b} value={b}>
@@ -232,6 +250,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 onChange={(e) => setYear(e.target.value)}
                 className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
               >
+                <option value="ALL">ALL YEARS</option>
                 {["E1", "E2", "E3", "E4"].map((y) => (
                   <option key={y} value={y}>
                     {y}
@@ -270,20 +289,31 @@ export default function UploadSection({ type }: { type: UploadType }) {
 
           <div className="space-y-2">
             <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
-              Batch (Oxx)
+              Batch
             </label>
-            <input
-              type="text"
-              placeholder="OPTIONAL"
-              value={batch}
-              onChange={(e) => setBatch(e.target.value)}
-              className="w-full h-11 px-5 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600"
-            />
+            <div className="relative group">
+              <select
+                value={batch}
+                onChange={(e) => setBatch(e.target.value)}
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl font-bold text-[11px] uppercase tracking-widest text-slate-600 appearance-none outline-none focus:border-blue-500"
+              >
+                <option value="ALL">ALL BATCHES</option>
+                {availableBatches.map((b) => (
+                  <option key={b} value={b}>
+                    {b}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                size={14}
+              />
+            </div>
           </div>
 
           {type === "grades" && (
             <>
-              <div className="space-y-2">
+              <div className="space-y-2 lg:col-span-1">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                   Subject Code
                   {subjectsLoading && (
@@ -301,7 +331,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                   >
                     <option value="">
                       {subjectsLoading
-                        ? "Loading subjects..."
+                        ? "Loading..."
                         : subjects.length === 0
                           ? "No subjects found"
                           : "ALL SUBJECTS (BULK)"}
@@ -359,12 +389,12 @@ export default function UploadSection({ type }: { type: UploadType }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
           <FileUploader
-            onFileSelect={(f: File | null) => {
+            onFileSelect={(f) => {
               setFile(f);
               setResult(null);
             }}
-            label={`Choose ${type} File`}
-            description={`Upload ${type} records (XLSX, XLS, CSV).`}
+            label={`Select ${type} Excel/CSV`}
+            description={`Drag and drop the official ${type} record file.`}
           />
 
           <button
@@ -386,10 +416,11 @@ export default function UploadSection({ type }: { type: UploadType }) {
         <div className="space-y-6">
           {result ? (
             <div
-              className={`p-8 rounded-xl border animate-in slide-in-from-right-8 duration-500 h-full shadow-none ${result.success
-                ? "bg-emerald-50 border-emerald-100"
-                : "bg-red-50 border-red-100"
-                }`}
+              className={`p-8 rounded-xl border animate-in slide-in-from-right-8 duration-500 h-full shadow-none ${
+                result.success
+                  ? "bg-emerald-50 border-emerald-100 text-emerald-900"
+                  : "bg-red-50 border-red-100 text-red-900"
+              }`}
             >
               <div className="flex items-center gap-4 mb-6">
                 <div
@@ -404,14 +435,14 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 <h3
                   className={`text-2xl font-semibold tracking-[-0.02em] ${result.success ? "text-emerald-900" : "text-red-900"}`}
                 >
-                  {result.success ? "Sync Completed" : "Sync Failed"}
+                  {result.success ? "Sync Successful" : "Sync Failed"}
                 </h3>
               </div>
 
               <div className="space-y-4">
                 {result.success ? (
                   <>
-                    <p className="text-emerald-800 font-medium">
+                    <p className="opacity-80 font-medium">
                       Successfully processed {result.processed || 0} records
                       into the central database.
                     </p>
@@ -420,12 +451,12 @@ export default function UploadSection({ type }: { type: UploadType }) {
                         Status
                       </p>
                       <p className="text-emerald-900 font-semibold text-[15px] leading-tight">
-                        All systems green. Student dashboards updated.
+                        All systems green. Institutional records updated.
                       </p>
                     </div>
                   </>
                 ) : (
-                  <p className="text-red-800 font-medium">{result.msg}</p>
+                  <p className="opacity-80 font-medium">{result.msg}</p>
                 )}
               </div>
             </div>
