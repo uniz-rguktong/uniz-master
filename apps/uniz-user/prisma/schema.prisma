@@ -39,6 +39,10 @@ model StudentProfile {
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
+  // New Fields from O21 Allocation Data
+  category             String?   @default("")
+  campus               String?   @default("")
+
   @@index([branch, year, batch])
 }
 
