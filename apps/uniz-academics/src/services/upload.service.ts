@@ -83,7 +83,15 @@ export async function processNextBatch() {
 
   // Cache subjects once for all batches in this run
   const allSubjects = await prisma.subject.findMany();
-  const subjectMap = new Map(allSubjects.map((s) => [s.code, s]));
+  const subjectMap = new Map(
+    allSubjects.map((s) => [s.code.trim().toUpperCase(), s]),
+  );
+
+  if (processedInThisRun === 0) {
+    console.log(
+      `[Worker] [${uploadId}] Normalized Subject Map size: ${subjectMap.size}.`,
+    );
+  }
 
   while (
     remainingRows.length > 0 &&
