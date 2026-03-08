@@ -103,13 +103,23 @@ export const login = async (req: Request, res: Response) => {
           timeout: 5000,
         },
       );
+
+      console.log(
+        `[AUTH-DEBUG] User Service Response for ${normalizedUsername}:`,
+        JSON.stringify(userRes.data),
+      );
+
       department =
         userRes.data?.[userType]?.department ||
         userRes.data?.[userType]?.branch ||
         "";
-    } catch (e) {
+
+      console.log(
+        `[AUTH-DEBUG] Resolved department for ${normalizedUsername}: "${department}"`,
+      );
+    } catch (e: any) {
       console.warn(
-        `[AUTH] Could not fetch department for ${normalizedUsername}`,
+        `[AUTH] Could not fetch department for ${normalizedUsername}: ${e.message}`,
       );
     }
 
