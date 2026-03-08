@@ -209,20 +209,18 @@ export default function DeanReview() {
           {allocations.map((alloc) => (
             <div
               key={alloc.id}
-              className={`bg-white border-2 rounded-[32px] p-8 transition-all ${
-                alloc.isApproved
+              className={`bg-white border-2 rounded-[32px] p-8 transition-all ${alloc.isApproved
                   ? "border-emerald-50 opacity-80"
                   : "border-slate-100 shadow-xl hover:border-blue-200"
-              } group`}
+                } group`}
             >
               <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-8">
                 <div className="flex items-center gap-6">
                   <div
-                    className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${
-                      alloc.isApproved
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${alloc.isApproved
                         ? "bg-emerald-50 text-emerald-600"
                         : "bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white"
-                    }`}
+                      }`}
                   >
                     <BookOpen size={28} />
                   </div>
