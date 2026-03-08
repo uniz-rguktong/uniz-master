@@ -9,7 +9,13 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: 'Orbitron', Arial, Helvetica, sans-serif;
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
+  overscroll-behavior-y: auto !important;
+}
+
+html {
+  overscroll-behavior-y: auto !important;
 }
 
 /* --- ORNATE Cinematic Scrollbar --- */
@@ -30,8 +36,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b82f6; /* Blue 500 */
-  border: 1px solid #60a5fa; /* Blue 400 */
+  background: #3b82f6;
+  /* Blue 500 */
+  border: 1px solid #60a5fa;
+  /* Blue 400 */
 }
 
 /* Firefox compatibility */
@@ -47,14 +55,23 @@ html {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 /* --- ORNATE PWA Animations --- */
 @keyframes slide-up {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .animate-slide-up {
