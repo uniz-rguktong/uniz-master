@@ -2169,6 +2169,9 @@ export const downloadGrades = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
+  console.log(
+    `[PDF] Grade Download Requested: ${req.query.studentId} for ${req.params.semesterId}`,
+  );
   const user = req.user;
   if (!user) return res.status(401).json({ success: false });
 
@@ -2273,6 +2276,9 @@ export const downloadAttendance = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
+  console.log(
+    `[PDF] Attendance Download Requested: ${req.query.studentId} for ${req.params.semesterId}`,
+  );
   const user = req.user;
   if (!user) return res.status(401).json({ success: false });
 
