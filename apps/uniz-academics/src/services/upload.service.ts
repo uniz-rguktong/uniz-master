@@ -75,8 +75,8 @@ export async function processNextBatch() {
   const totalRows = total;
   const currentUser = user;
 
-  // Process up to 20 batches (1000 rows) in one execution to reduce Vercel hop count
-  const BATCHES_PER_RUN = 20;
+  // Process up to 6 batches (300 rows) in one execution to provide more frequent UI updates
+  const BATCHES_PER_RUN = 6;
   const CHUNK_SIZE = 50;
 
   let processedInThisRun = 0;
