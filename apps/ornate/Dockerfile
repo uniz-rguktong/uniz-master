@@ -18,6 +18,8 @@ COPY . .
 RUN npx prisma generate
 
 # Build Next.js
+ARG NEXT_PUBLIC_ASSETS_URL
+ENV NEXT_PUBLIC_ASSETS_URL=$NEXT_PUBLIC_ASSETS_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy?schema=public"
 RUN npm run build
