@@ -125,6 +125,7 @@ model BranchAllocation {
 model Registration {
   id         String           @id @default(uuid())
   studentId  String
+  batch      String?          @default("") // e.g. "O21"
   subjectId  String
   semesterId String
   status     String           @default("REGISTERED") // "REGISTERED", "DROPPED"
@@ -136,11 +137,13 @@ model Registration {
   @@unique([studentId, subjectId, semesterId])
   @@index([studentId])
   @@index([semesterId])
+  @@index([batch])
 }
 
 model SeatingArrangement {
   id         String           @id @default(uuid())
   studentId  String
+  batch      String?          @default("") // e.g. "O21"
   subjectId  String
   semesterId String
   room       String
@@ -156,4 +159,5 @@ model SeatingArrangement {
   @@unique([studentId, subjectId, semesterId, examName])
   @@index([studentId])
   @@index([semesterId])
+  @@index([batch])
 }
