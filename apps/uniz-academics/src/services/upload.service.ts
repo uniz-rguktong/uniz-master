@@ -123,11 +123,8 @@ export async function processNextBatch() {
               "semesterid",
               "semester",
             ]);
-            const rawGrade = getVal([
-              "grade",
-              "grade (ex, a, b, c, d, e, r)",
-              "grade (0-10)",
-            ]);
+            const rawGrade = getVal(["grade (0-10)"]);
+            const batchCol = getVal(["batch", "acad_batch", "academic_batch"]);
 
             if (!studentId || !code) throw new Error(`Missing fields`);
             const grade = mapGradeToPoint(rawGrade);
@@ -135,7 +132,13 @@ export async function processNextBatch() {
             if (!subject) throw new Error(`Subject [${code}] not found`);
 
             const targetSemester = semesterId || subject.semester || "SEM-1";
-            const batchYear = studentId.substring(0, 3);
+
+            let finalBatch = batchCol;
+            if (!finalBatch && studentId) {
+              const prefix = studentId.substring(0, 3);
+              if (/^[A-Z]\d{2}$/.test(prefix)) finalBatch = prefix;
+            }
+            finalBatch = (finalBatch || "").toUpperCase();
 
             const existingGrade = await prisma.grade.findUnique({
               where: {
@@ -172,7 +175,7 @@ export async function processNextBatch() {
               },
               update: {
                 grade,
-                batch: batchYear,
+                batch: finalBatch,
                 isRemedial,
                 updatedAt: new Date(),
               },
@@ -181,7 +184,7 @@ export async function processNextBatch() {
                 subjectId: subject.id,
                 semesterId: targetSemester,
                 grade,
-                batch: batchYear,
+                batch: finalBatch,
                 isRemedial,
               },
             });
@@ -248,13 +251,19 @@ export async function processNextBatch() {
               parseInt(
                 getVal(["total classes occurred", "total classes", "total"]),
               ) || 0;
+            const batchCol = getVal(["batch", "acad_batch", "academic_batch"]);
 
             if (!studentId || !code)
               throw new Error("Missing Student ID or Subject Code");
             const subject = subjectMap.get(code);
             if (!subject) throw new Error(`Subject not found: ${code}`);
 
-            const batch = studentId.substring(0, 3);
+            let finalBatch = batchCol;
+            if (!finalBatch && studentId) {
+              const prefix = studentId.substring(0, 3);
+              if (/^[A-Z]\d{2}$/.test(prefix)) finalBatch = prefix;
+            }
+            finalBatch = (finalBatch || "").toUpperCase();
 
             await prisma.attendance.upsert({
               where: {
@@ -267,7 +276,7 @@ export async function processNextBatch() {
               update: {
                 attendedClasses: attended,
                 totalClasses: totalClasses,
-                batch,
+                batch: finalBatch,
                 updatedAt: new Date(),
               },
               create: {
@@ -276,7 +285,7 @@ export async function processNextBatch() {
                 semesterId: semesterId || "SEM-1",
                 attendedClasses: attended,
                 totalClasses: totalClasses,
-                batch,
+                batch: finalBatch,
               },
             });
             successCount++;
