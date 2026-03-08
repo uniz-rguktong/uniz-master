@@ -22,7 +22,7 @@ data:
   NOTIFICATION_SERVICE_URL: "http://uniz-notification-service.default.svc.cluster.local:3007"
   CRON_SERVICE_URL: "http://uniz-cron-service.default.svc.cluster.local:3008"
   CLIENT_URL: "https://uniz.rguktong.in,http://localhost:3000,http://localhost:5173"
-  NEXT_PUBLIC_ASSETS_URL: "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev"
+  NEXT_PUBLIC_ASSETS_URL: "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
   # DB Connectivity (assuming pgbouncer service in k8s)
   REDIS_URL: "redis://uniz-redis:6379"
   EMAIL_USER: "noreply.uniz@gmail.com"
@@ -41,6 +41,6 @@ data:
   R2_ACCOUNT_ID: "22c4923ed8c5f3e1575a2ef9bf3dc15b"
   R2_ENDPOINT: "https://22c4923ed8c5f3e1575a2ef9bf3dc15b.r2.cloudflarestorage.com"
   R2_BUCKET_NAME: "ornate-core-assets"
-  R2_PUBLIC_DOMAIN: "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev"
+  R2_PUBLIC_DOMAIN: "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
   AWS_REGION: "ap-south-1"
   SES_FROM_EMAIL: "no-reply-ems@rguktong.in"
