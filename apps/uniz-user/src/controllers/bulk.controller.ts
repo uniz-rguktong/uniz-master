@@ -81,6 +81,7 @@ export const getStudentsTemplate = async (
       "Year",
       "Section",
       "Phone",
+      "Batch",
     ],
     [
       "O210000",
@@ -91,6 +92,7 @@ export const getStudentsTemplate = async (
       "E1",
       "A",
       "9876543210",
+      "O21",
     ],
   ];
   return generateExcel(headers, "Student_Upload_Template", res);
@@ -203,6 +205,28 @@ export const uploadStudents = async (req: any, res: Response) => {
 
       const CHUNK_SIZE = 20;
       console.log(`[Bulk] Starting ingestion for ${total} students...`);
+
+      // PRE-SCAN: Identify Majority Batch (Majority Rule)
+      const prefixes: Record<string, number> = {};
+      rows.forEach((row) => {
+        const rowId = (
+          Object.values(row).find((v) =>
+            /^[A-Z]\d{2,}/i.test(String(v || "")),
+          ) || ""
+        )
+          .toString()
+          .toUpperCase();
+        if (rowId && rowId.length >= 3) {
+          const prefix = rowId.substring(0, 3);
+          if (/^[A-Z]\d{2}$/.test(prefix)) {
+            prefixes[prefix] = (prefixes[prefix] || 0) + 1;
+          }
+        }
+      });
+      const majorityBatch =
+        Object.keys(prefixes).sort((a, b) => prefixes[b] - prefixes[a])[0] ||
+        "";
+
       for (let i = 0; i < total; i += CHUNK_SIZE) {
         console.log(
           `[Bulk] Processing chunk ${Math.floor(i / CHUNK_SIZE) + 1} (${i} to ${Math.min(i + CHUNK_SIZE, total)})...`,
@@ -263,12 +287,30 @@ export const uploadStudents = async (req: any, res: Response) => {
             ]).toUpperCase();
             const section = getVal(["section", "sec"]).toUpperCase();
             const phone = getVal(["phone", "mobile", "contact"]);
+            const batchCol = getVal(["batch", "acad_batch", "academic_batch"]);
 
             // Derive defaults
             const finalEmail =
               email || (id ? `${id.toLowerCase()}@rguktong.ac.in` : "");
             const finalYear = year || "E1"; // Default to E1 for branch allocation newcomers
-            const finalSection = section || "GENERAL";
+            const finalSection =
+              !section || section === "UNKNOWN" || section === "GENERAL"
+                ? Math.floor(Math.random() * 4 + 1).toString()
+                : section;
+
+            // BATCH LOGIC:
+            // 1. If explicit batch provided in row, use it.
+            // 2. If row ID starts with a valid prefix (e.g. O21), use that prefix.
+            // 3. Fallback to the majority batch identified for this entire upload.
+            let finalBatch = batchCol;
+            if (!finalBatch && id) {
+              const prefix = id.substring(0, 3);
+              if (/^[A-Z]\d{2}$/.test(prefix)) {
+                finalBatch = prefix;
+              }
+            }
+            if (!finalBatch) finalBatch = majorityBatch;
+            finalBatch = finalBatch.toUpperCase();
 
             if (!id) {
               failCount++;
@@ -290,6 +332,7 @@ export const uploadStudents = async (req: any, res: Response) => {
                   branch,
                   year: finalYear,
                   section: finalSection,
+                  batch: finalBatch,
                   phone,
                   updatedAt: new Date(),
                 },
@@ -302,6 +345,7 @@ export const uploadStudents = async (req: any, res: Response) => {
                   branch,
                   year: finalYear,
                   section: finalSection,
+                  batch: finalBatch,
                   phone,
                 },
               });
@@ -449,12 +493,7 @@ export const exportStudentsSelective = async (
     if (year) where.year = String(year).toUpperCase();
     if (gender) where.gender = String(gender);
     if (section) where.section = String(section).toUpperCase();
-    if (batch) {
-      where.username = {
-        startsWith: String(batch).toUpperCase(),
-        mode: "insensitive",
-      };
-    }
+    if (batch) where.batch = String(batch).toUpperCase();
 
     const students = await prisma.studentProfile.findMany({
       where,
@@ -478,6 +517,7 @@ export const exportStudentsSelective = async (
       "branch",
       "year",
       "section",
+      "batch",
       "roomno",
       "isPresentInCampus",
     ];

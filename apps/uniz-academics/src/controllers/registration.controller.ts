@@ -68,6 +68,21 @@ export const initSemester = async (
             },
           });
 
+          // Infer batch from AY (e.g. AY 2024-25 -> 24)
+          let inferredBatch = "";
+          const ayMatch = academicSemester.match(/AY\s*(\d{4})/i);
+          if (ayMatch) {
+            const startYear = parseInt(ayMatch[1]);
+            const yearIndex = parseInt(yearSuffix.substring(1)); // E1 -> 1
+            if (yearSuffix.startsWith("E")) {
+              const entryYear = startYear - (yearIndex - 1);
+              inferredBatch = "O" + entryYear.toString().substring(2);
+            } else if (yearSuffix.startsWith("P")) {
+              const entryYear = startYear - (yearIndex - 1);
+              inferredBatch = "P" + entryYear.toString().substring(2);
+            }
+          }
+
           if (subjects.length > 0) {
             await prisma.branchAllocation.createMany({
               data: subjects.map(
@@ -77,6 +92,7 @@ export const initSemester = async (
                     subjectId: s.id,
                     semesterId: semester.id,
                     academicYear: yearSuffix,
+                    batch: inferredBatch,
                     isApproved: false,
                   }) as any,
               ),
