@@ -100,20 +100,40 @@ const mapFacultyProfile = (profile: any) => ({
   created_at: profile.createdAt,
 });
 
-const mapAdminProfile = (profile: any) => ({
-  id: profile.id,
-  username: profile.username,
-  name: profile.name,
-  email: profile.email,
-  contact: profile.contact,
-  profile_url: profile.profileUrl,
-  role: profile.role,
-  bio: profile.bio || "",
-  designation: profile.designation || "",
-  department: profile.department || "",
-  created_at: profile.createdAt,
-  updated_at: profile.updatedAt,
-});
+const mapAdminProfile = (profile: any) => {
+  return {
+    id: profile.id,
+    username: profile.username,
+    name: profile.name,
+    email: profile.email,
+    profile_url: profile.profileUrl,
+    role: profile.role,
+    department: profile.department,
+    designation: profile.designation,
+    bio: profile.bio,
+    created_at: profile.createdAt,
+    updated_at: profile.updatedAt,
+  };
+};
+
+export const getAvailableBatches = async (req: Request, res: Response) => {
+  try {
+    // Collect first 3 chars of all students and unique them.
+    const students = await prisma.studentProfile.findMany({
+      select: { username: true },
+    });
+    const batches = [
+      ...new Set(students.map((s) => s.username.substring(0, 3).toUpperCase())),
+    ]
+      .filter((b) => b.length === 3)
+      .sort();
+    return res.json({ success: true, batches });
+  } catch (e) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch batches" });
+  }
+};
 
 export const getStudentProfile = async (
   req: AuthenticatedRequest,

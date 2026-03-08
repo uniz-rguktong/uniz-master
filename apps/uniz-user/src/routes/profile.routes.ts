@@ -19,6 +19,7 @@ import {
   bulkCreateFaculty,
   bulkUpdateFaculty,
   bulkDeleteFaculty,
+  getAvailableBatches,
 } from "../controllers/profile.controller";
 
 import multer from "multer";
@@ -257,5 +258,6 @@ router.put("/student/status", authMiddleware, updateStudentPresence);
 router.post("/student/status", authMiddleware, updateStudentPresence); // Support legacy POST calls from portal
 
 router.get("/admin/me", authMiddleware, getAdminProfile);
+router.get("/admin/batches", authMiddleware, getAvailableBatches);
 
 export default router;
