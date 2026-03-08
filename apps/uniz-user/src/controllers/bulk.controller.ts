@@ -182,25 +182,34 @@ export const uploadStudents = async (req: any, res: Response) => {
 
     const startTime = Date.now();
 
-    // 1. Upload the raw buffer to Cloudinary for historical backup
+    // 1. Upload the raw buffer to Cloudinary for historical backup (BACKGROUND)
     let cloudinaryUrl = null;
-    try {
-      const FormData = require("form-data");
-      const form = new FormData();
-      form.append("file", req.file.buffer, req.file.originalname);
-      const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-      const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
-      form.append("upload_preset", uploadPreset);
+    const uploadToCloudinary = async (buffer: Buffer, filename: string) => {
+      try {
+        const FormData = require("form-data");
+        const form = new FormData();
+        form.append("file", buffer, filename);
+        const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+        form.append("upload_preset", uploadPreset);
 
-      const resUpload = await axios.post(
-        `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
-        form,
-        { headers: form.getHeaders() },
-      );
-      cloudinaryUrl = resUpload.data.secure_url;
-    } catch (cloudErr) {
-      console.warn("Cloudinary student backup failed:", cloudErr);
-    }
+        const resUpload = await axios.post(
+          `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
+          form,
+          { headers: form.getHeaders() },
+        );
+        return resUpload.data.secure_url;
+      } catch (cloudErr) {
+        console.warn("Cloudinary student backup failed:", cloudErr);
+        return null;
+      }
+    };
+
+    // Fire and forget, we don't hold up the user for a backup
+    uploadToCloudinary(req.file.buffer, req.file.originalname).then((url) => {
+      cloudinaryUrl = url;
+      // Update job if needed, but for now we just let it be
+    });
 
     // 2. PRE-SCAN: Identify Majority Batch
     const prefixes: Record<string, number> = {};
