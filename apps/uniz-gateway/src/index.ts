@@ -236,7 +236,12 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
   }
 
   // GET Cache Lookup + Fetch
-  if (req.method === "GET" && req.headers["cache-control"] !== "no-cache") {
+  const isExcluded = req.url.includes("progress") || req.url.includes("status");
+  if (
+    req.method === "GET" &&
+    !isExcluded &&
+    req.headers["cache-control"] !== "no-cache"
+  ) {
     try {
       const cached = await redis.get(cacheKey);
       if (cached) {
