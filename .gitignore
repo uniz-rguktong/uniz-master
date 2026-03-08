@@ -42,4 +42,5 @@ secrets.env
 secrets.yaml
 !secrets.yaml.template
 infra/core-infra/test_output/
-node_modulesapps/ornate/src/lib/generated/
+node_modules
+apps/ornate/src/lib/generated/
