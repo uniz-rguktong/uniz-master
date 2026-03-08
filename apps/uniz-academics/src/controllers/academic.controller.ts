@@ -11,7 +11,16 @@ const GATEWAY_URL = (
     : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
 ).replace(/\/$/, "");
 
+const USER_SERVICE_URL = (
+  (process.env.DOCKER_ENV === "true"
+    ? "http://uniz-user-service:3002"
+    : process.env.USER_SERVICE_URL) || "http://localhost:3002"
+).replace(/\/$/, "");
+
 const getHeaders = (token: string) => ({ headers: { Authorization: token } });
+const getInternalHeaders = () => ({
+  headers: { "x-internal-secret": process.env.INTERNAL_SECRET || "uniz-core" },
+});
 
 import { mapGradeToPoint, getGpaDialogue } from "../utils/helpers.util";
 import { randomUUID } from "crypto";
@@ -1656,7 +1665,7 @@ export const getGradesTemplate = async (
       }));
     } else {
       const profilesRes = await axios.post(
-        `${GATEWAY_URL}/profile/student/search`,
+        `${USER_SERVICE_URL}/profile/student/search`,
         {
           branch:
             branch && String(branch).toUpperCase() !== "ALL"
@@ -1666,9 +1675,12 @@ export const getGradesTemplate = async (
             !batch || String(batch).toUpperCase() === "ALL" ? year : undefined,
           batch:
             batch && String(batch).toUpperCase() !== "ALL" ? batch : undefined,
-          limit: 10000, // High limit for all students
+          limit: 10000,
         },
-        getHeaders(token!),
+        {
+          ...getHeaders(token!),
+          timeout: 60000, // 60s timeout for heavy bulk searches
+        },
       );
       students = profilesRes.data.students || [];
     }
@@ -1891,7 +1903,7 @@ export const getAttendanceTemplate = async (
 
   try {
     const profilesRes = await axios.post(
-      `${GATEWAY_URL}/profile/student/search`,
+      `${USER_SERVICE_URL}/profile/student/search`,
       {
         branch:
           branch && String(branch).toUpperCase() !== "ALL" ? branch : undefined,
@@ -1901,7 +1913,10 @@ export const getAttendanceTemplate = async (
           batch && String(batch).toUpperCase() !== "ALL" ? batch : undefined,
         limit: 10000,
       },
-      getHeaders(token!),
+      {
+        ...getHeaders(token!),
+        timeout: 60000, // 60s timeout for heavy bulk searches
+      },
     );
 
     const students = profilesRes.data.students || [];
