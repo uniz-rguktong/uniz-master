@@ -102,12 +102,17 @@ export default function StudentDetails() {
     username: string,
     currentSuspendedStatus: boolean,
   ) => {
-    if (
-      !window.confirm(
-        `${currentSuspendedStatus ? "Restore" : "Suspend"} access for ${username}?`,
-      )
-    )
-      return;
+    setSuspensionConfirm({
+      open: true,
+      username,
+      currentStatus: currentSuspendedStatus,
+    });
+  };
+
+  const confirmSuspensionAction = async () => {
+    const { username, currentStatus: currentSuspendedStatus } = suspensionConfirm;
+    setSuspensionConfirm((prev) => ({ ...prev, open: false }));
+
     setIsActionLoading(username + "_suspend");
     const token = localStorage.getItem("admin_token");
     try {
@@ -149,6 +154,13 @@ export default function StudentDetails() {
   const [selectedStudentName, setSelectedStudentName] = useState("");
   const [selectedStudentId, setSelectedStudentId] = useState("");
   const [performanceData, setPerformanceData] = useState<any>(null);
+
+  // Suspension Modal State
+  const [suspensionConfirm, setSuspensionConfirm] = useState<{
+    open: boolean;
+    username: string;
+    currentStatus: boolean;
+  }>({ open: false, username: "", currentStatus: false });
 
   const MOCK_PERFORMANCE_DATA = {
     grades: [
@@ -658,6 +670,38 @@ export default function StudentDetails() {
           </div>
         )}
       </div>
+
+      {suspensionConfirm.open && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-sm rounded-[24px] p-8 shadow-2xl border border-white animate-in zoom-in-95 duration-300">
+            <div className={`w-16 h-16 ${suspensionConfirm.currentStatus ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'} rounded-2xl flex items-center justify-center mb-6`}>
+              {suspensionConfirm.currentStatus ? <RotateCcw size={28} /> : <ShieldOff size={28} />}
+            </div>
+
+            <h3 className="text-xl font-bold text-slate-900 mb-2">
+              {suspensionConfirm.currentStatus ? "Restore Access?" : "Suspend Account?"}
+            </h3>
+            <p className="text-sm text-slate-500 mb-8 leading-relaxed">
+              Are you sure you want to {suspensionConfirm.currentStatus ? "restore" : "suspend"} the account for <span className="font-bold text-slate-900">@{suspensionConfirm.username}</span>? This action can be reversed later.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setSuspensionConfirm(prev => ({ ...prev, open: false }))}
+                className="flex-1 py-4 bg-slate-50 text-slate-500 font-bold text-[10px] uppercase tracking-widest rounded-xl hover:bg-slate-100 transition-all active:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmSuspensionAction}
+                className={`flex-[2] py-4 ${suspensionConfirm.currentStatus ? 'bg-emerald-600' : 'bg-red-600'} text-white font-bold text-[10px] uppercase tracking-widest rounded-xl shadow-lg transition-all active:scale-95`}
+              >
+                Yes, {suspensionConfirm.currentStatus ? "Restore" : "Suspend"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {performanceModalOpen && (
         <StudentPerformanceModal

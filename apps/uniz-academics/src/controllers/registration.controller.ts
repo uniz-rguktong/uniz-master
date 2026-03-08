@@ -152,19 +152,12 @@ export const deleteSemester = async (
   const { id } = req.params;
 
   try {
-    // 1. Delete associated registrations, allocations and seating first (Cascade)
+    // 1. Delete associated registrations and allocations first (Cascade)
     await prisma.registration.deleteMany({ where: { semesterId: id } });
     await prisma.branchAllocation.deleteMany({ where: { semesterId: id } });
-    await prisma.seatingArrangement.deleteMany({ where: { semesterId: id } });
 
-    // 2. Delete the semester record (using deleteMany to avoid crash if record is already missing)
-    const result = await prisma.academicSemester.deleteMany({ where: { id } });
-
-    if (result.count === 0) {
-      return res
-        .status(404)
-        .json({ error: "Semester not found or already deleted" });
-    }
+    // 2. Delete the semester record
+    await prisma.academicSemester.delete({ where: { id } });
 
     res.json({ success: true, message: "Semester deleted successfully" });
   } catch (error) {

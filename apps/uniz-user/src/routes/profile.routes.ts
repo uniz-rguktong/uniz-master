@@ -5,7 +5,6 @@ import {
   adminUpdateStudentProfile,
   getAdminProfile,
   getFacultyProfile,
-  getFacultyProfileByAdmin,
   searchStudents,
   createFacultyProfile,
   updateStudentPresence,
@@ -247,11 +246,6 @@ router.put("/admin/faculty/bulk-update", authMiddleware, bulkUpdateFaculty);
 router.delete("/admin/faculty/bulk-delete", authMiddleware, bulkDeleteFaculty);
 router.put("/admin/faculty/:username", authMiddleware, updateFacultyProfile);
 router.delete("/admin/faculty/:username", authMiddleware, deleteFacultyProfile);
-router.get(
-  "/admin/faculty/:username",
-  authMiddleware,
-  getFacultyProfileByAdmin,
-);
 router.put("/faculty/me/update", authMiddleware, updateFacultyProfileSelf);
 router.put("/admin/me/update", authMiddleware, updateAdminProfile);
 router.put(

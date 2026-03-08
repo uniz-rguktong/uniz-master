@@ -15,6 +15,7 @@ import {
   Layout,
   RefreshCcw,
   Edit3,
+  Coffee,
 } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
 import {
@@ -438,6 +439,25 @@ export default function UnifiedAcademicManager() {
                 </div>
               </div>
             ))}
+            {semesters.length === 0 && (
+              <div className="col-span-full py-24 bg-white rounded-xl border-dashed border-2 border-slate-100 p-12 text-center animate-in fade-in zoom-in-95 duration-700">
+                <div className="w-24 h-24 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-white shadow-none">
+                  <Coffee size={40} strokeWidth={2.5} />
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight italic">
+                  Relaxation levels are dangerously high.
+                </h3>
+                <p className="text-slate-500 font-medium max-w-md mx-auto mb-10 leading-relaxed">
+                  Campus vibes: 100% chill. Students are relaxing… but don't worry, semester registration is loading to take care of that.
+                </p>
+                <button
+                  onClick={() => setShowNewSemModal(true)}
+                  className="px-10 py-5 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-black transition-all active:scale-95 shadow-none"
+                >
+                  Initiate New Rollout
+                </button>
+              </div>
+            )}
           </div>
         )}
 

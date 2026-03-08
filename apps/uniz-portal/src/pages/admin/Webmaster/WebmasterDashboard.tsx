@@ -14,7 +14,7 @@ import {
   Lock,
   Search,
 } from "lucide-react";
-import ProfilePopup from "./ProfilePopup";
+import ProfilePopup from "../ProfilePopup";
 import SecuritySection from "./SecuritySection";
 import WebmasterOverview from "./WebmasterOverview";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -64,7 +64,7 @@ export default function WebmasterDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const username = localStorage.getItem("username") || "Webmaster";
-  const initials = username[0]?.toUpperCase() ?? "W";
+  const firstName = username.split(" ")[0];
 
   // Fetch profile on mount
   useEffect(() => {
@@ -325,7 +325,7 @@ export default function WebmasterDashboard() {
                 {profilePhoto ? (
                   <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
                 ) : (
-                  <span className="text-slate-600 font-bold text-[11px]">{initials}</span>
+                  <span className="text-slate-600 font-bold text-[10px] leading-tight text-center px-1 truncate">{firstName}</span>
                 )}
               </button>
               {isSidebarOpen && (
@@ -372,8 +372,8 @@ export default function WebmasterDashboard() {
                   alt=""
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-bold text-sm">
-                  {initials}
+                <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-bold text-[10px] leading-tight text-center px-1 truncate">
+                  {firstName}
                 </div>
               )}
             </button>
