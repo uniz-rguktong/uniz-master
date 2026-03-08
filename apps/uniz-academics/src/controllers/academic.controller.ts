@@ -1631,10 +1631,9 @@ export const getGradesTemplate = async (
   const { branch, year, semesterId, subjectCode, remedialsOnly, batch } =
     req.query;
   const token = req.headers.authorization;
-
   try {
     let students: any[] = [];
-    const headers = [
+    const headers: any[][] = [
       [
         "Student ID",
         "Student Name",
@@ -1645,12 +1644,21 @@ export const getGradesTemplate = async (
       ],
     ];
 
-    if (remedialsOnly === "true" && subjectCode) {
+    const subjectCodeStr = String(subjectCode || "").toUpperCase();
+    const isAllSubjects = !subjectCode || subjectCodeStr === "ALL";
+
+    console.log(
+      `[Academics] Grades Template: branch=${branch}, year=${year}, semesterId=${semesterId}, subjectCode=${subjectCode}, remedialsOnly=${remedialsOnly}`,
+    );
+
+    if (remedialsOnly === "true" && !isAllSubjects) {
       const subject = await prisma.subject.findUnique({
-        where: { code: subjectCode as string },
+        where: { code: subjectCodeStr },
       });
-      if (!subject)
+      if (!subject) {
+        console.warn(`[Academics] Subject not found: ${subjectCodeStr}`);
         return res.status(404).json({ message: "Subject not found" });
+      }
 
       const failures = await prisma.grade.findMany({
         where: {
@@ -1663,6 +1671,7 @@ export const getGradesTemplate = async (
         username: f.studentId,
         name: "REMEDIAL STUDENT",
       }));
+      console.log(`[Academics] Found ${students.length} remedial students.`);
     } else {
       const profilesRes = await axios.post(
         `${USER_SERVICE_URL}/profile/student/search`,
@@ -1672,17 +1681,22 @@ export const getGradesTemplate = async (
               ? branch
               : undefined,
           year:
-            !batch || String(batch).toUpperCase() === "ALL" ? year : undefined,
+            !batch || String(batch).toUpperCase() === "ALL"
+              ? year && String(year).toUpperCase() !== "ALL"
+                ? year
+                : undefined
+              : undefined,
           batch:
             batch && String(batch).toUpperCase() !== "ALL" ? batch : undefined,
           limit: 10000,
         },
         {
           ...getHeaders(token!),
-          timeout: 60000, // 60s timeout for heavy bulk searches
+          timeout: 60000,
         },
       );
       students = profilesRes.data.students || [];
+      console.log(`[Academics] Found ${students.length} students via search.`);
     }
 
     const subjects = await prisma.subject.findMany({
@@ -1692,24 +1706,28 @@ export const getGradesTemplate = async (
             ? (branch as string)
             : undefined,
         semester: (semesterId as string) || undefined,
-        code: { contains: (year as string) || undefined, mode: "insensitive" },
+        code:
+          year && String(year).toUpperCase() !== "ALL"
+            ? { contains: year as string, mode: "insensitive" }
+            : undefined,
       },
     });
+    console.log(`[Academics] Found ${subjects.length} matching subjects.`);
 
-    const activeSubjects = subjectCode
-      ? subjects.filter(
+    const activeSubjects = isAllSubjects
+      ? subjects
+      : subjects.filter(
           (s) =>
-            s.code.toUpperCase() === (subjectCode as string).toUpperCase() ||
-            s.code
-              .toUpperCase()
-              .includes((subjectCode as string).toUpperCase()),
-        )
-      : subjects;
+            s.code.toUpperCase() === subjectCodeStr ||
+            s.code.toUpperCase().includes(subjectCodeStr),
+        );
+    console.log(
+      `[Academics] Processing template for ${students.length} students across ${activeSubjects.length} subjects.`,
+    );
 
     students.forEach((s: any) => {
       activeSubjects.forEach((sub) => {
         const rowSemId = (semesterId as string) || sub.semester;
-        // Standardize to YEAR-SEM-ID if not already prefixed
         const finalSemId =
           rowSemId && year && !rowSemId.includes(String(year).toUpperCase())
             ? `${String(year).toUpperCase()}-${rowSemId.toUpperCase()}`
@@ -1719,6 +1737,7 @@ export const getGradesTemplate = async (
       });
     });
 
+    console.log(`[Academics] Final Template Rows: ${headers.length - 1}`);
     return generateExcel(headers, `Grades_Template_${year}_${branch}`, res);
   } catch (e: any) {
     return res.status(500).json({
@@ -1902,25 +1921,7 @@ export const getAttendanceTemplate = async (
   const token = req.headers.authorization;
 
   try {
-    const profilesRes = await axios.post(
-      `${USER_SERVICE_URL}/profile/student/search`,
-      {
-        branch:
-          branch && String(branch).toUpperCase() !== "ALL" ? branch : undefined,
-        year:
-          !batch || String(batch).toUpperCase() === "ALL" ? year : undefined,
-        batch:
-          batch && String(batch).toUpperCase() !== "ALL" ? batch : undefined,
-        limit: 10000,
-      },
-      {
-        ...getHeaders(token!),
-        timeout: 60000, // 60s timeout for heavy bulk searches
-      },
-    );
-
-    const students = profilesRes.data.students || [];
-    const headers = [
+    const headers: any[][] = [
       [
         "Student ID",
         "Student Name",
@@ -1932,6 +1933,34 @@ export const getAttendanceTemplate = async (
       ],
     ];
 
+    console.log(
+      `[Academics] Attendance Template: branch=${branch}, year=${year}, semesterId=${semesterId}, batch=${batch}`,
+    );
+
+    const profilesRes = await axios.post(
+      `${USER_SERVICE_URL}/profile/student/search`,
+      {
+        branch:
+          branch && String(branch).toUpperCase() !== "ALL" ? branch : undefined,
+        year:
+          !batch || String(batch).toUpperCase() === "ALL"
+            ? year && String(year).toUpperCase() !== "ALL"
+              ? year
+              : undefined
+            : undefined,
+        batch:
+          batch && String(batch).toUpperCase() !== "ALL" ? batch : undefined,
+        limit: 10000,
+      },
+      {
+        ...getHeaders(token!),
+        timeout: 60000, // 60s timeout for heavy bulk searches
+      },
+    );
+
+    const students = profilesRes.data.students || [];
+    console.log(`[Academics] Found ${students.length} students via search.`);
+
     const subjects = await prisma.subject.findMany({
       where: {
         department:
@@ -1939,9 +1968,16 @@ export const getAttendanceTemplate = async (
             ? (branch as string)
             : undefined,
         semester: (semesterId as string) || undefined,
-        code: { contains: (year as string) || undefined, mode: "insensitive" },
+        code:
+          year && String(year).toUpperCase() !== "ALL"
+            ? { contains: year as string, mode: "insensitive" }
+            : undefined,
       },
     });
+    console.log(`[Academics] Found ${subjects.length} subjects.`);
+    console.log(
+      `[Academics] Building attendance template for ${students.length} students x ${subjects.length} subjects.`,
+    );
 
     students.forEach((s: any) => {
       subjects.forEach((sub) => {
@@ -1966,9 +2002,11 @@ export const getAttendanceTemplate = async (
 
     return generateExcel(headers, `Attendance_Template_${year}_${branch}`, res);
   } catch (e: any) {
-    return res
-      .status(500)
-      .json({ message: "Unable to generate the attendance template." });
+    console.error("[Academics] Attendance Template Error:", e);
+    return res.status(500).json({
+      message:
+        "An internal error occurred while generating the template. Please try again.",
+    });
   }
 };
 
