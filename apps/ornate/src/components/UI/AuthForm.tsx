@@ -30,13 +30,13 @@ const LIME_BORDER = 'rgba(163,255,18,0.25)';
 
 /* ─── Input / label base classes ──────────────────────────────────── */
 const inputBase =
-    'w-full bg-black/40 text-white text-sm sm:text-base ' +
+    'w-full bg-black/40 text-white text-xs sm:text-base ' +
     'placeholder-white/45 focus:outline-none transition-all duration-200 ' +
-    'border border-white/15 px-3 py-2 sm:py-3 ' +
+    'border border-white/15 px-2.5 py-1.5 sm:py-3 ' +
     'focus:border-[#A3FF12]/60 focus:bg-[#A3FF12]/5 focus:shadow-[0_0_0_2px_rgba(163,255,18,0.10)]';
 
 const labelBase =
-    'block mb-1 sm:mb-1.5 text-[9px] sm:text-xs font-bold tracking-[0.10em] sm:tracking-[0.18em] uppercase';
+    'block mb-0.5 sm:mb-1.5 text-[8px] sm:text-xs font-bold tracking-[0.10em] sm:tracking-[0.18em] uppercase';
 
 /* ─── Corner HUD brackets ─────────────────────────────────────────── */
 function Corners({ size = 'w-4 h-4' }: { size?: string }) {
@@ -75,7 +75,7 @@ function ShinyButton({ loading, label }: { loading: boolean; label: string }) {
             disabled={loading}
             onMouseMove={handleMouseMove}
             suppressHydrationWarning
-            className="relative w-full flex items-center justify-between px-6 py-3 sm:py-3.5
+            className="relative w-full flex items-center justify-between px-4 py-2 sm:py-3.5
                        overflow-hidden transition-all duration-300 cursor-pointer shadow-[0_0_20px_rgba(163,255,18,0.2)] sm:shadow-none
                        disabled:opacity-40 disabled:cursor-not-allowed group border border-[#A3FF12]/60 sm:border-[#A3FF12]/25"
             style={{
@@ -98,9 +98,9 @@ function ShinyButton({ loading, label }: { loading: boolean; label: string }) {
                     background: `linear-gradient(135deg, ${LIME20}, transparent 60%)`,
                 }} />
 
-            <span className="relative z-10 text-[11px] font-black tracking-[0.3em] uppercase"
+            <span className="relative z-10 text-[9px] sm:text-[11px] font-black tracking-[0.2em] sm:tracking-[0.3em] uppercase"
                 style={{ color: LIME }}>
-                {loading ? 'Initializing Mission...' : label}
+                {loading ? 'Initializing...' : label}
             </span>
 
             <span className="relative z-10 flex items-center gap-2" style={{ color: LIME }}>
@@ -120,11 +120,26 @@ function ShinyButton({ loading, label }: { loading: boolean; label: string }) {
 /* ─── Field components ────────────────────────────────────────────── */
 function Field({ label, id, type, placeholder, autoFocus, disabled }:
     { label: string; id: string; type: string; placeholder: string; autoFocus?: boolean; disabled?: boolean }) {
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (!autoFocus) return;
+        // Only auto-focus on non-touch (desktop) devices to prevent the mobile
+        // keyboard from popping up immediately when the form mounts.
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        if (!isTouchDevice && inputRef.current) {
+            // Small delay to let the DOM settle before focusing
+            const t = setTimeout(() => inputRef.current?.focus(), 50);
+            return () => clearTimeout(t);
+        }
+    }, [autoFocus]);
+
     return (
         <div className="flex flex-col">
             <label htmlFor={id} className={labelBase} style={{ color: LIME }}>{label}</label>
-            <input id={id} type={type} required suppressHydrationWarning
-                placeholder={placeholder} autoFocus={autoFocus} disabled={disabled}
+            <input ref={inputRef} id={id} type={type} required suppressHydrationWarning
+                tabIndex={-1}
+                placeholder={placeholder} disabled={disabled}
                 className={`${inputBase} ${disabled ? 'opacity-50 cursor-not-allowed bg-white/5' : ''}`} />
         </div>
     );
@@ -137,6 +152,7 @@ function SelectField({ label, id, options, placeholder }:
             <label htmlFor={id} className={labelBase} style={{ color: LIME }}>{label}</label>
             <div className="relative">
                 <select id={id} required suppressHydrationWarning defaultValue=""
+                    tabIndex={-1}
                     className={`${inputBase} appearance-none cursor-pointer pr-8`}>
                     <option value="" disabled className="bg-neutral-950 text-white/40">{placeholder}</option>
                     {options.map(o => (
@@ -281,15 +297,15 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
                 style={{ background: `linear-gradient(to right, transparent, ${LIME}, transparent)` }} />
 
             {/* ── HEADER STRIP ──────────────────────────────────────── */}
-            <div className="relative flex items-center justify-between gap-2 sm:gap-6 px-4 sm:px-6 py-3"
+            <div className="relative flex items-center justify-between gap-2 sm:gap-6 px-3 sm:px-6 py-2 sm:py-3"
                 style={{ background: 'rgba(0,0,0,0.80)', borderBottom: `1px solid ${LIME_BORDER}` }}>
 
                 {/* mission badge */}
                 <div className="flex items-center gap-3 flex-shrink-0">
                     <div className="flex flex-col">
-                        <span className="text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.4em] font-bold"
+                        <span className="text-[8px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.4em] font-bold"
                             style={{ color: `${LIME}` }}>◈ ORNATE 2026</span>
-                        <span className="text-sm sm:text-base font-black tracking-[0.1em] sm:tracking-[0.15em] text-white uppercase leading-none mt-1 sm:mt-0">
+                        <span className="text-xs sm:text-base font-black tracking-[0.1em] sm:tracking-[0.15em] text-white uppercase leading-none mt-0.5 sm:mt-0">
                             {isLogin ? 'Access Terminal' : 'Crew Enlistment'}
                         </span>
                     </div>
@@ -317,7 +333,7 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
                         return (
                             <button key={lbl} type="button" suppressHydrationWarning
                                 onClick={() => setIsLogin(i === 0)}
-                                className="px-3 sm:px-5 py-2 sm:py-1.5 text-[9px] sm:text-xs font-black tracking-[0.15em] sm:tracking-[0.2em]
+                                className="px-2.5 sm:px-5 py-1.5 sm:py-1.5 text-[8px] sm:text-xs font-black tracking-[0.12em] sm:tracking-[0.2em]
                                            uppercase transition-all duration-250 cursor-pointer"
                                 style={{
                                     background: active ? LIME20 : 'transparent',
@@ -331,14 +347,14 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
             </div>
 
             {/* ── GLASS BODY ────────────────────────────────────────── */}
-            <div className="px-6 pb-5 pt-4 backdrop-blur-xl"
+            <div className="px-3 sm:px-6 pb-3 sm:pb-5 pt-3 sm:pt-4 backdrop-blur-xl"
                 style={{
                     background: 'rgba(0,0,0,0.72)',
                     border: `1px solid ${LIME06}`,
                     borderTop: 'none',
                 }}>
 
-                <form onSubmit={handleSubmit} suppressHydrationWarning className="space-y-3">
+                <form onSubmit={handleSubmit} suppressHydrationWarning className="space-y-2 sm:space-y-3">
 
                     {error && (
                         <div className="flex items-center gap-2 px-3 py-2 text-xs border"
@@ -376,7 +392,7 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
                         </div>
                     ) : (
                         /* ── REGISTER — responsive rows ───────────────── */
-                        <div className="space-y-2 sm:space-y-4">
+                        <div className="space-y-1.5 sm:space-y-4">
 
                             {/* ── ROW 1: Identity fields ─────────────────── */}
                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
@@ -430,7 +446,7 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
                 </form>
 
                 {/* footer */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 text-center sm:text-left">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-4 mt-2 sm:mt-4 text-center sm:text-left">
                     <p className="text-[10px] sm:text-xs tracking-[0.12em] text-white/40 uppercase">
                         Ornate&apos;26 · Mission Control · Secured Channel
                     </p>

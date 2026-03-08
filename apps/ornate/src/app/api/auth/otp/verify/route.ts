@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 
     // Mark email as verified for 30 minutes in Redis
     if (redis) {
-      await redis.set(`verified:${emailLower}`, "true", "EX", 1800);
+      await redis.set(`verified:${emailLower}`, "true", { ex: 1800 });
       await redis.del(`otp:${emailLower}`);
     }
 

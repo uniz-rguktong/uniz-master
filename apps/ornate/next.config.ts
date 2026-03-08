@@ -61,11 +61,10 @@ const nextConfig: NextConfig = {
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev https://*.cloudinary.com",
-              "media-src 'self' blob: https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev https://*.cloudinary.com",
-              "worker-src 'self' blob:", // Required by Three.js
-              "connect-src 'self' https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev https://*.cloudinary.com",
-              "frame-src 'self' https://challenges.cloudflare.com",
+              "img-src 'self' data: blob: https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev",
+              "media-src 'self' blob: https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev",
+              "worker-src 'self' blob:", // 'self' = sw.js, blob: = Three.js
+              "connect-src 'self' https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev",
               "frame-ancestors 'none'",
             ].join("; "),
           },
