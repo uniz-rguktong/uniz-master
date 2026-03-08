@@ -29,6 +29,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
   const [loading, setLoading] = useState(false);
   const [uploadId, setUploadId] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
+  const [progress, setProgress] = useState<any>(null);
 
   // Template Parameters
   const [branch, setBranch] = useState("CSE");
@@ -147,7 +148,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
             showToast: false,
           } as any);
           if (res && res.success && res.progress) {
-            // setProgress(res.progress); // Removed UI
+            setProgress(res.progress);
             if (
               res.progress.status === "completed" ||
               res.progress.status === "done" ||
@@ -461,7 +462,29 @@ export default function UploadSection({ type }: { type: UploadType }) {
               </div>
             </div>
           ) : (
-            <div className="p-8 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center h-full shadow-none">
+            <div className="p-8 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center h-full shadow-none relative overflow-hidden">
+              {progress && uploadId && (
+                <div className="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-8 animate-in fade-in duration-300">
+                  <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-none mb-6 animate-bounce">
+                    <Loader2 className="w-10 h-10 animate-spin" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                    Synchronizing...
+                  </h3>
+                  <div className="w-full max-w-xs bg-slate-100 h-3 rounded-full overflow-hidden mb-4 border border-slate-200">
+                    <div
+                      className="bg-blue-600 h-full transition-all duration-700 ease-out"
+                      style={{ width: `${progress.percent || 0}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between w-full max-w-xs text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                    <span>{progress.percent || 0}% Complete</span>
+                    <span>
+                      {progress.processed || 0} / {progress.total || 0} Records
+                    </span>
+                  </div>
+                </div>
+              )}
               <div className="p-5 bg-white rounded-xl shadow-none text-slate-300 mb-8 border border-slate-100">
                 <Info size={32} />
               </div>
