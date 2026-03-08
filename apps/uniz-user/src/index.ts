@@ -24,11 +24,36 @@ app.get("/health", (req, res) => {
 
 import profileRoutes from "./routes/profile.routes";
 import cmsRoutes from "./routes/cms.routes";
-// import botRoutes from "./routes/bot.routes";
+import queueRoutes from "./routes/queue.routes";
+
+// Background Job Worker Trigger (Internal only)
+app.use("/api/queue", queueRoutes);
 
 app.use("/", profileRoutes);
 app.use("/", cmsRoutes);
-// app.use("/bot", botRoutes);
+
+// Startup self-healing: Check for stuck student jobs
+import { processNextStudentBatch } from "./services/bulk-worker.service";
+import { redis } from "./utils/redis.util";
+
+const startWorker = async () => {
+  try {
+    const jobExists = await redis.llen("student:job:queue");
+    if (jobExists > 0) {
+      console.log(
+        `[Bulk] 🔄 Found ${jobExists} stuck student jobs on startup. Resuming...`,
+      );
+      let result;
+      do {
+        result = await processNextStudentBatch();
+      } while (result && result.status === "continued");
+      console.log("[Bulk] All stuck student jobs processed.");
+    }
+  } catch (err) {
+    console.warn("[Bulk] Startup worker check failed:", err);
+  }
+};
+setTimeout(startWorker, 5000);
 
 // 404 Handler
 app.use((req, res) => {
