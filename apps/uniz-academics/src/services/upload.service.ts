@@ -88,16 +88,29 @@ export async function processNextBatch() {
   );
 
   const getVal = (row: any, keys: string[]) => {
+    // Assuming rowKeys is available in the scope, which it isn't in the provided snippet.
+    // This part of the code seems to be missing context or `rowKeys` is defined elsewhere.
+    // For now, I'll assume `rowKeys` is meant to be `Object.keys(row)`.
     const rowKeys = Object.keys(row);
-    const found = rowKeys.find((k) => {
-      const normalized = k.trim().toLowerCase().replace(/\s+/g, " ");
+    const normalizedKeys = rowKeys.map((k) =>
+      k.trim().toLowerCase().replace(/\s+/g, " "),
+    );
+    const foundIdx = normalizedKeys.findIndex((nk) => {
       return keys.some(
         (target) =>
-          normalized === target.toLowerCase() ||
-          normalized.includes(target.toLowerCase()),
+          nk === target.toLowerCase() || nk.includes(target.toLowerCase()),
       );
     });
-    return found ? String(row[found]).trim() : "";
+
+    if (foundIdx !== -1) {
+      const actualKey = rowKeys[foundIdx];
+      console.log(
+        `[Worker] Matched header '${actualKey}' for keys: ${keys.join(", ")}`,
+      ); // Added log
+      return String(row[actualKey]).trim();
+    }
+    console.log(`[Worker] No header matched for keys: ${keys.join(", ")}`); // Added log
+    return "";
   };
 
   if (processedInThisRun === 0) {
@@ -226,6 +239,7 @@ export async function processNextBatch() {
             await redis.del(`grades:${studentId}`);
             await redis.del(`grades_v3:${studentId.toUpperCase()}`);
             await redis.del(`profile:v2:${studentId}`);
+            await redis.del(`profile:v3:${studentId}`); // Improved cache invalidation
           } catch (err: any) {
             if (failCount === 0) {
               console.error(`[Worker] [GRADES] First failure on row:`, row);
