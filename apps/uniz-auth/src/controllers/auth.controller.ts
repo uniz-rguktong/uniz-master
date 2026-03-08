@@ -61,6 +61,27 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
+    const inferDepartment = (uname: string): string => {
+      const parts = uname.toUpperCase().split("_");
+      const commonBranches = [
+        "CSE",
+        "ECE",
+        "ME",
+        "CE",
+        "MME",
+        "CHEM",
+        "EEE",
+        "CIVIL",
+        "MET",
+        "MEC",
+      ];
+      if (parts.length > 1) {
+        const lastPart = parts[parts.length - 1];
+        if (commonBranches.includes(lastPart)) return lastPart;
+      }
+      return "";
+    };
+
     const normalizedUsername = user.username.toUpperCase();
     let department = "";
     try {
@@ -75,20 +96,48 @@ export const login = async (req: Request, res: Response) => {
       ).trim();
 
       const userType = user.role === UserRole.STUDENT ? "student" : "faculty";
-      const userRes = await axios.get(
-        `${USER_SERVICE}/admin/${userType}/${normalizedUsername}`,
-        {
-          headers: { "x-internal-secret": INTERNAL_SECRET },
-        },
+      // Try faculty first, then admin if faculty fails/returns empty for non-students
+      const endpoints =
+        user.role === UserRole.STUDENT
+          ? [`student/${normalizedUsername}`]
+          : [`faculty/${normalizedUsername}`, `admin/${normalizedUsername}`];
+
+      for (const endpoint of endpoints) {
+        try {
+          const userRes = await axios.get(`${USER_SERVICE}/admin/${endpoint}`, {
+            headers: { "x-internal-secret": INTERNAL_SECRET },
+            timeout: 3000,
+          });
+          const data =
+            userRes.data?.student ||
+            userRes.data?.faculty ||
+            userRes.data?.data ||
+            userRes.data;
+          const foundDept = data?.department || data?.branch;
+          if (foundDept) {
+            department = foundDept;
+            break;
+          }
+        } catch (e) {}
+      }
+
+      console.log(
+        `[AUTH-DEBUG] Resolved department from services for ${normalizedUsername}: "${department}"`,
       );
-      department =
-        userRes.data?.[userType]?.department ||
-        userRes.data?.[userType]?.branch ||
-        "";
-    } catch (e) {
+    } catch (e: any) {
       console.warn(
-        `[AUTH] Could not fetch department for ${normalizedUsername}`,
+        `[AUTH] Service-based department resolution failed for ${normalizedUsername}: ${e.message}`,
       );
+    }
+
+    // Fallback: Infer from username if still empty
+    if (!department) {
+      department = inferDepartment(normalizedUsername);
+      if (department) {
+        console.log(
+          `[AUTH-DEBUG] Inferred department from username for ${normalizedUsername}: "${department}"`,
+        );
+      }
     }
 
     const token = signToken({
