@@ -1,6 +1,8 @@
 import { getPublicBestOutgoingStudents } from "@/actions/awardActions";
 import OutgoingStudentsPublicView from "@/components/features/public/OutgoingStudentsPublicView";
 
+export const dynamic = "force-dynamic";
+
 export default async function AwardsPage() {
   const result = await getPublicBestOutgoingStudents();
   const students = result.success
