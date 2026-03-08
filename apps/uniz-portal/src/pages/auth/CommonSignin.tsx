@@ -168,24 +168,27 @@ export default function Signin({ type }: SigninProps) {
         (token || data.success)
       ) {
         localStorage.setItem("faculty_token", token || "");
-        localStorage.setItem("username", username.trim());
+        localStorage.setItem("username", username.trim().toUpperCase());
         localStorage.setItem("role", data.role || "teacher");
+        localStorage.setItem("department", (data as any).department || "");
         setAuth({ is_authnticated: true, type: "faculty" });
         toast.success(`Welcome Professor ${username.trim()}!`);
         navigate("/faculty", { replace: true });
       } else if (type === "admin" && (token || data.success)) {
         localStorage.setItem("admin_token", token);
-        localStorage.setItem("username", username.trim());
+        localStorage.setItem("username", username.trim().toUpperCase());
         localStorage.setItem("admin_role", (data as any).role || "admin");
+        localStorage.setItem("department", (data as any).department || "");
 
         setAuth({ is_authnticated: true, type: "admin" });
-        setAdmin(username.trim());
+        setAdmin(username.trim().toUpperCase());
         toast.success("Welcome back, Admin!");
         setTimeout(() => navigate("/admin", { replace: true }), 100);
       } else if (type === "faculty" && token) {
         localStorage.setItem("faculty_token", token);
-        localStorage.setItem("username", username.trim());
+        localStorage.setItem("username", username.trim().toUpperCase());
         localStorage.setItem("role", (data as any).role);
+        localStorage.setItem("department", (data as any).department || "");
         setAuth({ is_authnticated: true, type: "faculty" });
         toast.success(`Welcome Professor ${username.trim()}!`);
         navigate("/faculty", { replace: true });
