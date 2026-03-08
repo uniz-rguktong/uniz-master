@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
   // --- Performance ---
   compress: true,
 
@@ -63,7 +62,7 @@ const nextConfig: NextConfig = {
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev",
               "media-src 'self' blob: https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev",
-              "worker-src blob:", // Required by Three.js
+              "worker-src 'self' blob:", // 'self' = sw.js, blob: = Three.js
               "connect-src 'self' https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev",
               "frame-ancestors 'none'",
             ].join("; "),
@@ -75,4 +74,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-// Force Rebuild: Build-time asset URL injection phase.
