@@ -1,21 +1,8 @@
-/**
- * ==============================================================================
- * UNIZ MICROSERVICES - USER MANAGEMENT ENGINE
- * ==============================================================================
- * Entry point for the User Service. Responsible for profile management,
- * academic record retrieval, and inter-service identity propagation.
- * ==============================================================================
- */
-
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
-
-// ------------------------------------------------------------------------------
-// 1. INITIALIZATION & MIDDLEWARE
-// ------------------------------------------------------------------------------
 
 dotenv.config();
 
@@ -35,10 +22,6 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", service: "uniz-user-service" });
 });
 
-// ------------------------------------------------------------------------------
-// 2. ROUTING & GATEWAYS
-// ------------------------------------------------------------------------------
-
 import profileRoutes from "./routes/profile.routes";
 import cmsRoutes from "./routes/cms.routes";
 // import botRoutes from "./routes/bot.routes";
@@ -46,10 +29,6 @@ import cmsRoutes from "./routes/cms.routes";
 app.use("/", profileRoutes);
 app.use("/", cmsRoutes);
 // app.use("/bot", botRoutes);
-
-// ------------------------------------------------------------------------------
-// 3. ERROR ORCHESTRATION
-// ------------------------------------------------------------------------------
 
 // 404 Handler
 app.use((req, res) => {
@@ -61,19 +40,11 @@ app.use((req, res) => {
   });
 });
 
-// ------------------------------------------------------------------------------
-// 4. SERVER BOOTSTRAP
-// ------------------------------------------------------------------------------
-
 const server = app.listen(PORT, () => {
   console.log(`User Service running on port ${PORT}`);
   server.keepAliveTimeout = 65000;
   server.headersTimeout = 66000;
 });
-
-// ------------------------------------------------------------------------------
-// 5. SYSTEM SIGNAL HANDLERS (GRACEFUL TERMINATION)
-// ------------------------------------------------------------------------------
 
 // Graceful Shutdown Handler
 process.on("SIGTERM", async () => {

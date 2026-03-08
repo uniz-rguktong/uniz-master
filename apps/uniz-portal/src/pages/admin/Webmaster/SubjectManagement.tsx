@@ -237,44 +237,76 @@ export default function SubjectManagement() {
         </div>
       ) : subjects.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {subjects.map((sub, idx) => (
               <div
                 key={idx}
-                className="bg-white border border-slate-100 rounded-xl p-4 flex flex-col h-full group hover:border-blue-100 transition-all shadow-none relative"
+                className="bg-white border border-slate-100 rounded-xl p-7 hover:translate-y-[-2px] hover:border-blue-100 transition-all group overflow-hidden relative shadow-none"
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-8 h-8 bg-blue-50 rounded-lg text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                    <BookText size={16} />
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-50 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300 shadow-none">
+                    <BookText size={20} />
                   </div>
-                  <span className="px-2 py-0.5 bg-slate-50 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400 border border-slate-100">
+                  <div className="px-3 py-1.5 bg-slate-50 rounded-xl text-[9px] font-semibold uppercase tracking-widest text-slate-400 border border-slate-100 shadow-none">
                     {sub.code}
-                  </span>
-                </div>
-
-                <h3 className="text-[13px] font-bold text-slate-900 leading-snug mb-3 min-h-[40px] line-clamp-2">
-                  {sub.name}
-                </h3>
-
-                <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-50">
-                  <div className="text-[8px] font-black uppercase tracking-widest text-slate-400">
-                    {sub.department} • {sub.credits}C
                   </div>
-                  <div className="flex gap-2">
+                  <div className="ml-auto flex gap-1 transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                     <button
                       onClick={() => handleEditClick(sub)}
-                      className="p-1.5 text-slate-300 hover:text-blue-600 transition-colors"
-                      title="Edit"
+                      className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
                     >
                       <Edit3 size={14} />
                     </button>
                     <button
                       onClick={() => handleDeleteSubject(sub.id)}
-                      className="p-1.5 text-slate-300 hover:text-red-500 transition-colors"
-                      title="Delete"
+                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
                     >
                       <Trash2 size={14} />
                     </button>
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 tracking-tight mb-2 leading-tight">
+                  {sub.name}
+                </h3>
+
+                <div className="grid grid-cols-2 gap-4 mt-8">
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest leading-none">
+                      Dept
+                    </p>
+                    <p className="font-semibold text-slate-700 text-xs flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-600/20 group-hover:bg-blue-600 transition-colors"></div>
+                      {sub.department}
+                    </p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest leading-none">
+                      Term
+                    </p>
+                    <p className="font-semibold text-slate-700 text-xs flex items-center gap-2">
+                      <Calendar size={13} className="text-slate-400" />{" "}
+                      {sub.semester}
+                    </p>
+                  </div>
+                  <div className="col-span-2 mt-4 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
+                        Credits
+                      </p>
+                      <span className="text-xs font-semibold text-blue-600">
+                        {sub.credits} Units
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      {[...Array(Number(sub.credits))].map((_, i) => (
+                        <div
+                          key={i}
+                          className="flex-1 h-1 rounded-xl bg-slate-100 group-hover:bg-blue-600/10 transition-colors overflow-hidden shadow-none"
+                        >
+                          <div className="w-full h-full bg-blue-600 translate-x-0 group-hover:translate-x-0 transition-transform duration-500"></div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
