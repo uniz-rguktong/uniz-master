@@ -104,8 +104,10 @@ git reset --hard origin/main
   # ----------------------------------------------------------------------------
   # Crucial: This prevent K8s from reverting rolling updates of services 
   # that were NOT rebuilt in this cycle by locking their current image tags.
+  # We clear the images block first to avoid duplicates.
   
   echo "[Infra] Preserving current image tags..."
+  sed -i '/^images:/,$d' infra/core-infra/kubernetes/base/kustomization.yaml
   echo "images:" >> infra/core-infra/kubernetes/base/kustomization.yaml
   for s in "${ALL_SERVICES[@]}"; do
     IFS=':' read -r DIR IMG DEP CON <<< "$s"
@@ -114,13 +116,18 @@ git reset --hard origin/main
     else
       CURRENT_IMG=$(kubectl get deployment "$DEP" -o jsonpath="{.spec.template.spec.containers[?(@.name=='$CON')].image}" 2>/dev/null)
     fi
-    if [ -n "$CURRENT_IMG" ] && [[ "$CURRENT_IMG" != *":local" ]]; then
+    
+    if [ -n "$CURRENT_IMG" ]; then
       # CURRENT_IMG comes out like docker.io/library/uniz-academics-service:local-12345
       IMG_REPO="${CURRENT_IMG%:*}"
       IMG_TAG="${CURRENT_IMG##*:}"
-      echo "  - name: ${IMG}:local" >> infra/core-infra/kubernetes/base/kustomization.yaml
-      echo "    newName: $IMG_REPO" >> infra/core-infra/kubernetes/base/kustomization.yaml
-      echo "    newTag: $IMG_TAG" >> infra/core-infra/kubernetes/base/kustomization.yaml
+      
+      # Only preserve if it's a timestamped local tag (e.g. local-1234 or fixed-1234)
+      if [[ "$IMG_TAG" == "local-"* ]] || [[ "$IMG_TAG" == "fixed-"* ]]; then
+        echo "  - name: ${IMG}:local" >> infra/core-infra/kubernetes/base/kustomization.yaml
+        echo "    newName: $IMG_REPO" >> infra/core-infra/kubernetes/base/kustomization.yaml
+        echo "    newTag: $IMG_TAG" >> infra/core-infra/kubernetes/base/kustomization.yaml
+      fi
     fi
   done
 
