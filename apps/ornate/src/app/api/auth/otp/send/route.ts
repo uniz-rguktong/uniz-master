@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
 
     // Store in Redis with 10-minute expiry
     if (redis) {
-      await redis.set(`otp:${emailLower}`, otp, "EX", 600);
+      await (redis as any).set(`otp:${emailLower}`, otp, { ex: 600 });
     } else {
       console.error("[OTP_SEND] Redis client not initialized");
       return NextResponse.json(
