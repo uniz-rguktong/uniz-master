@@ -131,7 +131,11 @@ export async function processNextBatch() {
               "semesterid",
               "semester",
             ]);
-            const rawGrade = getVal(["grade (0-10)"]);
+            const rawGrade = getVal([
+              "grade (ex, a, b, c, d, e, r)",
+              "grade (0-10)",
+              "grade",
+            ]);
             const batchCol = getVal(["batch", "acad_batch", "academic_batch"]);
 
             if (!studentId || !code) throw new Error(`Missing fields`);
