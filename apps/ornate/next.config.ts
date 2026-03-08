@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
   // --- Performance ---
   compress: true,
 
@@ -75,4 +74,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-// Force Rebuild: Build-time asset URL injection phase.
