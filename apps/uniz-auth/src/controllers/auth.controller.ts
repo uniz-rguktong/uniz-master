@@ -127,6 +127,7 @@ export const login = async (req: Request, res: Response) => {
       token,
       role: user.role,
       username: normalizedUsername,
+      department,
     };
 
     if (user.role === UserRole.STUDENT) {
