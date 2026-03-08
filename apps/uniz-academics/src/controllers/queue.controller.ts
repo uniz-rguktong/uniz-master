@@ -31,7 +31,7 @@ export const processQueue = async (req: Request, res: Response) => {
     // Otherwise Vercel terminates the function immediately after res.json()
     if (result.status === "continued") {
       const port = process.env.PORT || 3004;
-      const url = `http://localhost:${port}/api/academics/queue/process`;
+      const url = `http://localhost:${port}/api/queue/process`;
 
       // Loop Buster: Add random param to avoid 508 Loop Detected
       const triggerUrl = `${url}?lb=${Math.random().toString(36).substring(7)}`;
