@@ -80,6 +80,7 @@ const mapStudentProfile = (profile: any) => ({
   mother_email: profile.motherEmail,
   father_address: profile.fatherAddress,
   mother_address: profile.motherAddress,
+  batch: profile.batch,
   profile_url: profile.profileUrl,
   created_at: profile.createdAt,
   updated_at: profile.updatedAt,
@@ -120,14 +121,18 @@ export const getAvailableBatches = async (req: Request, res: Response) => {
   try {
     // Collect first 3 chars of all students and unique them.
     const students = await prisma.studentProfile.findMany({
-      select: { username: true },
+      select: { batch: true },
+      distinct: ["batch"],
+      where: { batch: { not: "" } },
     });
-    const batches = [
-      ...new Set(students.map((s) => s.username.substring(0, 3).toUpperCase())),
-    ]
-      .filter((b) => b.length === 3)
+
+    const batches = students
+      .map((s) => s.batch.toUpperCase())
+      .filter((b) => b.length >= 3)
       .sort();
-    return res.json({ success: true, batches });
+
+    const uniqueBatches = Array.from(new Set(batches));
+    return res.json({ success: true, batches: uniqueBatches });
   } catch (e) {
     return res
       .status(500)
@@ -363,9 +368,9 @@ export const searchStudents = async (
         { name: { contains: username, mode: "insensitive" } },
       ];
     }
-    if (batch) {
-      where.username = {
-        startsWith: String(batch).toUpperCase(),
+    if (batch && String(batch).toUpperCase() !== "ALL") {
+      where.batch = {
+        equals: String(batch).toUpperCase(),
         mode: "insensitive",
       };
     }

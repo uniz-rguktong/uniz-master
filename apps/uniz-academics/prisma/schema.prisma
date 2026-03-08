@@ -102,6 +102,7 @@ model BranchAllocation {
   id            String           @id @default(uuid())
   branch        String // e.g. "CSE", "ECE"
   academicYear  String?          @default("E1") // e.g. "E1", "E2", "E3", "E4"
+  batch         String?          @default("")   // e.g. "O21"
   subjectId     String
   semesterId    String
   customName    String? // For electives (e.g. ELECTIVE (NPTEL Course))
@@ -118,6 +119,7 @@ model BranchAllocation {
   @@index([branch])
   @@index([semesterId])
   @@index([academicYear])
+  @@index([batch])
 }
 
 model Registration {
