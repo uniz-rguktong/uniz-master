@@ -38,33 +38,22 @@ export interface AttendanceData {
 
 const CACHE_DIR = "/tmp/uniz-cache";
 const CACHE_PATH = path.join(CACHE_DIR, "university_logo.jpg");
-let logoBuffer: Buffer | null = null;
-
-const fetchLogo = async () => {
-  if (logoBuffer) return logoBuffer;
+let cachedLogo: string | null = null;
+const getLogo = async (): Promise<string | null> => {
+  if (cachedLogo) return cachedLogo;
   const logoUrl = process.env.INSTITUTION_LOGO_URL;
   if (!logoUrl) return null;
 
   try {
-    if (fs.existsSync(CACHE_PATH)) {
-      logoBuffer = fs.readFileSync(CACHE_PATH);
-      return logoBuffer;
-    }
-  } catch (err) {
-    console.error("Error reading logo cache:", err);
-  }
-
-  try {
     const response = await axios.get(logoUrl, {
       responseType: "arraybuffer",
-      timeout: 3000,
+      timeout: 5000,
+      headers: { "Cache-Control": "no-cache" },
     });
-    logoBuffer = Buffer.from(response.data);
-    if (!fs.existsSync(CACHE_DIR)) {
-      fs.mkdirSync(CACHE_DIR, { recursive: true });
-    }
-    fs.writeFileSync(CACHE_PATH, logoBuffer);
-    return logoBuffer;
+    const base64 = Buffer.from(response.data).toString("base64");
+    const mime = response.headers["content-type"] || "image/jpeg";
+    cachedLogo = `data:${mime};base64,${base64}`;
+    return cachedLogo;
   } catch (err) {
     console.error("Failed to fetch logo:", err);
     return null;
@@ -112,7 +101,7 @@ const cleanSubjectName = (name: string) => {
 
 export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
   const { name, username, branch, semesterId, grades, campus } = data;
-  const logo = await fetchLogo();
+  const logo = await getLogo();
   const campusName =
     campus && campus !== "N/A" ? campus.toUpperCase() : "RGUKT";
 
@@ -364,7 +353,7 @@ export const generateAttendancePdf = async (
   data: AttendanceData,
 ): Promise<Buffer> => {
   const { name, username, branch, semesterId, records, campus } = data;
-  const logo = await fetchLogo();
+  const logo = await getLogo();
   const campusName =
     campus && campus !== "N/A" ? campus.toUpperCase() : "RGUKT";
 
