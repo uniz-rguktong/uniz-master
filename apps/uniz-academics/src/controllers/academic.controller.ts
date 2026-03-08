@@ -71,24 +71,20 @@ export const getUploadProgress = async (
           Date.now() - (progress.lastActive || 0) > 15000;
 
         if (isStuck) {
-          const PORT = process.env.PORT || 3004;
-          const triggerUrl = `http://localhost:${PORT}/api/queue/process?lb_poll=${Math.random().toString(36).substring(7)}`;
           console.log(
-            `[Academics] 🚨 Job ${uploadId} appears stuck. Jump-starting via Progress Poll (Internal): ${triggerUrl}`,
+            `[Academics] 🚨 Job ${uploadId} appears stuck. Jump-starting via Progress Poll (Direct)...`,
           );
-          axios
-            .post(
-              triggerUrl,
-              {},
-              {
-                headers: {
-                  "x-internal-secret":
-                    process.env.INTERNAL_SECRET || "uniz-core",
-                },
-                timeout: 2000,
-              },
-            )
-            .catch(() => {}); // Ignore trigger errors here
+          // Fire and forget direct call to prevent blocking the user
+          // Using a recursive helper to handle the 'continued' state
+          const runStuck = async () => {
+            let result;
+            do {
+              result = await processNextBatch();
+            } while (result && result.status === "continued");
+          };
+          runStuck().catch((e) =>
+            console.error("[Academics] Stuck jump-start error:", e),
+          );
         }
 
         return res.json({
@@ -1853,32 +1849,22 @@ export const uploadGrades = async (req: any, res: Response) => {
     // Enqueue
     await redis.rpush("job:queue", JSON.stringify(job));
 
-    // Non-blocking trigger via background call
+    // Non-blocking trigger via direct service call (Much more reliable than HTTP in K8s)
     try {
-      // Trigger Processing asynchronously via local endpoint (Reliable start without hanging)
-      console.log(`[Academics] Starting first grades batch trigger...`);
-
-      const port = process.env.PORT || 3004;
-      const triggerUrl = `http://localhost:${port}/api/queue/process?lb_init=${Math.random().toString(36).substring(7)}`;
-
-      axios
-        .post(
-          triggerUrl,
-          {},
-          {
-            headers: {
-              "x-internal-secret": process.env.INTERNAL_SECRET || "uniz-core",
-            },
-            timeout: 2000,
-          },
-        )
-        .catch((e) => {
-          console.error(
-            `[Academics] Failed to trigger initial grades worker: ${e.message}`,
-          );
-        });
+      console.log(`[Academics] Starting first grades batch (Direct)...`);
+      const runQuietly = async () => {
+        let result;
+        do {
+          result = await processNextBatch();
+        } while (result && result.status === "continued");
+      };
+      runQuietly().catch((e) => {
+        console.error(
+          `[Academics] Grades worker direct run failed: ${e.message}`,
+        );
+      });
     } catch (e) {
-      console.error("First batch inline error:", e);
+      console.error("[Academics] Fatal trigger error:", e);
     }
 
     return res.status(202).json({
@@ -2093,32 +2079,22 @@ export const uploadAttendance = async (req: any, res: Response) => {
     // Enqueue
     await redis.rpush("job:queue", JSON.stringify(job));
 
-    // Non-blocking trigger via background call
+    // Non-blocking trigger via direct service call
     try {
-      // Trigger Processing asynchronously via local endpoint (Reliable start without hanging)
-      console.log(`[Academics] Starting first attendance batch trigger...`);
-
-      const port = process.env.PORT || 3004;
-      const triggerUrl = `http://localhost:${port}/api/queue/process?lb_init=${Math.random().toString(36).substring(7)}`;
-
-      axios
-        .post(
-          triggerUrl,
-          {},
-          {
-            headers: {
-              "x-internal-secret": process.env.INTERNAL_SECRET || "uniz-core",
-            },
-            timeout: 2000,
-          },
-        )
-        .catch((e) => {
-          console.error(
-            `[Academics] Failed to trigger initial attendance worker: ${e.message}`,
-          );
-        });
+      console.log(`[Academics] Starting first attendance batch (Direct)...`);
+      const runQuietly = async () => {
+        let result;
+        do {
+          result = await processNextBatch();
+        } while (result && result.status === "continued");
+      };
+      runQuietly().catch((e) => {
+        console.error(
+          `[Academics] Attendance worker direct run failed: ${e.message}`,
+        );
+      });
     } catch (e) {
-      console.error("First attendance batch inline error:", e);
+      console.error("[Academics] Fatal trigger error:", e);
     }
 
     return res.status(202).json({
