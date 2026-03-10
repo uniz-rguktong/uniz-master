@@ -148,7 +148,6 @@ async function seed() {
       { id: "O210004", branch: "CE", name: "CE Senior" },
       { id: "O210005", branch: "EEE", name: "EEE Senior" },
       { id: "O210006", branch: "MME", name: "MME Senior" },
-      { id: "O210007", branch: "CHEM", name: "CHEM Senior" },
       { id: "O210008", branch: "CSE", name: "Target Student (O210008)" },
       { id: "O210009", branch: "CIVIL", name: "O21 Senior" },
       { id: "O210010", branch: "CSE", name: "O21 Senior" },
