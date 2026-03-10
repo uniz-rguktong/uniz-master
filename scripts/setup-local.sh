@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# --- UniZ Universal Local Setup (V15) ---
-# Goal: Sub-5ms latency, self-healing dependencies, perfect Prisma sync.
-# Handles: Port clearing, Docker/Colima, DB Startup, Env Injection, Dependency Integrity.
+# --- UniZ Universal Local Setup (V16) ---
+# Goal: 100% Reliability, Sub-5ms latency, Auto-Healing Dependencies.
+# Fixes: Prisma version mismatches, Node module corruption, and macOS DNS delays.
 
 echo "🚀 Starting UniZ Master Setup (Local Environment)..."
 
@@ -53,7 +53,6 @@ fi
 
 # 2. Infra Startup
 echo "🏗️ Starting Core Infrastructure (Postgres & Redis)..."
-# Create a dummy .env in core-infra if it doesn't exist to prevent compose warnings
 touch infra/core-infra/.env
 $COMPOSE_CMD -f infra/core-infra/docker-compose.yml up -d uniz-redis uniz-postgres
 
@@ -74,7 +73,7 @@ if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
 fi
 echo "✅ Postgres is ready!"
 
-# 3. Environment Variable & Prisma Sync Logic
+# 3. Environment Variable & Dependency Synchronization
 SERVICES=("apps/uniz-gateway" "apps/uniz-auth" "apps/uniz-user" "apps/uniz-academics" "apps/uniz-outpass" "apps/uniz-files" "apps/uniz-mail" "apps/uniz-notifications" "apps/uniz-cron" "apps/uniz-portal")
 PREFIXES=("GATEWAY" "AUTH" "USER" "ACADEMICS" "OUTPASS" "FILES" "MAIL" "NOTIFICATION" "CRON" "VITE")
 
@@ -88,9 +87,9 @@ robust_sed() {
     fi
 }
 
-echo "🧬 Syncing Environment & Prisma Clients (Force Sub-5ms Ready)..."
+echo "🧬 Syncing Environment & Healing Dependencies..."
 
-# Ensure root has Prisma @ v6 for seeder
+# Update root Prisma for seeder stability
 npm install --no-save prisma@6 @prisma/client@6 >/dev/null 2>&1
 
 for i in "${!SERVICES[@]}"; do
@@ -100,12 +99,12 @@ for i in "${!SERVICES[@]}"; do
     if [ -d "$path" ]; then
         echo "  -> Processing $path..."
         
-        # 1. Update Secrets
+        # A. Update Secrets
         if [ -f "secrets.env" ]; then
             cp secrets.env "$path/.env"
         fi
         
-        # 2. Forced Overrides (127.0.0.1 bypasses macOS DNS latency)
+        # B. 127.0.0.1 Fast-Path Overrides
         robust_sed 's/76.13.241.174/127.0.0.1/g' "$path/.env"
         robust_sed 's/uniz-redis/127.0.0.1/g' "$path/.env"
         robust_sed 's/uniz-postgres/127.0.0.1/g' "$path/.env"
@@ -114,7 +113,7 @@ for i in "${!SERVICES[@]}"; do
         robust_sed 's/0x4AAAAAACnuFU49Yv6dqJum/1x00000000000000000000AA/g' "$path/.env"
         robust_sed 's/REDACTED_TURNSTILE_SECRET/1x00000000000000000000000000000000/g' "$path/.env"
         
-        # 3. Inject generic DATABASE_URL for Prisma
+        # C. Inject DATABASE_URL & Health-Check Service URLs
         db_var="${prefix}_DATABASE_URL"
         val=$(grep "^${db_var}=" "$path/.env" | head -n 1 | cut -d'=' -f2-)
         if [ -n "$val" ]; then
@@ -122,7 +121,6 @@ for i in "${!SERVICES[@]}"; do
             echo "DATABASE_URL=$val" >> "$path/.env"
         fi
         
-        # 4. Mandatory Routing Flags
         {
             echo "DOCKER_ENV=false"
             echo "GATEWAY_URL=http://127.0.0.1:3000/api/v1"
@@ -137,24 +135,26 @@ for i in "${!SERVICES[@]}"; do
             echo "CRON_SERVICE_URL=http://127.0.0.1:3008"
         } >> "$path/.env"
 
-        # 5. FIX PRISMA VERSION MISMATCH (Crucial for Node processes to start)
+        # D. HEAL PRISMA CLIENT (Fixes 'wasm-base64' and 'Cannot find module' errors)
         if [ -f "$path/prisma/schema.prisma" ]; then
-            echo "     💎 Updating Prisma Client for $path..."
-            # Force Prisma 6 client generation in the service directory
+            echo "     💎 Healing Prisma Client for $path..."
+            # Deleting corrupted client to force clean re-install/generate
+            rm -rf "$path/node_modules/@prisma/client"
+            (cd "$path" && npm install --no-save @prisma/client@6 prisma@6 >/dev/null 2>&1)
+            
             export DATABASE_URL="$val"
             (cd "$path" && yes | npx prisma@6 generate >/dev/null 2>&1)
-            # Also push any schema changes (skip if not needed, but push is safe with --accept-data-loss)
             (cd "$path" && yes | npx prisma@6 db push --accept-data-loss >/dev/null 2>&1)
         fi
     fi
 done
 
-# 6. Global Tooling check
-echo "📦 Finalizing development tools (ts-node, pg, etc)..."
+# 4. Final Tooling Installation
+echo "📦 Finalizing global development tools..."
 npm install --no-save ts-node bcrypt @types/bcrypt pg @types/pg >/dev/null 2>&1
 
 echo ""
-echo "🔥 MISSION CONTROL IS SHIPYARD READY (V15)!"
+echo "🔥 MISSION CONTROL IS SHIPYARD READY (V16)!"
 echo "--------------------------------------------------------"
 echo "1. SEED DATA:  npm run seed:local"
 echo "2. LAUNCH ALL: npm run dev:all"
