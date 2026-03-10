@@ -26,14 +26,13 @@ export default function CaretakerDashboard() {
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const username = (localStorage.getItem("username") || "Caretaker").replace(/"/g, "");
+  const initial = (profileName || username)[0]?.toUpperCase() ?? "C";
+
   const rawRole = (localStorage.getItem("admin_role") || "caretaker").replace(
     /"/g,
     "",
   );
-  const username =
-    localStorage.getItem("username")?.replace(/"/g, "") || "Caretaker";
-  const firstName = username.split(" ")[0];
-
   const isMale = rawRole === "caretaker_male";
   const portalLabel = isMale ? "M-Caretaker Portal" : "F-Caretaker Portal";
   const systemLabel = isMale ? "Boys Hostel Secure" : "Girls Hostel Secure";
@@ -53,7 +52,7 @@ export default function CaretakerDashboard() {
               setProfileName(data.data.name ?? null);
             }
           })
-          .catch(() => {});
+          .catch(() => { });
       });
     }
   }, []);
@@ -155,9 +154,7 @@ export default function CaretakerDashboard() {
   };
 
   return (
-    <div
-      className={`flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 ${isMale ? "selection:bg-blue-100 selection:text-blue-900" : "selection:bg-rose-100 selection:text-rose-900"}`}
-    >
+    <div className="flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       {/* Sidebar */}
       <aside
         className={`bg-white border-r border-slate-100 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"} hidden md:flex flex-col premium-shadow h-screen sticky top-0`}
@@ -286,10 +283,9 @@ export default function CaretakerDashboard() {
                       title={!isSidebarOpen ? item.label : ""}
                       className={`
                         w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group relative
-                        ${
-                          isActive
-                            ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
-                            : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
+                        ${isActive
+                          ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
+                          : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
                         }
                       `}
                     >
@@ -297,12 +293,9 @@ export default function CaretakerDashboard() {
                         <Icon
                           size={20}
                           className={`shrink-0 transition-colors
-                            ${
-                              isActive
-                                ? isMale
-                                  ? "text-blue-600"
-                                  : "text-rose-600"
-                                : "text-slate-400 group-hover:text-slate-600"
+                            ${isActive
+                              ? "text-blue-600"
+                              : "text-slate-400 group-hover:text-slate-600"
                             }`}
                         />
                       </div>
@@ -357,8 +350,8 @@ export default function CaretakerDashboard() {
                     alt=""
                   />
                 ) : (
-                  <span className="text-slate-600 font-bold text-[10px] leading-tight text-center px-1 truncate">
-                    {firstName}
+                  <span className="text-slate-600 font-bold text-[11px]">
+                    {initial}
                   </span>
                 )}
               </button>
@@ -403,7 +396,7 @@ export default function CaretakerDashboard() {
             <button
               ref={headerAvatarRef}
               title="Profile"
-              className={`w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 ${isMale ? "hover:ring-blue-400" : "hover:ring-rose-400"} transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50`}
+              className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 hover:ring-blue-400 transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50"
             >
               {profilePhoto ? (
                 <img
@@ -413,9 +406,9 @@ export default function CaretakerDashboard() {
                 />
               ) : (
                 <div
-                  className={`w-full h-full flex items-center justify-center ${isMale ? "bg-blue-600" : "bg-rose-600"} text-white font-bold text-[10px] leading-tight text-center px-1 truncate`}
+                  className={`w-full h-full flex items-center justify-center ${isMale ? "bg-blue-600" : "bg-rose-600"} text-white font-bold text-sm`}
                 >
-                  {firstName}
+                  {initial}
                 </div>
               )}
             </button>
@@ -431,7 +424,7 @@ export default function CaretakerDashboard() {
           </div>
         </header>
 
-        <div className="max-w-7xl mx-auto">{renderContent()}</div>
+        <div className="w-full px-10">{renderContent()}</div>
       </main>
     </div>
   );
