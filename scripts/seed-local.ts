@@ -67,35 +67,64 @@ async function seed() {
       ],
     );
 
-    // 3. Seed CMS Content (Banners & Notifications into user_v2)
-    console.log("- Seeding Landing Page Content...");
-    await client.query(
-      `
-      INSERT INTO user_v2."Banner" (id, title, text, "imageUrl", "isVisible", "createdAt", "updatedAt")
-      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
-      ON CONFLICT (id) DO NOTHING;
-    `,
-      [
-        "banner-1",
-        "UniZ v2.0 is now live",
-        "Experience the next generation of campus management with our high-speed microservice architecture.",
-        "https://images.unsplash.com/photo-1523050853064-06c57f642461?q=80&w=2070",
-        true,
-      ],
+    // 3. Seed CMS Content (Banners & Notifications)
+    console.log("- Seeding Landing Page Content (High-Quality Assets)...");
+
+    // Banner Logic
+    const upsertBanner = async (
+      id: string,
+      title: string,
+      text: string,
+      imageUrl: string,
+    ) => {
+      await client.query(
+        `
+        INSERT INTO user_v2."Banner" (id, title, text, "imageUrl", "isVisible", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, true, NOW(), NOW())
+        ON CONFLICT (id) DO UPDATE SET 
+          title = EXCLUDED.title,
+          text = EXCLUDED.text,
+          "imageUrl" = EXCLUDED."imageUrl",
+          "updatedAt" = NOW();
+      `,
+        [id, title, text, imageUrl],
+      );
+    };
+
+    await upsertBanner(
+      "banner-1",
+      "Modern Digital Library",
+      "Access over 50,000 journals and books from anywhere on campus.",
+      "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?auto=format&fit=crop&q=80&w=2070",
+    );
+    await upsertBanner(
+      "banner-2",
+      "Academic Excellence",
+      "Track your results and stay ahead with UniZ high-speed analytics.",
+      "https://images.unsplash.com/photo-1523050853064-06c57f642461?auto=format&fit=crop&q=80&w=2070",
+    );
+    await upsertBanner(
+      "banner-3",
+      "Campus Collaboration",
+      "Connect with clubs and manage events through the integrated student hub.",
+      "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80&w=2070",
     );
 
     await client.query(
       `
       INSERT INTO user_v2."PublicNotification" (id, title, content, link, "isVisible", "createdAt", "updatedAt")
-      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
-      ON CONFLICT (id) DO NOTHING;
+      VALUES ($1, $2, $3, $4, true, NOW(), NOW())
+      ON CONFLICT (id) DO UPDATE SET
+        title = EXCLUDED.title,
+        content = EXCLUDED.content,
+        link = EXCLUDED.link,
+        "updatedAt" = NOW();
     `,
       [
         "notif-1",
         "Admission Cycle 2026",
         "The 2026 undergraduate admission cycle is now open for all departments.",
         "https://rguktong.ac.in/admissions",
-        true,
       ],
     );
 
