@@ -11,6 +11,7 @@
     "axios": "^1.6.0",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
+    "dotenv": "^16.4.7",
     "express": "^5.2.1",
     "http-proxy": "^1.18.1",
     "http-proxy-middleware": "^3.0.5",
