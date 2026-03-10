@@ -148,6 +148,16 @@ for entry in "${SERVICES[@]}"; do
         echo "DOCKER_ENV=false" >> "$path/.env"
         echo "GATEWAY_URL=http://localhost:3000/api/v1" >> "$path/.env"
         echo "FORCE_GMAIL=true" >> "$path/.env"
+
+        # Inject Service URLs for Gateway Proxying (Localhost)
+        echo "AUTH_SERVICE_URL=http://localhost:3001" >> "$path/.env"
+        echo "USER_SERVICE_URL=http://localhost:3002" >> "$path/.env"
+        echo "ACADEMICS_SERVICE_URL=http://localhost:3004" >> "$path/.env"
+        echo "OUTPASS_SERVICE_URL=http://localhost:3003" >> "$path/.env"
+        echo "FILES_SERVICE_URL=http://localhost:3005" >> "$path/.env"
+        echo "MAIL_SERVICE_URL=http://localhost:3006" >> "$path/.env"
+        echo "NOTIFICATION_SERVICE_URL=http://localhost:3007" >> "$path/.env"
+        echo "CRON_SERVICE_URL=http://localhost:3008" >> "$path/.env"
     fi
 done
 
