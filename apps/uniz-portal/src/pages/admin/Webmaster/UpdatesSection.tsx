@@ -247,14 +247,37 @@ export default function UpdatesSection() {
             </thead>
             <tbody className="divide-y divide-slate-50/60">
               {loading ? (
-                Array(6)
+                Array(7)
                   .fill(0)
                   .map((_, i) => (
-                    <tr key={i} className="animate-pulse">
-                      <td
-                        colSpan={5}
-                        className="px-10 py-8 bg-slate-50/20"
-                      ></td>
+                    <tr key={i} className="animate-pulse border-b border-slate-50 last:border-0 hover:bg-transparent">
+                      <td className="px-10 py-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-11 h-11 rounded-xl bg-slate-100 border-2 border-white ring-1 ring-slate-100 shadow-sm" />
+                          <div className="space-y-2">
+                            <div className="h-4 w-32 bg-slate-100 rounded-lg shadow-sm" />
+                            <div className="h-2 w-48 bg-slate-50 rounded shadow-sm opacity-60" />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="h-4 w-20 bg-slate-50 rounded shadow-sm opacity-60" />
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="h-7 w-16 bg-blue-50/50 rounded-xl border border-blue-100/50 shadow-sm opacity-60" />
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="space-y-2">
+                          <div className="h-4 w-24 bg-slate-100 rounded-lg shadow-sm" />
+                          <div className="h-2 w-16 bg-slate-50 rounded shadow-sm opacity-60" />
+                        </div>
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="flex justify-end gap-2">
+                          <div className="h-10 w-10 bg-slate-50 rounded-xl shadow-sm border border-slate-100" />
+                          <div className="h-10 w-10 bg-slate-50 rounded-xl shadow-sm border border-slate-100" />
+                        </div>
+                      </td>
                     </tr>
                   ))
               ) : updates && updates.length > 0 ? (
