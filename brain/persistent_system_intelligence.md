@@ -174,17 +174,19 @@ _(This section to be expanded as APIs are indexed)_
 ## 7. Deployment Layer
 
 - **Registry**: Local Build on VPS (Domestic paritied builds).
-- **Pipeline**: GitHub Actions Manual Trigger (`deploy.yml`).
-- **Safety Protocol**: **Build-then-Deploy**.
-  - Script (`deploy.sh`) attempts `docker build`.
-  - If exit code != 0, script executes `exit 1` instantly.
-  - Zero downtime is maintained as old pods remain running if build fails.
+- **Pipeline**: GitHub Actions Automated Trigger (`deploy.yml`) on `push` to `main`.
+- **Branching Strategy (CRITICAL)**: Always use **Pull Requests**. Never push directly to `main` for standard tasks, features, or fixes. `main` must remain reserved strictly for verified and approved production-ready merges, as any merge directly updates the VPS.
+- **Safety Protocol**: **Cumulative Build-then-Deploy**.
+  - Script (`deploy.sh`) tracks the `LAST_SHA` deployed to only build changed services.
+  - Script attempts `docker build`. If it fails, the script executes `exit 1`, blocking deployment, and avoiding downtime matching the previous successful state.
 - **Workflow**:
-  1. Push code to `main`.
-  2. Run `gh workflow run "Manual VPS Deployment"`.
-  3. GitHub Actions authenticates via secrets (`VPS_IP`, `VPS_USER`, `VPS_PASSWORD`).
-  4. Script pulls and builds on VPS.
-  5. Script imports and restarts K8s deployments.
+  1. Create a branch (`feature/*`, `fix/*`, etc.).
+  2. Implement changes and commit. Create a PR to `main`.
+  3. Once merged to `main`, GitHub Actions automatically intercepts the push.
+  4. CI/CD authenticates via secrets (`VPS_IP`, `VPS_USER`, `VPS_PASSWORD`).
+  5. Script pulls, diffs commits, and builds affected services on the VPS.
+  6. Services can be explicitly rebuilt overriding diffs using a commit message pattern like `[rebuild all]`.
+  7. Successful state SHA is tracked on `/root/.uniz_last_deploy_sha`.
 
 ---
 
