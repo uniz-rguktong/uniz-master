@@ -1,4 +1,6 @@
 #!/bin/bash
+# --- UniZ Universal Deployment (VPS Cloud V5) ---
+# CI/CD Context: ${DEPLOY_CONTEXT:-"LOCAL"}
 
 # 1. Push code to GitHub
 echo "[Push] Pushing code to GitHub..."
