@@ -29,9 +29,17 @@ deploy_logic() {
     FORCE_ALL=true
   fi
 
-  # Detect changed files relative to last successful build
-  # If we are on a fresh clone or force, we might want to handle it
-  CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git show --name-only --format="" 2>/dev/null || echo "")
+  # Persistently track last successful deployment SHA on VPS
+  STATE_FILE="/root/.uniz_last_deploy_sha"
+  LAST_SHA=$( [ -f "$STATE_FILE" ] && cat "$STATE_FILE" || echo "" )
+  
+  if [ -z "$LAST_SHA" ]; then
+    echo "[Build] First deploy or empty state. Using HEAD~1 as base."
+    LAST_SHA="HEAD~1"
+  fi
+
+  echo "[Git] Verifying cumulative changes from $LAST_SHA to $NEW_HEAD"
+  CHANGED_FILES=$(git diff --name-only "$LAST_SHA" "$NEW_HEAD" 2>/dev/null || git show --name-only --format="" "$NEW_HEAD" 2>/dev/null || echo "")
   
   # Service mapping: "folder_name:image_name:deployment_name:container_name"
   ALL_SERVICES=(
@@ -171,6 +179,11 @@ deploy_logic() {
       fi
     done
     echo "[OK] Redeployed $REBUILT_COUNT services."
+    echo "[State] Updating deployment SHA: $NEW_HEAD"
+    echo "$NEW_HEAD" > "$STATE_FILE"
+  else
+    # Even if nothing rebuilt, current commit is now "deployed"
+    echo "$NEW_HEAD" > "$STATE_FILE"
   fi
 }
 
