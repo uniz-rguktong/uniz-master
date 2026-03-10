@@ -1,111 +1,101 @@
 #!/bin/bash
 
-# UniZ Vault Management Tool
-# This tool handles secure secret synchronization between local dev and VPS.
+# --- UniZ Stealth Vault & Secret Manager ---
+# This tool centralizes secret handling for both Local and VPS environments.
 
+MASTER_FILE="secrets.env"
+EXAMPLE_FILE="secrets.env.example"
 VPS_IP="76.13.241.174"
-REMOTE_SECRETS_PATH="/root/uniz-secrets.env"
-LOCAL_SECRETS_BAK="infra/core-infra/kubernetes/base/secrets.yaml.bak"
 
-function check_auth() {
-    # Check if we can SSH into the VPS without manual password entry
-    # This ensures only authorized devs with the SSH key can manage secrets
-    ssh -o ConnectTimeout=5 -o BatchMode=yes root@$VPS_IP "echo 'Auth OK'" &>/dev/null
-    if [ $? -ne 0 ]; then
-        echo "❌ [Auth] Authorization failed. You must have the authorized SSH key to use the vault."
-        exit 1
-    fi
+# List of critical keys that MUST exist for a healthy system
+REQUIRED_KEYS=(
+  "JWT_SECURITY_KEY"
+  "INTERNAL_SECRET"
+  "AUTH_DATABASE_URL"
+  "USER_DATABASE_URL"
+  "ACADEMICS_DATABASE_URL"
+  "AWS_ACCESS_KEY_ID"
+  "AWS_SECRET_ACCESS_KEY"
+)
+
+usage() {
+  echo "Usage: ./scripts/uniz-vault.sh [command]"
+  echo ""
+  echo "Commands:"
+  echo "  audit         Check for missing or empty secrets in master vault"
+  echo "  sync          Propagate master secrets to all microservices (.env files)"
+  echo "  get <KEY>     Get a secret value from master vault"
+  echo "  set <KEY=VAL> Set or update a secret in master vault"
+  echo "  vps-audit     Check if VPS master vault matches local required keys"
+  echo ""
 }
 
-function get_secrets() {
-    check_auth
-    echo "📥 [Vault] Downloading secrets from VPS..."
-    scp root@$VPS_IP:$REMOTE_SECRETS_PATH ./secrets.env
-    echo "✅ [Vault] Secrets saved to ./secrets.env (Keep this file out of Git!)"
+log_info() { echo -e "[\033[0;34mINFO\033[0m] $1"; }
+log_warn() { echo -e "[\033[0;33mWARN\033[0m] $1"; }
+log_error() { echo -e "[\033[0;31mERROR\033[0m] $1"; }
+
+audit() {
+  log_info "Auditing Master Vault ($MASTER_FILE)..."
+  if [ ! -f "$MASTER_FILE" ]; then
+    log_error "Master vault file not found!"
+    exit 1
+  fi
+
+  MISSING=0
+  for key in "${REQUIRED_KEYS[@]}"; do
+    val=$(grep "^${key}=" "$MASTER_FILE" | cut -d'=' -f2-)
+    if [ -z "$val" ]; then
+      log_warn "Missing or empty: $key"
+      ((MISSING++))
+    fi
+  done
+
+  if [ $MISSING -eq 0 ]; then
+    log_info "✅ All critical secrets present."
+  else
+    log_warn "⚠️ Found $MISSING potential issues in vault."
+  fi
 }
 
-function set_secrets() {
-    check_auth
-    if [ ! -f "secrets.env" ]; then
-        echo "❌ [Vault] Local secrets.env not found. Run 'get' first or create one."
-        exit 1
-    fi
-    echo "📤 [Vault] Uploading secrets to VPS..."
-    scp secrets.env root@$VPS_IP:$REMOTE_SECRETS_PATH
-    echo "🚀 [Vault] Secrets updated on VPS. Deploy to apply changes."
+sync_local() {
+  log_info "Syncing secrets to all microservices..."
+  # Re-use setup-local.sh logic or call it
+  ./scripts/setup-local.sh
 }
 
-function sync_local_envs() {
-    if [ ! -f "secrets.env" ]; then
-        echo "❌ [Vault] secrets.env not found. Run 'get' first."
-        exit 1
-    fi
-    echo "🔄 [Vault] Propagating secrets to all apps..."
-    
-    # Load secrets into environment for this script session
-    export $(grep -v '^#' secrets.env | xargs)
-
-    # List of apps to sync with full variable mappings
-    # Format: folder:var1,var2=MASTER_VAR,var3
-    APPS=(
-        "uniz-portal:VITE_API_URL,VITE_MAINTENANCE_MODE,VITE_CLOUDINARY_CLOUD_NAME=CLOUDINARY_CLOUD_NAME,VITE_CLOUDINARY_UPLOAD_PRESET=CLOUDINARY_UPLOAD_PRESET,VITE_SCRAPER_URL,VITE_TURNSTILE_SITE_KEY"
-        "uniz-auth:JWT_SECURITY_KEY,DATABASE_URL=AUTH_DATABASE_URL,REDIS_URL,INTERNAL_SECRET,USER_SERVICE_URL,GATEWAY_URL,EMAIL_USER,EMAIL_PASS,TURNSTILE_SECRET_KEY"
-        "uniz-user:CLOUDINARY_CLOUD_NAME,CLOUDINARY_UPLOAD_PRESET,DATABASE_URL=USER_DATABASE_URL,JWT_SECURITY_KEY,INTERNAL_SECRET,REDIS_URL,INTERNAL_BOT_SECRET"
-        "uniz-academics:DATABASE_URL=ACADEMICS_DATABASE_URL,JWT_SECURITY_KEY,REDIS_URL,INTERNAL_SECRET,INSTITUTION_LOGO_URL"
-        "uniz-mail:INTERNAL_SECRET,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,SES_FROM_EMAIL,EMAIL_USER,EMAIL_PASS,INSTITUTION_LOGO_URL"
-        "uniz-files:DATABASE_URL=FILES_DATABASE_URL,JWT_SECURITY_KEY,REDIS_URL,EMAIL_USER,EMAIL_PASS"
-        "uniz-notifications:INTERNAL_SECRET,MAIL_SERVICE_URL,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY,EMAIL_USER,EMAIL_PASS"
-        "uniz-outpass:DATABASE_URL=OUTPASS_DATABASE_URL,JWT_SECURITY_KEY,REDIS_URL,INTERNAL_SECRET"
-        "uniz-cron:DATABASE_URL=CRON_DATABASE_URL,GATEWAY_URL,INTERNAL_SECRET,REDIS_URL"
-        "ornate-core:DATABASE_URL=ORNATE_DATABASE_URL,DIRECT_URL=ORNATE_DIRECT_URL,NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,NEXTAUTH_URL,NEXTAUTH_SECRET,R2_ACCOUNT_ID,R2_ENDPOINT,R2_BUCKET_NAME,R2_ACCESS_KEY_ID,R2_SECRET_ACCESS_KEY,R2_PUBLIC_DOMAIN,UPSTASH_REDIS_REST_URL,UPSTASH_REDIS_REST_TOKEN,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,SES_FROM_EMAIL"
-    )
-
-    for item in "${APPS[@]}"; do
-        IFS=':' read -r APP_DIR VARS <<< "$item"
-        ENV_PATH="apps/$APP_DIR/.env"
-        
-        if [ ! -f "$ENV_PATH" ] && [ -f "$ENV_PATH.example" ]; then
-            echo "   -> Initializing $APP_DIR/.env from example..."
-            cp "$ENV_PATH.example" "$ENV_PATH"
-        fi
-        
-        if [ -f "$ENV_PATH" ]; then
-            echo "   -> Syncing $APP_DIR..."
-            IFS=',' read -ra ADDR <<< "$VARS"
-            for var_mapping in "${ADDR[@]}"; do
-                if [[ $var_mapping == *"="* ]]; then
-                    LOCAL_VAR="${var_mapping%%=*}"
-                    MASTER_VAR="${var_mapping#*=}"
-                else
-                    LOCAL_VAR="$var_mapping"
-                    MASTER_VAR="$var_mapping"
-                fi
-                
-                VAL="${!MASTER_VAR}"
-                if [ -n "$VAL" ]; then
-                    # Escaping value for sed
-                    ESCAPED_VAL=$(echo "$VAL" | sed 's/[\/&]/\\&/g')
-                    sed -i '' "s|^$LOCAL_VAR=.*|$LOCAL_VAR=\"$ESCAPED_VAL\"|" "$ENV_PATH" 2>/dev/null || \
-                    sed -i "s|^$LOCAL_VAR=.*|$LOCAL_VAR=\"$ESCAPED_VAL\"|" "$ENV_PATH"
-                fi
-            done
-        fi
-    done
-    echo "✅ [Vault] Local apps synced with VPS secrets."
+vps_audit() {
+  log_info "Auditing VPS Vault (SSH: root@$VPS_IP)..."
+  ssh -o ConnectTimeout=5 root@$VPS_IP "if [ -f /root/uniz-secrets.env ]; then echo 'FOUND'; else echo 'NOT_FOUND'; fi" | grep -q "FOUND" || {
+    log_error "VPS vault /root/uniz-secrets.env NOT found on master host!"
+    exit 1
+  }
+  
+  log_info "Checking VPS keys..."
+  # Run a remote check for the same required keys
+  for key in "${REQUIRED_KEYS[@]}"; do
+    ssh root@$VPS_IP "grep -q '^${key}=' /root/uniz-secrets.env" || log_warn "VPS Missing: $key"
+  done
+  log_info "✅ VPS Audit complete."
 }
 
 case "$1" in
-    get)
-        get_secrets
-        ;;
-    set)
-        set_secrets
-        ;;
-    sync)
-        sync_local_envs
-        ;;
-    *)
-        echo "Usage: $0 {get|set|sync}"
-        exit 1
-        ;;
+  audit) audit ;;
+  sync) sync_local ;;
+  get) 
+    grep "^$2=" "$MASTER_FILE" | cut -d'=' -f2-
+    ;;
+  set)
+    key_val="$2"
+    key="${key_val%%=*}"
+    # Escaping for sed
+    val="${key_val#*=}"
+    if grep -q "^${key}=" "$MASTER_FILE"; then
+      sed -i '' "s|^${key}=.*|${key}=${val}|" "$MASTER_FILE"
+    else
+      echo "${key}=${val}" >> "$MASTER_FILE"
+    fi
+    log_info "Updated $key"
+    ;;
+  vps-audit) vps_audit ;;
+  *) usage ;;
 esac

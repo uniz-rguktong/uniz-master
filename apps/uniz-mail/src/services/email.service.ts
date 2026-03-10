@@ -10,10 +10,14 @@ import {
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 
-// --- AWS SES SETUP (Refined 2026) ---
-const useSES = !!(
-  process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
-);
+// --- PROVIDER SELECTION ---
+// VPS uses SES (production), Local uses Gmail (testing)
+const forceGmail =
+  process.env.FORCE_GMAIL === "true" || process.env.DOCKER_ENV === "false";
+const useSES =
+  !forceGmail &&
+  !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY);
+
 let sesTransporter: nodemailer.Transporter | null = null;
 
 if (useSES) {
@@ -26,8 +30,6 @@ if (useSES) {
       },
     });
 
-    // Patterns found in node_modules/nodemailer/lib/ses-transport/index.js on server:
-    // It looks for this.ses.sesClient and this.ses.SendEmailCommand
     sesTransporter = nodemailer.createTransport({
       SES: {
         sesClient: sesClient,
