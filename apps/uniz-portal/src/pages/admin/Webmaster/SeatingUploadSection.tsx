@@ -6,13 +6,13 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Info,
   ChevronDown,
 } from "lucide-react";
 import {
   UPLOAD_SEATING,
   GET_SEATING_TEMPLATE,
   SEMESTERS,
+  ACADEMICS_PROGRESS,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient, downloadFile } from "../../../api/apiClient";
@@ -21,6 +21,8 @@ import { FileUploader } from "../../../components/ui/FileUploader";
 export default function SeatingUploadSection() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploadId, setUploadId] = useState<string | null>(null);
+  const [progress, setProgress] = useState<number>(0);
   const [result, setResult] = useState<any>(null);
 
   // Template Parameters
@@ -56,8 +58,6 @@ export default function SeatingUploadSection() {
     fetchSemesters();
   }, []);
 
-
-
   const handleUpload = async () => {
     if (!file || !semesterId) {
       toast.warning("Please select a file and semester");
@@ -77,10 +77,16 @@ export default function SeatingUploadSection() {
       });
 
       if (res && res.success) {
-        setResult({ success: true, message: res.message });
-        toast.success(
-          res.message || "Seating arrangement uploaded successfully",
-        );
+        if (res.uploadId) {
+          setUploadId(res.uploadId);
+          setProgress(0);
+          toast.info("Upload started. Monitoring progress...");
+        } else {
+          setResult({ success: true, message: res.message });
+          toast.success(
+            res.message || "Seating arrangement uploaded successfully",
+          );
+        }
       } else if (res) {
         setResult({
           success: false,
@@ -93,6 +99,52 @@ export default function SeatingUploadSection() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    let interval: any;
+    if (uploadId) {
+      interval = setInterval(async () => {
+        try {
+          const res = await apiClient<any>(ACADEMICS_PROGRESS(uploadId), {
+            showToast: false,
+          } as any);
+          if (res && res.success && res.progress) {
+            if (res.progress.percent !== undefined) {
+              setProgress(res.progress.percent);
+            }
+            if (
+              res.progress.status === "completed" ||
+              res.progress.status === "done" ||
+              res.progress.status === "error" ||
+              res.progress.status === "failed"
+            ) {
+              setUploadId(null);
+              clearInterval(interval);
+              if (
+                res.progress.status === "completed" ||
+                res.progress.status === "done"
+              ) {
+                setResult({
+                  success: true,
+                  message: "Synchronization completed successfully",
+                });
+                toast.success("Synchronization completed successfully");
+              } else {
+                setResult({
+                  success: false,
+                  msg: res.progress.message || "Synchronization failed",
+                });
+                toast.error("Synchronization failed");
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Progress poll error", e);
+        }
+      }, 2000);
+    }
+    return () => clearInterval(interval);
+  }, [uploadId]);
 
   const downloadTemplate = async () => {
     if (!semesterId) {
@@ -227,92 +279,91 @@ export default function SeatingUploadSection() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="w-full space-y-8 animate-in slide-in-from-bottom-8 duration-1000">
         <div className="space-y-6">
-          <FileUploader
-            onFileSelect={(f: File | null) => {
-              setFile(f);
-              setResult(null);
-            }}
-            label="Choose Seating Layout"
-            description="Supports XLSX, XLS or CSV files."
-          />
+          <div className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-100 shadow-none space-y-8 relative overflow-hidden transition-all">
+            <FileUploader
+              onFileSelect={(f) => {
+                setFile(f);
+                setResult(null);
+                setProgress(0);
+              }}
+              label="Choose Seating Layout"
+              description="Upload XLSX, XLS or CSV files with student-seat mappings."
+              isUploading={loading || !!uploadId}
+              isSuccess={result?.success === true}
+              isError={result?.success === false}
+              progress={progress}
+            />
 
-          <button
-            disabled={!file || loading || !semesterId}
-            onClick={handleUpload}
-            className="w-full bg-blue-600 text-white py-5 rounded-xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:bg-blue-700 transition-all shadow-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 active:scale-95"
-          >
-            {loading ? (
-              <Loader2 className="animate-spin w-5 h-5" />
-            ) : (
-              <Upload size={20} />
-            )}
-            Process Seating Layout
-          </button>
+            <button
+              disabled={!file || loading || !!uploadId || !semesterId}
+              onClick={handleUpload}
+              className="w-full h-20 bg-blue-600 text-white rounded-2xl font-bold uppercase tracking-[0.3em] text-[12px] shadow-none hover:bg-blue-700 hover:scale-[1.01] transition-all flex items-center justify-center gap-4 disabled:opacity-50 active:scale-[0.98]"
+            >
+              {loading || uploadId ? (
+                <div className="flex items-center gap-4">
+                  <Loader2 className="animate-spin w-6 h-6" />
+                  <span className="animate-pulse">
+                    {uploadId ? `Synchronizing Records... ${progress}%` : "Initiating Upload..."}
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <Upload size={24} />
+                  <span>Finalize Seating Arrangement</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
-        <div className="space-y-6">
-          {result ? (
-            <div
-              className={`p-8 rounded-xl border animate-in slide-in-from-right-8 duration-500 h-full shadow-none ${result.success
-                ? "bg-emerald-50 border-emerald-100"
-                : "bg-red-50 border-red-100"
-                }`}
-            >
-              <div className="flex items-center gap-4 mb-6">
-                <div
-                  className={`p-3.5 rounded-xl ${result.success ? "bg-emerald-500 text-white shadow-none" : "bg-red-500 text-white shadow-none"}`}
-                >
-                  {result.success ? (
-                    <CheckCircle2 size={26} />
-                  ) : (
-                    <AlertCircle size={26} />
-                  )}
-                </div>
-                <h3
-                  className={`text-2xl font-semibold tracking-[-0.02em] ${result.success ? "text-emerald-900" : "text-red-900"}`}
-                >
-                  {result?.success ? "Upload successful" : "Process failed"}
-                </h3>
-              </div>
-
-              <div className="space-y-4">
+        {result && (
+          <div
+            className={`p-8 rounded-xl border animate-in slide-in-from-top-4 duration-500 shadow-none ${result.success
+              ? "bg-emerald-50 border-emerald-100"
+              : "bg-red-50 border-red-100"
+              }`}
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div
+                className={`p-3.5 rounded-xl ${result.success ? "bg-emerald-500 text-white shadow-none" : "bg-red-500 text-white shadow-none"}`}
+              >
                 {result.success ? (
-                  <>
-                    <p className="text-emerald-800 font-medium">
-                      {result.message}
-                    </p>
-                    <div className="p-4 bg-white/50 rounded-xl border border-emerald-200/50 shadow-none">
-                      <p className="text-[10px] uppercase font-semibold text-emerald-600 tracking-widest mb-1.5 leading-none">
-                        Immediate Update
-                      </p>
-                      <p className="text-emerald-900 font-semibold text-[15px] leading-tight">
-                        Student portals will reflect these changes on the next
-                        refresh.
-                      </p>
-                    </div>
-                  </>
+                  <CheckCircle2 size={26} />
                 ) : (
-                  <p className="text-red-800 font-medium">{result.msg}</p>
+                  <AlertCircle size={26} />
                 )}
               </div>
-            </div>
-          ) : (
-            <div className="p-8 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center h-full shadow-none">
-              <div className="p-5 bg-white rounded-xl shadow-none text-slate-300 mb-8 border border-slate-100">
-                <Info size={32} />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2 tracking-tight">
-                Seating Status
+              <h3
+                className={`text-2xl font-semibold tracking-[-0.02em] ${result.success ? "text-emerald-900" : "text-red-900"}`}
+              >
+                {result?.success ? "Upload successful" : "Process failed"}
               </h3>
-              <p className="text-slate-400 max-w-[240px] font-medium text-[15px] leading-relaxed">
-                Download a pre-filled template, adjust the seating values, and
-                upload it back to the system.
-              </p>
             </div>
-          )}
-        </div>
+
+            <div className="space-y-4">
+              {result.success ? (
+                <>
+                  <p className="text-emerald-800 font-medium">
+                    {result.message}
+                  </p>
+                  <div className="p-4 bg-white/50 rounded-xl border border-emerald-200/50 shadow-none">
+                    <p className="text-[10px] uppercase font-semibold text-emerald-600 tracking-widest mb-1.5 leading-none">
+                      Immediate Update
+                    </p>
+                    <p className="text-emerald-900 font-semibold text-[15px] leading-tight">
+                      Student portals will reflect these changes on the next
+                      refresh.
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <p className="text-red-800 font-medium">{result.msg}</p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
