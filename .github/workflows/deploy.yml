@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - "apps/ornate/**"
+      - "apps/ornate-core/**"
   workflow_dispatch:
     inputs:
       commit_message:
