@@ -1,27 +1,122 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useIsAuth } from "../hooks/is_authenticated";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  Bell,
-  Calendar,
-  ArrowRight,
   ChevronRight,
   Activity,
+  ArrowUpRight,
+  Lock,
+  Smartphone,
+  Download,
 } from "lucide-react";
 import {
   PUBLIC_BANNERS,
   GET_NOTIFICATIONS,
-  SYSTEM_HEALTH,
 } from "../api/endpoints";
+import FeaturedCarousel from "../components/FeaturedCarousel";
+import { Timeline } from "../components/ui/timeline";
+import DatabaseWithRestApi from "../components/ui/database-with-rest-api";
+import { Features } from "../components/ui/features-9";
 
 export default function Home() {
   useIsAuth();
   const navigate = useNavigate();
   const [banners, setBanners] = useState<any[]>([]);
-  const [updates, setUpdates] = useState<any[]>([]);
-  const [health, setHealth] = useState<any>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const timelineData = [
+    {
+      title: "Install the application",
+      subtitle: "Campus in your pocket",
+      step: "Step 01",
+      icon: Smartphone,
+      content: (
+        <div className="space-y-6">
+          <p className="text-slate-500 font-medium text-lg leading-relaxed">
+            UniZ is built with cutting-edge PWA technology. This means you can install the platform directly on your mobile device or desktop for a lightning-fast, native experience—completely bypassing traditional app stores.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 items-start">
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                window.alert("Installation Guide: \n\n1. Open this page in Safari (iOS) or Chrome (Android)\n2. Tap the 'Share' or 'Menu' icon\n3. Select 'Add to Home Screen'\n\nUniZ is now ready in your app drawer!");
+              }}
+              className="group flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-full font-black text-sm shadow-2xl hover:bg-blue-600 transition-all active:scale-95 no-underline"
+            >
+              <Download size={20} strokeWidth={2.5} className="group-hover:-translate-y-1 transition-transform" />
+              Download Portal App
+            </a>
+            <div className="py-4">
+              <div className="flex items-center gap-2 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></div>
+                Latest Version v2.0 Live
+              </div>
+            </div>
+          </div>
+          <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100 max-w-xl">
+            <h5 className="font-black text-slate-900 mb-4 tracking-tight">App Experience Features</h5>
+            <ul className="space-y-3">
+              {['Instant loading with offline support', 'Biometric secure authentication', 'Real-time push notifications'].map((point, i) => (
+                <li key={i} className="flex items-center gap-3 text-slate-600 text-sm font-bold">
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Secure your access",
+      subtitle: "Live Academic Dashboard",
+      step: "Step 02",
+      icon: Lock,
+      content: (
+        <div className="space-y-6">
+          <p className="text-slate-500 font-medium text-lg leading-relaxed">
+            Gain a God's-eye view of your university credentials. Our platform mirrors your official records in real-time digital twins. Track exact GPA numbers and attendance thresholds automatically.
+          </p>
+          <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100 max-w-xl">
+            <h5 className="font-black text-slate-900 mb-4 tracking-tight">Live Academic Dashboard</h5>
+            <ul className="space-y-3">
+              {['Real-time SGPA & CGPA tracking', 'Multi-department resource sync', 'Proactive attendance analysis'].map((point, pointIdx) => (
+                <li key={pointIdx} className="flex items-center gap-3 text-slate-600 text-sm font-bold">
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Master your campus",
+      subtitle: "Unified Mobility Hub",
+      step: "Step 03",
+      icon: Activity,
+      content: (
+        <div className="space-y-6">
+          <p className="text-slate-500 font-medium text-lg leading-relaxed">
+            Take full control of your campus mobility. Request smart outpasses, track results, and receive broadcast alerts directly. It's not just checking boxes; it's understanding the pulse of your university life.
+          </p>
+          <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100 max-w-xl">
+            <h5 className="font-black text-slate-900 mb-4 tracking-tight">Unified Mobility Hub</h5>
+            <ul className="space-y-3">
+              {['Smart Outpass automation', 'Grievance resolution tracking', 'Global campus broadcasts'].map((itemText, itemIdx) => (
+                <li key={itemIdx} className="flex items-center gap-3 text-slate-600 text-sm font-bold">
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                  {itemText}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )
+    }
+  ];
 
   // AUTHENTIC API IMPLEMENTATION FOR BANNERS
   useEffect(() => {
@@ -59,37 +154,11 @@ export default function Home() {
       .then((response) => response.json())
       .then((result) => {
         if (result.success && result.notifications) {
-          setUpdates(result.notifications.updates || []);
+          // Notifications data remains but we no longer display the list
         }
       })
       .catch((error) => console.error(error));
   }, []);
-
-  // AUTHENTIC API IMPLEMENTATION FOR SYSTEM HEALTH
-  useEffect(() => {
-    const fetchHealth = async () => {
-      try {
-        const response = await fetch(SYSTEM_HEALTH);
-        const result = await response.json();
-        setHealth(result);
-      } catch (error) {
-        console.error("Health Check Error:", error);
-      }
-    };
-    fetchHealth();
-    const interval = setInterval(fetchHealth, 60000); // Refresh every minute
-    return () => clearInterval(interval);
-  }, []);
-
-  // Sync auto-advance
-  useEffect(() => {
-    if (banners.length <= 1) return;
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % banners.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [banners.length]);
-
   // Admin access
   useEffect(() => {
     let keys = "";
@@ -105,187 +174,105 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans">
+
+      {/* CENTERED PREMIUM HERO SECTION */}
+      <section className="relative min-h-[75vh] flex flex-col items-center justify-center bg-transparent overflow-hidden pt-6 pb-10 px-[9px]">
+        <div className="absolute top-0 inset-x-0 h-full bg-grid opacity-20 pointer-events-none"></div>
 
 
-      {/* 100% DYNAMIC HERO SECTION */}
-      {banners.length > 0 && (
-        <section className="relative h-[80vh] min-h-[500px] bg-slate-900 overflow-hidden">
-          <AnimatePresence mode="wait">
+        <div className="w-full z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="relative w-full border border-slate-100 rounded-[3rem] px-[9px] py-12 md:py-20 bg-transparent shadow-[0_32px_64px_-16px_rgba(0,0,0,0.02)] flex flex-col items-center text-center overflow-hidden"
+          >
+            {/* Background Accent */}
+
+
             <motion.div
-              key={currentIndex}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8 }}
-              className="absolute inset-0"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 text-[13px] font-bold mb-10 shadow-sm hover:scale-105 transition-transform cursor-pointer"
             >
-              {/* Image & Gradient */}
-              <div className="absolute inset-0">
-                <img
-                  src={banners[currentIndex].imageUrl}
-                  className="w-full h-full object-cover scale-105"
-                  alt=""
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent"></div>
-              </div>
-
-              {/* Text Content */}
-              <div className="relative h-full w-full px-6 md:px-20 flex flex-col justify-center">
-                <div className="max-w-6xl">
-                  <motion.span
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    className="inline-block px-3 py-1 bg-[#800000] text-white text-[10px] font-black uppercase tracking-[0.3em] mb-6 rounded"
-                  >
-                    Campus Spotlight
-                  </motion.span>
-                  <motion.h1
-                    initial={{ y: 30, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                    className="text-5xl md:text-8xl font-black text-white mb-6 leading-none tracking-tighter"
-                  >
-                    {banners[currentIndex].title}
-                  </motion.h1>
-                  <motion.p
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-lg md:text-2xl text-slate-300 max-w-2xl leading-relaxed mb-10"
-                  >
-                    {banners[currentIndex].text}
-                  </motion.p>
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="flex gap-4"
-                  >
-                    <button
-                      onClick={() => navigate("/student/signin")}
-                      className="px-10 py-4 bg-[#800000] text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-red-800 transition-all shadow-xl shadow-red-900/20 active:scale-95"
-                    >
-                      Sign In
-                    </button>
-                    <button className="px-10 py-4 border border-white/20 text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-white/10 transition-all active:scale-95">
-                      Explore
-                    </button>
-                  </motion.div>
-                </div>
-              </div>
+              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+              UniZ v2.0 is now live
+              <ChevronRight size={14} />
             </motion.div>
-          </AnimatePresence>
 
-          {/* Indicators */}
-          <div className="absolute bottom-12 left-6 md:left-20 flex gap-2">
-            {banners.map((_, i) => (
-              <div
-                key={i}
-                className={`h-1 rounded-full transition-all duration-500 ${i === currentIndex ? "w-12 bg-[#800000]" : "w-4 bg-white/20"}`}
-              ></div>
-            ))}
-          </div>
-        </section>
-      )}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="text-6xl md:text-9xl font-black text-slate-950 tracking-[-0.05em] leading-[0.9] mb-10 max-w-5xl"
+            >
+              The better way to <br />
+              <span className="text-slate-400">master your</span> campus life.
+            </motion.h1>
 
-      {/* 100% DYNAMIC NOTIFICATIONS SECTION */}
-      <section className="py-24 bg-white">
-        <div className="w-full px-6 md:px-20">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
-            <div className="space-y-4">
-              <span className="flex items-center gap-2 text-[#800000] font-black uppercase tracking-widest text-[10px]">
-                <Bell size={14} className="animate-bounce" /> Live News
-              </span>
-              <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter">
-                Latest <span className="text-[#800000]">Pulse</span>
-              </h2>
-            </div>
-            <button className="text-slate-400 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2 hover:text-[#800000] transition-colors">
-              VIEW ARCHIVE <ArrowRight size={14} />
-            </button>
-          </div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              className="text-lg md:text-2xl text-slate-500 font-medium leading-relaxed mb-14 max-w-2xl"
+            >
+              Fully customizable university software for students, faculty and admins. <br className="hidden md:block" />
+              From tracking grades to managing outpasses, UniZ handles it all.
+            </motion.p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {updates.length > 0 ? (
-              updates.map((update, i) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  key={update.id}
-                  className="group p-10 bg-slate-50 rounded-[3rem] border border-slate-100 hover:border-[#800000]/20 hover:bg-white hover:shadow-2xl transition-all flex flex-col h-full"
-                >
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="p-3 bg-white rounded-2xl group-hover:bg-[#800000] group-hover:text-white transition-all">
-                      <Calendar size={20} />
-                    </div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      {new Date(update.createdAt).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </span>
-                  </div>
-                  <h3 className="text-2xl font-black text-slate-900 mb-4 group-hover:text-[#800000] transition-colors line-clamp-2 leading-tight">
-                    {update.title}
-                  </h3>
-                  <p className="text-slate-500 font-medium leading-relaxed mb-10 line-clamp-3">
-                    {update.content}
-                  </p>
-                  <div className="mt-auto pt-6 border-t border-slate-100">
-                    <a
-                      href={update.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[10px] font-black uppercase tracking-widest text-[#800000] flex items-center gap-1 hover:gap-2 transition-all"
-                    >
-                      READ DETAIL <ChevronRight size={12} />
-                    </a>
-                  </div>
-                </motion.div>
-              ))
-            ) : (
-              <div className="col-span-full py-20 text-center bg-slate-50 rounded-[3rem] border-4 border-dashed border-slate-100">
-                <p className="text-slate-300 font-black uppercase tracking-widest text-[10px]">
-                  No active notifications
-                </p>
-              </div>
-            )}
-          </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
+              className="flex flex-col sm:flex-row gap-5 items-center justify-center w-full"
+            >
+              <button
+                onClick={() => navigate("/student/signin")}
+                className="px-10 py-5 bg-slate-950 text-white rounded-[2rem] text-[16px] font-bold shadow-2xl shadow-slate-300 hover:bg-slate-800 hover:shadow-slate-400 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2 group w-full sm:w-auto"
+              >
+                Get started for free
+                <ArrowUpRight size={20} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </button>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
-      {/* MINIMAL FOOTER */}
-      <footer className="mt-auto bg-slate-900 py-12 px-6 md:px-20">
-        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6">
-          <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.6em]">
-            UNIZ &bull; 2026 UNIVERSITY PORTAL
+      {/* FEATURED NOTIFICATIONS CAROUSEL */}
+      <FeaturedCarousel
+        items={banners.map((b, i) => ({
+          id: b.id || i,
+          imageUrl: b.imageUrl,
+          title: b.title,
+          tag: i % 2 === 0 ? "Featured" : "New Update",
+          hasHeart: true
+        }))}
+      />
+
+
+      {/* GETTING STARTED TIMELINE */}
+      <div className="px-[9px]">
+        <Timeline data={timelineData} />
+      </div>
+
+      {/* DATABASE REST API COMPONENT INTEGRATION */}
+      <div className="w-full px-6 flex flex-col items-center pb-32 pt-32 md:pt-48">
+        <div className="mb-16 text-left w-full max-w-7xl px-4 md:px-8">
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6">
+            Everything your campus needs,<br className="hidden md:block" />
+            <span className="text-slate-400">managed seamlessly.</span>
+          </h2>
+          <p className="text-lg text-slate-500 font-medium leading-relaxed max-w-2xl">
+            Eliminate operational friction with smart syncing connecting students, faculty and admin seamlessly.
           </p>
-
-          {health && (
-            <div className="flex items-center gap-4 pl-6 border-l border-white/10">
-              <div className="flex items-center gap-2">
-                <div
-                  className={`w-1.5 h-1.5 rounded-full animate-pulse ${health.status === "ok" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-amber-500"}`}
-                ></div>
-                <span className="text-white/40 text-[9px] font-bold uppercase tracking-widest">
-                  Systems {health.status === "ok" ? "Active" : "Degraded"}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 px-2 py-0.5 rounded-full bg-white/5 border border-white/10">
-                <Activity size={10} className="text-emerald-500" />
-                <span className="text-[8px] font-bold text-white/40 uppercase tracking-tighter">
-                  Live Monitor
-                </span>
-              </div>
-            </div>
-          )}
         </div>
-      </footer>
+        <DatabaseWithRestApi />
+      </div>
+
+      {/* SYSTEM HEALTH AND ACTIVITY DASHBOARD */}
+      <Features />
     </div>
   );
 }
