@@ -146,38 +146,22 @@ for entry in "${SERVICES[@]}"; do
             echo "DATABASE_URL=$val" >> "$path/.env"
         fi
         
-        # Routing flags
-        echo "DOCKER_ENV=false" >> "$path/.env"
-        echo "GATEWAY_URL=http://127.0.0.1:3000/api/v1" >> "$path/.env"
-        echo "FORCE_GMAIL=true" >> "$path/.env"
+# 5. Tooling & Environment Finalization
+echo "📦 Installing development tools..."
+# Pinning Prisma to 6.x to avoid Prisma 7's breaking 'P1012' schema validation
+npm install --no-save ts-node bcrypt @types/bcrypt pg @types/pg prisma@6 @prisma/client@6
 
-        # Inject Service URLs for Gateway Proxying (127.0.0.1)
-        echo "AUTH_SERVICE_URL=http://127.0.0.1:3001" >> "$path/.env"
-        echo "USER_SERVICE_URL=http://127.0.0.1:3002" >> "$path/.env"
-        echo "ACADEMICS_SERVICE_URL=http://127.0.0.1:3004" >> "$path/.env"
-        echo "OUTPASS_SERVICE_URL=http://127.0.0.1:3003" >> "$path/.env"
-        echo "FILES_SERVICE_URL=http://127.0.0.1:3005" >> "$path/.env"
-        echo "MAIL_SERVICE_URL=http://127.0.0.1:3006" >> "$path/.env"
-        echo "NOTIFICATION_SERVICE_URL=http://127.0.0.1:3007" >> "$path/.env"
-        echo "CRON_SERVICE_URL=http://127.0.0.1:3008" >> "$path/.env"
-    fi
-done
-
-# 5. Schema Sync & Seeder Preparation
 echo "💎 Synchronizing Local Database Schemas..."
 # Ensure DATABASE_URL is set in environment for Prisma push commands
 if [ -d "apps/uniz-auth" ]; then
     export DATABASE_URL="postgresql://user:password@127.0.0.1:5432/uniz_db?sslmode=disable&schema=auth_v2"
-    (cd apps/uniz-auth && npx prisma db push --accept-data-loss)
+    (cd apps/uniz-auth && npx prisma@6 db push --accept-data-loss)
 fi
 if [ -d "apps/uniz-user" ]; then
     export DATABASE_URL="postgresql://user:password@127.0.0.1:5432/uniz_db?sslmode=disable&schema=user_v2"
-    (cd apps/uniz-user && npx prisma db push --accept-data-loss)
+    (cd apps/uniz-user && npx prisma@6 db push --accept-data-loss)
 fi
 
-# 6. Final Tooling check
-echo "📦 Installing development tools..."
-npm install --no-save ts-node bcrypt @types/bcrypt pg @types/pg prisma @prisma/client
 
 echo ""
 echo "🔥 MISSION CONTROL IS SHIPYARD READY!"
