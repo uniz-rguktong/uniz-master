@@ -31,8 +31,7 @@ export default function WardenDashboard() {
   );
   const username =
     localStorage.getItem("username")?.replace(/"/g, "") || "Warden";
-  const firstName = username.split(" ")[0];
-
+  const initial = (profileName || username)[0]?.toUpperCase() ?? "W";
   const isMale = rawRole === "warden_male";
   const portalLabel = isMale ? "M-Warden Portal" : "F-Warden Portal";
   const systemLabel = isMale ? "Boys Hostel Secure" : "Girls Hostel Secure";
@@ -52,7 +51,7 @@ export default function WardenDashboard() {
               setProfileName(data.data.name ?? null);
             }
           })
-          .catch(() => {});
+          .catch(() => { });
       });
     }
   }, []);
@@ -185,9 +184,7 @@ export default function WardenDashboard() {
   };
 
   return (
-    <div
-      className={`flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 ${isMale ? "selection:bg-indigo-100 selection:text-indigo-900" : "selection:bg-fuchsia-100 selection:text-fuchsia-900"}`}
-    >
+    <div className="flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       {/* Sidebar */}
       <aside
         className={`bg-white border-r border-slate-100 transition-all duration-300 z-[70] 
@@ -306,10 +303,9 @@ export default function WardenDashboard() {
                       title={!isSidebarOpen ? item.label : ""}
                       className={`
                         w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group relative
-                        ${
-                          isActive
-                            ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
-                            : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
+                        ${isActive
+                          ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
+                          : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
                         }
                       `}
                     >
@@ -317,12 +313,9 @@ export default function WardenDashboard() {
                         <Icon
                           size={20}
                           className={`shrink-0 transition-colors
-                            ${
-                              isActive
-                                ? isMale
-                                  ? "text-indigo-600"
-                                  : "text-fuchsia-600"
-                                : "text-slate-400 group-hover:text-slate-600"
+                            ${isActive
+                              ? "text-blue-600"
+                              : "text-slate-400 group-hover:text-slate-600"
                             }`}
                         />
                       </div>
@@ -371,15 +364,9 @@ export default function WardenDashboard() {
                 className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-slate-100 flex items-center justify-center shadow-sm ring-1 ring-slate-200/60 transition-transform group-hover:scale-105"
               >
                 {profilePhoto ? (
-                  <img
-                    src={profilePhoto}
-                    className="w-full h-full object-cover"
-                    alt=""
-                  />
+                  <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
                 ) : (
-                  <span className="text-slate-600 font-bold text-[10px] leading-tight text-center px-1 truncate">
-                    {firstName}
-                  </span>
+                  <span className="text-slate-600 font-bold text-[11px]">{initial}</span>
                 )}
               </button>
               {isSidebarOpen && (
@@ -430,7 +417,7 @@ export default function WardenDashboard() {
             <button
               ref={headerAvatarRef}
               title="Profile"
-              className={`w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 ${isMale ? "hover:ring-indigo-400" : "hover:ring-fuchsia-400"} transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50`}
+              className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 hover:ring-blue-400 transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50"
             >
               {profilePhoto ? (
                 <img
@@ -439,10 +426,8 @@ export default function WardenDashboard() {
                   alt=""
                 />
               ) : (
-                <div
-                  className={`w-full h-full flex items-center justify-center ${isMale ? "bg-indigo-600" : "bg-fuchsia-600"} text-white font-bold text-[10px] leading-tight text-center px-1 truncate`}
-                >
-                  {firstName}
+                <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-bold text-sm">
+                  {initial}
                 </div>
               )}
             </button>
@@ -458,7 +443,7 @@ export default function WardenDashboard() {
           </div>
         </header>
 
-        <div className="flex-1 max-w-7xl mx-auto w-full">{renderContent()}</div>
+        <div className="flex-1 w-full px-10">{renderContent()}</div>
 
         {/* Mobile Bottom Navigation */}
         <div className="md:hidden h-16 bg-white border-t border-slate-100 flex items-center justify-around px-2 sticky bottom-0 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] backdrop-blur-xl">

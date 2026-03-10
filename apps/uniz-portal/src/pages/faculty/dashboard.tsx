@@ -174,9 +174,8 @@ export default function FacultyDashboard() {
     <div className="flex min-h-screen bg-[#F8FAFC]">
       {/* ── Sidebar ── */}
       <aside
-        className={`bg-white border-r border-neutral-100 transition-all duration-300 z-50 ${
-          isSidebarOpen ? "w-72" : "w-20"
-        } hidden md:flex flex-col h-screen sticky top-0 shadow-sm`}
+        className={`bg-white border-r border-neutral-100 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"
+          } hidden md:flex flex-col h-screen sticky top-0 shadow-sm`}
       >
         <div className="p-6 flex items-center gap-4 border-b border-neutral-50 shrink-0">
           <div className="w-12 h-12 bg-black rounded-[14px] flex items-center justify-center shrink-0 shadow-lg">
@@ -199,11 +198,10 @@ export default function FacultyDashboard() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as ActiveTab)}
-              className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-[20px] transition-all duration-200 group ${
-                activeTab === item.id
+              className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-[20px] transition-all duration-200 group ${activeTab === item.id
                   ? "bg-black text-white shadow-lg"
                   : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"
-              }`}
+                }`}
             >
               <item.icon
                 size={20}
@@ -752,17 +750,17 @@ function StudentsSection({
 
   const departments = isHOD
     ? [
-        "CSE",
-        "ECE",
-        "EEE",
-        "ME",
-        "CIVIL",
-        "CHEMISTRY",
-        "PHYSICS",
-        "MATHEMATICS",
-        "IT",
-        "ENGLISH",
-      ]
+      "CSE",
+      "ECE",
+      "EEE",
+      "ME",
+      "CIVIL",
+      "CHEMISTRY",
+      "PHYSICS",
+      "MATHEMATICS",
+      "IT",
+      "ENGLISH",
+    ]
     : [department];
 
   const fetchById = async () => {
@@ -962,17 +960,16 @@ function StudentsSection({
             <div
               key={std.username}
               onClick={() => fetchFullDetails(std.username)}
-              className={`group flex items-center justify-between p-4 px-6 bg-white border rounded-2xl cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 ${
-                selectedStudent?.username === std.username
+              className={`group flex items-center justify-between p-4 px-6 bg-white border rounded-2xl cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 ${selectedStudent?.username === std.username
                   ? "border-black ring-4 ring-black/5 shadow-xl"
                   : "border-neutral-100 hover:border-neutral-200"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-4">
                 <div
-                  className={`w-11 h-11 rounded-[16px] flex items-center justify-center transition-colors ${selectedStudent?.username === std.username ? "bg-black text-white" : "bg-neutral-50 text-neutral-400 group-hover:bg-black group-hover:text-white"}`}
+                  className={`w-11 h-11 rounded-[16px] flex items-center justify-center transition-colors font-bold uppercase ${selectedStudent?.username === std.username ? "bg-black text-white" : "bg-neutral-50 text-neutral-400 group-hover:bg-black group-hover:text-white"}`}
                 >
-                  <User size={20} />
+                  {std.name?.[0] || "S"}
                 </div>
                 <div>
                   <p className="font-bold text-neutral-900 leading-tight">
@@ -1052,7 +1049,9 @@ function StudentsSection({
                             alt=""
                           />
                         ) : (
-                          <User size={32} className="text-white/40" />
+                          <span className="text-3xl font-black text-white uppercase opacity-40">
+                            {selectedStudent.name?.[0] || "S"}
+                          </span>
                         )}
                       </div>
                       <div>
