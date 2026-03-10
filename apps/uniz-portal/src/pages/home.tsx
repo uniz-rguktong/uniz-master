@@ -47,12 +47,6 @@ export default function Home() {
               <Download size={20} strokeWidth={2.5} className="group-hover:-translate-y-1 transition-transform" />
               Download Portal App
             </a>
-            <div className="py-4">
-              <div className="flex items-center gap-2 text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></div>
-                Latest Version v2.0 Live
-              </div>
-            </div>
           </div>
           <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100 max-w-xl">
             <h5 className="font-black text-slate-900 mb-4 tracking-tight">App Experience Features</h5>
