@@ -142,11 +142,16 @@ async function seed() {
     // --- SEEDING STUDENTS (O21 Batch - Mandatory IDs) ---
     console.log("- Seeding O21 Sample Students...");
     const o21Students = [
+      { id: "O210001", branch: "CSE", name: "CSE Senior" },
       { id: "O210002", branch: "ECE", name: "ECE Senior" },
       { id: "O210003", branch: "ME", name: "ME Senior" },
       { id: "O210004", branch: "CE", name: "CE Senior" },
       { id: "O210005", branch: "EEE", name: "EEE Senior" },
-      { id: "O210008", branch: "CSE", name: "Target Student (O210008)" }, // Specifically requested
+      { id: "O210006", branch: "MME", name: "MME Senior" },
+      { id: "O210007", branch: "CHEM", name: "CHEM Senior" },
+      { id: "O210008", branch: "CSE", name: "Target Student (O210008)" },
+      { id: "O210009", branch: "CIVIL", name: "O21 Senior" },
+      { id: "O210010", branch: "CSE", name: "O21 Senior" },
     ];
 
     for (const student of o21Students) {
