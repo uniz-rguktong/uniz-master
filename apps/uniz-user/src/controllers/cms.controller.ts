@@ -21,9 +21,9 @@ export const getPublicBanners = async (req: Request, res: Response) => {
     });
     return res.json({ success: true, banners });
   } catch (e) {
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to fetch banners" });
+    console.error("[CMS-Public-Error] Failed to fetch banners:", e);
+    // Fail-safe: Return empty array so landing page doesn't crash
+    return res.json({ success: true, banners: [] });
   }
 };
 
@@ -42,9 +42,12 @@ export const getPublicNotifications = async (req: Request, res: Response) => {
       notifications: { updates, tenders: [] },
     });
   } catch (e) {
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to fetch notifications" });
+    console.error("[CMS-Public-Error] Failed to fetch notifications:", e);
+    // Fail-safe: Return empty structure
+    return res.json({
+      success: true,
+      notifications: { updates: [], tenders: [] },
+    });
   }
 };
 
