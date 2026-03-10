@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# --- UniZ Universal Local Setup (V16) ---
-# Goal: 100% Reliability, Sub-5ms latency, Auto-Healing Dependencies.
-# Fixes: Prisma version mismatches, Node module corruption, and macOS DNS delays.
+# --- UniZ Universal Local Setup (V17) ---
+# Goal: 100% Reliability, Sub-5ms latency, Corruption-Free Envs.
+# Fixes: Smashed .env lines, Prisma mismatches, Landing Page 500s.
 
 echo "🚀 Starting UniZ Master Setup (Local Environment)..."
 
@@ -45,7 +45,6 @@ echo "🧹 Clearing existing infrastructure (Guaranteeing Port 5432 & 6379)..."
 $COMPOSE_CMD -f infra/core-infra/docker-compose.yml stop uniz-redis uniz-postgres >/dev/null 2>&1 || true
 $COMPOSE_CMD -f infra/core-infra/docker-compose.yml rm -f uniz-redis uniz-postgres >/dev/null 2>&1 || true
 
-# Kill any standalone processes on DB ports (to ensure no conflicts)
 if [[ "$OSTYPE" == "darwin"* ]]; then
     lsof -ti:5432 | xargs kill -9 >/dev/null 2>&1 || true
     lsof -ti:6379 | xargs kill -9 >/dev/null 2>&1 || true
@@ -99,9 +98,11 @@ for i in "${!SERVICES[@]}"; do
     if [ -d "$path" ]; then
         echo "  -> Processing $path..."
         
-        # A. Update Secrets
+        # A. Update Secrets with Newline Safety
         if [ -f "secrets.env" ]; then
             cp secrets.env "$path/.env"
+            # Ensure file ends with newline to prevent smashing
+            [ -n "$(tail -c1 "$path/.env")" ] && printf "\n" >> "$path/.env"
         fi
         
         # B. 127.0.0.1 Fast-Path Overrides
@@ -135,10 +136,9 @@ for i in "${!SERVICES[@]}"; do
             echo "CRON_SERVICE_URL=http://127.0.0.1:3008"
         } >> "$path/.env"
 
-        # D. HEAL PRISMA CLIENT (Fixes 'wasm-base64' and 'Cannot find module' errors)
+        # D. HEAL PRISMA CLIENT
         if [ -f "$path/prisma/schema.prisma" ]; then
             echo "     💎 Healing Prisma Client for $path..."
-            # Deleting corrupted client to force clean re-install/generate
             rm -rf "$path/node_modules/@prisma/client"
             (cd "$path" && npm install --no-save @prisma/client@6 prisma@6 >/dev/null 2>&1)
             
@@ -149,12 +149,11 @@ for i in "${!SERVICES[@]}"; do
     fi
 done
 
-# 4. Final Tooling Installation
 echo "📦 Finalizing global development tools..."
 npm install --no-save ts-node bcrypt @types/bcrypt pg @types/pg >/dev/null 2>&1
 
 echo ""
-echo "🔥 MISSION CONTROL IS SHIPYARD READY (V16)!"
+echo "🔥 MISSION CONTROL IS SHIPYARD READY (V17)!"
 echo "--------------------------------------------------------"
 echo "1. SEED DATA:  npm run seed:local"
 echo "2. LAUNCH ALL: npm run dev:all"
