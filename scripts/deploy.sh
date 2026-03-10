@@ -13,6 +13,7 @@ fi
 
 # 2. Deploy Logic
 deploy_logic() {
+  echo "[CI/CD] Deployment Verified at $(date)"
   cd /root/uniz-master
   
   echo "[Git] Latest Commit: $(git log -1 --format='%h - %s')"
