@@ -1,15 +1,19 @@
-name: Manual VPS Deployment
+name: VPS Automated Deployment
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       commit_message:
-        description: "Commit message for the deployment"
-        required: true
-        default: "manual-deployment"
+        description: "Commit message for rebuilding (optional)"
+        required: false
+        default: "manual-update"
 
 jobs:
   deploy:
+    name: Build and Stream to VPS
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -17,27 +21,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Deploy to VPS
+      - name: Execute Remote Warp-Deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
+          key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            export DEPLOY_CONTEXT="GITHUB_ACTIONS"
             cd /root/uniz-master
-            echo "[Auth] Deployment triggered by ${{ github.actor }}"
 
-            # Check if current user is allowed (SreeCharan)
-            # GitHub stores login in github.actor, we check against known allowed handles
-            ALLOWED_USERS="sreecharan-desu"
-            if [[ ! " $ALLOWED_USERS " =~ " ${{ github.actor }} " ]]; then
-              echo "[Error] User ${{ github.actor }} is not authorized to deploy."
-              exit 1
-            fi
+            echo "[CI/CD] Triggered by ${{ github.actor }} on commit ${{ github.sha }}"
 
-            echo "[Git] Updating repository..."
+            # Security: Verify repo integrity
             git fetch origin main
             git reset --hard origin/main
 
-            # Run the same localized deploy script the user uses locally
-            /bin/bash ./scripts/deploy.sh "${{ github.event.inputs.commit_message }}"
+            # Extract commit message for build-detection
+            COMMIT_MSG=$(git log -1 --pretty=%B)
+            echo "[Log] Last Commit: $COMMIT_MSG"
+
+            # Execute the heavy lifter
+            /bin/bash ./scripts/deploy.sh "$COMMIT_MSG"
