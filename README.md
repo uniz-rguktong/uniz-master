@@ -71,30 +71,38 @@ graph TD
 | **Orchestration**    | K3s (Kubernetes)     | Production cluster management and auto-scaling.      |
 | **CI/CD**            | GitHub Actions       | Automated build, test, and VPS deployment pipelines. |
 
-## Getting Started
+### 🚀 Master Setup (All Systems)
 
-### Prerequisites
+Run the entire UniZ mission control center with a single setup command. Works natively on **macOS, Linux, and Windows (WSL/Git Bash)**:
 
-- Node.js v20+
-- Docker & Docker Compose
-- Git
+1. **Auto-Install & Infra**:
+   ```bash
+   npm run setup:local
+   ```
+2. **Seed Ecosystem**:
+   ```bash
+   npm run seed:local
+   ```
+3. **Launch All**:
+   ```bash
+   npm run dev:all
+   ```
 
-### Local Development
+**Test Credentials:**
 
-1.  **Initial Setup**:
-    ```bash
-    npm run install:all
-    npm run setup
-    ```
-2.  **Infrastructure**:
-    ```bash
-    docker-compose up -d
-    ```
-3.  **Run Services**:
-    ```bash
-    npm run dev
-    ```
-    Access the system health check at `https://api.uniz.rguktong.in/api/v1/system/health`.
+- **Webmaster**: `webmaster` / `password123`
+- **Faculty/HOD**: `hod_cse` / `password123`
+- **Student**: (Use bulk onboarding / seeder to create)
+
+## 🔐 Environment & Security Strategy
+
+UniZ uses a "Shielded Vault" pattern to isolate Local and Production environments:
+
+- **Local Development**: Managed via `secrets.env` in the root. The `npm run setup:local` command automatically propagates this to all microservice sub-directories. This file is git-ignored.
+- **Production (VPS)**: Sourced from `/root/uniz-secrets.env` on the VPS host. The `deploy.sh` script reads these values over SSH and injects them directly into Kubernetes Secrets.
+- **Airgap**: Production credentials **never** touch the Git history or your local machine's environment. Changes to production ENV must be made directly on the VPS master file.
+
+---
 
 ---
 
