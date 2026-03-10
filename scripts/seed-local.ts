@@ -9,68 +9,159 @@ const dbConfig = {
 };
 
 async function seed() {
-  console.log("🌱 Starting Seeding (Local DB)...");
+  console.log("🌱 Starting Deep Seeding (Local DB - Universal Version)...");
   const client = new Client(dbConfig);
+  const seededCreds: { username: string; role: string; desc: string }[] = [];
 
   try {
     await client.connect();
     const hash = await bcrypt.hash("password123", 10);
 
-    // 1. Seed Auth Credentials (Into auth_v2 schema)
-    console.log("- Seeding Auth Credentials...");
-    await client.query(
-      `
-      INSERT INTO auth_v2."AuthCredential" (id, username, "passwordHash", role, "updatedAt")
-      VALUES ($1, $2, $3, $4, NOW())
-      ON CONFLICT (username) DO UPDATE SET "passwordHash" = EXCLUDED."passwordHash";
-    `,
-      ["webmaster-id", "webmaster", hash, "webmaster"],
+    const upsertUser = async (
+      id: string,
+      username: string,
+      role: string,
+      desc: string,
+      profileType: "Admin" | "Faculty" | "Student",
+      extra: any = {},
+    ) => {
+      // 1. Auth Credential
+      await client.query(
+        `
+        INSERT INTO auth_v2."AuthCredential" (id, username, "passwordHash", role, "updatedAt")
+        VALUES ($1, $2, $3, $4, NOW())
+        ON CONFLICT (username) DO UPDATE SET "passwordHash" = EXCLUDED."passwordHash";
+      `,
+        [id, username, hash, role],
+      );
+
+      // 2. Profile
+      if (profileType === "Admin") {
+        await client.query(
+          `
+          INSERT INTO user_v2."AdminProfile" (id, username, email, name, role, "updatedAt")
+          VALUES ($1, $2, $3, $4, $5, NOW())
+          ON CONFLICT (username) DO UPDATE SET name = EXCLUDED.name, email = EXCLUDED.email;
+        `,
+          [
+            id,
+            username,
+            extra.email || `${username}@rguktong.ac.in`,
+            extra.name || username.toUpperCase(),
+            role,
+          ],
+        );
+      } else if (profileType === "Faculty") {
+        await client.query(
+          `
+          INSERT INTO user_v2."FacultyProfile" (id, username, name, email, department, designation, role, "updatedAt")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+          ON CONFLICT (username) DO UPDATE SET department = EXCLUDED.department, designation = EXCLUDED.designation;
+        `,
+          [
+            id,
+            username,
+            extra.name || `Dr. ${username.toUpperCase()}`,
+            extra.email || `${username}@rguktong.ac.in`,
+            extra.dept || "GENERAL",
+            extra.designation || "Faculty",
+            role,
+          ],
+        );
+      } else if (profileType === "Student") {
+        await client.query(
+          `
+          INSERT INTO user_v2."StudentProfile" (id, username, name, email, branch, year, semester, "updatedAt")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+          ON CONFLICT (username) DO UPDATE SET branch = EXCLUDED.branch, year = EXCLUDED.year;
+        `,
+          [
+            id,
+            username,
+            extra.name || `Student ${username.toUpperCase()}`,
+            extra.email || `${username}@rguktong.ac.in`,
+            extra.branch || "CSE",
+            "E4",
+            "Sem-1",
+          ],
+        );
+      }
+
+      seededCreds.push({ username, role, desc });
+    };
+
+    // --- SEEDING CORE ROLES ---
+    console.log("- Seeding Core Roles...");
+    await upsertUser(
+      "webmaster-id",
+      "webmaster",
+      "webmaster",
+      "Main System Administrator",
+      "Admin",
+      { email: "webadmin@rguktong.ac.in", name: "UniZ Webmaster" },
+    );
+    await upsertUser(
+      "dean-id",
+      "dean_academics",
+      "dean",
+      "Dean of Academic Affairs",
+      "Admin",
+      { email: "dean.ac@rguktong.ac.in", name: "Dean Academics" },
+    );
+    await upsertUser(
+      "director-id",
+      "director",
+      "director",
+      "Campus Director",
+      "Admin",
+      { email: "director@rguktong.ac.in", name: "Campus Director" },
+    );
+    await upsertUser(
+      "swo-id",
+      "swo_office",
+      "swo",
+      "Student Welfare Officer",
+      "Admin",
+      { email: "swo@rguktong.ac.in", name: "SWO Chief" },
     );
 
-    await client.query(
-      `
-      INSERT INTO auth_v2."AuthCredential" (id, username, "passwordHash", role, "updatedAt")
-      VALUES ($1, $2, $3, $4, NOW())
-      ON CONFLICT (username) DO UPDATE SET "passwordHash" = EXCLUDED."passwordHash";
-    `,
-      ["hod-cse-id", "hod_cse", hash, "hod"],
-    );
-
-    // 2. Seed User Profiles (Into user_v2 schema)
-    console.log("- Seeding User Profiles...");
-
-    // Webmaster Profile (Using columns verified via psql description)
-    await client.query(
-      `
-      INSERT INTO user_v2."AdminProfile" (id, username, email, role, "updatedAt")
-      VALUES ($1, $2, $3, $4, NOW())
-      ON CONFLICT (username) DO NOTHING;
-    `,
-      ["webmaster-id", "webmaster", "webadmin@rguktong.ac.in", "webmaster"],
-    );
-
-    // Faculty Profile
-    await client.query(
-      `
-      INSERT INTO user_v2."FacultyProfile" (id, username, name, email, department, designation, role, "updatedAt")
-      VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
-      ON CONFLICT (username) DO NOTHING;
-    `,
-      [
-        "hod-cse-id",
-        "hod_cse",
-        "Dr. CSE HOD",
-        "hod.cse@rguktong.ac.in",
-        "CSE",
-        "Head of Department",
+    // --- SEEDING HODs (One per branch) ---
+    console.log("- Seeding Department Heads...");
+    const branches = ["CSE", "ECE", "ME", "CE", "EEE", "MME", "CHEM"];
+    for (const dept of branches) {
+      await upsertUser(
+        `hod-${dept.toLowerCase()}-id`,
+        `hod_${dept.toLowerCase()}`,
         "hod",
-      ],
-    );
+        `${dept} Head of Department`,
+        "Faculty",
+        { dept, designation: "Head of Department" },
+      );
+    }
 
-    // 3. Seed CMS Content (Banners & Notifications)
-    console.log("- Seeding Landing Page Content (High-Quality Assets)...");
+    // --- SEEDING STUDENTS (O21 Batch - Mandatory IDs) ---
+    console.log("- Seeding O21 Sample Students...");
+    const o21Students = [
+      { id: "O210002", branch: "ECE", name: "ECE Senior" },
+      { id: "O210003", branch: "ME", name: "ME Senior" },
+      { id: "O210004", branch: "CE", name: "CE Senior" },
+      { id: "O210005", branch: "EEE", name: "EEE Senior" },
+      { id: "O210008", branch: "CSE", name: "Target Student (O210008)" }, // Specifically requested
+    ];
 
-    // Banner Logic
+    for (const student of o21Students) {
+      await upsertUser(
+        `${student.id}-id`,
+        student.id,
+        "student",
+        `${student.branch} student (O21)`,
+        "Student",
+        { branch: student.branch, name: student.name },
+      );
+    }
+
+    // --- SEEDING CMS CONTENT ---
+    console.log("- Seeding CMS Assets...");
     const upsertBanner = async (
       id: string,
       title: string,
@@ -81,11 +172,7 @@ async function seed() {
         `
         INSERT INTO user_v2."Banner" (id, title, text, "imageUrl", "isVisible", "createdAt", "updatedAt")
         VALUES ($1, $2, $3, $4, true, NOW(), NOW())
-        ON CONFLICT (id) DO UPDATE SET 
-          title = EXCLUDED.title,
-          text = EXCLUDED.text,
-          "imageUrl" = EXCLUDED."imageUrl",
-          "updatedAt" = NOW();
+        ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, "imageUrl" = EXCLUDED."imageUrl", "updatedAt" = NOW();
       `,
         [id, title, text, imageUrl],
       );
@@ -94,19 +181,19 @@ async function seed() {
     await upsertBanner(
       "banner-1",
       "Modern Digital Library",
-      "Access over 50,000 journals and books from anywhere on campus.",
+      "Access over 50,000 journals.",
       "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?auto=format&fit=crop&q=80&w=2070",
     );
     await upsertBanner(
       "banner-2",
       "Academic Excellence",
-      "Track your results and stay ahead with UniZ high-speed analytics.",
+      "Track results with Warp speed.",
       "https://images.unsplash.com/photo-1523050853064-06c57f642461?auto=format&fit=crop&q=80&w=2070",
     );
     await upsertBanner(
       "banner-3",
       "Campus Collaboration",
-      "Connect with clubs and manage events through the integrated student hub.",
+      "Connect with clubs easily.",
       "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80&w=2070",
     );
 
@@ -114,21 +201,28 @@ async function seed() {
       `
       INSERT INTO user_v2."PublicNotification" (id, title, content, link, "isVisible", "createdAt", "updatedAt")
       VALUES ($1, $2, $3, $4, true, NOW(), NOW())
-      ON CONFLICT (id) DO UPDATE SET
-        title = EXCLUDED.title,
-        content = EXCLUDED.content,
-        link = EXCLUDED.link,
-        "updatedAt" = NOW();
+      ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, "updatedAt" = NOW();
     `,
       [
         "notif-1",
         "Admission Cycle 2026",
-        "The 2026 undergraduate admission cycle is now open for all departments.",
+        "2026 UG Admissions open.",
         "https://rguktong.ac.in/admissions",
       ],
     );
 
-    console.log("✅ Seeding Complete!");
+    console.log("\n✅ Seeding Complete!\n");
+    console.log(
+      "--------------------------------------------------------------------------",
+    );
+    console.log("🔑 LOCAL DEVELOPMENT CREDENTIALS (PASSWORD: password123)");
+    console.log(
+      "--------------------------------------------------------------------------",
+    );
+    console.table(seededCreds);
+    console.log(
+      "--------------------------------------------------------------------------",
+    );
   } catch (err) {
     console.error("❌ Seeding Failed:", err);
     process.exit(1);
