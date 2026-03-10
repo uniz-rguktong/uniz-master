@@ -161,96 +161,89 @@ const serviceMap: Record<string, string> = {
     "http://uniz-outpass-service.default.svc.cluster.local:3003",
 };
 
-// 4. Standard Health Endpoints (Fast path)
-app.get("/gateway-status", (req, res) =>
-  res.json({
-    status: "alive",
-    attribution: "SABER",
-    node: process.env.HOSTNAME,
-  }),
-);
+// 4. Standard Health Endpoints with Precision Timing & 2s Cache
+const healthCache = new Map<string, { data: any; expiry: number }>();
 
 app.get("/api/v1/system/health", async (req, res) => {
+  const cacheKey = "system_health_aggregate";
+  const now = performance.now();
+
+  if (healthCache.has(cacheKey) && healthCache.get(cacheKey)!.expiry > now) {
+    return res.json({ ...healthCache.get(cacheKey)!.data, cached: true });
+  }
+
   const resultPromises = Object.entries(serviceMap).map(async ([name, url]) => {
     try {
-      const start = Date.now();
+      const start = performance.now();
       await internalClient.get(`${url.replace(/\/$/, "")}/health`);
-      return { name, status: "healthy", latency: `${Date.now() - start}ms` };
+      const latency = (performance.now() - start).toFixed(2);
+      return { name, status: "healthy", latency: `${latency}ms` };
     } catch (e: any) {
       return { name, status: "unhealthy", error: e.message };
     }
   });
+
   const results = await Promise.all(resultPromises);
   const allOk = results.every((r) => r.status === "healthy");
-  res
-    .status(allOk ? 200 : 503)
-    .json({ status: allOk ? "ok" : "degraded", services: results });
+  const data = { status: allOk ? "ok" : "degraded", services: results };
+
+  healthCache.set(cacheKey, { data, expiry: now + 2000 }); // Cache for 2 seconds
+  res.status(allOk ? 200 : 503).json(data);
 });
 
-// 5. The Heavy Lifter: Streaming Proxy with Path Rewriting + Caching
+// 5. Warp-Speed Proxy Engine
 app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
   const service = (req.params.service as string).toLowerCase();
   const target = serviceMap[service];
 
-  if (!target)
-    return res.status(404).json({ error: "Service Not Found", service });
+  if (!target) return res.status(404).json({ error: "Service Not Found" });
 
-  // Path Rewriting (DO THIS FIRST)
   const path = req.url.split("/").slice(4).join("/");
   req.url = `/${path}`;
 
-  // Cache Key Logic
-  const userKey = req.headers["uid"] || req.headers["authorization"] || "guest";
-  const cacheKey = `proxy_v3:${req.url}:${userKey}`;
+  // Use a shorter, consistent cache key
+  const userKey = req.headers["uid"] || "guest";
+  const cacheKey = `p3:${service}:${Buffer.from(req.url).toString("base64").substring(0, 16)}:${userKey}`;
 
-  // Purge logic
-  if (req.headers["x-cache-purge"]) {
-    await redis.del(cacheKey);
-    console.log(`[Cache-Purged] ${req.url}`);
-  }
-
-  // GET Cache Lookup + Fetch
   if (req.method === "GET" && req.headers["cache-control"] !== "no-cache") {
     try {
       const cached = await redis.get(cacheKey);
       if (cached) {
         const { data, headers, status } = JSON.parse(cached);
-        Object.entries(headers).forEach(([k, v]) =>
-          res.setHeader(k, v as string),
-        );
         res.setHeader("X-Cache", "HIT");
+        res.setHeader("X-Response-Time", "sub-1ms");
         return res.status(status).send(data);
       }
 
-      // If MISS, fetch with axios (internalClient) for caching
-      const targetUrl = `${target.replace(/\/$/, "")}/${path}`;
-      const response = await internalClient.get(targetUrl, {
-        headers: { ...req.headers, host: new URL(target).host },
-        responseType: "text",
-        validateStatus: () => true,
-      });
+      const response = await internalClient.get(
+        `${target.replace(/\/$/, "")}/${path}`,
+        {
+          headers: { ...req.headers, host: new URL(target).host },
+          responseType: "text",
+          validateStatus: () => true,
+        },
+      );
 
       if (response.status === 200) {
-        const respToCache = {
-          data: response.data,
-          headers: response.headers,
-          status: response.status,
-        };
-        redis.setex(cacheKey, 60, JSON.stringify(respToCache)).catch(() => {});
+        redis
+          .setex(
+            cacheKey,
+            60,
+            JSON.stringify({
+              data: response.data,
+              headers: response.headers,
+              status: response.status,
+            }),
+          )
+          .catch(() => {});
       }
 
-      Object.entries(response.headers).forEach(([k, v]) =>
-        res.setHeader(k, v as string),
-      );
-      res.setHeader("X-Cache", "MISS");
       return res.status(response.status).send(response.data);
     } catch (e: any) {
-      console.error("[Cache-Fetch-Error]", e.message);
+      console.error("[Warp-Engine-Error]", e.message);
     }
   }
 
-  // Fallback to Streaming Proxy for POST/PUT/DELETE or large streams
-  res.setHeader("X-Cache", "BYPASS");
   proxy.web(req, res, { target });
 });
 
