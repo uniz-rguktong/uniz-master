@@ -5,9 +5,15 @@ import path from "path";
 import compression from "compression";
 import Redis from "ioredis";
 import httpProxy from "http-proxy";
+import http from "http";
 import dotenv from "dotenv";
-
 dotenv.config();
+
+// Pre-configured Axios instance for internal communications with Keep-Alive
+const internalClient = axios.create({
+  timeout: 2000,
+  httpAgent: new http.Agent({ keepAlive: true, maxSockets: 100 }),
+});
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -168,7 +174,7 @@ app.get("/api/v1/system/health", async (req, res) => {
   const resultPromises = Object.entries(serviceMap).map(async ([name, url]) => {
     try {
       const start = Date.now();
-      await axios.get(`${url.replace(/\/$/, "")}/health`, { timeout: 2000 });
+      await internalClient.get(`${url.replace(/\/$/, "")}/health`);
       return { name, status: "healthy", latency: `${Date.now() - start}ms` };
     } catch (e: any) {
       return { name, status: "unhealthy", error: e.message };
@@ -216,9 +222,9 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
         return res.status(status).send(data);
       }
 
-      // If MISS, fetch with axios for caching
+      // If MISS, fetch with axios (internalClient) for caching
       const targetUrl = `${target.replace(/\/$/, "")}/${path}`;
-      const response = await axios.get(targetUrl, {
+      const response = await internalClient.get(targetUrl, {
         headers: { ...req.headers, host: new URL(target).host },
         responseType: "text",
         validateStatus: () => true,
