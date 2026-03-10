@@ -34,7 +34,7 @@ spec:
               memory: "256Mi"
           livenessProbe:
             httpGet:
-              path: /gateway-status
+              path: /
               port: 3000
             initialDelaySeconds: 15
             periodSeconds: 15
@@ -42,7 +42,7 @@ spec:
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /gateway-status
+              path: /
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 5
