@@ -13,15 +13,19 @@ import {
   ADMIN_STUDENT_PROGRESS,
   ADMIN_STUDENT_EXPORT,
   GET_AVAILABLE_BATCHES,
+  ADMIN_STUDENT_TEMPLATE,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { FileUploader } from "../../../components/ui/FileUploader";
+import { downloadFile } from "../../../api/apiClient";
 
 export default function StudentBulkSection() {
   const [file, setFile] = useState<File | null>(null);
   const [uploadId, setUploadId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"upload" | "export">("upload");
+  const [uploadSuccess, setUploadSuccess] = useState<boolean | null>(null);
+  const [progress, setProgress] = useState<number>(0);
 
   // Export State
   const [exportParams, setExportParams] = useState({
@@ -49,6 +53,8 @@ export default function StudentBulkSection() {
       const data = await res.json();
       if (data.success) {
         setUploadId(data.uploadId || "checking");
+        setUploadSuccess(null);
+        setProgress(0);
         toast.info("Upload started. Monitoring progress...");
       } else {
         toast.error(data.msg || "Upload failed");
@@ -57,6 +63,15 @@ export default function StudentBulkSection() {
       toast.error("Network error during upload");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDownloadTemplate = async () => {
+    try {
+      await downloadFile(ADMIN_STUDENT_TEMPLATE, "Student_Upload_Template.xlsx");
+      toast.success("Template downloaded");
+    } catch (error) {
+      toast.error("Failed to download template");
     }
   };
 
@@ -73,13 +88,16 @@ export default function StudentBulkSection() {
             },
           });
           const data = await res.json();
-          // setProgress(data); // Removed UI
+          if (data.percent !== undefined) setProgress(data.percent);
           if (data.status === "completed" || data.status === "done") {
             setUploadId(null);
+            setProgress(100);
+            setUploadSuccess(true);
             clearInterval(interval);
             toast.success("Bulk provisioning completed successfully");
           } else if (data.status === "failed" || data.status === "error") {
             setUploadId(null);
+            setUploadSuccess(false);
             clearInterval(interval);
             toast.error("Bulk provisioning failed");
           }
@@ -163,13 +181,32 @@ export default function StudentBulkSection() {
       </div>
 
       {activeTab === "upload" ? (
-        <div className="max-w-4xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
-          {/* Upload Step */}
-          <div className="bg-white p-6 md:p-8 rounded-xl border border-slate-100 shadow-none space-y-6 transition-all">
+        <div className="max-w-4xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-4">
+          <div className="flex justify-end pr-2">
+            <button
+              onClick={handleDownloadTemplate}
+              className="group flex items-center gap-2.5 px-4 py-2 bg-white text-slate-500 rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all font-bold uppercase tracking-widest text-[9px] shadow-sm active:scale-95"
+            >
+              <div className="p-1.5 bg-slate-50 rounded-lg group-hover:bg-blue-50 transition-colors">
+                <Download size={13} className="group-hover:scale-110 transition-transform" />
+              </div>
+              Download Template
+            </button>
+          </div>
+
+          <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 shadow-none space-y-6 transition-all relative">
             <FileUploader
-              onFileSelect={setFile}
+              onFileSelect={(f) => {
+                setFile(f);
+                setUploadSuccess(null);
+                setProgress(0);
+              }}
               label="Choose Student Records"
               description="Upload XLSX or CSV with mandatory fields (username, name, email)."
+              isUploading={loading || !!uploadId}
+              isSuccess={uploadSuccess === true}
+              isError={uploadSuccess === false}
+              progress={progress}
             />
 
             <button
@@ -180,13 +217,14 @@ export default function StudentBulkSection() {
               {loading ? (
                 <Loader2 className="animate-spin w-5 h-5" />
               ) : uploadId ? (
-                <Loader2 className="animate-spin w-5 h-5" />
+                <div className="flex items-center gap-3">
+                  <Loader2 className="animate-spin w-5 h-5" />
+                  <span>Processing Records... {progress}%</span>
+                </div>
               ) : (
                 <CheckCircle2 size={20} />
               )}
-              {uploadId
-                ? "Processing Records..."
-                : "Initiate Bulk Provisioning"}
+              {!loading && !uploadId && "Initiate Bulk Provisioning"}
             </button>
           </div>
         </div>

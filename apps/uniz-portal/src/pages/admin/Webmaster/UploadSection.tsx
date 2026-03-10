@@ -188,13 +188,13 @@ export default function UploadSection({ type }: { type: UploadType }) {
       type === "attendance"
         ? GET_ATTENDANCE_TEMPLATE(branch, year, semester, batch)
         : GET_GRADES_TEMPLATE(
-            branch,
-            year,
-            semester,
-            subjectCode,
-            remedialsOnly,
-            batch,
-          );
+          branch,
+          year,
+          semester,
+          subjectCode,
+          remedialsOnly,
+          batch,
+        );
     const fileName = `${type}_${branch}_${year}_${semester}_template.xlsx`;
     await downloadFile(url, fileName);
   };
@@ -416,11 +416,10 @@ export default function UploadSection({ type }: { type: UploadType }) {
         <div className="space-y-6">
           {result ? (
             <div
-              className={`p-8 rounded-xl border animate-in slide-in-from-right-8 duration-500 h-full shadow-none ${
-                result.success
-                  ? "bg-emerald-50 border-emerald-100 text-emerald-900"
-                  : "bg-red-50 border-red-100 text-red-900"
-              }`}
+              className={`p-8 rounded-xl border animate-in slide-in-from-right-8 duration-500 h-full shadow-none ${result.success
+                ? "bg-emerald-50 border-emerald-100 text-emerald-900"
+                : "bg-red-50 border-red-100 text-red-900"
+                }`}
             >
               <div className="flex items-center gap-4 mb-6">
                 <div

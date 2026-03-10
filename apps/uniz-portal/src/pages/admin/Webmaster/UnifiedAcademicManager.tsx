@@ -37,11 +37,11 @@ interface Semester {
   id: string;
   name: string;
   status:
-    | "DRAFT"
-    | "DEAN_REVIEW"
-    | "APPROVED"
-    | "REGISTRATION_OPEN"
-    | "REGISTRATION_CLOSED";
+  | "DRAFT"
+  | "DEAN_REVIEW"
+  | "APPROVED"
+  | "REGISTRATION_OPEN"
+  | "REGISTRATION_CLOSED";
   _count?: { registrations: number };
   createdAt: string;
 }
@@ -336,7 +336,7 @@ export default function UnifiedAcademicManager() {
         <div>
           <h1 className="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-4">
             <Layout className="text-blue-600" size={36} />
-            Academic Governance
+            Sem Registration
           </h1>
           <p className="text-slate-500 font-medium text-[15px] mt-1">
             Master curriculum control and semester lifecycle management.
@@ -348,16 +348,15 @@ export default function UnifiedAcademicManager() {
               fetchSemesters();
               fetchMasterSubjects();
             }}
-            className="p-4 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-blue-600 transition-all active:scale-95"
+            className="p-3 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-blue-600 transition-all active:scale-95"
           >
             <RefreshCcw size={20} className={loading ? "animate-spin" : ""} />
           </button>
           <button
             onClick={() => setShowNewSemModal(true)}
-            className="h-14 px-8 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-none"
+            className="h-12 px-6 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-none"
           >
-            <Zap size={16} className="text-amber-400 fill-amber-400" /> New
-            Rollout
+            New Rollout
           </button>
         </div>
       </div>
@@ -367,7 +366,7 @@ export default function UnifiedAcademicManager() {
         {(["catalog", "subjects", "rollout"] as const).map((tabId) => {
           const labels: Record<string, string> = {
             catalog: "Catalog",
-            subjects: "Master Catalog",
+            subjects: "Master Catalogue",
             rollout: "Live Rollout",
           };
           const icons: Record<string, any> = {
@@ -383,11 +382,10 @@ export default function UnifiedAcademicManager() {
               disabled={tabId === "rollout" && !selectedSem}
               onClick={() => setActiveTab(tabId)}
               className={`
-                flex items-center gap-3 px-8 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all
-                ${
-                  activeTab === tabId
-                    ? "bg-white text-blue-600 border border-slate-100"
-                    : "text-slate-400 hover:text-slate-900 hover:bg-white/80"
+                flex items-center gap-3 px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all
+                ${activeTab === tabId
+                  ? "bg-white text-blue-600 border border-slate-100"
+                  : "text-slate-400 hover:text-slate-900 hover:bg-white/80"
                 }
                 ${tabId === "rollout" && !selectedSem ? "opacity-30 cursor-not-allowed" : ""}
               `}
@@ -420,11 +418,10 @@ export default function UnifiedAcademicManager() {
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span
-                      className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${
-                        sem.status === "REGISTRATION_OPEN"
+                      className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${sem.status === "REGISTRATION_OPEN"
                           ? "bg-emerald-50 text-emerald-600 border-emerald-100"
                           : "bg-slate-50 text-slate-400 border-slate-100"
-                      }`}
+                        }`}
                     >
                       {sem.status.replace("_", " ")}
                     </span>
@@ -497,13 +494,13 @@ export default function UnifiedAcademicManager() {
                   placeholder="Search master subjects..."
                   value={subSearch}
                   onChange={(e) => setSubSearch(e.target.value)}
-                  className="w-full h-14 pl-14 pr-6 bg-slate-50 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 font-bold text-slate-900"
+                  className="w-full h-12 pl-14 pr-6 bg-slate-50 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 font-bold text-slate-900"
                 />
               </div>
               <select
                 value={subDept}
                 onChange={(e) => setSubDept(e.target.value)}
-                className="h-14 px-8 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-600 border-none outline-none appearance-none"
+                className="h-12 px-8 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-600 border-none outline-none appearance-none"
               >
                 <option value="">All Departments</option>
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((d) => (
@@ -524,7 +521,7 @@ export default function UnifiedAcademicManager() {
                   });
                   setShowSubModal(true);
                 }}
-                className="h-14 px-8 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 border-2 border-white/20 shadow-none"
+                className="h-12 px-8 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 border-2 border-white/20 shadow-none"
               >
                 <PlusCircle size={16} /> Add New Subject
               </button>
@@ -534,20 +531,20 @@ export default function UnifiedAcademicManager() {
               {allSubjects.map((sub, i) => (
                 <div
                   key={i}
-                  className="bg-white border border-slate-100 rounded-xl p-8 transition-all group overflow-hidden"
+                  className="bg-white border border-slate-100 rounded-xl p-5 group overflow-hidden"
                 >
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-50 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-50 transition-all">
                       <BookText size={20} />
                     </div>
                     <div className="px-3 py-1 bg-slate-50 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-400">
                       {sub.code}
                     </div>
                   </div>
-                  <h3 className="text-lg font-black text-slate-900 leading-tight mb-4">
+                  <h3 className="text-base font-black text-slate-900 leading-tight mb-2">
                     {sub.name}
                   </h3>
-                  <div className="flex items-center justify-between mt-auto pt-6 border-t border-slate-50">
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-50">
                     <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                       {sub.department} • {sub.credits} Credits
                     </div>
@@ -603,11 +600,10 @@ export default function UnifiedAcademicManager() {
                           : "REGISTRATION_OPEN",
                       )
                     }
-                    className={`h-14 px-10 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all ${
-                      selectedSem.status === "REGISTRATION_OPEN"
+                    className={`h-14 px-10 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all ${selectedSem.status === "REGISTRATION_OPEN"
                         ? "bg-red-50/10 text-red-500 border border-red-500/30 hover:bg-red-500 hover:text-white"
                         : "bg-emerald-600 text-white hover:bg-emerald-700"
-                    }`}
+                      }`}
                   >
                     {selectedSem.status === "REGISTRATION_OPEN"
                       ? "Suspend Enrollment"
@@ -630,11 +626,10 @@ export default function UnifiedAcademicManager() {
                   <button
                     key={v}
                     onClick={() => setRolloutView(v)}
-                    className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${
-                      rolloutView === v
+                    className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${rolloutView === v
                         ? "text-blue-600"
                         : "text-slate-400 hover:text-slate-600"
-                    }`}
+                      }`}
                   >
                     {v}
                     {rolloutView === v && (
@@ -826,15 +821,15 @@ export default function UnifiedAcademicManager() {
                 rolloutAllocations.length === 0) ||
                 (rolloutView === "registrations" &&
                   rolloutRegistrations.length === 0)) && (
-                <div className="p-32 text-center">
-                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
-                    <X size={40} />
+                  <div className="p-32 text-center">
+                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                      <X size={40} />
+                    </div>
+                    <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
+                      Zero activity detected for these parameters.
+                    </p>
                   </div>
-                  <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
-                    Zero activity detected for these parameters.
-                  </p>
-                </div>
-              )}
+                )}
             </div>
           </div>
         )}
@@ -886,11 +881,10 @@ export default function UnifiedAcademicManager() {
                             : [...prev, b],
                         )
                       }
-                      className={`h-14 rounded-xl font-black text-xs transition-all border ${
-                        selectedBranches.includes(b)
+                      className={`h-14 rounded-xl font-black text-xs transition-all border ${selectedBranches.includes(b)
                           ? "bg-slate-900 text-white border-slate-900 shadow-none"
                           : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-300"
-                      }`}
+                        }`}
                     >
                       {b}
                     </button>

@@ -552,9 +552,9 @@ export default function StudentProfilePage() {
                       className="w-full h-full object-cover"
                     />
                   ) : user?.name ? (
-                    user.name.charAt(0).toUpperCase()
+                    <span className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none">{user?.name?.[0]?.toUpperCase() || "S"}</span>
                   ) : (
-                    "S"
+                    <span className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none">S</span>
                   )}
 
                   {/* Dark blurry overlay — contained fully inside the circle */}
@@ -668,11 +668,10 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                  className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${
-                    activeTab === tab
+                  className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${activeTab === tab
                       ? "text-cyan-900"
                       : "text-slate-400 hover:text-slate-600"
-                  }`}
+                    }`}
                 >
                   {tab}
                   {activeTab === tab && (
@@ -900,7 +899,7 @@ export default function StudentProfilePage() {
                     </div>
                   ) : history.length > 0 ? (
                     <>
-                      {history.map((req) => (
+                      {history.map((req: any) => (
                         <RequestCard
                           key={req._id}
                           request={req}
@@ -933,9 +932,8 @@ export default function StudentProfilePage() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Modals placed inside main content area to avoid z-index issues, or can be outside. keeping existing loop logic */}
+        {/* Modals placed inside main content area to avoid z-index issues */}
         <AnimatePresence>
-          {/* ... (Existing modals logic) keeping same structure just shifting indentation logic implicitly by nesting */}
           {requestType && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
               <motion.div
@@ -1039,8 +1037,6 @@ export default function StudentProfilePage() {
             </div>
           )}
         </AnimatePresence>
-
-        {/* Closing divs for the standard layout */}
       </div>
     </div>
   );
