@@ -42,7 +42,8 @@ fi
 
 # 1. Port Clearance (Nuclear)
 echo "🧹 Clearing existing infrastructure (Guaranteeing Port 5432 & 6379)..."
-$COMPOSE_CMD -f infra/core-infra/docker-compose.yml down --remove-orphans >/dev/null 2>&1 || true
+$COMPOSE_CMD -f infra/core-infra/docker-compose.yml stop uniz-redis uniz-postgres >/dev/null 2>&1 || true
+$COMPOSE_CMD -f infra/core-infra/docker-compose.yml rm -f uniz-redis uniz-postgres >/dev/null 2>&1 || true
 
 # Kill any standalone processes on DB ports (to ensure no conflicts)
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -54,7 +55,7 @@ fi
 echo "🏗️ Starting Core Infrastructure (Postgres & Redis)..."
 # Create a dummy .env in core-infra if it doesn't exist to prevent compose warnings
 touch infra/core-infra/.env
-$COMPOSE_CMD -f infra/core-infra/docker-compose.yml up -d
+$COMPOSE_CMD -f infra/core-infra/docker-compose.yml up -d uniz-redis uniz-postgres
 
 # --- CRITICAL: Wait for Postgres to be ready ---
 echo "⏳ Waiting for Postgres to accept connections..."
