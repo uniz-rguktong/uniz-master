@@ -25,12 +25,14 @@ export function Layout({ children }: LayoutProps) {
     return <div className="min-h-screen bg-slate-50/50">{children}</div>;
   }
 
+  const isHomePage = location.pathname === "/";
+
   return (
-    <div className="min-h-screen flex flex-col bg-premium-gradient text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+    <div className={`min-h-screen flex flex-col ${isHomePage ? "bg-white" : "bg-premium-gradient"} text-slate-900 selection:bg-blue-100 selection:text-blue-900`}>
       <Suspense fallback={<LoadingAnim />}>
         <Navbar />
       </Suspense>
-      <main className="flex-grow flex flex-col max-w-[1600px] w-full mx-auto p-4 sm:p-6 md:p-10 animate-in fade-in duration-500">
+      <main className={`flex-grow flex flex-col ${isHomePage ? "" : "max-w-[1600px] w-full mx-auto p-4 sm:p-6 md:p-10"} animate-in fade-in duration-500`}>
         <div className="flex-grow h-full w-full">{children}</div>
       </main>
       <Footer />

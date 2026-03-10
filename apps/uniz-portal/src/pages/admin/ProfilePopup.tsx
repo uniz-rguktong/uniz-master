@@ -190,6 +190,7 @@ export default function ProfilePopup({
   };
 
   const displayName = profile?.name || username;
+  const initial = displayName[0]?.toUpperCase() ?? "U";
   const firstName = displayName.split(" ")[0];
 
   const popupContent = (
@@ -257,8 +258,8 @@ export default function ProfilePopup({
                           alt=""
                         />
                       ) : (
-                        <span className="text-sm font-bold text-white text-center px-2 leading-tight">
-                          {firstName}
+                        <span className="text-xl font-black text-white">
+                          {initial}
                         </span>
                       )}
                       {isUploading && (
