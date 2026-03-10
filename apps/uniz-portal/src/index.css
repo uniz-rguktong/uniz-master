@@ -38,6 +38,13 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
   }
 
   * {
@@ -181,6 +188,7 @@
   }
 
   @keyframes iconBounce {
+
     0%,
     100% {
       transform: translateY(0);
@@ -202,6 +210,13 @@
       transform: translateY(0);
     }
   }
+
+  .bg-grid {
+    background-size: 40px 40px;
+    background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px);
+    mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 70%, transparent 100%);
+  }
+
 }
 
 :root {
@@ -217,4 +232,39 @@
   --component-active-bg: var(--secondary);
   --component-line-inactive-color: var(--border);
   --component-active-color-default: var(--accent-foreground);
+}
+
+.database {
+  offset-anchor: 10px 0px;
+  animation: database-animation-path;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  animation-duration: 4s;
+  animation-delay: 1s;
+}
+
+.db-light-1 {
+  offset-path: path("M 31 10 v 15 q 0 5 5 5 h 59 q 5 0 5 5 v 40");
+}
+
+.db-light-2 {
+  offset-path: path("M 77 10 v 10 q 0 5 5 5 h 13 q 5 0 5 5 v 45");
+}
+
+.db-light-3 {
+  offset-path: path("M 124 10 v 10 q 0 5 -5 5 h -14 q -5 0 -5 5 v 45");
+}
+
+.db-light-4 {
+  offset-path: path("M 170 10 v 15 q 0 5 -5 5 h -60 q -5 0 -5 5 v 40");
+}
+
+@keyframes database-animation-path {
+  0% {
+    offset-distance: 0%;
+  }
+
+  100% {
+    offset-distance: 100%;
+  }
 }

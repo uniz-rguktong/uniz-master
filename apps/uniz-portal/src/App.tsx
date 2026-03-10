@@ -33,21 +33,7 @@ const AdminProfile = lazy(() => import("./pages/admin/Profile"));
 const CurrentSemesterAdmin = lazy(
   () => import("./pages/admin/CurrentSemesterAdmin"),
 );
-const ContactUs = lazy(() => import("./pages/ContactUs"));
-
-// Public Info Pages
-const Campus = lazy(() => import("./pages/institute/Campus"));
-const Administration = lazy(() => import("./pages/institute/Administration"));
-const Alumni = lazy(() => import("./pages/institute/Alumni"));
-const Faculty = lazy(() => import("./pages/academics/Faculty"));
-const Rules = lazy(() => import("./pages/academics/Rules"));
-const Calendar = lazy(() => import("./pages/academics/Calendar"));
-const Civil = lazy(() => import("./pages/departments/Civil"));
-const CSE = lazy(() => import("./pages/departments/CSE"));
-const Mech = lazy(() => import("./pages/departments/Mech"));
-const ECE = lazy(() => import("./pages/departments/ECE"));
-const EEE = lazy(() => import("./pages/departments/EEE"));
-const ExamCell = lazy(() => import("./pages/ExamCell"));
+// Public Info Pages deleted
 
 export const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === "true";
 
@@ -162,118 +148,7 @@ export default function App() {
               </MaintenanceGuard>
             }
           />
-          <Route
-            path="/contact-us"
-            element={
-              <PageTransition>
-                <ContactUs />
-              </PageTransition>
-            }
-          />
-
-          {/* Institute Routes */}
-          <Route
-            path="/institute/campus"
-            element={
-              <PageTransition>
-                <Campus />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/institute/administration"
-            element={
-              <PageTransition>
-                <Administration />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/institute/alumni"
-            element={
-              <PageTransition>
-                <Alumni />
-              </PageTransition>
-            }
-          />
-
-          {/* Academics Routes */}
-          <Route
-            path="/academics/faculty"
-            element={
-              <PageTransition>
-                <Faculty />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/academics/rules"
-            element={
-              <PageTransition>
-                <Rules />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/academics/calendar"
-            element={
-              <PageTransition>
-                <Calendar />
-              </PageTransition>
-            }
-          />
-
-          {/* Department Routes */}
-          <Route
-            path="/departments/civil"
-            element={
-              <PageTransition>
-                <Civil />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/departments/cse"
-            element={
-              <PageTransition>
-                <CSE />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/departments/mech"
-            element={
-              <PageTransition>
-                <Mech />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/departments/ece"
-            element={
-              <PageTransition>
-                <ECE />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/departments/eee"
-            element={
-              <PageTransition>
-                <EEE />
-              </PageTransition>
-            }
-          />
-
-          {/* Other Routes */}
-          <Route
-            path="/examcell"
-            element={
-              <PageTransition>
-                <ExamCell />
-              </PageTransition>
-            }
-          />
+          {/* Institutional and Academic routes deleted */}
           <Route
             path="/login"
             element={<Navigate to="/student/signin" replace />}

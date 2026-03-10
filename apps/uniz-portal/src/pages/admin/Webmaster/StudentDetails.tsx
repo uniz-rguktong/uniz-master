@@ -131,6 +131,12 @@ export default function StudentDetails() {
               : s,
           ),
         );
+        if (selectedStudentFullData?.username === username) {
+          setSelectedStudentFullData((prev: any) => ({
+            ...prev,
+            is_suspended: !currentSuspendedStatus,
+          }));
+        }
       } else {
         toast.error(data.msg || "Action failed");
       }
@@ -483,7 +489,13 @@ export default function StudentDetails() {
 
         {/* Detailed Dashboard (ID search result) */}
         {selectedStudentFullData && !loading && (
-          <StudentDashboard data={selectedStudentFullData} />
+          <StudentDashboard
+            data={selectedStudentFullData}
+            onSuspendToggle={(username, status) => {
+              handleToggleSuspension(username, status);
+            }}
+            isActionLoading={isActionLoading === selectedStudentFullData.username + "_suspend"}
+          />
         )}
 
         {/* Search Results Table - STAY VISIBLE for Filtered search */}
