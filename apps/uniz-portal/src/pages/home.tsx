@@ -223,7 +223,7 @@ export default function Home() {
               transition={{ delay: 0.4, duration: 0.8 }}
               className="text-6xl md:text-9xl font-black text-slate-950 tracking-[-0.05em] leading-[0.9] mb-10 max-w-5xl"
             >
-              The better way to <br />
+              The intelligent way to <br />
               <span className="text-slate-400">master your</span> campus life.
             </motion.h1>
 
