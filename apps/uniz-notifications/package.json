@@ -27,7 +27,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@prisma/client": "^5.19.1",
+    "@prisma/client": "^6.4.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
@@ -35,7 +35,7 @@
     "@types/nodemailer": "^6.4.15",
     "@types/pdfkit": "^0.17.4",
     "@types/web-push": "^3.6.4",
-    "prisma": "^5.19.1",
+    "prisma": "^6.4.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.3"
