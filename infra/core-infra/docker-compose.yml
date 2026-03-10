@@ -1,7 +1,6 @@
 services:
   uniz-redis:
     image: redis:7-alpine
-    platform: linux/arm64
     container_name: uniz-redis
     ports:
       - "127.0.0.1:6379:6379"
@@ -14,7 +13,6 @@ services:
 
   uniz-postgres:
     image: postgres:17-alpine
-    platform: linux/arm64
     container_name: uniz-postgres
     ports:
       - "127.0.0.1:5432:5432"
