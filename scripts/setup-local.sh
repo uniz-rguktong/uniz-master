@@ -1,20 +1,18 @@
 #!/bin/bash
 
-# UniZ Universal Local Setup Script - V10 (The Bulletproof Tank)
-# Built for RGUKT Ongole UniZ Ecosystem 2026.
-# Focused on extreme robustness and cross-platform compatibility.
-
-set -e
+# --- UniZ Universal Local Setup (V13) ---
+# Goal: Setup a 100% operational environment with sub-5ms latency.
+# Handles: Port clearing, Docker/Colima detection, DB Startup, Env Injection.
 
 echo "🚀 Starting UniZ Master Setup (Local Environment)..."
 
-# 1. System Check
 check_dep() {
-    if ! [ -x "$(command -v $1)" ]; then
-        echo "❌ Error: $1 is not installed. Please install it to proceed." >&2
+    if ! command -v "$1" >/dev/null 2>&1; then
+        echo "❌ Error: $1 is not installed. Please install it first."
         exit 1
     fi
 }
+
 check_dep node
 check_dep npm
 check_dep docker
@@ -36,105 +34,67 @@ fi
 # Detect docker-compose flavor
 COMPOSE_CMD="docker-compose"
 if ! command -v docker-compose &> /dev/null; then
-    if docker compose version &> /dev/null; then
-        COMPOSE_CMD="docker compose"
+  COMPOSE_CMD="docker compose"
+fi
+
+# 1. Port Clearance (Nuclear)
+echo "🧹 Clearing existing infrastructure (Guaranteeing Port 5432 & 6379)..."
+$COMPOSE_CMD -f infra/core-infra/docker-compose.yml down --remove-orphans >/dev/null 2>&1
+# Kill any standalone processes on DB ports
+lsof -ti:5432 | xargs kill -9 >/dev/null 2>&1 || true
+lsof -ti:6379 | xargs kill -9 >/dev/null 2>&1 || true
+
+# 2. Infra Startup
+echo "🏗️ Starting Core Infrastructure (Postgres & Redis)..."
+$COMPOSE_CMD -f infra/core-infra/docker-compose.yml up -d
+sleep 5 # Wait for PG to be ready
+
+# 3. Environment Variable Propagation
+echo "🧬 Injecting environment variables: apps/uniz-*, apps/uniz-portal, .env"
+
+if [ ! -f "secrets.env" ]; then
+    if [ -f "secrets.env.example" ]; then
+        echo "⚠️ Missing secrets.env! Creating from example..."
+        cp secrets.env.example secrets.env
     else
-        echo "❌ Error: Neither 'docker-compose' nor 'docker compose' found."
+        echo "❌ Critical Error: No secrets.env.example found!"
         exit 1
     fi
 fi
 
-# 2. Nuclear Port & Name Clearance
-echo "🧹 Clearing existing infrastructure (Guaranteeing Port 5432 & 6379)..."
-
-# Forcefully remove containers by name to prevent "Conflict" errors
-docker rm -f uniz-postgres uniz-redis >/dev/null 2>&1 || true
-docker rm -f uniz-gateway uniz-gateway-api uniz-auth-service uniz-user-service uniz-academics-service \
-          uniz-outpass-service uniz-files-service uniz-mail-service uniz-notification-service \
-          uniz-cron-service >/dev/null 2>&1 || true
-
-# Kill any local node processes using our core ports (3000-3008)
-# We use a gentle approach first, then more aggressive if lsof is available
-if [ -x "$(command -v lsof)" ]; then
-    for port in {3000..3008}; do
-        pid=$(lsof -t -iTCP:$port -sTCP:LISTEN 2>/dev/null || true)
-        if [ -n "$pid" ]; then
-            echo "   -> Cleaning up port $port (PID: $pid)"
-            kill -9 $pid 2>/dev/null || true
-        fi
-    done
-fi
-
-# 3. Booting Core Infrastructure
-echo "🏗️  Starting Core Infrastructure (Postgres & Redis)..."
-if [ -f "infra/core-infra/docker-compose.yml" ]; then
-    (cd infra/core-infra && $COMPOSE_CMD up -d uniz-postgres uniz-redis)
-else
-    $COMPOSE_CMD up -d uniz-postgres uniz-redis 2>/dev/null || $COMPOSE_CMD up -d
-fi
-
-# Verification loop for Postgres readiness
-echo "⏳ Waiting for Postgres to wake up (Health Check)..."
-MAX_TRIES=30
-COUNT=0
-until docker exec uniz-postgres pg_isready -U user -d uniz_db >/dev/null 2>&1 || [ $COUNT -eq $MAX_TRIES ]; do
-    sleep 2
-    ((COUNT++))
-    echo -n "."
-done
-echo ""
-
-if [ $COUNT -eq $MAX_TRIES ]; then
-    echo "❌ Timeout waiting for Postgres. Check 'docker logs uniz-postgres'."
-    exit 1
-fi
-
-# 4. Intelligent ENV Propagation
-echo "🔐 Propagating secrets with LOCAL development overrides..."
-if [ ! -f "secrets.env" ]; then
-    echo "📄 secrets.env not found. Initializing from template..."
-    cp secrets.env.example secrets.env 2>/dev/null || (echo "❌ secrets.env.example missing!" && exit 1)
-fi
-
-# Portable sed wrapper
-gsed() {
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "$@"
-  else
-    sed -i "$@"
-  fi
-}
-
-SERVICES=(
-  "apps/uniz-gateway:GATEWAY"
-  "apps/uniz-auth:AUTH"
-  "apps/uniz-user:USER"
-  "apps/uniz-academics:ACADEMICS"
-  "apps/uniz-outpass:OUTPASS"
-  "apps/uniz-files:FILES"
-  "apps/uniz-notifications:NOTIFICATION"
-  "apps/uniz-mail:MAIL"
-  "apps/uniz-cron:CRON"
-  "apps/uniz-portal:PORTAL"
+# Map of service directories to their env prefix
+declare -A service_prefixes=(
+    ["apps/uniz-gateway"]="GATEWAY"
+    ["apps/uniz-auth"]="AUTH"
+    ["apps/uniz-user"]="USER"
+    ["apps/uniz-academics"]="ACADEMICS"
+    ["apps/uniz-outpass"]="OUTPASS"
+    ["apps/uniz-files"]="FILES"
+    ["apps/uniz-mail"]="MAIL"
+    ["apps/uniz-notifications"]="NOTIFICATION"
+    ["apps/uniz-cron"]="CRON"
+    ["apps/uniz-portal"]="VITE"
 )
 
-for entry in "${SERVICES[@]}"; do
-    path="${entry%%:*}"
-    prefix="${entry##*:}"
-    
+# Loop through services and inject secrets
+for path in "${!service_prefixes[@]}"; do
     if [ -d "$path" ]; then
-        echo "   -> Injecting environment variables: $path/.env"
-        cat secrets.env > "$path/.env"
+        prefix="${service_prefixes[$path]}"
+        echo "  -> Injecting environment variables: $path/.env"
+        
+        # Start fresh for local overrides
+        cp secrets.env "$path/.env"
         printf "\n" >> "$path/.env"
         
         # Localhost overrides for hybrid (on-host node + dockerized DB)
-        gsed 's/76.13.241.174/127.0.0.1/g' "$path/.env"
-        gsed 's/uniz-redis/127.0.0.1/g' "$path/.env"
-        gsed 's/uniz-postgres/127.0.0.1/g' "$path/.env"
-        gsed 's/api.uniz.rguktong.in/127.0.0.1:3000/g' "$path/.env"
-        gsed 's/https:\/\/127.0.0.1:3000/http:\/\/127.0.0.1:3000/g' "$path/.env"
-        gsed 's/0x4AAAAAACnuFU49Yv6dqJum/1x00000000000000000000AA/g' "$path/.env"
-        gsed 's/0x4AAAAAACnuFekEUpVCyieVWmdzFvQ9xwE/1x00000000000000000000000000000000/g' "$path/.env"
+        # Using 127.0.0.1 to avoid macOS DNS resolution latency (~30ms -> <1ms)
+        gsed -i 's/76.13.241.174/127.0.0.1/g' "$path/.env" 2>/dev/null || sed -i '' 's/76.13.241.174/127.0.0.1/g' "$path/.env"
+        gsed -i 's/uniz-redis/127.0.0.1/g' "$path/.env" 2>/dev/null || sed -i '' 's/uniz-redis/127.0.0.1/g' "$path/.env"
+        gsed -i 's/uniz-postgres/127.0.0.1/g' "$path/.env" 2>/dev/null || sed -i '' 's/uniz-postgres/127.0.0.1/g' "$path/.env"
+        gsed -i 's/api.uniz.rguktong.in/127.0.0.1:3000/g' "$path/.env" 2>/dev/null || sed -i '' 's/api.uniz.rguktong.in/127.0.0.1:3000/g' "$path/.env"
+        gsed -i 's/https:\/\/127.0.0.1:3000/http:\/\/127.0.0.1:3000/g' "$path/.env" 2>/dev/null || sed -i '' 's/https:\/\/127.0.0.1:3000/http:\/\/127.0.0.1:3000/g' "$path/.env"
+        gsed -i 's/0x4AAAAAACnuFU49Yv6dqJum/1x00000000000000000000AA/g' "$path/.env" 2>/dev/null || sed -i '' 's/0x4AAAAAACnuFU49Yv6dqJum/1x00000000000000000000AA/g' "$path/.env"
+        gsed -i 's/0x4AAAAAACnuFekEUpVCyieVWmdzFvQ9xwE/1x00000000000000000000000000000000/g' "$path/.env" 2>/dev/null || sed -i '' 's/0x4AAAAAACnuFekEUpVCyieVWmdzFvQ9xwE/1x00000000000000000000000000000000/g' "$path/.env"
         
         # Map specific DB URL to generic DATABASE_URL for Prisma/Backend
         db_var="${prefix}_DATABASE_URL"
@@ -142,17 +102,34 @@ for entry in "${SERVICES[@]}"; do
         
         if [ -n "$val" ]; then
             # Ensure DB URL also uses 127.0.0.1
-            val=$(echo "$val" | sed 's/localhost/127.0.0.1/g')
+            val=$(echo "$val" | sed 's/localhost/127.0.0.1/g' | sed 's/uniz-postgres/127.0.0.1/g')
             echo "DATABASE_URL=$val" >> "$path/.env"
         fi
         
-# 5. Tooling & Environment Finalization
+        # Routing flags
+        echo "DOCKER_ENV=false" >> "$path/.env"
+        echo "GATEWAY_URL=http://127.0.0.1:3000/api/v1" >> "$path/.env"
+        echo "FORCE_GMAIL=true" >> "$path/.env"
+
+        # Inject Service URLs for Gateway Proxying (127.0.0.1)
+        echo "AUTH_SERVICE_URL=http://127.0.0.1:3001" >> "$path/.env"
+        echo "USER_SERVICE_URL=http://127.0.0.1:3002" >> "$path/.env"
+        echo "ACADEMICS_SERVICE_URL=http://127.0.0.1:3004" >> "$path/.env"
+        echo "OUTPASS_SERVICE_URL=http://127.0.0.1:3003" >> "$path/.env"
+        echo "FILES_SERVICE_URL=http://127.0.0.1:3005" >> "$path/.env"
+        echo "MAIL_SERVICE_URL=http://127.0.0.1:3006" >> "$path/.env"
+        echo "NOTIFICATION_SERVICE_URL=http://127.0.0.1:3007" >> "$path/.env"
+        echo "CRON_SERVICE_URL=http://127.0.0.1:3008" >> "$path/.env"
+    fi
+done
+
+# 4. Tooling & Environment Finalization
 echo "📦 Installing development tools..."
 # Pinning Prisma to 6.x to avoid Prisma 7's breaking 'P1012' schema validation
 npm install --no-save ts-node bcrypt @types/bcrypt pg @types/pg prisma@6 @prisma/client@6
 
+# 5. Schema Sync & Seeder Preparation (Using pinned Prisma@6)
 echo "💎 Synchronizing Local Database Schemas..."
-# Ensure DATABASE_URL is set in environment for Prisma push commands
 if [ -d "apps/uniz-auth" ]; then
     export DATABASE_URL="postgresql://user:password@127.0.0.1:5432/uniz_db?sslmode=disable&schema=auth_v2"
     (cd apps/uniz-auth && npx prisma@6 db push --accept-data-loss)
@@ -161,7 +138,6 @@ if [ -d "apps/uniz-user" ]; then
     export DATABASE_URL="postgresql://user:password@127.0.0.1:5432/uniz_db?sslmode=disable&schema=user_v2"
     (cd apps/uniz-user && npx prisma@6 db push --accept-data-loss)
 fi
-
 
 echo ""
 echo "🔥 MISSION CONTROL IS SHIPYARD READY!"
