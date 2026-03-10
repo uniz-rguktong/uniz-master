@@ -167,12 +167,12 @@ done
 echo "💎 Synchronizing Local Database Schemas..."
 # Ensure DATABASE_URL is set in environment for Prisma push commands
 if [ -d "apps/uniz-auth" ]; then
-    export DATABASE_URL="postgresql://user:password@localhost:5432/uniz_db?sslmode=disable&schema=auth_v2"
-    (cd apps/uniz-auth && npx prisma db push --accept-data-loss --skip-generate)
+    export DATABASE_URL="postgresql://user:password@127.0.0.1:5432/uniz_db?sslmode=disable&schema=auth_v2"
+    (cd apps/uniz-auth && npx prisma db push --accept-data-loss)
 fi
 if [ -d "apps/uniz-user" ]; then
-    export DATABASE_URL="postgresql://user:password@localhost:5432/uniz_db?sslmode=disable&schema=user_v2"
-    (cd apps/uniz-user && npx prisma db push --accept-data-loss --skip-generate)
+    export DATABASE_URL="postgresql://user:password@127.0.0.1:5432/uniz_db?sslmode=disable&schema=user_v2"
+    (cd apps/uniz-user && npx prisma db push --accept-data-loss)
 fi
 
 # 6. Final Tooling check
