@@ -4,8 +4,8 @@
 echo "[Push] Pushing code to GitHub..."
 MSG=${1:-"chore: deployment update $(date +'%Y-%m-%d %H:%M:%S')"}
 
-# Only try to commit/push if we are NOT on the VPS
-if [ ! -f "/root/uniz-secrets.env" ]; then
+# Only try to commit/push if we are NOT on the VPS and NOT in CI/CD
+if [ ! -f "/root/uniz-secrets.env" ] && [ "$DEPLOY_CONTEXT" != "GITHUB_ACTIONS" ]; then
   git add .
   git commit -m "$MSG" || echo "No changes to commit"
   git push origin main
