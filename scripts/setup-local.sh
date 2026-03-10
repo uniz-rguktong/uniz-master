@@ -128,11 +128,11 @@ for entry in "${SERVICES[@]}"; do
         printf "\n" >> "$path/.env"
         
         # Localhost overrides for hybrid (on-host node + dockerized DB)
-        gsed 's/76.13.241.174/localhost/g' "$path/.env"
-        gsed 's/uniz-redis/localhost/g' "$path/.env"
-        gsed 's/uniz-postgres/localhost/g' "$path/.env"
-        gsed 's/api.uniz.rguktong.in/localhost:3000/g' "$path/.env"
-        gsed 's/https:\/\/localhost:3000/http:\/\/localhost:3000/g' "$path/.env"
+        gsed 's/76.13.241.174/127.0.0.1/g' "$path/.env"
+        gsed 's/uniz-redis/127.0.0.1/g' "$path/.env"
+        gsed 's/uniz-postgres/127.0.0.1/g' "$path/.env"
+        gsed 's/api.uniz.rguktong.in/127.0.0.1:3000/g' "$path/.env"
+        gsed 's/https:\/\/127.0.0.1:3000/http:\/\/127.0.0.1:3000/g' "$path/.env"
         gsed 's/0x4AAAAAACnuFU49Yv6dqJum/1x00000000000000000000AA/g' "$path/.env"
         gsed 's/REDACTED_TURNSTILE_SECRET/1x00000000000000000000000000000000/g' "$path/.env"
         
@@ -141,23 +141,25 @@ for entry in "${SERVICES[@]}"; do
         val=$(grep "^${db_var}=" "$path/.env" | head -n 1 | cut -d'=' -f2-)
         
         if [ -n "$val" ]; then
+            # Ensure DB URL also uses 127.0.0.1
+            val=$(echo "$val" | sed 's/localhost/127.0.0.1/g')
             echo "DATABASE_URL=$val" >> "$path/.env"
         fi
         
         # Routing flags
         echo "DOCKER_ENV=false" >> "$path/.env"
-        echo "GATEWAY_URL=http://localhost:3000/api/v1" >> "$path/.env"
+        echo "GATEWAY_URL=http://127.0.0.1:3000/api/v1" >> "$path/.env"
         echo "FORCE_GMAIL=true" >> "$path/.env"
 
-        # Inject Service URLs for Gateway Proxying (Localhost)
-        echo "AUTH_SERVICE_URL=http://localhost:3001" >> "$path/.env"
-        echo "USER_SERVICE_URL=http://localhost:3002" >> "$path/.env"
-        echo "ACADEMICS_SERVICE_URL=http://localhost:3004" >> "$path/.env"
-        echo "OUTPASS_SERVICE_URL=http://localhost:3003" >> "$path/.env"
-        echo "FILES_SERVICE_URL=http://localhost:3005" >> "$path/.env"
-        echo "MAIL_SERVICE_URL=http://localhost:3006" >> "$path/.env"
-        echo "NOTIFICATION_SERVICE_URL=http://localhost:3007" >> "$path/.env"
-        echo "CRON_SERVICE_URL=http://localhost:3008" >> "$path/.env"
+        # Inject Service URLs for Gateway Proxying (127.0.0.1)
+        echo "AUTH_SERVICE_URL=http://127.0.0.1:3001" >> "$path/.env"
+        echo "USER_SERVICE_URL=http://127.0.0.1:3002" >> "$path/.env"
+        echo "ACADEMICS_SERVICE_URL=http://127.0.0.1:3004" >> "$path/.env"
+        echo "OUTPASS_SERVICE_URL=http://127.0.0.1:3003" >> "$path/.env"
+        echo "FILES_SERVICE_URL=http://127.0.0.1:3005" >> "$path/.env"
+        echo "MAIL_SERVICE_URL=http://127.0.0.1:3006" >> "$path/.env"
+        echo "NOTIFICATION_SERVICE_URL=http://127.0.0.1:3007" >> "$path/.env"
+        echo "CRON_SERVICE_URL=http://127.0.0.1:3008" >> "$path/.env"
     fi
 done
 
