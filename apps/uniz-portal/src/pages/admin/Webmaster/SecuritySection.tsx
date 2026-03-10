@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Lock, Eye, EyeOff, CheckCircle, XCircle, ShieldCheck, AlertTriangle, Loader2 } from "lucide-react";
+import { Lock, Eye, EyeOff, CheckCircle, XCircle, AlertTriangle, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { ADMIN_RESET_PASS } from "../../../api/endpoints";
 import { cn } from "../../../utils/cn";
@@ -65,60 +65,63 @@ export default function SecuritySection({ username }: { username: string }) {
     };
 
     return (
-        <div className="p-6 space-y-6 animate-in fade-in duration-500 max-w-2xl mx-auto pb-20">
-            {/* Header card */}
-            <div className="bg-gradient-to-br from-slate-900 to-[#1e293b] rounded-xl px-8 py-6 text-white shadow-none relative overflow-hidden">
-                <div className="relative z-10 space-y-1.5">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-xl border border-white/10 mb-2">
-                        <ShieldCheck size={12} className="text-emerald-400" />
-                        <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400">Security</span>
-                    </div>
-                    <h1 className="text-2xl font-semibold tracking-tight leading-none">Change Password</h1>
-                    <p className="text-slate-400 text-[13px] font-medium">
-                        Keep your account secure with a strong, unique password.
-                    </p>
-                </div>
-                <div className="absolute right-0 bottom-0 opacity-[0.04] translate-x-1/4 translate-y-1/4">
-                    <Lock size={200} />
-                </div>
+        <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
+            {/* Standard Header */}
+            <div className="flex flex-col gap-1.5">
+                <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+                    Security & Authentication
+                </h2>
+                <p className="text-slate-500 font-medium text-[15px]">
+                    Update your access credentials to maintain account integrity.
+                </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                {/* Form */}
-                <div className="md:col-span-3 bg-white rounded-xl border border-slate-100 shadow-none p-6 space-y-5">
+            <div className="bg-white rounded-xl border border-slate-100 shadow-none p-8 space-y-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 rounded-full blur-3xl opacity-50 -mr-24 -mt-24 pointer-events-none" />
+
+                <div className="relative z-10 space-y-6">
                     <PasswordInput
-                        label="Current Password"
+                        label="Current Access Key"
                         value={oldPw}
                         show={showOld}
                         onToggle={() => setShowOld(!showOld)}
                         onChange={setOldPw}
                     />
-                    <PasswordInput
-                        label="New Password"
-                        value={newPw}
-                        show={showNew}
-                        onToggle={() => setShowNew(!showNew)}
-                        onChange={setNewPw}
-                    />
 
-                    {/* Strength meter */}
-                    {newPw && (
-                        <div className="space-y-1.5">
-                            <div className="flex items-center justify-between text-[11px] font-semibold">
-                                <span className="text-slate-400">Strength</span>
-                                <span className={strength.textColor}>{strength.label}</span>
+                    <div className="space-y-4">
+                        <PasswordInput
+                            label="New Security Password"
+                            value={newPw}
+                            show={showNew}
+                            onToggle={() => setShowNew(!showNew)}
+                            onChange={setNewPw}
+                        />
+
+                        {/* Refined Strength Meter */}
+                        {newPw && (
+                            <div className="px-1 space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex gap-1">
+                                        {[1, 2, 3].map((step) => (
+                                            <div
+                                                key={step}
+                                                className={cn(
+                                                    "h-1 w-8 rounded-full transition-all duration-300",
+                                                    step <= strength.score ? strength.barColor : "bg-slate-100"
+                                                )}
+                                            />
+                                        ))}
+                                    </div>
+                                    <span className={cn("text-[10px] font-bold uppercase tracking-widest", strength.textColor)}>
+                                        {strength.label} Profile
+                                    </span>
+                                </div>
                             </div>
-                            <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                                <div
-                                    className={cn("h-full rounded-full transition-all duration-300", strength.barColor)}
-                                    style={{ width: `${(strength.score / 3) * 100}%` }}
-                                />
-                            </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
 
                     <PasswordInput
-                        label="Confirm New Password"
+                        label="Verify New Password"
                         value={confirmPw}
                         show={showConfirm}
                         onToggle={() => setShowConfirm(!showConfirm)}
@@ -126,56 +129,31 @@ export default function SecuritySection({ username }: { username: string }) {
                     />
 
                     {newPw && confirmPw && (
-                        <div className="flex items-center gap-1.5 text-[11px] font-semibold">
+                        <div className="flex items-center gap-2 px-1 text-[11px] font-bold uppercase tracking-widest">
                             {newPw === confirmPw ? (
-                                <><CheckCircle size={12} className="text-emerald-500" /><span className="text-emerald-600">Passwords match</span></>
+                                <><CheckCircle size={14} className="text-emerald-500" /><span className="text-emerald-600">Protocol Validated</span></>
                             ) : (
-                                <><XCircle size={12} className="text-red-500" /><span className="text-red-500">Passwords don't match</span></>
+                                <><XCircle size={14} className="text-red-500" /><span className="text-red-500">Mismatch Detected</span></>
                             )}
                         </div>
                     )}
 
-                    <button
-                        onClick={handleSubmit}
-                        disabled={loading}
-                        className="w-full py-3 rounded-xl bg-slate-900 text-white text-[12px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-60 flex items-center justify-center gap-2 shadow-none"
-                    >
-                        {loading ? <Loader2 size={14} className="animate-spin" /> : <Lock size={14} />}
-                        Change Password
-                    </button>
-                </div>
+                    <div className="pt-4 space-y-6">
+                        <button
+                            onClick={handleSubmit}
+                            disabled={loading}
+                            className="w-full h-12 rounded-xl bg-slate-900 text-white text-[11px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-60 flex items-center justify-center gap-3 shadow-none active:scale-[0.98]"
+                        >
+                            {loading ? <Loader2 size={16} className="animate-spin" /> : <Lock size={16} />}
+                            Update Credentials
+                        </button>
 
-                {/* Requirements panel */}
-                <div className="md:col-span-2 bg-white rounded-xl border border-slate-100 shadow-none p-6 flex flex-col gap-5">
-                    <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
-                        <ShieldCheck size={13} className="text-blue-500" /> Requirements
-                    </h3>
-                    <ul className="space-y-3">
-                        {[
-                            { met: newPw.length >= 8, text: "At least 8 characters" },
-                            { met: /[0-9]/.test(newPw), text: "One number" },
-                            { met: /[^A-Za-z0-9]/.test(newPw), text: "One special character" },
-                        ].map(({ met, text }) => (
-                            <li key={text} className="flex items-center gap-2.5">
-                                <div
-                                    className={cn(
-                                        "w-5 h-5 rounded-xl flex items-center justify-center shrink-0 transition-colors",
-                                        met ? "bg-emerald-100 text-emerald-600" : "bg-slate-100 text-slate-400"
-                                    )}
-                                >
-                                    {met ? <CheckCircle size={12} /> : <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />}
-                                </div>
-                                <span className={cn("text-[12px] font-medium transition-colors", met ? "text-slate-900" : "text-slate-400")}>
-                                    {text}
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                    <div className="mt-auto bg-amber-50 rounded-xl p-4 border border-amber-100 flex gap-3">
-                        <AlertTriangle size={14} className="text-amber-500 shrink-0 mt-0.5" />
-                        <p className="text-[11px] text-amber-700 font-medium leading-relaxed">
-                            You will be signed out automatically after a successful password change.
-                        </p>
+                        <div className="bg-amber-50/50 rounded-xl p-4 border border-amber-100/50 flex gap-3">
+                            <AlertTriangle size={16} className="text-amber-500 shrink-0" />
+                            <p className="text-[11px] text-amber-700 font-semibold leading-relaxed">
+                                System protocol: You will be automatically decommissioned from the current session upon successful update.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

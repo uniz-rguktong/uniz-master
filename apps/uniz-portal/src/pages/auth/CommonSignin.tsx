@@ -20,7 +20,6 @@ import {
   KeyRound,
   ArrowLeft,
   ChevronLeft,
-  Chrome,
 } from "lucide-react";
 import LoginScreen from "../../components/ui/login-1";
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -87,10 +86,15 @@ export default function Signin({ type }: SigninProps) {
       return;
     }
 
-    if (type === "student" && !username.toUpperCase().includes("O")) {
-      toast.error(
-        "Student username must be your college ID (e.g., containing 'O')",
-      );
+    const isStudentFormat = /^O\d+/i.test(username.trim());
+
+    if (type === "student" && !isStudentFormat) {
+      toast.error("Student username must be your valid college ID (e.g., O210001)");
+      return;
+    }
+
+    if ((type === "admin" || type === "faculty") && isStudentFormat) {
+      toast.error(`Students are not allowed to access the ${type === "admin" ? "Admin" : "Faculty"} Portal`);
       return;
     }
 
@@ -186,6 +190,18 @@ export default function Signin({ type }: SigninProps) {
       return;
     }
 
+    const isStudentFormat = /^O\d+/i.test(username.trim());
+
+    if (type === "student" && !isStudentFormat) {
+      toast.error("Student ID must be a valid college ID (e.g., O210001)");
+      return;
+    }
+
+    if ((type === "admin" || type === "faculty") && isStudentFormat) {
+      toast.error(`Students cannot request OTP from the ${type === "admin" ? "Admin" : "Faculty"} Portal`);
+      return;
+    }
+
     setIsLoading(true);
     try {
       const data = await apiClient<{ success: boolean; message?: string }>(
@@ -206,6 +222,18 @@ export default function Signin({ type }: SigninProps) {
   };
 
   const requestEmailOtp = async () => {
+    const isStudentFormat = /^O\d+/i.test(username.trim());
+
+    if (type === "student" && !isStudentFormat) {
+      toast.error("Student ID must be a valid college ID (e.g., O210001)");
+      return;
+    }
+
+    if ((type === "admin" || type === "faculty") && isStudentFormat) {
+      toast.error(`Students cannot request OTP from the ${type === "admin" ? "Admin" : "Faculty"} Portal`);
+      return;
+    }
+
     setIsLoading(true);
     try {
       const data = await apiClient<{ success: boolean; message?: string }>(
@@ -408,27 +436,7 @@ export default function Signin({ type }: SigninProps) {
                 Sign In
               </Button>
 
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-100"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-slate-400 font-medium">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
 
-              <Button
-                variant="outline"
-                className="w-full h-12 border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-[15px] font-bold flex items-center justify-center gap-2"
-                size="lg"
-                type="button"
-                onClick={() => toast.info("Google Sign-In is coming soon!")}
-              >
-                <Chrome className="w-5 h-5 text-blue-500" />
-                Sign in with Google
-              </Button>
 
               {type === "admin" && (
                 <div className="text-center pt-2">

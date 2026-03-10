@@ -1,16 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   GraduationCap,
   Search,
-  Plus,
   Loader2,
-  User,
-  BookOpen,
   Table,
   CheckCircle2,
   AlertCircle,
-  Calendar,
   BarChart3 as BarChartIcon,
   PieChart as PieChartIcon,
   ChevronDown,
@@ -35,7 +31,6 @@ import {
 } from "recharts";
 import {
   GET_BATCH_GRADES,
-  ADD_MANUAL_GRADE,
   GET_SUBJECTS,
   UPLOAD_GRADES,
   GET_GRADES_TEMPLATE,
@@ -60,14 +55,6 @@ export default function GradesSection() {
     semesterId: "SEM-1",
     failedOnly: true,
   });
-  const [manualGrade, setManualGrade] = useState({
-    studentId: "",
-    subjectId: "",
-    semesterId: "SEM-1",
-    grade: "",
-  });
-  const [manualDept, setManualDept] = useState("CSE");
-  const [manualYear, setManualYear] = useState("E1");
 
   // Template Filters
   const [templateFilters, setTemplateFilters] = useState({
@@ -82,47 +69,6 @@ export default function GradesSection() {
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  // Dynamic subjects for manual entry
-  const [manualSubjects, setManualSubjects] = useState<
-    { code: string; name: string }[]
-  >([]);
-  const [manualSubjectsLoading, setManualSubjectsLoading] = useState(false);
-
-  useEffect(() => {
-    if (subTab !== "manual") return;
-    const fetchManualSubjects = async () => {
-      setManualSubjectsLoading(true);
-      setManualGrade((prev) => ({ ...prev, subjectId: "" }));
-      try {
-        const token = (localStorage.getItem("admin_token") || "").replace(
-          /"/g,
-          "",
-        );
-        const url = `${GET_SUBJECTS}?department=${manualDept}&semester=${encodeURIComponent(manualGrade.semesterId)}&limit=100`;
-        const res = await fetch(url, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (data.success && data.subjects) {
-          // Year is encoded in subject code (e.g. CSE-E2-SEM-1-01)
-          // Filter client-side by checking the selected year is in the code
-          const filtered = data.subjects.filter((s: any) =>
-            s.code.toUpperCase().includes(`-${manualYear}-`),
-          );
-          setManualSubjects(
-            filtered.map((s: any) => ({ code: s.code, name: s.name })),
-          );
-        } else {
-          setManualSubjects([]);
-        }
-      } catch {
-        setManualSubjects([]);
-      } finally {
-        setManualSubjectsLoading(false);
-      }
-    };
-    fetchManualSubjects();
-  }, [manualDept, manualYear, manualGrade.semesterId, subTab]);
 
   // Fetch subjects for template
   useEffect(() => {
@@ -273,27 +219,6 @@ export default function GradesSection() {
     }
   }, [page, subTab]);
 
-  const handleManualAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await apiClient<any>(ADD_MANUAL_GRADE, {
-        method: "POST",
-        body: JSON.stringify(manualGrade),
-      });
-      if (res && res.success) {
-        toast.success("Grade added successfully");
-        setManualGrade({
-          studentId: "",
-          subjectId: "",
-          semesterId: "SEM-1",
-          grade: "",
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="p-6 space-y-8 animate-in fade-in duration-700 pb-20 text-slate-900">
@@ -318,12 +243,6 @@ export default function GradesSection() {
           className={`px-6 py-2.5 rounded-xl font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "batch" ? "bg-white text-blue-700 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
         >
           <Search size={14} /> Batch Grades
-        </button>
-        <button
-          onClick={() => setSubTab("manual")}
-          className={`px-6 py-2.5 rounded-xl font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "manual" ? "bg-white text-blue-700 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
-        >
-          <Plus size={14} /> Manual Add
         </button>
       </div>
 
@@ -973,10 +892,9 @@ export default function GradesSection() {
                               onClick={() => setPage((p) => Math.max(1, p - 1))}
                               className="p-3 rounded-xl bg-white border border-slate-100 transition-all hover:bg-slate-50 disabled:opacity-50 active:scale-90"
                             >
-                              <Plus
-                                size={20}
-                                className="rotate-[135deg] text-slate-400"
-                              />
+                              <div className="rotate-[135deg] text-slate-400">
+                                <ArrowRight size={20} />
+                              </div>
                             </button>
 
                             <div className="flex items-center gap-2">
@@ -1021,10 +939,9 @@ export default function GradesSection() {
                               }
                               className="p-3 rounded-xl bg-white border border-slate-100 transition-all hover:bg-slate-50 disabled:opacity-50 active:scale-90"
                             >
-                              <Plus
-                                size={20}
-                                className="rotate-45 text-slate-400"
-                              />
+                              <div className="rotate-45 text-slate-400">
+                                <ArrowRight size={20} />
+                              </div>
                             </button>
                           </div>
                         )}
@@ -1035,219 +952,6 @@ export default function GradesSection() {
             </div>
           )}
 
-          {subTab === "manual" && (
-            <div className="bg-blue-50/20 rounded-xl border border-blue-100/50 p-8 space-y-8 transition-all">
-              <div className="flex items-center gap-4">
-                <div className="p-3.5 bg-white text-blue-600 rounded-xl border border-blue-50">
-                  <Plus size={22} />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold tracking-tight">
-                    Manual Grade Entry
-                  </h3>
-                  <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-widest mt-1">
-                    Rapid individual record provisioning
-                  </p>
-                </div>
-              </div>
-
-              <form onSubmit={handleManualAdd} className="space-y-8">
-                <div className="flex flex-wrap items-end gap-6">
-                  <div className="flex-1 min-w-[200px] space-y-2">
-                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                      Student ID
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4" />
-                      <input
-                        required
-                        value={manualGrade.studentId}
-                        onChange={(e) =>
-                          setManualGrade({
-                            ...manualGrade,
-                            studentId: e.target.value.toUpperCase(),
-                          })
-                        }
-                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
-                        placeholder="O210329"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex-1 min-w-[200px] space-y-2">
-                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                      Department
-                    </label>
-                    <div className="relative">
-                      <select
-                        value={manualDept}
-                        onChange={(e) => setManualDept(e.target.value)}
-                        className="w-full pl-5 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
-                      >
-                        {[
-                          "CSE",
-                          "ECE",
-                          "EEE",
-                          "MECH",
-                          "CIVIL",
-                          "CHEM",
-                          "MATHEMATICS",
-                          "PHYSICS",
-                          "IT",
-                          "ENGLISH",
-                        ].map((d) => (
-                          <option key={d} value={d}>
-                            {d}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                        size={14}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex-1 min-w-[200px] space-y-2">
-                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                      Year
-                    </label>
-                    <div className="relative">
-                      <select
-                        value={manualYear}
-                        onChange={(e) => setManualYear(e.target.value)}
-                        className="w-full pl-5 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
-                      >
-                        {["E1", "E2", "E3", "E4"].map((y) => (
-                          <option key={y} value={y}>
-                            {y}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                        size={14}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex-1 min-w-[200px] space-y-2">
-                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                      Subject Code
-                      {manualSubjectsLoading && (
-                        <span className="ml-2 text-blue-500 normal-case tracking-normal font-medium text-[9px]">
-                          loading...
-                        </span>
-                      )}
-                    </label>
-                    <div className="relative">
-                      <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 pointer-events-none z-10" />
-                      <select
-                        required
-                        value={manualGrade.subjectId}
-                        onChange={(e) =>
-                          setManualGrade({
-                            ...manualGrade,
-                            subjectId: e.target.value,
-                          })
-                        }
-                        className="w-full pl-12 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none disabled:opacity-50"
-                        disabled={manualSubjectsLoading}
-                      >
-                        <option value="">
-                          {manualSubjectsLoading
-                            ? "Loading..."
-                            : manualSubjects.length === 0
-                              ? "No subjects"
-                              : "Select Subject"}
-                        </option>
-                        {manualSubjects.map((s) => (
-                          <option key={s.code} value={s.code}>
-                            {s.code} — {s.name}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                        size={14}
-                      />
-                    </div>
-                    {manualGrade.subjectId && (
-                      <p className="text-[10px] text-blue-600 font-semibold ml-2">
-                        ✓{" "}
-                        {
-                          manualSubjects.find(
-                            (s) => s.code === manualGrade.subjectId,
-                          )?.name
-                        }
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-[200px] space-y-2">
-                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                      Semester
-                    </label>
-                    <div className="relative">
-                      <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4" />
-                      <select
-                        value={manualGrade.semesterId}
-                        onChange={(e) =>
-                          setManualGrade({
-                            ...manualGrade,
-                            semesterId: e.target.value,
-                          })
-                        }
-                        className="w-full pl-12 pr-10 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
-                      >
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
-                          <option key={s}>SEM-{s}</option>
-                        ))}
-                      </select>
-                      <ChevronDown
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                        size={14}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex-1 min-w-[200px] space-y-2">
-                    <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                      Grade
-                    </label>
-                    <div className="relative">
-                      <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4" />
-                      <input
-                        required
-                        value={manualGrade.grade}
-                        onChange={(e) =>
-                          setManualGrade({
-                            ...manualGrade,
-                            grade: e.target.value.toUpperCase(),
-                          })
-                        }
-                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
-                        placeholder="EX, A, B..."
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-blue-600 text-white py-5 rounded-xl font-semibold uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
-                >
-                  {loading ? (
-                    <Loader2 className="animate-spin w-5 h-5" />
-                  ) : (
-                    <Plus size={18} />
-                  )}
-                  Add Record to Batch
-                </button>
-              </form>
-            </div>
-          )}
         </div>
       )}
     </div>
