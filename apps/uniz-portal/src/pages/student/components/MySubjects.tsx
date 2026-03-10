@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import {
-  BookOpen,
+  BookText,
   GraduationCap,
   CheckCircle2,
-  MapPin,
   User,
   Info,
   Loader2,
@@ -128,49 +127,31 @@ export default function MySubjects({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
             key={subject.id}
-            className="group bg-white border border-slate-100 p-6 rounded-[24px] hover:border-blue-600 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 relative overflow-hidden"
+            className="group bg-white border border-slate-100 p-4 rounded-xl hover:border-blue-100 transition-all duration-300 relative overflow-hidden flex flex-col h-full"
           >
-            {/* Background Polish */}
-            <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity">
-              <BookOpen className="w-24 h-24 -mr-8 -mt-8" />
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-8 h-8 bg-blue-50 rounded-lg text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                <BookText size={16} />
+              </div>
+              <span className="px-2 py-0.5 bg-slate-50 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400 border border-slate-100">
+                {subject.subject?.code}
+              </span>
             </div>
 
-            <div className="relative z-10 flex flex-col h-full justify-between gap-4">
-              <div className="flex items-start justify-between gap-2">
-                <div className="space-y-1">
-                  <span className="text-blue-600 text-[10px] font-black uppercase tracking-[0.15em] py-0.5 px-2 bg-blue-50 rounded-md">
-                    {subject.subject?.code}
-                  </span>
-                  <h3 className="text-lg font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition-colors">
-                    {subject.subject?.name}
-                  </h3>
-                </div>
-                <div className="text-center bg-slate-50 rounded-xl px-3 py-2 border border-slate-100 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors">
-                  <span className="block text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
-                    Credits
-                  </span>
-                  <span className="text-lg font-black text-slate-800 group-hover:text-blue-600 leading-none">
-                    {subject.subject?.credits}
-                  </span>
-                </div>
-              </div>
+            <div className="relative z-10 flex flex-col h-full justify-between gap-3">
+              <h3 className="text-[13px] font-bold text-slate-800 leading-snug mb-2 min-h-[40px] line-clamp-2 group-hover:text-blue-600 transition-colors">
+                {subject.subject?.name}
+              </h3>
 
-              <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-50 mt-auto">
-                <div className="flex items-center gap-2 text-slate-500">
-                  <div className="p-1.5 bg-slate-50 rounded-lg">
-                    <MapPin className="w-3 h-3" />
-                  </div>
-                  <span className="text-[11px] font-semibold uppercase tracking-wider">
-                    {subject.subject?.department}
-                  </span>
+              <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-50">
+                <div className="text-[8px] font-black uppercase tracking-widest text-slate-400">
+                  {subject.subject?.department} • {subject.subject?.credits} Credits
                 </div>
                 {subject.faculty && (
-                  <div className="flex items-center gap-2 text-slate-500">
-                    <div className="p-1.5 bg-slate-50 rounded-lg">
-                      <User className="w-3 h-3" />
-                    </div>
-                    <span className="text-[11px] font-semibold uppercase tracking-wider truncate">
-                      {subject.faculty?.name || "Not Assigned"}
+                  <div className="flex items-center gap-1.5 text-slate-400">
+                    <User size={10} />
+                    <span className="text-[9px] font-bold uppercase tracking-wider truncate max-w-[80px]">
+                      {subject.faculty?.name?.split(' ')[0] || "Staff"}
                     </span>
                   </div>
                 )}

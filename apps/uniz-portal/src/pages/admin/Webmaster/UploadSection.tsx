@@ -29,7 +29,6 @@ export default function UploadSection({ type }: { type: UploadType }) {
   const [loading, setLoading] = useState(false);
   const [uploadId, setUploadId] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
-  const [progress, setProgress] = useState<any>(null);
 
   // Template Parameters
   const [branch, setBranch] = useState("CSE");
@@ -143,43 +142,34 @@ export default function UploadSection({ type }: { type: UploadType }) {
     let interval: any;
     if (uploadId) {
       interval = setInterval(async () => {
-        const token = (
-          localStorage.getItem("admin_token") ||
-          localStorage.getItem("faculty_token") ||
-          ""
-        ).replace(/"/g, "");
         try {
-          const cb = Date.now();
-          const res = await fetch(`${ACADEMICS_PROGRESS(uploadId)}&_cb=${cb}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const data = await res.json(); // Parse the response
-          if (data && data.success && data.progress) {
-            setProgress(data.progress);
+          const res = await apiClient<any>(ACADEMICS_PROGRESS(uploadId), {
+            showToast: false,
+          } as any);
+          if (res && res.success && res.progress) {
+            // setProgress(res.progress); // Removed UI
             if (
-              data.progress.status === "completed" ||
-              data.progress.status === "done" ||
-              data.progress.status === "error" ||
-              data.progress.status === "failed"
+              res.progress.status === "completed" ||
+              res.progress.status === "done" ||
+              res.progress.status === "error" ||
+              res.progress.status === "failed"
             ) {
               setUploadId(null);
               clearInterval(interval);
               if (
-                data.progress.status === "completed" ||
-                data.progress.status === "done"
+                res.progress.status === "completed" ||
+                res.progress.status === "done"
               ) {
                 setResult({
                   success: true,
-                  processed: data.progress.processed,
-                  total: data.progress.total,
+                  processed: res.progress.processed,
+                  total: res.progress.total,
                 });
                 toast.success("Synchronization completed successfully");
               } else {
                 setResult({
                   success: false,
-                  msg: data.progress.message || "Synchronization failed",
+                  msg: res.progress.message || "Synchronization failed",
                 });
                 toast.error("Synchronization failed");
               }
@@ -198,13 +188,13 @@ export default function UploadSection({ type }: { type: UploadType }) {
       type === "attendance"
         ? GET_ATTENDANCE_TEMPLATE(branch, year, semester, batch)
         : GET_GRADES_TEMPLATE(
-            branch,
-            year,
-            semester,
-            subjectCode,
-            remedialsOnly,
-            batch,
-          );
+          branch,
+          year,
+          semester,
+          subjectCode,
+          remedialsOnly,
+          batch,
+        );
     const fileName = `${type}_${branch}_${year}_${semester}_template.xlsx`;
     await downloadFile(url, fileName);
   };
@@ -426,11 +416,10 @@ export default function UploadSection({ type }: { type: UploadType }) {
         <div className="space-y-6">
           {result ? (
             <div
-              className={`p-8 rounded-xl border animate-in slide-in-from-right-8 duration-500 h-full shadow-none ${
-                result.success
-                  ? "bg-emerald-50 border-emerald-100 text-emerald-900"
-                  : "bg-red-50 border-red-100 text-red-900"
-              }`}
+              className={`p-8 rounded-xl border animate-in slide-in-from-right-8 duration-500 h-full shadow-none ${result.success
+                ? "bg-emerald-50 border-emerald-100 text-emerald-900"
+                : "bg-red-50 border-red-100 text-red-900"
+                }`}
             >
               <div className="flex items-center gap-4 mb-6">
                 <div
@@ -471,29 +460,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
               </div>
             </div>
           ) : (
-            <div className="p-8 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center h-full shadow-none relative overflow-hidden">
-              {progress && uploadId && (
-                <div className="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-8 animate-in fade-in duration-300">
-                  <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-none mb-6 animate-bounce">
-                    <Loader2 className="w-10 h-10 animate-spin" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                    Synchronizing...
-                  </h3>
-                  <div className="w-full max-w-xs bg-slate-100 h-3 rounded-full overflow-hidden mb-4 border border-slate-200">
-                    <div
-                      className="bg-blue-600 h-full transition-all duration-700 ease-out"
-                      style={{ width: `${progress.percent || 0}%` }}
-                    />
-                  </div>
-                  <div className="flex justify-between w-full max-w-xs text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                    <span>{progress.percent || 0}% Complete</span>
-                    <span>
-                      {progress.processed || 0} / {progress.total || 0} Records
-                    </span>
-                  </div>
-                </div>
-              )}
+            <div className="p-8 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center h-full shadow-none">
               <div className="p-5 bg-white rounded-xl shadow-none text-slate-300 mb-8 border border-slate-100">
                 <Info size={32} />
               </div>

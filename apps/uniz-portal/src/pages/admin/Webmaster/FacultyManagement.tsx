@@ -7,7 +7,6 @@ import {
   Mail,
   RefreshCw,
   Search,
-  Filter,
   X,
   Trash2,
   Upload,
@@ -464,73 +463,57 @@ export default function FacultyManagement({
   };
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
+    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-6 text-slate-900">
       {/* ─── Top bar ─── */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex flex-col gap-1.5">
           <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
-            User Management
+            Institutional Registry
           </h2>
-          <div className="flex items-center gap-2 mt-2">
-            <span className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-black uppercase tracking-widest">
-              {meta.total} Registered Staff
-            </span>
-            <p className="text-slate-500 font-medium text-[15px]">
-              Manage administrative and teaching staff accounts.
-            </p>
-          </div>
+          <p className="text-slate-500 font-medium text-[15px]">
+            Strategic management of administrative and teaching assets.
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Mode Toggle */}
-          <div className="flex bg-slate-100 p-1 rounded-xl gap-1">
+        <div className="flex items-center gap-4">
+          <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/50 backdrop-blur-sm shadow-none">
             <button
-              onClick={() => setMode("single")}
-              className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${mode === "single" ? "bg-white text-slate-900 shadow" : "text-slate-400 hover:text-slate-600"}`}
+              onClick={() => setMode(mode === "single" ? "bulk" : "single")}
+              title={mode === "single" ? "Switch to Bulk Mode" : "Switch to Individual Mode"}
+              className="p-2.5 text-slate-500 hover:text-blue-600 transition-all"
             >
-              Individual
+              <Layers size={18} />
             </button>
             <button
-              onClick={() => setMode("bulk")}
-              className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 ${mode === "bulk" ? "bg-white text-slate-900 shadow" : "text-slate-400 hover:text-slate-600"}`}
+              onClick={fetchFaculty}
+              title="Refresh Registry"
+              className={`p-2.5 text-slate-500 hover:text-blue-600 transition-all ${loading ? "animate-spin" : ""}`}
             >
-              <Layers size={12} /> Bulk Ops
+              <RefreshCw size={18} />
             </button>
+          </div>
+
+          <div className="relative group">
+            <Search
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors pointer-events-none"
+              size={16}
+            />
+            <input
+              type="text"
+              placeholder="Search registry..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-11 pr-5 h-12 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[240px] shadow-none placeholder:text-slate-400"
+            />
           </div>
 
           {mode === "single" && (
-            <>
-              <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/50 backdrop-blur-sm shadow-none">
-                <button className="p-2.5 text-slate-500 hover:text-blue-600 transition-all">
-                  <Filter size={18} />
-                </button>
-                <button
-                  onClick={fetchFaculty}
-                  className={`p-2.5 text-slate-500 hover:text-blue-600 transition-all ${loading ? "animate-spin" : ""}`}
-                >
-                  <RefreshCw size={18} />
-                </button>
-              </div>
-              <div className="relative group">
-                <Search
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"
-                  size={14}
-                />
-                <input
-                  type="text"
-                  placeholder="System Search..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-10 pr-5 h-11 bg-white border border-slate-200 rounded-xl text-[11px] font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[220px]"
-                />
-              </div>
-              <button
-                onClick={openAdd}
-                className="h-11 px-6 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center gap-2.5"
-              >
-                <Plus size={16} /> Add Staff
-              </button>
-            </>
+            <button
+              onClick={openAdd}
+              className="h-12 px-6 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-slate-800 active:scale-95 transition-all flex items-center gap-2.5 shadow-none"
+            >
+              <Plus size={16} /> Provision Staff
+            </button>
           )}
         </div>
       </div>
@@ -959,8 +942,8 @@ export default function FacultyManagement({
           </div>
         )}
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="relative">
+          <table className="w-full text-left border-collapse table-auto">
             <thead>
               <tr className="border-b border-slate-50">
                 {mode === "bulk" && (
@@ -978,20 +961,20 @@ export default function FacultyManagement({
                     </button>
                   </th>
                 )}
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-6 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   User Details
                 </th>
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-6 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   Designation
                 </th>
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-6 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   Role
                 </th>
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-6 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   Status
                 </th>
                 {mode === "single" && (
-                  <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20 text-right">
+                  <th className="px-6 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20 text-right">
                     Actions
                   </th>
                 )}
@@ -999,14 +982,39 @@ export default function FacultyManagement({
             </thead>
             <tbody className="divide-y divide-slate-50/60">
               {loading ? (
-                Array(6)
+                Array(limit)
                   .fill(0)
                   .map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td
-                        colSpan={mode === "bulk" ? 6 : 5}
-                        className="px-10 py-8 bg-slate-50/20"
-                      ></td>
+                      {mode === "bulk" && <td className="px-4 py-6"><div className="w-5 h-5 bg-slate-100 rounded" /></td>}
+                      <td className="px-6 py-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-full bg-slate-100 shrink-0" />
+                          <div className="space-y-2 w-full">
+                            <div className="h-4 bg-slate-100 rounded w-24" />
+                            <div className="h-3 bg-slate-50 rounded w-40" />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-6">
+                        <div className="space-y-2">
+                          <div className="h-4 bg-slate-100 rounded w-20" />
+                        </div>
+                      </td>
+                      <td className="px-6 py-6">
+                        <div className="h-5 bg-slate-100 rounded-lg w-16" />
+                      </td>
+                      <td className="px-6 py-6">
+                        <div className="h-6 bg-slate-100 rounded-full w-20" />
+                      </td>
+                      {mode === "single" && (
+                        <td className="px-6 py-6">
+                          <div className="flex justify-end gap-2">
+                            <div className="w-8 h-8 bg-slate-100 rounded-full" />
+                            <div className="w-16 h-8 bg-slate-100 rounded-full" />
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   ))
               ) : faculty.length > 0 ? (
@@ -1034,7 +1042,7 @@ export default function FacultyManagement({
                           )}
                         </td>
                       )}
-                      <td className="px-10 py-6">
+                      <td className="px-6 py-6">
                         <div className="flex items-center gap-4">
                           <div
                             className={`w-11 h-11 rounded-full text-white flex items-center justify-center font-bold text-sm shadow-none border-2 border-white ring-1 ring-slate-100 overflow-hidden ${isSelected ? "bg-blue-600" : "bg-slate-900"}`}
@@ -1065,7 +1073,7 @@ export default function FacultyManagement({
                           </div>
                         </div>
                       </td>
-                      <td className="px-10 py-6">
+                      <td className="px-6 py-6">
                         <p className="text-xs font-black text-slate-600 uppercase tracking-wide">
                           {member.Designation || "Lecturer"}
                         </p>
@@ -1073,12 +1081,12 @@ export default function FacultyManagement({
                           {member.Department}
                         </p>
                       </td>
-                      <td className="px-10 py-6">
+                      <td className="px-6 py-6">
                         <span className="px-3 py-1 bg-slate-50 rounded-lg text-slate-500 font-semibold uppercase tracking-widest text-[9px] border border-slate-100">
                           {member.Role?.toUpperCase() || "FACULTY"}
                         </span>
                       </td>
-                      <td className="px-10 py-6">
+                      <td className="px-6 py-6">
                         <div
                           className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-[9px] font-bold uppercase tracking-widest w-fit ${!member.is_suspended ? "border-emerald-100 text-emerald-600" : "border-red-100 text-red-500"}`}
                         >
@@ -1089,7 +1097,7 @@ export default function FacultyManagement({
                         </div>
                       </td>
                       {mode === "single" && (
-                        <td className="px-10 py-6">
+                        <td className="px-6 py-6">
                           <div className="flex items-center justify-end gap-2.5">
                             <button
                               onClick={() => {
