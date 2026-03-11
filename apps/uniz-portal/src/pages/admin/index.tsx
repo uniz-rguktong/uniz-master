@@ -28,6 +28,7 @@ import SWODashboard from "./SWO/SWODashboard";
 import CaretakerDashboard from "./Caretaker/CaretakerDashboard";
 import WardenDashboard from "./Warden/WardenDashboard";
 import SecurityPortal from "./SecurityPortal";
+import DirectorDashboard from "./Director/DirectorDashboard";
 
 const QuickActionButton = ({
   onClick,
@@ -73,6 +74,10 @@ export default function Admin() {
 
   if (role === "webmaster") {
     return <WebmasterDashboard />;
+  }
+
+  if (role === "director") {
+    return <DirectorDashboard />;
   }
 
   if (role === "swo" || role === "dsw") {
@@ -173,39 +178,39 @@ export default function Admin() {
       items: [
         ...(isDean
           ? [
-              {
-                onClick: () => navigate("/admin/addfaculty"),
-                title: "Faculty",
-                subtitle: "Manage Staff",
-                Icon: UserPlus,
-              },
-              {
-                onClick: () => navigate("/admin/addstudents"),
-                title: "Students",
-                subtitle: "Import CSV",
-                Icon: UserPlus,
-              },
-            ]
+            {
+              onClick: () => navigate("/admin/addfaculty"),
+              title: "Faculty",
+              subtitle: "Manage Staff",
+              Icon: UserPlus,
+            },
+            {
+              onClick: () => navigate("/admin/addstudents"),
+              title: "Students",
+              subtitle: "Import CSV",
+              Icon: UserPlus,
+            },
+          ]
           : []),
         ...(isDirector
           ? [
-              {
-                onClick: () => navigate("/admin/roles"),
-                title: "Roles",
-                subtitle: "Permissions",
-                Icon: UserCog,
-              },
-            ]
+            {
+              onClick: () => navigate("/admin/roles"),
+              title: "Roles",
+              subtitle: "Permissions",
+              Icon: UserCog,
+            },
+          ]
           : []),
         ...(isSecurity
           ? [
-              {
-                onClick: () => navigate("/admin/searchstudents"),
-                title: "Search",
-                subtitle: "Find Students",
-                Icon: Search,
-              },
-            ]
+            {
+              onClick: () => navigate("/admin/searchstudents"),
+              title: "Search",
+              subtitle: "Find Students",
+              Icon: Search,
+            },
+          ]
           : []),
       ],
     },
@@ -221,13 +226,13 @@ export default function Admin() {
         },
         ...(isDean
           ? [
-              {
-                onClick: () => navigate("/admin/banners"),
-                title: "Banners",
-                subtitle: "Site Visuals",
-                Icon: ImageIcon,
-              },
-            ]
+            {
+              onClick: () => navigate("/admin/banners"),
+              title: "Banners",
+              subtitle: "Site Visuals",
+              Icon: ImageIcon,
+            },
+          ]
           : []),
       ],
     },

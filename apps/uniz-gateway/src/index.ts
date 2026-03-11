@@ -21,10 +21,10 @@ const PORT = process.env.PORT || 3000;
 // Initialize Redis for High-Speed Caching
 const redis = new Redis(process.env.REDIS_URL || "redis://uniz-redis:6379", {
   maxRetriesPerRequest: 3,
-  retryStrategy: (times) => Math.min(times * 50, 2000),
+  retryStrategy: (times: number) => Math.min(times * 50, 2000),
 });
 
-redis.on("error", (err) =>
+redis.on("error", (err: Error) =>
   console.error("[Redis] Connection Error:", err.message),
 );
 redis.on("connect", () => console.log("[Redis] Connected for Caching"));
@@ -36,7 +36,7 @@ const proxy = httpProxy.createProxyServer({
   agent: new (require("http").Agent)({ keepAlive: true, maxSockets: 100 }),
 });
 
-proxy.on("error", (err, req, res: any) => {
+proxy.on("error", (err: Error, req: any, res: any) => {
   console.error("[Proxy-Error]", err.message);
   if (!res.headersSent) {
     res
@@ -53,7 +53,7 @@ const allowedOrigins = process.env.CLIENT_URL
   : ["http://localhost:5173", "http://localhost:3000"];
 
 // 2. Optimized CORS
-app.use((req, res, next) => {
+app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
   const origin = req.headers.origin;
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
@@ -119,7 +119,7 @@ const cacheMiddleware = async (
       // Cache for 60 seconds by default
       redis
         .setex(cacheKey, 60, JSON.stringify(respToCache))
-        .catch((err) => console.error("[Cache-Write-Error]", err));
+        .catch((err: Error) => console.error("[Cache-Write-Error]", err));
     }
     return originalSend.apply(res, [body]);
   };
@@ -164,7 +164,7 @@ const serviceMap: Record<string, string> = {
 // 4. Standard Health Endpoints with Precision Timing & 2s Cache
 const healthCache = new Map<string, { data: any; expiry: number }>();
 
-app.get("/api/v1/system/health", async (req, res) => {
+app.get("/api/v1/system/health", async (req: express.Request, res: express.Response) => {
   const cacheKey = "system_health_aggregate";
   const now = performance.now();
 
@@ -235,7 +235,7 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
               status: response.status,
             }),
           )
-          .catch(() => {});
+          .catch(() => { });
       }
 
       return res.status(response.status).send(response.data);
@@ -247,7 +247,7 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
   proxy.web(req, res, { target });
 });
 
-app.get("/", (req, res) => {
+app.get("/", (req: express.Request, res: express.Response) => {
   res.send(`
 <pre style="background: black; color: white; padding: 20px; font-family: monospace;">
 ██╗   ██╗███╗   ██╗██╗███████╗
