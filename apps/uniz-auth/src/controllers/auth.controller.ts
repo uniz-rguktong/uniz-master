@@ -249,8 +249,8 @@ export const requestOtp = async (req: Request, res: Response) => {
         // Tiered lookup: start with student, then admin/faculty endpoints if needed
         const endpoints = [
           `student/${username}`,
-          `admin/faculty/${username}`,
-          `admin/admin/${username}`,
+          `faculty/${username}`,
+          `admin/${username}`,
         ];
 
         for (const endpoint of endpoints) {
@@ -349,8 +349,8 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
 
       const endpoints = [
         `student/${username}`,
-        `admin/faculty/${username}`,
-        `admin/admin/${username}`,
+        `faculty/${username}`,
+        `admin/${username}`,
       ];
 
       for (const endpoint of endpoints) {
