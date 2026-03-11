@@ -1,40 +1,63 @@
 import rateLimit from "express-rate-limit";
 
-// Standard Auth limiter
+// Standard Auth limiter (Username-aware to prevent campus IP collisions)
 export const rateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 50, // More reasonable limit
+  max: 50,
+  keyGenerator: (req: any) =>
+    req.body.username?.toString().toLowerCase() || req.ip,
   message: {
     success: false,
-    message: "Too many login/OTP attempts, please try again after 15 minutes",
+    message: "Security threshold exceeded. Please try again after 15 minutes.",
     code: "RATE_LIMIT_EXCEEDED",
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// Balanced OTP Minute Limiter (2 per min to allow quick retry)
-export const otpMinuteLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 2,
-  message: {
-    success: false,
-    message:
-      "Security check: Please wait 60 seconds before requesting another code.",
-    code: "OTP_LIMIT_MINUTE",
     attribution: "SABER",
   },
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Balanced OTP Hour Limiter (10 per hour)
-export const otpHourLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
-  max: 10,
+// Push-First OTP Limiter (2/min per user)
+export const otpPushLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 2,
+  keyGenerator: (req: any) =>
+    `push_${req.body.username?.toString().toLowerCase() || req.ip}`,
   message: {
     success: false,
-    message: "Security threshold reached. Please try again after an hour.",
+    message:
+      "Security check: Please wait 60 seconds before requesting another push code.",
+    code: "OTP_PUSH_LIMIT",
+    attribution: "SABER",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Email-Manual OTP Limiter (More relaxed to allow resends/fallbacks)
+export const otpEmailLimiter = rateLimit({
+  windowMs: 2 * 60 * 1000, // 2-minute cycle
+  max: 4, // up to 4 email codes or resends
+  keyGenerator: (req: any) =>
+    `email_${req.body.username?.toString().toLowerCase() || req.ip}`,
+  message: {
+    success: false,
+    message: "Email dispatch limit temporary reached. Please wait 2 minutes.",
+    code: "OTP_EMAIL_LIMIT",
+    attribution: "SABER",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Global Hourly Safeguard per User
+export const otpHourLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 15, // Total 15 across any channel per hour
+  keyGenerator: (req: any) =>
+    `hour_${req.body.username?.toString().toLowerCase() || req.ip}`,
+  message: {
+    success: false,
+    message: "Maximum hourly security requests reached. Try again later.",
     code: "OTP_LIMIT_HOUR",
     attribution: "SABER",
   },
