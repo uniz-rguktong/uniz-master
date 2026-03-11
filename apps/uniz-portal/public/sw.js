@@ -14,6 +14,11 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim());
 });
 
+// ─── Fetch Event (Required for PWA Installability) ───────────────────────────
+self.addEventListener("fetch", (event) => {
+  // Pass-through handler. In the future, this can be used for offline caching.
+});
+
 // ─── Push Event ───────────────────────────────────────────────────────────────
 // This is the core handler. When Chrome is closed on Android, the OS wakes
 // up this SW to deliver the push. event.waitUntil() MUST be called synchronously
