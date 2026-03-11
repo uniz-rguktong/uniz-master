@@ -12,7 +12,7 @@ model Subject {
   id                String             @id @default(uuid())
   code              String             @unique
   name              String
-  credits           Int
+  credits           Float
   department        String
   semester          String
   attendance        Attendance[]
