@@ -78,15 +78,15 @@ router.post(
 router.post("/signup", validateRequest(SignupSchema), signup);
 router.post(
   "/otp/request",
-  otpHourLimiter,
-  otpMinuteLimiter,
+  // otpHourLimiter,
+  // otpMinuteLimiter,
   validateRequest(OtpRequestSchema),
   requestOtp,
 );
 router.post(
   "/otp/request-email",
-  otpHourLimiter,
-  otpMinuteLimiter,
+  // otpHourLimiter,
+  // otpMinuteLimiter,
   validateRequest(OtpRequestSchema),
   requestOtpEmail,
 );
