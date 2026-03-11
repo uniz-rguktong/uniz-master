@@ -696,8 +696,6 @@ export const signup = async (req: Request, res: Response) => {
       where: { username: { equals: username, mode: "insensitive" } },
     });
 
-    const hashedPassword = await hashPassword(password);
-
     if (existing) {
       if (isInternal) {
         // For internal bulk-upload calls: NEVER reset the password of an
@@ -721,6 +719,9 @@ export const signup = async (req: Request, res: Response) => {
         message: "Username already exists",
       });
     }
+
+    // Only hash the password if we are actually creating a new credential
+    const hashedPassword = await hashPassword(password);
 
     const user = await prisma.authCredential.create({
       data: {
