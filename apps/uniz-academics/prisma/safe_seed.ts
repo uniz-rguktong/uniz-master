@@ -556,7 +556,7 @@ async function main() {
             allSubjects.push({
               code,
               name,
-              credits: Math.round(credits[index]), // Credits is Int in schema
+              credits: credits[index], // Now supports precise Float values (e.g. 1.5, 2.5)
               department: branchKey,
               semester: normalizedSem,
             });
