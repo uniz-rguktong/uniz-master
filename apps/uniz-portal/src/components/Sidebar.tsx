@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../hooks/is_authenticated";
 import { useLogout } from "../hooks/useLogout";
 import { useStudentData } from "../hooks/student_info";
-import { useState, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { enableOutingsAndOutpasses } from "../pages/student/student";
 import {
   User,
@@ -71,6 +71,16 @@ export default function Sidebar({ content }: MainContent) {
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [showNotice, setShowNotice] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const { logout } = useLogout();
 
   const handleLogout = () => {
@@ -269,13 +279,13 @@ export default function Sidebar({ content }: MainContent) {
         {/* Main Content Area */}
         <main className="flex-1 md:pl-28 md:overflow-y-auto md:max-h-screen">
           {/* Mobile Header */}
-          <header className="md:hidden bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16">
-            <h1 className="unifrakturcook-bold text-3xl text-slate-900 tracking-tighter">
+          <header className={`md:hidden sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16 transition-all duration-300 ${isScrolled ? "bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm" : "bg-transparent border-transparent"}`}>
+            <h1 className={`unifrakturcook-bold text-3xl tracking-tighter transition-colors duration-300 ${isScrolled ? "text-slate-900" : "text-slate-800"}`}>
               uniZ
             </h1>
             <button
               onClick={() => setShowConfirm(true)}
-              className="p-2 text-slate-400 active:text-red-500 transition-all font-sans"
+              className={`p-2 transition-all font-sans ${isScrolled ? "text-slate-400 active:text-red-500" : "text-slate-500 active:text-red-600"}`}
             >
               <LogOut size={22} />
             </button>
