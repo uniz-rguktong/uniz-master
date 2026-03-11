@@ -253,8 +253,7 @@ export default function AdminProfile() {
                 icon={<Mail className="text-blue-500" />}
                 label="Email Address"
                 value={formData.email || `${username}@rguktong.ac.in`}
-                editable={isEditing}
-                onChange={(val) => setFormData({ ...formData, email: val })}
+                editable={false}
               />
               <ProfileItem
                 icon={<User className="text-indigo-500" />}

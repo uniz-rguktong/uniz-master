@@ -792,7 +792,7 @@ export default function StudentProfilePage() {
                       value={fields.fatherEmail}
                       isEditing={isEditing}
                       onValueChange={handleFieldChange}
-                      editable
+                      editable={false}
                     />
                   </div>
                 </div>
@@ -833,7 +833,7 @@ export default function StudentProfilePage() {
                       value={fields.motherEmail}
                       isEditing={isEditing}
                       onValueChange={handleFieldChange}
-                      editable
+                      editable={false}
                     />
                   </div>
                 </div>
