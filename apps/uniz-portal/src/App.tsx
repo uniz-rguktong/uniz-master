@@ -6,7 +6,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { PageTransition } from "./components/Transition";
 import { useIsAuth } from "./hooks/is_authenticated";
-import { Construction, FileQuestion, Loader2, ArrowLeft } from "lucide-react";
+import { Construction, FileQuestion, ArrowLeft } from "lucide-react";
 import { Button } from "./components/Button";
 
 // Lazy imports
@@ -37,11 +37,13 @@ const CurrentSemesterAdmin = lazy(
 
 export const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === "true";
 
+import { Spinner } from "./components/ui/ios-spinner";
+
 const LoadingFallback = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4">
-    <Loader2 className="w-10 h-10 text-black animate-spin" />
-    <p className="text-black font-semibold uppercase tracking-widest animate-pulse">
-      Loading Ongole...
+    <Spinner size="lg" />
+    <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] animate-pulse">
+      Initialising Portal...
     </p>
   </div>
 );
