@@ -35,9 +35,9 @@ export async function apiClient<T = any>(
   showToast = true,
 ): Promise<T | null> {
   const token =
-    localStorage.getItem("student_token") ||
     localStorage.getItem("admin_token") ||
-    localStorage.getItem("faculty_token");
+    localStorage.getItem("faculty_token") ||
+    localStorage.getItem("student_token");
   const cleanToken = token ? token.replace(/^"|"$/g, "") : null;
 
   const isFormData = options.body instanceof FormData;
@@ -99,9 +99,9 @@ export async function downloadFile(
   params?: Record<string, any>,
 ): Promise<void> {
   const token =
-    localStorage.getItem("student_token") ||
     localStorage.getItem("admin_token") ||
-    localStorage.getItem("faculty_token");
+    localStorage.getItem("faculty_token") ||
+    localStorage.getItem("student_token");
   const cleanToken = token ? token.replace(/^"|"$/g, "") : null;
 
   let url = endpoint;

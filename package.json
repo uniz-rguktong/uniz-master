@@ -14,6 +14,7 @@
     "dev": "concurrently -n \"GATEWAY,AUTH,USER,PORTAL\" -c \"cyan,magenta,blue,yellow\" \"cd apps/uniz-gateway && npm run dev\" \"cd apps/uniz-auth && npm run dev\" \"cd apps/uniz-user && npm run dev\" \"cd apps/uniz-portal && npm run dev\"",
     "dev:all": "concurrently -n \"CORE,ACADEMICS,OUTPASS,FILES,NOTIFY,MAIL,CRON\" -c \"reset,green,cyan,white,yellow,magenta,red\" \"npm run dev\" \"cd apps/uniz-academics && npm run dev\" \"cd apps/uniz-outpass && npm run dev\" \"cd apps/uniz-files && npm run dev\" \"cd apps/uniz-notifications && npm run dev\" \"cd apps/uniz-mail && npm run dev\" \"cd apps/uniz-cron && npm run dev\"",
     "setup:local": "bash ./scripts/setup-local.sh",
+    "sync": "bash ./scripts/sync-local.sh",
     "seed:local": "ts-node scripts/seed-local.ts",
     "prettify": "prettier --write .",
     "vault:get": "bash ./scripts/uniz-vault.sh get",
