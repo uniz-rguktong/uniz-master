@@ -15,7 +15,8 @@ import {
 } from "../controllers/auth.controller";
 import {
   rateLimiter,
-  otpMinuteLimiter,
+  otpPushLimiter,
+  otpEmailLimiter,
   otpHourLimiter,
 } from "../middlewares/ratelimit.middleware";
 import { authMiddleware } from "../middlewares/auth.middleware";
@@ -79,14 +80,14 @@ router.post("/signup", validateRequest(SignupSchema), signup);
 router.post(
   "/otp/request",
   otpHourLimiter,
-  otpMinuteLimiter,
+  otpPushLimiter,
   validateRequest(OtpRequestSchema),
   requestOtp,
 );
 router.post(
   "/otp/request-email",
   otpHourLimiter,
-  otpMinuteLimiter,
+  otpEmailLimiter,
   validateRequest(OtpRequestSchema),
   requestOtpEmail,
 );
