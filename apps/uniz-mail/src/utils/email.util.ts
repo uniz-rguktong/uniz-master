@@ -1,12 +1,50 @@
 import nodemailer from "nodemailer";
+import * as SES from "@aws-sdk/client-ses";
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER || "noreplycampusschield@gmail.com",
-    pass: process.env.EMAIL_PASS || "acix rfbi kujh xwtj",
-  },
-});
+// Environment-based Transporter Configuration
+const isProduction = process.env.DOCKER_ENV === "true";
+
+let transporter: nodemailer.Transporter;
+
+if (isProduction) {
+  // Use AWS SES for Production
+  const ses = new SES.SES({
+    apiVersion: "2010-12-01",
+    region: process.env.AWS_REGION || "ap-south-1",
+    credentials: {
+      accessKeyId:
+        process.env.PROD_AWS_ACCESS_KEY_NEWONE_AFTER_LEAK ||
+        process.env.AWS_ACCESS_KEY_ID ||
+        "",
+      secretAccessKey:
+        process.env.PROD_AWS_ACCESS_KEY_SECRET_NEWONE_AFTER_LEAK ||
+        process.env.AWS_SECRET_ACCESS_KEY ||
+        "",
+    },
+  });
+
+  transporter = nodemailer.createTransport({
+    SES: { ses, aws: SES },
+  });
+  console.log("[Mail] Using AWS SES Production Transporter");
+} else {
+  // Use Gmail for Local Development
+  transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER || "noreplycampusschield@gmail.com",
+      pass: process.env.EMAIL_PASS || "acix rfbi kujh xwtj",
+    },
+  });
+  console.log("[Mail] Using Gmail Local Transporter");
+}
+
+const FROM_NAME = "UniZ Campus";
+const FROM_EMAIL = isProduction
+  ? process.env.SES_FROM_EMAIL || "no-reply-ems@rguktong.in"
+  : process.env.EMAIL_USER || "noreplycampusschield@gmail.com";
+
+const SENDER = `"${FROM_NAME}" <${FROM_EMAIL}>`;
 
 // Minimal text footer
 const emailFooter = `
@@ -32,7 +70,7 @@ This OTP will expire in 10 minutes.
 If you did not request this, please contact the administrator immediately.${emailFooter}`;
 
     await transporter.sendMail({
-      from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+      from: SENDER,
       to: email,
       subject: "UniZ - Password Reset OTP",
       text,
@@ -64,7 +102,7 @@ ${ipAddress ? `IP Address: ${ipAddress}\n` : ""}Device: Web Browser
 If this wasn't you, please reset your password immediately and contact the administrator.${emailFooter}`;
 
     await transporter.sendMail({
-      from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+      from: SENDER,
       to: email,
       subject: "UniZ - Login Notification",
       text,
@@ -86,9 +124,6 @@ export const sendProfileUpdateNotification = async (
     const timestamp = new Date().toLocaleString("en-IN", {
       timeZone: "Asia/Kolkata",
     });
-    const fieldsList = updatedFields
-      .map((field) => `<li>${field}</li>`)
-      .join("");
     const text = `Hello ${username},
 
 Your profile has been updated successfully.
@@ -100,7 +135,7 @@ ${updatedFields.map((field) => `- ${field}`).join("\n")}
 If you did not make these changes, please contact the administrator immediately.${emailFooter}`;
 
     await transporter.sendMail({
-      from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+      from: SENDER,
       to: email,
       subject: "UniZ - Profile Updated",
       text,
@@ -130,7 +165,7 @@ Changed at: ${timestamp}
 If you did not make this change, your account may be compromised. Please contact the administrator immediately.${emailFooter}`;
 
     await transporter.sendMail({
-      from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+      from: SENDER,
       to: email,
       subject: "UniZ - Password Changed",
       text,
@@ -163,7 +198,7 @@ Status: Pending Approval
 You will be notified once your request is reviewed.${emailFooter}`;
 
     await transporter.sendMail({
-      from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+      from: SENDER,
       to: email,
       subject: "UniZ - Outpass Request Submitted",
       text,
@@ -196,7 +231,7 @@ Status: Pending Approval
 You will be notified once your request is reviewed.${emailFooter}`;
 
     await transporter.sendMail({
-      from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+      from: SENDER,
       to: email,
       subject: "UniZ - Outing Request Submitted",
       text,
@@ -234,7 +269,7 @@ ${
 }${emailFooter}`;
 
     await transporter.sendMail({
-      from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+      from: SENDER,
       to: email,
       subject: `UniZ - Outpass ${isApproved ? "Approved" : "Rejected"}`,
       text,
@@ -272,7 +307,7 @@ ${
 }${emailFooter}`;
 
     await transporter.sendMail({
-      from: '"UniZ Campus" <noreplycampusschield@gmail.com>',
+      from: SENDER,
       to: email,
       subject: `UniZ - Outing ${isApproved ? "Approved" : "Rejected"}`,
       text,
