@@ -9,6 +9,7 @@
     "vercel-build": "prisma generate",
     "postinstall": "if [ -f prisma/schema.prisma ]; then npx prisma generate; fi",
     "seed": "ts-node prisma/seed.ts",
+    "safe-seed": "ts-node prisma/safe_seed.ts",
     "data-reset": "npx prisma db push --force-reset && npm run seed",
     "deploy": "git add . && git commit -m \"deploy: updates\" && git push origin main",
     "redeploy": "bash redeploy.sh"
