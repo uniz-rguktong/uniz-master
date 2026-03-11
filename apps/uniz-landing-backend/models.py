@@ -80,5 +80,5 @@ class Notification(Base):
     id = Column(Integer, primary_key=True, index=True)
     category = Column(Enum(NotificationType), index=True)
     title = Column(String)
-    date_string = Column(String)                        # Stored as string due to scraping format
+    date = Column(String)                      # Stored as string due to scraping format
     links = Column(JSON, default=[])                    # List of {text, url}
