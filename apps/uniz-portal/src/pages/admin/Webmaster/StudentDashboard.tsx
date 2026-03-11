@@ -11,6 +11,7 @@ import {
     Scale,
     ShieldAlert,
     History,
+    KeyRound,
 } from "lucide-react";
 import {
     LineChart,
@@ -27,10 +28,11 @@ import { cn } from "../../../utils/cn";
 interface StudentDashboardProps {
     data: any;
     onSuspendToggle?: (username: string, currentStatus: boolean) => void;
+    onResetPassword?: (username: string) => void;
     isActionLoading?: boolean;
 }
 
-export default function StudentDashboard({ data, onSuspendToggle, isActionLoading }: StudentDashboardProps) {
+export default function StudentDashboard({ data, onSuspendToggle, onResetPassword, isActionLoading }: StudentDashboardProps) {
     const student = data;
     if (!student) return null;
 
@@ -86,8 +88,8 @@ export default function StudentDashboard({ data, onSuspendToggle, isActionLoadin
                         <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-[10px]">{student.username}</p>
                     </div>
 
-                    {/* Compact Suspension Button */}
-                    <div className="flex justify-center">
+                    {/* Compact Suspension & Reset Buttons */}
+                    <div className="flex justify-center gap-3">
                         <button
                             onClick={() => onSuspendToggle?.(student.username, student.is_suspended)}
                             disabled={isActionLoading}
@@ -106,6 +108,15 @@ export default function StudentDashboard({ data, onSuspendToggle, isActionLoadin
                                 <ShieldAlert className="w-4 h-4" />
                             )}
                             {student.is_suspended ? 'Restore Access' : 'Suspend Access'}
+                        </button>
+
+                        <button
+                            onClick={() => onResetPassword?.(student.username)}
+                            disabled={isActionLoading}
+                            className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-bold uppercase tracking-widest text-[10px] transition-all group active:scale-95 shadow-sm hover:bg-slate-900 hover:text-white hover:border-slate-900"
+                        >
+                            <KeyRound className="w-4 h-4" />
+                            Reset Password
                         </button>
                     </div>
                 </div>
