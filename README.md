@@ -107,5 +107,5 @@ UniZ uses a "Shielded Vault" pattern to isolate Local and Production environment
 ---
 
 <p align="center">
-  Built with dedication by <b>SreeCharan</b> | 2026
+  Built with love by <b>SreeCharan</b> | 2026
 </p>
