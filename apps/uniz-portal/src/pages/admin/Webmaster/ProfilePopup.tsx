@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import {
   X,
   Camera,
-  Loader2,
   Mail,
   Phone,
   Briefcase,
@@ -15,6 +14,7 @@ import {
   User,
   Shield,
 } from "lucide-react";
+import { Spinner } from "../../../components/ui/ios-spinner";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../../api/endpoints";
@@ -247,10 +247,7 @@ export default function ProfilePopup({
                   <div className="w-full h-full rounded-full bg-white p-[2px]">
                     <div className="w-full h-full rounded-full overflow-hidden bg-slate-800 flex items-center justify-center shadow-none">
                       {loading && !initialPhoto ? (
-                        <Loader2
-                          size={24}
-                          className="animate-spin text-blue-300"
-                        />
+                        <Spinner size="sm" className="brightness-200" />
                       ) : profile?.profile_url || initialPhoto ? (
                         <img
                           src={profile?.profile_url || initialPhoto!}
@@ -264,10 +261,7 @@ export default function ProfilePopup({
                       )}
                       {isUploading && (
                         <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center">
-                          <Loader2
-                            size={20}
-                            className="animate-spin text-white"
-                          />
+                          <Spinner size="sm" className="brightness-200" />
                         </div>
                       )}
                     </div>
@@ -308,7 +302,7 @@ export default function ProfilePopup({
                     className="flex items-center gap-1.5 px-5 py-2 rounded-xl border-2 border-blue-500 text-blue-600 text-[12px] font-semibold hover:bg-blue-50 transition-all disabled:opacity-60 shadow-none"
                   >
                     {isSaving ? (
-                      <Loader2 size={13} className="animate-spin" />
+                      <Spinner size="sm" className="scale-75" />
                     ) : (
                       <Check size={13} />
                     )}
@@ -349,7 +343,7 @@ export default function ProfilePopup({
             <div className="px-4 py-3 space-y-1">
               {loading ? (
                 <div className="flex justify-center py-5">
-                  <Loader2 size={20} className="animate-spin text-blue-400" />
+                  <Spinner size="sm" />
                 </div>
               ) : (
                 <>
