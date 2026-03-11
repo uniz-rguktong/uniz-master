@@ -1008,7 +1008,7 @@ export const updateFacultyProfile = async (
 ) => {
   const user = req.user;
   const username = req.params.username.toUpperCase();
-  const updates = req.body; 
+  const { email, ...updates } = req.body;
 
   const adminRoles = [
     UserRole.WEBMASTER,
@@ -1040,12 +1040,13 @@ export const updateFacultyProfile = async (
       where: { id: existingFaculty.id },
       data: {
         ...updates,
+        ...(email && { email }),
         username: targetUsername,
       },
     });
 
     // Sync with Auth Service (Upsert behavior)
-    if (updates.role || updates.email || updates.username || true) {
+    if (updates.role || email || updates.username || true) {
       // Always sync to fix existing
       const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
       const defaultPassword = `${targetUsername}@uniz`;
@@ -1057,7 +1058,7 @@ export const updateFacultyProfile = async (
             username: targetUsername,
             password: defaultPassword,
             role: updates.role || updated.role,
-            email: updates.email || updated.email,
+            email: email || updated.email,
           },
           {
             headers: { "x-internal-secret": SECRET },
