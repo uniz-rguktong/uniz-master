@@ -24,8 +24,11 @@ if (isProduction) {
   });
 
   transporter = nodemailer.createTransport({
-    SES: { ses, aws: SES },
-  });
+    SES: {
+      ses,
+      aws: SES,
+    },
+  } as any);
   console.log("[Mail] Using AWS SES Production Transporter");
 } else {
   // Use Gmail for Local Development
