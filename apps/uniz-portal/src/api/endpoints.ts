@@ -63,6 +63,7 @@ export const SECURITY_CHECKIN = (id: string) =>
 
 // Legacy / Placeholder Endpoints for Build Compatibility
 export const ADMIN_RESET_PASS = `${BASE_URL}/auth/admin/reset-password`;
+export const ADMIN_GLOBAL_RESET_PASS = `${BASE_URL}/auth/admin/global-reset-password`;
 export const RESET_PASS = `${BASE_URL}/auth/reset-password`;
 
 // Academic / Grades (Pending Microservice Migration)
