@@ -29,6 +29,8 @@ import {
   DEAN_REVIEW,
   DEAN_APPROVE,
   GET_REGISTRATIONS,
+  BASE_URL,
+  GET_AVAILABLE_BATCHES,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 
@@ -136,7 +138,7 @@ export default function UnifiedAcademicManager() {
 
   useEffect(() => {
     const fetchBatches = async () => {
-      const res = await apiClient<string[]>("/api/v1/profile/admin/batches");
+      const res = await apiClient<string[]>(GET_AVAILABLE_BATCHES);
       if (res) setAvailableBatches(res);
     };
     fetchBatches();
@@ -279,7 +281,7 @@ export default function UnifiedAcademicManager() {
     if (!addAllocData.subjectId || !selectedSem) return;
     setLoading(true);
     try {
-      await apiClient("/api/v1/academics/dean/allocation", {
+      await apiClient(`${BASE_URL}/academics/dean/allocation`, {
         method: "POST",
         body: JSON.stringify({
           ...addAllocData,
@@ -300,7 +302,7 @@ export default function UnifiedAcademicManager() {
   const handleRemoveAlloc = async (id: string) => {
     if (!window.confirm("Remove this subject from the rollout?")) return;
     try {
-      await apiClient(`/api/v1/academics/dean/allocation/${id}`, {
+      await apiClient(`${BASE_URL}/academics/dean/allocation/${id}`, {
         method: "DELETE",
       });
       toast.success("Allocation removed");
