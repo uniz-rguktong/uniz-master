@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import {
   GraduationCap,
   Search,
-  Loader2,
   Table,
   CheckCircle2,
   AlertCircle,
@@ -17,6 +16,7 @@ import {
   ShieldCheck,
   Zap,
 } from "lucide-react";
+import { Spinner } from "../../../components/ui/ios-spinner";
 import {
   ResponsiveContainer,
   BarChart,
@@ -408,7 +408,7 @@ export default function GradesSection() {
                   className="w-full bg-slate-900 text-white h-16 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-slate-800 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50"
                 >
                   {loading ? (
-                    <Loader2 className="animate-spin w-5 h-5" />
+                    <Spinner size="sm" className="brightness-200" />
                   ) : (
                     <Download size={20} />
                   )}
@@ -484,7 +484,7 @@ export default function GradesSection() {
                   className="w-full bg-blue-600 text-white h-16 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50 disabled:bg-slate-100 disabled:text-slate-400"
                 >
                   {uploading ? (
-                    <Loader2 className="animate-spin w-5 h-5" />
+                    <Spinner size="sm" className="brightness-200" />
                   ) : (
                     <ArrowRight size={20} />
                   )}
@@ -610,7 +610,7 @@ export default function GradesSection() {
                   className="h-11 px-8 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2.5"
                 >
                   {loading ? (
-                    <Loader2 className="animate-spin w-4 h-4" />
+                    <Spinner size="sm" className="brightness-200" />
                   ) : (
                     <Search size={16} />
                   )}
