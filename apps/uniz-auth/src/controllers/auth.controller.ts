@@ -130,7 +130,7 @@ export const login = async (req: Request, res: Response) => {
             department = foundDept;
             break;
           }
-        } catch (e) { }
+        } catch (e) {}
       }
 
       console.log(
@@ -266,7 +266,7 @@ export const requestOtp = async (req: Request, res: Response) => {
 
     if (sentCount === 0) {
       console.log(
-        `[AUTH] No push devices for ${username}. Falling back to email.`,
+        `[AUTH] No active push channels for ${username}. Deploying email fallback...`,
       );
       // Resolve email
       let email = `${username.toLowerCase()}@rguktong.ac.in`;
@@ -283,25 +283,33 @@ export const requestOtp = async (req: Request, res: Response) => {
           { headers: { "x-internal-secret": SECRET } },
         );
         if (userRes.data?.student?.email) email = userRes.data.student.email;
-      } catch (e) { }
+      } catch (e) {}
 
       await sendOtpEmail(email, username, otp);
       return res.json({
         success: true,
-        message: "OTP sent to your registered email (no push devices found)",
+        deliveryMethod: "email",
+        email: email.replace(/(.{2})(.*)(?=@)/, (gp1, gp2, gp3) => {
+          return gp2 + "*".repeat(gp3.length);
+        }),
+        message: `Security code successfully dispatched to your registered email.`,
       });
     }
 
-    console.log(`[AUTH] OTP generated and pushed for ${username}: ${otp}`);
+    console.log(
+      `[AUTH] OTP generated and pushed to ${sentCount} devices for ${username}.`,
+    );
     return res.json({
       success: true,
-      message: "OTP sent to your registered devices",
+      deliveryMethod: "push",
+      message: `Security code successfully pushed to ${sentCount} of your active devices.`,
     });
   } catch (error) {
-    console.error("[AUTH] OTP Request Error:", error);
+    console.error("[AUTH] Security OTP Request Error:", error);
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
-      message: "Unable to send OTP. Please try again later.",
+      message:
+        "Security infrastructure encountered an error. Please try again.",
     });
   }
 };
@@ -365,7 +373,7 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
         { headers: { "x-internal-secret": SECRET } },
       );
       if (userRes.data?.student?.email) email = userRes.data.student.email;
-    } catch (e) { }
+    } catch (e) {}
 
     // Send via Resend (High priority on-demand)
     sendOtpEmail(email, username, lastOtp.otp).catch((err: any) => {
@@ -384,7 +392,9 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
 
     return res.json({
       success: true,
-      message: "OTP has been sent to your registered email",
+      deliveryMethod: "email",
+      message:
+        "Security code successfully dispatched to your registered email.",
     });
   } catch (error) {
     console.error("[AUTH] OTP Email Request Error:", error);
@@ -669,7 +679,7 @@ export const adminResetPassword = async (req: Request, res: Response) => {
     // Send password change notification email as a courtesy
     if (!username.startsWith("O") && !username.startsWith("o")) {
       const email = `${user.username.toLowerCase()}@rguktong.ac.in`;
-      sendPasswordChangeNotification(email, user.username).catch(() => { });
+      sendPasswordChangeNotification(email, user.username).catch(() => {});
     }
 
     return res.json({
@@ -739,27 +749,27 @@ export const signup = async (req: Request, res: Response) => {
       const profilePromise =
         role === "faculty" || role === "teacher"
           ? axios.post(
-            `${userServiceUrl}/api/v1/users/faculty`,
-            {
-              username: user.username,
-              name: user.username,
-              email: email || `${user.username}@uniz.com`,
-              department: "CSE",
-              designation: "Lecture",
-            },
-            { headers: { "x-internal-secret": SECRET } },
-          )
-          : role === "student"
-            ? axios.post(
-              `${userServiceUrl}/api/v1/users/students`,
+              `${userServiceUrl}/api/v1/users/faculty`,
               {
-                id: user.username,
                 username: user.username,
                 name: user.username,
-                email: email || `${user.username}@rguktong.ac.in`,
+                email: email || `${user.username}@uniz.com`,
+                department: "CSE",
+                designation: "Lecture",
               },
               { headers: { "x-internal-secret": SECRET } },
             )
+          : role === "student"
+            ? axios.post(
+                `${userServiceUrl}/api/v1/users/students`,
+                {
+                  id: user.username,
+                  username: user.username,
+                  name: user.username,
+                  email: email || `${user.username}@rguktong.ac.in`,
+                },
+                { headers: { "x-internal-secret": SECRET } },
+              )
             : Promise.resolve();
 
       profilePromise.catch((profileErr: any) => {
