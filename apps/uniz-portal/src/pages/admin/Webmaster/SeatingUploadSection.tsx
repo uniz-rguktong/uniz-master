@@ -158,13 +158,25 @@ export default function SeatingUploadSection() {
 
   return (
     <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
-      <div className="flex flex-col gap-1.5 mb-2">
-        <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
-          Exam Seating Management
-        </h2>
-        <p className="text-slate-500 font-medium text-[15px]">
-          Upload seating arrangements for students based on their exam schedule.
-        </p>
+      <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-2">
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+            Exam Seating Management
+          </h2>
+          <p className="text-slate-500 font-medium text-[15px]">
+            Upload seating arrangements for students based on their exam schedule.
+          </p>
+        </div>
+
+        <button
+          onClick={downloadTemplate}
+          className="group flex items-center gap-2.5 px-4 py-2 bg-white text-slate-500 rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all font-bold uppercase tracking-widest text-[9px] shadow-none active:scale-95 mb-1"
+        >
+          <div className="p-1.5 bg-slate-50 rounded-lg group-hover:bg-blue-50 transition-colors">
+            <FileDown size={13} className="group-hover:scale-110 transition-transform" />
+          </div>
+          Download Template
+        </button>
       </div>
 
       <div className="flex flex-col gap-6 bg-white p-7 rounded-xl border border-slate-100 shadow-none animate-in slide-in-from-top-4 duration-500">
@@ -269,101 +281,92 @@ export default function SeatingUploadSection() {
           </div>
         </div>
 
-        <div className="flex justify-end pt-2 border-t border-slate-50">
-          <button
-            onClick={downloadTemplate}
-            className="h-11 px-6 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-xl text-blue-700 font-bold uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2.5 active:scale-95 shadow-none"
-          >
-            <FileDown size={14} /> Download Template
-          </button>
-        </div>
-      </div>
+        <div className="w-full space-y-8 animate-in slide-in-from-bottom-8 duration-1000">
+          <div className="space-y-6">
+            <div className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-100 shadow-none space-y-8 relative overflow-hidden transition-all">
+              <FileUploader
+                onFileSelect={(f) => {
+                  setFile(f);
+                  setResult(null);
+                  setProgress(0);
+                }}
+                label="Choose Seating Layout"
+                description="Upload XLSX, XLS or CSV files with student-seat mappings."
+                isUploading={loading || !!uploadId}
+                isSuccess={result?.success === true}
+                isError={result?.success === false}
+                progress={progress}
+              />
 
-      <div className="w-full space-y-8 animate-in slide-in-from-bottom-8 duration-1000">
-        <div className="space-y-6">
-          <div className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-100 shadow-none space-y-8 relative overflow-hidden transition-all">
-            <FileUploader
-              onFileSelect={(f) => {
-                setFile(f);
-                setResult(null);
-                setProgress(0);
-              }}
-              label="Choose Seating Layout"
-              description="Upload XLSX, XLS or CSV files with student-seat mappings."
-              isUploading={loading || !!uploadId}
-              isSuccess={result?.success === true}
-              isError={result?.success === false}
-              progress={progress}
-            />
-
-            <button
-              disabled={!file || loading || !!uploadId || !semesterId}
-              onClick={handleUpload}
-              className="w-full h-20 bg-blue-600 text-white rounded-2xl font-bold uppercase tracking-[0.3em] text-[12px] shadow-none hover:bg-blue-700 hover:scale-[1.01] transition-all flex items-center justify-center gap-4 disabled:opacity-50 active:scale-[0.98]"
-            >
-              {loading || uploadId ? (
-                <div className="flex items-center gap-4">
-                  <Loader2 className="animate-spin w-6 h-6" />
-                  <span className="animate-pulse">
-                    {uploadId ? `Synchronizing Records... ${progress}%` : "Initiating Upload..."}
-                  </span>
-                </div>
-              ) : (
-                <>
-                  <Upload size={24} />
-                  <span>Finalize Seating Arrangement</span>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {result && (
-          <div
-            className={`p-8 rounded-xl border animate-in slide-in-from-top-4 duration-500 shadow-none ${result.success
-              ? "bg-emerald-50 border-emerald-100"
-              : "bg-red-50 border-red-100"
-              }`}
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <div
-                className={`p-3.5 rounded-xl ${result.success ? "bg-emerald-500 text-white shadow-none" : "bg-red-500 text-white shadow-none"}`}
+              <button
+                disabled={!file || loading || !!uploadId || !semesterId}
+                onClick={handleUpload}
+                className="w-full h-20 bg-blue-600 text-white rounded-2xl font-bold uppercase tracking-[0.3em] text-[12px] shadow-none hover:bg-blue-700 hover:scale-[1.01] transition-all flex items-center justify-center gap-4 disabled:opacity-50 active:scale-[0.98]"
               >
-                {result.success ? (
-                  <CheckCircle2 size={26} />
+                {loading || uploadId ? (
+                  <div className="flex items-center gap-4">
+                    <Loader2 className="animate-spin w-6 h-6" />
+                    <span className="animate-pulse">
+                      {uploadId ? `Synchronizing Records... ${progress}%` : "Initiating Upload..."}
+                    </span>
+                  </div>
                 ) : (
-                  <AlertCircle size={26} />
+                  <>
+                    <Upload size={24} />
+                    <span>Finalize Seating Arrangement</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {result && (
+            <div
+              className={`p-8 rounded-xl border animate-in slide-in-from-top-4 duration-500 shadow-none ${result.success
+                ? "bg-emerald-50 border-emerald-100"
+                : "bg-red-50 border-red-100"
+                }`}
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div
+                  className={`p-3.5 rounded-xl ${result.success ? "bg-emerald-500 text-white shadow-none" : "bg-red-500 text-white shadow-none"}`}
+                >
+                  {result.success ? (
+                    <CheckCircle2 size={26} />
+                  ) : (
+                    <AlertCircle size={26} />
+                  )}
+                </div>
+                <h3
+                  className={`text-2xl font-semibold tracking-[-0.02em] ${result.success ? "text-emerald-900" : "text-red-900"}`}
+                >
+                  {result?.success ? "Upload successful" : "Process failed"}
+                </h3>
+              </div>
+
+              <div className="space-y-4">
+                {result.success ? (
+                  <>
+                    <p className="text-emerald-800 font-medium">
+                      {result.message}
+                    </p>
+                    <div className="p-4 bg-white/50 rounded-xl border border-emerald-200/50 shadow-none">
+                      <p className="text-[10px] uppercase font-semibold text-emerald-600 tracking-widest mb-1.5 leading-none">
+                        Immediate Update
+                      </p>
+                      <p className="text-emerald-900 font-semibold text-[15px] leading-tight">
+                        Student portals will reflect these changes on the next
+                        refresh.
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-red-800 font-medium">{result.msg}</p>
                 )}
               </div>
-              <h3
-                className={`text-2xl font-semibold tracking-[-0.02em] ${result.success ? "text-emerald-900" : "text-red-900"}`}
-              >
-                {result?.success ? "Upload successful" : "Process failed"}
-              </h3>
             </div>
-
-            <div className="space-y-4">
-              {result.success ? (
-                <>
-                  <p className="text-emerald-800 font-medium">
-                    {result.message}
-                  </p>
-                  <div className="p-4 bg-white/50 rounded-xl border border-emerald-200/50 shadow-none">
-                    <p className="text-[10px] uppercase font-semibold text-emerald-600 tracking-widest mb-1.5 leading-none">
-                      Immediate Update
-                    </p>
-                    <p className="text-emerald-900 font-semibold text-[15px] leading-tight">
-                      Student portals will reflect these changes on the next
-                      refresh.
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <p className="text-red-800 font-medium">{result.msg}</p>
-              )}
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
