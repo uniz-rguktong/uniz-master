@@ -3,7 +3,6 @@ import { is_authenticated, student } from "../store";
 import { useStudentData } from "../hooks/student_info";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  ChevronRight,
   LogOut,
   User as UserIcon,
 } from "lucide-react";
@@ -30,10 +29,10 @@ export default function Navbar() {
     (localStorage.getItem("student_token") && user);
 
   return (
-    <header className="sticky top-0 z-[100] bg-transparent backdrop-blur-xl border-b border-slate-100/50 px-[9px] py-2">
-      <div className="w-full flex items-center justify-between h-16">
-        <div className="flex items-center gap-10">
-          {/* Logo */}
+    <header className="fixed top-0 inset-x-0 z-[100] bg-white/10 backdrop-blur-xl border-b border-white/10 px-6 py-3">
+      <div className="max-w-7xl mx-auto flex items-center justify-between h-14">
+        {/* Left: Logo */}
+        <div className="flex items-center">
           <Link
             to="/"
             className="flex items-center gap-2 cursor-pointer group"
@@ -43,22 +42,20 @@ export default function Navbar() {
             </span>
           </Link>
         </div>
-
-        <div className="flex items-center gap-6">
-          {!isAuthenticated && (
+        {/* Right: Action Buttons */}
+        <div className="flex items-center gap-4">
+          {!isAuthenticated ? (
             <button
               onClick={() => navigate("/student/signin")}
-              className="hidden md:block text-[14px] font-semibold text-slate-600 hover:text-slate-950 transition-colors"
+              className="px-8 py-2.5 bg-slate-950 text-white rounded-full text-[14px] font-bold border border-white/20 shadow-[0_0_20px_rgba(0,0,0,0.1)] hover:bg-slate-800 hover:shadow-[0_0_25px_rgba(0,0,0,0.2)] hover:-translate-y-0.5 transition-all active:scale-95"
             >
               Sign in
             </button>
-          )}
-
-          {isAuthenticated ? (
+          ) : (
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate("/student/profile")}
-                className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-100/50 hover:bg-slate-100 transition-all border border-slate-200/50"
+                className="flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/50 hover:bg-white transition-all border border-slate-200/50 shadow-sm"
               >
                 <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-[10px] font-bold text-white overflow-hidden shadow-sm">
                   {user?.profile_url ? (
@@ -73,19 +70,12 @@ export default function Navbar() {
               </button>
               <button
                 onClick={logout}
-                className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                className="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all border border-transparent hover:border-red-100"
                 title="Sign out"
               >
                 <LogOut size={18} />
               </button>
             </div>
-          ) : (
-            <button
-              onClick={() => navigate("/student/signin")}
-              className="px-6 py-3 bg-slate-950 text-white rounded-xl text-[14px] font-bold shadow-xl shadow-slate-200 hover:bg-slate-800 hover:shadow-2xl hover:-translate-y-0.5 transition-all active:scale-95 flex items-center gap-2"
-            >
-              Get started <ChevronRight size={16} />
-            </button>
           )}
         </div>
       </div>
