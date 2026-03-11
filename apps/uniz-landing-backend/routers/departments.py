@@ -1,40 +1,48 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException
+from starlette import status
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, delete
 from database import get_db
 import models
 import schemas
 
 router = APIRouter(prefix="/api/departments", tags=["Departments Staff"])
 
-@router.get("/{dept_code}", response_model=schemas.DepartmentResponse)
-def get_department(dept_code: models.DepartmentType, db: Session = Depends(get_db)):
-    faculties = db.query(models.Faculty).filter(models.Faculty.department == dept_code).all()
+@router.get("/{dept_code}", response_model=schemas.DepartmentResponse, status_code=status.HTTP_200_OK)
+async def get_department(dept_code: models.DepartmentType, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(models.Faculty).filter(models.Faculty.department == dept_code))
+    faculties = result.scalars().all()
     
-    # We return the structure even if faculties list is empty
     return {"dept": dept_code, "faculties": faculties}
 
-@router.post("/{dept_code}")
-def sync_department(
+@router.post("/{dept_code}", status_code=status.HTTP_200_OK)
+async def sync_department(
     dept_code: models.DepartmentType,
     data: schemas.DepartmentResponse,
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
-    # 1. Clear out old faculty for this department
-    db.query(models.Faculty).filter(models.Faculty.department == dept_code).delete()
-    
-    # 2. Insert the fresh batch
-    new_faculties = []
-    for fac in data.faculties:
-        new_record = models.Faculty(
-            department=dept_code,
-            name=fac.name,
-            email=fac.email,
-            photo=fac.photo,
-            bio=fac.bio
-        )
-        new_faculties.append(new_record)
+    try:
+        # Using the async delete pattern
+        await db.execute(delete(models.Faculty).where(models.Faculty.department == dept_code))
         
-    db.add_all(new_faculties)
-    db.commit()
-    
-    return {"message": f"Successfully synced {len(new_faculties)} faculties for {dept_code.value}"}
+        new_faculties = []
+        for fac in data.faculties:
+            new_record = models.Faculty(
+                department=dept_code,
+                name=fac.name,
+                email=fac.email,
+                photo=fac.photo,
+                bio=fac.bio
+            )
+            new_faculties.append(new_record)
+            
+        db.add_all(new_faculties)
+        await db.commit()
+        
+        return {"message": f"Successfully synced {len(new_faculties)} faculties for {dept_code.value}"}
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail=f"Database error during department sync: {str(e)}"
+        )
