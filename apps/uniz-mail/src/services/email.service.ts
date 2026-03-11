@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import * as sesv2 from "@aws-sdk/client-sesv2";
+import * as SESv2Saves from "@aws-sdk/client-sesv2";
 import {
   generateResultPdf,
   ResultData,
@@ -11,29 +12,31 @@ const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 
 // --- PROVIDER SELECTION ---
-// VPS uses SES (production), Local uses Gmail (testing)
-const forceGmail =
-  process.env.FORCE_GMAIL === "true" || process.env.DOCKER_ENV === "false";
-const useSES =
-  !forceGmail &&
-  !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY);
+const isProduction = process.env.DOCKER_ENV === "true";
+const forceGmail = process.env.FORCE_GMAIL === "true";
 
 let sesTransporter: nodemailer.Transporter | null = null;
 
-if (useSES) {
+if (isProduction && !forceGmail) {
   try {
     const sesClient = new sesv2.SESv2Client({
       region: process.env.AWS_REGION || "ap-south-1",
       credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        accessKeyId:
+          process.env.PROD_AWS_ACCESS_KEY_NEWONE_AFTER_LEAK ||
+          process.env.AWS_ACCESS_KEY_ID ||
+          "",
+        secretAccessKey:
+          process.env.PROD_AWS_ACCESS_KEY_SECRET_NEWONE_AFTER_LEAK ||
+          process.env.AWS_SECRET_ACCESS_KEY ||
+          "",
       },
     });
 
     sesTransporter = nodemailer.createTransport({
       SES: {
-        sesClient: sesClient,
-        SendEmailCommand: sesv2.SendEmailCommand,
+        ses: sesClient,
+        aws: sesv2,
       },
     } as any);
 
@@ -45,40 +48,22 @@ if (useSES) {
   }
 }
 
-// --- GMAIL POOL SETUP (Fallback/Legacy) ---
-const emailPoolStr = process.env.EMAIL_POOL || ""; // format: "u1:p1,u2:p2"
-const accounts = emailPoolStr
-  ? emailPoolStr
-      .split(",")
-      .map((a) => a.split(":"))
-      .filter((a) => a.length === 2)
-  : [[process.env.EMAIL_USER, process.env.EMAIL_PASS]];
-
-let currentGmailIndex = 0;
-const gmailTransporters = accounts.map(([user, pass]) =>
-  nodemailer.createTransport({
-    service: "gmail",
-    pool: true,
-    maxConnections: 3,
-    auth: { user, pass },
-  }),
-);
+// --- GMAIL SETUP (Local / Fallback) ---
+const localGmailTransporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER || "noreplycampusschield@gmail.com",
+    pass: (process.env.EMAIL_PASS || "acix rfbi kujh xwtj").replace(/\s/g, ""),
+  },
+});
 
 const getTransporter = () => {
-  // Always use SES if configured
   if (sesTransporter) return sesTransporter;
-
-  // Otherwise fallback to Gmail pool
-  const transporter = gmailTransporters[currentGmailIndex];
-  currentGmailIndex = (currentGmailIndex + 1) % gmailTransporters.length;
-  return transporter;
+  return localGmailTransporter;
 };
 
-console.log(
-  `[MAIL] Gmail Pool Initialized with ${gmailTransporters.length} accounts.`,
-);
-
-console.log(`[MAIL] Active Provider: ${useSES ? "AWS SES" : "Gmail Pool"}`);
+console.log(`[MAIL] Transporter Initialized.`);
+console.log(`[MAIL] Active Provider: ${sesTransporter ? "AWS SES" : "Gmail"}`);
 
 // --- RESEND SETUP ---
 // --- EMAIL DELIVERY SETUP ---
@@ -90,7 +75,7 @@ const sendEmailUnified = async (options: {
   html: string;
   attachments?: any[];
 }): Promise<boolean> => {
-  const provider = useSES ? "SES" : "GMAIL-FALLBACK";
+  const provider = sesTransporter ? "SES" : "GMAIL";
   try {
     const info = await getTransporter().sendMail({
       ...options,
