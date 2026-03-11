@@ -1,32 +1,42 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from starlette import status
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from database import get_db
 import models
 import schemas
 
 router = APIRouter(prefix="/api/home", tags=["Home"])
 
-@router.get("/", response_model=schemas.HomePageResponse)
-def get_home_data(db: Session = Depends(get_db)):
-    home_data = db.query(models.HomePageData).first()
+@router.get("/", response_model=schemas.HomePageResponse, status_code=status.HTTP_200_OK)
+async def get_home_data(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(models.HomePageData))
+    home_data = result.scalars().first()
+    
     if not home_data:
-        # Return empty structure if DB is brand new
         return {"announcements": [], "stats": [], "images": []}
     return home_data
 
-@router.post("/", response_model=schemas.HomePageResponse)
-def sync_home_data(data: schemas.HomePageResponse, db: Session = Depends(get_db)):
-    home_data = db.query(models.HomePageData).first()
-    
-    if not home_data:
-        home_data = models.HomePageData()
-        db.add(home_data)
+@router.post("/", response_model=schemas.HomePageResponse, status_code=status.HTTP_200_OK)
+async def sync_home_data(data: schemas.HomePageResponse, db: AsyncSession = Depends(get_db)):
+    try:
+        result = await db.execute(select(models.HomePageData))
+        home_data = result.scalars().first()
+        
+        if not home_data:
+            home_data = models.HomePageData()
+            db.add(home_data)
 
-    # Dump the Pydantic models to dicts/lists for JSON columns
-    home_data.announcements = [item.model_dump() for item in data.announcements]
-    home_data.stats = [item.model_dump() for item in data.stats]
-    home_data.images = data.images
+        home_data.announcements = [item.model_dump() for item in data.announcements]
+        home_data.stats = [item.model_dump() for item in data.stats]
+        home_data.images = data.images
 
-    db.commit()
-    db.refresh(home_data)
-    return home_data
+        await db.commit()
+        await db.refresh(home_data)
+        return home_data
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail=f"Database error during home sync: {str(e)}"
+        )
