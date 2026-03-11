@@ -1008,7 +1008,7 @@ export const updateFacultyProfile = async (
 ) => {
   const user = req.user;
   const username = req.params.username.toUpperCase();
-  const updates = req.body;
+  const updates = req.body; 
 
   const adminRoles = [
     UserRole.WEBMASTER,
@@ -1076,7 +1076,15 @@ export const updateFacultyProfile = async (
     }
 
     return res.json({ success: true, faculty: mapFacultyProfile(updated) });
-  } catch (e) {
+  } catch (e: any) {
+    if (e.code === 'P2002') {
+      return res.status(400).json({
+        success: false,
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Email or username already in use by another account."
+      });
+    }
+    
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to update profile",
