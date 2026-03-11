@@ -333,12 +333,11 @@ export default function UnifiedAcademicManager() {
     <div className="p-8 space-y-10 animate-in fade-in duration-700 pb-24">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div>
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-4">
-            <Layout className="text-blue-600" size={36} />
+        <div className="flex flex-col gap-1.5 mb-2">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
             Sem Registration
-          </h1>
-          <p className="text-slate-500 font-medium text-[15px] mt-1">
+          </h2>
+          <p className="text-slate-500 font-medium text-[15px]">
             Master curriculum control and semester lifecycle management.
           </p>
         </div>
@@ -419,8 +418,8 @@ export default function UnifiedAcademicManager() {
                   <div className="flex flex-col items-end gap-2">
                     <span
                       className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${sem.status === "REGISTRATION_OPEN"
-                          ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                          : "bg-slate-50 text-slate-400 border-slate-100"
+                        ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                        : "bg-slate-50 text-slate-400 border-slate-100"
                         }`}
                     >
                       {sem.status.replace("_", " ")}
@@ -601,8 +600,8 @@ export default function UnifiedAcademicManager() {
                       )
                     }
                     className={`h-14 px-10 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all ${selectedSem.status === "REGISTRATION_OPEN"
-                        ? "bg-red-50/10 text-red-500 border border-red-500/30 hover:bg-red-500 hover:text-white"
-                        : "bg-emerald-600 text-white hover:bg-emerald-700"
+                      ? "bg-red-50/10 text-red-500 border border-red-500/30 hover:bg-red-500 hover:text-white"
+                      : "bg-emerald-600 text-white hover:bg-emerald-700"
                       }`}
                   >
                     {selectedSem.status === "REGISTRATION_OPEN"
@@ -627,8 +626,8 @@ export default function UnifiedAcademicManager() {
                     key={v}
                     onClick={() => setRolloutView(v)}
                     className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${rolloutView === v
-                        ? "text-blue-600"
-                        : "text-slate-400 hover:text-slate-600"
+                      ? "text-blue-600"
+                      : "text-slate-400 hover:text-slate-600"
                       }`}
                   >
                     {v}
@@ -882,8 +881,8 @@ export default function UnifiedAcademicManager() {
                         )
                       }
                       className={`h-14 rounded-xl font-black text-xs transition-all border ${selectedBranches.includes(b)
-                          ? "bg-slate-900 text-white border-slate-900 shadow-none"
-                          : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-300"
+                        ? "bg-slate-900 text-white border-slate-900 shadow-none"
+                        : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-300"
                         }`}
                     >
                       {b}

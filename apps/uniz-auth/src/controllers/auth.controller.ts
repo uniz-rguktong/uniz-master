@@ -130,7 +130,7 @@ export const login = async (req: Request, res: Response) => {
             department = foundDept;
             break;
           }
-        } catch (e) {}
+        } catch (e) { }
       }
 
       console.log(
@@ -283,7 +283,7 @@ export const requestOtp = async (req: Request, res: Response) => {
           { headers: { "x-internal-secret": SECRET } },
         );
         if (userRes.data?.student?.email) email = userRes.data.student.email;
-      } catch (e) {}
+      } catch (e) { }
 
       await sendOtpEmail(email, username, otp);
       return res.json({
@@ -365,7 +365,7 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
         { headers: { "x-internal-secret": SECRET } },
       );
       if (userRes.data?.student?.email) email = userRes.data.student.email;
-    } catch (e) {}
+    } catch (e) { }
 
     // Send via Resend (High priority on-demand)
     sendOtpEmail(email, username, lastOtp.otp).catch((err: any) => {
@@ -669,7 +669,7 @@ export const adminResetPassword = async (req: Request, res: Response) => {
     // Send password change notification email as a courtesy
     if (!username.startsWith("O") && !username.startsWith("o")) {
       const email = `${user.username.toLowerCase()}@rguktong.ac.in`;
-      sendPasswordChangeNotification(email, user.username).catch(() => {});
+      sendPasswordChangeNotification(email, user.username).catch(() => { });
     }
 
     return res.json({
@@ -739,27 +739,27 @@ export const signup = async (req: Request, res: Response) => {
       const profilePromise =
         role === "faculty" || role === "teacher"
           ? axios.post(
-              `${userServiceUrl}/api/v1/users/faculty`,
+            `${userServiceUrl}/api/v1/users/faculty`,
+            {
+              username: user.username,
+              name: user.username,
+              email: email || `${user.username}@uniz.com`,
+              department: "CSE",
+              designation: "Lecture",
+            },
+            { headers: { "x-internal-secret": SECRET } },
+          )
+          : role === "student"
+            ? axios.post(
+              `${userServiceUrl}/api/v1/users/students`,
               {
+                id: user.username,
                 username: user.username,
                 name: user.username,
-                email: email || `${user.username}@uniz.com`,
-                department: "CSE",
-                designation: "Lecture",
+                email: email || `${user.username}@rguktong.ac.in`,
               },
               { headers: { "x-internal-secret": SECRET } },
             )
-          : role === "student"
-            ? axios.post(
-                `${userServiceUrl}/api/v1/users/students`,
-                {
-                  id: user.username,
-                  username: user.username,
-                  name: user.username,
-                  email: email || `${user.username}@rguktong.ac.in`,
-                },
-                { headers: { "x-internal-secret": SECRET } },
-              )
             : Promise.resolve();
 
       profilePromise.catch((profileErr: any) => {
