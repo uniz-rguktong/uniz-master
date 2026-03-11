@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Pause, Play, ChevronRight, Megaphone } from "lucide-react";
 import { cn } from "../utils/cn";
+import { GET_NOTIFICATIONS } from "../api/endpoints";
 
 // Types
 type Announcement = {
@@ -119,7 +120,7 @@ export function NotificationPanel() {
     const myHeaders = new Headers();
     myHeaders.append("x-cms-api-key", "uniz-landing-v1-key");
 
-    fetch("/api/v1/cms/notifications", {
+    fetch(GET_NOTIFICATIONS, {
       method: "GET",
       headers: myHeaders,
       redirect: "follow" as RequestRedirect,

@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import {
   Calendar,
   Plus,
-  Loader2,
   CheckCircle2,
   Clock,
   Play,
@@ -15,6 +14,7 @@ import {
   AlertCircle,
   Trash2,
 } from "lucide-react";
+import { Spinner } from "../../../components/ui/ios-spinner";
 import {
   SEMESTERS,
   INIT_SEMESTER,
@@ -151,11 +151,7 @@ export default function SemesterRegistration() {
 
       {loading ? (
         <div className="flex flex-col items-center justify-center h-64 gap-4">
-          <Loader2
-            className="animate-spin text-blue-600"
-            size={48}
-            strokeWidth={3}
-          />
+          <Spinner size="lg" />
           <p className="text-slate-400 font-black uppercase tracking-widest text-xs">
             Loading Workflows...
           </p>
@@ -392,7 +388,7 @@ export default function SemesterRegistration() {
                     className="flex-[2] bg-slate-900 text-white px-8 py-5 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-none flex items-center justify-center gap-3 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
                   >
                     {isSubmitting ? (
-                      <Loader2 className="animate-spin w-5 h-5" />
+                      <Spinner size="sm" className="brightness-200" />
                     ) : (
                       <>
                         <Users size={18} /> Deploy Registration
