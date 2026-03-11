@@ -792,6 +792,77 @@ export const signup = async (req: Request, res: Response) => {
   }
 };
 
+export const globalAdminResetPassword = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const { targetUsername, newPassword } = req.body;
+  const requester = req.user;
+
+  // Security Check: Strictly WEBMASTER (and maybe DEAN/DIRECTOR) for this level of access
+  const allowedRoles = [UserRole.WEBMASTER, UserRole.DEAN];
+  if (!requester || !allowedRoles.includes(requester.role as UserRole)) {
+    return res.status(403).json({
+      code: ErrorCode.AUTH_FORBIDDEN,
+      message: "Access denied. High-level administrative clearance required.",
+    });
+  }
+
+  if (!targetUsername || !newPassword) {
+    return res.status(400).json({
+      code: ErrorCode.VALIDATION_ERROR,
+      message: "Target username and new password are required.",
+    });
+  }
+
+  try {
+    const targetUser = await prisma.authCredential.findFirst({
+      where: { username: { equals: targetUsername, mode: "insensitive" } },
+    });
+
+    if (!targetUser) {
+      return res.status(404).json({
+        code: ErrorCode.RESOURCE_NOT_FOUND,
+        message: "User not found in authentication registry.",
+      });
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+
+    await prisma.authCredential.update({
+      where: { id: targetUser.id },
+      data: { passwordHash: hashedPassword },
+    });
+
+    // Invalidate status cache to be safe
+    await redis.del(`user:status:${targetUser.id}`);
+
+    // Send password change notification email (Silent failure if mail service unavailable)
+    const email = `${targetUser.username.toLowerCase()}@rguktong.ac.in`;
+    sendPasswordChangeNotification(email, targetUser.username).catch((err) => {
+      console.error(
+        `[AUTH] Background notification failed for ${targetUser.username}:`,
+        err.message,
+      );
+    });
+
+    console.log(
+      `[AUTH] [ADMIN-RESET] Webmaster (${requester.username}) reset password for: ${targetUser.username}`,
+    );
+
+    return res.json({
+      success: true,
+      message: `Password for ${targetUser.username} has been successfully reset.`,
+    });
+  } catch (error: any) {
+    console.error("[AUTH] Global Admin Reset Error:", error.message);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to perform reset operation.",
+    });
+  }
+};
+
 export const getUserStatus = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
