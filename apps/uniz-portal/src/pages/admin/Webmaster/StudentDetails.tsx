@@ -8,12 +8,11 @@ import {
   LayoutList,
   ChevronRight,
   Filter,
-  ShieldOff,
-  RotateCcw,
 } from "lucide-react";
 import StudentPerformanceModal from "./StudentPerformanceModal";
 import StudentDashboard from "./StudentDashboard";
 import StudentDashboardSkeleton from "./StudentDashboardSkeleton";
+import { Pagination } from "../../../components/Pagination";
 
 import {
   ADMIN_VIEW_STUDENT,
@@ -21,6 +20,58 @@ import {
   ADMIN_SUSPEND_STUDENT,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
+
+function StudentTableSkeleton() {
+  return (
+    <div className="w-full animate-pulse px-2">
+      <div className="flex items-center justify-between px-2 mb-6">
+        <div className="h-3 w-48 bg-slate-100 rounded-full"></div>
+      </div>
+      <div className="bg-white rounded-[2rem] border-2 border-slate-50 overflow-hidden mb-10 shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-50 bg-slate-50/30">
+                {["Student", "Credentials", "Status", "Contact"].map((h) => (
+                  <th key={h} className="px-8 py-6">
+                    <div className="h-2 w-16 bg-slate-100 rounded-full"></div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50/50">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((row) => (
+                <tr key={row}>
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-4">
+                      <div className="w-11 h-11 rounded-full bg-slate-50 shrink-0 border border-slate-100"></div>
+                      <div className="space-y-2">
+                        <div className="h-3.5 w-32 bg-slate-100 rounded-full"></div>
+                        <div className="h-2.5 w-20 bg-slate-50 rounded-full"></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-8 py-5">
+                    <div className="flex gap-2">
+                      <div className="h-5 w-12 bg-slate-50 rounded-lg border border-slate-100"></div>
+                      <div className="h-5 w-12 bg-slate-50 rounded-lg border border-slate-100"></div>
+                    </div>
+                  </td>
+                  <td className="px-8 py-5">
+                    <div className="h-6 w-20 bg-slate-50 rounded-full border border-slate-100"></div>
+                  </td>
+                  <td className="px-8 py-5">
+                    <div className="h-3 w-40 bg-slate-100 rounded-full opacity-60"></div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function StudentDetails() {
   const [searchMode, setSearchMode] = useState<"id" | "filter" | "none">("id");
@@ -34,6 +85,7 @@ export default function StudentDetails() {
   // Filter Search State
   const [branch, setBranch] = useState("CSE");
   const [year, setYear] = useState("E2");
+  const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
 
   const fetchStudentById = async (idToFetch?: string) => {
     const id = idToFetch || studentId.trim().toUpperCase();
@@ -66,7 +118,7 @@ export default function StudentDetails() {
     }
   };
 
-  const handleSearchByFilter = async () => {
+  const handleSearchByFilter = async (page = 1) => {
     setLoading(true);
     setSelectedStudentFullData(null);
     const token = localStorage.getItem("admin_token");
@@ -80,13 +132,16 @@ export default function StudentDetails() {
         body: JSON.stringify({
           branch,
           year,
-          page: 1,
-          limit: 100,
+          page,
+          limit: 10,
         }),
       });
       const data = await res.json();
       if (data.success) {
         setSearchResults(data.students || []);
+        if (data.pagination) {
+          setPagination(data.pagination);
+        }
         if (data.students?.length === 0) toast.info("No students found");
       } else {
         toast.error(data.msg || "Search failed");
@@ -371,6 +426,7 @@ export default function StudentDetails() {
             onClick={() => {
               setSearchMode("id");
               setSearchResults([]);
+              setPagination({ page: 1, totalPages: 1, total: 0 });
             }}
             className={`px-8 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.15em] transition-all ${searchMode === "id" ? "bg-white text-blue-700 shadow-none border border-slate-200/50" : "text-slate-500 hover:text-blue-600"}`}
           >
@@ -380,6 +436,7 @@ export default function StudentDetails() {
             onClick={() => {
               setSearchMode("filter");
               setSearchResults([]);
+              setPagination({ page: 1, totalPages: 1, total: 0 });
             }}
             className={`px-8 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.15em] transition-all ${searchMode === "filter" ? "bg-white text-blue-700 shadow-none border border-slate-200/50" : "text-slate-500 hover:text-blue-600"}`}
           >
@@ -469,7 +526,7 @@ export default function StudentDetails() {
           </div>
 
           <button
-            onClick={handleSearchByFilter}
+            onClick={() => handleSearchByFilter(1)}
             disabled={loading}
             className="h-12 px-8 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
@@ -484,8 +541,10 @@ export default function StudentDetails() {
       )}
 
       <div className="space-y-8">
-        {/* Loading Skeleton */}
-        {loading && <StudentDashboardSkeleton />}
+        {/* Loading Skeleton Logic */}
+        {loading && (
+          searchMode === "id" ? <StudentDashboardSkeleton /> : <StudentTableSkeleton />
+        )}
 
         {/* Detailed Dashboard (ID search result) */}
         {selectedStudentFullData && !loading && (
@@ -503,7 +562,7 @@ export default function StudentDetails() {
           <div className="w-full animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="flex items-center justify-between px-2 mb-4">
               <h4 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Institutional Records Found ({searchResults.length})
+                Institutional Records Found ({pagination.total || searchResults.length})
               </h4>
             </div>
 
@@ -523,9 +582,6 @@ export default function StudentDetails() {
                       </th>
                       <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
                         Contact
-                      </th>
-                      <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                        Action
                       </th>
                     </tr>
                   </thead>
@@ -588,45 +644,19 @@ export default function StudentDetails() {
                             {std.email}
                           </p>
                         </td>
-                        <td className="px-8 py-5">
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleToggleSuspension(
-                                  std.username,
-                                  std.is_suspended === true,
-                                );
-                              }}
-                              disabled={
-                                isActionLoading === std.username + "_suspend"
-                              }
-                              className={`p-2 rounded-lg transition-all flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest ${std.is_suspended === true ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100" : "bg-amber-50 text-amber-600 hover:bg-amber-100"}`}
-                              title={
-                                std.is_suspended === true
-                                  ? "Restore Access"
-                                  : "Suspend Access"
-                              }
-                            >
-                              {isActionLoading === std.username + "_suspend" ? (
-                                <Loader2 size={14} className="animate-spin" />
-                              ) : std.is_suspended === true ? (
-                                <RotateCcw size={14} />
-                              ) : (
-                                <ShieldOff size={14} />
-                              )}
-                              {std.is_suspended === true
-                                ? "Restore"
-                                : "Suspend"}
-                            </button>
-                          </div>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
+            
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              onPageChange={(p) => handleSearchByFilter(p)}
+              className="mt-8"
+            />
           </div>
         )}
 
