@@ -86,7 +86,7 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
                 ))}
                 <div
                     style={{
-                        height: height + "px",
+                        height: (height - 100) + "px",
                     }}
                     className="absolute md:left-8 left-8 top-0 overflow-hidden w-[2px] bg-slate-100"
                 >
