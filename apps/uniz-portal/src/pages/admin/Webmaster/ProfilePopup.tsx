@@ -358,8 +358,7 @@ export default function ProfilePopup({
                     icon={<Mail size={14} className="text-slate-500" />}
                     label="Email"
                     value={formData.email || `${username}@rguktong.ac.in`}
-                    editable={isEditing}
-                    onChange={(v) => setFormData({ ...formData, email: v })}
+                    editable={false}
                   />
                   <DetailRow
                     icon={<Phone size={14} className="text-slate-500" />}
