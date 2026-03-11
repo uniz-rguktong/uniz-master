@@ -14,13 +14,7 @@ import {
   REQUEST_OTP_EMAIL_ENDPOINT,
 } from "../../api/endpoints";
 import { apiClient } from "../../api/apiClient";
-import {
-  User,
-  Lock,
-  KeyRound,
-  ArrowLeft,
-  ChevronLeft,
-} from "lucide-react";
+import { User, Lock, KeyRound, ArrowLeft, ChevronLeft } from "lucide-react";
 import LoginScreen from "../../components/ui/login-1";
 import { Turnstile } from "@marsidev/react-turnstile";
 
@@ -89,12 +83,16 @@ export default function Signin({ type }: SigninProps) {
     const isStudentFormat = /^O\d+/i.test(username.trim());
 
     if (type === "student" && !isStudentFormat) {
-      toast.error("Student username must be your valid college ID (e.g., O210001)");
+      toast.error(
+        "Student username must be your valid college ID (e.g., O210001)",
+      );
       return;
     }
 
     if ((type === "admin" || type === "faculty") && isStudentFormat) {
-      toast.error(`Students are not allowed to access the ${type === "admin" ? "Admin" : "Faculty"} Portal`);
+      toast.error(
+        `Students are not allowed to access the ${type === "admin" ? "Admin" : "Faculty"} Portal`,
+      );
       return;
     }
 
@@ -198,22 +196,29 @@ export default function Signin({ type }: SigninProps) {
     }
 
     if ((type === "admin" || type === "faculty") && isStudentFormat) {
-      toast.error(`Students cannot request OTP from the ${type === "admin" ? "Admin" : "Faculty"} Portal`);
+      toast.error(
+        `Students cannot request OTP from the ${type === "admin" ? "Admin" : "Faculty"} Portal`,
+      );
       return;
     }
 
     setIsLoading(true);
     try {
-      const data = await apiClient<{ success: boolean; message?: string }>(
-        FORGOT_PASS_ENDPOINT,
-        {
-          method: "POST",
-          body: JSON.stringify({ username: username.trim() }),
-        },
-      );
+      const data = await apiClient<{
+        success: boolean;
+        message?: string;
+        deliveryMethod?: "push" | "email";
+        email?: string;
+      }>(FORGOT_PASS_ENDPOINT, {
+        method: "POST",
+        body: JSON.stringify({ username: username.trim() }),
+      });
 
       if (data && data.success) {
-        toast.success(data.message || "OTP sent successfully");
+        toast.success(data.message || "Security code sent successfully", {
+          icon: <span>{data.deliveryMethod === "push" ? "📱" : "📧"}</span>,
+          autoClose: 5000,
+        });
         setStep("verifyOtp");
       }
     } finally {
@@ -230,22 +235,31 @@ export default function Signin({ type }: SigninProps) {
     }
 
     if ((type === "admin" || type === "faculty") && isStudentFormat) {
-      toast.error(`Students cannot request OTP from the ${type === "admin" ? "Admin" : "Faculty"} Portal`);
+      toast.error(
+        `Students cannot request OTP from the ${type === "admin" ? "Admin" : "Faculty"} Portal`,
+      );
       return;
     }
 
     setIsLoading(true);
     try {
-      const data = await apiClient<{ success: boolean; message?: string }>(
-        REQUEST_OTP_EMAIL_ENDPOINT,
-        {
-          method: "POST",
-          body: JSON.stringify({ username: username.trim() }),
-        },
-      );
+      const data = await apiClient<{
+        success: boolean;
+        message?: string;
+        deliveryMethod?: "email";
+      }>(REQUEST_OTP_EMAIL_ENDPOINT, {
+        method: "POST",
+        body: JSON.stringify({ username: username.trim() }),
+      });
 
       if (data && data.success) {
-        toast.success(data.message || "OTP sent to your email");
+        toast.success(
+          data.message || "Security code dispatched to your email",
+          {
+            icon: <span></span>,
+            autoClose: 5000,
+          },
+        );
       }
     } finally {
       setIsLoading(false);
@@ -435,8 +449,6 @@ export default function Signin({ type }: SigninProps) {
               >
                 Sign In
               </Button>
-
-
 
               {type === "admin" && (
                 <div className="text-center pt-2">
