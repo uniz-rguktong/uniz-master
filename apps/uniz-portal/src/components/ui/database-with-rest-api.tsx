@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
 import {
   Bell,
@@ -15,7 +14,6 @@ import { cn } from "../../lib/utils";
 
 interface DatabaseWithRestApiProps {
   className?: string;
-  circleText?: React.ReactNode;
   badgeTexts?: {
     first: string;
     second: string;
@@ -34,7 +32,6 @@ interface DatabaseWithRestApiProps {
 
 const DatabaseWithRestApi = ({
   className,
-  circleText = "UNIZ",
   badgeTexts = {
     first: "Results",
     second: "Registrations",
@@ -285,9 +282,9 @@ const DatabaseWithRestApi = ({
           <span className="text-[12px] font-bold text-slate-800">{title}</span>
         </div>
         {/* box outter circle */}
-        <div className="absolute -bottom-8 z-30 grid h-[80px] w-[80px] place-items-center rounded-full border border-slate-200 bg-white shadow-md text-2xl tracking-tighter text-slate-950 font-black group cursor-pointer">
-          <span className="unifrakturcook-bold text-4xl text-slate-900 tracking-tight leading-none group-hover:scale-105 transition-transform duration-300">
-            {circleText}
+        <div className="absolute -bottom-12 z-30 grid h-[100px] w-[100px] place-items-center rounded-full border border-slate-200 bg-white shadow-md text-slate-950 font-black group cursor-pointer">
+          <span className="unifrakturcook-bold text-[3rem] text-slate-900 tracking-tight leading-none group-hover:scale-110 transition-transform duration-300">
+            uniZ
           </span>
         </div>
         {/* box content */}
