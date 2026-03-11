@@ -1305,11 +1305,12 @@ export default function FacultyManagement({
                 <input
                   required
                   type="email"
+                  disabled={editMode}
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold disabled:opacity-60"
                   placeholder="faculty@rguktong.ac.in"
                 />
               </div>

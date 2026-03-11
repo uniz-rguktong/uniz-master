@@ -37,7 +37,7 @@ export default function CourseRegistration({
   const fetchAvailable = async () => {
     setLoading(true);
     try {
-      const data = await apiClient<any>(GET_AVAILABLE_SUBJECTS(branch, year));
+      const data = await apiClient<any>(GET_AVAILABLE_SUBJECTS(branch, year), {}, false);
       if (data) {
         const subs = data.subjects || [];
         setAvailable(subs);
