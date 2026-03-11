@@ -1,19 +1,20 @@
-import { PrismaClient } from "./generated/client";
+import { PrismaClient } from "../../generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
+import pg from "pg";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
 function createPrismaClient() {
-  const pool = new Pool({
+  const pool = new pg.Pool({
     connectionString: process.env.DATABASE_URL!,
     max: 3,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 60000,
   });
 
+  // Prisma v7: PrismaPg is a factory, pass it directly — no .connect() needed
   const adapter = new PrismaPg(pool);
 
   return new PrismaClient({
