@@ -48,8 +48,9 @@
     "typescript": "^5"
   },
   "overrides": {
-    "hono": "4.12.7",
-    "minimatch": "3.0.5",
-    "lodash": "4.17.21"
+    "hono": "^4.12.7",
+    "@hono/node-server": "^1.19.11",
+    "minimatch": "^3.1.5",
+    "lodash": "^4.17.21"
   }
 }
