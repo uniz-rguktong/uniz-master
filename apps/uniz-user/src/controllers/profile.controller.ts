@@ -426,11 +426,27 @@ export const getFacultyProfile = async (
   res: Response,
 ) => {
   const user = req.user;
+  const targetUsername = (
+    req.params.username ||
+    user?.username ||
+    ""
+  ).toLowerCase();
+
+  if (!user) return res.status(401).json({ code: ErrorCode.AUTH_UNAUTHORIZED });
+
+  // Allow self lookup or Staff/Admin roles to lookup any faculty
+  const isSelf = user.username?.toLowerCase() === targetUsername;
+  const adminRoles = [
+    UserRole.WEBMASTER,
+    UserRole.DEAN,
+    UserRole.DIRECTOR,
+    UserRole.HOD,
+  ];
+
   if (
-    !user ||
-    ![UserRole.TEACHER, UserRole.HOD, UserRole.FACULTY].includes(
-      user.role as UserRole,
-    )
+    !isSelf &&
+    !adminRoles.includes(user.role as UserRole) &&
+    user.id !== "internal"
   ) {
     return res
       .status(403)
@@ -439,7 +455,7 @@ export const getFacultyProfile = async (
 
   try {
     const profile = await prisma.facultyProfile.findUnique({
-      where: { username: user.username },
+      where: { username: targetUsername },
     });
     if (!profile)
       return res.status(404).json({
@@ -460,6 +476,12 @@ export const getAdminProfile = async (
   res: Response,
 ) => {
   const user = req.user;
+  const targetUsername = (
+    req.params.username ||
+    user?.username ||
+    ""
+  ).toUpperCase();
+
   // Check if role is any admin role
   const adminRoles = [
     UserRole.WEBMASTER,
@@ -477,7 +499,11 @@ export const getAdminProfile = async (
     UserRole.FACULTY,
     UserRole.HOD,
   ];
-  if (!user || !adminRoles.includes(user.role as UserRole)) {
+
+  if (
+    !user ||
+    (!adminRoles.includes(user.role as UserRole) && user.id !== "internal")
+  ) {
     return res
       .status(403)
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
@@ -485,30 +511,27 @@ export const getAdminProfile = async (
 
   try {
     let profile;
-    if (
-      user.role === UserRole.TEACHER ||
-      user.role === UserRole.FACULTY ||
-      user.role === UserRole.HOD
-    ) {
-      profile = await prisma.facultyProfile.findUnique({
-        where: { username: user.username },
-      });
+    const isInternal = user.id === "internal";
+
+    // Check faculty table first
+    const faculty = await prisma.facultyProfile.findUnique({
+      where: { username: targetUsername.toLowerCase() },
+    });
+    if (faculty) {
       return res.json({
         success: true,
-        data: profile
-          ? {
-              id: profile.id,
-              username: profile.username,
-              name: profile.name,
-              email: profile.email,
-              contact: profile.contact,
-              profile_url: profile.profileUrl,
-              role: profile.role,
-              department: profile.department,
-              designation: profile.designation,
-              bio: profile.bio,
-            }
-          : null,
+        data: {
+          id: faculty.id,
+          username: faculty.username,
+          name: faculty.name,
+          email: faculty.email,
+          contact: faculty.contact,
+          profile_url: faculty.profileUrl,
+          role: faculty.role,
+          department: faculty.department,
+          designation: faculty.designation,
+          bio: faculty.bio,
+        },
       });
     }
 
@@ -536,7 +559,7 @@ export const getAdminProfile = async (
     };
 
     const existingProfile = await prisma.adminProfile.findUnique({
-      where: { username: user.username },
+      where: { username: targetUsername },
     });
 
     if (existingProfile) {
