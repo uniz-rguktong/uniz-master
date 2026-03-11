@@ -20,6 +20,8 @@ import {
   DEAN_REVIEW,
   DEAN_APPROVE,
   GET_REGISTRATIONS,
+  BASE_URL,
+  GET_SUBJECTS,
 } from "../../../api/endpoints";
 import { toast } from "react-toastify";
 
@@ -133,7 +135,7 @@ export default function SemesterRegistrationSection({
 
   const fetchMasterSubjects = async () => {
     try {
-      const res = await apiClient<any[]>("/api/v1/academics/subjects");
+      const res = await apiClient<any[]>(GET_SUBJECTS);
       if (res) setAllSubjects(res);
     } catch (err) {
       console.error("Failed to fetch master subjects");
@@ -258,7 +260,7 @@ export default function SemesterRegistrationSection({
     setLoading(true);
     try {
       await apiClient(
-        `/api/v1/academics/dean/allocation/${editingAllocation.id}`,
+        `${BASE_URL}/academics/dean/allocation/${editingAllocation.id}`,
         {
           method: "PUT",
           body: JSON.stringify(editFormData),
@@ -277,7 +279,7 @@ export default function SemesterRegistrationSection({
   const removeAllocation = async (id: string) => {
     if (!window.confirm("Remove this subject from the rollout?")) return;
     try {
-      await apiClient(`/api/v1/academics/dean/allocation/${id}`, {
+      await apiClient(`${BASE_URL}/academics/dean/allocation/${id}`, {
         method: "DELETE",
       });
       toast.success("Subject removed");
@@ -291,7 +293,7 @@ export default function SemesterRegistrationSection({
     if (!addSubjectData.subjectId || !selectedSem) return;
     setLoading(true);
     try {
-      await apiClient("/api/v1/academics/dean/allocation", {
+      await apiClient(`${BASE_URL}/academics/dean/allocation`, {
         method: "POST",
         body: JSON.stringify({
           ...addSubjectData,
@@ -312,7 +314,7 @@ export default function SemesterRegistrationSection({
 
   const downloadExport = async (type: string) => {
     if (!selectedSem) return;
-    const url = `/api/v1/academics/export`;
+    const url = `${BASE_URL}/academics/export`;
     await downloadFile(url, `${selectedSem.name}_${type}.xlsx`, {
       type,
       semesterId: selectedSem.id,
