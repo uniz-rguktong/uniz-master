@@ -146,10 +146,10 @@ export function Features() {
                     <div className="relative z-10">
                         <span className="text-slate-500 font-bold flex items-center gap-2">
                             <MessageCircle className="size-4" />
-                            Email and web support
+                            Chatbot support
                         </span>
 
-                        <p className="my-8 text-2xl font-semibold text-slate-900">Reach out via email or web for any assistance you need.</p>
+                        <p className="my-8 text-2xl font-semibold text-slate-900">Get instant answers to your queries with our AI-powered chatbot.</p>
                     </div>
                     <div aria-hidden className="flex flex-col gap-8">
                         <div>
