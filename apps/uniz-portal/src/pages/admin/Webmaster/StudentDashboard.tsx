@@ -22,6 +22,7 @@ import {
     ResponsiveContainer,
 } from "recharts";
 import { motion } from "framer-motion";
+import { cn } from "../../../utils/cn";
 
 interface StudentDashboardProps {
     data: any;
@@ -77,11 +78,36 @@ export default function StudentDashboard({ data, onSuspendToggle, isActionLoadin
                     )}
                 </div>
 
-                <div className="space-y-1 mb-10">
-                    <h2 className="text-3xl font-black text-slate-900 tracking-tight lowercase first-letter:uppercase">
-                        {(student.name || '').split(' ')[0]} <span className="text-blue-600">{(student.name || '').split(' ').slice(1).join(' ')}</span>
-                    </h2>
-                    <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-[10px]">{student.username}</p>
+                <div className="space-y-4 mb-10">
+                    <div className="space-y-1">
+                        <h2 className="text-3xl font-black text-slate-900 tracking-tight lowercase first-letter:uppercase">
+                            {(student.name || '').split(' ')[0]} <span className="text-blue-600">{(student.name || '').split(' ').slice(1).join(' ')}</span>
+                        </h2>
+                        <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-[10px]">{student.username}</p>
+                    </div>
+
+                    {/* Compact Suspension Button */}
+                    <div className="flex justify-center">
+                        <button
+                            onClick={() => onSuspendToggle?.(student.username, student.is_suspended)}
+                            disabled={isActionLoading}
+                            className={cn(
+                                "flex items-center gap-2 px-6 py-2.5 rounded-xl border font-bold uppercase tracking-widest text-[10px] transition-all group active:scale-95 shadow-sm",
+                                student.is_suspended 
+                                    ? "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white" 
+                                    : "bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white"
+                            )}
+                        >
+                            {isActionLoading ? (
+                                <Zap className="animate-spin w-3.5 h-3.5" />
+                            ) : student.is_suspended ? (
+                                <Shield className="w-4 h-4" />
+                            ) : (
+                                <ShieldAlert className="w-4 h-4" />
+                            )}
+                            {student.is_suspended ? 'Restore Access' : 'Suspend Access'}
+                        </button>
+                    </div>
                 </div>
 
                 {/* Structured Info Grid (No Cards) */}
@@ -127,38 +153,13 @@ export default function StudentDashboard({ data, onSuspendToggle, isActionLoadin
                 />
             </div>
 
-            {/* Actions & Bottom Intelligence */}
+            {/* Bottom Intelligence */}
             <div className="flex flex-col md:flex-row gap-4">
                 {/* Motivation Quote */}
-                <div className="flex-1 bg-slate-50 border border-slate-100 p-6 rounded-[2rem] text-center flex flex-col justify-center">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Institutional Motivation</p>
-                    <p className="text-sm font-black text-slate-600 italic leading-relaxed">"{student.motivation}"</p>
+                <div className="w-full bg-slate-50 border border-slate-100 p-8 rounded-[2rem] text-center flex flex-col justify-center shadow-none">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Institutional Motivation</p>
+                    <p className="text-base font-black text-slate-600 italic leading-relaxed max-w-2xl mx-auto">"{student.motivation}"</p>
                 </div>
-
-                {/* Suspension Button */}
-                <button
-                    onClick={() => onSuspendToggle?.(student.username, student.is_suspended)}
-                    disabled={isActionLoading}
-                    className={`h-20 px-8 rounded-[2rem] border-2 transition-all flex items-center justify-center gap-4 group relative overflow-hidden min-w-[300px] ${student.is_suspended ? 'bg-emerald-50 border-emerald-500/20 text-emerald-600 hover:bg-emerald-600 hover:text-white' : 'bg-red-50 border-red-500/20 text-red-600 hover:bg-red-600 hover:text-white'}`}
-                >
-                    <div className="flex items-center gap-3">
-                        {isActionLoading ? (
-                            <Zap className="animate-spin w-5 h-5" />
-                        ) : student.is_suspended ? (
-                            <Shield className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                        ) : (
-                            <ShieldAlert className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                        )}
-                        <div className="text-left">
-                            <p className="font-black uppercase tracking-widest text-[11px] leading-tight">
-                                {student.is_suspended ? 'Restore Student Access' : 'Suspend Institutional Access'}
-                            </p>
-                            <p className={`text-[9px] font-bold uppercase opacity-60 leading-tight`}>
-                                {student.is_suspended ? 'Release Account Restriction' : 'Restrict Terminal Operations'}
-                            </p>
-                        </div>
-                    </div>
-                </button>
             </div>
         </motion.div>
     );
