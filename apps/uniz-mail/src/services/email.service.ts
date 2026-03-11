@@ -122,7 +122,7 @@ const sendEmailUnified = async (options: {
 
 // Logic moved to simplified sendEmailUnified above
 
-// Minimalist professional email template
+// Super professional minimalist email template (No gradients, high clarity)
 const emailTemplate = (title: string, content: string) => `
 <!DOCTYPE html>
 <html>
@@ -130,51 +130,47 @@ const emailTemplate = (title: string, content: string) => `
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-  <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0;">
-    <!-- Premium Header -->
-    <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 40px; text-align: center;">
-      <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.025em; font-family: 'Outfit', sans-serif;">
-        UniZ <span style="color: #60a5fa;">Portal</span>
+<body style="margin: 0; padding: 0; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <div style="max-width: 580px; margin: 0 auto; padding: 40px 20px;">
+    <!-- Minimalist Branding -->
+    <div style="margin-bottom: 40px; border-bottom: 2px solid #000000; padding-bottom: 12px;">
+      <h1 style="margin: 0; color: #000000; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">
+        UniZ <span style="font-weight: 300; color: #666666;">Security Dispatch</span>
       </h1>
-      <p style="margin: 8px 0 0 0; color: #94a3b8; font-size: 13px; font-weight: 500; text-transform: uppercase; tracking-widest: 0.1em;">
-        Official Academic System
-      </p>
     </div>
     
-    <!-- Content Body -->
-    <div style="padding: 48px; background-color: #ffffff;">
-      <h2 style="margin: 0 0 24px 0; color: #0f172a; font-size: 20px; font-weight: 700; letter-spacing: -0.01em;">
+    <!-- Professional Content -->
+    <div style="margin-bottom: 60px;">
+      <h2 style="margin: 0 0 24px 0; color: #000000; font-size: 22px; font-weight: 600; letter-spacing: -0.01em;">
         ${title}
       </h2>
-      <div style="color: #475569; font-size: 16px; line-height: 1.7; font-weight: 400;">
+      <div style="color: #333333; font-size: 15px; line-height: 1.6; font-weight: 400;">
         ${content}
       </div>
     </div>
     
-    <!-- Professional Footer -->
-    <div style="padding: 48px; background-color: #f1f5f9; border-top: 1px solid #e2e8f0;">
-      <div style="display: flex; align-items: start; gap: 16px;">
-        <div style="flex: 1;">
-          <p style="margin: 0; color: #64748b; font-size: 13px; line-height: 1.6;">
-            Best Regards,<br>
-            <strong style="color: #1e293b;">Office of Student Affairs</strong><br>
-            Rajiv Gandhi University of Knowledge Technologies
-          </p>
-          <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #cbd5e1;">
-            <p style="margin: 0; color: #94a3b8; font-size: 11px; font-weight: 500; text-transform: uppercase;">
-              Security Notice
-            </p>
-            <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 11px; line-height: 1.5;">
-              This is an automated transaction email from the RGUKT Ongole Campus. If you believe this email was sent in error, please contact IT support.
-            </p>
-          </div>
-        </div>
+    <!-- Clean Structured Footer -->
+    <div style="padding: 30px 0; border-top: 1px solid #eeeeee;">
+      <p style="margin: 0; color: #000000; font-size: 14px; font-weight: 600;">
+        Office of Information Security
+      </p>
+      <p style="margin: 4px 0 0 0; color: #888888; font-size: 13px;">
+        Rajiv Gandhi University of Knowledge Technologies
+      </p>
+      
+      <div style="margin-top: 40px;">
+        <p style="margin: 0; color: #bbbbbb; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">
+          Administrative Notice
+        </p>
+        <p style="margin: 8px 0 0 0; color: #bbbbbb; font-size: 11px; line-height: 1.5;">
+          This is an automated administrative transmission initiated by system security. If you did not expect this communication, please disregard or notify the institutional IT helpdesk. Confidentiality and security are paramount.
+        </p>
       </div>
     </div>
-  </div>
-  <div style="text-align: center; padding: 20px;">
-    <p style="color: #94a3b8; font-size: 12px;">&copy; 2026 UniZ. All rights reserved.</p>
+    
+    <div style="margin-top: 30px; text-align: left;">
+      <p style="color: #cccccc; font-size: 10px;">&copy; 2026 UniZ Integrated Services. Document ID: SEC/${Date.now().toString(36).toUpperCase()}</p>
+    </div>
   </div>
 </body>
 </html>
@@ -187,12 +183,16 @@ export const sendOtpEmail = async (
 ): Promise<boolean> => {
   try {
     const content = `
-      <p style="margin: 0;">Hello <strong>${username}</strong>,</p>
-      <p style="margin: 16px 0 0 0;">Verify your identity to complete the security process. Use the following one-time passcode:</p>
-      <div style="background-color: #f1f5f9; border: 2px solid #e2e8f0; padding: 32px; text-align: center; margin: 32px 0; border-radius: 12px;">
-        <span style="font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #1e293b; font-family: monospace;">${otp}</span>
+      <p style="margin: 0;">Identity verification for student ID: <strong>${username}</strong></p>
+      <p style="margin: 16px 0 0 0;">Please enter the following security code to authenticate your session. This code is unique and valid for a single transaction.</p>
+      
+      <div style="margin: 40px 0; border: 1px solid #000000; padding: 30px; text-align: center;">
+        <span style="font-size: 32px; font-weight: 700; letter-spacing: 12px; color: #000000; font-family: 'Courier New', Courier, monospace;">${otp}</span>
       </div>
-      <p style="margin: 0; font-size: 14px; color: #64748b;">This code expires in 10 minutes. If you didn't request this, you can safely ignore this message.</p>
+      
+      <p style="margin: 0; font-size: 13px; color: #666666;">
+        This security code will expire automatically in 10 minutes.
+      </p>
     `;
 
     const success = await sendEmailUnified({
