@@ -14,6 +14,7 @@ import FeaturedCarousel from "../components/FeaturedCarousel";
 import { Timeline } from "../components/ui/timeline";
 import DatabaseWithRestApi from "../components/ui/database-with-rest-api";
 import { Features } from "../components/ui/features-9";
+import GlobeFeature from "../components/ui/globe-feature-section";
 
 export default function Home() {
   useIsAuth();
@@ -245,14 +246,21 @@ export default function Home() {
               className="flex flex-col sm:flex-row gap-5 items-center justify-center w-full"
             >
               <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.alert("Installation Guide: \n\n1. Open this page in Safari (iOS) or Chrome (Android)\n2. Tap the 'Share' or 'Menu' icon\n3. Select 'Add to Home Screen'\n\nUniZ is now ready in your app drawer!");
+                }}
+                className="px-10 py-5 bg-white border-2 border-slate-950 text-slate-950 rounded-[2rem] text-[16px] font-bold shadow-sm hover:bg-slate-50 transition-all active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto"
+              >
+                <Download size={20} />
+                Install application
+              </button>
+              <button
                 onClick={() => navigate("/student/signin")}
                 className="px-10 py-5 bg-slate-950 text-white rounded-[2rem] text-[16px] font-bold shadow-2xl shadow-slate-300 hover:bg-slate-800 hover:shadow-slate-400 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2 group w-full sm:w-auto"
               >
-                Get started for free
-                <ArrowUpRight
-                  size={20}
-                  className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-                />
+                Student Login
+                <ArrowUpRight size={20} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </button>
             </motion.div>
           </motion.div>
@@ -293,6 +301,11 @@ export default function Home() {
 
       {/* SYSTEM HEALTH AND ACTIVITY DASHBOARD */}
       <Features />
+
+      {/* GLOBAL CONNECTIVITY FEATURE - FULL WIDTH */}
+      <div className="w-full bg-transparent mt-0 flex flex-col items-center">
+        <GlobeFeature />
+      </div>
     </div>
   );
 }
