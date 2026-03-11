@@ -245,8 +245,10 @@ router.post("/faculty/search", authMiddleware, searchFaculty);
 router.post("/admin/faculty/bulk-create", authMiddleware, bulkCreateFaculty);
 router.put("/admin/faculty/bulk-update", authMiddleware, bulkUpdateFaculty);
 router.delete("/admin/faculty/bulk-delete", authMiddleware, bulkDeleteFaculty);
+router.get("/admin/faculty/:username", authMiddleware, getFacultyProfile);
 router.put("/admin/faculty/:username", authMiddleware, updateFacultyProfile);
 router.delete("/admin/faculty/:username", authMiddleware, deleteFacultyProfile);
+router.get("/admin/admin/:username", authMiddleware, getAdminProfile);
 router.put("/faculty/me/update", authMiddleware, updateFacultyProfileSelf);
 router.put("/admin/me/update", authMiddleware, updateAdminProfile);
 router.put(
