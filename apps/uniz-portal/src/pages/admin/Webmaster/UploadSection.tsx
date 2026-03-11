@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Info,
   ChevronDown,
 } from "lucide-react";
 import {
@@ -201,13 +200,27 @@ export default function UploadSection({ type }: { type: UploadType }) {
 
   return (
     <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
-      <div className="flex flex-col gap-1.5 mb-2">
-        <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none capitalize">
-          {type} Bulk Management
-        </h2>
-        <p className="text-slate-500 font-medium text-[15px]">
-          Synchronize institutional {type} records with the core system.
-        </p>
+      <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-2">
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none capitalize">
+            {type} Bulk Management
+          </h2>
+          <p className="text-slate-500 font-medium text-[15px]">
+            Synchronize institutional {type} records with the core system.
+          </p>
+        </div>
+
+        {type === "grades" && (
+          <button
+            onClick={downloadTemplate}
+            className="group flex items-center gap-2.5 px-4 py-2 bg-white text-slate-500 rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all font-bold uppercase tracking-widest text-[9px] shadow-none active:scale-95 mb-1"
+          >
+            <div className="p-1.5 bg-slate-50 rounded-lg group-hover:bg-blue-50 transition-colors">
+              <FileDown size={13} className="group-hover:scale-110 transition-transform" />
+            </div>
+            Download {type} Template
+          </button>
+        )}
       </div>
 
       <div className="bg-white p-7 rounded-2xl border border-slate-100 shadow-none animate-in slide-in-from-top-4 duration-500 space-y-8">
@@ -374,19 +387,21 @@ export default function UploadSection({ type }: { type: UploadType }) {
               </div>
             </>
           )}
-        </div>
 
-        <div className="flex justify-end pt-2 border-t border-slate-50">
-          <button
-            onClick={downloadTemplate}
-            className="h-11 px-6 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-xl shadow-none text-blue-700 font-bold uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2.5 active:scale-95"
-          >
-            <FileDown size={14} /> Download {type} Template
-          </button>
+          {type === "attendance" && (
+            <div className="flex items-end lg:col-span-2">
+              <button
+                onClick={downloadTemplate}
+                className="h-11 px-10 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-xl shadow-none text-blue-700 font-bold uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2.5 active:scale-95 w-full whitespace-nowrap"
+              >
+                <FileDown size={14} /> Download {type} Template
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="space-y-8">
         <div className="space-y-6">
           <FileUploader
             onFileSelect={(f) => {
@@ -414,9 +429,9 @@ export default function UploadSection({ type }: { type: UploadType }) {
         </div>
 
         <div className="space-y-6">
-          {result ? (
+          {result && (
             <div
-              className={`p-8 rounded-xl border animate-in slide-in-from-right-8 duration-500 h-full shadow-none ${result.success
+              className={`p-8 rounded-xl border animate-in slide-in-from-top-4 duration-500 shadow-none ${result.success
                 ? "bg-emerald-50 border-emerald-100 text-emerald-900"
                 : "bg-red-50 border-red-100 text-red-900"
                 }`}
@@ -458,19 +473,6 @@ export default function UploadSection({ type }: { type: UploadType }) {
                   <p className="opacity-80 font-medium">{result.msg}</p>
                 )}
               </div>
-            </div>
-          ) : (
-            <div className="p-8 rounded-xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center h-full shadow-none">
-              <div className="p-5 bg-white rounded-xl shadow-none text-slate-300 mb-8 border border-slate-100">
-                <Info size={32} />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2 tracking-tight">
-                Ready for synchronization
-              </h3>
-              <p className="text-slate-400 max-w-[240px] font-medium text-[15px] leading-relaxed">
-                Upload a file to see the system status and processing results
-                here.
-              </p>
             </div>
           )}
         </div>
