@@ -74,6 +74,16 @@ module.exports = {
       backgroundImage: {
         "premium-gradient": "linear-gradient(to right, #f8fafc, #f1f5f9)",
       },
+      animation: {
+        "spinner-blade": "spinner-blade 1s linear infinite",
+      },
+      keyframes: {
+        "spinner-blade": {
+          "0%": { opacity: "0.85" },
+          "50%": { opacity: "0.25" },
+          "100%": { opacity: "0.25" },
+        },
+      },
     },
   },
   plugins: [require("tailwind-scrollbar-hide")],
