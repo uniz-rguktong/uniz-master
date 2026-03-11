@@ -224,39 +224,6 @@ export const requestOtp = async (req: Request, res: Response) => {
       });
     }
 
-    // Rate Limiting
-    const now = new Date();
-    const oneMinuteAgo = new Date(now.getTime() - 60 * 1000);
-    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-
-    // Check for last OTP request time (for 60s delay)
-    const lastOtp = await prisma.otpLog.findFirst({
-      where: { username: { equals: username, mode: "insensitive" } },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (lastOtp && lastOtp.createdAt > oneMinuteAgo) {
-      return res.status(429).json({
-        code: "RATE_LIMIT_EXCEEDED",
-        message: "Please wait 60 seconds before requesting another OTP.",
-      });
-    }
-
-    // Check for hourly limit
-    const hourlyRequests = await prisma.otpLog.count({
-      where: {
-        username: { equals: username, mode: "insensitive" },
-        createdAt: { gt: oneHourAgo },
-      },
-    });
-
-    if (hourlyRequests >= 100) {
-      return res.status(429).json({
-        code: "RATE_LIMIT_EXCEEDED",
-        message: "Too many OTP requests. Please try again later.",
-      });
-    }
-
     await prisma.otpLog.create({
       data: { username, otp, expiresAt },
     });
@@ -346,18 +313,6 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
       });
     }
 
-    // Strict Rate Limiting: 3 email requests per hour
-    const rateLimitKey = `auth:ratelimit:email_otp:${username}`;
-    const emailCount = await redis.get(rateLimitKey);
-
-    if (emailCount && parseInt(emailCount) >= 3) {
-      return res.status(429).json({
-        code: "RATE_LIMIT_EXCEEDED",
-        message:
-          "You can only request 3 email OTPs per hour. Please check your push notifications or try again later.",
-      });
-    }
-
     // Resolve email
     let email = `${username.toLowerCase()}@rguktong.ac.in`;
     try {
@@ -382,13 +337,6 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
         err,
       );
     });
-
-    // Increment rate limit counter
-    if (!emailCount) {
-      await redis.setex(rateLimitKey, 3600, "1");
-    } else {
-      await redis.incr(rateLimitKey);
-    }
 
     return res.json({
       success: true,
