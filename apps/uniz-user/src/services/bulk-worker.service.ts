@@ -189,6 +189,15 @@ export async function processNextStudentBatch() {
       (successCount - initialSuccess) +
       (failCount - initialFail);
 
+    // Calculate ETA
+    const elapsed = Math.max(Date.now() - startTime, 1);
+    const avgTimePerItem = elapsed / processedCount;
+    const remainingCount = total - processedCount;
+    const etaSeconds =
+      processedCount >= total
+        ? 0
+        : Math.ceil((avgTimePerItem * remainingCount) / 1000);
+
     await redis.setex(
       `student:upload:progress:${username}`,
       3600,
@@ -199,9 +208,10 @@ export async function processNextStudentBatch() {
         success: successCount,
         fail: failCount,
         percent: Math.round((processedCount / total) * 100),
-        etaSeconds: 0,
+        etaSeconds: Math.max(etaSeconds, 0),
         errors: errors.slice(-20),
         lastActive: Date.now(),
+        startTime,
       }),
     );
   }
