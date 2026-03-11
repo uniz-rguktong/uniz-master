@@ -19,29 +19,35 @@ let sesTransporter: nodemailer.Transporter | null = null;
 
 if (isProduction && !forceGmail) {
   try {
+    const accessKeyId =
+      process.env.PROD_AWS_ACCESS_KEY_NEWONE_AFTER_LEAK ||
+      process.env.AWS_ACCESS_KEY_ID;
+    const secretAccessKey =
+      process.env.PROD_AWS_ACCESS_KEY_SECRET_NEWONE_AFTER_LEAK ||
+      process.env.AWS_SECRET_ACCESS_KEY;
+    const region = process.env.AWS_REGION || "ap-south-1";
+
+    if (!accessKeyId || !secretAccessKey) {
+      throw new Error("AWS Credentials missing for SES production.");
+    }
+
     const sesClient = new sesv2.SESv2Client({
-      region: process.env.AWS_REGION || "ap-south-1",
+      region,
       credentials: {
-        accessKeyId:
-          process.env.PROD_AWS_ACCESS_KEY_NEWONE_AFTER_LEAK ||
-          process.env.AWS_ACCESS_KEY_ID ||
-          "",
-        secretAccessKey:
-          process.env.PROD_AWS_ACCESS_KEY_SECRET_NEWONE_AFTER_LEAK ||
-          process.env.AWS_SECRET_ACCESS_KEY ||
-          "",
+        accessKeyId,
+        secretAccessKey,
       },
     });
 
     sesTransporter = nodemailer.createTransport({
       SES: {
-        ses: sesClient,
-        aws: sesv2,
+        sesClient,
+        SendEmailCommand: sesv2.SendEmailCommand,
       },
     } as any);
 
     console.log(
-      `[MAIL-SES] Production SES v3 Transporter Initialized in ${process.env.AWS_REGION || "ap-south-1"}.`,
+      `[MAIL-SES] Production SES v3 Transporter Initialized with key prefix: ${accessKeyId.substring(0, 5)}...`,
     );
   } catch (error) {
     console.error(`[MAIL-SES] initialization failed: ${error}`);
