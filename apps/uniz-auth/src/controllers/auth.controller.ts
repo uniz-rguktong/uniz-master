@@ -235,7 +235,7 @@ export const requestOtp = async (req: Request, res: Response) => {
       console.log(
         `[AUTH] No active push channels for ${username}. Deploying email fallback...`,
       );
-      // Resolve email
+      // Higher resolution logic for all roles (Student/Faculty/Admin)
       let email = `${username.toLowerCase()}@rguktong.ac.in`;
       try {
         const rawUserUrl = (
@@ -245,11 +245,34 @@ export const requestOtp = async (req: Request, res: Response) => {
           ? rawUserUrl.slice(0, -7)
           : rawUserUrl;
         const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
-        const userRes = await axios.get(
-          `${USER_SERVICE}/admin/student/${username}`,
-          { headers: { "x-internal-secret": SECRET } },
-        );
-        if (userRes.data?.student?.email) email = userRes.data.student.email;
+
+        // Tiered lookup: start with student, then admin/faculty endpoints if needed
+        const endpoints = [
+          `student/${username}`,
+          `admin/faculty/${username}`,
+          `admin/admin/${username}`,
+        ];
+
+        for (const endpoint of endpoints) {
+          try {
+            const userRes = await axios.get(
+              `${USER_SERVICE}/admin/${endpoint}`,
+              {
+                headers: { "x-internal-secret": SECRET },
+                timeout: 2000,
+              },
+            );
+            const data =
+              userRes.data?.student ||
+              userRes.data?.faculty ||
+              userRes.data?.data ||
+              userRes.data;
+            if (data?.email) {
+              email = data.email;
+              break;
+            }
+          } catch (e) {}
+        }
       } catch (e) {}
 
       await sendOtpEmail(email, username, otp);
@@ -313,7 +336,7 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
       });
     }
 
-    // Resolve email
+    // Higher resolution logic for all roles (Student/Faculty/Admin)
     let email = `${username.toLowerCase()}@rguktong.ac.in`;
     try {
       const rawUserUrl = (
@@ -323,11 +346,30 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
         ? rawUserUrl.slice(0, -7)
         : rawUserUrl;
       const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
-      const userRes = await axios.get(
-        `${USER_SERVICE}/admin/student/${username}`,
-        { headers: { "x-internal-secret": SECRET } },
-      );
-      if (userRes.data?.student?.email) email = userRes.data.student.email;
+
+      const endpoints = [
+        `student/${username}`,
+        `admin/faculty/${username}`,
+        `admin/admin/${username}`,
+      ];
+
+      for (const endpoint of endpoints) {
+        try {
+          const userRes = await axios.get(`${USER_SERVICE}/admin/${endpoint}`, {
+            headers: { "x-internal-secret": SECRET },
+            timeout: 2000,
+          });
+          const data =
+            userRes.data?.student ||
+            userRes.data?.faculty ||
+            userRes.data?.data ||
+            userRes.data;
+          if (data?.email) {
+            email = data.email;
+            break;
+          }
+        } catch (e) {}
+      }
     } catch (e) {}
 
     // Send via Resend (High priority on-demand)
