@@ -12,6 +12,7 @@ import {
   getUserStatus,
   changePassword,
   adminResetPassword,
+  globalAdminResetPassword,
 } from "../controllers/auth.controller";
 import {
   rateLimiter,
@@ -61,6 +62,11 @@ const SignupSchema = z.object({
   password: z.string().min(6),
   role: z.string().default("student"),
   email: z.string().email().optional(),
+});
+
+const GlobalAdminResetSchema = z.object({
+  targetUsername: z.string(),
+  newPassword: z.string().min(6),
 });
 
 router.post("/login", rateLimiter, validateRequest(LoginSchema), login); // Keep for compatibility if needed, but better to use specific ones
@@ -114,6 +120,12 @@ router.post(
   rateLimiter,
   validateRequest(AdminResetPasswordSchema),
   adminResetPassword,
+);
+router.post(
+  "/admin/global-reset-password",
+  authMiddleware,
+  validateRequest(GlobalAdminResetSchema),
+  globalAdminResetPassword,
 );
 router.post("/admin/suspend", toggleSuspension);
 
