@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../hooks/is_authenticated";
 import { useLogout } from "../hooks/useLogout";
 import { useStudentData } from "../hooks/student_info";
-import { useState, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { enableOutingsAndOutpasses } from "../pages/student/student";
 import {
   User,
@@ -19,6 +19,7 @@ import {
   X,
   Layers,
   ScanLine,
+  ChevronLeft,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -42,18 +43,18 @@ export { enableOutingsAndOutpasses } from "../pages/student/student";
 
 interface MainContent {
   content:
-    | "outpass"
-    | "outing"
-    | "gradehub"
-    | "resetpassword"
-    | "dashboard"
-    | "requestOuting"
-    | "requestOutpass"
-    | "attendance"
-    | "grievance"
-    | "currentSemester"
-    | "seating"
-    | "error";
+  | "outpass"
+  | "outing"
+  | "gradehub"
+  | "resetpassword"
+  | "dashboard"
+  | "requestOuting"
+  | "requestOutpass"
+  | "attendance"
+  | "grievance"
+  | "currentSemester"
+  | "seating"
+  | "error";
 }
 
 const ContentSkeleton = () => (
@@ -64,15 +65,21 @@ const ContentSkeleton = () => (
 
 export default function Sidebar({ content }: MainContent) {
   useIsAuth();
-  // Trigger /me fetch immediately when the student portal shell mounts,
-  // so all pages have user data even before the profile tab is visited.
   useStudentData();
   const userData = useRecoilValue<any>(student);
   const navigate = useNavigate();
 
   const [showConfirm, setShowConfirm] = useState(false);
-
   const [showNotice, setShowNotice] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const { logout } = useLogout();
 
@@ -92,25 +99,25 @@ export default function Sidebar({ content }: MainContent) {
     },
     ...(enableOutingsAndOutpasses
       ? [
-          {
-            id: "outing",
-            label: "Outing Requests",
-            href: "/student/outing",
-            content: "outing",
-            icon: Clock,
-            activeColor: "text-amber-500",
-            hoverColor: "hover:text-amber-500",
-          },
-          {
-            id: "outpass",
-            label: "Outpass Requests",
-            href: "/student/outpass",
-            content: "outpass",
-            icon: CalendarDays,
-            activeColor: "text-orange-500",
-            hoverColor: "hover:text-orange-500",
-          },
-        ]
+        {
+          id: "outing",
+          label: "Outing Requests",
+          href: "/student/outing",
+          content: "outing",
+          icon: Clock,
+          activeColor: "text-amber-500",
+          hoverColor: "hover:text-amber-500",
+        },
+        {
+          id: "outpass",
+          label: "Outpass Requests",
+          href: "/student/outpass",
+          content: "outpass",
+          icon: CalendarDays,
+          activeColor: "text-orange-500",
+          hoverColor: "hover:text-orange-500",
+        },
+      ]
       : []),
     {
       id: "gradehub",
@@ -271,6 +278,19 @@ export default function Sidebar({ content }: MainContent) {
 
         {/* Main Content Area */}
         <main className="flex-1 md:pl-28 md:overflow-y-auto md:max-h-screen">
+          {/* Mobile Header */}
+          <header className={`md:hidden sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16 transition-all duration-300 ${isScrolled ? "bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm" : "bg-transparent border-transparent"}`}>
+            <h1 className={`unifrakturcook-bold text-3xl tracking-tighter transition-colors duration-300 ${isScrolled ? "text-slate-900" : "text-slate-800"}`}>
+              uniZ
+            </h1>
+            <button
+              onClick={() => setShowConfirm(true)}
+              className={`p-2 transition-all font-sans ${isScrolled ? "text-slate-400 active:text-red-500" : "text-slate-500 active:text-red-600"}`}
+            >
+              <LogOut size={22} />
+            </button>
+          </header>
+
           {/* Re-designed Desktop Header (Pharmacy App Style) */}
           <header className="bg-white/60 backdrop-blur-md border-b border-white/20 sticky top-0 z-40 p-4 px-8 justify-between items-center hidden md:flex">
             {/* Left: App Branding */}
@@ -312,7 +332,19 @@ export default function Sidebar({ content }: MainContent) {
             </div>
           </header>
 
-          <div className="p-4 pb-32 md:p-10 min-h-full">
+          <div className="pt-4 px-4 pb-32 md:p-10 min-h-full">
+            {/* Mobile Back Button (Below Header) */}
+            {content !== "dashboard" && (
+              <div className="md:hidden mb-6">
+                <button
+                  onClick={() => navigate("/student")}
+                  className="flex items-center gap-1 text-slate-500 font-bold text-[10px] uppercase tracking-widest py-2"
+                >
+                  <ChevronLeft size={20} strokeWidth={3} />
+
+                </button>
+              </div>
+            )}
             <Suspense fallback={<ContentSkeleton />}>
               {contentMap[content] || <Error />}
             </Suspense>
