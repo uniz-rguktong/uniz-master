@@ -139,6 +139,8 @@ export default function Signin({ type }: SigninProps) {
         data.student_token || data.admin_token || (data as any).token;
 
       if (type === "student" && token && data.role === "student") {
+        localStorage.removeItem("admin_token");
+        localStorage.removeItem("faculty_token");
         localStorage.setItem("student_token", token);
         localStorage.setItem("username", username.trim());
         setAuth({ is_authnticated: true, type: "student" });
@@ -149,6 +151,8 @@ export default function Signin({ type }: SigninProps) {
         (data.role === "teacher" || data.role === "faculty") &&
         (token || data.success)
       ) {
+        localStorage.removeItem("student_token");
+        localStorage.removeItem("admin_token");
         localStorage.setItem("faculty_token", token || "");
         localStorage.setItem("username", username.trim());
         localStorage.setItem("role", data.role || "teacher");
@@ -156,6 +160,8 @@ export default function Signin({ type }: SigninProps) {
         toast.success(`Welcome Professor ${username.trim()}!`);
         navigate("/faculty", { replace: true });
       } else if (type === "admin" && (token || data.success)) {
+        localStorage.removeItem("student_token");
+        localStorage.removeItem("faculty_token");
         localStorage.setItem("admin_token", token);
         localStorage.setItem("username", username.trim());
         localStorage.setItem("admin_role", (data as any).role || "admin");
@@ -165,6 +171,8 @@ export default function Signin({ type }: SigninProps) {
         toast.success("Welcome back, Admin!");
         setTimeout(() => navigate("/admin", { replace: true }), 100);
       } else if (type === "faculty" && token) {
+        localStorage.removeItem("student_token");
+        localStorage.removeItem("admin_token");
         localStorage.setItem("faculty_token", token);
         localStorage.setItem("username", username.trim());
         localStorage.setItem("role", (data as any).role);
