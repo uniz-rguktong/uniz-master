@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import {
   CheckCircle,
   Eye,
-  Loader2,
   AlertCircle,
   BookOpen,
   ArrowRight,
@@ -18,7 +17,14 @@ import {
   Users,
   BookText,
 } from "lucide-react";
-import { DEAN_REVIEW, APPROVE_ALLOCATION } from "../../../api/endpoints";
+import { Spinner } from "../../../components/ui/ios-spinner";
+import {
+  DEAN_REVIEW,
+  APPROVE_ALLOCATION,
+  BASE_URL,
+  GET_SUBJECTS,
+  GET_AVAILABLE_BATCHES,
+} from "../../../api/endpoints";
 import { toast } from "react-toastify";
 import { apiClient } from "../../../api/apiClient";
 
@@ -84,8 +90,8 @@ export default function DeanReview() {
         apiClient<any[]>(
           `${DEAN_REVIEW(department)}${query ? `?${query}` : ""}`,
         ),
-        apiClient<any[]>("/api/v1/academics/subjects"),
-        apiClient<string[]>("/api/v1/profile/admin/batches"),
+        apiClient<any[]>(GET_SUBJECTS),
+        apiClient<string[]>(GET_AVAILABLE_BATCHES),
       ]);
       setAllocations(allocData || []);
       setAllSubjects(subjectsData || []);
@@ -121,7 +127,7 @@ export default function DeanReview() {
     e.preventDefault();
     if (!editing) return;
     try {
-      await apiClient(`/api/v1/academics/dean/allocation/${editing.id}`, {
+      await apiClient(`${BASE_URL}/academics/dean/allocation/${editing.id}`, {
         method: "PUT",
         body: JSON.stringify(editing),
       });
@@ -145,7 +151,7 @@ export default function DeanReview() {
     }
 
     try {
-      await apiClient("/api/v1/academics/dean/allocation", {
+      await apiClient(`${BASE_URL}/academics/dean/allocation`, {
         method: "POST",
         body: JSON.stringify({
           ...newAllocData,
@@ -164,7 +170,7 @@ export default function DeanReview() {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Remove this subject from registration?")) return;
     try {
-      await apiClient(`/api/v1/academics/dean/allocation/${id}`, {
+      await apiClient(`${BASE_URL}/academics/dean/allocation/${id}`, {
         method: "DELETE",
       });
       toast.success("Subject removed");
@@ -250,7 +256,7 @@ export default function DeanReview() {
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="animate-spin text-slate-900" size={32} />
+          <Spinner size="lg" />
         </div>
       ) : allocations.length > 0 ? (
         <div className="grid grid-cols-1 gap-6">
@@ -314,7 +320,7 @@ export default function DeanReview() {
                         className="bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center gap-2 hover:bg-black transition-all shadow-xl active:scale-95 disabled:opacity-50"
                       >
                         {approving === alloc.id ? (
-                          <Loader2 className="animate-spin w-4 h-4" />
+                          <Spinner size="sm" className="brightness-200" />
                         ) : (
                           <CheckCircle size={16} />
                         )}
