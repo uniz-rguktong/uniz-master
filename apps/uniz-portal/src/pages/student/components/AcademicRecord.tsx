@@ -27,7 +27,7 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
       ...Object.keys(gradesBySemester || {}),
       ...Object.keys(attendanceBySemester || {}),
     ]),
-  ].sort();
+  ].filter((s) => s !== "Unknown").sort();
 
   if (semesters.length === 0) return null;
 
