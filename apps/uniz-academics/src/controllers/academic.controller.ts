@@ -1854,7 +1854,7 @@ export const uploadGrades = async (req: any, res: Response) => {
       total,
       user: { username: user.username },
       filename: req.file.originalname,
-      createdAt: Date.now(),
+      startTime: Date.now(),
     };
 
     // Initialize Progress in Redis using uploadId
@@ -1874,6 +1874,7 @@ export const uploadGrades = async (req: any, res: Response) => {
         percent: 0,
         etaSeconds: 0,
         lastActive: Date.now(),
+        startTime: Date.now(),
       }),
     );
 
@@ -2106,7 +2107,7 @@ export const uploadAttendance = async (req: any, res: Response) => {
       total,
       user: { username: user.username },
       filename: req.file.originalname,
-      createdAt: Date.now(),
+      startTime: Date.now(),
     };
 
     // Initialize Progress in Redis using uploadId
@@ -2126,6 +2127,7 @@ export const uploadAttendance = async (req: any, res: Response) => {
         percent: 0,
         etaSeconds: 0,
         lastActive: Date.now(),
+        startTime: Date.now(),
       }),
     );
 
