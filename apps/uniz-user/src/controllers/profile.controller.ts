@@ -1160,10 +1160,19 @@ export const updateFacultyProfileSelf = async (
     });
 
     return res.json({ success: true, faculty: mapFacultyProfile(updated) });
-  } catch (e) {
+  } catch (e: any) {
+    console.error("Update Faculty Profile Self Error:", e);
+    if (e.code === 'P2002') {
+      return res.status(400).json({
+        success: false,
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Email already in use by another account."
+      });
+    }
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to update profile",
+      details: e.message || e
     });
   }
 };
@@ -1223,9 +1232,17 @@ export const updateAdminProfile = async (
       if (updates.bio !== undefined || updates.Bio !== undefined)
         facultyData.bio = updates.bio || updates.Bio;
 
-      const updated: any = await prisma.facultyProfile.update({
+      const updated: any = await prisma.facultyProfile.upsert({
         where: { username: user.username },
-        data: facultyData,
+        update: facultyData,
+        create: {
+          username: user.username,
+          name: updates.name || user.username,
+          email: updates.email || `${user.username}@rguktong.ac.in`,
+          department: updates.department || "Administration",
+          designation: updates.designation || "Staff",
+          ...facultyData,
+        },
       });
 
       return res.json({
@@ -1257,17 +1274,37 @@ export const updateAdminProfile = async (
       adminData.profileUrl = updates.profileUrl || updates.profile_url;
     if (updates.bio !== undefined) adminData.bio = updates.bio;
 
-    const updated = await prisma.adminProfile.update({
+    // For Admin roles, use upsert for better resilience
+    const updated = await prisma.adminProfile.upsert({
       where: { username: user.username },
-      data: adminData,
+      update: adminData,
+      create: {
+        username: user.username,
+        role: user.role as string,
+        name: updates.name || user.username.charAt(0).toUpperCase() + user.username.slice(1),
+        email: updates.email || `${user.username}@rguktong.ac.in`,
+        ...adminData,
+      },
     });
 
     return res.json({ success: true, data: mapAdminProfile(updated) });
-  } catch (e) {
+  } catch (e: any) {
     console.error("Update Admin Profile Error:", e);
+    
+    // Handle Prisma Unique Constraint Violation
+    if (e.code === 'P2002') {
+      return res.status(400).json({
+        success: false,
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "Email already in use by another account.",
+        details: "A record with this email already exists."
+      });
+    }
+
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to update profile",
+      details: e.message || e,
     });
   }
 };
