@@ -15,11 +15,28 @@ import { Timeline } from "../components/ui/timeline";
 import DatabaseWithRestApi from "../components/ui/database-with-rest-api";
 import { Features } from "../components/ui/features-9";
 import GlobeFeature from "../components/ui/globe-feature-section";
+import { usePWAInstall } from "../hooks/usePWAInstall";
 
 export default function Home() {
   useIsAuth();
   const navigate = useNavigate();
   const [banners, setBanners] = useState<any[]>([]);
+  const { isInstalled, install } = usePWAInstall();
+
+  const handleInstallClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const result = await install();
+    if (result === "ios") {
+      window.alert(
+        "Installation Guide (iOS): \n\n1. Tap the 'Share' icon (square with arrow) at the bottom.\n2. Scroll down and select 'Add to Home Screen'.\n\nUniZ will now be ready on your home screen!",
+      );
+    } else if (result === "fallback") {
+      // Fallback for cases where install prompt is not available
+      window.alert(
+        "Installation Guide: \n\n1. Open your browser menu (usually three dots or share list).\n2. Select 'Install App' or 'Add to Home Screen'.",
+      );
+    }
+  };
 
   const timelineData = [
     {
@@ -38,12 +55,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 items-start">
             <a
               href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                window.alert(
-                  "Installation Guide: \n\n1. Open this page in Safari (iOS) or Chrome (Android)\n2. Tap the 'Share' or 'Menu' icon\n3. Select 'Add to Home Screen'\n\nUniZ is now ready in your app drawer!",
-                );
-              }}
+              onClick={handleInstallClick}
               className="group flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-full font-black text-sm shadow-2xl hover:bg-blue-600 transition-all active:scale-95 no-underline"
             >
               <Download
@@ -245,22 +257,24 @@ export default function Home() {
               transition={{ delay: 0.8, duration: 0.5 }}
               className="flex flex-col sm:flex-row gap-5 items-center justify-center w-full"
             >
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.alert("Installation Guide: \n\n1. Open this page in Safari (iOS) or Chrome (Android)\n2. Tap the 'Share' or 'Menu' icon\n3. Select 'Add to Home Screen'\n\nUniZ is now ready in your app drawer!");
-                }}
-                className="px-10 py-5 bg-white border-2 border-slate-950 text-slate-950 rounded-[2rem] text-[16px] font-bold shadow-sm hover:bg-slate-50 transition-all active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto"
-              >
-                <Download size={20} />
-                Install application
-              </button>
+              {!isInstalled && (
+                <button
+                  onClick={handleInstallClick}
+                  className="px-10 py-5 bg-white border-2 border-slate-950 text-slate-950 rounded-[2rem] text-[16px] font-bold shadow-sm hover:bg-slate-50 transition-all active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto"
+                >
+                  <Download size={20} />
+                  Install application
+                </button>
+              )}
               <button
                 onClick={() => navigate("/student/signin")}
                 className="px-10 py-5 bg-slate-950 text-white rounded-[2rem] text-[16px] font-bold shadow-2xl shadow-slate-300 hover:bg-slate-800 hover:shadow-slate-400 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2 group w-full sm:w-auto"
               >
                 Student Login
-                <ArrowUpRight size={20} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <ArrowUpRight
+                  size={20}
+                  className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+                />
               </button>
             </motion.div>
           </motion.div>
