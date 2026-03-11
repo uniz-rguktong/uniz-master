@@ -117,7 +117,31 @@ export const getUploadProgress = async (
     });
   }
 
-  return res.json(JSON.parse(data));
+  const progress = JSON.parse(data);
+
+  // --- SELF-HEALING: JUMP START STUCK STUDENT JOBS ---
+  // If status is 'processing' or 'queued' but no activity for > 15 seconds, poke it!
+  const isStuck =
+    (progress.status === "processing" || progress.status === "queued") &&
+    Date.now() - (progress.lastActive || 0) > 15000;
+
+  if (isStuck) {
+    console.log(
+      `[Bulk] 🚨 Student job for ${user.username} appears stuck. Jump-starting via Poller...`,
+    );
+    // Fire and forget direct call to prevent blocking the user
+    const runStuck = async () => {
+      let result;
+      do {
+        result = await processNextStudentBatch();
+      } while (result && result.status === "continued");
+    };
+    runStuck().catch((e) =>
+      console.error("[Bulk] Student stuck jump-start error:", e),
+    );
+  }
+
+  return res.json(progress);
 };
 
 export const uploadStudents = async (req: any, res: Response) => {
@@ -177,10 +201,11 @@ export const uploadStudents = async (req: any, res: Response) => {
         fail: 0,
         percent: 0,
         etaSeconds: 0,
+        lastActive: Date.now(),
       }),
     );
 
-    const startTime = Date.now();
+    const startTimeIn = Date.now();
 
     // 1. Upload the raw buffer to Cloudinary for historical backup (BACKGROUND)
     let cloudinaryUrl = null;
@@ -254,6 +279,7 @@ export const uploadStudents = async (req: any, res: Response) => {
         fail: 0,
         percent: 0,
         etaSeconds: 0,
+        lastActive: Date.now(),
       }),
     );
 
