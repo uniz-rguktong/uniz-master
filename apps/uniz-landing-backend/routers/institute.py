@@ -6,38 +6,47 @@ from database import get_db
 import models
 import schemas
 from dependencies import AdminRole
+from typing import List
 
 router = APIRouter(prefix="/api/institute", tags=["Institute"])
 
 @router.get("/{page_name}", response_model=schemas.InstitutePageResponse, status_code=status.HTTP_200_OK)
 async def get_institute_page(
-    page_name: models.InstitutePageType = Path(..., description="The name of the college info page"), 
+    page_name: str = Path(..., description="The name of the college info page"), 
     db: AsyncSession = Depends(get_db)
 ):
-    result = await db.execute(select(models.InstitutePage).filter(models.InstitutePage.page_name == page_name.value))
+    result = await db.execute(select(models.InstitutePage).filter(models.InstitutePage.page_name == page_name))
     page_data = result.scalars().first()
     
     if not page_data:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"Page '{page_name.value}' not found in database."
+            detail=f"Page '{page_name}' not found in database."
         )
     
     return {"page": page_data.page_name, "sections": page_data.sections, "profiles": page_data.profiles}
 
-@router.post("/{page_name}", response_model=schemas.InstitutePageResponse, status_code=status.HTTP_200_OK)
+
+@router.get("/list/pages", response_model=List[str], status_code=status.HTTP_200_OK)
+async def list_institute_pages(db: AsyncSession = Depends(get_db)):
+    """Returns a list of all dynamically created institute pages (e.g., ['aboutrgukt', 'campuslife'])."""
+    result = await db.execute(select(models.InstitutePage.page_name))
+    pages = result.scalars().all()
+    return pages
+
+@router.put("/{page_name}", response_model=schemas.InstitutePageResponse, status_code=status.HTTP_200_OK)
 async def sync_institute_page(
-    page_name: models.InstitutePageType, 
+    page_name: str,
     data: schemas.InstitutePageResponse, 
     user: AdminRole,
     db: AsyncSession = Depends(get_db)
 ):
     try:
-        result = await db.execute(select(models.InstitutePage).filter(models.InstitutePage.page_name == page_name.value))
+        result = await db.execute(select(models.InstitutePage).filter(models.InstitutePage.page_name == page_name))
         page_data = result.scalars().first()
         
         if not page_data:
-            page_data = models.InstitutePage(page_name=page_name.value)
+            page_data = models.InstitutePage(page_name=page_name)
             db.add(page_data)
 
         page_data.sections = [item.model_dump() for item in data.sections]
