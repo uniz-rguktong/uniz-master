@@ -1,14 +1,10 @@
 from pydantic import BaseModel, Field, AliasChoices
 from typing import List, Optional, Dict, Any
-from models import NotificationType, DepartmentType
 
 # --- SHARED SCHEMAS ---
-# schemas.py
-
 class LinkItem(BaseModel):
     label: str = Field(validation_alias=AliasChoices('text', 'label'))
     url: Optional[str] = None
-
 
 # --- HOME SCHEMAS ---
 class AnnouncementItem(BaseModel):
@@ -52,7 +48,7 @@ class FacultyMember(BaseModel):
     bio: Dict[str, Any]
 
 class DepartmentResponse(BaseModel):
-    dept: DepartmentType
+    dept: str
     faculties: List[FacultyMember]
 
 # --- NOTIFICATION SCHEMAS ---

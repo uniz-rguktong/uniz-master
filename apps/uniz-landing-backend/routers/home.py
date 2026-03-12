@@ -18,11 +18,13 @@ async def get_home_data(db: AsyncSession = Depends(get_db)):
         return {"announcements": [], "stats": [], "images": []}
     return home_data
 
-@router.post("/", response_model=schemas.HomePageResponse, status_code=status.HTTP_200_OK)
-async def sync_home_data(data: schemas.HomePageResponse, 
-                         user: AdminRole,
-                         db: AsyncSession = Depends(get_db)
-                         ):
+
+@router.put("/", response_model=schemas.HomePageResponse, status_code=status.HTTP_200_OK)
+async def sync_home_data(
+    data: schemas.HomePageResponse, 
+    user: AdminRole,
+    db: AsyncSession = Depends(get_db)
+):
     try:
         result = await db.execute(select(models.HomePageData))
         home_data = result.scalars().first()
