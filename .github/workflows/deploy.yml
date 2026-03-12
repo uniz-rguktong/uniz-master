@@ -24,16 +24,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Execute Remote Warp-Deploy
+      - name: Inject Secrets and Deploy
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          MASTER_VAULT: ${{ secrets.MASTER_VAULT }}
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
           timeout: 60s
+          envs: MASTER_VAULT
           script: |
             export DEPLOY_CONTEXT="GITHUB_ACTIONS"
             cd /root/uniz-master
+
+            echo "[Security] Injecting Master Vault..."
+            echo "$MASTER_VAULT" > /root/uniz-secrets.env
+            chmod 600 /root/uniz-secrets.env
 
             echo "[CI/CD] Triggered by ${{ github.actor }} on commit ${{ github.sha }}"
 
