@@ -170,8 +170,10 @@ export const getStudentProfile = async (
       });
     }
 
-    // Edge Caching
-    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=600");
+    // Immediate Freshness for critical profile data
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
 
     // 2. Optimized DB Query
     const profile = await prisma.studentProfile.findUnique({
@@ -392,8 +394,8 @@ export const searchStudents = async (
       where.isApplicationPending = req.body.isApplicationPending;
     }
 
-    // Cache search results for 1 minute
-    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=300");
+    // Disable aggressive caching for searches
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     const [students, total] = await Promise.all([
       prisma.studentProfile.findMany({
         where,
