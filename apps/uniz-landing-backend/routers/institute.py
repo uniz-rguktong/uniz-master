@@ -5,6 +5,7 @@ from sqlalchemy import select
 from database import get_db
 import models
 import schemas
+from dependencies import AdminRole
 
 router = APIRouter(prefix="/api/institute", tags=["Institute"])
 
@@ -28,6 +29,7 @@ async def get_institute_page(
 async def sync_institute_page(
     page_name: models.InstitutePageType, 
     data: schemas.InstitutePageResponse, 
+    user: AdminRole,
     db: AsyncSession = Depends(get_db)
 ):
     try:

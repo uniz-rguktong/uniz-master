@@ -6,6 +6,7 @@ from typing import List
 from database import get_db
 import models
 import schemas
+from dependencies import AdminRole
 
 router = APIRouter(prefix="/api/notifications", tags=["Notifications"])
 
@@ -22,6 +23,7 @@ async def get_notifications(
 async def sync_notifications(
     type: models.NotificationType, 
     data: List[schemas.NotificationResponse], 
+    user: AdminRole,
     db: AsyncSession = Depends(get_db)
 ):
     try:

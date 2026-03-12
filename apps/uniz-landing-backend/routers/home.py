@@ -5,6 +5,7 @@ from sqlalchemy import select
 from database import get_db
 import models
 import schemas
+from dependencies import AdminRole
 
 router = APIRouter(prefix="/api/home", tags=["Home"])
 
@@ -18,7 +19,10 @@ async def get_home_data(db: AsyncSession = Depends(get_db)):
     return home_data
 
 @router.post("/", response_model=schemas.HomePageResponse, status_code=status.HTTP_200_OK)
-async def sync_home_data(data: schemas.HomePageResponse, db: AsyncSession = Depends(get_db)):
+async def sync_home_data(data: schemas.HomePageResponse, 
+                         user: AdminRole,
+                         db: AsyncSession = Depends(get_db)
+                         ):
     try:
         result = await db.execute(select(models.HomePageData))
         home_data = result.scalars().first()
