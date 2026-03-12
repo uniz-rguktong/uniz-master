@@ -7,35 +7,44 @@ from database import get_db
 import models
 import schemas
 from dependencies import AdminRole
+from typing import List
 
 router = APIRouter(prefix="/api/academics", tags=["Academics"])
 
 @router.get("/{page_name}", response_model=List[schemas.AcademicSection], status_code=status.HTTP_200_OK)
-async def get_academic_page(page_name: models.AcademicPageType, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(models.AcademicPage).filter(models.AcademicPage.page_name == page_name.value))
+async def get_academic_page(page_name: str, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(models.AcademicPage).filter(models.AcademicPage.page_name == page_name))
     page_data = result.scalars().first()
     
     if not page_data:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"Page '{page_name.value}' not found in database."
+            detail=f"Page '{page_name}' not found in database."
         )
     
     return page_data.content
 
-@router.post("/{page_name}", response_model=List[schemas.AcademicSection], status_code=status.HTTP_200_OK)
+
+@router.get("/list/pages", response_model=List[str], status_code=status.HTTP_200_OK)
+async def list_academic_pages(db: AsyncSession = Depends(get_db)):
+    """Returns a list of all dynamically created academic pages."""
+    result = await db.execute(select(models.AcademicPage.page_name))
+    pages = result.scalars().all()
+    return pages
+
+@router.put("/{page_name}", response_model=List[schemas.AcademicSection], status_code=status.HTTP_200_OK)
 async def sync_academic_page(
-    page_name: models.AcademicPageType,
+    page_name: str, # Changed from Enum to string
     data: List[schemas.AcademicSection],
     user: AdminRole,
     db: AsyncSession = Depends(get_db)
 ):
     try:
-        result = await db.execute(select(models.AcademicPage).filter(models.AcademicPage.page_name == page_name.value))
+        result = await db.execute(select(models.AcademicPage).filter(models.AcademicPage.page_name == page_name))
         page_data = result.scalars().first()
         
         if not page_data:
-            page_data = models.AcademicPage(page_name=page_name.value)
+            page_data = models.AcademicPage(page_name=page_name)
             db.add(page_data)
 
         page_data.content = [item.model_dump() for item in data]
