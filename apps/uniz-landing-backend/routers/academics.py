@@ -6,6 +6,7 @@ from typing import List
 from database import get_db
 import models
 import schemas
+from dependencies import AdminRole
 
 router = APIRouter(prefix="/api/academics", tags=["Academics"])
 
@@ -25,7 +26,8 @@ async def get_academic_page(page_name: models.AcademicPageType, db: AsyncSession
 @router.post("/{page_name}", response_model=List[schemas.AcademicSection], status_code=status.HTTP_200_OK)
 async def sync_academic_page(
     page_name: models.AcademicPageType,
-    data: List[schemas.AcademicSection], 
+    data: List[schemas.AcademicSection],
+    user: AdminRole,
     db: AsyncSession = Depends(get_db)
 ):
     try:
