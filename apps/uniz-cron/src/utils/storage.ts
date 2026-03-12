@@ -13,11 +13,15 @@ export const runStorageCleanup = async () => {
 
   const commands = [
     {
+<<<<<<< HEAD
       name: "Docker System Prune",
       cmd: 'docker system prune -af --volumes --filter "until=24h"',
     },
     {
       name: "Docker Image Prune",
+=======
+      name: "Docker Images Prune",
+>>>>>>> feature/seating-and-ui-polish
       cmd: 'docker image prune -af --filter "until=24h"',
     },
     {
@@ -25,9 +29,19 @@ export const runStorageCleanup = async () => {
       cmd: 'docker builder prune -af --filter "until=24h"',
     },
     {
+<<<<<<< HEAD
       name: "K3s Image Prune",
       cmd: "crictl --runtime-endpoint unix:///run/k3s/containerd/containerd.sock rmi --prune",
     },
+=======
+      name: "Container Log Truncation",
+      cmd: "find /var/lib/docker/containers/ -name '*-json.log' -exec truncate -s 0 {} \\;",
+    },
+    { name: "K3s Image Prune", cmd: "k3s crictl rmi --prune" },
+    { name: "Journal Log Vacuum", cmd: "journalctl --vacuum-time=1d" },
+    { name: "Apt Cleanup", cmd: "apt-get clean && apt-get autoremove -y" },
+    { name: "Temp File Cleanup", cmd: "rm -rf /tmp/* /var/tmp/*" },
+>>>>>>> feature/seating-and-ui-polish
   ];
 
   for (const { name, cmd } of commands) {

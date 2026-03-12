@@ -43,4 +43,7 @@ next-env.d.ts
 
 /generated/prisma
 src/lib/generated/
+<<<<<<< HEAD
 src/lib/prisma-client/
+=======
+>>>>>>> feature/seating-and-ui-polish

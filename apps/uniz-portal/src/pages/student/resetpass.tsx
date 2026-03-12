@@ -7,7 +7,7 @@ import { useStudentData } from "../../hooks/student_info";
 import { toast } from "react-toastify";
 import { CHANGE_PASS_ENDPOINT } from "../../api/endpoints";
 import { apiClient } from "../../api/apiClient";
-import { KeyRound } from "lucide-react";
+
 
 export default function Resetpassword() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -104,7 +104,7 @@ export default function Resetpassword() {
   return (
     <div className="font-sans text-slate-900">
       <div className="max-w-6xl mx-auto px-4 pb-10">
-        <div className="flex flex-col gap-1.5 mb-8">
+        <div className="flex flex-col gap-1.5 md:mb-8 mb-4">
           <p className="text-slate-500 font-medium text-[13px]">
             Account Security Terminal
           </p>
@@ -114,13 +114,13 @@ export default function Resetpassword() {
         </div>
 
         {/* Main Content */}
-        <div className="bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm">
+        <div className="md:bg-white md:rounded-xl md:overflow-hidden md:border md:border-slate-100 md:shadow-sm bg-transparent">
           <div className="md:flex">
             {/* Form Section */}
             {/* Form Section */}
-            <div className="md:w-2/3 p-6 md:p-8 md:px-10">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-100">
+            <div className="md:w-2/3 py-6 px-0 md:p-8 md:px-10">
+              <div className="flex items-center gap-4 md:mb-8 mb-4">
+                <div className="hidden md:block p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-100">
                   <svg
                     className="w-6 h-6"
                     fill="none"
@@ -135,20 +135,12 @@ export default function Resetpassword() {
                     />
                   </svg>
                 </div>
-                <div>
-                  <h3 className="text-[17px] font-semibold text-slate-900 tracking-tight">
-                    Credential Update
-                  </h3>
-                  <p className="text-[13px] font-medium text-slate-400">
-                    Verify and update your access terminal credentials
-                  </p>
-                </div>
               </div>
 
               <div className="space-y-4 md:space-y-6">
                 {/* Current Password */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
                     Current Password
                   </label>
                   <div className="relative group">
@@ -163,7 +155,7 @@ export default function Resetpassword() {
 
                 {/* New Password */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
                     New Password
                   </label>
                   <div className="relative group">
@@ -195,7 +187,7 @@ export default function Resetpassword() {
 
                 {/* Confirm New Password */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 block ml-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
                     Confirm Password
                   </label>
                   <div className="relative group">
@@ -211,18 +203,10 @@ export default function Resetpassword() {
                 <button
                   onClick={handleResetPassword}
                   disabled={isLoading}
-                  className="w-full h-[50px] bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2"
+                  className="w-full h-[50px] bg-black text-white rounded-xl font-bold text-sm transition-all  flex items-center justify-center gap-2"
                 >
                   {isLoading ? "Updating..." : "Update Password"}
-                  {!isLoading && <KeyRound size={18} />}
-                </button>
-
-                <button
-                  onClick={() => navigateTo("/student")}
-                  className="w-full h-[46px] text-slate-500 hover:text-slate-900 font-bold text-sm transition-colors"
-                  disabled={isLoading}
-                >
-                  Cancel & Return
+                  {!isLoading}
                 </button>
               </div>
             </div>
