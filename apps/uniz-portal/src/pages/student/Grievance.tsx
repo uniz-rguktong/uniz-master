@@ -65,46 +65,38 @@ export default function Grievance() {
 
   return (
     <div className="font-sans text-slate-900">
-      <div className="max-w-6xl mx-auto px-4 pb-10">
-        <div className="flex flex-col gap-1.5 mb-6">
-          <p className="text-slate-500 font-medium text-[13px]">
+      <div className="max-w-6xl mx-auto px-4 pb-4 md:pb-10">
+        <div className="flex flex-col gap-0.5 md:mb-6 mb-2">
+          <p className="text-slate-500 font-medium text-[11px] md:text-[13px]">
             Institutional Support Terminal
           </p>
-          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+          <h1 className="text-xl md:text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
             Grievance Redressal System
           </h1>
         </div>
 
         {/* Main Content */}
-        <div className="bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm">
+        <div className="md:bg-white md:rounded-xl md:overflow-hidden md:border md:border-slate-100 md:shadow-sm bg-transparent">
           <div className="md:flex">
             {/* Form Section */}
-            <div className="md:w-2/3 p-6 md:p-10 border-r border-slate-50">
-              <div className="flex items-center gap-4 mb-8">
+            <div className="md:w-2/3 md:p-10 md:border-r border-slate-50 py-2 md:py-6 px-0">
+              <div className="hidden md:flex items-center gap-4 md:mb-8 mb-4">
                 <div className="text-blue-500">
                   <AlertCircle size={24} />
                 </div>
-                <div>
-                  <h3 className="text-[17px] font-semibold text-slate-900 tracking-tight">
-                    Initialize New Grievance
-                  </h3>
-                  <p className="text-[13px] font-medium text-slate-400">
-                    Document your concerns following official protocols
-                  </p>
-                </div>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-3 md:space-y-6">
                 {/* Category */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 block ml-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
                     Category
                   </label>
                   <div className="relative group">
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 font-semibold text-[15px] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all appearance-none text-slate-900"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 md:py-3.5 font-semibold text-sm md:text-[15px] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all appearance-none text-slate-900"
                     >
                       <option value="Hostel">Hostel</option>
                       <option value="Mess">Mess</option>
@@ -132,19 +124,19 @@ export default function Grievance() {
 
                 {/* Description */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 block ml-1">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
                     Description
                   </label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Provide detailed information about your grievance..."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-5 font-semibold text-[15px] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all min-h-[160px] resize-none text-slate-900 placeholder:text-slate-300 placeholder:font-normal"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-5 font-semibold text-sm md:text-[15px] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all h-[100px] md:min-h-[160px] resize-none text-slate-900 placeholder:text-slate-300 placeholder:font-normal"
                   />
                 </div>
 
                 {/* Anonymous Toggle */}
-                <div className="flex items-center gap-3 ml-1 bg-slate-50/50 p-3 rounded-xl border border-slate-100/50">
+                <div className="flex items-center gap-3 ml-1 bg-slate-50/50 p-2 md:p-3 rounded-xl border border-slate-100/50">
                   <input
                     type="checkbox"
                     id="anonymous"
@@ -163,7 +155,7 @@ export default function Grievance() {
                 {/* Action Buttons */}
                 <div className="pt-4">
                   <button
-                    className="w-full py-4 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-lg shadow-slate-200"
+                    className="w-full py-3.5 md:py-4 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-lg shadow-slate-200"
                     onClick={() => handleSubmit()}
                     disabled={loading}
                   >
@@ -180,7 +172,7 @@ export default function Grievance() {
                   Official Guidelines
                 </h3>
 
-                <div className="space-y-6">
+                <div className="space-y-3 md:space-y-6">
                   <div className="flex items-start gap-4">
                     <div className="w-6 h-6 rounded-lg flex items-center justify-center bg-white border border-slate-100 text-slate-900 font-bold text-[10px] shrink-0 shadow-sm">
                       01
