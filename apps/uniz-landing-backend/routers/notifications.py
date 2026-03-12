@@ -12,16 +12,24 @@ router = APIRouter(prefix="/api/notifications", tags=["Notifications"])
 
 @router.get("/", response_model=List[schemas.NotificationResponse], status_code=status.HTTP_200_OK)
 async def get_notifications(
-    type: models.NotificationType = Query(..., description="Select the category"),
+    type: str = Query(..., description="Select the category"),
     db: AsyncSession = Depends(get_db)
 ):
     result = await db.execute(select(models.Notification).filter(models.Notification.category == type))
     notifications = result.scalars().all()
     return notifications
 
-@router.post("/", status_code=status.HTTP_200_OK)
+@router.get("/list/categories", response_model=List[str], status_code=status.HTTP_200_OK)
+async def list_notification_categories(db: AsyncSession = Depends(get_db)):
+    """Returns a list of all unique notification categories."""
+    result = await db.execute(select(models.Notification.category).distinct())
+    categories = result.scalars().all()
+    
+    return [c for c in categories if c]
+
+@router.put("/", status_code=status.HTTP_200_OK)
 async def sync_notifications(
-    type: models.NotificationType, 
+    type: str,
     data: List[schemas.NotificationResponse], 
     user: AdminRole,
     db: AsyncSession = Depends(get_db)
@@ -42,7 +50,7 @@ async def sync_notifications(
         db.add_all(new_records)
         await db.commit()
         
-        return {"message": f"Successfully synced {len(new_records)} items for {type.value}"}
+        return {"message": f"Successfully synced {len(new_records)} items for {type}"}
     except Exception as e:
         await db.rollback()
         raise HTTPException(
