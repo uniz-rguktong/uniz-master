@@ -24,6 +24,10 @@ export const runStorageCleanup = async () => {
       name: "Docker Build Cache Prune",
       cmd: 'docker builder prune -af --filter "until=24h"',
     },
+    {
+      name: "K3s Image Prune",
+      cmd: "crictl --runtime-endpoint unix:///run/k3s/containerd/containerd.sock rmi --prune",
+    },
   ];
 
   for (const { name, cmd } of commands) {
