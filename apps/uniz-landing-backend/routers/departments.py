@@ -6,25 +6,36 @@ from database import get_db
 import models
 import schemas
 from dependencies import AdminRole
+from typing import List
 
 router = APIRouter(prefix="/api/departments", tags=["Departments Staff"])
 
 @router.get("/{dept_code}", response_model=schemas.DepartmentResponse, status_code=status.HTTP_200_OK)
-async def get_department(dept_code: models.DepartmentType, db: AsyncSession = Depends(get_db)):
+async def get_department(dept_code: str, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(models.Faculty).filter(models.Faculty.department == dept_code))
     faculties = result.scalars().all()
     
     return {"dept": dept_code, "faculties": faculties}
 
-@router.post("/{dept_code}", status_code=status.HTTP_200_OK)
+
+
+@router.get("/list/all", response_model=List[str], status_code=status.HTTP_200_OK)
+async def list_departments(db: AsyncSession = Depends(get_db)):
+    """Returns a list of all unique department codes currently in the database."""
+    result = await db.execute(select(models.Faculty.department).distinct())
+    departments = result.scalars().all()
+    
+    # Filter out any None values just in case
+    return [d for d in departments if d]
+
+@router.put("/{dept_code}", status_code=status.HTTP_200_OK)
 async def sync_department(
-    dept_code: models.DepartmentType,
+    dept_code: str,
     data: schemas.DepartmentResponse,
     user: AdminRole,
     db: AsyncSession = Depends(get_db)
 ):
     try:
-        # Using the async delete pattern
         await db.execute(delete(models.Faculty).where(models.Faculty.department == dept_code))
         
         new_faculties = []
@@ -41,7 +52,8 @@ async def sync_department(
         db.add_all(new_faculties)
         await db.commit()
         
-        return {"message": f"Successfully synced {len(new_faculties)} faculties for {dept_code.value}"}
+        
+        return {"message": f"Successfully synced {len(new_faculties)} faculties for {dept_code}"}
     except Exception as e:
         await db.rollback()
         raise HTTPException(
