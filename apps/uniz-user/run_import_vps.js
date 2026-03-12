@@ -5,7 +5,7 @@ const path = require("path");
 const prisma = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://neondb_owner:REDACTED_DB_KEY@ep-red-queen-a12hqixj.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&schema=user_v2",
+      url: process.env.USER_DATABASE_URL || process.env.DATABASE_URL,
     },
   },
 });
