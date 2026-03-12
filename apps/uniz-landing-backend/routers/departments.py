@@ -5,6 +5,7 @@ from sqlalchemy import select, delete
 from database import get_db
 import models
 import schemas
+from dependencies import AdminRole
 
 router = APIRouter(prefix="/api/departments", tags=["Departments Staff"])
 
@@ -19,6 +20,7 @@ async def get_department(dept_code: models.DepartmentType, db: AsyncSession = De
 async def sync_department(
     dept_code: models.DepartmentType,
     data: schemas.DepartmentResponse,
+    user: AdminRole,
     db: AsyncSession = Depends(get_db)
 ):
     try:
