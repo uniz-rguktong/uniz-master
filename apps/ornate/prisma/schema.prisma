@@ -1,7 +1,11 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["multiSchema"]
+<<<<<<< HEAD
   output          = "../src/lib/prisma-client"
+=======
+  output          = "../src/lib/generated/client"
+>>>>>>> feature/seating-and-ui-polish
 }
 
 datasource db {
