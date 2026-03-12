@@ -69,7 +69,7 @@ graph TD
 | **Orchestration**    | K3s (Kubernetes)     | Production cluster management and auto-scaling.      |
 | **CI/CD**            | GitHub Actions       | Automated build, test, and VPS deployment pipelines. |
 
-### 🚀 Master Setup (All Systems)
+### Master Setup (All Systems)
 
 Run the entire UniZ mission control center with a single setup command. Works natively on **macOS, Linux, and Windows (WSL/Git Bash)**:
 
@@ -92,7 +92,7 @@ Run the entire UniZ mission control center with a single setup command. Works na
 - **Faculty/HOD**: `hod_cse` / `password123`
 - **Student**: (Use bulk onboarding / seeder to create)
 
-## 🔐 Environment & Security Strategy
+## Environment & Security Strategy
 
 UniZ uses a "Shielded Vault" pattern to isolate Local and Production environments:
 
