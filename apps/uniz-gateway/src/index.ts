@@ -92,7 +92,7 @@ const cacheMiddleware = async (
 
   try {
     const cachedResponse = await redis.get(cacheKey);
-    if (cachedResponse) {
+    if (cachedResponse && req.headers["cache-control"] !== "no-cache") {
       const { data, headers, status } = JSON.parse(cachedResponse);
       console.log(`[Cache-Hit] ${req.url}`);
 
@@ -110,15 +110,15 @@ const cacheMiddleware = async (
   // If No Cache, intercept the send to store it
   const originalSend = res.send;
   (res as any).send = function (body: any) {
-    if (res.statusCode === 200) {
+    if (res.statusCode === 200 && req.headers["cache-control"] !== "no-cache") {
       const respToCache = {
         data: body,
         headers: res.getHeaders(),
         status: res.statusCode,
       };
-      // Cache for 60 seconds by default
+      // Cache for 1 second to allow near real-time updates while protecting against bursts
       redis
-        .setex(cacheKey, 60, JSON.stringify(respToCache))
+        .setex(cacheKey, 1, JSON.stringify(respToCache))
         .catch((err: Error) => console.error("[Cache-Write-Error]", err));
     }
     return originalSend.apply(res, [body]);
@@ -225,10 +225,11 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
       );
 
       if (response.status === 200) {
+        // Cache for 1 second instead of 60
         redis
           .setex(
             cacheKey,
-            60,
+            1,
             JSON.stringify({
               data: response.data,
               headers: response.headers,

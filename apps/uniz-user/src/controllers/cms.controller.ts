@@ -13,8 +13,8 @@ const prisma = new PrismaClient();
 // Consolidated public banners
 export const getPublicBanners = async (req: Request, res: Response) => {
   try {
-    // Cache for 5 mins
-    res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=1200");
+    // Cache for 10 seconds (Balance between load and freshness)
+    res.setHeader("Cache-Control", "s-maxage=10, stale-while-revalidate=60");
     const banners = await prisma.banner.findMany({
       where: { isVisible: true },
       orderBy: { createdAt: "desc" },
@@ -30,7 +30,7 @@ export const getPublicBanners = async (req: Request, res: Response) => {
 // Consolidated notifications (Updates only, Tenders removed)
 export const getPublicNotifications = async (req: Request, res: Response) => {
   try {
-    res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=1200");
+    res.setHeader("Cache-Control", "s-maxage=10, stale-while-revalidate=60");
 
     const updates = await prisma.publicNotification.findMany({
       where: { isVisible: true },
