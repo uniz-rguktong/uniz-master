@@ -170,10 +170,8 @@ export const getStudentProfile = async (
       });
     }
 
-    // Immediate Freshness for critical profile data
-    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
+    // Edge Caching
+    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=600");
 
     // 2. Optimized DB Query
     const profile = await prisma.studentProfile.findUnique({
@@ -394,8 +392,8 @@ export const searchStudents = async (
       where.isApplicationPending = req.body.isApplicationPending;
     }
 
-    // Disable aggressive caching for searches
-    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    // Cache search results for 1 minute
+    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=300");
     const [students, total] = await Promise.all([
       prisma.studentProfile.findMany({
         where,
@@ -1080,14 +1078,14 @@ export const updateFacultyProfile = async (
 
     return res.json({ success: true, faculty: mapFacultyProfile(updated) });
   } catch (e: any) {
-    if (e.code === 'P2002') {
+    if (e.code === "P2002") {
       return res.status(400).json({
         success: false,
         code: ErrorCode.VALIDATION_ERROR,
-        message: "Email or username already in use by another account."
+        message: "Email or username already in use by another account.",
       });
     }
-    
+
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to update profile",
@@ -1173,17 +1171,17 @@ export const updateFacultyProfileSelf = async (
     return res.json({ success: true, faculty: mapFacultyProfile(updated) });
   } catch (e: any) {
     console.error("Update Faculty Profile Self Error:", e);
-    if (e.code === 'P2002') {
+    if (e.code === "P2002") {
       return res.status(400).json({
         success: false,
         code: ErrorCode.VALIDATION_ERROR,
-        message: "Email already in use by another account."
+        message: "Email already in use by another account.",
       });
     }
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to update profile",
-      details: e.message || e
+      details: e.message || e,
     });
   }
 };
@@ -1292,7 +1290,9 @@ export const updateAdminProfile = async (
       create: {
         username: user.username,
         role: user.role as string,
-        name: updates.name || user.username.charAt(0).toUpperCase() + user.username.slice(1),
+        name:
+          updates.name ||
+          user.username.charAt(0).toUpperCase() + user.username.slice(1),
         email: updates.email || `${user.username}@rguktong.ac.in`,
         ...adminData,
       },
@@ -1301,14 +1301,14 @@ export const updateAdminProfile = async (
     return res.json({ success: true, data: mapAdminProfile(updated) });
   } catch (e: any) {
     console.error("Update Admin Profile Error:", e);
-    
+
     // Handle Prisma Unique Constraint Violation
-    if (e.code === 'P2002') {
+    if (e.code === "P2002") {
       return res.status(400).json({
         success: false,
         code: ErrorCode.VALIDATION_ERROR,
         message: "Email already in use by another account.",
-        details: "A record with this email already exists."
+        details: "A record with this email already exists.",
       });
     }
 
