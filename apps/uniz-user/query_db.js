@@ -1,7 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient({
-  datasourceUrl:
-    "postgresql://neondb_owner:REDACTED_DB_KEY@ep-red-queen-a12hqixj.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&schema=notifications_v2",
+  datasourceUrl: process.env.NOTIFICATION_DATABASE_URL || process.env.DATABASE_URL,
 });
 async function run() {
   const total = await prisma.studentProfile.count();
