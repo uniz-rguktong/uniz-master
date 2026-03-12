@@ -5,6 +5,8 @@ const axios = require("axios");
 
 // Using ONLY the local VPS database URL
 const DATABASE_URL =
+  process.env.USER_DATABASE_URL ||
+  process.env.DATABASE_URL ||
   "postgresql://user:password@localhost:5432/uniz_db?sslmode=disable&schema=user_v2";
 
 const prisma = new PrismaClient({
