@@ -1,9 +1,19 @@
 import requests
-import time
+import sys
+from config import settings
 
-# --- CONFIGURATION ---
+
 OLD_BASE_URL = "https://college-scraped.vercel.app"
-NEW_BASE_URL = "http://localhost:8000" # Update this to your new local or prod URL
+NEW_BASE_URL = "http://localhost:8000"
+
+
+TOKEN = settings.DUMMY_TOKEN
+
+
+HEADERS = {
+    "Authorization": f"Bearer {TOKEN}",
+    "Content-Type": "application/json"
+}
 
 DEPARTMENTS = ["CSE", "CIVIL", "ECE", "EEE", "ME", "MATHEMATICS", "PHYSICS", "CHEMISTRY", "IT", "BIOLOGY", "ENGLISH", "LIB", "MANAGEMENT", "PED", "TELUGU", "YOGA"]
 INSTITUTE_PAGES = ["aboutrgukt", "campuslife", "edusys", "govcouncil", "rtiinfo", "scst"]
@@ -11,41 +21,47 @@ ACADEMIC_PAGES = ["AcademicPrograms", "AcademicCalender", "AcademicRegulations",
 NOTIFICATION_TYPES = ["news_updates", "tenders", "careers"]
 
 def migrate_data():
-    print("🚀 Starting Migration...")
+    if TOKEN == "your_fresh_jwt_token_here":
+        print("❌ Please update the TOKEN variable at the top of the script first!")
+        sys.exit(1)
 
-    # 1. Migrate HOME
+    print("🚀 Starting Authenticated Migration...")
+
+    # 1. Migrate HOME (Trailing slash included)
     print("🏠 Migrating Home Data...")
     home_data = requests.get(f"{OLD_BASE_URL}/api/home").json()
-    requests.post(f"{NEW_BASE_URL}/api/home/", json=home_data)
+    resp = requests.post(f"{NEW_BASE_URL}/api/home/", json=home_data, headers=HEADERS)
+    print(f"   Status: {resp.status_code}")
 
     # 2. Migrate INSTITUTE PAGES
     for page in INSTITUTE_PAGES:
         print(f"🏛️ Migrating Institute: {page}...")
         data = requests.get(f"{OLD_BASE_URL}/api/institute/{page}").json()
-        # We hit the new POST endpoint using the page name as the path param
-        requests.post(f"{NEW_BASE_URL}/api/institute/{page}", json=data)
+        resp = requests.post(f"{NEW_BASE_URL}/api/institute/{page}", json=data, headers=HEADERS)
+        print(f"   Status: {resp.status_code}")
 
     # 3. Migrate ACADEMIC PAGES
     for page in ACADEMIC_PAGES:
         print(f"🎓 Migrating Academics: {page}...")
         data = requests.get(f"{OLD_BASE_URL}/api/academics/{page}").json()
-        requests.post(f"{NEW_BASE_URL}/api/academics/{page}", json=data)
+        resp = requests.post(f"{NEW_BASE_URL}/api/academics/{page}", json=data, headers=HEADERS)
+        print(f"   Status: {resp.status_code}")
 
-    # 4. Migrate NOTIFICATIONS
+    # 4. Migrate NOTIFICATIONS (Trailing slash included)
     for n_type in NOTIFICATION_TYPES:
         print(f"🔔 Migrating Notifications: {n_type}...")
-        # The old API uses query params, our new POST uses query params too
         data = requests.get(f"{OLD_BASE_URL}/api/notifications", params={"type": n_type}).json()
-        requests.post(f"{NEW_BASE_URL}/api/notifications/", params={"type": n_type}, json=data)
+        resp = requests.post(f"{NEW_BASE_URL}/api/notifications/", params={"type": n_type}, json=data, headers=HEADERS)
+        print(f"   Status: {resp.status_code}")
 
-    # 5. Migrate DEPARTMENTS (Deep Bio Fetch)
+    # 5. Migrate DEPARTMENTS (Deep Sync)
     for dept in DEPARTMENTS:
         print(f"👨‍🏫 Migrating Dept: {dept} (Deep Sync)...")
-        # Fetching with deep=true to get the full bio details
         data = requests.get(f"{OLD_BASE_URL}/api/departments/{dept}", params={"deep": True}).json()
-        requests.post(f"{NEW_BASE_URL}/api/departments/{dept}", json=data)
+        resp = requests.post(f"{NEW_BASE_URL}/api/departments/{dept}", json=data, headers=HEADERS)
+        print(f"   Status: {resp.status_code}")
 
-    print("\n✅ Migration Complete! Your new database is now fully populated.")
+    print("\n✅ Migration Complete! Your database is fully populated and secured.")
 
 if __name__ == "__main__":
     try:
