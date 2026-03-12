@@ -39,12 +39,14 @@
   html {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: auto;
   }
 
   body {
     overflow-x: hidden;
     scroll-behavior: smooth;
     text-rendering: optimizeLegibility;
+    overscroll-behavior-y: auto;
   }
 
   * {
@@ -347,4 +349,30 @@
   100% {
     offset-distance: 100%;
   }
+}
+
+/* Modern Mobile Menu Additions */
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-0.3em);
+  }
+  40% {
+    transform: translateY(0);
+  }
+  60% {
+    transform: translateY(-0.1em);
+  }
+  80% {
+    transform: translateY(0);
+  }
+}
+
+:root {
+  --chart-2: #2dd4bf;
+  --chart-3: #fb923c;
+  --chart-4: #818cf8;
+  --chart-5: #f472b6;
 }

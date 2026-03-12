@@ -4,16 +4,15 @@ import axios from "axios";
 import { student, studentAuthLoading } from "../../store";
 import {
   ChevronDown,
-  Award,
+  CalendarCheck,
   AlertCircle,
-  CheckCircle,
   Download,
 } from "lucide-react";
 import { GET_ATTENDANCE, DOWNLOAD_ATTENDANCE } from "../../api/endpoints";
 import { downloadFile } from "../../api/apiClient";
 
 interface AttendanceRecord {
-  subject: string | { name: string; [key: string]: any };
+  subject: string | { name: string;[key: string]: any };
   totalClasses: number;
   attendedClasses: number;
   percentage: string | number;
@@ -164,17 +163,11 @@ export default function Attendance() {
           </h1>
         </div>
         {/* Selection Criteria */}
-        <div className="mb-8 bg-white p-6 rounded-xl border border-slate-100 shadow-sm transition-all duration-300">
-          <h2 className="text-[15px] font-semibold tracking-tight text-slate-700 mb-6 flex items-center gap-2">
-            <div className="p-1.5 bg-blue-500 rounded-lg text-white shadow-sm shadow-blue-50">
-              <CheckCircle size={16} />
-            </div>
-            Select Tracking Criteria
-          </h2>
+        <div className="mb-8 md:bg-white p-6 md:rounded-xl md:border md:border-slate-100 md:shadow-sm bg-transparent transition-all duration-300 px-0 md:px-6">
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="relative group">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block ml-0.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
                 Academic Year
               </label>
               <div
@@ -193,11 +186,10 @@ export default function Attendance() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-semibold hover:bg-slate-50 transition-colors ${
-                        selectedYear === year
-                          ? "bg-slate-950 text-white"
-                          : "text-slate-600"
-                      }`}
+                      className={`p-3 cursor-pointer text-sm font-semibold hover:bg-slate-50 transition-colors ${selectedYear === year
+                        ? "bg-slate-950 text-white"
+                        : "text-slate-600"
+                        }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setSelectedSemester(
@@ -217,7 +209,7 @@ export default function Attendance() {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block ml-0.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
                 Semester
               </label>
               <div className="relative">
@@ -254,7 +246,7 @@ export default function Attendance() {
                     Syncing...
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1.5">View Matrix</span>
+                  <span className="flex items-center gap-1.5">Get Attendance</span>
                 )}
               </button>
             </div>
@@ -327,8 +319,8 @@ export default function Attendance() {
 
               {/* Content */}
               {!attendanceData.attendance ||
-              !Array.isArray(attendanceData.attendance) ||
-              attendanceData.attendance.length === 0 ? (
+                !Array.isArray(attendanceData.attendance) ||
+                attendanceData.attendance.length === 0 ? (
                 <div className="bg-slate-50 rounded-xl p-8 text-center border border-slate-200">
                   <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm border border-slate-100">
                     <AlertCircle size={28} className="text-slate-400" />
@@ -342,11 +334,11 @@ export default function Attendance() {
                   </p>
                 </div>
               ) : (
-                <div className="bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm mt-4">
+                <div className="md:bg-white md:rounded-xl overflow-hidden md:border md:border-slate-100 md:shadow-sm mt-4 bg-transparent border-t border-slate-100">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-slate-200 bg-slate-50/50">
+                        <tr className="border-b border-slate-200 md:bg-slate-50/50 bg-transparent">
                           <th className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">
                             Subject
                           </th>
@@ -382,16 +374,15 @@ export default function Attendance() {
                                 </td>
                                 <td className="px-4 py-2 text-center">
                                   <span
-                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                                      parseFloat(String(record.percentage)) >=
+                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${parseFloat(String(record.percentage)) >=
                                       75
-                                        ? "bg-blue-600 text-white"
-                                        : parseFloat(
-                                              String(record.percentage),
-                                            ) >= 65
-                                          ? "bg-slate-200 text-slate-700"
-                                          : "bg-slate-100 text-slate-400"
-                                    }`}
+                                      ? "bg-blue-600 text-white"
+                                      : parseFloat(
+                                        String(record.percentage),
+                                      ) >= 65
+                                        ? "bg-slate-200 text-slate-700"
+                                        : "bg-slate-100 text-slate-400"
+                                      }`}
                                   >
                                     {record.percentage}%
                                   </span>
@@ -403,10 +394,10 @@ export default function Attendance() {
                     </table>
                   </div>
 
-                  <div className="px-6 py-8 bg-slate-950 text-white mt-0 shadow-inner">
+                  <div className="px-6 py-8 md:bg-slate-950 text-white md:mt-0 shadow-inner bg-transparent mt-4 border-t border-slate-100">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                       <div>
-                        <h3 className="text-base font-semibold tracking-tight">
+                        <h3 className="text-base font-semibold tracking-tight text-slate-800 md:text-white">
                           Aggregate Attendance
                         </h3>
                       </div>
@@ -416,7 +407,7 @@ export default function Attendance() {
                           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">
                             Semester Avg :
                           </p>
-                          <p className="text-3xl font-semibold text-white tracking-tighter">
+                          <p className="text-3xl font-semibold text-slate-900 md:text-white tracking-tighter">
                             {(
                               attendanceData.attendance.reduce(
                                 (acc, curr: any) =>
@@ -462,8 +453,8 @@ export default function Attendance() {
           !resultsFetched &&
           !error && (
             <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-12 text-center">
-              <div className="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-50">
-                <Award size={32} className="text-slate-300" />
+              <div className="md:bg-white w-16 h-16 md:rounded-2xl flex items-center justify-center mx-auto mb-6 md:shadow-sm md:border md:border-slate-50 bg-transparent">
+                <CalendarCheck size={32} className="text-slate-300" />
               </div>
               <h3 className="text-base font-semibold mb-2 text-slate-800">
                 No Snapshot Selected

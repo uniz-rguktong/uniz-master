@@ -39,7 +39,7 @@ export default function CurrentSemester() {
   if (!data?.semester) {
     return (
       <div className="max-w-4xl mx-auto py-10 text-center">
-        <div className="bg-white p-12 rounded-3xl border border-slate-100 shadow-sm">
+        <div className="md:bg-white p-12 md:rounded-3xl md:border md:border-slate-100 md:shadow-sm bg-transparent">
           <Layers className="w-16 h-16 text-slate-200 mx-auto mb-6" />
           <h2 className="text-2xl font-black text-slate-900 mb-2">
             No Active Semester
@@ -74,7 +74,7 @@ export default function CurrentSemester() {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="bg-white p-4 px-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center">
+          <div className="md:bg-white p-4 px-6 md:rounded-2xl md:border md:border-slate-100 md:shadow-sm bg-transparent flex flex-col items-center">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               Subjects
             </span>
@@ -82,7 +82,7 @@ export default function CurrentSemester() {
               {studentData?.summary?.subjectCount || 0}
             </span>
           </div>
-          <div className="bg-white p-4 px-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center">
+          <div className="md:bg-white p-4 px-6 md:rounded-2xl md:border md:border-slate-100 md:shadow-sm bg-transparent flex flex-col items-center">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               Total Credits
             </span>
@@ -98,7 +98,7 @@ export default function CurrentSemester() {
         {studentData?.registrations?.map((reg: any) => (
           <div
             key={reg.id}
-            className="group bg-white p-5 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-blue-100 transition-all duration-300 relative overflow-hidden"
+            className="group md:bg-white p-5 md:rounded-3xl md:border md:border-slate-100 md:shadow-sm hover:shadow-xl hover:border-blue-100 transition-all duration-300 relative overflow-hidden bg-transparent border-b border-slate-100 last:border-0"
           >
             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
               <Book className="w-20 h-20" />
