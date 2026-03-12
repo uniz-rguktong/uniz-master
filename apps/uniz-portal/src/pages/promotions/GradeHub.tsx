@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { apiClient, downloadFile } from "../../api/apiClient";
 import { student, studentAuthLoading } from "../../store";
 
-import { ChevronDown, Award, AlertCircle, Download } from "lucide-react";
+import { ChevronDown, GraduationCap, AlertCircle, Download } from "lucide-react";
 import { GET_GRADES, DOWNLOAD_GRADES } from "../../api/endpoints";
 
 // Helper function to truncate long text
@@ -169,21 +169,12 @@ export default function GradeHub() {
             Academic Performance Terminal
           </p>
           <h1 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
-            Results & Transcripts
+            Results
           </h1>
         </div>
 
         {/* Selection Criteria */}
-        <div className="mb-8 bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="bg-blue-500 text-white p-1.5 rounded-lg shadow-sm shadow-blue-50">
-              <Award size={16} />
-            </div>
-            <h2 className="text-[15px] font-semibold tracking-tight text-slate-700">
-              Select Recording Criteria
-            </h2>
-          </div>
-
+        <div className="mb-8 md:bg-white p-6 px-0 md:px-6 md:rounded-xl md:border md:border-slate-100 md:shadow-sm bg-transparent">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="relative group">
               <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
@@ -205,11 +196,10 @@ export default function GradeHub() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${
-                        selectedYear === year
-                          ? "bg-slate-950 text-white"
-                          : "hover:bg-slate-50 text-slate-600"
-                      }`}
+                      className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${selectedYear === year
+                        ? "bg-slate-950 text-white"
+                        : "hover:bg-slate-50 text-slate-600"
+                        }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setShowDropdown(false);
@@ -249,10 +239,7 @@ export default function GradeHub() {
               </div>
             </div>
 
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
-                Actions
-              </label>
+            <div className="flex items-end">
               <button
                 onClick={handleFetchResults}
                 className="w-full h-[46px] bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm"
@@ -263,7 +250,7 @@ export default function GradeHub() {
                     Processing...
                   </span>
                 ) : (
-                  <span>View Records</span>
+                  <span>Get Results</span>
                 )}
               </button>
             </div>
@@ -296,9 +283,9 @@ export default function GradeHub() {
 
         {/* Results Section */}
         {resultsFetched && grades && grades.success && !isLoading && (
-          <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+          <div className="md:bg-white md:border md:border-slate-100 md:rounded-xl overflow-hidden md:shadow-sm bg-transparent">
             {/* Results Header */}
-            <div className="bg-white border-b border-slate-50 px-6 py-5 flex justify-between items-center">
+            <div className="md:bg-white border-b border-slate-50 md:px-6 py-5 flex justify-between items-center bg-transparent px-0">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">
                   Transcript For
@@ -328,7 +315,7 @@ export default function GradeHub() {
 
             {/* Content */}
             {!grades.calculation_details ||
-            grades.calculation_details.length === 0 ? (
+              grades.calculation_details.length === 0 ? (
               <div className="p-12 text-center">
                 <AlertCircle
                   size={48}
@@ -350,10 +337,10 @@ export default function GradeHub() {
                       <div className="w-1 h-3 bg-blue-500 rounded-full"></div>{" "}
                       Detailed Grades
                     </h3>
-                    <div className="rounded-xl border border-slate-200 bg-white">
+                    <div className="md:rounded-xl md:border md:border-slate-200 md:bg-white bg-transparent">
                       <table className="w-full text-sm table-fixed">
                         <thead>
-                          <tr className="bg-blue-50/50 border-b border-slate-200">
+                          <tr className="md:bg-blue-50/50 border-b border-slate-200 bg-transparent">
                             <th className="px-2 py-3 text-left font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[55%]">
                               Subjects
                             </th>
@@ -387,11 +374,10 @@ export default function GradeHub() {
                                 <td className="px-2 py-2.5 text-center">
                                   <div className="flex flex-col items-center gap-0.5">
                                     <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
-                                        item.grade === "Ex"
-                                          ? "bg-blue-600 text-white"
-                                          : "bg-slate-100 text-slate-800"
-                                      }`}
+                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${item.grade === "Ex"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-slate-100 text-slate-800"
+                                        }`}
                                     >
                                       {item.grade}
                                     </span>
@@ -408,8 +394,8 @@ export default function GradeHub() {
                                 <td className="px-2 py-2.5 text-center text-slate-400 font-medium text-[10px]">
                                   {item.passDate
                                     ? new Date(
-                                        item.passDate,
-                                      ).toLocaleDateString()
+                                      item.passDate,
+                                    ).toLocaleDateString()
                                     : "-"}
                                 </td>
                               </tr>
@@ -431,11 +417,10 @@ export default function GradeHub() {
                                   </td>
                                   <td className="px-2 py-2.5 text-center">
                                     <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
-                                        grade === "Ex"
-                                          ? "bg-blue-600 text-white"
-                                          : "bg-slate-100 text-slate-800"
-                                      }`}
+                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${grade === "Ex"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-slate-100 text-slate-800"
+                                        }`}
                                     >
                                       {grade}
                                     </span>
@@ -453,7 +438,7 @@ export default function GradeHub() {
                 </div>
 
                 {/* GPA Display - Centered below table */}
-                <div className="px-6 py-8 bg-slate-50/30 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 border-t border-slate-50">
+                <div className="px-6 py-8 md:bg-slate-50/30 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 border-t border-slate-50 bg-transparent">
                   {/* SGPA Section */}
                   <div className="flex flex-col items-center">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
@@ -537,13 +522,13 @@ export default function GradeHub() {
           !resultsFetched &&
           !error && (
             <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center">
-              <div className="bg-white w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
-                <Award size={40} className="text-blue-600" />
+              <div className="md:bg-white w-20 h-20 md:rounded-2xl flex items-center justify-center mx-auto mb-6 md:shadow-sm md:border md:border-slate-100 bg-transparent">
+                <GraduationCap size={40} className="text-blue-600" />
               </div>
 
               <h3 className="text-2xl font-black mb-3">No Results Selected</h3>
               <p className="text-slate-500 mb-6 max-w-sm mx-auto font-medium">
-                Select an academic year and semester above, then click "View
+                Select an academic year and semester above, then click "Get
                 Results" to see your grades.
               </p>
             </div>
