@@ -1,10 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useIsAuth } from "../hooks/is_authenticated";
-import { motion } from "framer-motion";
+// motion removed as it's unused in this file
 import {
   Activity,
-  ArrowUpRight,
   Lock,
   Smartphone,
   Download,
@@ -16,12 +15,13 @@ import DatabaseWithRestApi from "../components/ui/database-with-rest-api";
 import { Features } from "../components/ui/features-9";
 import GlobeFeature from "../components/ui/globe-feature-section";
 import { usePWAInstall } from "../hooks/usePWAInstall";
+import { HeroBlock } from "../components/ui/hero-block-shadcnui";
 
 export default function Home() {
   useIsAuth();
   const navigate = useNavigate();
   const [banners, setBanners] = useState<any[]>([]);
-  const { isInstalled, install } = usePWAInstall();
+  const { install } = usePWAInstall();
 
   const handleInstallClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -217,69 +217,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-transparent flex flex-col font-sans">
-      {/* CENTERED PREMIUM HERO SECTION */}
-      <section className="relative min-h-[75vh] flex flex-col items-center justify-center bg-transparent overflow-hidden pt-6 pb-10 px-[9px]">
-        <div className="absolute top-0 inset-x-0 h-full bg-grid opacity-20 pointer-events-none"></div>
-
-        <div className="w-full z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative w-full border border-slate-100 rounded-[3rem] px-[9px] py-12 md:py-20 bg-transparent shadow-[0_32px_64px_-16px_rgba(0,0,0,0.02)] flex flex-col items-center text-center overflow-hidden"
-          >
-            {/* Background Accent */}
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-6xl md:text-9xl font-black text-slate-950 tracking-[-0.05em] leading-[0.9] mb-10 max-w-5xl"
-            >
-              The intelligent way to <br />
-              <span className="text-slate-400">master your</span> campus life.
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="text-lg md:text-2xl text-slate-500 font-medium leading-relaxed mb-14 max-w-2xl"
-            >
-              Fully customizable university software for students, faculty and
-              admins. <br className="hidden md:block" />
-              From tracking grades to managing outpasses, UniZ handles it all.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.8, duration: 0.5 }}
-              className="flex flex-col sm:flex-row gap-5 items-center justify-center w-full"
-            >
-              {!isInstalled && (
-                <button
-                  onClick={handleInstallClick}
-                  className="px-10 py-5 bg-white border-2 border-slate-950 text-slate-950 rounded-[2rem] text-[16px] font-bold shadow-sm hover:bg-slate-50 transition-all active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto"
-                >
-                  <Download size={20} />
-                  Install application
-                </button>
-              )}
-              <button
-                onClick={() => navigate("/student/signin")}
-                className="px-10 py-5 bg-slate-950 text-white rounded-[2rem] text-[16px] font-bold shadow-2xl shadow-slate-300 hover:bg-slate-800 hover:shadow-slate-400 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2 group w-full sm:w-auto"
-              >
-                Student Login
-                <ArrowUpRight
-                  size={20}
-                  className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-                />
-              </button>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+      <HeroBlock />
 
       {/* FEATURED NOTIFICATIONS CAROUSEL */}
       <FeaturedCarousel
