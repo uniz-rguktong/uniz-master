@@ -505,8 +505,8 @@ export default function StudentProfilePage() {
       <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2">
         {/* Profile Header */}
         <div className="flex flex-col items-center justify-center relative mb-8">
-          {/* Actions - Top Right Absolute Position */}
-          <div className="absolute top-0 right-0 flex gap-2 shrink-0 z-20">
+          {/* Actions - Top Right Absolute Position (Desktop Only) */}
+          <div className="hidden md:flex absolute top-0 right-0 gap-2 shrink-0 z-20">
             {isEditing && (
               <>
                 <button
@@ -651,6 +651,33 @@ export default function StudentProfilePage() {
                 </>
               )}
             </div>
+            {/* Mobile Actions */}
+            {isEditing && (
+              <div className="md:hidden flex flex-col items-center mt-6 w-full">
+                <div className="flex gap-3 w-full justify-center mb-3">
+                  <button
+                    onClick={() => {
+                      setIsEditing(false);
+                      refetch();
+                    }}
+                    className="flex-1 max-w-[140px] py-2.5 bg-white text-slate-600 border border-slate-200 rounded-xl font-bold text-xs shadow-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                    className="flex-1 max-w-[140px] py-2.5 bg-blue-600 text-white rounded-xl font-bold text-xs shadow-md shadow-blue-100 flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting && <Loader2 className="w-3 h-3 animate-spin" />}
+                    Save Changes
+                  </button>
+                </div>
+                <p className="text-[10px] font-bold text-red-500 text-center uppercase tracking-wider">
+                  Update the details below and click save changes
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -671,8 +698,8 @@ export default function StudentProfilePage() {
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
                   className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${activeTab === tab
-                      ? "text-cyan-900"
-                      : "text-slate-400 hover:text-slate-600"
+                    ? "text-cyan-900"
+                    : "text-slate-400 hover:text-slate-600"
                     }`}
                 >
                   {tab}

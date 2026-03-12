@@ -8,18 +8,19 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import { enableOutingsAndOutpasses } from "../pages/student/student";
 import {
   User,
-  LayoutDashboard,
   Clock,
   CalendarDays,
   GraduationCap,
   CalendarCheck,
-  KeyRound,
   LogOut,
   AlertCircle,
   X,
   Layers,
   ScanLine,
   ChevronLeft,
+  LayoutGrid,
+  BookOpen,
+  Lock,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -78,7 +79,31 @@ export default function Sidebar({ content }: MainContent) {
       setIsScrolled(window.scrollY > 10);
     };
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    // Pull to Refresh Implementation
+    let touchStartPos = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      if (window.scrollY === 0) {
+        touchStartPos = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touchCurrentPos = e.touches[0].clientY;
+      // If pulled down more than 150px while at the top
+      if (window.scrollY <= 0 && touchCurrentPos > touchStartPos + 150) {
+        window.location.reload();
+      }
+    };
+
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
   }, []);
 
   const { logout } = useLogout();
@@ -148,10 +173,10 @@ export default function Sidebar({ content }: MainContent) {
     },
     {
       id: "resetpassword",
-      label: "Settings",
+      label: "Password",
       href: "/student/resetpassword",
       content: "resetpassword",
-      icon: KeyRound,
+      icon: Lock,
       activeColor: "text-slate-600",
       hoverColor: "hover:text-slate-600",
     },
@@ -196,12 +221,34 @@ export default function Sidebar({ content }: MainContent) {
     },
   ];
 
-  const mobileMenuItems: InteractiveMenuItem[] = [
+  const primaryMobileItems: InteractiveMenuItem[] = [
+    {
+      label: "Password",
+      icon: Lock,
+      onClick: () => navigate("/student/resetpassword"),
+      isActive: content === "resetpassword",
+    },
+    {
+      label: "Explore",
+      icon: LayoutGrid,
+      isActive: ["currentSemester", "gradehub", "attendance", "grievance"].includes(
+        content
+      ),
+    },
     {
       label: "Profile",
-      icon: LayoutDashboard,
+      icon: User,
       onClick: () => navigate("/student"),
       isActive: content === "dashboard",
+    },
+  ];
+
+  const moreMobileItems: InteractiveMenuItem[] = [
+    {
+      label: "Current Sem",
+      icon: BookOpen,
+      onClick: () => navigate("/student/current-semester"),
+      isActive: content === "currentSemester",
     },
     {
       label: "Results",
@@ -214,12 +261,6 @@ export default function Sidebar({ content }: MainContent) {
       icon: CalendarCheck,
       onClick: () => navigate("/student/attendance"),
       isActive: content === "attendance",
-    },
-    {
-      label: "Settings",
-      icon: KeyRound,
-      onClick: () => navigate("/student/resetpassword"),
-      isActive: content === "resetpassword",
     },
     {
       label: "Grievance",
@@ -360,7 +401,10 @@ export default function Sidebar({ content }: MainContent) {
 
         {/* Modern Mobile Bottom Navigation - Sticky Animated Bar */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
-          <InteractiveMenu items={mobileMenuItems} />
+          <InteractiveMenu 
+            primaryItems={primaryMobileItems} 
+            moreItems={moreMobileItems} 
+          />
         </div>
       </div>
     </div>
