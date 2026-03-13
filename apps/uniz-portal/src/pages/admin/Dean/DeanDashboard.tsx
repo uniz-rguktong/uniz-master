@@ -21,7 +21,8 @@ import StudentBulkSection from "../Webmaster/StudentBulkSection";
 import SystemLogsSection from "../Webmaster/SystemLogsSection";
 import SemesterRegistrationSection from "../Webmaster/SemesterRegistrationSection";
 import FacultyManagement from "../Webmaster/FacultyManagement";
-import WebmasterOverview from "../Webmaster/WebmasterOverview";
+import DeanOverview from "./DeanOverview";
+import { InAppNotificationBell } from "../../../components/InAppNotificationBell";
 
 export default function DeanDashboard() {
   useIsAuth();
@@ -155,14 +156,14 @@ export default function DeanDashboard() {
       default:
         return (
           <div className="animate-in fade-in duration-500">
-            <WebmasterOverview username={username} />
+            <DeanOverview />
           </div>
         );
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+    <div className="flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 selection:bg-navy-100 selection:text-blue-900">
       {/* Sidebar */}
       <aside
         className={`bg-white transition-all duration-300 z-50 ${isSidebarOpen ? "w-[315px]" : "w-24"} hidden md:flex flex-col h-screen sticky top-0 border-r border-slate-200/60 shadow-[4px_0_24px_rgba(0,0,0,0.02)]`}
@@ -253,7 +254,7 @@ export default function DeanDashboard() {
                           size={20}
                           className={`shrink-0 transition-colors
                             ${isActive
-                              ? "text-blue-600"
+                              ? "text-navy-900"
                               : "text-slate-400 group-hover:text-slate-600"
                             }`}
                         />
@@ -329,8 +330,10 @@ export default function DeanDashboard() {
       <main className="flex-1 overflow-y-auto max-h-screen">
         {/* New minimal header */}
         <header className=" sticky top-0 z-40 px-10 py-5 flex items-center justify-end bg-white/40 backdrop-blur-md border-b border-white/20">
-          {/* Right group: name+email → avatar → logout */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
+            <InAppNotificationBell />
+            {/* Right group: name+email → avatar → logout */}
+            <div className="flex items-center gap-4">
             {/* Name + email — left of avatar */}
             <div className="text-right">
               <p className="text-[15px] font-bold text-slate-900 leading-tight tracking-tight">
@@ -349,7 +352,7 @@ export default function DeanDashboard() {
                 setProfilePopupOpen(true);
               }}
               title="Profile"
-              className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 hover:ring-blue-400 transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50"
+              className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 hover:ring-navy-900 transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50"
             >
               {profilePhoto ? (
                 <img
@@ -358,7 +361,7 @@ export default function DeanDashboard() {
                   alt=""
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-bold text-sm">
+                <div className="w-full h-full flex items-center justify-center bg-navy-900 text-white font-bold text-sm">
                   {initial}
                 </div>
               )}
@@ -373,7 +376,8 @@ export default function DeanDashboard() {
               <LogOut size={18} />
             </button>
           </div>
-        </header>
+        </div>
+      </header>
 
         {/* Profile popup portal */}
         <ProfilePopup

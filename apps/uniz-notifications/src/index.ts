@@ -533,6 +533,34 @@ webpush.setVapidDetails(
   privateVapidKey,
 );
 
+/**
+ * createInAppNotification
+ * Persists a notification to the database for the UniZ in-app bell system.
+ */
+const createInAppNotification = async (
+  username: string,
+  title: string,
+  message: string,
+  type: string = "INFO",
+  link?: string,
+) => {
+  try {
+    const target = username.toLowerCase();
+    await prisma.inAppNotification.create({
+      data: {
+        username: target,
+        title,
+        message,
+        type,
+        link,
+      },
+    });
+    console.log(`[InApp] Created notification for user: ${target}`);
+  } catch (err: any) {
+    console.error(`[InApp] Failed to persist notification: ${err.message}`);
+  }
+};
+
 const sendWebPush = async (
   username: string,
   payload: { title: string; body: string; data?: any; name?: string },
@@ -600,6 +628,16 @@ const sendWebPush = async (
     console.log(
       `[Push] User=${username}: reached ${succeededCount}/${subscriptions.length} devices.`,
     );
+
+    // PERSISTENCE: Every targeted push should also be an in-app notification
+    await createInAppNotification(
+      username,
+      payload.title,
+      payload.body,
+      payload.data?.type || "INFO",
+      payload.data?.link,
+    );
+
     return succeededCount;
   } catch (err: any) {
     console.error(`[Push] Error in sendWebPush: ${err.message}`);
@@ -1017,6 +1055,16 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
           data: { type: "BROADCAST" },
         });
 
+        // Store In-App Notification (Broadcast)
+        createInAppNotification(
+          u.username,
+          personalizedTitle,
+          body
+            .replace(/{{name}}/g, u.name || u.username)
+            .replace(/{{username}}/g, u.username),
+          "INFO",
+        );
+
         return userSubs.map(async (sub) => {
           try {
             await webpush.sendNotification(
@@ -1098,6 +1146,94 @@ app.get("/push/subscribers", requireAuth, requireAdmin, async (req, res) => {
       limit,
       subscribers,
     });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * --- IN-APP NOTIFICATION ENDPOINTS ---
+ */
+
+// 1. Get My Notifications (Paginated)
+app.get("/in-app", requireAuth, async (req: any, res) => {
+  try {
+    const username = req.user.username.toLowerCase();
+    const page = Math.max(1, parseInt((req.query.page as string) || "1", 10));
+    const limit = Math.min(
+      100,
+      parseInt((req.query.limit as string) || "20", 10),
+    );
+    const skip = (page - 1) * limit;
+
+    const [total, notifications, unreadCount] = await Promise.all([
+      prisma.inAppNotification.count({ where: { username } }),
+      prisma.inAppNotification.findMany({
+        where: { username },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.inAppNotification.count({ where: { username, isRead: false } }),
+    ]);
+
+    res.json({
+      success: true,
+      data: notifications,
+      total,
+      unreadCount,
+      page,
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 2. Mark as Read
+app.put("/in-app/:id/read", requireAuth, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const username = req.user.username.toLowerCase();
+
+    const notif = await prisma.inAppNotification.updateMany({
+      where: { id, username },
+      data: { isRead: true },
+    });
+
+    res.json({ success: true, updated: notif.count });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 3. Mark All as Read
+app.put("/in-app/read-all", requireAuth, async (req: any, res) => {
+  try {
+    const username = req.user.username.toLowerCase();
+
+    const notif = await prisma.inAppNotification.updateMany({
+      where: { username, isRead: false },
+      data: { isRead: true },
+    });
+
+    res.json({ success: true, updated: notif.count });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 4. Delete Notification
+app.delete("/in-app/:id", requireAuth, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const username = req.user.username.toLowerCase();
+
+    await prisma.inAppNotification.deleteMany({
+      where: { id, username },
+    });
+
+    res.json({ success: true });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }

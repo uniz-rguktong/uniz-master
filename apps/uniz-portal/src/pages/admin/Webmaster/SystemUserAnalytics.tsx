@@ -34,9 +34,11 @@ export default function SystemUserAnalytics() {
     const fetchData = async () => {
       try {
         setLoading(true);
+        const token = localStorage.getItem("admin_token") || localStorage.getItem("token");
         const res = await fetch(ANALYTICS_SYSTEM_USERS, {
           headers: {
             "x-api-key": ANALYTICS_KEY,
+            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json"
           }
         });

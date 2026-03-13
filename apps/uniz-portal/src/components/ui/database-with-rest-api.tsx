@@ -276,7 +276,7 @@ const DatabaseWithRestApi = ({
       {/* Main Box */}
       <div className="absolute bottom-10 flex w-full flex-col items-center px-4 sm:px-10">
         {/* bottom shadow */}
-        <div className="absolute -bottom-2 h-[100px] w-full max-w-[95%] rounded-[3rem] bg-blue-500/10 scale-95" />
+        <div className="absolute -bottom-2 h-[100px] w-full max-w-[95%] rounded-[3rem] bg-navy-500/10 scale-95" />
         {/* box title */}
         <div className="absolute -top-3 z-20 flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 shadow-sm sm:-top-4 sm:py-2">
           <span className="text-[10px] sm:text-[12px] font-bold text-slate-800">{title}</span>
@@ -300,7 +300,7 @@ const DatabaseWithRestApi = ({
               delay: 0,
             }}
           >
-            <Bell className="size-4 text-blue-500" />
+            <Bell className="size-4 text-navy-900" />
             <span>{buttonTexts?.first}</span>
           </motion.div>
 
@@ -314,7 +314,7 @@ const DatabaseWithRestApi = ({
               delay: 1,
             }}
           >
-            <AlertCircle className="size-4 text-blue-500" />
+            <AlertCircle className="size-4 text-navy-900" />
             <span>{buttonTexts?.third}</span>
           </motion.div>
 
@@ -328,7 +328,7 @@ const DatabaseWithRestApi = ({
               delay: 2,
             }}
           >
-            <Smartphone className="size-4 text-blue-500" />
+            <Smartphone className="size-4 text-navy-900" />
             <span>{buttonTexts?.fourth}</span>
           </motion.div>
 
@@ -342,7 +342,7 @@ const DatabaseWithRestApi = ({
               delay: 0.5,
             }}
           >
-            <Megaphone className="size-4 text-blue-500" />
+            <Megaphone className="size-4 text-navy-900" />
             <span>{buttonTexts?.second}</span>
           </motion.div>
           {/* Circles */}
@@ -382,7 +382,7 @@ const DatabaseWithRestApi = ({
               animate={{ y: [-2, 2, -2] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             >
-              <Database className="text-blue-500 mb-2 size-5 sm:size-6" />
+              <Database className="text-navy-900 mb-2 size-5 sm:size-6" />
               <span className="text-xs sm:text-sm font-bold text-slate-800 text-center">
                 Core Sync
               </span>
@@ -396,7 +396,7 @@ const DatabaseWithRestApi = ({
               animate={{ y: [2, -2, 2] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             >
-              <ShieldCheck className="text-blue-600 mb-2 size-6 sm:size-7" />
+              <ShieldCheck className="text-navy-900 mb-2 size-6 sm:size-7" />
               <span className="text-sm sm:text-base font-bold text-slate-900 text-center">
                 API Gateway
               </span>
@@ -415,7 +415,7 @@ const DatabaseWithRestApi = ({
                 delay: 1,
               }}
             >
-              <Activity className="text-blue-500 mb-2 size-5 sm:size-6" />
+              <Activity className="text-navy-900 mb-2 size-5 sm:size-6" />
               <span className="text-xs sm:text-sm font-bold text-slate-800 text-center">
                 Webhooks
               </span>

@@ -13,8 +13,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../../api/endpoints";
+import { BackgroundIconCloud } from "../../../components/illustrations/FloatingIllustrations";
 import SystemUserAnalytics from "./SystemUserAnalytics";
-import DeanOverview from "../Dean/DeanOverview";
 
 const CLOUDINARY_CLOUD = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -137,11 +137,14 @@ export default function WebmasterOverview({ username }: { username: string }) {
   };
 
   const displayName = profile?.name || username || "Webmaster";
-  const initials = (displayName[0] || "W").toUpperCase();
+  const initials = displayName[0].toUpperCase();
   const email = (profile?.email || `${username}@rguktong.ac.in`).toLowerCase();
 
   return (
-    <div className="font-sans text-slate-900 min-h-[60vh] flex flex-col items-center justify-center px-4 pt-10 pb-20 animate-in fade-in duration-500">
+    <div className="font-sans text-slate-900 min-h-[60vh] flex flex-col items-center justify-center px-4 pt-10 pb-20 animate-in fade-in duration-500 relative overflow-hidden">
+      {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
+      <BackgroundIconCloud />
+
       {/* Avatar */}
       <div className="relative mb-6">
         <div
@@ -192,7 +195,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
-            className="absolute bottom-[-1px] right-2 w-8 h-8 bg-[#e8f0fe] border-[1.5px] border-[#4285f4] rounded-full flex items-center justify-center text-[#174ea6] hover:bg-blue-100 transition-all z-20 cursor-pointer hover:scale-110 active:scale-95 disabled:opacity-50 shadow-none"
+            className="absolute bottom-[-1px] right-2 w-8 h-8 bg-[#e8f0fe] border-[1.5px] border-[#4285f4] rounded-full flex items-center justify-center text-[#174ea6] hover:bg-navy-100 transition-all z-20 cursor-pointer hover:scale-110 active:scale-95 disabled:opacity-50 shadow-none"
             title="Update Profile Photo"
           >
             <Camera className="w-[17px] h-[17px]" strokeWidth={2.5} />
@@ -238,7 +241,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
       {/* Info tags */}
       {!loading && (
         <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold mb-6">
-          <span className="text-indigo-600 uppercase tracking-widest px-2.5 py-1 bg-indigo-50 border border-indigo-100 rounded-xl">
+          <span className="text-navy-900 uppercase tracking-widest px-2.5 py-1 bg-navy-50 border border-navy-100 rounded-xl">
             {username}
           </span>
           {profile?.role && (
@@ -317,7 +320,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                     onChange={(e) =>
                       setFormData({ ...formData, [key]: e.target.value })
                     }
-                    className="text-[13px] font-medium text-slate-900 bg-transparent border-b border-blue-300 focus:outline-none w-full"
+                    className="text-[13px] font-medium text-slate-900 bg-transparent border-b border-navy-100 focus:outline-none w-full"
                   />
                 </div>
               </div>
@@ -357,25 +360,14 @@ export default function WebmasterOverview({ username }: { username: string }) {
         )}
       </AnimatePresence>
 
-      <div className="w-full max-w-6xl mt-12 pt-12 border-t border-slate-100 space-y-20">
-        {(() => {
-          const role = (
-            localStorage.getItem("admin_role") || "admin"
-          ).replace(/"/g, "").toLowerCase();
-
-          if (role === "webmaster") {
-            return (
-              <>
-                <SystemUserAnalytics />
-              </>
-            );
-          } else if (role === "dean" || role === "hod" || role === "swo" || role === "dsw") {
-            return <DeanOverview />;
-          }
-          return null;
-        })()}
-      </div>
+      {!loading && !isEditing && (
+        <div className="w-full max-w-6xl mt-12 space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+          <div className="relative">
+            <div className="absolute inset-0 bg-blue-50/50 blur-3xl rounded-full -z-10" />
+            <SystemUserAnalytics />
+          </div>
+        </div>
+      )}
     </div>
-
   );
 }

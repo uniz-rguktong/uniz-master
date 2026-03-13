@@ -1,5 +1,6 @@
 // Set this to your Azure VM IP or Domain in .env as VITE_API_URL
 export const BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
+export const ANALYTICS_BASE_URL = import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app";
 
 // Notification service URL - routes through same-origin nginx proxy
 export const NOTIFICATION_SERVICE_URL = `${BASE_URL}/notifications`;
@@ -159,6 +160,10 @@ export const SYSTEM_HEALTH = `${BASE_URL}/system/health`;
 export const PUSH_SUBSCRIBE = `${BASE_URL}/notifications/subscribe`;
 export const PUSH_SUBSCRIBERS = `${BASE_URL}/notifications/push/subscribers`;
 export const PUSH_SEND = `${BASE_URL}/notifications/push/send`;
+export const IN_APP_NOTIFICATIONS = `${BASE_URL}/notifications/in-app`;
+export const MARK_NOTIFICATION_READ = (id: string) => `${BASE_URL}/notifications/in-app/${id}/read`;
+export const MARK_ALL_NOTIFICATIONS_READ = `${BASE_URL}/notifications/in-app/read-all`;
+export const DELETE_NOTIFICATION = (id: string) => `${BASE_URL}/notifications/in-app/${id}`;
 
 export const BULK_UPDATE_GRADES = `${BASE_URL}/academics/grades/bulk-update`;
 export const GET_BATCH_GRADES = `${BASE_URL}/academics/grades/batch`;
@@ -208,8 +213,9 @@ export const UPLOAD_SEATING = `${BASE_URL}/academics/seating/upload`;
 export const GET_STUDENT_SEATING = `${BASE_URL}/academics/seating/student`;
 
 // Analytics Centralized
-export const ANALYTICS_URL = import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app/api";
-export const ANALYTICS_KEY = import.meta.env.VITE_ANALYTICS_KEY || "";
+const RAW_ANALYTICS_URL = import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app";
+export const ANALYTICS_URL = RAW_ANALYTICS_URL.endsWith("/api") ? RAW_ANALYTICS_URL : `${RAW_ANALYTICS_URL}/api`;
+export const ANALYTICS_KEY = import.meta.env.VITE_ANALYTICS_KEY || import.meta.env.VITE_ANALYTICS_API_KEY || "";
 
 export const ANALYTICS_UPLOAD_HEALTH = `${ANALYTICS_URL}/analytics/webmaster/upload-health`;
 export const ANALYTICS_SYSTEM_USERS = `${ANALYTICS_URL}/analytics/webmaster/system-users`;
@@ -217,3 +223,5 @@ export const ANALYTICS_CAMPUS_OCCUPANCY = `${ANALYTICS_URL}/analytics/dean/campu
 export const ANALYTICS_ACADEMIC_HEATMAP = `${ANALYTICS_URL}/analytics/dean/academic-heatmap`;
 export const ANALYTICS_GRIEVANCE_TRENDS = `${ANALYTICS_URL}/analytics/dean/grievance-trends`;
 
+export const STUDENT_ATTENDANCE_ANALYTICS = (id: string) => `${ANALYTICS_BASE_URL}/api/analytics/student/${id}/attendance`;
+export const STUDENT_GRADES_TREND_ANALYTICS = (id: string) => `${ANALYTICS_BASE_URL}/api/analytics/student/${id}/grades-trend`;

@@ -13,6 +13,10 @@ import {
   ScanLine,
   Lock,
   Search,
+  Brain,
+  ChevronRight,
+  ChevronsUpDown,
+  MoreHorizontal,
 } from "lucide-react";
 import ProfilePopup from "../ProfilePopup";
 import SecuritySection from "./SecuritySection";
@@ -23,6 +27,7 @@ import StudentDetails from "./StudentDetails";
 import UnifiedAcademicManager from "./UnifiedAcademicManager";
 import FacultyManagement from "./FacultyManagement";
 import UploadSection from "./UploadSection";
+import SystemUserAnalytics from "./SystemUserAnalytics";
 
 import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";
@@ -49,13 +54,14 @@ export default function WebmasterDashboard() {
     | "system_logs"
     | "exam_seating"
     | "security"
+    | "intelligence"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
   const [profileEmail, setProfileEmail] = useState<string | null>(null);
-  const avatarBtnRef = useRef<HTMLButtonElement>(null);
+  const avatarBtnRef = useRef<any>(null);
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
   const [activeAnchor, setActiveAnchor] = useState<React.RefObject<HTMLElement>>(headerAvatarRef);
   const [searchQuery, setSearchQuery] = useState("");
@@ -89,6 +95,7 @@ export default function WebmasterDashboard() {
       group: null,
       items: [
         { id: "dashboard", label: "Overview", icon: LayoutDashboard },
+        { id: "intelligence", label: "Intelligence", icon: Brain },
       ]
     },
     {
@@ -158,6 +165,12 @@ export default function WebmasterDashboard() {
         return <SeatingUploadSection />;
       case "security":
         return <SecuritySection username={username} />;
+      case "intelligence":
+        return (
+          <div className="animate-in fade-in duration-700">
+            <SystemUserAnalytics />
+          </div>
+        );
       default:
         return (
           <div className="animate-in fade-in duration-500">
@@ -168,51 +181,64 @@ export default function WebmasterDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+    <div className="flex min-h-screen bg-white relative overflow-hidden text-slate-900 selection:bg-blue-50 selection:text-blue-900">
       {/* Sidebar */}
       <aside
-        className={`bg-white transition-all duration-300 z-50 ${isSidebarOpen ? "w-[315px]" : "w-24"} hidden md:flex flex-col h-screen sticky top-0 border-r border-slate-200/60 shadow-[4px_0_24px_rgba(0,0,0,0.02)]`}
+        className={`bg-[#fafafa] transition-all duration-300 z-50 ${isSidebarOpen ? "w-[256px]" : "w-16"} hidden md:flex flex-col h-screen sticky top-0 border-r border-slate-200/60 relative group/sidebar`}
       >
-        {/* Toggle Button */}
+        {/* Subtle Toggle Button */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="absolute -right-3.5 top-1/2 -translate-y-1/2 bg-white border border-slate-200 rounded-full p-1.5 shadow-md text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all z-50 hidden lg:block"
+          className="absolute -right-3 top-12 bg-white border border-slate-200 rounded-full p-1 shadow-sm text-slate-400 hover:text-slate-600 opacity-0 group-hover/sidebar:opacity-100 transition-all z-50 hidden md:flex items-center justify-center hover:scale-110 active:scale-95"
         >
           {isSidebarOpen ? (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+            <ChevronRight size={12} className="rotate-180" />
           ) : (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+            <ChevronRight size={12} />
           )}
         </button>
 
-        {/* Sidebar Branding */}
-        <div className="px-4 pt-6 pb-2">
-          <div className="flex items-center justify-center">
-            <h1 className={`unifrakturcook-bold ${isSidebarOpen ? "text-4xl" : "text-3xl"} text-slate-900 tracking-tight transition-all duration-300`}>
-              {isSidebarOpen ? "uniZ" : "Z"}
-            </h1>
-          </div>
+        {/* Workspace Switcher Header */}
+        <div className="p-3">
+          <button className={`w-full flex items-center ${isSidebarOpen ? "justify-between" : "justify-center"} p-1.5 hover:bg-slate-200/50 rounded-lg transition-colors group`}>
+            <div className="flex items-center gap-2.5 min-w-0">
+               <div className="w-6 h-6 rounded-md bg-gradient-to-tr from-slate-900 to-slate-700 flex items-center justify-center text-[10px] font-black text-white shrink-0">
+                  {initial}
+               </div>
+               {isSidebarOpen && (
+                 <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-[13px] font-semibold text-slate-900 truncate tracking-tight">
+                      uniZ Portal
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded-md bg-slate-200 text-[9px] font-bold text-slate-600 uppercase tracking-tight">
+                       Hobby
+                    </span>
+                 </div>
+               )}
+            </div>
+            {isSidebarOpen && <ChevronsUpDown size={14} className="text-slate-400 group-hover:text-slate-600 shrink-0" />}
+          </button>
         </div>
 
-        {/* Search Style */}
-        <div className="px-5 py-4">
-          <div className="relative group">
-            <Search className={`absolute ${isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2"} top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600 transition-colors`} size={16} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isSidebarOpen ? "Search operations..." : ""}
-              className={`w-full bg-slate-50 border border-slate-200/60 rounded-xl ${isSidebarOpen ? "pl-10 pr-8" : "px-0"} py-2 text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all font-medium`}
-            />
-            {isSidebarOpen && (
-              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-slate-200/60 rounded text-[9px] font-bold text-slate-400 uppercase">/</div>
-            )}
-          </div>
+        {/* Search Bar */}
+        <div className="px-3 pb-2">
+           <div className="relative group">
+              <Search size={14} className={`absolute ${isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2"} top-1/2 -translate-y-1/2 text-slate-400`} />
+              <input 
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={isSidebarOpen ? "Find..." : ""}
+                className={`w-full bg-white border border-slate-200 rounded-md ${isSidebarOpen ? "pl-9 pr-8" : "px-0"} py-1.5 text-[13px] focus:outline-none focus:ring-1 focus:ring-slate-300 transition-all font-medium placeholder-slate-400`}
+              />
+              {isSidebarOpen && (
+                <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-300 border border-slate-100 px-1 rounded bg-slate-50/50">F</span>
+              )}
+           </div>
         </div>
 
         {/* Navigation Section */}
-        <nav className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-2 overflow-y-auto space-y-6 custom-sidebar-scroll`}>
+        <nav className={`flex-1 ${isSidebarOpen ? "px-2" : "px-2"} py-2 overflow-y-auto space-y-0.5 custom-sidebar-scroll`}>
           {(() => {
             const filteredGroups = navGroups.map(group => ({
               ...group,
@@ -221,22 +247,9 @@ export default function WebmasterDashboard() {
               )
             })).filter(group => group.items.length > 0);
 
-            if (filteredGroups.length === 0 && searchQuery) {
-              return (
-                <div className="flex flex-col items-center justify-center py-10 text-center">
-                  <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
-                    <Search size={20} className="text-slate-300" />
-                  </div>
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-4">No operations found</p>
-                </div>
-              );
-            }
-
             return filteredGroups.map((group, gIdx) => (
-              <div key={gIdx} className="space-y-1.5">
-                {group.group && isSidebarOpen && (
-                  <h4 className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{group.group}</h4>
-                )}
+              <div key={gIdx} className="space-y-0.5">
+                {group.group && isSidebarOpen && gIdx > 0 && <hr className="my-3 border-transparent" />}
                 {group.items.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
@@ -245,32 +258,24 @@ export default function WebmasterDashboard() {
                     <button
                       key={item.id}
                       onClick={() => setActiveTab(item.id as any)}
-                      title={!isSidebarOpen ? item.label : ""}
                       className={`
-                        w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group relative
+                        w-full flex items-center ${isSidebarOpen ? "px-3" : "justify-center px-0"} py-1.5 rounded-md text-left transition-all duration-150 group relative
                         ${isActive
-                          ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
-                          : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
+                          ? "bg-slate-200/80 text-slate-900"
+                          : "text-slate-600 hover:bg-slate-200/50 hover:text-slate-900"
                         }
                       `}
                     >
-                      <div className="flex items-center justify-center min-w-[22px]">
-                        <Icon
-                          size={20}
-                          className={`shrink-0 transition-colors
-                            ${isActive
-                              ? "text-blue-600"
-                              : "text-slate-400 group-hover:text-slate-600"
-                            }`}
-                        />
+                      <div className="flex items-center justify-center min-w-[20px]">
+                        <Icon size={16} className={`${isActive ? "text-slate-900" : "text-slate-500 group-hover:text-slate-900"} transition-colors`} />
                       </div>
                       {isSidebarOpen && (
-                        <span
-                          className={`text-[13.5px] whitespace-nowrap tracking-tight leading-none
-                            ${isActive ? "font-bold" : "font-semibold"}`}
-                        >
+                        <span className={`ml-3 text-[13px] tracking-tight ${isActive ? "font-bold" : "font-medium"}`}>
                           {item.label}
                         </span>
+                      )}
+                      {isSidebarOpen && ["security", "Exam Seating", "Academic"].some(k => item.label.includes(k) || group.group?.includes(k)) && (
+                         <ChevronRight size={12} className="ml-auto text-slate-300 group-hover:text-slate-400" />
                       )}
                     </button>
                   );
@@ -278,55 +283,39 @@ export default function WebmasterDashboard() {
               </div>
             ));
           })()}
-
-          {/* Special Logout Item (at the bottom of nav list) */}
-          <div className="pt-2">
-            <button
-              onClick={handleLogout}
-              className={`
-                w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group hover:bg-red-50 hover:text-red-500 text-slate-500
-              `}
-              title={!isSidebarOpen ? "Logout" : ""}
-            >
-              <div className="flex items-center justify-center min-w-[22px]">
-                <LogOut size={20} className="text-slate-400 group-hover:text-red-500 transition-colors" />
-              </div>
-              {isSidebarOpen && (
-                <span className="text-[13.5px] font-semibold whitespace-nowrap tracking-tight leading-none">
-                  Logout System
-                </span>
-              )}
-            </button>
-          </div>
         </nav>
 
-        {/* User Info Style (Back to minimal) */}
-        <div className="mt-auto border-t border-slate-200/60 p-3 pb-5">
-          <div
-            onClick={() => {
-              setActiveAnchor(avatarBtnRef);
-              setProfilePopupOpen(true);
-            }}
-            className={`flex items-center ${isSidebarOpen ? "justify-start px-2" : "justify-center"} py-1.5 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group`}
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <button
-                ref={avatarBtnRef}
-                className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-slate-100 flex items-center justify-center shadow-sm ring-1 ring-slate-200/60 transition-transform group-hover:scale-105"
-              >
-                {profilePhoto ? (
-                  <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
-                ) : (
-                  <span className="text-slate-600 font-bold text-[11px]">{initial}</span>
-                )}
-              </button>
-              {isSidebarOpen && (
-                <div className="min-w-0">
-                  <p className="text-[13px] font-bold text-slate-900 truncate leading-tight">{profileName || username}</p>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate mt-0.5">Webmaster</p>
+        {/* Bottom User Info Footer */}
+        <div className="mt-auto border-t border-slate-200 p-3">
+          <div className={`flex items-center ${isSidebarOpen ? "justify-between" : "justify-center"} gap-2`}>
+             <button 
+               onClick={() => {
+                 setActiveAnchor(avatarBtnRef);
+                 setProfilePopupOpen(true);
+               }}
+               className="flex-1 flex items-center gap-2.5 p-1 hover:bg-slate-200/50 rounded-lg transition-all group min-w-0"
+             >
+                <div ref={avatarBtnRef} className="w-6 h-6 rounded-full overflow-hidden bg-slate-200 shrink-0 border border-slate-200">
+                  {profilePhoto ? (
+                    <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-slate-900 text-white text-[10px] font-black uppercase">
+                      {initial}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+                {isSidebarOpen && (
+                  <span className="text-[13px] font-semibold text-slate-900 truncate tracking-tight">
+                    {profileName || username}
+                  </span>
+                )}
+                {isSidebarOpen && <MoreHorizontal size={14} className="ml-auto text-slate-400 group-hover:text-slate-600 shrink-0" />}
+             </button>
+             {isSidebarOpen && (
+               <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200/50 rounded-lg transition-all shrink-0">
+                  <Bell size={16} />
+               </button>
+             )}
           </div>
         </div>
       </aside>
@@ -355,7 +344,7 @@ export default function WebmasterDashboard() {
                 setProfilePopupOpen(true);
               }}
               title="Profile"
-              className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 hover:ring-blue-400 transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50"
+              className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 hover:ring-navy-900 transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50"
             >
               {profilePhoto ? (
                 <img
@@ -364,7 +353,7 @@ export default function WebmasterDashboard() {
                   alt=""
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-bold text-sm">
+                <div className="w-full h-full flex items-center justify-center bg-navy-900 text-white font-bold text-sm">
                   {initial}
                 </div>
               )}
