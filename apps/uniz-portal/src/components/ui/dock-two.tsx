@@ -47,8 +47,8 @@ const DockIconButton = React.forwardRef<HTMLButtonElement, DockIconButtonProps>(
         className={cn(
           "relative group p-3 rounded-xl transition-all duration-200 bg-transparent",
           isActive
-            ? activeColor || "text-blue-600"
-            : `text-slate-400 ${hoverColor || "hover:text-blue-600"}`,
+            ? activeColor || "text-navy-900"
+            : `text-slate-400 ${hoverColor || "hover:text-navy-900"}`,
           className,
         )}
       >

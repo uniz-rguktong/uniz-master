@@ -47,7 +47,7 @@ export default function Navbar() {
           {!isAuthenticated ? (
             <button
               onClick={() => navigate("/student/signin")}
-              className="px-8 py-2.5 bg-slate-950 text-white rounded-full text-[14px] font-bold border border-white/20 shadow-[0_0_20px_rgba(0,0,0,0.1)] hover:bg-slate-800 hover:shadow-[0_0_25px_rgba(0,0,0,0.2)] hover:-translate-y-0.5 transition-all active:scale-95"
+              className="px-8 py-2.5 bg-navy-900 text-white rounded-full text-[14px] font-bold border border-white/20 shadow-[0_0_20px_rgba(0,0,0,0.1)] hover:bg-navy-800 hover:shadow-[0_0_25px_rgba(0,0,0,0.2)] hover:-translate-y-0.5 transition-all active:scale-95"
             >
               Sign in
             </button>
@@ -57,7 +57,7 @@ export default function Navbar() {
                 onClick={() => navigate("/student/profile")}
                 className="flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/50 hover:bg-white transition-all border border-slate-200/50 shadow-sm"
               >
-                <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-[10px] font-bold text-white overflow-hidden shadow-sm">
+                <div className="w-8 h-8 rounded-full bg-navy-900 flex items-center justify-center text-[10px] font-bold text-white overflow-hidden shadow-sm">
                   {user?.profile_url ? (
                     <img src={user.profile_url} className="w-full h-full object-cover" />
                   ) : (

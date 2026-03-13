@@ -354,7 +354,7 @@ export default function SemesterRegistrationSection({
                 className="bg-white rounded-xl border border-slate-100 p-8 shadow-none transition-all group relative overflow-hidden"
               >
                 <div
-                  className={`absolute top-0 right-0 w-32 h-32 opacity-[0.03] transition-transform duration-1000 group-hover:rotate-12 ${sem.status === "REGISTRATION_OPEN" ? "text-emerald-500" : "text-blue-500"}`}
+                  className={`absolute top-0 right-0 w-32 h-32 opacity-[0.03] transition-transform duration-1000 group-hover:rotate-12 ${sem.status === "REGISTRATION_OPEN" ? "text-emerald-500" : "text-navy-900"}`}
                 >
                   <Zap size={120} />
                 </div>
@@ -377,7 +377,7 @@ export default function SemesterRegistrationSection({
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-4 group-hover:text-blue-600 transition-colors uppercase">
+                <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-4 group-hover:text-navy-900 transition-colors uppercase">
                   {sem.name}
                 </h3>
 
@@ -403,7 +403,7 @@ export default function SemesterRegistrationSection({
                 <div className="flex flex-col gap-3">
                   <button
                     onClick={() => viewDetails(sem)}
-                    className="w-full flex items-center justify-center gap-2 py-4 bg-slate-50 text-slate-600 rounded-xl font-bold text-sm hover:bg-blue-50 hover:text-blue-600 transition-all"
+                    className="w-full flex items-center justify-center gap-2 py-4 bg-slate-50 text-slate-600 rounded-xl font-bold text-sm hover:bg-navy-50 hover:text-navy-900 transition-all"
                   >
                     Review Allocations <ChevronRight size={16} />
                   </button>
@@ -415,7 +415,7 @@ export default function SemesterRegistrationSection({
                           onClick={() =>
                             updateStatus(sem.id, "REGISTRATION_OPEN")
                           }
-                          className="flex-1 py-4 bg-blue-600 text-white rounded-xl font-bold text-xs hover:bg-blue-700 transition-all shadow-none"
+                          className="flex-1 py-4 bg-navy-900 text-white rounded-xl font-bold text-xs hover:bg-navy-800 transition-all shadow-none"
                         >
                           Open Enrollment
                         </button>
@@ -463,12 +463,12 @@ export default function SemesterRegistrationSection({
               <div className="flex items-center gap-6">
                 <button
                   onClick={() => setActiveTab("list")}
-                  className="p-3 bg-slate-50 rounded-xl text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-all border border-transparent hover:border-blue-100"
+                  className="p-3 bg-slate-50 rounded-xl text-slate-400 hover:bg-navy-50 hover:text-navy-900 transition-all border border-transparent hover:border-navy-100"
                 >
                   <ChevronRight className="rotate-180" size={24} />
                 </button>
                 <div>
-                  <p className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mb-1 opacity-70">
+                  <p className="text-[10px] font-bold text-navy-900 uppercase tracking-[0.2em] mb-1 opacity-70">
                     Rollout Review • {branchFilter.toUpperCase()}
                   </p>
                   <h1 className="text-3xl font-black text-slate-900 tracking-tight">
@@ -489,7 +489,7 @@ export default function SemesterRegistrationSection({
                   activeViewTab === "allocations" && (
                     <button
                       onClick={() => setShowAddSubjectModal(true)}
-                      className="flex items-center gap-3 px-6 py-4 bg-blue-50 text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-100 transition-all"
+                      className="flex items-center gap-3 px-6 py-4 bg-navy-50 text-navy-900 rounded-xl font-bold text-sm hover:bg-navy-100 transition-all"
                     >
                       <Plus size={18} />
                       Add Subject
@@ -501,7 +501,7 @@ export default function SemesterRegistrationSection({
                     <button
                       onClick={approveAllocation}
                       disabled={loading}
-                      className={`flex items-center gap-3 px-8 py-4 ${role === "dean" ? "bg-slate-900" : "bg-blue-600 shadow-none"} text-white rounded-xl font-extrabold text-sm hover:opacity-90 transition-all shadow-none`}
+                      className={`flex items-center gap-3 px-8 py-4 ${role === "dean" ? "bg-slate-900" : "bg-navy-900 shadow-none"} text-white rounded-xl font-extrabold text-sm hover:opacity-90 transition-all shadow-none`}
                     >
                       <ShieldCheck size={18} />
                       {role === "dean"
@@ -518,13 +518,13 @@ export default function SemesterRegistrationSection({
               <div className="flex gap-4">
                 <button
                   onClick={() => setActiveViewTab("allocations")}
-                  className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${activeViewTab === "allocations" ? "bg-blue-600 text-white shadow-none" : "bg-white text-slate-400 border border-slate-100"}`}
+                  className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${activeViewTab === "allocations" ? "bg-navy-900 text-white shadow-none" : "bg-white text-slate-400 border border-slate-100"}`}
                 >
                   Allocations
                 </button>
                 <button
                   onClick={() => setActiveViewTab("registrations")}
-                  className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${activeViewTab === "registrations" ? "bg-blue-600 text-white shadow-none" : "bg-white text-slate-400 border border-slate-100"}`}
+                  className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${activeViewTab === "registrations" ? "bg-navy-900 text-white shadow-none" : "bg-white text-slate-400 border border-slate-100"}`}
                 >
                   Registrations
                 </button>
@@ -595,7 +595,7 @@ export default function SemesterRegistrationSection({
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => openEditModal(item)}
-                              className="p-2 text-slate-400 hover:text-blue-600 bg-slate-50 rounded-xl border border-transparent hover:border-blue-100"
+                              className="p-2 text-slate-400 hover:text-navy-900 bg-slate-50 rounded-xl border border-transparent hover:border-navy-100"
                             >
                               <Edit3 size={18} />
                             </button>
@@ -651,7 +651,7 @@ export default function SemesterRegistrationSection({
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
           <div className="bg-white w-full max-w-xl rounded-xl p-10 shadow-none animate-in zoom-in-95 duration-300">
             <div className="flex items-center gap-4 mb-8">
-              <div className="p-4 bg-blue-50 text-blue-600 rounded-xl">
+              <div className="p-4 bg-navy-50 text-navy-900 rounded-xl">
                 <Zap size={32} />
               </div>
               <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">
@@ -667,7 +667,7 @@ export default function SemesterRegistrationSection({
                   type="text"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="w-full px-6 py-5 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-xl font-bold text-slate-900 outline-none"
+                  className="w-full px-6 py-5 bg-slate-50 border-2 border-transparent focus:border-navy-100 focus:bg-white rounded-xl font-bold text-slate-900 outline-none"
                 />
               </div>
               <div>
@@ -685,7 +685,7 @@ export default function SemesterRegistrationSection({
                           )
                           : setSelectedBranches([...selectedBranches, b])
                       }
-                      className={`py-3 rounded-xl font-bold text-xs border transition-all ${selectedBranches.includes(b) ? "bg-blue-600 text-white shadow-none" : "bg-slate-50 text-slate-400 border-slate-100"}`}
+                      className={`py-3 rounded-xl font-bold text-xs border transition-all ${selectedBranches.includes(b) ? "bg-navy-900 text-white shadow-none" : "bg-slate-50 text-slate-400 border-slate-100"}`}
                     >
                       {b}
                     </button>
@@ -735,7 +735,7 @@ export default function SemesterRegistrationSection({
                 <input
                   type="text"
                   placeholder="Search code/name..."
-                  className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-xl font-bold text-slate-900 outline-none text-sm"
+                  className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-navy-100 focus:bg-white rounded-xl font-bold text-slate-900 outline-none text-sm"
                   value={subjectSearchQuery}
                   onChange={(e) => setSubjectSearchQuery(e.target.value)}
                 />
@@ -764,7 +764,7 @@ export default function SemesterRegistrationSection({
                       <option
                         key={s.id}
                         value={s.id}
-                        className="py-2 px-2 hover:bg-blue-50 rounded-lg"
+                        className="py-2 px-2 hover:bg-navy-50 rounded-lg"
                       >
                         [{s.code}] {s.name}
                       </option>
@@ -776,7 +776,7 @@ export default function SemesterRegistrationSection({
                   Engineering Year
                 </label>
                 <select
-                  className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-xl font-bold text-slate-900 outline-none"
+                  className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-navy-100 focus:bg-white rounded-xl font-bold text-slate-900 outline-none"
                   value={addSubjectData.academicYear}
                   onChange={(e) =>
                     setAddSubjectData({
@@ -856,7 +856,7 @@ export default function SemesterRegistrationSection({
                       isMandatory: e.target.checked,
                     })
                   }
-                  className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  className="w-5 h-5 rounded border-slate-300 text-navy-900 focus:ring-navy-900"
                 />
                 <label
                   htmlFor="isMandatory"
@@ -867,9 +867,9 @@ export default function SemesterRegistrationSection({
               </div>
 
               {!editFormData.isMandatory && (
-                <div className="space-y-6 p-6 bg-blue-50/50 rounded-xl border border-blue-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="space-y-6 p-6 bg-navy-50/50 rounded-xl border border-navy-100 animate-in fade-in slide-in-from-top-2 duration-300">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-blue-600 px-1 block">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-navy-900 px-1 block">
                       Elective Group Name
                     </label>
                     <input
@@ -881,12 +881,12 @@ export default function SemesterRegistrationSection({
                           electiveGroupId: e.target.value,
                         })
                       }
-                      className="w-full px-6 py-4 bg-white border border-blue-100 rounded-xl font-bold text-slate-900 outline-none"
+                      className="w-full px-6 py-4 bg-white border border-navy-100 rounded-xl font-bold text-slate-900 outline-none"
                       placeholder="e.g. Professional Elective-I"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-blue-600 px-1 block">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-navy-900 px-1 block">
                       Selection Limit
                     </label>
                     <input
@@ -898,7 +898,7 @@ export default function SemesterRegistrationSection({
                           electiveLimit: parseInt(e.target.value),
                         })
                       }
-                      className="w-full px-6 py-4 bg-white border border-blue-100 rounded-xl font-bold text-slate-900 outline-none"
+                      className="w-full px-6 py-4 bg-white border border-navy-100 rounded-xl font-bold text-slate-900 outline-none"
                       placeholder="How many courses from this group?"
                       min={1}
                     />
@@ -914,7 +914,7 @@ export default function SemesterRegistrationSection({
                 </button>
                 <button
                   onClick={saveAllocation}
-                  className="flex-2 px-10 py-5 bg-blue-600 text-white rounded-xl font-bold shadow-none"
+                  className="flex-2 px-10 py-5 bg-navy-900 text-white rounded-xl font-bold shadow-none"
                 >
                   Save Changes
                 </button>

@@ -229,7 +229,7 @@ export default function CurriculumManager() {
           <select
             value={sem}
             onChange={(e) => setSem(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-navy-900 focus:border-navy-100 block p-2.5"
           >
             <option value="Sem - 1">Semester 1</option>
             <option value="Sem - 2">Semester 2</option>
@@ -243,7 +243,7 @@ export default function CurriculumManager() {
           <select
             value={branch}
             onChange={(e) => setBranch(e.target.value as Branch)}
-            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-navy-900 focus:border-navy-100 block p-2.5"
           >
             {["CSE", "ECE", "EEE", "CIVIL", "MECH"].map((b) => (
               <option key={b} value={b}>
@@ -271,7 +271,7 @@ export default function CurriculumManager() {
                   ? "bg-emerald-100 text-emerald-700"
                   : status.type === "error"
                     ? "bg-red-100 text-red-700"
-                    : "bg-blue-100 text-blue-700",
+                    : "bg-navy-100 text-navy-800",
               )}
             >
               {status.type === "success" ? (
@@ -347,7 +347,7 @@ export default function CurriculumManager() {
           <div className="p-4 bg-slate-50 border-t border-slate-200">
             <button
               onClick={addRow}
-              className="w-full py-2.5 border-2 border-dashed border-slate-300 rounded-lg text-slate-500 font-medium hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all flex items-center justify-center gap-2"
+              className="w-full py-2.5 border-2 border-dashed border-slate-300 rounded-lg text-slate-500 font-medium hover:border-navy-100 hover:text-navy-900 hover:bg-navy-50/50 transition-all flex items-center justify-center gap-2"
             >
               <Plus className="w-4 h-4" /> Add Subject
             </button>
