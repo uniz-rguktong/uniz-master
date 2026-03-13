@@ -5,11 +5,9 @@ import {
   Plus,
   Loader2,
   BookText,
-  Calendar,
-  Trash2,
   Search,
   ChevronDown,
-  Filter,
+  Trash2,
 } from "lucide-react";
 import {
   GET_SUBJECTS,
@@ -148,48 +146,28 @@ export default function SubjectManagement() {
   };
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex flex-col gap-1.5">
-          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
-            Academic Subjects
-          </h2>
-          <p className="text-slate-500 font-medium text-[15px]">
-            Manage the core institutional curriculum ({meta.total} records).
-          </p>
-        </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="h-11 px-6 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2"
-        >
-          <Plus size={16} /> New Subject
-        </button>
-      </div>
-
-      <div className="flex flex-wrap gap-4 items-center">
-        <div className="relative group flex-1 min-w-[300px]">
+    <div className="p-10 space-y-8 text-slate-900 bg-transparent min-h-screen">
+      {/* Header / Filter Bar Row */}
+      <div className="flex items-center gap-4 bg-white p-5 rounded-[22px] shadow-sm border border-slate-100/50">
+        <div className="relative group flex-1">
           <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"
-            size={16}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors"
+            size={18}
           />
           <input
             type="text"
-            placeholder="Search by name or code..."
+            placeholder="Search master subjects..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-11 pl-12 pr-5 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm placeholder:text-slate-400 placeholder:font-medium shadow-none"
+            className="w-full h-11 pl-12 pr-5 bg-slate-50/50 border-none rounded-2xl focus:ring-0 outline-none font-bold text-slate-900 text-[13px] placeholder:text-slate-400 placeholder:font-bold"
           />
         </div>
 
-        <div className="relative group">
-          <Filter
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none"
-            size={14}
-          />
+        <div className="relative group h-11">
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            className="bg-white border border-slate-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
+            className="bg-slate-50/50 border-none px-8 h-full rounded-2xl font-bold text-[10px] uppercase tracking-widest text-slate-500 outline-none min-w-[180px] cursor-pointer appearance-none text-center"
           >
             <option value="">All Departments</option>
             <option value="CSE">CSE</option>
@@ -201,111 +179,74 @@ export default function SubjectManagement() {
             <option value="MME">MME</option>
           </select>
           <ChevronDown
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none"
             size={14}
           />
         </div>
 
-        <div className="relative group">
-          <Calendar
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none"
-            size={14}
-          />
-          <select
-            value={semester}
-            onChange={(e) => setSemester(e.target.value)}
-            className="bg-white border border-slate-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
-          >
-            <option value="">All Semesters</option>
-            {["E1", "E2", "E3", "E4"].map((y) => (
-              <React.Fragment key={y}>
-                <option value={`${y}-SEM-1`}>{y} SEM-1</option>
-                <option value={`${y}-SEM-2`}>{y} SEM-2</option>
-              </React.Fragment>
-            ))}
-          </select>
-          <ChevronDown
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-            size={14}
-          />
-        </div>
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="h-11 px-8 bg-indigo-600 text-white rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center gap-2"
+        >
+          <Plus size={16} strokeWidth={3} /> Add New Subject
+        </button>
       </div>
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="animate-spin text-blue-600" size={32} />
+          <Loader2 className="animate-spin text-indigo-600" size={32} />
         </div>
       ) : subjects.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {subjects.map((sub, idx) => (
               <div
                 key={idx}
-                className="bg-white border border-slate-100 rounded-xl p-7 hover:translate-y-[-2px] hover:border-blue-100 transition-all group overflow-hidden relative shadow-none"
+                className="bg-white border border-slate-100 rounded-[22px] p-6 shadow-sm flex flex-col justify-between"
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-50 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300 shadow-none">
-                    <BookText size={20} />
+                <div>
+                  {/* Top Row: Icon Box & Badge */}
+                  <div className="flex items-center gap-4 mb-5">
+                    <div className="w-12 h-12 bg-indigo-50/50 rounded-[18px] flex items-center justify-center text-indigo-500 border border-indigo-100/20">
+                      <BookText size={18} strokeWidth={2.5} />
+                    </div>
+                    <div className="flex-1 bg-slate-50/80 rounded-xl px-4 py-3 border border-slate-100/50">
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.1em] leading-none">
+                        {sub.department}-{sub.semester}-{sub.code?.slice(-2) || "01"}
+                      </p>
+                    </div>
                   </div>
-                  <div className="px-3 py-1.5 bg-slate-50 rounded-xl text-[9px] font-semibold uppercase tracking-widest text-slate-400 border border-slate-100 shadow-none">
-                    {sub.code}
-                  </div>
-                  <div className="ml-auto flex gap-1 transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                    <button
-                      onClick={() => handleEditClick(sub)}
-                      className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-                    >
-                      <Edit3 size={14} />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteSubject(sub.id)}
-                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+
+                  {/* Subject Name */}
+                  <div className="mb-6">
+                    <h3 className="text-[17px] font-bold text-slate-900 tracking-tight leading-snug">
+                      {sub.name}
+                    </h3>
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900 tracking-tight mb-2 leading-tight">
-                  {sub.name}
-                </h3>
 
-                <div className="grid grid-cols-2 gap-4 mt-8">
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest leading-none">
-                      Dept
-                    </p>
-                    <p className="font-semibold text-slate-700 text-xs flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-600/20 group-hover:bg-blue-600 transition-colors"></div>
-                      {sub.department}
-                    </p>
-                  </div>
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest leading-none">
-                      Term
-                    </p>
-                    <p className="font-semibold text-slate-700 text-xs flex items-center gap-2">
-                      <Calendar size={13} className="text-slate-400" />{" "}
-                      {sub.semester}
-                    </p>
-                  </div>
-                  <div className="col-span-2 mt-4 space-y-2.5">
-                    <div className="flex items-center justify-between">
-                      <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                        Credits
-                      </p>
-                      <span className="text-xs font-semibold text-blue-600">
-                        {sub.credits} Units
-                      </span>
-                    </div>
+                <div>
+                  {/* Divider Line */}
+                  <div className="h-px bg-slate-50 w-full mb-4"></div>
+
+                  {/* Footer Stats & Edit */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.05em]">
+                      {sub.department} • {sub.credits} Credits
+                    </span>
                     <div className="flex gap-2">
-                      {[...Array(Number(sub.credits))].map((_, i) => (
-                        <div
-                          key={i}
-                          className="flex-1 h-1 rounded-xl bg-slate-100 group-hover:bg-blue-600/10 transition-colors overflow-hidden shadow-none"
-                        >
-                          <div className="w-full h-full bg-blue-600 translate-x-0 group-hover:translate-x-0 transition-transform duration-500"></div>
-                        </div>
-                      ))}
+                      <button
+                        onClick={() => handleEditClick(sub)}
+                        className="text-slate-300 hover:text-indigo-600 transition-colors"
+                      >
+                        <Edit3 size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteSubject(sub.id)}
+                        className="text-slate-200 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </div>
                 </div>
