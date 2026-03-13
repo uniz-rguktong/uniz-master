@@ -13,9 +13,11 @@ import {
   Pie, 
   Cell,
   LineChart,
-  Line
+  Line,
+  BarChart,
+  Bar
 } from "recharts";
-import { Activity, Clock, CheckCircle2, AlertCircle, Check, type LucideIcon } from "lucide-react";
+import { Activity, Clock, CheckCircle2, AlertCircle, Check, ChevronDown, type LucideIcon } from "lucide-react";
 import { cn } from "../../utils/cn";
 
 /**
@@ -292,6 +294,95 @@ export const ComparisonChart = ({ title, data = [], lines = [] }: { title: strin
               />
             ))}
           </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Subject Grade Chart - Bar chart for subject performance with branch selection
+ */
+export const SubjectGradeChart = ({ 
+  title, 
+  data = [], 
+  branches = [], 
+  selectedBranch, 
+  onBranchChange 
+}: { 
+  title: string; 
+  data: any[]; 
+  branches: string[]; 
+  selectedBranch: string; 
+  onBranchChange: (branch: string) => void;
+}) => {
+  return (
+    <div className="bg-transparent p-10 rounded-xl border border-slate-100 flex flex-col h-full w-full overflow-hidden">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+        <div>
+          <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-1">{title}</h3>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Academic performance metrics</p>
+        </div>
+        
+        <div className="relative group">
+           <select 
+             value={selectedBranch}
+             onChange={(e) => onBranchChange(e.target.value)}
+             className="appearance-none bg-slate-50 border border-slate-100 rounded-xl px-5 py-2.5 pr-10 text-[11px] font-black uppercase tracking-widest text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/10 cursor-pointer hover:bg-slate-100 transition-all shadow-sm"
+           >
+             {branches.map(b => (
+               <option key={b} value={b}>{b}</option>
+             ))}
+           </select>
+           <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+        </div>
+      </div>
+
+      <div className="h-[400px] w-full mt-4">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 100 }}>
+            <defs>
+              <linearGradient id="colorGrade" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#3b82f6" stopOpacity={1} />
+                <stop offset="100%" stopColor="#60a5fa" stopOpacity={0.8} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="5 5" vertical={false} stroke="#f1f5f9" />
+            <XAxis 
+              dataKey="subject_name" 
+              axisLine={false} 
+              tickLine={false} 
+              interval={0}
+              angle={-45}
+              textAnchor="end"
+              tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
+              height={100}
+            />
+            <YAxis 
+              domain={[0, 10]} 
+              axisLine={false} 
+              tickLine={false} 
+              tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
+            />
+            <Tooltip 
+              cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }}
+              contentStyle={{ 
+                borderRadius: '20px', 
+                border: 'none', 
+                boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                padding: '12px 20px'
+              }}
+              labelStyle={{ fontSize: '11px', fontWeight: '900', color: '#1e293b', marginBottom: '4px', textTransform: 'uppercase' }}
+              itemStyle={{ fontSize: '12px', fontWeight: '800', color: '#3b82f6' }}
+            />
+            <Bar 
+              dataKey="average_grade" 
+              fill="url(#colorGrade)" 
+              radius={[6, 6, 0, 0]} 
+              barSize={40}
+              animationDuration={1500}
+            />
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </div>
