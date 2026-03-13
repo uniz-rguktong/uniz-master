@@ -6,7 +6,7 @@ WORKDIR /app
 # Install dependencies and generate Prisma Client
 COPY package.json package-lock.json* ./
 COPY prisma ./prisma/
-RUN npm ci
+RUN npm ci || npm install
 
 # Set binary target for Alpine
 ENV PRISMA_CLI_BINARY_TARGETS=linux-musl-openssl-3.0.x
