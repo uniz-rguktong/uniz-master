@@ -234,13 +234,13 @@ export default function GradesSection() {
       <div className="flex flex-wrap gap-2.5 bg-slate-100/80 p-1.5 rounded-xl w-fit border border-slate-200/60 backdrop-blur-sm">
         <button
           onClick={() => setSubTab("bulk")}
-          className={`px-6 py-2.5 rounded-xl font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "bulk" ? "bg-white text-blue-700 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
+          className={`px-6 py-2.5 rounded-xl font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "bulk" ? "bg-white text-navy-800 border border-navy-100" : "text-slate-500 hover:text-navy-900"}`}
         >
           <Zap size={14} /> Resource Ingestion
         </button>
         <button
           onClick={() => setSubTab("batch")}
-          className={`px-6 py-2.5 rounded-xl font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "batch" ? "bg-white text-blue-700 border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
+          className={`px-6 py-2.5 rounded-xl font-semibold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 ${subTab === "batch" ? "bg-white text-navy-800 border border-navy-100" : "text-slate-500 hover:text-navy-900"}`}
         >
           <Search size={14} /> Batch Grades
         </button>
@@ -248,7 +248,7 @@ export default function GradesSection() {
 
       {!subTab ? (
         <div className="p-32 flex flex-col items-center justify-center text-center space-y-6 bg-white rounded-xl border border-slate-50">
-          <div className="w-24 h-24 bg-blue-50/50 rounded-xl flex items-center justify-center text-blue-200">
+          <div className="w-24 h-24 bg-navy-50/50 rounded-xl flex items-center justify-center text-blue-200">
             <GraduationCap size={48} strokeWidth={1.5} />
           </div>
           <div>
@@ -262,7 +262,7 @@ export default function GradesSection() {
           </div>
           <div className="flex gap-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="w-1.5 h-1.5 rounded-full bg-blue-100" />
+              <div key={i} className="w-1.5 h-1.5 rounded-full bg-navy-100" />
             ))}
           </div>
         </div>
@@ -419,7 +419,7 @@ export default function GradesSection() {
               {/* Upload Section */}
               <div className="bg-white rounded-xl border border-slate-100 p-10 space-y-10">
                 <div className="flex items-center gap-4">
-                  <div className="p-4 bg-blue-50 text-blue-600 rounded-xl border border-blue-100">
+                  <div className="p-4 bg-navy-50 text-navy-900 rounded-xl border border-navy-100">
                     <Upload size={24} />
                   </div>
                   <div>
@@ -445,7 +445,7 @@ export default function GradesSection() {
                     <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                       Ingestion Protocol
                     </h4>
-                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest flex items-center gap-1.5">
+                    <span className="text-[10px] font-black text-navy-900 uppercase tracking-widest flex items-center gap-1.5">
                       <Zap size={10} /> Live Validation
                     </span>
                   </div>
@@ -481,7 +481,7 @@ export default function GradesSection() {
                 <button
                   onClick={handleFileUpload}
                   disabled={!uploadFile || uploading}
-                  className="w-full bg-blue-600 text-white h-16 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50 disabled:bg-slate-100 disabled:text-slate-400"
+                  className="w-full bg-navy-900 text-white h-16 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-navy-800 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50 disabled:bg-slate-100 disabled:text-slate-400"
                 >
                   {uploading ? (
                     <Spinner size="sm" className="brightness-200" />
@@ -511,7 +511,7 @@ export default function GradesSection() {
                             branch: e.target.value,
                           })
                         }
-                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
                       >
                         <option>CSE</option>
                         <option>ECE</option>
@@ -540,7 +540,7 @@ export default function GradesSection() {
                             year: e.target.value,
                           })
                         }
-                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
                       >
                         <option>E1</option>
                         <option>E2</option>
@@ -566,7 +566,7 @@ export default function GradesSection() {
                             semesterId: e.target.value,
                           })
                         }
-                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                        className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
                       >
                         {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                           <option key={s}>SEM-{s}</option>
@@ -583,7 +583,7 @@ export default function GradesSection() {
                       Target
                     </label>
                     <div
-                      className="flex items-center gap-3 h-[52px] bg-slate-50 border border-slate-100 rounded-xl px-5 cursor-pointer hover:bg-white hover:border-blue-200 transition-all"
+                      className="flex items-center gap-3 h-[52px] bg-slate-50 border border-slate-100 rounded-xl px-5 cursor-pointer hover:bg-white hover:border-navy-100 transition-all"
                       onClick={() =>
                         setBatchFilters({
                           ...batchFilters,
@@ -592,7 +592,7 @@ export default function GradesSection() {
                       }
                     >
                       <div
-                        className={`w-9 h-5 rounded-full relative transition-all ${batchFilters.failedOnly ? "bg-blue-600" : "bg-slate-200"}`}
+                        className={`w-9 h-5 rounded-full relative transition-all ${batchFilters.failedOnly ? "bg-navy-900" : "bg-slate-200"}`}
                       >
                         <div
                           className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${batchFilters.failedOnly ? "right-1" : "left-1"}`}
@@ -607,7 +607,7 @@ export default function GradesSection() {
                 <button
                   onClick={() => fetchBatchGrades()}
                   disabled={loading}
-                  className="h-11 px-8 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2.5"
+                  className="h-11 px-8 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-navy-800 active:scale-95 transition-all flex items-center justify-center gap-2.5"
                 >
                   {loading ? (
                     <Spinner size="sm" className="brightness-200" />
@@ -665,7 +665,7 @@ export default function GradesSection() {
                               label: "Batch Efficiency",
                               value: `${passRate}%`,
                               icon: GraduationCap,
-                              color: "bg-blue-50 text-blue-600",
+                              color: "bg-navy-50 text-navy-900",
                             },
                           ].map((stat, i) => (
                             <div
@@ -829,7 +829,7 @@ export default function GradesSection() {
 
                       <div className="space-y-6">
                         <div className="flex items-center gap-3 ml-6">
-                          <div className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                          <div className="w-1.5 h-1.5 rounded-full bg-navy-900" />
                           <h4 className="font-black text-slate-900 uppercase tracking-[0.3em] text-[10px]">
                             Detailed Cryptographic Trace
                           </h4>
@@ -910,8 +910,8 @@ export default function GradesSection() {
                                       key={p}
                                       onClick={() => setPage(p)}
                                       className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${page === p
-                                        ? "bg-blue-600 text-white border-blue-600"
-                                        : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
+                                        ? "bg-navy-900 text-white border-navy-100"
+                                        : "bg-white text-slate-400 border-slate-100 hover:border-navy-100 hover:text-navy-900"
                                         }`}
                                     >
                                       {p}

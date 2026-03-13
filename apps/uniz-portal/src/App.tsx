@@ -42,9 +42,6 @@ import { Spinner } from "./components/ui/ios-spinner";
 const LoadingFallback = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4">
     <Spinner size="lg" />
-    <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] animate-pulse">
-      Initialising Portal...
-    </p>
   </div>
 );
 
