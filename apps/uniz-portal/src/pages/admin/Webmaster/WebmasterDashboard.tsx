@@ -13,6 +13,7 @@ import {
   ScanLine,
   Lock,
   Search,
+  Brain,
 } from "lucide-react";
 import ProfilePopup from "../ProfilePopup";
 import SecuritySection from "./SecuritySection";
@@ -23,6 +24,7 @@ import StudentDetails from "./StudentDetails";
 import UnifiedAcademicManager from "./UnifiedAcademicManager";
 import FacultyManagement from "./FacultyManagement";
 import UploadSection from "./UploadSection";
+import SystemUserAnalytics from "./SystemUserAnalytics";
 
 import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";
@@ -49,6 +51,7 @@ export default function WebmasterDashboard() {
     | "system_logs"
     | "exam_seating"
     | "security"
+    | "intelligence"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
@@ -89,6 +92,7 @@ export default function WebmasterDashboard() {
       group: null,
       items: [
         { id: "dashboard", label: "Overview", icon: LayoutDashboard },
+        { id: "intelligence", label: "Intelligence", icon: Brain },
       ]
     },
     {
@@ -158,6 +162,12 @@ export default function WebmasterDashboard() {
         return <SeatingUploadSection />;
       case "security":
         return <SecuritySection username={username} />;
+      case "intelligence":
+        return (
+          <div className="animate-in fade-in duration-700">
+            <SystemUserAnalytics />
+          </div>
+        );
       default:
         return (
           <div className="animate-in fade-in duration-500">
