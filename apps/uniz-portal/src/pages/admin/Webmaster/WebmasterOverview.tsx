@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../../api/endpoints";
 import { BackgroundIconCloud } from "../../../components/illustrations/FloatingIllustrations";
+import SystemUserAnalytics from "./SystemUserAnalytics";
 
 const CLOUDINARY_CLOUD = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -358,6 +359,15 @@ export default function WebmasterOverview({ username }: { username: string }) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {!loading && !isEditing && (
+        <div className="w-full max-w-6xl mt-12 space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+          <div className="relative">
+            <div className="absolute inset-0 bg-blue-50/50 blur-3xl rounded-full -z-10" />
+            <SystemUserAnalytics />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
