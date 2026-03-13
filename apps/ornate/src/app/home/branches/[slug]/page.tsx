@@ -5,13 +5,6 @@ import { getSportsStandingsData, computeDynamicStandings } from '@/lib/data/spor
 
 export const revalidate = 60; // Cache and regenerate page every 60 seconds (ISR)
 
-export async function generateStaticParams() {
-    const slugs = [
-        'cse', 'ece', 'eee', 'mechanical', 'civil', 'hho'
-    ];
-    return slugs.map((slug) => ({ slug }));
-}
-
 export default async function BranchPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 
