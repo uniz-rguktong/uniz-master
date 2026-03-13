@@ -72,7 +72,7 @@ export default function GrievanceSection() {
       case "pending":
         return "bg-amber-50 text-amber-600 border-amber-100";
       case "in-progress":
-        return "bg-blue-50 text-blue-600 border-blue-100";
+        return "bg-navy-50 text-navy-900 border-navy-100";
       default:
         return "bg-slate-50 text-slate-600 border-slate-100";
     }
@@ -118,7 +118,7 @@ export default function GrievanceSection() {
           label="Total Grievances"
           count={grievances.length}
           icon={MessageSquare}
-          color="bg-blue-600"
+          color="bg-navy-900"
         />
         <StatCard
           label="Pending Review"
@@ -149,7 +149,7 @@ export default function GrievanceSection() {
             placeholder="Search grievances by ID, category or content..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm"
+            className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900 text-sm"
           />
         </div>
 
@@ -158,7 +158,7 @@ export default function GrievanceSection() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-5 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-widest transition-all ${filter === f ? "bg-white text-blue-700 shadow-none border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
+              className={`px-5 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-widest transition-all ${filter === f ? "bg-white text-navy-800 shadow-none border border-navy-100" : "text-slate-500 hover:text-navy-900"}`}
             >
               {f}
             </button>
@@ -263,8 +263,8 @@ export default function GrievanceSection() {
                         key={p}
                         onClick={() => setPage(p)}
                         className={`w-10 h-10 rounded-xl font-black text-xs transition-all ${page === p
-                          ? "bg-blue-600 text-white shadow-none"
-                          : "text-slate-400 hover:bg-white hover:text-blue-600"
+                          ? "bg-navy-900 text-white shadow-none"
+                          : "text-slate-400 hover:bg-white hover:text-navy-900"
                           }`}
                       >
                         {p}

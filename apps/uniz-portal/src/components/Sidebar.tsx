@@ -131,8 +131,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student",
       content: "dashboard",
       icon: User,
-      activeColor: "text-blue-600",
-      hoverColor: "hover:text-blue-600",
+      activeColor: "text-navy-900",
+      hoverColor: "hover:text-navy-900",
     },
     ...(enableOutingsAndOutpasses
       ? [
@@ -171,8 +171,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student/current-semester",
       content: "currentSemester",
       icon: Layers,
-      activeColor: "text-indigo-600",
-      hoverColor: "hover:text-indigo-600",
+      activeColor: "text-navy-900",
+      hoverColor: "hover:text-navy-900",
     },
     {
       id: "attendance",
@@ -180,8 +180,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student/attendance",
       content: "attendance",
       icon: CalendarCheck,
-      activeColor: "text-cyan-600",
-      hoverColor: "hover:text-cyan-600",
+      activeColor: "text-navy-900",
+      hoverColor: "hover:text-navy-900",
     },
     {
       id: "resetpassword",
@@ -298,14 +298,14 @@ export default function Sidebar({ content }: MainContent) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-premium-gradient text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+    <div className="flex flex-col min-h-screen bg-premium-gradient text-slate-900 selection:bg-navy-100 selection:text-navy-900">
       <AnimatePresence>
         {showNotice && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="bg-blue-600 text-white py-2.5 px-6 flex items-center justify-between shadow-lg relative z-[100]"
+            className="bg-gradient-to-r from-[#0B2A47] to-[#0F3B63] text-white py-2.5 px-6 flex items-center justify-between shadow-lg relative z-[100]"
           >
             <div className="flex-1 text-center text-[11px] md:text-[13px] font-sans font-bold tracking-tight">
               Outpass and outing feature has been currently disabled by the
@@ -363,7 +363,7 @@ export default function Sidebar({ content }: MainContent) {
                   {userData?.email || "N/A"}
                 </p>
               </div>
-              <div className="w-11 h-11 rounded-full ring-2 ring-blue-50 border-2 border-white overflow-hidden shadow-sm">
+              <div className="w-11 h-11 rounded-full ring-2 ring-navy-50 border-2 border-white overflow-hidden shadow-sm">
                 {userData?.profile_url ? (
                   <img
                     src={userData.profile_url}
@@ -371,7 +371,7 @@ export default function Sidebar({ content }: MainContent) {
                     alt=""
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-bold text-xs">
+                  <div className="w-full h-full flex items-center justify-center bg-navy-900 text-white font-bold text-xs">
                     {userData?.name?.charAt(0) || "S"}
                   </div>
                 )}

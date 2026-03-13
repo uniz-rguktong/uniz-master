@@ -299,7 +299,7 @@ export default function ProfilePopup({
                   <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl border-2 border-blue-500 text-blue-600 text-[12px] font-semibold hover:bg-blue-50 transition-all disabled:opacity-60 shadow-none"
+                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl border-2 border-navy-100 text-navy-900 text-[12px] font-semibold hover:bg-navy-50 transition-all disabled:opacity-60 shadow-none"
                   >
                     {isSaving ? (
                       <Spinner size="sm" className="scale-75" />
@@ -452,7 +452,7 @@ function DetailRow({
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="text-[13px] font-medium text-slate-900 bg-transparent border-b border-blue-400 focus:outline-none w-full"
+            className="text-[13px] font-medium text-slate-900 bg-transparent border-b border-navy-100 focus:outline-none w-full"
           />
         ) : (
           <p className="text-[13px] font-medium text-slate-900 truncate">

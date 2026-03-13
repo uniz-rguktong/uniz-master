@@ -20,8 +20,6 @@ interface DonutChartProps extends React.HTMLAttributes<HTMLDivElement> {
   animationDelayPerSegment?: number;
   highlightOnHover?: boolean;
   centerContent?: React.ReactNode;
-  /** Minimum percentage for a segment to be visually visible (0-100) */
-  minVisiblePercentage?: number;
   /** Callback function when a segment is hovered */
   onSegmentHover?: (segment: DonutChartSegment | null) => void;
 }
@@ -37,7 +35,6 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
       animationDelayPerSegment = 0.05,
       highlightOnHover = true,
       centerContent,
-      minVisiblePercentage = 4,
       onSegmentHover,
       className,
       ...props
@@ -53,52 +50,9 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
       [data, propTotalValue]
     );
 
-    // Calculate visual segments ensuring small values are visible
-    const visualSegments = React.useMemo(() => {
-      if (internalTotalValue === 0) return [];
-      
-      const nonZeroSegments = data.filter(s => s.value > 0);
-      if (nonZeroSegments.length === 0) return [];
-
-      // If we have very skewed data, we ensure a minimum visibility for small segments
-      let usedPercentage = 0;
-      const countBelowMin = nonZeroSegments.filter(s => (s.value / internalTotalValue) * 100 < minVisiblePercentage).length;
-      
-      // Total percentage dedicated to small segments
-      const totalMinAllocated = countBelowMin * minVisiblePercentage;
-      const remainingPercentage = 100 - totalMinAllocated;
-      
-      const largeSegmentsTotalValue = nonZeroSegments
-        .filter(s => (s.value / internalTotalValue) * 100 >= minVisiblePercentage)
-        .reduce((sum, s) => sum + s.value, 0);
-
-      let cumulative = 0;
-      return data.map((segment) => {
-        if (segment.value === 0) return { ...segment, visualPercentage: 0, visualOffset: 0 };
-
-        const actualPercentage = (segment.value / internalTotalValue) * 100;
-        let visualPercentage = actualPercentage;
-
-        if (actualPercentage < minVisiblePercentage) {
-          visualPercentage = minVisiblePercentage;
-        } else if (largeSegmentsTotalValue > 0) {
-          // Proportionally scale down large segments to make room for min-width small segments
-          visualPercentage = (segment.value / largeSegmentsTotalValue) * remainingPercentage;
-        }
-
-        const offset = cumulative;
-        cumulative += visualPercentage;
-        
-        return {
-          ...segment,
-          visualPercentage,
-          visualOffset: offset
-        };
-      });
-    }, [data, internalTotalValue, minVisiblePercentage]);
-
     const radius = size / 2 - strokeWidth / 2;
     const circumference = 2 * Math.PI * radius;
+    let cumulativePercentage = 0;
 
     // Effect to call the onSegmentHover prop when internal state changes
     React.useEffect(() => {
@@ -135,13 +89,20 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
           
           {/* Data Segments */}
           <AnimatePresence>
-            {visualSegments.map((segment, index) => {
-              if (segment.visualPercentage === 0) return null;
+            {data.map((segment, index) => {
+              if (segment.value === 0) return null;
 
-              const strokeDasharray = `${(segment.visualPercentage / 100) * circumference} ${circumference}`;
-              const strokeDashoffset = (segment.visualOffset / 100) * circumference;
+              const percentage =
+                internalTotalValue === 0
+                  ? 0
+                  : (segment.value / internalTotalValue) * 100;
+              
+              const strokeDasharray = `${(percentage / 100) * circumference} ${circumference}`;
+              const strokeDashoffset = (cumulativePercentage / 100) * circumference;
               
               const isActive = hoveredSegment?.label === segment.label;
+              
+              cumulativePercentage += percentage;
 
               return (
                 <motion.circle

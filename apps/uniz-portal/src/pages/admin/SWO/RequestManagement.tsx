@@ -124,7 +124,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center p-20 space-y-4">
-        <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
+        <Loader2 className="w-10 h-10 text-navy-900 animate-spin" />
         <p className="text-slate-500 font-medium">
           Fetching pending applications...
         </p>
@@ -137,7 +137,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-indigo-600 font-bold text-[10px] uppercase tracking-[0.2em]">
+          <div className="flex items-center gap-2 text-navy-900 font-bold text-[10px] uppercase tracking-[0.2em]">
             <TrendingUp size={14} />
             Live Queue
           </div>
@@ -151,7 +151,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
 
         <div className="relative group w-full md:w-96">
           <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors"
             size={18}
           />
           <input
@@ -159,7 +159,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
             placeholder="Search Student ID or Name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 outline-none transition-all font-medium text-slate-900 shadow-sm"
+            className="w-full h-12 pl-12 pr-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-medium text-slate-900 shadow-sm"
           />
         </div>
       </div>
@@ -194,7 +194,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                     <h3 className="font-bold text-slate-900 text-xl tracking-tight leading-none mb-2">
                       {request.username}
                     </h3>
-                    <p className="text-[12px] text-indigo-600 font-black uppercase tracking-widest">
+                    <p className="text-[12px] text-navy-900 font-black uppercase tracking-widest">
                       {request.studentId || "NO ID"}
                     </p>
                   </div>
