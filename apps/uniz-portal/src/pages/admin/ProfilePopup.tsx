@@ -18,6 +18,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../api/endpoints";
+import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
 
 const CLOUDINARY_CLOUD = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -220,6 +221,9 @@ export default function ProfilePopup({
               mass: 0.8,
             }}
           >
+            {/* Background Decorative Illustrations */}
+            <BackgroundIconCloud className="scale-[1.5]" />
+
             {/* ── Top bar: email (centered) + close ── */}
             <div className="relative flex items-center justify-center px-5 py-3 border-b border-slate-100">
               <p className="text-[12.5px] font-semibold text-slate-600 truncate lowercase">
@@ -305,7 +309,7 @@ export default function ProfilePopup({
                   <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl border-2 border-blue-500 text-blue-600 text-[12px] font-semibold hover:bg-blue-50 transition-all disabled:opacity-60 shadow-none"
+                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl border-2 border-navy-100 text-navy-900 text-[12px] font-semibold hover:bg-navy-50 transition-all disabled:opacity-60 shadow-none"
                   >
                     {isSaving ? (
                       <Loader2 size={13} className="animate-spin" />
@@ -459,7 +463,7 @@ function DetailRow({
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="text-[13px] font-medium text-slate-900 bg-transparent border-b border-blue-400 focus:outline-none w-full"
+            className="text-[13px] font-medium text-slate-900 bg-transparent border-b border-navy-100 focus:outline-none w-full"
           />
         ) : (
           <p className="text-[13px] font-medium text-slate-900 truncate">

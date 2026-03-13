@@ -87,7 +87,7 @@ export default function FeaturedCarousel({ items }: FeaturedCarouselProps) {
         <section className="py-20 bg-transparent px-[9px]">
             <div className="max-w-[1440px] mx-auto px-4 md:px-10">
                 <div className="flex items-center gap-3 mb-10">
-                    <div className="w-1.5 h-8 bg-[#0052cc] rounded-full"></div>
+                    <div className="w-1.5 h-8 bg-navy-900 rounded-full"></div>
                     <h2 className="text-3xl font-black text-slate-900 tracking-tight">Featured</h2>
                 </div>
 

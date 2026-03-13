@@ -7,7 +7,7 @@ export function HeroBlock() {
   const navigate = useNavigate();
 
   return (
-    <section className="relative flex items-center justify-center overflow-hidden bg-background min-h-screen w-full">
+    <section className="relative flex items-center justify-center overflow-hidden bg-[#F4F6F8] min-h-screen w-full">
 
       <div className="relative z-10 mx-auto max-w-5xl text-center">
         <motion.div

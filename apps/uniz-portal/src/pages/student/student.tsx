@@ -41,6 +41,8 @@ import AcademicRecord from "./components/AcademicRecord";
 import MySubjects from "./components/MySubjects";
 import SeatingArrangement from "./components/SeatingArrangement";
 import { Student } from "../../types";
+import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
+import StudentAnalytics from "./components/StudentAnalytics";
 
 export const enableOutingsAndOutpasses = false;
 
@@ -391,7 +393,7 @@ export default function StudentProfilePage() {
         className="bg-slate-900 rounded-[24px] p-6 text-white shadow-xl shadow-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-white/10"
       >
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md text-blue-400">
+          <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md text-navy-300">
             <Calendar size={24} />
           </div>
           <div>
@@ -416,7 +418,7 @@ export default function StudentProfilePage() {
           </div>
           <button
             onClick={() => setActiveTab("seating")}
-            className="flex-1 md:flex-none px-6 py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all"
+            className="flex-1 md:flex-none px-6 py-4 bg-navy-900 hover:bg-navy-800 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all"
           >
             View Full Plan
           </button>
@@ -501,7 +503,10 @@ export default function StudentProfilePage() {
   ];
 
   return (
-    <div className="font-sans text-slate-900">
+    <div className="font-sans text-slate-900 relative">
+      {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
+      <BackgroundIconCloud />
+
       <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2">
         {/* Profile Header */}
         <div className="flex flex-col items-center justify-center relative mb-8">
@@ -586,7 +591,7 @@ export default function StudentProfilePage() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingImage}
-                className="absolute bottom-[-1px] right-2 w-8 h-8 bg-[#e8f0fe] border-[1.5px] border-[#4285f4] rounded-full flex items-center justify-center text-[#174ea6] hover:bg-blue-100 transition-all z-20 cursor-pointer shadow-sm hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="absolute bottom-[-1px] right-2 w-8 h-8 bg-navy-100 border-[1.5px] border-navy-900 rounded-full flex items-center justify-center text-navy-800 hover:bg-navy-200 transition-all z-20 cursor-pointer shadow-sm hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Update Profile Photo"
               >
                 <Camera
@@ -612,7 +617,7 @@ export default function StudentProfilePage() {
                 {!isEditing && (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="absolute -right-8 md:-right-10 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-transparent text-slate-400 hover:bg-slate-100 hover:text-[#5455ea] transition-all"
+                    className="absolute -right-8 md:-right-10 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-transparent text-slate-400 hover:bg-slate-100 hover:text-navy-900 transition-all"
                     title="Edit Profile"
                   >
                     <Pencil
@@ -635,7 +640,7 @@ export default function StudentProfilePage() {
 
             {/* Badges */}
             <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] md:text-xs font-medium text-slate-500 mt-1">
-              <span className="text-indigo-600 font-bold uppercase tracking-widest px-2 py-1 bg-indigo-50 border border-indigo-100 rounded">
+              <span className="text-navy-900 font-bold uppercase tracking-widest px-2 py-1 bg-navy-50 border border-navy-100 rounded">
                 {user?.username}
               </span>
               <span className="w-1 h-1 rounded-full bg-slate-300"></span>
@@ -667,7 +672,7 @@ export default function StudentProfilePage() {
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex-1 max-w-[140px] py-2.5 bg-blue-600 text-white rounded-xl font-bold text-xs shadow-md shadow-blue-100 flex items-center justify-center gap-2"
+                    className="flex-1 max-w-[140px] py-2.5 bg-navy-900 text-white rounded-xl font-bold text-xs shadow-md shadow-navy-100 flex items-center justify-center gap-2"
                   >
                     {isSubmitting && <Loader2 className="w-3 h-3 animate-spin" />}
                     Save Changes
@@ -697,8 +702,8 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                  className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${activeTab === tab
-                    ? "text-cyan-900"
+                    className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${activeTab === tab
+                    ? "text-navy-900"
                     : "text-slate-400 hover:text-slate-600"
                     }`}
                 >
@@ -706,7 +711,7 @@ export default function StudentProfilePage() {
                   {activeTab === tab && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-cyan-900 rounded-t-full"
+                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-navy-900 rounded-t-full"
                     />
                   )}
                 </button>
@@ -738,6 +743,8 @@ export default function StudentProfilePage() {
                     />
                   ))}
                 </div>
+                {/* Modern Analytics Section integrated into Personal view */}
+                {user?.username && <StudentAnalytics studentId={user.username} />}
               </div>
             )}
 
@@ -745,7 +752,7 @@ export default function StudentProfilePage() {
               <div className="space-y-10">
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
-                    <div className="h-6 w-1.5 bg-blue-600 rounded-full"></div>
+                    <div className="h-6 w-1.5 bg-navy-900 rounded-full"></div>
                     <h3 className="text-[17px] font-semibold tracking-tight text-slate-900">
                       Academic Overview
                     </h3>
@@ -878,7 +885,7 @@ export default function StudentProfilePage() {
                     className="group relative overflow-hidden bg-white hover:bg-slate-900 rounded-xl p-6 transition-all duration-300 border border-slate-100 hover:border-slate-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md h-[120px] md:h-auto"
                   >
                     <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
-                      <div className="text-indigo-600 group-hover:text-white transition-colors duration-300">
+                      <div className="text-navy-900 group-hover:text-white transition-colors duration-300">
                         <Clock size={22} />
                       </div>
                       <div>
@@ -897,7 +904,7 @@ export default function StudentProfilePage() {
                     className="group relative overflow-hidden bg-white hover:bg-slate-900 rounded-xl p-6 transition-all duration-300 border border-slate-100 hover:border-slate-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md h-[120px] md:h-auto"
                   >
                     <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
-                      <div className="text-indigo-600 group-hover:text-white transition-colors duration-300">
+                      <div className="text-navy-900 group-hover:text-white transition-colors duration-300">
                         <Calendar size={22} />
                       </div>
                       <div>
@@ -995,7 +1002,7 @@ export default function StudentProfilePage() {
                       Reason
                     </label>
                     <textarea
-                      className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none min-h-[120px] font-bold text-[15px] text-slate-900 placeholder:text-slate-300 placeholder:font-normal resize-none transition-all"
+                      className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200 focus:border-navy-100 focus:ring-1 focus:ring-navy-900 focus:outline-none min-h-[120px] font-bold text-[15px] text-slate-900 placeholder:text-slate-300 placeholder:font-normal resize-none transition-all"
                       placeholder="Please explain why you need to leave..."
                       value={requestForm.reason}
                       onChange={(e) =>
@@ -1015,7 +1022,7 @@ export default function StudentProfilePage() {
                       </label>
                       <input
                         type={requestType === "outpass" ? "date" : "time"}
-                        className="w-full bg-slate-50 p-4 rounded-xl border border-slate-100 focus:border-cyan-800 focus:ring-1 focus:ring-cyan-800 focus:outline-none font-semibold text-lg text-slate-900 transition-all"
+                        className="w-full bg-slate-50 p-4 rounded-xl border border-slate-100 focus:border-navy-100 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-lg text-slate-900 transition-all"
                         value={requestForm.from}
                         onChange={(e) =>
                           setRequestForm({
@@ -1032,7 +1039,7 @@ export default function StudentProfilePage() {
                       </label>
                       <input
                         type={requestType === "outpass" ? "date" : "time"}
-                        className="w-full bg-slate-50 p-4 rounded-xl border border-slate-100 focus:border-cyan-800 focus:ring-1 focus:ring-cyan-800 focus:outline-none font-semibold text-lg text-slate-900 transition-all"
+                        className="w-full bg-slate-50 p-4 rounded-xl border border-slate-100 focus:border-navy-100 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-lg text-slate-900 transition-all"
                         value={requestForm.to}
                         onChange={(e) =>
                           setRequestForm({ ...requestForm, to: e.target.value })

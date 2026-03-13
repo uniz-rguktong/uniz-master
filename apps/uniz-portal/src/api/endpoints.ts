@@ -1,5 +1,6 @@
 // Set this to your Azure VM IP or Domain in .env as VITE_API_URL
 export const BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
+export const ANALYTICS_BASE_URL = import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app";
 
 // Notification service URL - routes through same-origin nginx proxy
 export const NOTIFICATION_SERVICE_URL = `${BASE_URL}/notifications`;
@@ -206,3 +207,7 @@ export const GET_SEATING_TEMPLATE = (
   `${BASE_URL}/academics/seating/template?semesterId=${semesterId}&branch=${branch}&year=${year}&examName=${examName}`;
 export const UPLOAD_SEATING = `${BASE_URL}/academics/seating/upload`;
 export const GET_STUDENT_SEATING = `${BASE_URL}/academics/seating/student`;
+
+// Analytics Service
+export const STUDENT_ATTENDANCE_ANALYTICS = (id: string) => `${ANALYTICS_BASE_URL}/api/analytics/student/${id}/attendance`;
+export const STUDENT_GRADES_TREND_ANALYTICS = (id: string) => `${ANALYTICS_BASE_URL}/api/analytics/student/${id}/grades-trend`;
