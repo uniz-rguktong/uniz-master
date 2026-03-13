@@ -1,0 +1,4724 @@
+/* author: https://codepen.io/jcoulterdesign/pen/ZxXbeP
+Jamie Coulter
+ */
+
+.page-clubs {
+  font-family: var(--font-orbitron), sans-serif;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.page-clubs .solar_systm {
+  transform-style: preserve-3d;
+  pointer-events: none;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.page-clubs .planet_description {
+  pointer-events: all;
+  position: relative;
+  z-index: 100;
+}
+
+.page-clubs * {
+  -webkit-user-select: none;
+  /* Chrome all / Safari all */
+  -moz-user-select: none;
+  /* Firefox all */
+  -ms-user-select: none;
+  /* IE 10+ */
+  user-select: none;
+  /* Likely future */
+}
+
+.page-clubs .solar_systm .planet,
+.page-clubs input[type=radio][name=planet]::after,
+.page-clubs .overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: auto;
+}
+
+.page-clubs .solar_systm .planet.sarvasrijana .trajectory.umb,
+.page-clubs .solar_systm .planet.sarvasrijana .trajectory.ari,
+.page-clubs .solar_systm .planet.sarvasrijana .trajectory.mir,
+.page-clubs .solar_systm .planet.kaladharani .trajectory.enc,
+.page-clubs .solar_systm .planet.kaladharani .trajectory.di,
+.page-clubs .solar_systm .planet.kaladharani .trajectory.ti,
+.page-clubs .solar_systm .planet.artix .trajectory.ga,
+.page-clubs .solar_systm .planet.artix .trajectory.eu,
+.page-clubs .solar_systm .planet.artix .trajectory.lop,
+.page-clubs .solar_systm .planet.techxcel .trajectory.p,
+.page-clubs .solar_systm .planet.techxcel .trajectory.d,
+.page-clubs .solar_systm .planet.pixelro .trajectory.m {
+  border: 2px dashed white;
+  position: absolute;
+  border-radius: 3400px;
+  background: none !important;
+  z-index: -2;
+}
+
+.page-clubs .solar_systm .planet {
+  height: 1200px;
+  width: 1200px;
+  border-radius: 600px;
+  background: black;
+  transition: transform 1.8s 0s cubic-bezier(0.33, 0, 0, 1), opacity 1.5s 0s, box-shadow 0s 0s;
+  background-size: 1140px 910px !important;
+  top: auto;
+  bottom: -920px;
+  will-change: transform, opacity;
+}
+
+.page-clubs .solar_systm .planet .moon {
+  height: 200px;
+  width: 200px;
+  border-radius: 600px;
+  background: red;
+  position: absolute;
+  text-align: center;
+  color: white;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.6s 0.2s, transform 0.6s 0.2s;
+}
+
+.page-clubs .solar_systm .planet .moon h2 {
+  font-weight: 100;
+  font-size: 40px;
+  letter-spacing: 5px;
+  margin: 0;
+  position: relative;
+  top: -120px;
+}
+
+.page-clubs .solar_systm .planet .moon h3 {
+  font-weight: 100;
+  font-size: 20px;
+  letter-spacing: 5px;
+  color: #fea082;
+  margin: 0;
+  position: relative;
+  top: -120px;
+}
+
+@keyframes clubs-planet {
+  from {
+    background-position-y: 0px;
+  }
+
+  to {
+    background-position-y: -1000px;
+  }
+}
+
+.page-clubs .solar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotatex(-20deg);
+  perspective: 800px;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  width: 220px;
+  height: 220px;
+  border-radius: 550px;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  z-index: 12;
+  left: 18px;
+  bottom: 282px;
+}
+
+.page-clubs {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: black;
+  font-family: "var(--font-orbitron)", sans-serif;
+  z-index: 1;
+}
+
+.page-clubs .read-info-container {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  left: auto;
+  z-index: 9999;
+}
+
+.page-clubs .read-info-container:hover .explore-arrow {
+  transform: translateX(-8px);
+  filter: drop-shadow(0 0 5px var(--color-neon));
+}
+
+.page-clubs .backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  z-index: 9990;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.5s ease;
+}
+
+.page-clubs #readInfo:checked~.backdrop {
+  opacity: 1;
+  visibility: visible;
+}
+
+.page-clubs .read-info-btn {
+  background: rgba(57, 255, 20, 0.05);
+  color: #39FF14;
+  padding: 12px 28px;
+  border-radius: 2px;
+  border: 1px solid rgba(57, 255, 20, 0.3);
+  cursor: pointer;
+  font-family: var(--font-apex), sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  backdrop-filter: blur(8px);
+  display: inline-block;
+  box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.page-clubs .read-info-btn:hover {
+  background: rgba(57, 255, 20, 0.15);
+  border-color: #39FF14;
+  color: #39FF14;
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.2), inset 0 0 15px rgba(57, 255, 20, 0.1);
+  letter-spacing: 5px;
+}
+
+
+
+.page-clubs .logo {
+  color: white;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  text-align: center;
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 100;
+  letter-spacing: 4px;
+}
+
+.page-clubs .logo span {
+  font-size: 12px;
+  color: #f39041;
+  display: block;
+}
+
+.page-clubs label {
+  cursor: pointer;
+}
+
+.page-clubs label.icro>.preview {
+  background: url("/assets/ICRO.webp") !important;
+}
+
+.page-clubs label.khelsaathi>.preview {
+  background: url("/assets/Khelsaathi.webp") !important;
+}
+
+.page-clubs label.pixelro>.preview {
+  background: url("/assets/PixelRo.webp") !important;
+}
+
+.page-clubs label.techxcel>.preview {
+  background: url("/assets/TechXcel.webp") !important;
+}
+
+.page-clubs label.artix>.preview {
+  background: url("/assets/artix.webp") !important;
+}
+
+.page-clubs label.kaladharani>.preview {
+  background: url("/assets/kaladharani.webp") !important;
+}
+
+.page-clubs label.sarvasrijana>.preview {
+  background: url("/assets/sarvasrijana.webp") !important;
+}
+
+.page-clubs label.menu {
+  color: white;
+  display: block;
+  position: absolute;
+  cursor: pointer;
+  right: 90px;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.page-clubs label.menu:hover .preview {
+  filter: brightness(1.2);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.page-clubs label.menu:hover .info h2,
+.page-clubs label.menu:hover .info h3 {
+  opacity: 1;
+  color: white;
+}
+
+.page-clubs label.menu:after {
+  display: none;
+}
+
+.page-clubs label.menu:hover h2,
+.page-clubs label.menu:hover h3 {
+  opacity: 1;
+}
+
+.page-clubs label.menu.icro h2 .pip {
+  background: #E8927C;
+}
+
+.page-clubs label.menu.khelsaathi h2 .pip {
+  background: #b45d15;
+}
+
+.page-clubs label.menu.pixelro h2 .pip {
+  background: #26daaa;
+}
+
+.page-clubs label.menu.techxcel h2 .pip {
+  background: #e55f45;
+}
+
+.page-clubs label.menu.artix h2 .pip {
+  background: orange;
+}
+
+.page-clubs label.menu.kaladharani h2 .pip {
+  background: #b29d81;
+}
+
+.page-clubs label.menu.sarvasrijana h2 .pip {
+  background: #8dcdd8;
+}
+
+.page-clubs label.menu .preview {
+  width: 45px;
+  height: 45px;
+  background: yellow;
+  background-size: auto 100% !important;
+  position: absolute;
+  right: 0;
+  border-radius: 100px;
+  box-shadow: 0 -13px 10px 2px black inset;
+}
+
+.page-clubs label.menu .info {
+  position: relative;
+  right: 65px;
+  top: 5px;
+  text-align: right;
+}
+
+.page-clubs label.menu h2,
+.page-clubs label.menu h3 {
+  text-transform: uppercase;
+  margin: 0;
+  font-weight: 100;
+  letter-spacing: 2px;
+}
+
+.page-clubs label.menu h2 {
+  font-size: 15px;
+  opacity: 0.4;
+  margin-bottom: 4px;
+}
+
+.page-clubs label.menu h2 .pip {
+  width: 0;
+  height: 9px;
+  background: #fea082;
+  float: right;
+  position: relative;
+  top: 3px;
+  transition: all 0.3s;
+  margin-left: 0px;
+}
+
+.page-clubs label.menu h3 {
+  font-size: 8px;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+  opacity: 0.3;
+}
+
+.page-clubs label.menu:nth-of-type(1) {
+  top: calc(50vh + 100px + (70px * 1) - 450px);
+}
+
+.page-clubs label.menu:nth-of-type(2) {
+  top: calc(50vh + 100px + (70px * 2) - 450px);
+}
+
+.page-clubs label.menu:nth-of-type(3) {
+  top: calc(50vh + 100px + (70px * 3) - 450px);
+}
+
+.page-clubs label.menu:nth-of-type(4) {
+  top: calc(50vh + 100px + (70px * 4) - 450px);
+}
+
+.page-clubs label.menu:nth-of-type(5) {
+  top: calc(50vh + 100px + (70px * 5) - 450px);
+}
+
+.page-clubs label.menu:nth-of-type(6) {
+  top: calc(50vh + 100px + (70px * 6) - 450px);
+}
+
+.page-clubs label.menu:nth-of-type(7) {
+  top: calc(50vh + 100px + (70px * 7) - 450px);
+}
+
+.page-clubs #readInfo:checked~#icro:checked~.panel.panel-icro,
+.page-clubs #readInfo:checked~#khelsaathi:checked~.panel.panel-khelsaathi,
+.page-clubs #readInfo:checked~#pixelro:checked~.panel.panel-pixelro,
+.page-clubs #readInfo:checked~#techxcel:checked~.panel.panel-techxcel,
+.page-clubs #readInfo:checked~#artix:checked~.panel.panel-artix,
+.page-clubs #readInfo:checked~#kaladharani:checked~.panel.panel-kaladharani,
+.page-clubs #readInfo:checked~#sarvasrijana:checked~.panel.panel-sarvasrijana {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  visibility: visible;
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.4s, opacity 0.5s 0.4s, visibility 0s 0.4s;
+}
+
+.page-clubs .panel label.closePanel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  color: #888;
+  font-size: 24px;
+  transition: transform 0.2s, color 0.2s;
+  z-index: 1000;
+}
+
+.page-clubs .panel label.closePanel:hover {
+  color: #333;
+  transform: translateX(4px);
+}
+
+/* removed old .read sibling transitions */
+
+.page-clubs label.close {
+  position: absolute;
+  right: 60px;
+  opacity: 0;
+  transition: all 0.3s 0.4s;
+  z-index: 3;
+  top: 65px;
+}
+
+.page-clubs label.closeBig {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  height: 100vh;
+  transition: all 0.2s;
+  z-index: 10;
+  width: 0;
+  background: rgba(56, 37, 99, 0.38);
+}
+
+.page-clubs label.closeBig::after {
+  content: "Back";
+  text-align: center;
+  font-size: 30px;
+  color: white;
+  position: absolute;
+  left: -140px;
+  opacity: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.page-clubs .overlay {
+  width: 1800px;
+  height: 1900px;
+  /* Stretched to bottom */
+  top: 500px;
+  left: -303px;
+  opacity: 1;
+  border-radius: 0;
+  /* Straight edges, no curl */
+  z-index: 0;
+  box-shadow: 0px -650px 950px 300px rgb(0, 0, 0) inset;
+  background: linear-gradient(to bottom, transparent 500px, rgba(0, 0, 0, 0.9) 1200px, black 1900px);
+  pointer-events: none;
+  /* Prevents blocking clicks on planets */
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -2;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-11500px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -3;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-13800px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -4;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label:before {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label .preview {
+  box-shadow: 0 0 20px 2px rgba(255, 255, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.6);
+  border: 2px solid white;
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.icro .preview {
+  border-color: #E8927C;
+  box-shadow: 0 0 25px 5px rgba(232, 146, 124, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.khelsaathi .preview {
+  border-color: #b45d15;
+  box-shadow: 0 0 25px 5px rgba(180, 93, 21, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.pixelro .preview {
+  border-color: #26daaa;
+  box-shadow: 0 0 25px 5px rgba(38, 218, 170, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.techxcel .preview {
+  border-color: #e55f45;
+  box-shadow: 0 0 25px 5px rgba(229, 95, 69, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.artix .preview {
+  border-color: orange;
+  box-shadow: 0 0 25px 5px rgba(255, 165, 0, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.kaladharani .preview {
+  border-color: #b29d81;
+  box-shadow: 0 0 25px 5px rgba(178, 157, 129, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.sarvasrijana .preview {
+  border-color: #8dcdd8;
+  box-shadow: 0 0 25px 5px rgba(141, 205, 216, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -2;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-11500px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -3;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label:before {
+  display: block;
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 2;
+  background: white;
+  border-radius: 4px;
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -2;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label:before {
+  display: block;
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 2;
+  background: white;
+  border-radius: 4px;
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 5;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label:before {
+  display: block;
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 2;
+  background: white;
+  border-radius: 4px;
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 6;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 5;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label:before {
+  display: block;
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 2;
+  background: white;
+  border-radius: 4px;
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(11500px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 7;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 6;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 5;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label:before {
+  display: block;
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 2;
+  background: white;
+  border-radius: 4px;
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(13800px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 8;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(11500px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 7;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 6;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 5;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label:before {
+  display: block;
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 2;
+  background: white;
+  border-radius: 4px;
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 2;
+}
+
+.page-clubs .solar_systm:nth-of-type(1) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(1) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(1) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(1) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(1) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(2) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(2) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(2) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(2) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(2) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(3) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(3) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(3) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(3) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(3) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -1;
+}
+
+.page-clubs .solar_systm:nth-of-type(4) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(4) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(4) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(4) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(4) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -2;
+}
+
+.page-clubs .solar_systm:nth-of-type(5) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(5) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(5) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(5) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(5) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-11500px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -3;
+}
+
+.page-clubs .solar_systm:nth-of-type(6) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(6) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(6) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(6) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(6) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-13800px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -4;
+}
+
+.page-clubs .solar_systm:nth-of-type(7) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(7) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(7) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(7) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(7) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm .planet .trajectory {
+  transition: all 0.6s 0s;
+  opacity: 0;
+}
+
+.page-clubs .solar_systm .planet.icro {
+  box-shadow: 0 -150px 150px black inset, 0 0px 130px 40px rgba(234, 205, 199, 0.6) inset, 0 0px 23px 4px rgba(234, 205, 199, 0.6) inset, 0 -10px 130px rgba(188, 143, 127, 0.6);
+}
+
+.page-clubs .solar_systm .planet.khelsaathi {
+  box-shadow: 0 -150px 150px black inset, 0 0px 130px 40px #ffcb9c inset, 0 0px 23px 4px #ffcb9c inset, 0 -10px 130px #b85a07;
+}
+
+.page-clubs .solar_systm .planet.pixelro {
+  box-shadow: 0 -150px 150px black inset, 0 0px 130px 40px #8cbaff inset, 0 0px 23px 4px #8cbaff inset, 0 -10px 130px #7894a9;
+}
+
+.page-clubs .solar_systm .planet.pixelro .trajectory.m {
+  width: 1500px;
+  height: 1500px;
+  left: -150px;
+  top: -110px;
+}
+
+.page-clubs .solar_systm .planet.pixelro .moon {
+  left: 800px;
+  top: -160px;
+  transform: scale(0.45);
+  background: url("/assets/moon.webp");
+  z-index: -1;
+  box-shadow: 0px -30px 30px 10px black inset;
+}
+
+.page-clubs .solar_systm .planet.pixelro .moon h3 {
+  color: #26daaa;
+}
+
+.page-clubs .solar_systm .planet.techxcel {
+  box-shadow: 0 -150px 150px black inset, 0 0px 130px 40px #e86363 inset, 0 0px 23px 4px #e86363 inset, 0 -10px 130px #6b261a;
+}
+
+.page-clubs .solar_systm .planet.techxcel .moon h3 {
+  color: #e55f45;
+}
+
+.page-clubs .solar_systm .planet.techxcel .deimos {
+  left: 900px;
+  top: -100px;
+  transform: scale(0.45);
+  background: url("/assets/moon.webp");
+  z-index: -1;
+  box-shadow: 0px -30px 30px 10px black inset;
+}
+
+.page-clubs .solar_systm .planet.techxcel .trajectory.d {
+  width: 1770px;
+  height: 1770px;
+  left: -317px;
+  top: -110px;
+}
+
+.page-clubs .solar_systm .planet.techxcel .trajectory.p {
+  width: 1600px;
+  height: 1600px;
+  left: -200px;
+  top: -160px;
+}
+
+.page-clubs .solar_systm .planet.techxcel .phoebos {
+  left: 100px;
+  top: -160px;
+  transform: scale(0.5);
+  background: url("/assets/moon.webp");
+  z-index: -1;
+  box-shadow: 0px -30px 30px 10px black inset;
+}
+
+.page-clubs .solar_systm .planet.artix {
+  box-shadow: 0 -150px 150px black inset, 0 0px 130px 40px rgba(234, 205, 199, 0.6) inset, 0 0px 23px 4px rgba(234, 205, 199, 0.6) inset, 0 -10px 130px rgba(188, 143, 127, 0.6);
+}
+
+.page-clubs .solar_systm .planet.artix .moon h3 {
+  color: orange;
+}
+
+.page-clubs .solar_systm .planet.artix .trajectory.lop {
+  width: 1500px;
+  height: 1500px;
+  left: -210px;
+  top: -189px;
+}
+
+.page-clubs .solar_systm .planet.artix .trajectory.eu {
+  width: 1530px;
+  height: 1530px;
+  left: -165px;
+  top: -130px;
+}
+
+.page-clubs .solar_systm .planet.artix .trajectory.ga {
+  width: 1760px;
+  height: 1760px;
+  left: -360px;
+  top: -114px;
+}
+
+.page-clubs .solar_systm .planet.artix .lo {
+  left: 100px;
+  top: -100px;
+  transform: scale(0.4);
+  background: url("/assets/moon.webp");
+  z-index: -1;
+  box-shadow: 0px -30px 30px 10px black inset;
+}
+
+.page-clubs .solar_systm .planet.artix .europa {
+  left: 400px;
+  top: -210px;
+  transform: scale(0.45);
+  background: url("/assets/moon.webp");
+  z-index: -1;
+  box-shadow: 0px -30px 30px 10px black inset;
+}
+
+.page-clubs .solar_systm .planet.artix .ganymede {
+  left: 900px;
+  top: -70px;
+  transform: scale(0.4);
+  background: url("/assets/moon.webp");
+  z-index: -1;
+  box-shadow: 0px -30px 30px 10px black inset;
+}
+
+.page-clubs .solar_systm .planet.kaladharani {
+  box-shadow: 0 -150px 150px black inset, 0 0px 130px 40px rgba(234, 205, 199, 0.6) inset, 0 0px 23px 4px rgba(234, 205, 199, 0.6) inset, 0 -10px 130px rgba(188, 143, 127, 0.6);
+}
+
+.page-clubs .solar_systm .planet.kaladharani .moon h3 {
+  color: #b29d81;
+  background: url("/assets/moon.webp");
+}
+
+.page-clubs .solar_systm .planet.kaladharani .trajectory.ti {
+  width: 1500px;
+  height: 1500px;
+  left: -210px;
+  top: -189px;
+}
+
+.page-clubs .solar_systm .planet.kaladharani .trajectory.di {
+  width: 1530px;
+  height: 1530px;
+  left: -165px;
+  top: -130px;
+}
+
+.page-clubs .solar_systm .planet.kaladharani .trajectory.enc {
+  width: 1760px;
+  height: 1760px;
+  left: -360px;
+  top: -114px;
+}
+
+.page-clubs .solar_systm .planet.kaladharani .titan {
+  left: 100px;
+  top: -100px;
+  transform: scale(0.4);
+  background: url("/assets/moon.webp");
+  z-index: -1;
+  box-shadow: 0px -30px 30px 10px black inset;
+}
+
+.page-clubs .solar_systm .planet.kaladharani .dione {
+  left: 400px;
+  top: -210px;
+  transform: scale(0.45);
+  background: url("/assets/moon.webp");
+  z-index: -1;
+  box-shadow: 0px -30px 30px 10px black inset;
+}
+
+.page-clubs .solar_systm .planet.kaladharani .enceladus {
+  left: 900px;
+  top: -70px;
+  transform: scale(0.4);
+  background: url("/assets/moon.webp");
+  z-index: -1;
+  box-shadow: 0px -30px 30px 10px black inset;
+}
+
+.page-clubs .solar_systm .planet.sarvasrijana {
+  box-shadow: 0 -150px 150px black inset, 0 0px 130px 40px rgba(234, 205, 199, 0.6) inset, 0 0px 23px 4px rgba(234, 205, 199, 0.6) inset, 0 -10px 130px rgba(127, 188, 171, 0.6);
+}
+
+.page-clubs .solar_systm .planet.sarvasrijana .moon h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs .solar_systm .planet.sarvasrijana .trajectory.mir {
+  width: 1500px;
+  height: 1500px;
+  left: -210px;
+  top: -189px;
+}
+
+.page-clubs .solar_systm .planet.sarvasrijana .trajectory.ari {
+  width: 1530px;
+  height: 1530px;
+  left: -165px;
+  top: -130px;
+}
+
+.page-clubs .solar_systm .planet.sarvasrijana .trajectory.umb {
+  width: 1760px;
+  height: 1760px;
+  left: -360px;
+  top: -114px;
+}
+
+.page-clubs .solar_systm .planet.sarvasrijana .miranda {
+  left: 100px;
+  top: -100px;
+  transform: scale(0.4);
+  background: url("/assets/moon.webp");
+  z-index: -1;
+  box-shadow: 0px -30px 30px 10px black inset;
+}
+
+.page-clubs .solar_systm .planet.sarvasrijana .ariel {
+  left: 400px;
+  top: -210px;
+  transform: scale(0.45);
+  background: url("/assets/moon.webp");
+  z-index: -1;
+  box-shadow: 0px -30px 30px 10px black inset;
+}
+
+.page-clubs .solar_systm .planet.sarvasrijana .umbriel {
+  left: 900px;
+  top: -70px;
+  transform: scale(0.4);
+  background: url("/assets/moon.webp");
+  z-index: -1;
+  box-shadow: 0px -30px 30px 10px black inset;
+}
+
+.page-clubs .solar_systm .planet_description {
+  width: 620px;
+  text-align: center;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  color: white;
+  font-weight: 100;
+  transition: all 0.4s 0s;
+  text-transform: uppercase;
+  z-index: 100;
+  padding-bottom: 40px;
+  pointer-events: auto !important;
+}
+
+.page-clubs .solar_systm .planet_description.icro a {
+  color: #E8927C;
+}
+
+.page-clubs .solar_systm .planet_description.icro h2 {
+  color: #f7dad3;
+}
+
+.page-clubs .solar_systm .planet_description.khelsaathi a {
+  color: #b45d15;
+}
+
+.page-clubs .solar_systm .planet_description.khelsaathi h2 {
+  color: #e99046;
+}
+
+.page-clubs .solar_systm .planet_description.pixelro a {
+  color: #26daaa;
+}
+
+.page-clubs .solar_systm .planet_description.pixelro h2 {
+  color: #7de9cc;
+}
+
+.page-clubs .solar_systm .planet_description.techxcel a {
+  color: #e55f45;
+}
+
+.page-clubs .solar_systm .planet_description.techxcel h2 {
+  color: #f2ac9e;
+}
+
+.page-clubs .solar_systm .planet_description.artix a {
+  color: orange;
+}
+
+.page-clubs .solar_systm .planet_description.artix h2 {
+  color: #ffc966;
+}
+
+.page-clubs .solar_systm .planet_description.kaladharani a {
+  color: #b29d81;
+}
+
+.page-clubs .solar_systm .planet_description.kaladharani h2 {
+  color: #d9cec0;
+}
+
+.page-clubs .solar_systm .planet_description.sarvasrijana a {
+  color: #8dcdd8;
+}
+
+.page-clubs .solar_systm .planet_description.sarvasrijana h2 {
+  color: #d9eef2;
+}
+
+.page-clubs .solar_systm .planet_description h1,
+.page-clubs .solar_systm .planet_description h2,
+.page-clubs .solar_systm .planet_description p,
+.page-clubs .solar_systm .planet_description a {
+  font-family: var(--font-orbitron), sans-serif;
+  font-weight: 100;
+  font-size: 10px;
+  letter-spacing: 5px;
+  margin: 0;
+}
+
+.page-clubs .solar_systm .planet_description h1 {
+  letter-spacing: 16px;
+  font-size: 34px;
+}
+
+.page-clubs .solar_systm .planet_description h2,
+.page-clubs .solar_systm .planet_description a {
+  color: #fabfad;
+}
+
+.page-clubs .solar_systm .planet_description h2 {
+  margin-top: 60px;
+  margin-bottom: 6px;
+}
+
+.page-clubs .solar_systm .planet_description p {
+  line-height: 26px;
+  margin-top: 14px;
+  opacity: 0.9;
+  margin-bottom: 10px;
+}
+
+.page-clubs .solar_systm .planet_description label {
+  z-index: 1000;
+  position: relative;
+  cursor: pointer;
+  display: block;
+  pointer-events: all;
+  padding: 10px;
+}
+
+.page-clubs .solar_systm .planet_description a {
+  color: #fea082;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0 2px 5px 0px;
+  border-bottom: 2px solid;
+  transition: all 0.2s;
+  position: relative;
+  left: 0;
+  display: inline-block;
+  pointer-events: none;
+}
+
+.page-clubs .solar_systm .planet_description a:hover {
+  padding: 0 10px 5px 10px;
+  left: -1px;
+}
+
+.page-clubs .solar_systm .planet_description a span {
+  letter-spacing: 0;
+  margin-left: -5px;
+}
+
+.page-clubs .panel {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  width: 90%;
+  max-width: 500px;
+  height: auto;
+  max-height: 85vh;
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.6s cubic-bezier(0.33, 0, 0, 1), opacity 0.4s, visibility 0s 0.6s;
+  color: black;
+  background: white;
+  padding: 40px 60px;
+  border-radius: 20px;
+  z-index: 9995;
+  overflow-y: scroll;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+}
+
+.page-clubs .panel::-webkit-scrollbar {
+  width: 1em;
+}
+
+.page-clubs .panel::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.page-clubs .panel::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
+.page-clubs .panel .profile {
+  padding-top: 4px;
+}
+
+.page-clubs .panel .profile p {
+  line-height: 10px;
+}
+
+.page-clubs .panel .profile p span {
+  font-weight: 600;
+  color: black;
+}
+
+.page-clubs .panel img {
+  border-radius: 2px;
+  width: 100%;
+}
+
+.page-clubs .panel h1 {
+  text-transform: uppercase;
+  font-weight: 100;
+  margin: 0 0 0 0;
+  letter-spacing: 3px;
+  top: 0;
+  padding: 49px 0 0 0;
+  width: 100%;
+  font-size: 20px;
+}
+
+.page-clubs .panel h1::after {
+  width: 30px;
+  height: 2px;
+  background: black;
+  display: block;
+  content: "";
+  margin-bottom: 30px;
+  margin-top: 8px;
+}
+
+.page-clubs .panel h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 30px;
+}
+
+.page-clubs .panel h2::after {
+  width: 30px;
+  height: 2px;
+  background: black;
+  display: block;
+  content: "";
+  margin-top: 8px;
+}
+
+.page-clubs .panel p {
+  color: #a0a0a0;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+
+.page-clubs input[type=radio][name=planet].planet1:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(1) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -2;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-11500px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -3;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-13800px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -4;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(8) .planet {
+  transform: translateZ(-16100px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -5;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label+div .solar_systm:nth-of-type(9) .planet {
+  transform: translateZ(-18400px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -6;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.neptune>.info h3 {
+  color: #4f83e2;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label.pluto>.info h3 {
+  color: #FF8732;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label:before {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label .preview {
+  box-shadow: 0 0 20px 2px rgba(255, 255, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.6);
+  border: 2px solid white;
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.icro .preview {
+  border-color: #E8927C;
+  box-shadow: 0 0 25px 5px rgba(232, 146, 124, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.khelsaathi .preview {
+  border-color: #b45d15;
+  box-shadow: 0 0 25px 5px rgba(180, 93, 21, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.pixelro .preview {
+  border-color: #26daaa;
+  box-shadow: 0 0 25px 5px rgba(38, 218, 170, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.techxcel .preview {
+  border-color: #e55f45;
+  box-shadow: 0 0 25px 5px rgba(229, 95, 69, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.artix .preview {
+  border-color: orange;
+  box-shadow: 0 0 25px 5px rgba(255, 165, 0, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.kaladharani .preview {
+  border-color: #b29d81;
+  box-shadow: 0 0 25px 5px rgba(178, 157, 129, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet]:checked+label.sarvasrijana .preview {
+  border-color: #8dcdd8;
+  box-shadow: 0 0 25px 5px rgba(141, 205, 216, 0.6);
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(2) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -2;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-11500px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -3;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(8) .planet {
+  transform: translateZ(-13800px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -4;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label+input+label+div .solar_systm:nth-of-type(9) .planet {
+  transform: translateZ(-16100px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -5;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.neptune>.info h3 {
+  color: #4f83e2;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label.pluto>.info h3 {
+  color: #FF8732;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label:before {
+  display: block;
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 2;
+  background: white;
+  border-radius: 4px;
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -2;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(8) .planet {
+  transform: translateZ(-11500px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -3;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label+input+label+input+label+div .solar_systm:nth-of-type(9) .planet {
+  transform: translateZ(-13800px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -4;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.neptune>.info h3 {
+  color: #4f83e2;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label.pluto>.info h3 {
+  color: #FF8732;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label:before {
+  display: block;
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 2;
+  background: white;
+  border-radius: 4px;
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 5;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(8) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -2;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(9) .planet {
+  transform: translateZ(-11500px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -3;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.neptune>.info h3 {
+  color: #4f83e2;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label.pluto>.info h3 {
+  color: #FF8732;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label:before {
+  display: block;
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 2;
+  background: white;
+  border-radius: 4px;
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 6;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 5;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(8) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(9) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -2;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.neptune>.info h3 {
+  color: #4f83e2;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label.pluto>.info h3 {
+  color: #FF8732;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label:before {
+  display: block;
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 2;
+  background: white;
+  border-radius: 4px;
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(11500px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 7;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 6;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 5;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(8) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(9) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.neptune>.info h3 {
+  color: #4f83e2;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label.pluto>.info h3 {
+  color: #FF8732;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label:before {
+  display: block;
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 2;
+  background: white;
+  border-radius: 4px;
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+input::after {
+  display: none;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) {
+  pointer-events: all;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(13800px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 8;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(11500px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 7;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(9200px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 6;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(6900px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 5;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 2;
+  animation: clubs-planet 60s 0s infinite linear;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet_description {
+  opacity: 1;
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet_description h2,
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet_description h1 {
+  position: relative;
+  top: 0px;
+  transition: opacity 0.6s 0.6s, transform 0.6s 0.6s;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet_description p,
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet_description a {
+  transition: opacity 0.8s 1s;
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet .moon {
+  opacity: 1;
+  transition: opacity 0.8s 0.8s;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet .trajectory {
+  opacity: 0.2;
+  transition: opacity 0.6s 0.2s;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(7) .planet .overlay {
+  opacity: 1;
+  top: 500px;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(8) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label+input+label+input+label+input+label+input+label+input+label+input+label+div .solar_systm:nth-of-type(9) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scaleX(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.icro>.info h3 {
+  color: #E8927C;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.khelsaathi>.info h3 {
+  color: #b45d15;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.pixelro>.info h3 {
+  color: #26daaa;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.techxcel>.info h3 {
+  color: #e55f45;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.artix>.info h3 {
+  color: orange;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.kaladharani>.info h3 {
+  color: #b29d81;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.sarvasrijana>.info h3 {
+  color: #8dcdd8;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.neptune>.info h3 {
+  color: #4f83e2;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label.pluto>.info h3 {
+  color: #FF8732;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label:before {
+  display: block;
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  z-index: 2;
+  background: white;
+  border-radius: 4px;
+  content: "";
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label>.info h2 {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label>.info h2 .pip {
+  width: 30px;
+  margin-left: 6px;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked+label>.info h3 {
+  opacity: 1;
+  color: #fea082;
+}
+
+.page-clubs input[type=radio][name=planet] {
+  appearance: none;
+}
+
+.page-clubs input[type=radio][name=planet]::after {
+  content: "";
+}
+
+
+.page-clubs .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 2;
+}
+
+.page-clubs .solar_systm:nth-of-type(1) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(1) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(1) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(1) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(1) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(2) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(2) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(2) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(2) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(2) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(3) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(3) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(3) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(3) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(3) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -1;
+}
+
+.page-clubs .solar_systm:nth-of-type(4) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(4) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(4) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(4) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(4) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -2;
+}
+
+.page-clubs .solar_systm:nth-of-type(5) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(5) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(5) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(5) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(5) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-11500px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -3;
+}
+
+.page-clubs .solar_systm:nth-of-type(6) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(6) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(6) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(6) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(6) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-13800px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -4;
+}
+
+.page-clubs .solar_systm:nth-of-type(7) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(7) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(7) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(7) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(7) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(8) .planet {
+  transform: translateZ(-16100px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -5;
+}
+
+.page-clubs .solar_systm:nth-of-type(8) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(8) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(8) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(8) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(8) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(9) .planet {
+  transform: translateZ(-18400px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -6;
+}
+
+.page-clubs .solar_systm:nth-of-type(9) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(9) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(9) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(9) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(9) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+.page-clubs .solar_systm:nth-of-type(10) .planet {
+  transform: translateZ(-20700px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -7;
+}
+
+.page-clubs .solar_systm:nth-of-type(10) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs .solar_systm:nth-of-type(10) .planet_description p,
+.page-clubs .solar_systm:nth-of-type(10) .planet_description a {
+  opacity: 0;
+}
+
+.page-clubs .solar_systm:nth-of-type(10) .planet_description h1,
+.page-clubs .solar_systm:nth-of-type(10) .planet_description h2 {
+  position: relative;
+  top: -330px;
+  transition: all 0.5s 0s;
+}
+
+
+
+/* INJECTED PLANET TRANSITIONS */
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 2;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(1) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(2) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(3) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(4) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -2;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(5) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-11500px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -3;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(6) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-13800px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -4;
+}
+
+.page-clubs input[type=radio][name=planet].planet1:checked~.solar .solar_systm:nth-of-type(7) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(1) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 2;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(2) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(3) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(4) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(5) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -2;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(6) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-11500px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -3;
+}
+
+.page-clubs input[type=radio][name=planet].planet2:checked~.solar .solar_systm:nth-of-type(7) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(1) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(2) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 2;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(3) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(4) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(5) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(6) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-9200px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -2;
+}
+
+.page-clubs input[type=radio][name=planet].planet3:checked~.solar .solar_systm:nth-of-type(7) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(6900px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 5;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(1) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(2) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(3) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 2;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(4) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(5) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(6) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-6900px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: -1;
+}
+
+.page-clubs input[type=radio][name=planet].planet4:checked~.solar .solar_systm:nth-of-type(7) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(9200px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 6;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(1) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(6900px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 5;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(2) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(3) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(4) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 2;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(5) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(6) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-4600px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet5:checked~.solar .solar_systm:nth-of-type(7) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(11500px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 7;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(1) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(9200px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 6;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(2) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(6900px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 5;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(3) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(4) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(5) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 2;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(6) .planet_description {
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(-2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 1;
+}
+
+.page-clubs input[type=radio][name=planet].planet6:checked~.solar .solar_systm:nth-of-type(7) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(1) .planet {
+  transform: translateZ(13800px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 8;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(1) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(2) .planet {
+  transform: translateZ(11500px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 7;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(2) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(3) .planet {
+  transform: translateZ(9200px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 6;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(3) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(4) .planet {
+  transform: translateZ(6900px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 5;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(4) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(5) .planet {
+  transform: translateZ(4600px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 4;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(5) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(6) .planet {
+  transform: translateZ(2300px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 3;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(6) .planet_description {
+  opacity: 0;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(7) .planet {
+  transform: translateZ(0px) translateY(0) rotatex(4deg) scalex(0.89);
+  opacity: 2;
+}
+
+.page-clubs input[type=radio][name=planet].planet7:checked~.solar .solar_systm:nth-of-type(7) .planet_description {
+  opacity: 1;
+}
+
+
+/* Custom Planet Textures */
+.page-clubs .solar_systm .planet.icro {
+  background-image: url("/assets/ICRO.webp") !important;
+}
+
+.page-clubs .solar_systm .planet.khelsaathi {
+  background-image: url("/assets/Khelsaathi.webp") !important;
+}
+
+.page-clubs .solar_systm .planet.pixelro {
+  background-image: url("/assets/PixelRo.webp") !important;
+}
+
+.page-clubs .solar_systm .planet.techxcel {
+  background-image: url("/assets/TechXcel.webp") !important;
+}
+
+.page-clubs .solar_systm .planet.artix {
+  background-image: url("/assets/artix.webp") !important;
+}
+
+.page-clubs .solar_systm .planet.kaladharani {
+  background-image: url("/assets/kaladharani.webp") !important;
+}
+
+.page-clubs .solar_systm .planet.sarvasrijana {
+  background-image: url("/assets/sarvasrijana.webp") !important;
+}
+
+/* ── MOBILE: full planet visible, sidebar icons left ── */
+@media (max-width: 767px) {
+  .page-clubs .solar {
+    transform: rotatex(-10deg);
+    perspective: 2000px;
+  }
+
+  /* Shrink planet so full circle fits on mobile */
+  .page-clubs .solar_systm .planet {
+    width: 460px;
+    height: 460px;
+    border-radius: 230px;
+    background-size: 437px 349px !important;
+    bottom: -50px;
+  }
+
+  .page-clubs .solar_systm .planet .planet_description {
+    top: 45% !important;
+    transform: translateY(-50%) !important;
+    width: 300px !important;
+  }
+
+  /* Sidebar: move icons to LEFT as vertical strip */
+  .page-clubs label.menu {
+    display: flex !important;
+    left: 10px !important;
+    right: auto !important;
+    top: auto !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .page-clubs label.menu:nth-of-type(1) {
+    top: 80px !important;
+  }
+
+  .page-clubs label.menu:nth-of-type(2) {
+    top: 132px !important;
+  }
+
+  .page-clubs label.menu:nth-of-type(3) {
+    top: 184px !important;
+  }
+
+  .page-clubs label.menu:nth-of-type(4) {
+    top: 236px !important;
+  }
+
+  .page-clubs label.menu:nth-of-type(5) {
+    top: 288px !important;
+  }
+
+  .page-clubs label.menu:nth-of-type(6) {
+    top: 340px !important;
+  }
+
+  .page-clubs label.menu:nth-of-type(7) {
+    top: 392px !important;
+  }
+
+  /* Small 36px planet thumbnail icons */
+  .page-clubs label.menu .preview {
+    width: 36px;
+    height: 36px;
+    position: relative;
+    left: auto;
+    float: none;
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.25), 0 -8px 8px 1px black inset;
+  }
+
+  /* Force 3 planets visibility by overriding opacity thresholds on mobile */
+  .page-clubs input.planet1:checked~.solar .solar_systm:nth-of-type(1) .planet,
+  .page-clubs input.planet1:checked~.solar .solar_systm:nth-of-type(2) .planet,
+  .page-clubs input.planet1:checked~.solar .solar_systm:nth-of-type(3) .planet,
+  .page-clubs input.planet2:checked~.solar .solar_systm:nth-of-type(1) .planet,
+  .page-clubs input.planet2:checked~.solar .solar_systm:nth-of-type(2) .planet,
+  .page-clubs input.planet2:checked~.solar .solar_systm:nth-of-type(3) .planet,
+  .page-clubs input.planet2:checked~.solar .solar_systm:nth-of-type(4) .planet,
+  .page-clubs input.planet3:checked~.solar .solar_systm:nth-of-type(2) .planet,
+  .page-clubs input.planet3:checked~.solar .solar_systm:nth-of-type(3) .planet,
+  .page-clubs input.planet3:checked~.solar .solar_systm:nth-of-type(4) .planet,
+  .page-clubs input.planet3:checked~.solar .solar_systm:nth-of-type(5) .planet,
+  .page-clubs input.planet4:checked~.solar .solar_systm:nth-of-type(3) .planet,
+  .page-clubs input.planet4:checked~.solar .solar_systm:nth-of-type(4) .planet,
+  .page-clubs input.planet4:checked~.solar .solar_systm:nth-of-type(5) .planet,
+  .page-clubs input.planet4:checked~.solar .solar_systm:nth-of-type(6) .planet,
+  .page-clubs input.planet5:checked~.solar .solar_systm:nth-of-type(4) .planet,
+  .page-clubs input.planet5:checked~.solar .solar_systm:nth-of-type(5) .planet,
+  .page-clubs input.planet5:checked~.solar .solar_systm:nth-of-type(6) .planet,
+  .page-clubs input.planet5:checked~.solar .solar_systm:nth-of-type(7) .planet,
+  .page-clubs input.planet6:checked~.solar .solar_systm:nth-of-type(5) .planet,
+  .page-clubs input.planet6:checked~.solar .solar_systm:nth-of-type(6) .planet,
+  .page-clubs input.planet6:checked~.solar .solar_systm:nth-of-type(7) .planet,
+  .page-clubs input.planet7:checked~.solar .solar_systm:nth-of-type(5) .planet,
+  .page-clubs input.planet7:checked~.solar .solar_systm:nth-of-type(6) .planet,
+  .page-clubs input.planet7:checked~.solar .solar_systm:nth-of-type(7) .planet {
+    opacity: 1 !important;
+  }
+
+  /* Hide branch name + AU text */
+  .page-clubs label.menu .info {
+    display: none;
+  }
+
+  /* Active icon highlight */
+  .page-clubs input[type=radio][name=planet]:checked+label.menu .preview {
+    box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.5), 0 -8px 8px 1px black inset;
+    transform: scale(1.15);
+  }
+
+  /* Center planet description within the planet */
+  .page-clubs .solar_systm .planet_description {
+    width: 250px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+  }
+
+  .page-clubs .solar_systm .planet_description h2 {
+    font-size: 10px !important;
+    letter-spacing: 4px !important;
+    font-family: var(--font-apex), sans-serif !important;
+    margin-bottom: 8px !important;
+    opacity: 0.6 !important;
+  }
+
+  .page-clubs .solar_systm .planet_description h1 {
+    font-size: 36px !important;
+    letter-spacing: -1px !important;
+    font-family: var(--font-apex), sans-serif !important;
+    font-weight: 900 !important;
+    margin: 5px 0 !important;
+    line-height: 1 !important;
+    font-style: italic !important;
+  }
+
+  .page-clubs .solar_systm .planet_description p {
+    font-size: 11px !important;
+    line-height: 1.6 !important;
+    letter-spacing: 1px !important;
+    max-width: 280px !important;
+    margin: 15px auto 0 !important;
+    font-weight: 300 !important;
+    opacity: 0.8 !important;
+  }
+
+  /* No slide-in offset on mobile */
+  .page-clubs .solar_systm .planet_description h1,
+  .page-clubs .solar_systm .planet_description h2 {
+    top: 0 !important;
+    position: relative !important;
+  }
+
+  .page-clubs .solar_systm .planet .moon {
+    display: none !important;
+  }
+
+  /* Center the Explore Club button */
+  .page-clubs .read-info-container {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 45px;
+  }
+
+  /* Fix overlay bounds for mobile size */
+  .page-clubs .solar_systm .planet .overlay {
+    top: 100px !important;
+    left: -115px !important;
+    bottom: -500px;
+    width: 1290px !important;
+    height: 780px !important;
+    border-radius: 220px !important;
+    background: linear-gradient(to bottom, transparent 200px, rgba(0, 0, 0, 0.9) 460px, black 730px) !important;
+    box-shadow: 0px -210px 300px 100px rgb(0, 0, 0) inset !important;
+    pointer-events: all;
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  /* Keep planet description text above the overlay */
+  .page-clubs .solar_systm .planet_description {
+    z-index: 2;
+  }
+
+  .page-clubs header {
+    padding: 12px 16px !important;
+  }
+
+  .bottom-svg-container {
+    display: none !important;
+  }
+}
+
+/* ── 📱 TABLET: intermediate sizing (Radial Menu + Planet Adjustment) ── */
+@media (min-width: 768px) and (max-width: 1024px) {
+
+  /* Scale down planet size slightly and move to the LEFT corner */
+  .page-clubs .solar_systm .planet {
+    width: 900px;
+    height: 900px;
+    border-radius: 450px;
+    background-size: 855px 682px !important;
+    bottom: -650px;
+    left: -70px !important;
+    /* Move more onto the screen (left padding) */
+    /* Deeper in the corner */
+    right: auto !important;
+    margin: 0 !important;
+    /* CRITICAL: prevent auto-centering */
+    box-shadow: 0 -150px 150px black inset,
+      0 0px 130px 40px rgba(234, 205, 199, 0.6) inset,
+      0 0px 23px 4px rgba(234, 205, 199, 0.6) inset,
+      0 -10px 130px rgba(232, 146, 124, 0.6) !important;
+    /* Matched to Branches padding and depth */
+    filter: brightness(1.1);
+  }
+
+  /* Increase visibility of radial menu planets on tablet (Bumped for darker assets) */
+  .page-clubs label.menu .preview {
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.4), 0 -8px 8px 1px black inset !important;
+    filter: brightness(1.5) contrast(1.1);
+    opacity: 1 !important;
+  }
+
+  /* Active radial planet highlight (Matching Branches orange/cyan theme) */
+  .page-clubs input[type=radio]:checked+label.menu .preview {
+    box-shadow: 0 0 25px 8px rgba(0, 255, 202, 0.7), 0 -8px 8px 1px black inset !important;
+    /* Neon Cyan like Branches Toggle */
+    transform: scale(1.2);
+    filter: brightness(1.6);
+  }
+
+  /* Restrict visibility to exactly TWO planets (Active + Next neighbor) like Branches */
+  .page-clubs .solar_systm .planet {
+    opacity: 0 !important;
+    transition: all 0.8s ease;
+  }
+
+  /* Precision targeting for the Active Planet on Tablet */
+  .page-clubs input[id="icro"]:checked~.solar .solar_systm:nth-of-type(1) .planet,
+  .page-clubs input[id="khelsaathi"]:checked~.solar .solar_systm:nth-of-type(2) .planet,
+  .page-clubs input[id="pixelro"]:checked~.solar .solar_systm:nth-of-type(3) .planet,
+  .page-clubs input[id="techxcel"]:checked~.solar .solar_systm:nth-of-type(4) .planet,
+  .page-clubs input[id="artix"]:checked~.solar .solar_systm:nth-of-type(5) .planet,
+  .page-clubs input[id="kaladharani"]:checked~.solar .solar_systm:nth-of-type(6) .planet,
+  .page-clubs input[id="sarvasrijana"]:checked~.solar .solar_systm:nth-of-type(7) .planet {
+    opacity: 1 !important;
+    filter: brightness(1.3);
+  }
+
+  /* Precision targeting for the 'Next in Line' neighbor (much visible) */
+  .page-clubs input[id="icro"]:checked~.solar .solar_systm:nth-of-type(2) .planet,
+  .page-clubs input[id="khelsaathi"]:checked~.solar .solar_systm:nth-of-type(3) .planet,
+  .page-clubs input[id="pixelro"]:checked~.solar .solar_systm:nth-of-type(4) .planet,
+  .page-clubs input[id="techxcel"]:checked~.solar .solar_systm:nth-of-type(5) .planet,
+  .page-clubs input[id="artix"]:checked~.solar .solar_systm:nth-of-type(6) .planet,
+  .page-clubs input[id="kaladharani"]:checked~.solar .solar_systm:nth-of-type(7) .planet,
+  .page-clubs input[id="sarvasrijana"]:checked~.solar .solar_systm:nth-of-type(1) .planet {
+    opacity: 0.7 !important;
+    /* High visibility neighbor per user request */
+  }
+
+  /* ── NATIVE TABLET RADIAL MENU (USES DESKTOP HTML) ── */
+  .page-clubs label.menu {
+    position: fixed !important;
+    top: calc(50% - 22.5px) !important;
+    right: 45px !important;
+    left: auto !important;
+    display: block !important;
+    width: 45px !important;
+    height: 45px !important;
+    opacity: 0 !important;
+    pointer-events: none;
+    transform: scale(0.5) translate(0, 0);
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 9990;
+    /* Lower base z-index to allow active to rise above */
+  }
+
+  /* Active item priority (Layering Fix) - only visible when menu is OPEN */
+  .page-clubs.radial-open input[type=radio]:checked+label.menu {
+    z-index: 9999 !important;
+    opacity: 1 !important;
+  }
+
+  .page-clubs.radial-open label.menu {
+    opacity: 1 !important;
+    pointer-events: auto;
+  }
+
+  /* Distribute 7 items radially (Increased 170px radius for long labels) */
+  /* Mirror distribution: radiate left from the right button */
+  .page-clubs label.menu:nth-of-type(1) {
+    --x: 0px;
+    --y: -170px;
+    transition-delay: 0s;
+  }
+
+  .page-clubs label.menu:nth-of-type(2) {
+    --x: -85px;
+    --y: -147px;
+    transition-delay: 0.05s;
+  }
+
+  .page-clubs label.menu:nth-of-type(3) {
+    --x: -147px;
+    --y: -85px;
+    transition-delay: 0.1s;
+  }
+
+  .page-clubs label.menu:nth-of-type(4) {
+    --x: -170px;
+    --y: 0px;
+    transition-delay: 0.15s;
+  }
+
+  .page-clubs label.menu:nth-of-type(5) {
+    --x: -147px;
+    --y: 85px;
+    transition-delay: 0.2s;
+  }
+
+  .page-clubs label.menu:nth-of-type(6) {
+    --x: -85px;
+    --y: 147px;
+    transition-delay: 0.25s;
+  }
+
+  .page-clubs label.menu:nth-of-type(7) {
+    --x: 0px;
+    --y: 170px;
+    transition-delay: 0.3s;
+  }
+
+  .page-clubs.radial-open label.menu {
+    transform: scale(0.8) translate(var(--x), var(--y));
+  }
+
+  .page-clubs.radial-open label.menu:hover {
+    transform: scale(0.9) translate(var(--x), var(--y));
+    transition-delay: 0s;
+  }
+
+  /* ── CLEAN SIDE-ALIGNED LABELS FOR TABLET (Layering & Length Fix) ── */
+  .page-clubs label.menu .info {
+    position: absolute !important;
+    right: 55px !important;
+    /* Position to the LEFT of the thumbnail */
+    left: auto !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 160px !important;
+    text-align: right !important;
+    z-index: 120;
+    pointer-events: none;
+    background: none !important;
+  }
+
+  .page-clubs label.menu h2 {
+    font-size: 11px !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase;
+    text-align: right !important;
+    margin: 0 !important;
+    text-shadow: 0px 0px 8px rgba(0, 0, 0, 1), 0px 0px 3px rgba(0, 0, 0, 1);
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Highlighting the active label */
+  .page-clubs input[type=radio]:checked+label.menu h2 {
+    color: var(--color-neon);
+    font-weight: 900;
+    text-shadow: 0px 0px 10px rgba(0, 255, 202, 0.5);
+  }
+
+  /* Hide pips/AU for absolute clarity */
+  .page-clubs label.menu h2 .pip,
+  .page-clubs label.menu h3 {
+    display: none !important;
+  }
+
+  /* Drop planet description cleanly down on the LEFT */
+  .page-clubs .solar_systm .planet_description {
+    position: absolute !important;
+    width: 600px !important;
+    left: 50% !important;
+    margin-left: -300px !important;
+    /* Center globally like Branches */
+    top: -40px !important;
+    bottom: auto !important;
+    text-align: center !important;
+    z-index: 50 !important;
+    text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.9);
+    /* Added shadow padding for readability */
+  }
+
+  /* Force the text elements to stop inheriting weird "top" offsets from desktop animations */
+  .page-clubs .solar_systm .planet_description h1,
+  .page-clubs .solar_systm .planet_description h2,
+  .page-clubs .solar_systm .planet_description p {
+    position: relative !important;
+    top: 0 !important;
+    transform: none !important;
+  }
+
+  .page-clubs .solar_systm .planet_description p {
+    margin: 15px auto 0 !important;
+  }
+
+  .page-clubs .solar_systm .planet_description h1 {
+    font-size: 50px !important;
+  }
+
+  /* Overlay bounds adjusted for LEFT layout */
+  .page-clubs .overlay {
+    width: 1300px;
+    height: 1400px;
+    top: 350px;
+    left: -150px;
+    /* Adjusted to cover full screen width relative to nudged planet */
+    right: auto;
+    background: linear-gradient(to bottom, transparent 350px, rgba(0, 0, 0, 0.9) 900px, black 1400px);
+    box-shadow: 0px -210px 300px 100px rgb(0, 0, 0) inset !important;
+    /* Missing shadow restored */
+  }
+
+  /* Button bounds pushed to extreme corner */
+  .page-clubs .read-info-container {
+    right: 20px;
+    left: auto;
+    bottom: 25px;
+  }
+}
+
+/* ── MOBILE LANDSCAPE: half-planet peeking from bottom, like desktop ── */
+@media (max-width: 767px) and (orientation: landscape) {
+  .page-clubs .solar_systm .planet {
+    bottom: -160px !important;
+  }
+
+  /* Re-anchor description to top of planet so it stays in the visible upper half */
+  .page-clubs .solar_systm .planet_description {
+    top: 20px !important;
+    transform: none !important;
+  }
+
+  /* Sidebar icons: tighten spacing to fit landscape height */
+  .page-clubs label.menu:nth-of-type(1) {
+    top: 60px !important;
+  }
+
+  .page-clubs label.menu:nth-of-type(2) {
+    top: 100px !important;
+  }
+
+  .page-clubs label.menu:nth-of-type(3) {
+    top: 140px !important;
+  }
+
+  .page-clubs label.menu:nth-of-type(4) {
+    top: 180px !important;
+  }
+
+  .page-clubs label.menu:nth-of-type(5) {
+    top: 220px !important;
+  }
+
+  .page-clubs label.menu:nth-of-type(6) {
+    top: 260px !important;
+  }
+
+  .page-clubs label.menu:nth-of-type(7) {
+    top: 300px !important;
+  }
+}

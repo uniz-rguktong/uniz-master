@@ -1,0 +1,13 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: ornate-redis-dev
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6380:6379"
+    volumes:
+      - redisdata_dev:/data
+    restart: unless-stopped
+
+volumes:
+  redisdata_dev:

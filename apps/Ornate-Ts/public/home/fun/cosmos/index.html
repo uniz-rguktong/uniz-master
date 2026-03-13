@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COSMOS — Universe Exploration Simulator</title>
+    <meta name="description"
+        content="Immersive 3D universe exploration simulator. Pilot your spacecraft through the solar system, black holes, nebulas, and deep space." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            user-select: none;
+            -webkit-user-select: none;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Landscape Orientation Lock / Prompt */
+        #orientation-overlay {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media screen and (orientation: portrait) and (max-width: 1024px) {
+            #orientation-overlay {
+                display: flex;
+            }
+        }
+
+        .orientation-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: rotate 2s infinite ease-in-out;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(90deg);
+            }
+
+            100% {
+                transform: rotate(90deg);
+            }
+        }
+
+        .orientation-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            letter-spacing: 2px;
+            color: #4fc3f7;
+            margin-bottom: 10px;
+        }
+
+        .orientation-msg {
+            font-family: 'Share Tech Mono', sans-serif;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center, #0a0a1a 0%, #000005 60%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 1.5s ease;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 64px;
+            font-weight: 900;
+            letter-spacing: 20px;
+            background: linear-gradient(135deg, #4fc3f7 0%, #a78bfa 50%, #f472b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            text-shadow: none;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                filter: brightness(1);
+            }
+
+            50% {
+                filter: brightness(1.4);
+            }
+        }
+
+        .loading-subtitle {
+            font-family: 'Share Tech Mono', monospace;
+            color: rgba(130, 200, 255, 0.7);
+            font-size: 13px;
+            letter-spacing: 8px;
+            margin-bottom: 60px;
+        }
+
+        .loading-bar-container {
+            width: 400px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .loading-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4fc3f7, #a78bfa, #f472b6);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 15px rgba(167, 139, 250, 0.8);
+        }
+
+        .loading-status {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: rgba(130, 200, 255, 0.5);
+            letter-spacing: 3px;
+        }
+
+        .loading-stars {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        /* Start Screen over loading */
+        #start-screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 900;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        #start-screen.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .start-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 72px;
+            font-weight: 900;
+            letter-spacing: 16px;
+            background: linear-gradient(135deg, #4fc3f7 0%, #a78bfa 50%, #f472b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .start-tagline {
+            font-family: 'Share Tech Mono', monospace;
+            color: rgba(167, 200, 255, 0.7);
+            letter-spacing: 6px;
+            font-size: 14px;
+            margin-bottom: 60px;
+        }
+
+        .start-btn {
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            letter-spacing: 5px;
+            color: #fff;
+            background: rgba(167, 139, 250, 0.15);
+            /* Solid glowing background */
+            border: 1px solid rgba(167, 139, 250, 0.6);
+            padding: 18px 50px;
+            cursor: pointer;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(79, 195, 247, 0.1), rgba(167, 139, 250, 0.2));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .start-btn:hover::before {
+            opacity: 1;
+        }
+
+        .start-btn:hover {
+            border-color: rgba(167, 139, 250, 1);
+            box-shadow: 0 0 30px rgba(167, 139, 250, 0.4);
+        }
+
+        .controls-hint {
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: rgba(130, 200, 255, 0.4);
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .controls-hint span {
+            color: rgba(167, 139, 250, 0.8);
+        }
+
+        /* HUD */
+        #hud {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+        }
+
+        #hud.active {
+            display: block;
+        }
+
+        /* Speed indicator */
+        .hud-speed {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        .speed-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            color: rgba(130, 200, 255, 0.5);
+            letter-spacing: 4px;
+            margin-bottom: 6px;
+        }
+
+        .speed-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 32px;
+            font-weight: 700;
+            color: #4fc3f7;
+            text-shadow: 0 0 20px rgba(79, 195, 247, 0.6);
+        }
+
+        .speed-unit {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: rgba(79, 195, 247, 0.6);
+            letter-spacing: 3px;
+        }
+
+        .velocity-bars {
+            display: flex;
+            gap: 3px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .vel-bar {
+            width: 4px;
+            height: 20px;
+            background: rgba(79, 195, 247, 0.15);
+            border-radius: 2px;
+            transition: background 0.1s, height 0.1s;
+        }
+
+        .vel-bar.active {
+            background: #4fc3f7;
+            box-shadow: 0 0 8px rgba(79, 195, 247, 0.8);
+        }
+
+        /* Crosshair */
+        .crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+        }
+
+        .crosshair::before,
+        .crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(79, 195, 247, 0.6);
+        }
+
+        .crosshair::before {
+            width: 1px;
+            height: 100%;
+            top: 0;
+            left: 50%;
+        }
+
+        .crosshair::after {
+            height: 1px;
+            width: 100%;
+            left: 0;
+            top: 50%;
+        }
+
+        .crosshair-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(79, 195, 247, 0.8);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 6px rgba(79, 195, 247, 1);
+        }
+
+        /* Top info bar */
+        .hud-top {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .hud-stat {
+            text-align: center;
+        }
+
+        .hud-stat-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            color: rgba(130, 200, 255, 0.4);
+            letter-spacing: 3px;
+        }
+
+        .hud-stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            color: rgba(167, 139, 250, 0.9);
+        }
+
+        /* Compass */
+        .hud-compass {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            color: rgba(130, 200, 255, 0.4);
+            letter-spacing: 2px;
+            text-align: right;
+        }
+
+        .compass-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 18px;
+            color: rgba(79, 195, 247, 0.8);
+        }
+
+        /* Left panel - thrust */
+        .hud-left {
+            position: absolute;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .thrust-indicator {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            color: rgba(130, 200, 255, 0.4);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .thrust-bar-container {
+            width: 6px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thrust-bar {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            border-radius: 3px;
+            transition: height 0.1s, background 0.1s;
+        }
+
+        /* Right panel - engine */
+        .hud-right {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: right;
+        }
+
+        .engine-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            color: rgba(130, 200, 255, 0.4);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+
+        .engine-ring {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 1px solid rgba(79, 195, 247, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-left: auto;
+        }
+
+        .engine-ring::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            border: 1px solid rgba(79, 195, 247, 0.1);
+        }
+
+        .engine-pct {
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            color: #4fc3f7;
+        }
+
+        /* Planet approach notification */
+        #planet-hud {
+            position: absolute;
+            top: 50%;
+            right: 60px;
+            transform: translateY(-50%);
+            background: rgba(5, 10, 30, 0.85);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 4px;
+            padding: 20px 25px;
+            backdrop-filter: blur(10px);
+            min-width: 220px;
+            display: none;
+            pointer-events: auto;
+        }
+
+        #planet-hud.visible {
+            display: block;
+        }
+
+        .planet-hud-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 18px;
+            color: #a78bfa;
+            margin-bottom: 6px;
+            text-shadow: 0 0 15px rgba(167, 139, 250, 0.5);
+        }
+
+        .planet-hud-dist {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            color: rgba(130, 200, 255, 0.5);
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+        }
+
+        .planet-hud-info {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            color: rgba(150, 200, 255, 0.6);
+            line-height: 1.8;
+            border-top: 1px solid rgba(167, 139, 250, 0.15);
+            padding-top: 12px;
+        }
+
+        .planet-hud-info strong {
+            color: rgba(167, 139, 250, 0.8);
+        }
+
+        .approach-pulse {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #a78bfa;
+            animation: pulse 1s ease-in-out infinite;
+            margin-right: 8px;
+            box-shadow: 0 0 8px rgba(167, 139, 250, 0.8);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(0.7);
+            }
+        }
+
+        /* Controls overlay (Keyboard Hints) */
+        #controls-overlay {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: rgba(130, 200, 255, 0.8);
+            line-height: 2;
+            background: rgba(4, 14, 35, 0.65);
+            padding: 16px 24px;
+            border: 1px solid rgba(79, 195, 247, 0.4);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(79, 195, 247, 0.15);
+            pointer-events: none;
+            letter-spacing: 1px;
+        }
+
+        #controls-overlay span {
+            color: #fff;
+            background: rgba(167, 139, 250, 0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(167, 139, 250, 0.6);
+            margin-right: 4px;
+            font-weight: bold;
+            box-shadow: 0 0 8px rgba(167, 139, 250, 0.3);
+        }
+
+        /* White flash for wormhole exit */
+        #white-flash {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: #fff;
+            opacity: 0;
+            z-index: 999;
+            transition: opacity 4s ease-out;
+        }
+
+        /* Notification toast */
+        #notification {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-80px);
+            background: rgba(5, 10, 30, 0.9);
+            border: 1px solid rgba(167, 139, 250, 0.4);
+            border-radius: 3px;
+            padding: 12px 28px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            color: rgba(167, 200, 255, 0.9);
+            letter-spacing: 3px;
+            z-index: 200;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(15px);
+        }
+
+        #notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ── On-screen Thruster Control Pad ─────────────────────────────────── */
+        #thruster-pad {
+            position: fixed;
+            bottom: 30px;
+            right: 40px;
+            display: none;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+            z-index: 150;
+            pointer-events: auto;
+            user-select: none;
+            background: rgba(4, 14, 35, 0.65);
+            padding: 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(79, 195, 247, 0.4);
+            box-shadow: 0 0 25px rgba(79, 195, 247, 0.15), inset 0 0 15px rgba(79, 195, 247, 0.05);
+        }
+
+        #hud.active #thruster-pad {
+            display: flex;
+        }
+
+        /* Label above pad */
+        .pad-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: rgba(130, 200, 255, 0.35);
+            margin-bottom: 2px;
+        }
+
+        /* Generic thruster button */
+        .thr-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(79, 195, 247, 0.25);
+            border-radius: 6px;
+            background: rgba(4, 14, 35, 0.75);
+            cursor: pointer;
+            transition: background 0.12s, border-color 0.12s, box-shadow 0.12s, transform 0.08s;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: none;
+        }
+
+        .thr-btn:active,
+        .thr-btn.pressed {
+            transform: scale(0.92);
+        }
+
+        /* Forward thrust — largest, most prominent */
+        #btn-forward {
+            width: 80px;
+            height: 80px;
+            border-color: rgba(79, 195, 247, 0.5);
+            box-shadow: 0 0 12px rgba(79, 195, 247, 0.1);
+        }
+
+        #btn-forward.pressed,
+        #btn-forward:active {
+            background: rgba(6, 182, 212, 0.2);
+            border-color: #4fc3f7;
+            box-shadow: 0 0 28px rgba(79, 195, 247, 0.55), inset 0 0 20px rgba(79, 195, 247, 0.15);
+        }
+
+        /* Reverse / brake */
+        #btn-reverse {
+            width: 64px;
+            height: 56px;
+            border-color: rgba(244, 114, 182, 0.35);
+        }
+
+        #btn-reverse.pressed,
+        #btn-reverse:active {
+            background: rgba(244, 114, 182, 0.18);
+            border-color: #f472b6;
+            box-shadow: 0 0 22px rgba(244, 114, 182, 0.45);
+        }
+
+        /* Boost */
+        #btn-boost {
+            width: 80px;
+            height: 44px;
+            border-color: rgba(167, 139, 250, 0.4);
+            background: rgba(10, 5, 30, 0.8);
+        }
+
+        #btn-boost.pressed,
+        #btn-boost:active {
+            background: rgba(167, 139, 250, 0.22);
+            border-color: #a78bfa;
+            box-shadow: 0 0 28px rgba(167, 139, 250, 0.55);
+        }
+
+        /* Yaw row */
+        .yaw-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .thr-btn.yaw {
+            width: 52px;
+            height: 52px;
+            border-color: rgba(79, 195, 247, 0.2);
+        }
+
+        .thr-btn.yaw.pressed,
+        .thr-btn.yaw:active {
+            background: rgba(79, 195, 247, 0.15);
+            border-color: rgba(79, 195, 247, 0.7);
+            box-shadow: 0 0 18px rgba(79, 195, 247, 0.4);
+        }
+
+        /* Roll row */
+        .thr-btn.roll {
+            width: 48px;
+            height: 40px;
+            border-color: rgba(167, 139, 250, 0.2);
+            font-size: 16px;
+        }
+
+        .thr-btn.roll.pressed,
+        .thr-btn.roll:active {
+            background: rgba(167, 139, 250, 0.15);
+            border-color: rgba(167, 139, 250, 0.6);
+            box-shadow: 0 0 16px rgba(167, 139, 250, 0.4);
+        }
+
+        /* Icon/label inside button */
+        .thr-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            pointer-events: none;
+        }
+
+        .thr-arrow {
+            font-size: 22px;
+            line-height: 1;
+            color: rgba(79, 195, 247, 0.85);
+            text-shadow: 0 0 10px rgba(79, 195, 247, 0.6);
+            pointer-events: none;
+        }
+
+        .thr-arrow.rev {
+            color: rgba(244, 114, 182, 0.85);
+            text-shadow: 0 0 10px rgba(244, 114, 182, 0.5);
+        }
+
+        .thr-arrow.boost {
+            color: rgba(167, 139, 250, 0.9);
+            text-shadow: 0 0 12px rgba(167, 139, 250, 0.7);
+        }
+
+        .thr-arrow.roll-icon {
+            color: rgba(167, 139, 250, 0.8);
+            font-size: 17px;
+            text-shadow: 0 0 8px rgba(167, 139, 250, 0.5);
+        }
+
+        .thr-arrow.yaw-icon {
+            color: rgba(79, 195, 247, 0.8);
+            font-size: 18px;
+        }
+
+        .thr-key {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 1px;
+            color: rgba(130, 200, 255, 0.35);
+            pointer-events: none;
+        }
+
+        /* Glow pulse when engine fire active */
+        #btn-forward::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 8px;
+            background: transparent;
+            box-shadow: none;
+            transition: box-shadow 0.15s;
+        }
+
+        #btn-forward.pressed::after {
+            box-shadow: 0 0 40px 8px rgba(79, 195, 247, 0.3);
+        }
+
+        .pad-sep {
+            width: 60px;
+            height: 1px;
+            background: rgba(79, 195, 247, 0.08);
+            margin: 2px 0;
+        }
+
+        .abort-btn {
+            position: relative;
+            margin-top: 5px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 48px;
+            border: 1px solid rgba(244, 114, 182, 0.5);
+            border-radius: 6px;
+            background: rgba(244, 114, 182, 0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            pointer-events: auto;
+            z-index: 200;
+        }
+
+        .abort-btn:hover {
+            background: rgba(244, 114, 182, 0.25);
+            border-color: #f472b6;
+            box-shadow: 0 0 20px rgba(244, 114, 182, 0.6);
+            transform: scale(1.02);
+        }
+
+        .abort-btn .thr-arrow {
+            color: rgba(244, 114, 182, 1);
+            font-size: 16px;
+            margin-right: 6px;
+            text-shadow: 0 0 10px rgba(244, 114, 182, 0.5);
+        }
+
+        .abort-btn .thr-key {
+            color: rgba(244, 114, 182, 1);
+            font-size: 12px;
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+
+        .scene-label {
+            position: absolute;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: rgba(167, 200, 255, 0.9);
+            letter-spacing: 2px;
+            pointer-events: none;
+            white-space: nowrap;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.9), 0 0 12px rgba(79, 195, 247, 0.7);
+            transform-origin: top left;
+            will-change: transform, opacity;
+            z-index: 250;
+            display: none;
+        }
+
+        #labels-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 250;
+            display: none;
+        }
+
+        #hud.active~#labels-container,
+        #hud.active+#labels-container,
+        #labels-container.active {
+            display: block;
+        }
+
+        /* GOTO Menu */
+        #goto-menu-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        #goto-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 48px;
+            background: rgba(79, 195, 247, 0.1);
+            border: 1px solid rgba(79, 195, 247, 0.5);
+            border-radius: 6px;
+            color: #4fc3f7;
+            font-family: 'Share Tech Mono', monospace;
+            padding: 8px 16px;
+            cursor: pointer;
+            text-shadow: 0 0 5px #4fc3f7;
+            box-shadow: 0 0 10px rgba(79, 195, 247, 0.2);
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            pointer-events: auto;
+            z-index: 200;
+        }
+
+        #goto-btn:hover {
+            background: rgba(79, 195, 247, 0.2);
+            box-shadow: 0 0 15px rgba(79, 195, 247, 0.6);
+            border-color: #4fc3f7;
+        }
+
+        #goto-list {
+            position: absolute;
+            bottom: 55px;
+            left: 0;
+            width: 100%;
+            background: rgb(5, 10, 20);
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            border-radius: 6px;
+            display: none;
+            flex-direction: column;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 1);
+        }
+
+        #goto-list.visible {
+            display: flex;
+        }
+
+        .goto-item {
+            padding: 10px 15px;
+            color: rgba(167, 200, 255, 0.8);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(79, 195, 247, 0.1);
+            transition: background 0.1s, color 0.1s;
+        }
+
+        .goto-item:hover {
+            background: rgba(79, 195, 247, 0.2);
+            color: #fff;
+            text-shadow: 0 0 5px #4fc3f7;
+        }
+
+        /* Scrollbar for goto list */
+        #goto-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #goto-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        #goto-list::-webkit-scrollbar-thumb {
+            background: rgba(79, 195, 247, 0.5);
+        }
+
+        /* --- MOBILE OPTIMIZATIONS --- */
+        @media (max-width: 1024px) and (max-height: 600px),
+        (max-width: 768px) {
+            #controls-overlay {
+                display: none !important;
+            }
+
+            .thr-key,
+            .pad-label {
+                display: none !important;
+            }
+
+            #thruster-pad {
+                bottom: 10px;
+                right: 15px;
+                padding: 10px;
+                gap: 6px;
+                background: rgba(4, 14, 35, 0.5);
+                border-width: 1px;
+            }
+
+            #btn-forward {
+                width: 55px;
+                height: 55px;
+                border-radius: 12px;
+            }
+
+            #btn-reverse {
+                width: 45px;
+                height: 35px;
+            }
+
+            #btn-boost {
+                width: 55px;
+                height: 32px;
+            }
+
+            .thr-btn.yaw {
+                width: 40px;
+                height: 40px;
+            }
+
+            .thr-btn.roll {
+                width: 35px;
+                height: 28px;
+            }
+
+            .thr-arrow {
+                font-size: 16px !important;
+                margin: 0 !important;
+            }
+
+            .thr-arrow.yaw-icon {
+                font-size: 14px !important;
+            }
+
+            .thr-arrow.roll-icon {
+                font-size: 12px !important;
+            }
+
+            .pad-sep {
+                margin: 2px 0 !important;
+                width: 100% !important;
+            }
+
+            .abort-btn,
+            #goto-btn {
+                height: 32px !important;
+                font-size: 10px !important;
+                padding: 4px !important;
+            }
+
+            .abort-btn .thr-arrow {
+                font-size: 12px !important;
+                margin-right: 4px !important;
+            }
+
+            /* Disable mouse/touch moving look-around effect on canvas */
+            #canvas-container {
+                pointer-events: none !important;
+            }
+        }
+    </style>
+    <script type="module" crossorigin src="/home/fun/cosmos/assets/index-U0qd6zCS.js"></script>
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <canvas class="loading-stars" id="loading-canvas"></canvas>
+        <div class="loading-logo">COSMOS</div>
+        <div class="loading-subtitle">UNIVERSE EXPLORATION SIMULATOR</div>
+        <div class="loading-bar-container">
+            <div class="loading-bar" id="loading-bar"></div>
+        </div>
+        <div class="loading-status" id="loading-status">INITIALIZING SYSTEMS...</div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen">
+        <div class="start-title">COSMOS</div>
+        <div class="start-tagline">UNIVERSE EXPLORATION SIMULATOR</div>
+        <button class="start-btn" id="start-btn">LAUNCH MISSION</button>
+        <div class="controls-hint" style="grid-template-columns: repeat(4, 1fr);">
+            <div><span>W / S</span><br />THRUST</div>
+            <div><span>A / D</span><br />YAW</div>
+            <div><span>Q / E</span><br />ROLL</div>
+            <div><span>MOUSE</span><br />LOOK</div>
+            <div><span>SHIFT</span><br />BOOST</div>
+            <div><span>CTRL</span><br />BRAKE</div>
+            <div><span>ESC</span><br />FREE MOUSE</div>
+        </div>
+    </div>
+
+    <!-- Game Canvas -->
+    <div id="canvas-container">
+        <canvas id="space-canvas"></canvas>
+    </div>
+
+    <!-- 3D Object Labels -->
+    <div id="labels-container"></div>
+
+    <!-- Warp Overlay -->
+    <div id="warp-overlay"></div>
+    <!-- Boost Flash -->
+    <div id="boost-flash"></div>
+    <!-- Notification -->
+    <div id="notification" id="notification"></div>
+
+    <!-- HUD -->
+    <div id="hud">
+
+        <!-- Crosshair -->
+        <div class="crosshair">
+            <div class="crosshair-dot"></div>
+        </div>
+
+        <!-- Top bar -->
+        <div class="hud-top">
+            <div class="hud-stat">
+                <div class="hud-stat-label">COORDINATES</div>
+                <div class="hud-stat-value" id="hud-coords">0 : 0 : 0</div>
+            </div>
+            <div class="hud-stat">
+                <div class="hud-stat-label">SECTOR</div>
+                <div class="hud-stat-value" id="hud-sector">SOLAR SYSTEM</div>
+            </div>
+            <div class="hud-stat">
+                <div class="hud-stat-label">MISSION TIME</div>
+                <div class="hud-stat-value" id="hud-time">00:00:00</div>
+            </div>
+        </div>
+
+        <!-- Compass -->
+        <div class="hud-compass">
+            <div class="compass-value" id="hud-heading">000°</div>
+            <div>HEADING</div>
+        </div>
+
+        <!-- Speed -->
+        <div class="hud-speed">
+            <div class="speed-label">VELOCITY</div>
+            <div class="speed-value" id="hud-speed">0</div>
+            <div class="speed-unit">KM/S</div>
+            <div class="velocity-bars" id="vel-bars">
+                <!-- generated by JS -->
+            </div>
+        </div>
+
+        <!-- Thrust left -->
+        <div class="hud-left">
+            <div class="thrust-indicator">THRUST</div>
+            <div class="thrust-bar-container">
+                <div class="thrust-bar" id="thrust-bar"></div>
+            </div>
+        </div>
+
+        <!-- Engine right -->
+        <div class="hud-right">
+            <div class="engine-label">ENGINE</div>
+            <div class="engine-ring">
+                <div class="engine-pct" id="engine-pct">0%</div>
+            </div>
+        </div>
+
+        <!-- Planet HUD -->
+        <div id="planet-hud">
+            <div class="planet-hud-name" id="planet-hud-name">EARTH</div>
+            <div class="planet-hud-dist"><span class="approach-pulse"></span> <span id="planet-hud-dist">0 AU</span>
+            </div>
+            <div class="planet-hud-info" id="planet-hud-info"></div>
+        </div>
+
+
+
+        <!-- Controls overlay -->
+        <div id="controls-overlay">
+            <span>[W/S]</span> THRUST/REVERSE &nbsp;&nbsp;&nbsp; <span>[SHIFT/CTRL]</span> BOOST/BRAKE <br>
+            <span>[A/D]</span> YAW (TURN) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span>[Q/E]</span> ROLL <br>
+            <span>[MOUSE]</span> PITCH/YAW VIEW &nbsp; <span>[ESC]</span> FREE MOUSE
+        </div>
+        <!-- ── On-screen Thruster Pad ─────────────────────────────────────── -->
+        <div id="thruster-pad">
+            <div class="pad-label">THRUSTERS</div>
+
+            <!-- BOOST -->
+            <button class="thr-btn" id="btn-boost" data-action="boost" title="BOOST [Shift]">
+                <div class="thr-icon">
+                    <span class="thr-arrow boost">⚡</span>
+                    <span class="thr-key">BOOST</span>
+                </div>
+            </button>
+
+            <div class="pad-sep"></div>
+
+            <!-- FORWARD -->
+            <button class="thr-btn" id="btn-forward" data-action="w" title="Forward Thrust [W]">
+                <div class="thr-icon">
+                    <span class="thr-arrow">▲</span>
+                    <span class="thr-key">FWD</span>
+                </div>
+            </button>
+
+            <!-- YAW ROW -->
+            <div class="yaw-row">
+                <button class="thr-btn yaw" id="btn-yaw-left" data-action="a" title="Yaw Left [A]">
+                    <div class="thr-icon">
+                        <span class="thr-arrow yaw-icon">◀</span>
+                        <span class="thr-key">YAW L</span>
+                    </div>
+                </button>
+
+                <!-- REVERSE -->
+                <button class="thr-btn" id="btn-reverse" data-action="s" title="Reverse Thrust [S]">
+                    <div class="thr-icon">
+                        <span class="thr-arrow rev">▼</span>
+                        <span class="thr-key">REV</span>
+                    </div>
+                </button>
+
+                <button class="thr-btn yaw" id="btn-yaw-right" data-action="d" title="Yaw Right [D]">
+                    <div class="thr-icon">
+                        <span class="thr-arrow yaw-icon">▶</span>
+                        <span class="thr-key">YAW R</span>
+                    </div>
+                </button>
+            </div>
+
+            <div class="pad-sep"></div>
+
+            <!-- ROLL ROW -->
+            <div class="yaw-row">
+                <button class="thr-btn roll" id="btn-roll-left" data-action="q" title="Roll Left [Q]">
+                    <div class="thr-icon">
+                        <span class="thr-arrow roll-icon">↺</span>
+                        <span class="thr-key">ROLL L</span>
+                    </div>
+                </button>
+                <button class="thr-btn roll" id="btn-roll-right" data-action="e" title="Roll Right [E]">
+                    <div class="thr-icon">
+                        <span class="thr-arrow roll-icon">↻</span>
+                        <span class="thr-key">ROLL R</span>
+                    </div>
+                </button>
+            </div>
+
+            <div class="pad-sep" style="margin: 6px 0; width: 100%;"></div>
+
+            <div style="display: flex; gap: 8px; width: 100%;">
+                <!-- Abort Mission Button -->
+                <a href="/home/fun" class="abort-btn" title="Abort Mission" style="flex: 1; margin-top: 0;">
+                    <span class="thr-arrow">✕</span>
+                    <span class="thr-key">ABORT</span>
+                </a>
+
+                <!-- GOTO Menu -->
+                <div id="goto-menu-container" style="flex: 1; margin-top: 0;">
+                    <button id="goto-btn">⚲ GOTO</button>
+                    <div id="goto-list">
+                        <!-- Populated dynamically by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="orientation-overlay">
+        <div class="orientation-icon">📱</div>
+        <div class="orientation-title">LANDSCAPE REQUIRED</div>
+        <div class="orientation-msg">Please rotate your device for the best cosmic experience.</div>
+    </div>
+
+    <div id="white-flash"></div>
+</body>
+
+</html>

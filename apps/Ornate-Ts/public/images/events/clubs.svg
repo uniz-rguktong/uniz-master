@@ -1,0 +1,85 @@
+<svg width="600" height="240" viewBox="0 0 600 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="600" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#020a0f"/>
+      <stop offset="50%" stop-color="#041520"/>
+      <stop offset="100%" stop-color="#020810"/>
+    </linearGradient>
+    <filter id="blur1"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="blur2"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="2"/></filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="240" fill="url(#bg)"/>
+
+  <!-- Grid -->
+  <g stroke="#22d3ee" stroke-opacity="0.05" stroke-width="0.5">
+    <line x1="0" y1="30" x2="600" y2="30"/><line x1="0" y1="60" x2="600" y2="60"/>
+    <line x1="0" y1="90" x2="600" y2="90"/><line x1="0" y1="120" x2="600" y2="120"/>
+    <line x1="0" y1="150" x2="600" y2="150"/><line x1="0" y1="180" x2="600" y2="180"/>
+    <line x1="0" y1="210" x2="600" y2="210"/>
+    <line x1="60" y1="0" x2="60" y2="240"/><line x1="120" y1="0" x2="120" y2="240"/>
+    <line x1="180" y1="0" x2="180" y2="240"/><line x1="240" y1="0" x2="240" y2="240"/>
+    <line x1="300" y1="0" x2="300" y2="240"/><line x1="360" y1="0" x2="360" y2="240"/>
+    <line x1="420" y1="0" x2="420" y2="240"/><line x1="480" y1="0" x2="480" y2="240"/>
+    <line x1="540" y1="0" x2="540" y2="240"/>
+  </g>
+
+  <!-- Glow orbs -->
+  <ellipse cx="300" cy="120" rx="160" ry="100" fill="#22d3ee" fill-opacity="0.04" filter="url(#blur1)"/>
+  <ellipse cx="100" cy="60" rx="80" ry="60" fill="#22d3ee" fill-opacity="0.05" filter="url(#blur1)"/>
+  <ellipse cx="500" cy="180" rx="80" ry="60" fill="#06b6d4" fill-opacity="0.05" filter="url(#blur1)"/>
+
+  <!-- Constellation edges -->
+  <g stroke="#22d3ee" stroke-opacity="0.2" stroke-width="0.8">
+    <line x1="100" y1="60" x2="200" y2="100"/>
+    <line x1="200" y1="100" x2="300" y2="60"/>
+    <line x1="300" y1="60" x2="420" y2="90"/>
+    <line x1="420" y1="90" x2="500" y2="50"/>
+    <line x1="200" y1="100" x2="180" y2="180"/>
+    <line x1="300" y1="60" x2="300" y2="160"/>
+    <line x1="420" y1="90" x2="400" y2="180"/>
+    <line x1="180" y1="180" x2="300" y2="160"/>
+    <line x1="300" y1="160" x2="400" y2="180"/>
+    <line x1="100" y1="60" x2="80" y2="160"/>
+    <line x1="80" y1="160" x2="180" y2="180"/>
+    <line x1="500" y1="50" x2="520" y2="150"/>
+    <line x1="520" y1="150" x2="400" y2="180"/>
+    <line x1="300" y1="160" x2="300" y2="220"/>
+  </g>
+
+  <!-- Node circles -->
+  <g fill="#22d3ee">
+    <circle cx="100" cy="60" r="5" fill-opacity="0.8"/>
+    <circle cx="200" cy="100" r="5" fill-opacity="0.8"/>
+    <circle cx="300" cy="60" r="7" fill-opacity="0.9"/>
+    <circle cx="420" cy="90" r="5" fill-opacity="0.8"/>
+    <circle cx="500" cy="50" r="4" fill-opacity="0.7"/>
+    <circle cx="80" cy="160" r="4" fill-opacity="0.7"/>
+    <circle cx="180" cy="180" r="5" fill-opacity="0.8"/>
+    <circle cx="300" cy="160" r="6" fill-opacity="0.9"/>
+    <circle cx="400" cy="180" r="5" fill-opacity="0.8"/>
+    <circle cx="520" cy="150" r="4" fill-opacity="0.7"/>
+    <circle cx="300" cy="220" r="3" fill-opacity="0.5"/>
+    <!-- Glows -->
+    <circle cx="300" cy="60" r="20" fill-opacity="0.08" filter="url(#blur2)"/>
+    <circle cx="300" cy="160" r="20" fill-opacity="0.08" filter="url(#blur2)"/>
+  </g>
+
+  <!-- Club labels at key nodes -->
+  <g font-family="monospace" font-weight="bold" letter-spacing="1.5" fill="#22d3ee">
+    <text x="65" y="54" font-size="8" fill-opacity="0.9">PIXLERO</text>
+    <text x="165" y="94" font-size="8" fill-opacity="0.9">ICRO</text>
+    <text x="275" y="50" font-size="9" fill-opacity="1">TECHXEL</text>
+    <text x="428" y="84" font-size="8" fill-opacity="0.9">ARTIX</text>
+    <text x="505" y="44" font-size="8" fill-opacity="0.8">SARVASRIJANA</text>
+    <text x="50" y="178" font-size="8" fill-opacity="0.8">KALADHARINI</text>
+    <text x="285" y="195" font-size="9" fill-opacity="1">KHELSATHI</text>
+    <text x="405" y="198" font-size="8" fill-opacity="0.8">CLUBS</text>
+  </g>
+
+  <!-- Corner accents -->
+  <polygon points="0,0 30,0 0,30" fill="#22d3ee" fill-opacity="0.15"/>
+  <polygon points="600,240 570,240 600,210" fill="#22d3ee" fill-opacity="0.1"/>
+</svg>

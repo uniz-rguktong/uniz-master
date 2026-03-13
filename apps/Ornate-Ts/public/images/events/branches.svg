@@ -1,0 +1,99 @@
+<svg width="600" height="240" viewBox="0 0 600 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="600" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#050e05"/>
+      <stop offset="50%" stop-color="#071a07"/>
+      <stop offset="100%" stop-color="#040c04"/>
+    </linearGradient>
+    <linearGradient id="glow1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#39FF14" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#39FF14" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="blur1"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="blur2"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="1.5"/></filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="240" fill="url(#bg)"/>
+
+  <!-- Grid lines -->
+  <g stroke="#39FF14" stroke-opacity="0.07" stroke-width="0.5">
+    <line x1="0" y1="30" x2="600" y2="30"/>
+    <line x1="0" y1="60" x2="600" y2="60"/>
+    <line x1="0" y1="90" x2="600" y2="90"/>
+    <line x1="0" y1="120" x2="600" y2="120"/>
+    <line x1="0" y1="150" x2="600" y2="150"/>
+    <line x1="0" y1="180" x2="600" y2="180"/>
+    <line x1="0" y1="210" x2="600" y2="210"/>
+    <line x1="60" y1="0" x2="60" y2="240"/>
+    <line x1="120" y1="0" x2="120" y2="240"/>
+    <line x1="180" y1="0" x2="180" y2="240"/>
+    <line x1="240" y1="0" x2="240" y2="240"/>
+    <line x1="300" y1="0" x2="300" y2="240"/>
+    <line x1="360" y1="0" x2="360" y2="240"/>
+    <line x1="420" y1="0" x2="420" y2="240"/>
+    <line x1="480" y1="0" x2="480" y2="240"/>
+    <line x1="540" y1="0" x2="540" y2="240"/>
+  </g>
+
+  <!-- Glow orbs -->
+  <ellipse cx="120" cy="120" rx="80" ry="60" fill="#39FF14" fill-opacity="0.06" filter="url(#blur1)"/>
+  <ellipse cx="450" cy="80" rx="100" ry="70" fill="#39FF14" fill-opacity="0.05" filter="url(#blur1)"/>
+  <ellipse cx="300" cy="200" rx="120" ry="50" fill="#39FF14" fill-opacity="0.04" filter="url(#blur1)"/>
+
+  <!-- Circuit traces -->
+  <g stroke="#39FF14" stroke-opacity="0.25" stroke-width="1.2" fill="none">
+    <!-- Horizontal main traces -->
+    <polyline points="0,80 80,80 80,40 200,40 200,80 340,80 340,60 500,60"/>
+    <polyline points="0,160 60,160 60,120 160,120 160,160 280,160 280,140 400,140 400,160 600,160"/>
+    <polyline points="100,200 100,180 220,180 220,200"/>
+    <polyline points="350,20 350,50 480,50 480,20"/>
+    <polyline points="500,100 500,130 580,130 580,100"/>
+  </g>
+
+  <!-- Circuit nodes (dots) -->
+  <g fill="#39FF14">
+    <circle cx="80" cy="80" r="3" fill-opacity="0.6"/>
+    <circle cx="200" cy="40" r="3" fill-opacity="0.6"/>
+    <circle cx="340" cy="60" r="3" fill-opacity="0.6"/>
+    <circle cx="60" cy="160" r="3" fill-opacity="0.6"/>
+    <circle cx="160" cy="120" r="3" fill-opacity="0.6"/>
+    <circle cx="280" cy="140" r="3" fill-opacity="0.6"/>
+    <circle cx="400" cy="160" r="3" fill-opacity="0.6"/>
+    <circle cx="480" cy="50" r="3" fill-opacity="0.6"/>
+    <circle cx="500" cy="130" r="3" fill-opacity="0.6"/>
+    <!-- Glow dots -->
+    <circle cx="200" cy="40" r="6" fill-opacity="0.15" filter="url(#blur3)"/>
+    <circle cx="280" cy="140" r="6" fill-opacity="0.15" filter="url(#blur3)"/>
+  </g>
+
+  <!-- Department labels -->
+  <g font-family="monospace" font-weight="bold" letter-spacing="2">
+    <text x="30" y="108" font-size="11" fill="#39FF14" fill-opacity="0.9">CSE</text>
+    <text x="30" y="128" font-size="8" fill="#39FF14" fill-opacity="0.4">COMPUTER SCIENCE</text>
+
+    <text x="150" y="68" font-size="11" fill="#39FF14" fill-opacity="0.9">ECE</text>
+    <text x="150" y="84" font-size="8" fill="#39FF14" fill-opacity="0.4">ELECTRONICS</text>
+
+    <text x="310" y="108" font-size="11" fill="#39FF14" fill-opacity="0.9">MECH</text>
+    <text x="310" y="124" font-size="8" fill="#39FF14" fill-opacity="0.4">MECHANICAL</text>
+
+    <text x="420" y="168" font-size="11" fill="#39FF14" fill-opacity="0.9">CIVIL</text>
+    <text x="420" y="184" font-size="8" fill="#39FF14" fill-opacity="0.4">ENGINEERING</text>
+
+    <text x="490" y="68" font-size="11" fill="#39FF14" fill-opacity="0.9">EE</text>
+    <text x="475" y="84" font-size="8" fill="#39FF14" fill-opacity="0.4">ELECTRICAL</text>
+  </g>
+
+  <!-- Corner accent -->
+  <polygon points="0,0 40,0 0,40" fill="#39FF14" fill-opacity="0.12"/>
+  <polygon points="600,240 560,240 600,200" fill="#39FF14" fill-opacity="0.08"/>
+
+  <!-- Bottom gradient fade -->
+  <rect width="600" height="60" y="180" fill="url(#glow1)" opacity="0.4"/>
+
+  <!-- Scan line effect -->
+  <rect width="600" height="1" y="118" fill="#39FF14" fill-opacity="0.08"/>
+  <rect width="600" height="1" y="119" fill="#39FF14" fill-opacity="0.04"/>
+</svg>

@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "verbatimModuleSyntax": false
+  },
+  "include": [
+    "src/worker/**/*.ts",
+    "src/lib/notifications/**/*.ts",
+    "src/lib/prisma.ts"
+  ]
+}

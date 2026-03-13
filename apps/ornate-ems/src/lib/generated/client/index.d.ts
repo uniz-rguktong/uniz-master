@@ -94,6 +94,11 @@ export type AuditLog = $Result.DefaultSelection<Prisma.$AuditLogPayload>
  */
 export type Notification = $Result.DefaultSelection<Prisma.$NotificationPayload>
 /**
+ * Model PushSubscription
+ * 
+ */
+export type PushSubscription = $Result.DefaultSelection<Prisma.$PushSubscriptionPayload>
+/**
  * Model CertificateTheme
  * 
  */
@@ -143,6 +148,21 @@ export type SportWinnerAnnouncement = $Result.DefaultSelection<Prisma.$SportWinn
  * 
  */
 export type BranchPoints = $Result.DefaultSelection<Prisma.$BranchPointsPayload>
+/**
+ * Model AchievementBadge
+ * 
+ */
+export type AchievementBadge = $Result.DefaultSelection<Prisma.$AchievementBadgePayload>
+/**
+ * Model CadetProfile
+ * 
+ */
+export type CadetProfile = $Result.DefaultSelection<Prisma.$CadetProfilePayload>
+/**
+ * Model EnergyTransaction
+ * 
+ */
+export type EnergyTransaction = $Result.DefaultSelection<Prisma.$EnergyTransactionPayload>
 
 /**
  * Enums
@@ -266,6 +286,32 @@ export const MatchWinner: {
 
 export type MatchWinner = (typeof MatchWinner)[keyof typeof MatchWinner]
 
+
+export const EnergyReason: {
+  REGISTRATION_BONUS: 'REGISTRATION_BONUS',
+  PROFILE_COMPLETE: 'PROFILE_COMPLETE',
+  AVATAR_UPLOAD: 'AVATAR_UPLOAD',
+  EVENT_REGISTER: 'EVENT_REGISTER',
+  EVENT_ATTEND: 'EVENT_ATTEND',
+  MISSION_PARTICIPATE: 'MISSION_PARTICIPATE',
+  MISSION_THIRD: 'MISSION_THIRD',
+  MISSION_SECOND: 'MISSION_SECOND',
+  MISSION_FIRST: 'MISSION_FIRST',
+  SPORT_REGISTER: 'SPORT_REGISTER',
+  SPORT_PARTICIPATE: 'SPORT_PARTICIPATE',
+  SPORT_THIRD: 'SPORT_THIRD',
+  SPORT_SECOND: 'SPORT_SECOND',
+  SPORT_FIRST: 'SPORT_FIRST',
+  WEBSITE_ACTIVITY: 'WEBSITE_ACTIVITY',
+  GAME_SCORE: 'GAME_SCORE',
+  BADGE_UNLOCK: 'BADGE_UNLOCK',
+  SOCIAL_SHARE: 'SOCIAL_SHARE',
+  INVITE_FRIEND: 'INVITE_FRIEND',
+  ADMIN_GRANT: 'ADMIN_GRANT'
+};
+
+export type EnergyReason = (typeof EnergyReason)[keyof typeof EnergyReason]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -315,6 +361,10 @@ export const SportStatus: typeof $Enums.SportStatus
 export type MatchWinner = $Enums.MatchWinner
 
 export const MatchWinner: typeof $Enums.MatchWinner
+
+export type EnergyReason = $Enums.EnergyReason
+
+export const EnergyReason: typeof $Enums.EnergyReason
 
 /**
  * ##  Prisma Client ʲˢ
@@ -595,6 +645,16 @@ export class PrismaClient<
   get notification(): Prisma.NotificationDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.pushSubscription`: Exposes CRUD operations for the **PushSubscription** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PushSubscriptions
+    * const pushSubscriptions = await prisma.pushSubscription.findMany()
+    * ```
+    */
+  get pushSubscription(): Prisma.PushSubscriptionDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.certificateTheme`: Exposes CRUD operations for the **CertificateTheme** model.
     * Example usage:
     * ```ts
@@ -693,6 +753,36 @@ export class PrismaClient<
     * ```
     */
   get branchPoints(): Prisma.BranchPointsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.achievementBadge`: Exposes CRUD operations for the **AchievementBadge** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AchievementBadges
+    * const achievementBadges = await prisma.achievementBadge.findMany()
+    * ```
+    */
+  get achievementBadge(): Prisma.AchievementBadgeDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.cadetProfile`: Exposes CRUD operations for the **CadetProfile** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CadetProfiles
+    * const cadetProfiles = await prisma.cadetProfile.findMany()
+    * ```
+    */
+  get cadetProfile(): Prisma.CadetProfileDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.energyTransaction`: Exposes CRUD operations for the **EnergyTransaction** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EnergyTransactions
+    * const energyTransactions = await prisma.energyTransaction.findMany()
+    * ```
+    */
+  get energyTransaction(): Prisma.EnergyTransactionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1150,6 +1240,7 @@ export namespace Prisma {
     WinnerAnnouncement: 'WinnerAnnouncement',
     AuditLog: 'AuditLog',
     Notification: 'Notification',
+    PushSubscription: 'PushSubscription',
     CertificateTheme: 'CertificateTheme',
     Sport: 'Sport',
     SportTeam: 'SportTeam',
@@ -1159,7 +1250,10 @@ export namespace Prisma {
     Stall: 'Stall',
     SportRegistration: 'SportRegistration',
     SportWinnerAnnouncement: 'SportWinnerAnnouncement',
-    BranchPoints: 'BranchPoints'
+    BranchPoints: 'BranchPoints',
+    AchievementBadge: 'AchievementBadge',
+    CadetProfile: 'CadetProfile',
+    EnergyTransaction: 'EnergyTransaction'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1178,7 +1272,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "admin" | "user" | "event" | "registration" | "team" | "teamMember" | "analyticsSnapshot" | "promoVideo" | "brandLogo" | "galleryAlbum" | "galleryImage" | "announcement" | "task" | "winnerAnnouncement" | "auditLog" | "notification" | "certificateTheme" | "sport" | "sportTeam" | "match" | "festSettings" | "bestOutgoingStudent" | "stall" | "sportRegistration" | "sportWinnerAnnouncement" | "branchPoints"
+      modelProps: "admin" | "user" | "event" | "registration" | "team" | "teamMember" | "analyticsSnapshot" | "promoVideo" | "brandLogo" | "galleryAlbum" | "galleryImage" | "announcement" | "task" | "winnerAnnouncement" | "auditLog" | "notification" | "pushSubscription" | "certificateTheme" | "sport" | "sportTeam" | "match" | "festSettings" | "bestOutgoingStudent" | "stall" | "sportRegistration" | "sportWinnerAnnouncement" | "branchPoints" | "achievementBadge" | "cadetProfile" | "energyTransaction"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2366,6 +2460,80 @@ export namespace Prisma {
           }
         }
       }
+      PushSubscription: {
+        payload: Prisma.$PushSubscriptionPayload<ExtArgs>
+        fields: Prisma.PushSubscriptionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PushSubscriptionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushSubscriptionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PushSubscriptionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>
+          }
+          findFirst: {
+            args: Prisma.PushSubscriptionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushSubscriptionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PushSubscriptionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>
+          }
+          findMany: {
+            args: Prisma.PushSubscriptionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>[]
+          }
+          create: {
+            args: Prisma.PushSubscriptionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>
+          }
+          createMany: {
+            args: Prisma.PushSubscriptionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PushSubscriptionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>[]
+          }
+          delete: {
+            args: Prisma.PushSubscriptionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>
+          }
+          update: {
+            args: Prisma.PushSubscriptionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>
+          }
+          deleteMany: {
+            args: Prisma.PushSubscriptionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PushSubscriptionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PushSubscriptionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>[]
+          }
+          upsert: {
+            args: Prisma.PushSubscriptionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>
+          }
+          aggregate: {
+            args: Prisma.PushSubscriptionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePushSubscription>
+          }
+          groupBy: {
+            args: Prisma.PushSubscriptionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PushSubscriptionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PushSubscriptionCountArgs<ExtArgs>
+            result: $Utils.Optional<PushSubscriptionCountAggregateOutputType> | number
+          }
+        }
+      }
       CertificateTheme: {
         payload: Prisma.$CertificateThemePayload<ExtArgs>
         fields: Prisma.CertificateThemeFieldRefs
@@ -3106,6 +3274,228 @@ export namespace Prisma {
           }
         }
       }
+      AchievementBadge: {
+        payload: Prisma.$AchievementBadgePayload<ExtArgs>
+        fields: Prisma.AchievementBadgeFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AchievementBadgeFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementBadgePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AchievementBadgeFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementBadgePayload>
+          }
+          findFirst: {
+            args: Prisma.AchievementBadgeFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementBadgePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AchievementBadgeFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementBadgePayload>
+          }
+          findMany: {
+            args: Prisma.AchievementBadgeFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementBadgePayload>[]
+          }
+          create: {
+            args: Prisma.AchievementBadgeCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementBadgePayload>
+          }
+          createMany: {
+            args: Prisma.AchievementBadgeCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AchievementBadgeCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementBadgePayload>[]
+          }
+          delete: {
+            args: Prisma.AchievementBadgeDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementBadgePayload>
+          }
+          update: {
+            args: Prisma.AchievementBadgeUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementBadgePayload>
+          }
+          deleteMany: {
+            args: Prisma.AchievementBadgeDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AchievementBadgeUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AchievementBadgeUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementBadgePayload>[]
+          }
+          upsert: {
+            args: Prisma.AchievementBadgeUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AchievementBadgePayload>
+          }
+          aggregate: {
+            args: Prisma.AchievementBadgeAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAchievementBadge>
+          }
+          groupBy: {
+            args: Prisma.AchievementBadgeGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AchievementBadgeGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AchievementBadgeCountArgs<ExtArgs>
+            result: $Utils.Optional<AchievementBadgeCountAggregateOutputType> | number
+          }
+        }
+      }
+      CadetProfile: {
+        payload: Prisma.$CadetProfilePayload<ExtArgs>
+        fields: Prisma.CadetProfileFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CadetProfileFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadetProfilePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CadetProfileFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadetProfilePayload>
+          }
+          findFirst: {
+            args: Prisma.CadetProfileFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadetProfilePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CadetProfileFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadetProfilePayload>
+          }
+          findMany: {
+            args: Prisma.CadetProfileFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadetProfilePayload>[]
+          }
+          create: {
+            args: Prisma.CadetProfileCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadetProfilePayload>
+          }
+          createMany: {
+            args: Prisma.CadetProfileCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CadetProfileCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadetProfilePayload>[]
+          }
+          delete: {
+            args: Prisma.CadetProfileDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadetProfilePayload>
+          }
+          update: {
+            args: Prisma.CadetProfileUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadetProfilePayload>
+          }
+          deleteMany: {
+            args: Prisma.CadetProfileDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CadetProfileUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CadetProfileUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadetProfilePayload>[]
+          }
+          upsert: {
+            args: Prisma.CadetProfileUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadetProfilePayload>
+          }
+          aggregate: {
+            args: Prisma.CadetProfileAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCadetProfile>
+          }
+          groupBy: {
+            args: Prisma.CadetProfileGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CadetProfileGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CadetProfileCountArgs<ExtArgs>
+            result: $Utils.Optional<CadetProfileCountAggregateOutputType> | number
+          }
+        }
+      }
+      EnergyTransaction: {
+        payload: Prisma.$EnergyTransactionPayload<ExtArgs>
+        fields: Prisma.EnergyTransactionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EnergyTransactionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnergyTransactionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EnergyTransactionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnergyTransactionPayload>
+          }
+          findFirst: {
+            args: Prisma.EnergyTransactionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnergyTransactionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EnergyTransactionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnergyTransactionPayload>
+          }
+          findMany: {
+            args: Prisma.EnergyTransactionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnergyTransactionPayload>[]
+          }
+          create: {
+            args: Prisma.EnergyTransactionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnergyTransactionPayload>
+          }
+          createMany: {
+            args: Prisma.EnergyTransactionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EnergyTransactionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnergyTransactionPayload>[]
+          }
+          delete: {
+            args: Prisma.EnergyTransactionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnergyTransactionPayload>
+          }
+          update: {
+            args: Prisma.EnergyTransactionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnergyTransactionPayload>
+          }
+          deleteMany: {
+            args: Prisma.EnergyTransactionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EnergyTransactionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EnergyTransactionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnergyTransactionPayload>[]
+          }
+          upsert: {
+            args: Prisma.EnergyTransactionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EnergyTransactionPayload>
+          }
+          aggregate: {
+            args: Prisma.EnergyTransactionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEnergyTransaction>
+          }
+          groupBy: {
+            args: Prisma.EnergyTransactionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EnergyTransactionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EnergyTransactionCountArgs<ExtArgs>
+            result: $Utils.Optional<EnergyTransactionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3218,6 +3608,7 @@ export namespace Prisma {
     winnerAnnouncement?: WinnerAnnouncementOmit
     auditLog?: AuditLogOmit
     notification?: NotificationOmit
+    pushSubscription?: PushSubscriptionOmit
     certificateTheme?: CertificateThemeOmit
     sport?: SportOmit
     sportTeam?: SportTeamOmit
@@ -3228,6 +3619,9 @@ export namespace Prisma {
     sportRegistration?: SportRegistrationOmit
     sportWinnerAnnouncement?: SportWinnerAnnouncementOmit
     branchPoints?: BranchPointsOmit
+    achievementBadge?: AchievementBadgeOmit
+    cadetProfile?: CadetProfileOmit
+    energyTransaction?: EnergyTransactionOmit
   }
 
   /* Types for Logging */
@@ -3402,12 +3796,14 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
+    EnergyTransaction: number
     registrations: number
     leaderOf: number
     teamMembers: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    EnergyTransaction?: boolean | UserCountOutputTypeCountEnergyTransactionArgs
     registrations?: boolean | UserCountOutputTypeCountRegistrationsArgs
     leaderOf?: boolean | UserCountOutputTypeCountLeaderOfArgs
     teamMembers?: boolean | UserCountOutputTypeCountTeamMembersArgs
@@ -3422,6 +3818,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountEnergyTransactionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EnergyTransactionWhereInput
   }
 
   /**
@@ -5224,6 +5627,8 @@ export namespace Prisma {
     phone?: boolean
     createdAt?: boolean
     stdid?: boolean
+    CadetProfile?: boolean | User$CadetProfileArgs<ExtArgs>
+    EnergyTransaction?: boolean | User$EnergyTransactionArgs<ExtArgs>
     registrations?: boolean | User$registrationsArgs<ExtArgs>
     leaderOf?: boolean | User$leaderOfArgs<ExtArgs>
     teamMembers?: boolean | User$teamMembersArgs<ExtArgs>
@@ -5271,6 +5676,8 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "branch" | "currentYear" | "phone" | "createdAt" | "stdid", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    CadetProfile?: boolean | User$CadetProfileArgs<ExtArgs>
+    EnergyTransaction?: boolean | User$EnergyTransactionArgs<ExtArgs>
     registrations?: boolean | User$registrationsArgs<ExtArgs>
     leaderOf?: boolean | User$leaderOfArgs<ExtArgs>
     teamMembers?: boolean | User$teamMembersArgs<ExtArgs>
@@ -5282,6 +5689,8 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      CadetProfile: Prisma.$CadetProfilePayload<ExtArgs> | null
+      EnergyTransaction: Prisma.$EnergyTransactionPayload<ExtArgs>[]
       registrations: Prisma.$RegistrationPayload<ExtArgs>[]
       leaderOf: Prisma.$TeamPayload<ExtArgs>[]
       teamMembers: Prisma.$TeamMemberPayload<ExtArgs>[]
@@ -5691,6 +6100,8 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    CadetProfile<T extends User$CadetProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$CadetProfileArgs<ExtArgs>>): Prisma__CadetProfileClient<$Result.GetResult<Prisma.$CadetProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    EnergyTransaction<T extends User$EnergyTransactionArgs<ExtArgs> = {}>(args?: Subset<T, User$EnergyTransactionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EnergyTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     registrations<T extends User$registrationsArgs<ExtArgs> = {}>(args?: Subset<T, User$registrationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegistrationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     leaderOf<T extends User$leaderOfArgs<ExtArgs> = {}>(args?: Subset<T, User$leaderOfArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teamMembers<T extends User$teamMembersArgs<ExtArgs> = {}>(args?: Subset<T, User$teamMembersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -6118,6 +6529,49 @@ export namespace Prisma {
      * Limit how many Users to delete.
      */
     limit?: number
+  }
+
+  /**
+   * User.CadetProfile
+   */
+  export type User$CadetProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileInclude<ExtArgs> | null
+    where?: CadetProfileWhereInput
+  }
+
+  /**
+   * User.EnergyTransaction
+   */
+  export type User$EnergyTransactionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionInclude<ExtArgs> | null
+    where?: EnergyTransactionWhereInput
+    orderBy?: EnergyTransactionOrderByWithRelationInput | EnergyTransactionOrderByWithRelationInput[]
+    cursor?: EnergyTransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EnergyTransactionScalarFieldEnum | EnergyTransactionScalarFieldEnum[]
   }
 
   /**
@@ -11759,7 +12213,6 @@ export namespace Prisma {
 
   export type AnalyticsSnapshotAvgAggregateOutputType = {
     totalOnlineRegistrations: number | null
-    totalOfflineRegistrations: number | null
     totalAttendance: number | null
     totalRevenue: number | null
     avgAttendanceRate: number | null
@@ -11771,11 +12224,11 @@ export namespace Prisma {
     pendingRegistrations: number | null
     pendingRevenue: number | null
     waitlistRegistrations: number | null
+    totalSpotRegistrations: number | null
   }
 
   export type AnalyticsSnapshotSumAggregateOutputType = {
     totalOnlineRegistrations: number | null
-    totalOfflineRegistrations: number | null
     totalAttendance: number | null
     totalRevenue: number | null
     avgAttendanceRate: number | null
@@ -11787,13 +12240,13 @@ export namespace Prisma {
     pendingRegistrations: number | null
     pendingRevenue: number | null
     waitlistRegistrations: number | null
+    totalSpotRegistrations: number | null
   }
 
   export type AnalyticsSnapshotMinAggregateOutputType = {
     id: string | null
     snapshotDate: Date | null
     totalOnlineRegistrations: number | null
-    totalOfflineRegistrations: number | null
     totalAttendance: number | null
     totalRevenue: number | null
     avgAttendanceRate: number | null
@@ -11806,13 +12259,13 @@ export namespace Prisma {
     pendingRegistrations: number | null
     pendingRevenue: number | null
     waitlistRegistrations: number | null
+    totalSpotRegistrations: number | null
   }
 
   export type AnalyticsSnapshotMaxAggregateOutputType = {
     id: string | null
     snapshotDate: Date | null
     totalOnlineRegistrations: number | null
-    totalOfflineRegistrations: number | null
     totalAttendance: number | null
     totalRevenue: number | null
     avgAttendanceRate: number | null
@@ -11825,13 +12278,13 @@ export namespace Prisma {
     pendingRegistrations: number | null
     pendingRevenue: number | null
     waitlistRegistrations: number | null
+    totalSpotRegistrations: number | null
   }
 
   export type AnalyticsSnapshotCountAggregateOutputType = {
     id: number
     snapshotDate: number
     totalOnlineRegistrations: number
-    totalOfflineRegistrations: number
     totalAttendance: number
     totalRevenue: number
     avgAttendanceRate: number
@@ -11844,13 +12297,13 @@ export namespace Prisma {
     pendingRegistrations: number
     pendingRevenue: number
     waitlistRegistrations: number
+    totalSpotRegistrations: number
     _all: number
   }
 
 
   export type AnalyticsSnapshotAvgAggregateInputType = {
     totalOnlineRegistrations?: true
-    totalOfflineRegistrations?: true
     totalAttendance?: true
     totalRevenue?: true
     avgAttendanceRate?: true
@@ -11862,11 +12315,11 @@ export namespace Prisma {
     pendingRegistrations?: true
     pendingRevenue?: true
     waitlistRegistrations?: true
+    totalSpotRegistrations?: true
   }
 
   export type AnalyticsSnapshotSumAggregateInputType = {
     totalOnlineRegistrations?: true
-    totalOfflineRegistrations?: true
     totalAttendance?: true
     totalRevenue?: true
     avgAttendanceRate?: true
@@ -11878,13 +12331,13 @@ export namespace Prisma {
     pendingRegistrations?: true
     pendingRevenue?: true
     waitlistRegistrations?: true
+    totalSpotRegistrations?: true
   }
 
   export type AnalyticsSnapshotMinAggregateInputType = {
     id?: true
     snapshotDate?: true
     totalOnlineRegistrations?: true
-    totalOfflineRegistrations?: true
     totalAttendance?: true
     totalRevenue?: true
     avgAttendanceRate?: true
@@ -11897,13 +12350,13 @@ export namespace Prisma {
     pendingRegistrations?: true
     pendingRevenue?: true
     waitlistRegistrations?: true
+    totalSpotRegistrations?: true
   }
 
   export type AnalyticsSnapshotMaxAggregateInputType = {
     id?: true
     snapshotDate?: true
     totalOnlineRegistrations?: true
-    totalOfflineRegistrations?: true
     totalAttendance?: true
     totalRevenue?: true
     avgAttendanceRate?: true
@@ -11916,13 +12369,13 @@ export namespace Prisma {
     pendingRegistrations?: true
     pendingRevenue?: true
     waitlistRegistrations?: true
+    totalSpotRegistrations?: true
   }
 
   export type AnalyticsSnapshotCountAggregateInputType = {
     id?: true
     snapshotDate?: true
     totalOnlineRegistrations?: true
-    totalOfflineRegistrations?: true
     totalAttendance?: true
     totalRevenue?: true
     avgAttendanceRate?: true
@@ -11935,6 +12388,7 @@ export namespace Prisma {
     pendingRegistrations?: true
     pendingRevenue?: true
     waitlistRegistrations?: true
+    totalSpotRegistrations?: true
     _all?: true
   }
 
@@ -12028,7 +12482,6 @@ export namespace Prisma {
     id: string
     snapshotDate: Date
     totalOnlineRegistrations: number
-    totalOfflineRegistrations: number
     totalAttendance: number
     totalRevenue: number
     avgAttendanceRate: number
@@ -12041,6 +12494,7 @@ export namespace Prisma {
     pendingRegistrations: number
     pendingRevenue: number
     waitlistRegistrations: number
+    totalSpotRegistrations: number
     _count: AnalyticsSnapshotCountAggregateOutputType | null
     _avg: AnalyticsSnapshotAvgAggregateOutputType | null
     _sum: AnalyticsSnapshotSumAggregateOutputType | null
@@ -12066,7 +12520,6 @@ export namespace Prisma {
     id?: boolean
     snapshotDate?: boolean
     totalOnlineRegistrations?: boolean
-    totalOfflineRegistrations?: boolean
     totalAttendance?: boolean
     totalRevenue?: boolean
     avgAttendanceRate?: boolean
@@ -12079,13 +12532,13 @@ export namespace Prisma {
     pendingRegistrations?: boolean
     pendingRevenue?: boolean
     waitlistRegistrations?: boolean
+    totalSpotRegistrations?: boolean
   }, ExtArgs["result"]["analyticsSnapshot"]>
 
   export type AnalyticsSnapshotSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     snapshotDate?: boolean
     totalOnlineRegistrations?: boolean
-    totalOfflineRegistrations?: boolean
     totalAttendance?: boolean
     totalRevenue?: boolean
     avgAttendanceRate?: boolean
@@ -12098,13 +12551,13 @@ export namespace Prisma {
     pendingRegistrations?: boolean
     pendingRevenue?: boolean
     waitlistRegistrations?: boolean
+    totalSpotRegistrations?: boolean
   }, ExtArgs["result"]["analyticsSnapshot"]>
 
   export type AnalyticsSnapshotSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     snapshotDate?: boolean
     totalOnlineRegistrations?: boolean
-    totalOfflineRegistrations?: boolean
     totalAttendance?: boolean
     totalRevenue?: boolean
     avgAttendanceRate?: boolean
@@ -12117,13 +12570,13 @@ export namespace Prisma {
     pendingRegistrations?: boolean
     pendingRevenue?: boolean
     waitlistRegistrations?: boolean
+    totalSpotRegistrations?: boolean
   }, ExtArgs["result"]["analyticsSnapshot"]>
 
   export type AnalyticsSnapshotSelectScalar = {
     id?: boolean
     snapshotDate?: boolean
     totalOnlineRegistrations?: boolean
-    totalOfflineRegistrations?: boolean
     totalAttendance?: boolean
     totalRevenue?: boolean
     avgAttendanceRate?: boolean
@@ -12136,9 +12589,10 @@ export namespace Prisma {
     pendingRegistrations?: boolean
     pendingRevenue?: boolean
     waitlistRegistrations?: boolean
+    totalSpotRegistrations?: boolean
   }
 
-  export type AnalyticsSnapshotOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "snapshotDate" | "totalOnlineRegistrations" | "totalOfflineRegistrations" | "totalAttendance" | "totalRevenue" | "avgAttendanceRate" | "totalEvents" | "createdAt" | "activeParticipants" | "cancelledRegistrations" | "completionRate" | "confirmedRegistrations" | "pendingRegistrations" | "pendingRevenue" | "waitlistRegistrations", ExtArgs["result"]["analyticsSnapshot"]>
+  export type AnalyticsSnapshotOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "snapshotDate" | "totalOnlineRegistrations" | "totalAttendance" | "totalRevenue" | "avgAttendanceRate" | "totalEvents" | "createdAt" | "activeParticipants" | "cancelledRegistrations" | "completionRate" | "confirmedRegistrations" | "pendingRegistrations" | "pendingRevenue" | "waitlistRegistrations" | "totalSpotRegistrations", ExtArgs["result"]["analyticsSnapshot"]>
 
   export type $AnalyticsSnapshotPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "AnalyticsSnapshot"
@@ -12147,7 +12601,6 @@ export namespace Prisma {
       id: string
       snapshotDate: Date
       totalOnlineRegistrations: number
-      totalOfflineRegistrations: number
       totalAttendance: number
       totalRevenue: number
       avgAttendanceRate: number
@@ -12160,6 +12613,7 @@ export namespace Prisma {
       pendingRegistrations: number
       pendingRevenue: number
       waitlistRegistrations: number
+      totalSpotRegistrations: number
     }, ExtArgs["result"]["analyticsSnapshot"]>
     composites: {}
   }
@@ -12586,7 +13040,6 @@ export namespace Prisma {
     readonly id: FieldRef<"AnalyticsSnapshot", 'String'>
     readonly snapshotDate: FieldRef<"AnalyticsSnapshot", 'DateTime'>
     readonly totalOnlineRegistrations: FieldRef<"AnalyticsSnapshot", 'Int'>
-    readonly totalOfflineRegistrations: FieldRef<"AnalyticsSnapshot", 'Int'>
     readonly totalAttendance: FieldRef<"AnalyticsSnapshot", 'Int'>
     readonly totalRevenue: FieldRef<"AnalyticsSnapshot", 'Float'>
     readonly avgAttendanceRate: FieldRef<"AnalyticsSnapshot", 'Float'>
@@ -12599,6 +13052,7 @@ export namespace Prisma {
     readonly pendingRegistrations: FieldRef<"AnalyticsSnapshot", 'Int'>
     readonly pendingRevenue: FieldRef<"AnalyticsSnapshot", 'Float'>
     readonly waitlistRegistrations: FieldRef<"AnalyticsSnapshot", 'Int'>
+    readonly totalSpotRegistrations: FieldRef<"AnalyticsSnapshot", 'Int'>
   }
     
 
@@ -23098,6 +23552,1053 @@ export namespace Prisma {
 
 
   /**
+   * Model PushSubscription
+   */
+
+  export type AggregatePushSubscription = {
+    _count: PushSubscriptionCountAggregateOutputType | null
+    _min: PushSubscriptionMinAggregateOutputType | null
+    _max: PushSubscriptionMaxAggregateOutputType | null
+  }
+
+  export type PushSubscriptionMinAggregateOutputType = {
+    id: string | null
+    username: string | null
+    endpoint: string | null
+    p256dh: string | null
+    auth: string | null
+    expirationTime: Date | null
+    userAgent: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PushSubscriptionMaxAggregateOutputType = {
+    id: string | null
+    username: string | null
+    endpoint: string | null
+    p256dh: string | null
+    auth: string | null
+    expirationTime: Date | null
+    userAgent: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PushSubscriptionCountAggregateOutputType = {
+    id: number
+    username: number
+    endpoint: number
+    p256dh: number
+    auth: number
+    expirationTime: number
+    userAgent: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PushSubscriptionMinAggregateInputType = {
+    id?: true
+    username?: true
+    endpoint?: true
+    p256dh?: true
+    auth?: true
+    expirationTime?: true
+    userAgent?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PushSubscriptionMaxAggregateInputType = {
+    id?: true
+    username?: true
+    endpoint?: true
+    p256dh?: true
+    auth?: true
+    expirationTime?: true
+    userAgent?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PushSubscriptionCountAggregateInputType = {
+    id?: true
+    username?: true
+    endpoint?: true
+    p256dh?: true
+    auth?: true
+    expirationTime?: true
+    userAgent?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PushSubscriptionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PushSubscription to aggregate.
+     */
+    where?: PushSubscriptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PushSubscriptions to fetch.
+     */
+    orderBy?: PushSubscriptionOrderByWithRelationInput | PushSubscriptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PushSubscriptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PushSubscriptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PushSubscriptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PushSubscriptions
+    **/
+    _count?: true | PushSubscriptionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PushSubscriptionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PushSubscriptionMaxAggregateInputType
+  }
+
+  export type GetPushSubscriptionAggregateType<T extends PushSubscriptionAggregateArgs> = {
+        [P in keyof T & keyof AggregatePushSubscription]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePushSubscription[P]>
+      : GetScalarType<T[P], AggregatePushSubscription[P]>
+  }
+
+
+
+
+  export type PushSubscriptionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PushSubscriptionWhereInput
+    orderBy?: PushSubscriptionOrderByWithAggregationInput | PushSubscriptionOrderByWithAggregationInput[]
+    by: PushSubscriptionScalarFieldEnum[] | PushSubscriptionScalarFieldEnum
+    having?: PushSubscriptionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PushSubscriptionCountAggregateInputType | true
+    _min?: PushSubscriptionMinAggregateInputType
+    _max?: PushSubscriptionMaxAggregateInputType
+  }
+
+  export type PushSubscriptionGroupByOutputType = {
+    id: string
+    username: string
+    endpoint: string
+    p256dh: string
+    auth: string
+    expirationTime: Date | null
+    userAgent: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: PushSubscriptionCountAggregateOutputType | null
+    _min: PushSubscriptionMinAggregateOutputType | null
+    _max: PushSubscriptionMaxAggregateOutputType | null
+  }
+
+  type GetPushSubscriptionGroupByPayload<T extends PushSubscriptionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PushSubscriptionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PushSubscriptionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PushSubscriptionGroupByOutputType[P]>
+            : GetScalarType<T[P], PushSubscriptionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PushSubscriptionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    username?: boolean
+    endpoint?: boolean
+    p256dh?: boolean
+    auth?: boolean
+    expirationTime?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["pushSubscription"]>
+
+  export type PushSubscriptionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    username?: boolean
+    endpoint?: boolean
+    p256dh?: boolean
+    auth?: boolean
+    expirationTime?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["pushSubscription"]>
+
+  export type PushSubscriptionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    username?: boolean
+    endpoint?: boolean
+    p256dh?: boolean
+    auth?: boolean
+    expirationTime?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["pushSubscription"]>
+
+  export type PushSubscriptionSelectScalar = {
+    id?: boolean
+    username?: boolean
+    endpoint?: boolean
+    p256dh?: boolean
+    auth?: boolean
+    expirationTime?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PushSubscriptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "endpoint" | "p256dh" | "auth" | "expirationTime" | "userAgent" | "createdAt" | "updatedAt", ExtArgs["result"]["pushSubscription"]>
+
+  export type $PushSubscriptionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PushSubscription"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      username: string
+      endpoint: string
+      p256dh: string
+      auth: string
+      expirationTime: Date | null
+      userAgent: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["pushSubscription"]>
+    composites: {}
+  }
+
+  type PushSubscriptionGetPayload<S extends boolean | null | undefined | PushSubscriptionDefaultArgs> = $Result.GetResult<Prisma.$PushSubscriptionPayload, S>
+
+  type PushSubscriptionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PushSubscriptionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PushSubscriptionCountAggregateInputType | true
+    }
+
+  export interface PushSubscriptionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PushSubscription'], meta: { name: 'PushSubscription' } }
+    /**
+     * Find zero or one PushSubscription that matches the filter.
+     * @param {PushSubscriptionFindUniqueArgs} args - Arguments to find a PushSubscription
+     * @example
+     * // Get one PushSubscription
+     * const pushSubscription = await prisma.pushSubscription.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PushSubscriptionFindUniqueArgs>(args: SelectSubset<T, PushSubscriptionFindUniqueArgs<ExtArgs>>): Prisma__PushSubscriptionClient<$Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PushSubscription that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PushSubscriptionFindUniqueOrThrowArgs} args - Arguments to find a PushSubscription
+     * @example
+     * // Get one PushSubscription
+     * const pushSubscription = await prisma.pushSubscription.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PushSubscriptionFindUniqueOrThrowArgs>(args: SelectSubset<T, PushSubscriptionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PushSubscriptionClient<$Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PushSubscription that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushSubscriptionFindFirstArgs} args - Arguments to find a PushSubscription
+     * @example
+     * // Get one PushSubscription
+     * const pushSubscription = await prisma.pushSubscription.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PushSubscriptionFindFirstArgs>(args?: SelectSubset<T, PushSubscriptionFindFirstArgs<ExtArgs>>): Prisma__PushSubscriptionClient<$Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PushSubscription that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushSubscriptionFindFirstOrThrowArgs} args - Arguments to find a PushSubscription
+     * @example
+     * // Get one PushSubscription
+     * const pushSubscription = await prisma.pushSubscription.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PushSubscriptionFindFirstOrThrowArgs>(args?: SelectSubset<T, PushSubscriptionFindFirstOrThrowArgs<ExtArgs>>): Prisma__PushSubscriptionClient<$Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PushSubscriptions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushSubscriptionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PushSubscriptions
+     * const pushSubscriptions = await prisma.pushSubscription.findMany()
+     * 
+     * // Get first 10 PushSubscriptions
+     * const pushSubscriptions = await prisma.pushSubscription.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const pushSubscriptionWithIdOnly = await prisma.pushSubscription.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PushSubscriptionFindManyArgs>(args?: SelectSubset<T, PushSubscriptionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PushSubscription.
+     * @param {PushSubscriptionCreateArgs} args - Arguments to create a PushSubscription.
+     * @example
+     * // Create one PushSubscription
+     * const PushSubscription = await prisma.pushSubscription.create({
+     *   data: {
+     *     // ... data to create a PushSubscription
+     *   }
+     * })
+     * 
+     */
+    create<T extends PushSubscriptionCreateArgs>(args: SelectSubset<T, PushSubscriptionCreateArgs<ExtArgs>>): Prisma__PushSubscriptionClient<$Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PushSubscriptions.
+     * @param {PushSubscriptionCreateManyArgs} args - Arguments to create many PushSubscriptions.
+     * @example
+     * // Create many PushSubscriptions
+     * const pushSubscription = await prisma.pushSubscription.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PushSubscriptionCreateManyArgs>(args?: SelectSubset<T, PushSubscriptionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PushSubscriptions and returns the data saved in the database.
+     * @param {PushSubscriptionCreateManyAndReturnArgs} args - Arguments to create many PushSubscriptions.
+     * @example
+     * // Create many PushSubscriptions
+     * const pushSubscription = await prisma.pushSubscription.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PushSubscriptions and only return the `id`
+     * const pushSubscriptionWithIdOnly = await prisma.pushSubscription.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PushSubscriptionCreateManyAndReturnArgs>(args?: SelectSubset<T, PushSubscriptionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PushSubscription.
+     * @param {PushSubscriptionDeleteArgs} args - Arguments to delete one PushSubscription.
+     * @example
+     * // Delete one PushSubscription
+     * const PushSubscription = await prisma.pushSubscription.delete({
+     *   where: {
+     *     // ... filter to delete one PushSubscription
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PushSubscriptionDeleteArgs>(args: SelectSubset<T, PushSubscriptionDeleteArgs<ExtArgs>>): Prisma__PushSubscriptionClient<$Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PushSubscription.
+     * @param {PushSubscriptionUpdateArgs} args - Arguments to update one PushSubscription.
+     * @example
+     * // Update one PushSubscription
+     * const pushSubscription = await prisma.pushSubscription.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PushSubscriptionUpdateArgs>(args: SelectSubset<T, PushSubscriptionUpdateArgs<ExtArgs>>): Prisma__PushSubscriptionClient<$Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PushSubscriptions.
+     * @param {PushSubscriptionDeleteManyArgs} args - Arguments to filter PushSubscriptions to delete.
+     * @example
+     * // Delete a few PushSubscriptions
+     * const { count } = await prisma.pushSubscription.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PushSubscriptionDeleteManyArgs>(args?: SelectSubset<T, PushSubscriptionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PushSubscriptions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushSubscriptionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PushSubscriptions
+     * const pushSubscription = await prisma.pushSubscription.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PushSubscriptionUpdateManyArgs>(args: SelectSubset<T, PushSubscriptionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PushSubscriptions and returns the data updated in the database.
+     * @param {PushSubscriptionUpdateManyAndReturnArgs} args - Arguments to update many PushSubscriptions.
+     * @example
+     * // Update many PushSubscriptions
+     * const pushSubscription = await prisma.pushSubscription.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PushSubscriptions and only return the `id`
+     * const pushSubscriptionWithIdOnly = await prisma.pushSubscription.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PushSubscriptionUpdateManyAndReturnArgs>(args: SelectSubset<T, PushSubscriptionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PushSubscription.
+     * @param {PushSubscriptionUpsertArgs} args - Arguments to update or create a PushSubscription.
+     * @example
+     * // Update or create a PushSubscription
+     * const pushSubscription = await prisma.pushSubscription.upsert({
+     *   create: {
+     *     // ... data to create a PushSubscription
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PushSubscription we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PushSubscriptionUpsertArgs>(args: SelectSubset<T, PushSubscriptionUpsertArgs<ExtArgs>>): Prisma__PushSubscriptionClient<$Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PushSubscriptions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushSubscriptionCountArgs} args - Arguments to filter PushSubscriptions to count.
+     * @example
+     * // Count the number of PushSubscriptions
+     * const count = await prisma.pushSubscription.count({
+     *   where: {
+     *     // ... the filter for the PushSubscriptions we want to count
+     *   }
+     * })
+    **/
+    count<T extends PushSubscriptionCountArgs>(
+      args?: Subset<T, PushSubscriptionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PushSubscriptionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PushSubscription.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushSubscriptionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PushSubscriptionAggregateArgs>(args: Subset<T, PushSubscriptionAggregateArgs>): Prisma.PrismaPromise<GetPushSubscriptionAggregateType<T>>
+
+    /**
+     * Group by PushSubscription.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PushSubscriptionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PushSubscriptionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PushSubscriptionGroupByArgs['orderBy'] }
+        : { orderBy?: PushSubscriptionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PushSubscriptionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPushSubscriptionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PushSubscription model
+   */
+  readonly fields: PushSubscriptionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PushSubscription.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PushSubscriptionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PushSubscription model
+   */
+  interface PushSubscriptionFieldRefs {
+    readonly id: FieldRef<"PushSubscription", 'String'>
+    readonly username: FieldRef<"PushSubscription", 'String'>
+    readonly endpoint: FieldRef<"PushSubscription", 'String'>
+    readonly p256dh: FieldRef<"PushSubscription", 'String'>
+    readonly auth: FieldRef<"PushSubscription", 'String'>
+    readonly expirationTime: FieldRef<"PushSubscription", 'DateTime'>
+    readonly userAgent: FieldRef<"PushSubscription", 'String'>
+    readonly createdAt: FieldRef<"PushSubscription", 'DateTime'>
+    readonly updatedAt: FieldRef<"PushSubscription", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PushSubscription findUnique
+   */
+  export type PushSubscriptionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushSubscription
+     */
+    select?: PushSubscriptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushSubscription
+     */
+    omit?: PushSubscriptionOmit<ExtArgs> | null
+    /**
+     * Filter, which PushSubscription to fetch.
+     */
+    where: PushSubscriptionWhereUniqueInput
+  }
+
+  /**
+   * PushSubscription findUniqueOrThrow
+   */
+  export type PushSubscriptionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushSubscription
+     */
+    select?: PushSubscriptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushSubscription
+     */
+    omit?: PushSubscriptionOmit<ExtArgs> | null
+    /**
+     * Filter, which PushSubscription to fetch.
+     */
+    where: PushSubscriptionWhereUniqueInput
+  }
+
+  /**
+   * PushSubscription findFirst
+   */
+  export type PushSubscriptionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushSubscription
+     */
+    select?: PushSubscriptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushSubscription
+     */
+    omit?: PushSubscriptionOmit<ExtArgs> | null
+    /**
+     * Filter, which PushSubscription to fetch.
+     */
+    where?: PushSubscriptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PushSubscriptions to fetch.
+     */
+    orderBy?: PushSubscriptionOrderByWithRelationInput | PushSubscriptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PushSubscriptions.
+     */
+    cursor?: PushSubscriptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PushSubscriptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PushSubscriptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PushSubscriptions.
+     */
+    distinct?: PushSubscriptionScalarFieldEnum | PushSubscriptionScalarFieldEnum[]
+  }
+
+  /**
+   * PushSubscription findFirstOrThrow
+   */
+  export type PushSubscriptionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushSubscription
+     */
+    select?: PushSubscriptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushSubscription
+     */
+    omit?: PushSubscriptionOmit<ExtArgs> | null
+    /**
+     * Filter, which PushSubscription to fetch.
+     */
+    where?: PushSubscriptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PushSubscriptions to fetch.
+     */
+    orderBy?: PushSubscriptionOrderByWithRelationInput | PushSubscriptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PushSubscriptions.
+     */
+    cursor?: PushSubscriptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PushSubscriptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PushSubscriptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PushSubscriptions.
+     */
+    distinct?: PushSubscriptionScalarFieldEnum | PushSubscriptionScalarFieldEnum[]
+  }
+
+  /**
+   * PushSubscription findMany
+   */
+  export type PushSubscriptionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushSubscription
+     */
+    select?: PushSubscriptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushSubscription
+     */
+    omit?: PushSubscriptionOmit<ExtArgs> | null
+    /**
+     * Filter, which PushSubscriptions to fetch.
+     */
+    where?: PushSubscriptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PushSubscriptions to fetch.
+     */
+    orderBy?: PushSubscriptionOrderByWithRelationInput | PushSubscriptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PushSubscriptions.
+     */
+    cursor?: PushSubscriptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PushSubscriptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PushSubscriptions.
+     */
+    skip?: number
+    distinct?: PushSubscriptionScalarFieldEnum | PushSubscriptionScalarFieldEnum[]
+  }
+
+  /**
+   * PushSubscription create
+   */
+  export type PushSubscriptionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushSubscription
+     */
+    select?: PushSubscriptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushSubscription
+     */
+    omit?: PushSubscriptionOmit<ExtArgs> | null
+    /**
+     * The data needed to create a PushSubscription.
+     */
+    data: XOR<PushSubscriptionCreateInput, PushSubscriptionUncheckedCreateInput>
+  }
+
+  /**
+   * PushSubscription createMany
+   */
+  export type PushSubscriptionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PushSubscriptions.
+     */
+    data: PushSubscriptionCreateManyInput | PushSubscriptionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PushSubscription createManyAndReturn
+   */
+  export type PushSubscriptionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushSubscription
+     */
+    select?: PushSubscriptionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushSubscription
+     */
+    omit?: PushSubscriptionOmit<ExtArgs> | null
+    /**
+     * The data used to create many PushSubscriptions.
+     */
+    data: PushSubscriptionCreateManyInput | PushSubscriptionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PushSubscription update
+   */
+  export type PushSubscriptionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushSubscription
+     */
+    select?: PushSubscriptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushSubscription
+     */
+    omit?: PushSubscriptionOmit<ExtArgs> | null
+    /**
+     * The data needed to update a PushSubscription.
+     */
+    data: XOR<PushSubscriptionUpdateInput, PushSubscriptionUncheckedUpdateInput>
+    /**
+     * Choose, which PushSubscription to update.
+     */
+    where: PushSubscriptionWhereUniqueInput
+  }
+
+  /**
+   * PushSubscription updateMany
+   */
+  export type PushSubscriptionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PushSubscriptions.
+     */
+    data: XOR<PushSubscriptionUpdateManyMutationInput, PushSubscriptionUncheckedUpdateManyInput>
+    /**
+     * Filter which PushSubscriptions to update
+     */
+    where?: PushSubscriptionWhereInput
+    /**
+     * Limit how many PushSubscriptions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PushSubscription updateManyAndReturn
+   */
+  export type PushSubscriptionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushSubscription
+     */
+    select?: PushSubscriptionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushSubscription
+     */
+    omit?: PushSubscriptionOmit<ExtArgs> | null
+    /**
+     * The data used to update PushSubscriptions.
+     */
+    data: XOR<PushSubscriptionUpdateManyMutationInput, PushSubscriptionUncheckedUpdateManyInput>
+    /**
+     * Filter which PushSubscriptions to update
+     */
+    where?: PushSubscriptionWhereInput
+    /**
+     * Limit how many PushSubscriptions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PushSubscription upsert
+   */
+  export type PushSubscriptionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushSubscription
+     */
+    select?: PushSubscriptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushSubscription
+     */
+    omit?: PushSubscriptionOmit<ExtArgs> | null
+    /**
+     * The filter to search for the PushSubscription to update in case it exists.
+     */
+    where: PushSubscriptionWhereUniqueInput
+    /**
+     * In case the PushSubscription found by the `where` argument doesn't exist, create a new PushSubscription with this data.
+     */
+    create: XOR<PushSubscriptionCreateInput, PushSubscriptionUncheckedCreateInput>
+    /**
+     * In case the PushSubscription was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PushSubscriptionUpdateInput, PushSubscriptionUncheckedUpdateInput>
+  }
+
+  /**
+   * PushSubscription delete
+   */
+  export type PushSubscriptionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushSubscription
+     */
+    select?: PushSubscriptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushSubscription
+     */
+    omit?: PushSubscriptionOmit<ExtArgs> | null
+    /**
+     * Filter which PushSubscription to delete.
+     */
+    where: PushSubscriptionWhereUniqueInput
+  }
+
+  /**
+   * PushSubscription deleteMany
+   */
+  export type PushSubscriptionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PushSubscriptions to delete
+     */
+    where?: PushSubscriptionWhereInput
+    /**
+     * Limit how many PushSubscriptions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PushSubscription without action
+   */
+  export type PushSubscriptionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PushSubscription
+     */
+    select?: PushSubscriptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PushSubscription
+     */
+    omit?: PushSubscriptionOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Model CertificateTheme
    */
 
@@ -30424,9 +31925,13 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     description: string | null
-    price: string | null
     stallNo: string | null
-    teamSize: string | null
+    qrCodeUrl: string | null
+    qrTargetUrl: string | null
+    recommendedItem: string | null
+    teamName: string | null
+    timings: string | null
+    venue: string | null
   }
 
   export type StallMaxAggregateOutputType = {
@@ -30439,9 +31944,13 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     description: string | null
-    price: string | null
     stallNo: string | null
-    teamSize: string | null
+    qrCodeUrl: string | null
+    qrTargetUrl: string | null
+    recommendedItem: string | null
+    teamName: string | null
+    timings: string | null
+    venue: string | null
   }
 
   export type StallCountAggregateOutputType = {
@@ -30454,9 +31963,14 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     description: number
-    price: number
     stallNo: number
-    teamSize: number
+    menuItems: number
+    qrCodeUrl: number
+    qrTargetUrl: number
+    recommendedItem: number
+    teamName: number
+    timings: number
+    venue: number
     _all: number
   }
 
@@ -30479,9 +31993,13 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     description?: true
-    price?: true
     stallNo?: true
-    teamSize?: true
+    qrCodeUrl?: true
+    qrTargetUrl?: true
+    recommendedItem?: true
+    teamName?: true
+    timings?: true
+    venue?: true
   }
 
   export type StallMaxAggregateInputType = {
@@ -30494,9 +32012,13 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     description?: true
-    price?: true
     stallNo?: true
-    teamSize?: true
+    qrCodeUrl?: true
+    qrTargetUrl?: true
+    recommendedItem?: true
+    teamName?: true
+    timings?: true
+    venue?: true
   }
 
   export type StallCountAggregateInputType = {
@@ -30509,9 +32031,14 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     description?: true
-    price?: true
     stallNo?: true
-    teamSize?: true
+    menuItems?: true
+    qrCodeUrl?: true
+    qrTargetUrl?: true
+    recommendedItem?: true
+    teamName?: true
+    timings?: true
+    venue?: true
     _all?: true
   }
 
@@ -30611,9 +32138,14 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     description: string
-    price: string
     stallNo: string
-    teamSize: string
+    menuItems: JsonValue | null
+    qrCodeUrl: string | null
+    qrTargetUrl: string | null
+    recommendedItem: string
+    teamName: string
+    timings: string
+    venue: string
     _count: StallCountAggregateOutputType | null
     _avg: StallAvgAggregateOutputType | null
     _sum: StallSumAggregateOutputType | null
@@ -30645,9 +32177,14 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     description?: boolean
-    price?: boolean
     stallNo?: boolean
-    teamSize?: boolean
+    menuItems?: boolean
+    qrCodeUrl?: boolean
+    qrTargetUrl?: boolean
+    recommendedItem?: boolean
+    teamName?: boolean
+    timings?: boolean
+    venue?: boolean
   }, ExtArgs["result"]["stall"]>
 
   export type StallSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -30660,9 +32197,14 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     description?: boolean
-    price?: boolean
     stallNo?: boolean
-    teamSize?: boolean
+    menuItems?: boolean
+    qrCodeUrl?: boolean
+    qrTargetUrl?: boolean
+    recommendedItem?: boolean
+    teamName?: boolean
+    timings?: boolean
+    venue?: boolean
   }, ExtArgs["result"]["stall"]>
 
   export type StallSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -30675,9 +32217,14 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     description?: boolean
-    price?: boolean
     stallNo?: boolean
-    teamSize?: boolean
+    menuItems?: boolean
+    qrCodeUrl?: boolean
+    qrTargetUrl?: boolean
+    recommendedItem?: boolean
+    teamName?: boolean
+    timings?: boolean
+    venue?: boolean
   }, ExtArgs["result"]["stall"]>
 
   export type StallSelectScalar = {
@@ -30690,12 +32237,17 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     description?: boolean
-    price?: boolean
     stallNo?: boolean
-    teamSize?: boolean
+    menuItems?: boolean
+    qrCodeUrl?: boolean
+    qrTargetUrl?: boolean
+    recommendedItem?: boolean
+    teamName?: boolean
+    timings?: boolean
+    venue?: boolean
   }
 
-  export type StallOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "type" | "owner" | "bidAmount" | "status" | "createdAt" | "updatedAt" | "description" | "price" | "stallNo" | "teamSize", ExtArgs["result"]["stall"]>
+  export type StallOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "type" | "owner" | "bidAmount" | "status" | "createdAt" | "updatedAt" | "description" | "stallNo" | "menuItems" | "qrCodeUrl" | "qrTargetUrl" | "recommendedItem" | "teamName" | "timings" | "venue", ExtArgs["result"]["stall"]>
 
   export type $StallPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Stall"
@@ -30710,9 +32262,14 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       description: string
-      price: string
       stallNo: string
-      teamSize: string
+      menuItems: Prisma.JsonValue | null
+      qrCodeUrl: string | null
+      qrTargetUrl: string | null
+      recommendedItem: string
+      teamName: string
+      timings: string
+      venue: string
     }, ExtArgs["result"]["stall"]>
     composites: {}
   }
@@ -31145,9 +32702,14 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"Stall", 'DateTime'>
     readonly updatedAt: FieldRef<"Stall", 'DateTime'>
     readonly description: FieldRef<"Stall", 'String'>
-    readonly price: FieldRef<"Stall", 'String'>
     readonly stallNo: FieldRef<"Stall", 'String'>
-    readonly teamSize: FieldRef<"Stall", 'String'>
+    readonly menuItems: FieldRef<"Stall", 'Json'>
+    readonly qrCodeUrl: FieldRef<"Stall", 'String'>
+    readonly qrTargetUrl: FieldRef<"Stall", 'String'>
+    readonly recommendedItem: FieldRef<"Stall", 'String'>
+    readonly teamName: FieldRef<"Stall", 'String'>
+    readonly timings: FieldRef<"Stall", 'String'>
+    readonly venue: FieldRef<"Stall", 'String'>
   }
     
 
@@ -34863,6 +36425,3267 @@ export namespace Prisma {
 
 
   /**
+   * Model AchievementBadge
+   */
+
+  export type AggregateAchievementBadge = {
+    _count: AchievementBadgeCountAggregateOutputType | null
+    _avg: AchievementBadgeAvgAggregateOutputType | null
+    _sum: AchievementBadgeSumAggregateOutputType | null
+    _min: AchievementBadgeMinAggregateOutputType | null
+    _max: AchievementBadgeMaxAggregateOutputType | null
+  }
+
+  export type AchievementBadgeAvgAggregateOutputType = {
+    bonusEnergy: number | null
+  }
+
+  export type AchievementBadgeSumAggregateOutputType = {
+    bonusEnergy: number | null
+  }
+
+  export type AchievementBadgeMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    icon: string | null
+    bonusEnergy: number | null
+    category: string | null
+    createdAt: Date | null
+  }
+
+  export type AchievementBadgeMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    icon: string | null
+    bonusEnergy: number | null
+    category: string | null
+    createdAt: Date | null
+  }
+
+  export type AchievementBadgeCountAggregateOutputType = {
+    id: number
+    name: number
+    description: number
+    icon: number
+    bonusEnergy: number
+    category: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AchievementBadgeAvgAggregateInputType = {
+    bonusEnergy?: true
+  }
+
+  export type AchievementBadgeSumAggregateInputType = {
+    bonusEnergy?: true
+  }
+
+  export type AchievementBadgeMinAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    icon?: true
+    bonusEnergy?: true
+    category?: true
+    createdAt?: true
+  }
+
+  export type AchievementBadgeMaxAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    icon?: true
+    bonusEnergy?: true
+    category?: true
+    createdAt?: true
+  }
+
+  export type AchievementBadgeCountAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    icon?: true
+    bonusEnergy?: true
+    category?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AchievementBadgeAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AchievementBadge to aggregate.
+     */
+    where?: AchievementBadgeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AchievementBadges to fetch.
+     */
+    orderBy?: AchievementBadgeOrderByWithRelationInput | AchievementBadgeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AchievementBadgeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AchievementBadges from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AchievementBadges.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AchievementBadges
+    **/
+    _count?: true | AchievementBadgeCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AchievementBadgeAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AchievementBadgeSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AchievementBadgeMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AchievementBadgeMaxAggregateInputType
+  }
+
+  export type GetAchievementBadgeAggregateType<T extends AchievementBadgeAggregateArgs> = {
+        [P in keyof T & keyof AggregateAchievementBadge]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAchievementBadge[P]>
+      : GetScalarType<T[P], AggregateAchievementBadge[P]>
+  }
+
+
+
+
+  export type AchievementBadgeGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AchievementBadgeWhereInput
+    orderBy?: AchievementBadgeOrderByWithAggregationInput | AchievementBadgeOrderByWithAggregationInput[]
+    by: AchievementBadgeScalarFieldEnum[] | AchievementBadgeScalarFieldEnum
+    having?: AchievementBadgeScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AchievementBadgeCountAggregateInputType | true
+    _avg?: AchievementBadgeAvgAggregateInputType
+    _sum?: AchievementBadgeSumAggregateInputType
+    _min?: AchievementBadgeMinAggregateInputType
+    _max?: AchievementBadgeMaxAggregateInputType
+  }
+
+  export type AchievementBadgeGroupByOutputType = {
+    id: string
+    name: string
+    description: string
+    icon: string
+    bonusEnergy: number
+    category: string
+    createdAt: Date
+    _count: AchievementBadgeCountAggregateOutputType | null
+    _avg: AchievementBadgeAvgAggregateOutputType | null
+    _sum: AchievementBadgeSumAggregateOutputType | null
+    _min: AchievementBadgeMinAggregateOutputType | null
+    _max: AchievementBadgeMaxAggregateOutputType | null
+  }
+
+  type GetAchievementBadgeGroupByPayload<T extends AchievementBadgeGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AchievementBadgeGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AchievementBadgeGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AchievementBadgeGroupByOutputType[P]>
+            : GetScalarType<T[P], AchievementBadgeGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AchievementBadgeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    icon?: boolean
+    bonusEnergy?: boolean
+    category?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["achievementBadge"]>
+
+  export type AchievementBadgeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    icon?: boolean
+    bonusEnergy?: boolean
+    category?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["achievementBadge"]>
+
+  export type AchievementBadgeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    icon?: boolean
+    bonusEnergy?: boolean
+    category?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["achievementBadge"]>
+
+  export type AchievementBadgeSelectScalar = {
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    icon?: boolean
+    bonusEnergy?: boolean
+    category?: boolean
+    createdAt?: boolean
+  }
+
+  export type AchievementBadgeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "icon" | "bonusEnergy" | "category" | "createdAt", ExtArgs["result"]["achievementBadge"]>
+
+  export type $AchievementBadgePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AchievementBadge"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      description: string
+      icon: string
+      bonusEnergy: number
+      category: string
+      createdAt: Date
+    }, ExtArgs["result"]["achievementBadge"]>
+    composites: {}
+  }
+
+  type AchievementBadgeGetPayload<S extends boolean | null | undefined | AchievementBadgeDefaultArgs> = $Result.GetResult<Prisma.$AchievementBadgePayload, S>
+
+  type AchievementBadgeCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AchievementBadgeFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AchievementBadgeCountAggregateInputType | true
+    }
+
+  export interface AchievementBadgeDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AchievementBadge'], meta: { name: 'AchievementBadge' } }
+    /**
+     * Find zero or one AchievementBadge that matches the filter.
+     * @param {AchievementBadgeFindUniqueArgs} args - Arguments to find a AchievementBadge
+     * @example
+     * // Get one AchievementBadge
+     * const achievementBadge = await prisma.achievementBadge.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AchievementBadgeFindUniqueArgs>(args: SelectSubset<T, AchievementBadgeFindUniqueArgs<ExtArgs>>): Prisma__AchievementBadgeClient<$Result.GetResult<Prisma.$AchievementBadgePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AchievementBadge that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AchievementBadgeFindUniqueOrThrowArgs} args - Arguments to find a AchievementBadge
+     * @example
+     * // Get one AchievementBadge
+     * const achievementBadge = await prisma.achievementBadge.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AchievementBadgeFindUniqueOrThrowArgs>(args: SelectSubset<T, AchievementBadgeFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AchievementBadgeClient<$Result.GetResult<Prisma.$AchievementBadgePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AchievementBadge that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementBadgeFindFirstArgs} args - Arguments to find a AchievementBadge
+     * @example
+     * // Get one AchievementBadge
+     * const achievementBadge = await prisma.achievementBadge.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AchievementBadgeFindFirstArgs>(args?: SelectSubset<T, AchievementBadgeFindFirstArgs<ExtArgs>>): Prisma__AchievementBadgeClient<$Result.GetResult<Prisma.$AchievementBadgePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AchievementBadge that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementBadgeFindFirstOrThrowArgs} args - Arguments to find a AchievementBadge
+     * @example
+     * // Get one AchievementBadge
+     * const achievementBadge = await prisma.achievementBadge.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AchievementBadgeFindFirstOrThrowArgs>(args?: SelectSubset<T, AchievementBadgeFindFirstOrThrowArgs<ExtArgs>>): Prisma__AchievementBadgeClient<$Result.GetResult<Prisma.$AchievementBadgePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AchievementBadges that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementBadgeFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AchievementBadges
+     * const achievementBadges = await prisma.achievementBadge.findMany()
+     * 
+     * // Get first 10 AchievementBadges
+     * const achievementBadges = await prisma.achievementBadge.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const achievementBadgeWithIdOnly = await prisma.achievementBadge.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AchievementBadgeFindManyArgs>(args?: SelectSubset<T, AchievementBadgeFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AchievementBadgePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AchievementBadge.
+     * @param {AchievementBadgeCreateArgs} args - Arguments to create a AchievementBadge.
+     * @example
+     * // Create one AchievementBadge
+     * const AchievementBadge = await prisma.achievementBadge.create({
+     *   data: {
+     *     // ... data to create a AchievementBadge
+     *   }
+     * })
+     * 
+     */
+    create<T extends AchievementBadgeCreateArgs>(args: SelectSubset<T, AchievementBadgeCreateArgs<ExtArgs>>): Prisma__AchievementBadgeClient<$Result.GetResult<Prisma.$AchievementBadgePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AchievementBadges.
+     * @param {AchievementBadgeCreateManyArgs} args - Arguments to create many AchievementBadges.
+     * @example
+     * // Create many AchievementBadges
+     * const achievementBadge = await prisma.achievementBadge.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AchievementBadgeCreateManyArgs>(args?: SelectSubset<T, AchievementBadgeCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AchievementBadges and returns the data saved in the database.
+     * @param {AchievementBadgeCreateManyAndReturnArgs} args - Arguments to create many AchievementBadges.
+     * @example
+     * // Create many AchievementBadges
+     * const achievementBadge = await prisma.achievementBadge.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AchievementBadges and only return the `id`
+     * const achievementBadgeWithIdOnly = await prisma.achievementBadge.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AchievementBadgeCreateManyAndReturnArgs>(args?: SelectSubset<T, AchievementBadgeCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AchievementBadgePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AchievementBadge.
+     * @param {AchievementBadgeDeleteArgs} args - Arguments to delete one AchievementBadge.
+     * @example
+     * // Delete one AchievementBadge
+     * const AchievementBadge = await prisma.achievementBadge.delete({
+     *   where: {
+     *     // ... filter to delete one AchievementBadge
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AchievementBadgeDeleteArgs>(args: SelectSubset<T, AchievementBadgeDeleteArgs<ExtArgs>>): Prisma__AchievementBadgeClient<$Result.GetResult<Prisma.$AchievementBadgePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AchievementBadge.
+     * @param {AchievementBadgeUpdateArgs} args - Arguments to update one AchievementBadge.
+     * @example
+     * // Update one AchievementBadge
+     * const achievementBadge = await prisma.achievementBadge.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AchievementBadgeUpdateArgs>(args: SelectSubset<T, AchievementBadgeUpdateArgs<ExtArgs>>): Prisma__AchievementBadgeClient<$Result.GetResult<Prisma.$AchievementBadgePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AchievementBadges.
+     * @param {AchievementBadgeDeleteManyArgs} args - Arguments to filter AchievementBadges to delete.
+     * @example
+     * // Delete a few AchievementBadges
+     * const { count } = await prisma.achievementBadge.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AchievementBadgeDeleteManyArgs>(args?: SelectSubset<T, AchievementBadgeDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AchievementBadges.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementBadgeUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AchievementBadges
+     * const achievementBadge = await prisma.achievementBadge.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AchievementBadgeUpdateManyArgs>(args: SelectSubset<T, AchievementBadgeUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AchievementBadges and returns the data updated in the database.
+     * @param {AchievementBadgeUpdateManyAndReturnArgs} args - Arguments to update many AchievementBadges.
+     * @example
+     * // Update many AchievementBadges
+     * const achievementBadge = await prisma.achievementBadge.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AchievementBadges and only return the `id`
+     * const achievementBadgeWithIdOnly = await prisma.achievementBadge.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AchievementBadgeUpdateManyAndReturnArgs>(args: SelectSubset<T, AchievementBadgeUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AchievementBadgePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AchievementBadge.
+     * @param {AchievementBadgeUpsertArgs} args - Arguments to update or create a AchievementBadge.
+     * @example
+     * // Update or create a AchievementBadge
+     * const achievementBadge = await prisma.achievementBadge.upsert({
+     *   create: {
+     *     // ... data to create a AchievementBadge
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AchievementBadge we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AchievementBadgeUpsertArgs>(args: SelectSubset<T, AchievementBadgeUpsertArgs<ExtArgs>>): Prisma__AchievementBadgeClient<$Result.GetResult<Prisma.$AchievementBadgePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AchievementBadges.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementBadgeCountArgs} args - Arguments to filter AchievementBadges to count.
+     * @example
+     * // Count the number of AchievementBadges
+     * const count = await prisma.achievementBadge.count({
+     *   where: {
+     *     // ... the filter for the AchievementBadges we want to count
+     *   }
+     * })
+    **/
+    count<T extends AchievementBadgeCountArgs>(
+      args?: Subset<T, AchievementBadgeCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AchievementBadgeCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AchievementBadge.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementBadgeAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AchievementBadgeAggregateArgs>(args: Subset<T, AchievementBadgeAggregateArgs>): Prisma.PrismaPromise<GetAchievementBadgeAggregateType<T>>
+
+    /**
+     * Group by AchievementBadge.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AchievementBadgeGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AchievementBadgeGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AchievementBadgeGroupByArgs['orderBy'] }
+        : { orderBy?: AchievementBadgeGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AchievementBadgeGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAchievementBadgeGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AchievementBadge model
+   */
+  readonly fields: AchievementBadgeFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AchievementBadge.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AchievementBadgeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AchievementBadge model
+   */
+  interface AchievementBadgeFieldRefs {
+    readonly id: FieldRef<"AchievementBadge", 'String'>
+    readonly name: FieldRef<"AchievementBadge", 'String'>
+    readonly description: FieldRef<"AchievementBadge", 'String'>
+    readonly icon: FieldRef<"AchievementBadge", 'String'>
+    readonly bonusEnergy: FieldRef<"AchievementBadge", 'Int'>
+    readonly category: FieldRef<"AchievementBadge", 'String'>
+    readonly createdAt: FieldRef<"AchievementBadge", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AchievementBadge findUnique
+   */
+  export type AchievementBadgeFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AchievementBadge
+     */
+    select?: AchievementBadgeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AchievementBadge
+     */
+    omit?: AchievementBadgeOmit<ExtArgs> | null
+    /**
+     * Filter, which AchievementBadge to fetch.
+     */
+    where: AchievementBadgeWhereUniqueInput
+  }
+
+  /**
+   * AchievementBadge findUniqueOrThrow
+   */
+  export type AchievementBadgeFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AchievementBadge
+     */
+    select?: AchievementBadgeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AchievementBadge
+     */
+    omit?: AchievementBadgeOmit<ExtArgs> | null
+    /**
+     * Filter, which AchievementBadge to fetch.
+     */
+    where: AchievementBadgeWhereUniqueInput
+  }
+
+  /**
+   * AchievementBadge findFirst
+   */
+  export type AchievementBadgeFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AchievementBadge
+     */
+    select?: AchievementBadgeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AchievementBadge
+     */
+    omit?: AchievementBadgeOmit<ExtArgs> | null
+    /**
+     * Filter, which AchievementBadge to fetch.
+     */
+    where?: AchievementBadgeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AchievementBadges to fetch.
+     */
+    orderBy?: AchievementBadgeOrderByWithRelationInput | AchievementBadgeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AchievementBadges.
+     */
+    cursor?: AchievementBadgeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AchievementBadges from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AchievementBadges.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AchievementBadges.
+     */
+    distinct?: AchievementBadgeScalarFieldEnum | AchievementBadgeScalarFieldEnum[]
+  }
+
+  /**
+   * AchievementBadge findFirstOrThrow
+   */
+  export type AchievementBadgeFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AchievementBadge
+     */
+    select?: AchievementBadgeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AchievementBadge
+     */
+    omit?: AchievementBadgeOmit<ExtArgs> | null
+    /**
+     * Filter, which AchievementBadge to fetch.
+     */
+    where?: AchievementBadgeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AchievementBadges to fetch.
+     */
+    orderBy?: AchievementBadgeOrderByWithRelationInput | AchievementBadgeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AchievementBadges.
+     */
+    cursor?: AchievementBadgeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AchievementBadges from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AchievementBadges.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AchievementBadges.
+     */
+    distinct?: AchievementBadgeScalarFieldEnum | AchievementBadgeScalarFieldEnum[]
+  }
+
+  /**
+   * AchievementBadge findMany
+   */
+  export type AchievementBadgeFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AchievementBadge
+     */
+    select?: AchievementBadgeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AchievementBadge
+     */
+    omit?: AchievementBadgeOmit<ExtArgs> | null
+    /**
+     * Filter, which AchievementBadges to fetch.
+     */
+    where?: AchievementBadgeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AchievementBadges to fetch.
+     */
+    orderBy?: AchievementBadgeOrderByWithRelationInput | AchievementBadgeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AchievementBadges.
+     */
+    cursor?: AchievementBadgeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AchievementBadges from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AchievementBadges.
+     */
+    skip?: number
+    distinct?: AchievementBadgeScalarFieldEnum | AchievementBadgeScalarFieldEnum[]
+  }
+
+  /**
+   * AchievementBadge create
+   */
+  export type AchievementBadgeCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AchievementBadge
+     */
+    select?: AchievementBadgeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AchievementBadge
+     */
+    omit?: AchievementBadgeOmit<ExtArgs> | null
+    /**
+     * The data needed to create a AchievementBadge.
+     */
+    data: XOR<AchievementBadgeCreateInput, AchievementBadgeUncheckedCreateInput>
+  }
+
+  /**
+   * AchievementBadge createMany
+   */
+  export type AchievementBadgeCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AchievementBadges.
+     */
+    data: AchievementBadgeCreateManyInput | AchievementBadgeCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AchievementBadge createManyAndReturn
+   */
+  export type AchievementBadgeCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AchievementBadge
+     */
+    select?: AchievementBadgeSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AchievementBadge
+     */
+    omit?: AchievementBadgeOmit<ExtArgs> | null
+    /**
+     * The data used to create many AchievementBadges.
+     */
+    data: AchievementBadgeCreateManyInput | AchievementBadgeCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AchievementBadge update
+   */
+  export type AchievementBadgeUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AchievementBadge
+     */
+    select?: AchievementBadgeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AchievementBadge
+     */
+    omit?: AchievementBadgeOmit<ExtArgs> | null
+    /**
+     * The data needed to update a AchievementBadge.
+     */
+    data: XOR<AchievementBadgeUpdateInput, AchievementBadgeUncheckedUpdateInput>
+    /**
+     * Choose, which AchievementBadge to update.
+     */
+    where: AchievementBadgeWhereUniqueInput
+  }
+
+  /**
+   * AchievementBadge updateMany
+   */
+  export type AchievementBadgeUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AchievementBadges.
+     */
+    data: XOR<AchievementBadgeUpdateManyMutationInput, AchievementBadgeUncheckedUpdateManyInput>
+    /**
+     * Filter which AchievementBadges to update
+     */
+    where?: AchievementBadgeWhereInput
+    /**
+     * Limit how many AchievementBadges to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AchievementBadge updateManyAndReturn
+   */
+  export type AchievementBadgeUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AchievementBadge
+     */
+    select?: AchievementBadgeSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AchievementBadge
+     */
+    omit?: AchievementBadgeOmit<ExtArgs> | null
+    /**
+     * The data used to update AchievementBadges.
+     */
+    data: XOR<AchievementBadgeUpdateManyMutationInput, AchievementBadgeUncheckedUpdateManyInput>
+    /**
+     * Filter which AchievementBadges to update
+     */
+    where?: AchievementBadgeWhereInput
+    /**
+     * Limit how many AchievementBadges to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AchievementBadge upsert
+   */
+  export type AchievementBadgeUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AchievementBadge
+     */
+    select?: AchievementBadgeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AchievementBadge
+     */
+    omit?: AchievementBadgeOmit<ExtArgs> | null
+    /**
+     * The filter to search for the AchievementBadge to update in case it exists.
+     */
+    where: AchievementBadgeWhereUniqueInput
+    /**
+     * In case the AchievementBadge found by the `where` argument doesn't exist, create a new AchievementBadge with this data.
+     */
+    create: XOR<AchievementBadgeCreateInput, AchievementBadgeUncheckedCreateInput>
+    /**
+     * In case the AchievementBadge was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AchievementBadgeUpdateInput, AchievementBadgeUncheckedUpdateInput>
+  }
+
+  /**
+   * AchievementBadge delete
+   */
+  export type AchievementBadgeDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AchievementBadge
+     */
+    select?: AchievementBadgeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AchievementBadge
+     */
+    omit?: AchievementBadgeOmit<ExtArgs> | null
+    /**
+     * Filter which AchievementBadge to delete.
+     */
+    where: AchievementBadgeWhereUniqueInput
+  }
+
+  /**
+   * AchievementBadge deleteMany
+   */
+  export type AchievementBadgeDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AchievementBadges to delete
+     */
+    where?: AchievementBadgeWhereInput
+    /**
+     * Limit how many AchievementBadges to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AchievementBadge without action
+   */
+  export type AchievementBadgeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AchievementBadge
+     */
+    select?: AchievementBadgeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AchievementBadge
+     */
+    omit?: AchievementBadgeOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CadetProfile
+   */
+
+  export type AggregateCadetProfile = {
+    _count: CadetProfileCountAggregateOutputType | null
+    _avg: CadetProfileAvgAggregateOutputType | null
+    _sum: CadetProfileSumAggregateOutputType | null
+    _min: CadetProfileMinAggregateOutputType | null
+    _max: CadetProfileMaxAggregateOutputType | null
+  }
+
+  export type CadetProfileAvgAggregateOutputType = {
+    totalEnergy: number | null
+  }
+
+  export type CadetProfileSumAggregateOutputType = {
+    totalEnergy: number | null
+  }
+
+  export type CadetProfileMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    totalEnergy: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CadetProfileMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    totalEnergy: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CadetProfileCountAggregateOutputType = {
+    id: number
+    userId: number
+    totalEnergy: number
+    badgeIds: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CadetProfileAvgAggregateInputType = {
+    totalEnergy?: true
+  }
+
+  export type CadetProfileSumAggregateInputType = {
+    totalEnergy?: true
+  }
+
+  export type CadetProfileMinAggregateInputType = {
+    id?: true
+    userId?: true
+    totalEnergy?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CadetProfileMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    totalEnergy?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CadetProfileCountAggregateInputType = {
+    id?: true
+    userId?: true
+    totalEnergy?: true
+    badgeIds?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CadetProfileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CadetProfile to aggregate.
+     */
+    where?: CadetProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CadetProfiles to fetch.
+     */
+    orderBy?: CadetProfileOrderByWithRelationInput | CadetProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CadetProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CadetProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CadetProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CadetProfiles
+    **/
+    _count?: true | CadetProfileCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CadetProfileAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CadetProfileSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CadetProfileMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CadetProfileMaxAggregateInputType
+  }
+
+  export type GetCadetProfileAggregateType<T extends CadetProfileAggregateArgs> = {
+        [P in keyof T & keyof AggregateCadetProfile]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCadetProfile[P]>
+      : GetScalarType<T[P], AggregateCadetProfile[P]>
+  }
+
+
+
+
+  export type CadetProfileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CadetProfileWhereInput
+    orderBy?: CadetProfileOrderByWithAggregationInput | CadetProfileOrderByWithAggregationInput[]
+    by: CadetProfileScalarFieldEnum[] | CadetProfileScalarFieldEnum
+    having?: CadetProfileScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CadetProfileCountAggregateInputType | true
+    _avg?: CadetProfileAvgAggregateInputType
+    _sum?: CadetProfileSumAggregateInputType
+    _min?: CadetProfileMinAggregateInputType
+    _max?: CadetProfileMaxAggregateInputType
+  }
+
+  export type CadetProfileGroupByOutputType = {
+    id: string
+    userId: string
+    totalEnergy: number
+    badgeIds: string[]
+    createdAt: Date
+    updatedAt: Date
+    _count: CadetProfileCountAggregateOutputType | null
+    _avg: CadetProfileAvgAggregateOutputType | null
+    _sum: CadetProfileSumAggregateOutputType | null
+    _min: CadetProfileMinAggregateOutputType | null
+    _max: CadetProfileMaxAggregateOutputType | null
+  }
+
+  type GetCadetProfileGroupByPayload<T extends CadetProfileGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CadetProfileGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CadetProfileGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CadetProfileGroupByOutputType[P]>
+            : GetScalarType<T[P], CadetProfileGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CadetProfileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    totalEnergy?: boolean
+    badgeIds?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    User?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cadetProfile"]>
+
+  export type CadetProfileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    totalEnergy?: boolean
+    badgeIds?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    User?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cadetProfile"]>
+
+  export type CadetProfileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    totalEnergy?: boolean
+    badgeIds?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    User?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cadetProfile"]>
+
+  export type CadetProfileSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    totalEnergy?: boolean
+    badgeIds?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CadetProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "totalEnergy" | "badgeIds" | "createdAt" | "updatedAt", ExtArgs["result"]["cadetProfile"]>
+  export type CadetProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    User?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CadetProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    User?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CadetProfileIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    User?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $CadetProfilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CadetProfile"
+    objects: {
+      User: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      totalEnergy: number
+      badgeIds: string[]
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["cadetProfile"]>
+    composites: {}
+  }
+
+  type CadetProfileGetPayload<S extends boolean | null | undefined | CadetProfileDefaultArgs> = $Result.GetResult<Prisma.$CadetProfilePayload, S>
+
+  type CadetProfileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CadetProfileFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CadetProfileCountAggregateInputType | true
+    }
+
+  export interface CadetProfileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CadetProfile'], meta: { name: 'CadetProfile' } }
+    /**
+     * Find zero or one CadetProfile that matches the filter.
+     * @param {CadetProfileFindUniqueArgs} args - Arguments to find a CadetProfile
+     * @example
+     * // Get one CadetProfile
+     * const cadetProfile = await prisma.cadetProfile.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CadetProfileFindUniqueArgs>(args: SelectSubset<T, CadetProfileFindUniqueArgs<ExtArgs>>): Prisma__CadetProfileClient<$Result.GetResult<Prisma.$CadetProfilePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CadetProfile that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CadetProfileFindUniqueOrThrowArgs} args - Arguments to find a CadetProfile
+     * @example
+     * // Get one CadetProfile
+     * const cadetProfile = await prisma.cadetProfile.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CadetProfileFindUniqueOrThrowArgs>(args: SelectSubset<T, CadetProfileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CadetProfileClient<$Result.GetResult<Prisma.$CadetProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CadetProfile that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadetProfileFindFirstArgs} args - Arguments to find a CadetProfile
+     * @example
+     * // Get one CadetProfile
+     * const cadetProfile = await prisma.cadetProfile.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CadetProfileFindFirstArgs>(args?: SelectSubset<T, CadetProfileFindFirstArgs<ExtArgs>>): Prisma__CadetProfileClient<$Result.GetResult<Prisma.$CadetProfilePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CadetProfile that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadetProfileFindFirstOrThrowArgs} args - Arguments to find a CadetProfile
+     * @example
+     * // Get one CadetProfile
+     * const cadetProfile = await prisma.cadetProfile.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CadetProfileFindFirstOrThrowArgs>(args?: SelectSubset<T, CadetProfileFindFirstOrThrowArgs<ExtArgs>>): Prisma__CadetProfileClient<$Result.GetResult<Prisma.$CadetProfilePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CadetProfiles that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadetProfileFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CadetProfiles
+     * const cadetProfiles = await prisma.cadetProfile.findMany()
+     * 
+     * // Get first 10 CadetProfiles
+     * const cadetProfiles = await prisma.cadetProfile.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const cadetProfileWithIdOnly = await prisma.cadetProfile.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CadetProfileFindManyArgs>(args?: SelectSubset<T, CadetProfileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CadetProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CadetProfile.
+     * @param {CadetProfileCreateArgs} args - Arguments to create a CadetProfile.
+     * @example
+     * // Create one CadetProfile
+     * const CadetProfile = await prisma.cadetProfile.create({
+     *   data: {
+     *     // ... data to create a CadetProfile
+     *   }
+     * })
+     * 
+     */
+    create<T extends CadetProfileCreateArgs>(args: SelectSubset<T, CadetProfileCreateArgs<ExtArgs>>): Prisma__CadetProfileClient<$Result.GetResult<Prisma.$CadetProfilePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CadetProfiles.
+     * @param {CadetProfileCreateManyArgs} args - Arguments to create many CadetProfiles.
+     * @example
+     * // Create many CadetProfiles
+     * const cadetProfile = await prisma.cadetProfile.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CadetProfileCreateManyArgs>(args?: SelectSubset<T, CadetProfileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CadetProfiles and returns the data saved in the database.
+     * @param {CadetProfileCreateManyAndReturnArgs} args - Arguments to create many CadetProfiles.
+     * @example
+     * // Create many CadetProfiles
+     * const cadetProfile = await prisma.cadetProfile.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CadetProfiles and only return the `id`
+     * const cadetProfileWithIdOnly = await prisma.cadetProfile.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CadetProfileCreateManyAndReturnArgs>(args?: SelectSubset<T, CadetProfileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CadetProfilePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CadetProfile.
+     * @param {CadetProfileDeleteArgs} args - Arguments to delete one CadetProfile.
+     * @example
+     * // Delete one CadetProfile
+     * const CadetProfile = await prisma.cadetProfile.delete({
+     *   where: {
+     *     // ... filter to delete one CadetProfile
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CadetProfileDeleteArgs>(args: SelectSubset<T, CadetProfileDeleteArgs<ExtArgs>>): Prisma__CadetProfileClient<$Result.GetResult<Prisma.$CadetProfilePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CadetProfile.
+     * @param {CadetProfileUpdateArgs} args - Arguments to update one CadetProfile.
+     * @example
+     * // Update one CadetProfile
+     * const cadetProfile = await prisma.cadetProfile.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CadetProfileUpdateArgs>(args: SelectSubset<T, CadetProfileUpdateArgs<ExtArgs>>): Prisma__CadetProfileClient<$Result.GetResult<Prisma.$CadetProfilePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CadetProfiles.
+     * @param {CadetProfileDeleteManyArgs} args - Arguments to filter CadetProfiles to delete.
+     * @example
+     * // Delete a few CadetProfiles
+     * const { count } = await prisma.cadetProfile.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CadetProfileDeleteManyArgs>(args?: SelectSubset<T, CadetProfileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CadetProfiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadetProfileUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CadetProfiles
+     * const cadetProfile = await prisma.cadetProfile.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CadetProfileUpdateManyArgs>(args: SelectSubset<T, CadetProfileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CadetProfiles and returns the data updated in the database.
+     * @param {CadetProfileUpdateManyAndReturnArgs} args - Arguments to update many CadetProfiles.
+     * @example
+     * // Update many CadetProfiles
+     * const cadetProfile = await prisma.cadetProfile.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CadetProfiles and only return the `id`
+     * const cadetProfileWithIdOnly = await prisma.cadetProfile.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CadetProfileUpdateManyAndReturnArgs>(args: SelectSubset<T, CadetProfileUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CadetProfilePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CadetProfile.
+     * @param {CadetProfileUpsertArgs} args - Arguments to update or create a CadetProfile.
+     * @example
+     * // Update or create a CadetProfile
+     * const cadetProfile = await prisma.cadetProfile.upsert({
+     *   create: {
+     *     // ... data to create a CadetProfile
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CadetProfile we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CadetProfileUpsertArgs>(args: SelectSubset<T, CadetProfileUpsertArgs<ExtArgs>>): Prisma__CadetProfileClient<$Result.GetResult<Prisma.$CadetProfilePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CadetProfiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadetProfileCountArgs} args - Arguments to filter CadetProfiles to count.
+     * @example
+     * // Count the number of CadetProfiles
+     * const count = await prisma.cadetProfile.count({
+     *   where: {
+     *     // ... the filter for the CadetProfiles we want to count
+     *   }
+     * })
+    **/
+    count<T extends CadetProfileCountArgs>(
+      args?: Subset<T, CadetProfileCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CadetProfileCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CadetProfile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadetProfileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CadetProfileAggregateArgs>(args: Subset<T, CadetProfileAggregateArgs>): Prisma.PrismaPromise<GetCadetProfileAggregateType<T>>
+
+    /**
+     * Group by CadetProfile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadetProfileGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CadetProfileGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CadetProfileGroupByArgs['orderBy'] }
+        : { orderBy?: CadetProfileGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CadetProfileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCadetProfileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CadetProfile model
+   */
+  readonly fields: CadetProfileFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CadetProfile.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CadetProfileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    User<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CadetProfile model
+   */
+  interface CadetProfileFieldRefs {
+    readonly id: FieldRef<"CadetProfile", 'String'>
+    readonly userId: FieldRef<"CadetProfile", 'String'>
+    readonly totalEnergy: FieldRef<"CadetProfile", 'Int'>
+    readonly badgeIds: FieldRef<"CadetProfile", 'String[]'>
+    readonly createdAt: FieldRef<"CadetProfile", 'DateTime'>
+    readonly updatedAt: FieldRef<"CadetProfile", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CadetProfile findUnique
+   */
+  export type CadetProfileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which CadetProfile to fetch.
+     */
+    where: CadetProfileWhereUniqueInput
+  }
+
+  /**
+   * CadetProfile findUniqueOrThrow
+   */
+  export type CadetProfileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which CadetProfile to fetch.
+     */
+    where: CadetProfileWhereUniqueInput
+  }
+
+  /**
+   * CadetProfile findFirst
+   */
+  export type CadetProfileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which CadetProfile to fetch.
+     */
+    where?: CadetProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CadetProfiles to fetch.
+     */
+    orderBy?: CadetProfileOrderByWithRelationInput | CadetProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CadetProfiles.
+     */
+    cursor?: CadetProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CadetProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CadetProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CadetProfiles.
+     */
+    distinct?: CadetProfileScalarFieldEnum | CadetProfileScalarFieldEnum[]
+  }
+
+  /**
+   * CadetProfile findFirstOrThrow
+   */
+  export type CadetProfileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which CadetProfile to fetch.
+     */
+    where?: CadetProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CadetProfiles to fetch.
+     */
+    orderBy?: CadetProfileOrderByWithRelationInput | CadetProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CadetProfiles.
+     */
+    cursor?: CadetProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CadetProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CadetProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CadetProfiles.
+     */
+    distinct?: CadetProfileScalarFieldEnum | CadetProfileScalarFieldEnum[]
+  }
+
+  /**
+   * CadetProfile findMany
+   */
+  export type CadetProfileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which CadetProfiles to fetch.
+     */
+    where?: CadetProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CadetProfiles to fetch.
+     */
+    orderBy?: CadetProfileOrderByWithRelationInput | CadetProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CadetProfiles.
+     */
+    cursor?: CadetProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CadetProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CadetProfiles.
+     */
+    skip?: number
+    distinct?: CadetProfileScalarFieldEnum | CadetProfileScalarFieldEnum[]
+  }
+
+  /**
+   * CadetProfile create
+   */
+  export type CadetProfileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CadetProfile.
+     */
+    data: XOR<CadetProfileCreateInput, CadetProfileUncheckedCreateInput>
+  }
+
+  /**
+   * CadetProfile createMany
+   */
+  export type CadetProfileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CadetProfiles.
+     */
+    data: CadetProfileCreateManyInput | CadetProfileCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CadetProfile createManyAndReturn
+   */
+  export type CadetProfileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * The data used to create many CadetProfiles.
+     */
+    data: CadetProfileCreateManyInput | CadetProfileCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CadetProfile update
+   */
+  export type CadetProfileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CadetProfile.
+     */
+    data: XOR<CadetProfileUpdateInput, CadetProfileUncheckedUpdateInput>
+    /**
+     * Choose, which CadetProfile to update.
+     */
+    where: CadetProfileWhereUniqueInput
+  }
+
+  /**
+   * CadetProfile updateMany
+   */
+  export type CadetProfileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CadetProfiles.
+     */
+    data: XOR<CadetProfileUpdateManyMutationInput, CadetProfileUncheckedUpdateManyInput>
+    /**
+     * Filter which CadetProfiles to update
+     */
+    where?: CadetProfileWhereInput
+    /**
+     * Limit how many CadetProfiles to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CadetProfile updateManyAndReturn
+   */
+  export type CadetProfileUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * The data used to update CadetProfiles.
+     */
+    data: XOR<CadetProfileUpdateManyMutationInput, CadetProfileUncheckedUpdateManyInput>
+    /**
+     * Filter which CadetProfiles to update
+     */
+    where?: CadetProfileWhereInput
+    /**
+     * Limit how many CadetProfiles to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CadetProfile upsert
+   */
+  export type CadetProfileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CadetProfile to update in case it exists.
+     */
+    where: CadetProfileWhereUniqueInput
+    /**
+     * In case the CadetProfile found by the `where` argument doesn't exist, create a new CadetProfile with this data.
+     */
+    create: XOR<CadetProfileCreateInput, CadetProfileUncheckedCreateInput>
+    /**
+     * In case the CadetProfile was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CadetProfileUpdateInput, CadetProfileUncheckedUpdateInput>
+  }
+
+  /**
+   * CadetProfile delete
+   */
+  export type CadetProfileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileInclude<ExtArgs> | null
+    /**
+     * Filter which CadetProfile to delete.
+     */
+    where: CadetProfileWhereUniqueInput
+  }
+
+  /**
+   * CadetProfile deleteMany
+   */
+  export type CadetProfileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CadetProfiles to delete
+     */
+    where?: CadetProfileWhereInput
+    /**
+     * Limit how many CadetProfiles to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CadetProfile without action
+   */
+  export type CadetProfileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadetProfile
+     */
+    select?: CadetProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadetProfile
+     */
+    omit?: CadetProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CadetProfileInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EnergyTransaction
+   */
+
+  export type AggregateEnergyTransaction = {
+    _count: EnergyTransactionCountAggregateOutputType | null
+    _avg: EnergyTransactionAvgAggregateOutputType | null
+    _sum: EnergyTransactionSumAggregateOutputType | null
+    _min: EnergyTransactionMinAggregateOutputType | null
+    _max: EnergyTransactionMaxAggregateOutputType | null
+  }
+
+  export type EnergyTransactionAvgAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type EnergyTransactionSumAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type EnergyTransactionMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    amount: number | null
+    reason: $Enums.EnergyReason | null
+    note: string | null
+    createdAt: Date | null
+  }
+
+  export type EnergyTransactionMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    amount: number | null
+    reason: $Enums.EnergyReason | null
+    note: string | null
+    createdAt: Date | null
+  }
+
+  export type EnergyTransactionCountAggregateOutputType = {
+    id: number
+    userId: number
+    amount: number
+    reason: number
+    note: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type EnergyTransactionAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type EnergyTransactionSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type EnergyTransactionMinAggregateInputType = {
+    id?: true
+    userId?: true
+    amount?: true
+    reason?: true
+    note?: true
+    createdAt?: true
+  }
+
+  export type EnergyTransactionMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    amount?: true
+    reason?: true
+    note?: true
+    createdAt?: true
+  }
+
+  export type EnergyTransactionCountAggregateInputType = {
+    id?: true
+    userId?: true
+    amount?: true
+    reason?: true
+    note?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type EnergyTransactionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EnergyTransaction to aggregate.
+     */
+    where?: EnergyTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EnergyTransactions to fetch.
+     */
+    orderBy?: EnergyTransactionOrderByWithRelationInput | EnergyTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EnergyTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EnergyTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EnergyTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EnergyTransactions
+    **/
+    _count?: true | EnergyTransactionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: EnergyTransactionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: EnergyTransactionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EnergyTransactionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EnergyTransactionMaxAggregateInputType
+  }
+
+  export type GetEnergyTransactionAggregateType<T extends EnergyTransactionAggregateArgs> = {
+        [P in keyof T & keyof AggregateEnergyTransaction]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEnergyTransaction[P]>
+      : GetScalarType<T[P], AggregateEnergyTransaction[P]>
+  }
+
+
+
+
+  export type EnergyTransactionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EnergyTransactionWhereInput
+    orderBy?: EnergyTransactionOrderByWithAggregationInput | EnergyTransactionOrderByWithAggregationInput[]
+    by: EnergyTransactionScalarFieldEnum[] | EnergyTransactionScalarFieldEnum
+    having?: EnergyTransactionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EnergyTransactionCountAggregateInputType | true
+    _avg?: EnergyTransactionAvgAggregateInputType
+    _sum?: EnergyTransactionSumAggregateInputType
+    _min?: EnergyTransactionMinAggregateInputType
+    _max?: EnergyTransactionMaxAggregateInputType
+  }
+
+  export type EnergyTransactionGroupByOutputType = {
+    id: string
+    userId: string
+    amount: number
+    reason: $Enums.EnergyReason
+    note: string | null
+    createdAt: Date
+    _count: EnergyTransactionCountAggregateOutputType | null
+    _avg: EnergyTransactionAvgAggregateOutputType | null
+    _sum: EnergyTransactionSumAggregateOutputType | null
+    _min: EnergyTransactionMinAggregateOutputType | null
+    _max: EnergyTransactionMaxAggregateOutputType | null
+  }
+
+  type GetEnergyTransactionGroupByPayload<T extends EnergyTransactionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EnergyTransactionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EnergyTransactionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EnergyTransactionGroupByOutputType[P]>
+            : GetScalarType<T[P], EnergyTransactionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EnergyTransactionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    amount?: boolean
+    reason?: boolean
+    note?: boolean
+    createdAt?: boolean
+    User?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["energyTransaction"]>
+
+  export type EnergyTransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    amount?: boolean
+    reason?: boolean
+    note?: boolean
+    createdAt?: boolean
+    User?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["energyTransaction"]>
+
+  export type EnergyTransactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    amount?: boolean
+    reason?: boolean
+    note?: boolean
+    createdAt?: boolean
+    User?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["energyTransaction"]>
+
+  export type EnergyTransactionSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    amount?: boolean
+    reason?: boolean
+    note?: boolean
+    createdAt?: boolean
+  }
+
+  export type EnergyTransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "amount" | "reason" | "note" | "createdAt", ExtArgs["result"]["energyTransaction"]>
+  export type EnergyTransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    User?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type EnergyTransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    User?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type EnergyTransactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    User?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $EnergyTransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EnergyTransaction"
+    objects: {
+      User: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      amount: number
+      reason: $Enums.EnergyReason
+      note: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["energyTransaction"]>
+    composites: {}
+  }
+
+  type EnergyTransactionGetPayload<S extends boolean | null | undefined | EnergyTransactionDefaultArgs> = $Result.GetResult<Prisma.$EnergyTransactionPayload, S>
+
+  type EnergyTransactionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EnergyTransactionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EnergyTransactionCountAggregateInputType | true
+    }
+
+  export interface EnergyTransactionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EnergyTransaction'], meta: { name: 'EnergyTransaction' } }
+    /**
+     * Find zero or one EnergyTransaction that matches the filter.
+     * @param {EnergyTransactionFindUniqueArgs} args - Arguments to find a EnergyTransaction
+     * @example
+     * // Get one EnergyTransaction
+     * const energyTransaction = await prisma.energyTransaction.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EnergyTransactionFindUniqueArgs>(args: SelectSubset<T, EnergyTransactionFindUniqueArgs<ExtArgs>>): Prisma__EnergyTransactionClient<$Result.GetResult<Prisma.$EnergyTransactionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EnergyTransaction that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EnergyTransactionFindUniqueOrThrowArgs} args - Arguments to find a EnergyTransaction
+     * @example
+     * // Get one EnergyTransaction
+     * const energyTransaction = await prisma.energyTransaction.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EnergyTransactionFindUniqueOrThrowArgs>(args: SelectSubset<T, EnergyTransactionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EnergyTransactionClient<$Result.GetResult<Prisma.$EnergyTransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EnergyTransaction that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnergyTransactionFindFirstArgs} args - Arguments to find a EnergyTransaction
+     * @example
+     * // Get one EnergyTransaction
+     * const energyTransaction = await prisma.energyTransaction.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EnergyTransactionFindFirstArgs>(args?: SelectSubset<T, EnergyTransactionFindFirstArgs<ExtArgs>>): Prisma__EnergyTransactionClient<$Result.GetResult<Prisma.$EnergyTransactionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EnergyTransaction that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnergyTransactionFindFirstOrThrowArgs} args - Arguments to find a EnergyTransaction
+     * @example
+     * // Get one EnergyTransaction
+     * const energyTransaction = await prisma.energyTransaction.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EnergyTransactionFindFirstOrThrowArgs>(args?: SelectSubset<T, EnergyTransactionFindFirstOrThrowArgs<ExtArgs>>): Prisma__EnergyTransactionClient<$Result.GetResult<Prisma.$EnergyTransactionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EnergyTransactions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnergyTransactionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EnergyTransactions
+     * const energyTransactions = await prisma.energyTransaction.findMany()
+     * 
+     * // Get first 10 EnergyTransactions
+     * const energyTransactions = await prisma.energyTransaction.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const energyTransactionWithIdOnly = await prisma.energyTransaction.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EnergyTransactionFindManyArgs>(args?: SelectSubset<T, EnergyTransactionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EnergyTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EnergyTransaction.
+     * @param {EnergyTransactionCreateArgs} args - Arguments to create a EnergyTransaction.
+     * @example
+     * // Create one EnergyTransaction
+     * const EnergyTransaction = await prisma.energyTransaction.create({
+     *   data: {
+     *     // ... data to create a EnergyTransaction
+     *   }
+     * })
+     * 
+     */
+    create<T extends EnergyTransactionCreateArgs>(args: SelectSubset<T, EnergyTransactionCreateArgs<ExtArgs>>): Prisma__EnergyTransactionClient<$Result.GetResult<Prisma.$EnergyTransactionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EnergyTransactions.
+     * @param {EnergyTransactionCreateManyArgs} args - Arguments to create many EnergyTransactions.
+     * @example
+     * // Create many EnergyTransactions
+     * const energyTransaction = await prisma.energyTransaction.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EnergyTransactionCreateManyArgs>(args?: SelectSubset<T, EnergyTransactionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EnergyTransactions and returns the data saved in the database.
+     * @param {EnergyTransactionCreateManyAndReturnArgs} args - Arguments to create many EnergyTransactions.
+     * @example
+     * // Create many EnergyTransactions
+     * const energyTransaction = await prisma.energyTransaction.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EnergyTransactions and only return the `id`
+     * const energyTransactionWithIdOnly = await prisma.energyTransaction.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EnergyTransactionCreateManyAndReturnArgs>(args?: SelectSubset<T, EnergyTransactionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EnergyTransactionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EnergyTransaction.
+     * @param {EnergyTransactionDeleteArgs} args - Arguments to delete one EnergyTransaction.
+     * @example
+     * // Delete one EnergyTransaction
+     * const EnergyTransaction = await prisma.energyTransaction.delete({
+     *   where: {
+     *     // ... filter to delete one EnergyTransaction
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EnergyTransactionDeleteArgs>(args: SelectSubset<T, EnergyTransactionDeleteArgs<ExtArgs>>): Prisma__EnergyTransactionClient<$Result.GetResult<Prisma.$EnergyTransactionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EnergyTransaction.
+     * @param {EnergyTransactionUpdateArgs} args - Arguments to update one EnergyTransaction.
+     * @example
+     * // Update one EnergyTransaction
+     * const energyTransaction = await prisma.energyTransaction.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EnergyTransactionUpdateArgs>(args: SelectSubset<T, EnergyTransactionUpdateArgs<ExtArgs>>): Prisma__EnergyTransactionClient<$Result.GetResult<Prisma.$EnergyTransactionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EnergyTransactions.
+     * @param {EnergyTransactionDeleteManyArgs} args - Arguments to filter EnergyTransactions to delete.
+     * @example
+     * // Delete a few EnergyTransactions
+     * const { count } = await prisma.energyTransaction.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EnergyTransactionDeleteManyArgs>(args?: SelectSubset<T, EnergyTransactionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EnergyTransactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnergyTransactionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EnergyTransactions
+     * const energyTransaction = await prisma.energyTransaction.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EnergyTransactionUpdateManyArgs>(args: SelectSubset<T, EnergyTransactionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EnergyTransactions and returns the data updated in the database.
+     * @param {EnergyTransactionUpdateManyAndReturnArgs} args - Arguments to update many EnergyTransactions.
+     * @example
+     * // Update many EnergyTransactions
+     * const energyTransaction = await prisma.energyTransaction.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EnergyTransactions and only return the `id`
+     * const energyTransactionWithIdOnly = await prisma.energyTransaction.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EnergyTransactionUpdateManyAndReturnArgs>(args: SelectSubset<T, EnergyTransactionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EnergyTransactionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EnergyTransaction.
+     * @param {EnergyTransactionUpsertArgs} args - Arguments to update or create a EnergyTransaction.
+     * @example
+     * // Update or create a EnergyTransaction
+     * const energyTransaction = await prisma.energyTransaction.upsert({
+     *   create: {
+     *     // ... data to create a EnergyTransaction
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EnergyTransaction we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EnergyTransactionUpsertArgs>(args: SelectSubset<T, EnergyTransactionUpsertArgs<ExtArgs>>): Prisma__EnergyTransactionClient<$Result.GetResult<Prisma.$EnergyTransactionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EnergyTransactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnergyTransactionCountArgs} args - Arguments to filter EnergyTransactions to count.
+     * @example
+     * // Count the number of EnergyTransactions
+     * const count = await prisma.energyTransaction.count({
+     *   where: {
+     *     // ... the filter for the EnergyTransactions we want to count
+     *   }
+     * })
+    **/
+    count<T extends EnergyTransactionCountArgs>(
+      args?: Subset<T, EnergyTransactionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EnergyTransactionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EnergyTransaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnergyTransactionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EnergyTransactionAggregateArgs>(args: Subset<T, EnergyTransactionAggregateArgs>): Prisma.PrismaPromise<GetEnergyTransactionAggregateType<T>>
+
+    /**
+     * Group by EnergyTransaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EnergyTransactionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EnergyTransactionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EnergyTransactionGroupByArgs['orderBy'] }
+        : { orderBy?: EnergyTransactionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EnergyTransactionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEnergyTransactionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EnergyTransaction model
+   */
+  readonly fields: EnergyTransactionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EnergyTransaction.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EnergyTransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    User<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EnergyTransaction model
+   */
+  interface EnergyTransactionFieldRefs {
+    readonly id: FieldRef<"EnergyTransaction", 'String'>
+    readonly userId: FieldRef<"EnergyTransaction", 'String'>
+    readonly amount: FieldRef<"EnergyTransaction", 'Int'>
+    readonly reason: FieldRef<"EnergyTransaction", 'EnergyReason'>
+    readonly note: FieldRef<"EnergyTransaction", 'String'>
+    readonly createdAt: FieldRef<"EnergyTransaction", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EnergyTransaction findUnique
+   */
+  export type EnergyTransactionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which EnergyTransaction to fetch.
+     */
+    where: EnergyTransactionWhereUniqueInput
+  }
+
+  /**
+   * EnergyTransaction findUniqueOrThrow
+   */
+  export type EnergyTransactionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which EnergyTransaction to fetch.
+     */
+    where: EnergyTransactionWhereUniqueInput
+  }
+
+  /**
+   * EnergyTransaction findFirst
+   */
+  export type EnergyTransactionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which EnergyTransaction to fetch.
+     */
+    where?: EnergyTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EnergyTransactions to fetch.
+     */
+    orderBy?: EnergyTransactionOrderByWithRelationInput | EnergyTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EnergyTransactions.
+     */
+    cursor?: EnergyTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EnergyTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EnergyTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EnergyTransactions.
+     */
+    distinct?: EnergyTransactionScalarFieldEnum | EnergyTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * EnergyTransaction findFirstOrThrow
+   */
+  export type EnergyTransactionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which EnergyTransaction to fetch.
+     */
+    where?: EnergyTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EnergyTransactions to fetch.
+     */
+    orderBy?: EnergyTransactionOrderByWithRelationInput | EnergyTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EnergyTransactions.
+     */
+    cursor?: EnergyTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EnergyTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EnergyTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EnergyTransactions.
+     */
+    distinct?: EnergyTransactionScalarFieldEnum | EnergyTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * EnergyTransaction findMany
+   */
+  export type EnergyTransactionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which EnergyTransactions to fetch.
+     */
+    where?: EnergyTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EnergyTransactions to fetch.
+     */
+    orderBy?: EnergyTransactionOrderByWithRelationInput | EnergyTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EnergyTransactions.
+     */
+    cursor?: EnergyTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EnergyTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EnergyTransactions.
+     */
+    skip?: number
+    distinct?: EnergyTransactionScalarFieldEnum | EnergyTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * EnergyTransaction create
+   */
+  export type EnergyTransactionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a EnergyTransaction.
+     */
+    data: XOR<EnergyTransactionCreateInput, EnergyTransactionUncheckedCreateInput>
+  }
+
+  /**
+   * EnergyTransaction createMany
+   */
+  export type EnergyTransactionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EnergyTransactions.
+     */
+    data: EnergyTransactionCreateManyInput | EnergyTransactionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EnergyTransaction createManyAndReturn
+   */
+  export type EnergyTransactionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * The data used to create many EnergyTransactions.
+     */
+    data: EnergyTransactionCreateManyInput | EnergyTransactionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EnergyTransaction update
+   */
+  export type EnergyTransactionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EnergyTransaction.
+     */
+    data: XOR<EnergyTransactionUpdateInput, EnergyTransactionUncheckedUpdateInput>
+    /**
+     * Choose, which EnergyTransaction to update.
+     */
+    where: EnergyTransactionWhereUniqueInput
+  }
+
+  /**
+   * EnergyTransaction updateMany
+   */
+  export type EnergyTransactionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EnergyTransactions.
+     */
+    data: XOR<EnergyTransactionUpdateManyMutationInput, EnergyTransactionUncheckedUpdateManyInput>
+    /**
+     * Filter which EnergyTransactions to update
+     */
+    where?: EnergyTransactionWhereInput
+    /**
+     * Limit how many EnergyTransactions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EnergyTransaction updateManyAndReturn
+   */
+  export type EnergyTransactionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * The data used to update EnergyTransactions.
+     */
+    data: XOR<EnergyTransactionUpdateManyMutationInput, EnergyTransactionUncheckedUpdateManyInput>
+    /**
+     * Filter which EnergyTransactions to update
+     */
+    where?: EnergyTransactionWhereInput
+    /**
+     * Limit how many EnergyTransactions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EnergyTransaction upsert
+   */
+  export type EnergyTransactionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the EnergyTransaction to update in case it exists.
+     */
+    where: EnergyTransactionWhereUniqueInput
+    /**
+     * In case the EnergyTransaction found by the `where` argument doesn't exist, create a new EnergyTransaction with this data.
+     */
+    create: XOR<EnergyTransactionCreateInput, EnergyTransactionUncheckedCreateInput>
+    /**
+     * In case the EnergyTransaction was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EnergyTransactionUpdateInput, EnergyTransactionUncheckedUpdateInput>
+  }
+
+  /**
+   * EnergyTransaction delete
+   */
+  export type EnergyTransactionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionInclude<ExtArgs> | null
+    /**
+     * Filter which EnergyTransaction to delete.
+     */
+    where: EnergyTransactionWhereUniqueInput
+  }
+
+  /**
+   * EnergyTransaction deleteMany
+   */
+  export type EnergyTransactionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EnergyTransactions to delete
+     */
+    where?: EnergyTransactionWhereInput
+    /**
+     * Limit how many EnergyTransactions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EnergyTransaction without action
+   */
+  export type EnergyTransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EnergyTransaction
+     */
+    select?: EnergyTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EnergyTransaction
+     */
+    omit?: EnergyTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EnergyTransactionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -35030,7 +39853,6 @@ export namespace Prisma {
     id: 'id',
     snapshotDate: 'snapshotDate',
     totalOnlineRegistrations: 'totalOnlineRegistrations',
-    totalOfflineRegistrations: 'totalOfflineRegistrations',
     totalAttendance: 'totalAttendance',
     totalRevenue: 'totalRevenue',
     avgAttendanceRate: 'avgAttendanceRate',
@@ -35042,7 +39864,8 @@ export namespace Prisma {
     confirmedRegistrations: 'confirmedRegistrations',
     pendingRegistrations: 'pendingRegistrations',
     pendingRevenue: 'pendingRevenue',
-    waitlistRegistrations: 'waitlistRegistrations'
+    waitlistRegistrations: 'waitlistRegistrations',
+    totalSpotRegistrations: 'totalSpotRegistrations'
   };
 
   export type AnalyticsSnapshotScalarFieldEnum = (typeof AnalyticsSnapshotScalarFieldEnum)[keyof typeof AnalyticsSnapshotScalarFieldEnum]
@@ -35197,6 +40020,21 @@ export namespace Prisma {
   export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
+  export const PushSubscriptionScalarFieldEnum: {
+    id: 'id',
+    username: 'username',
+    endpoint: 'endpoint',
+    p256dh: 'p256dh',
+    auth: 'auth',
+    expirationTime: 'expirationTime',
+    userAgent: 'userAgent',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
+
+
   export const CertificateThemeScalarFieldEnum: {
     id: 'id',
     name: 'name',
@@ -35336,9 +40174,14 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     description: 'description',
-    price: 'price',
     stallNo: 'stallNo',
-    teamSize: 'teamSize'
+    menuItems: 'menuItems',
+    qrCodeUrl: 'qrCodeUrl',
+    qrTargetUrl: 'qrTargetUrl',
+    recommendedItem: 'recommendedItem',
+    teamName: 'teamName',
+    timings: 'timings',
+    venue: 'venue'
   };
 
   export type StallScalarFieldEnum = (typeof StallScalarFieldEnum)[keyof typeof StallScalarFieldEnum]
@@ -35384,6 +40227,43 @@ export namespace Prisma {
   };
 
   export type BranchPointsScalarFieldEnum = (typeof BranchPointsScalarFieldEnum)[keyof typeof BranchPointsScalarFieldEnum]
+
+
+  export const AchievementBadgeScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    description: 'description',
+    icon: 'icon',
+    bonusEnergy: 'bonusEnergy',
+    category: 'category',
+    createdAt: 'createdAt'
+  };
+
+  export type AchievementBadgeScalarFieldEnum = (typeof AchievementBadgeScalarFieldEnum)[keyof typeof AchievementBadgeScalarFieldEnum]
+
+
+  export const CadetProfileScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    totalEnergy: 'totalEnergy',
+    badgeIds: 'badgeIds',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CadetProfileScalarFieldEnum = (typeof CadetProfileScalarFieldEnum)[keyof typeof CadetProfileScalarFieldEnum]
+
+
+  export const EnergyTransactionScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    amount: 'amount',
+    reason: 'reason',
+    note: 'note',
+    createdAt: 'createdAt'
+  };
+
+  export type EnergyTransactionScalarFieldEnum = (typeof EnergyTransactionScalarFieldEnum)[keyof typeof EnergyTransactionScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -35682,6 +40562,20 @@ export namespace Prisma {
    */
   export type ListEnumMatchWinnerFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MatchWinner[]'>
     
+
+
+  /**
+   * Reference to a field of type 'EnergyReason'
+   */
+  export type EnumEnergyReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EnergyReason'>
+    
+
+
+  /**
+   * Reference to a field of type 'EnergyReason[]'
+   */
+  export type ListEnumEnergyReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EnergyReason[]'>
+    
   /**
    * Deep Input Types
    */
@@ -35832,6 +40726,8 @@ export namespace Prisma {
     phone?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     stdid?: StringNullableFilter<"User"> | string | null
+    CadetProfile?: XOR<CadetProfileNullableScalarRelationFilter, CadetProfileWhereInput> | null
+    EnergyTransaction?: EnergyTransactionListRelationFilter
     registrations?: RegistrationListRelationFilter
     leaderOf?: TeamListRelationFilter
     teamMembers?: TeamMemberListRelationFilter
@@ -35848,6 +40744,8 @@ export namespace Prisma {
     phone?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     stdid?: SortOrderInput | SortOrder
+    CadetProfile?: CadetProfileOrderByWithRelationInput
+    EnergyTransaction?: EnergyTransactionOrderByRelationAggregateInput
     registrations?: RegistrationOrderByRelationAggregateInput
     leaderOf?: TeamOrderByRelationAggregateInput
     teamMembers?: TeamMemberOrderByRelationAggregateInput
@@ -35867,6 +40765,8 @@ export namespace Prisma {
     currentYear?: StringNullableFilter<"User"> | string | null
     phone?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
+    CadetProfile?: XOR<CadetProfileNullableScalarRelationFilter, CadetProfileWhereInput> | null
+    EnergyTransaction?: EnergyTransactionListRelationFilter
     registrations?: RegistrationListRelationFilter
     leaderOf?: TeamListRelationFilter
     teamMembers?: TeamMemberListRelationFilter
@@ -36515,7 +41415,6 @@ export namespace Prisma {
     id?: StringFilter<"AnalyticsSnapshot"> | string
     snapshotDate?: DateTimeFilter<"AnalyticsSnapshot"> | Date | string
     totalOnlineRegistrations?: IntFilter<"AnalyticsSnapshot"> | number
-    totalOfflineRegistrations?: IntFilter<"AnalyticsSnapshot"> | number
     totalAttendance?: IntFilter<"AnalyticsSnapshot"> | number
     totalRevenue?: FloatFilter<"AnalyticsSnapshot"> | number
     avgAttendanceRate?: FloatFilter<"AnalyticsSnapshot"> | number
@@ -36528,13 +41427,13 @@ export namespace Prisma {
     pendingRegistrations?: IntFilter<"AnalyticsSnapshot"> | number
     pendingRevenue?: FloatFilter<"AnalyticsSnapshot"> | number
     waitlistRegistrations?: IntFilter<"AnalyticsSnapshot"> | number
+    totalSpotRegistrations?: IntFilter<"AnalyticsSnapshot"> | number
   }
 
   export type AnalyticsSnapshotOrderByWithRelationInput = {
     id?: SortOrder
     snapshotDate?: SortOrder
     totalOnlineRegistrations?: SortOrder
-    totalOfflineRegistrations?: SortOrder
     totalAttendance?: SortOrder
     totalRevenue?: SortOrder
     avgAttendanceRate?: SortOrder
@@ -36547,6 +41446,7 @@ export namespace Prisma {
     pendingRegistrations?: SortOrder
     pendingRevenue?: SortOrder
     waitlistRegistrations?: SortOrder
+    totalSpotRegistrations?: SortOrder
   }
 
   export type AnalyticsSnapshotWhereUniqueInput = Prisma.AtLeast<{
@@ -36556,7 +41456,6 @@ export namespace Prisma {
     OR?: AnalyticsSnapshotWhereInput[]
     NOT?: AnalyticsSnapshotWhereInput | AnalyticsSnapshotWhereInput[]
     totalOnlineRegistrations?: IntFilter<"AnalyticsSnapshot"> | number
-    totalOfflineRegistrations?: IntFilter<"AnalyticsSnapshot"> | number
     totalAttendance?: IntFilter<"AnalyticsSnapshot"> | number
     totalRevenue?: FloatFilter<"AnalyticsSnapshot"> | number
     avgAttendanceRate?: FloatFilter<"AnalyticsSnapshot"> | number
@@ -36569,13 +41468,13 @@ export namespace Prisma {
     pendingRegistrations?: IntFilter<"AnalyticsSnapshot"> | number
     pendingRevenue?: FloatFilter<"AnalyticsSnapshot"> | number
     waitlistRegistrations?: IntFilter<"AnalyticsSnapshot"> | number
+    totalSpotRegistrations?: IntFilter<"AnalyticsSnapshot"> | number
   }, "id" | "snapshotDate">
 
   export type AnalyticsSnapshotOrderByWithAggregationInput = {
     id?: SortOrder
     snapshotDate?: SortOrder
     totalOnlineRegistrations?: SortOrder
-    totalOfflineRegistrations?: SortOrder
     totalAttendance?: SortOrder
     totalRevenue?: SortOrder
     avgAttendanceRate?: SortOrder
@@ -36588,6 +41487,7 @@ export namespace Prisma {
     pendingRegistrations?: SortOrder
     pendingRevenue?: SortOrder
     waitlistRegistrations?: SortOrder
+    totalSpotRegistrations?: SortOrder
     _count?: AnalyticsSnapshotCountOrderByAggregateInput
     _avg?: AnalyticsSnapshotAvgOrderByAggregateInput
     _max?: AnalyticsSnapshotMaxOrderByAggregateInput
@@ -36602,7 +41502,6 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"AnalyticsSnapshot"> | string
     snapshotDate?: DateTimeWithAggregatesFilter<"AnalyticsSnapshot"> | Date | string
     totalOnlineRegistrations?: IntWithAggregatesFilter<"AnalyticsSnapshot"> | number
-    totalOfflineRegistrations?: IntWithAggregatesFilter<"AnalyticsSnapshot"> | number
     totalAttendance?: IntWithAggregatesFilter<"AnalyticsSnapshot"> | number
     totalRevenue?: FloatWithAggregatesFilter<"AnalyticsSnapshot"> | number
     avgAttendanceRate?: FloatWithAggregatesFilter<"AnalyticsSnapshot"> | number
@@ -36615,6 +41514,7 @@ export namespace Prisma {
     pendingRegistrations?: IntWithAggregatesFilter<"AnalyticsSnapshot"> | number
     pendingRevenue?: FloatWithAggregatesFilter<"AnalyticsSnapshot"> | number
     waitlistRegistrations?: IntWithAggregatesFilter<"AnalyticsSnapshot"> | number
+    totalSpotRegistrations?: IntWithAggregatesFilter<"AnalyticsSnapshot"> | number
   }
 
   export type PromoVideoWhereInput = {
@@ -37363,6 +42263,78 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Notification"> | Date | string
   }
 
+  export type PushSubscriptionWhereInput = {
+    AND?: PushSubscriptionWhereInput | PushSubscriptionWhereInput[]
+    OR?: PushSubscriptionWhereInput[]
+    NOT?: PushSubscriptionWhereInput | PushSubscriptionWhereInput[]
+    id?: StringFilter<"PushSubscription"> | string
+    username?: StringFilter<"PushSubscription"> | string
+    endpoint?: StringFilter<"PushSubscription"> | string
+    p256dh?: StringFilter<"PushSubscription"> | string
+    auth?: StringFilter<"PushSubscription"> | string
+    expirationTime?: DateTimeNullableFilter<"PushSubscription"> | Date | string | null
+    userAgent?: StringNullableFilter<"PushSubscription"> | string | null
+    createdAt?: DateTimeFilter<"PushSubscription"> | Date | string
+    updatedAt?: DateTimeFilter<"PushSubscription"> | Date | string
+  }
+
+  export type PushSubscriptionOrderByWithRelationInput = {
+    id?: SortOrder
+    username?: SortOrder
+    endpoint?: SortOrder
+    p256dh?: SortOrder
+    auth?: SortOrder
+    expirationTime?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PushSubscriptionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    endpoint?: string
+    AND?: PushSubscriptionWhereInput | PushSubscriptionWhereInput[]
+    OR?: PushSubscriptionWhereInput[]
+    NOT?: PushSubscriptionWhereInput | PushSubscriptionWhereInput[]
+    username?: StringFilter<"PushSubscription"> | string
+    p256dh?: StringFilter<"PushSubscription"> | string
+    auth?: StringFilter<"PushSubscription"> | string
+    expirationTime?: DateTimeNullableFilter<"PushSubscription"> | Date | string | null
+    userAgent?: StringNullableFilter<"PushSubscription"> | string | null
+    createdAt?: DateTimeFilter<"PushSubscription"> | Date | string
+    updatedAt?: DateTimeFilter<"PushSubscription"> | Date | string
+  }, "id" | "endpoint">
+
+  export type PushSubscriptionOrderByWithAggregationInput = {
+    id?: SortOrder
+    username?: SortOrder
+    endpoint?: SortOrder
+    p256dh?: SortOrder
+    auth?: SortOrder
+    expirationTime?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PushSubscriptionCountOrderByAggregateInput
+    _max?: PushSubscriptionMaxOrderByAggregateInput
+    _min?: PushSubscriptionMinOrderByAggregateInput
+  }
+
+  export type PushSubscriptionScalarWhereWithAggregatesInput = {
+    AND?: PushSubscriptionScalarWhereWithAggregatesInput | PushSubscriptionScalarWhereWithAggregatesInput[]
+    OR?: PushSubscriptionScalarWhereWithAggregatesInput[]
+    NOT?: PushSubscriptionScalarWhereWithAggregatesInput | PushSubscriptionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PushSubscription"> | string
+    username?: StringWithAggregatesFilter<"PushSubscription"> | string
+    endpoint?: StringWithAggregatesFilter<"PushSubscription"> | string
+    p256dh?: StringWithAggregatesFilter<"PushSubscription"> | string
+    auth?: StringWithAggregatesFilter<"PushSubscription"> | string
+    expirationTime?: DateTimeNullableWithAggregatesFilter<"PushSubscription"> | Date | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"PushSubscription"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"PushSubscription"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PushSubscription"> | Date | string
+  }
+
   export type CertificateThemeWhereInput = {
     AND?: CertificateThemeWhereInput | CertificateThemeWhereInput[]
     OR?: CertificateThemeWhereInput[]
@@ -38037,9 +43009,14 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Stall"> | Date | string
     updatedAt?: DateTimeFilter<"Stall"> | Date | string
     description?: StringFilter<"Stall"> | string
-    price?: StringFilter<"Stall"> | string
     stallNo?: StringFilter<"Stall"> | string
-    teamSize?: StringFilter<"Stall"> | string
+    menuItems?: JsonNullableFilter<"Stall">
+    qrCodeUrl?: StringNullableFilter<"Stall"> | string | null
+    qrTargetUrl?: StringNullableFilter<"Stall"> | string | null
+    recommendedItem?: StringFilter<"Stall"> | string
+    teamName?: StringFilter<"Stall"> | string
+    timings?: StringFilter<"Stall"> | string
+    venue?: StringFilter<"Stall"> | string
   }
 
   export type StallOrderByWithRelationInput = {
@@ -38052,9 +43029,14 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     description?: SortOrder
-    price?: SortOrder
     stallNo?: SortOrder
-    teamSize?: SortOrder
+    menuItems?: SortOrderInput | SortOrder
+    qrCodeUrl?: SortOrderInput | SortOrder
+    qrTargetUrl?: SortOrderInput | SortOrder
+    recommendedItem?: SortOrder
+    teamName?: SortOrder
+    timings?: SortOrder
+    venue?: SortOrder
   }
 
   export type StallWhereUniqueInput = Prisma.AtLeast<{
@@ -38070,9 +43052,14 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Stall"> | Date | string
     updatedAt?: DateTimeFilter<"Stall"> | Date | string
     description?: StringFilter<"Stall"> | string
-    price?: StringFilter<"Stall"> | string
     stallNo?: StringFilter<"Stall"> | string
-    teamSize?: StringFilter<"Stall"> | string
+    menuItems?: JsonNullableFilter<"Stall">
+    qrCodeUrl?: StringNullableFilter<"Stall"> | string | null
+    qrTargetUrl?: StringNullableFilter<"Stall"> | string | null
+    recommendedItem?: StringFilter<"Stall"> | string
+    teamName?: StringFilter<"Stall"> | string
+    timings?: StringFilter<"Stall"> | string
+    venue?: StringFilter<"Stall"> | string
   }, "id">
 
   export type StallOrderByWithAggregationInput = {
@@ -38085,9 +43072,14 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     description?: SortOrder
-    price?: SortOrder
     stallNo?: SortOrder
-    teamSize?: SortOrder
+    menuItems?: SortOrderInput | SortOrder
+    qrCodeUrl?: SortOrderInput | SortOrder
+    qrTargetUrl?: SortOrderInput | SortOrder
+    recommendedItem?: SortOrder
+    teamName?: SortOrder
+    timings?: SortOrder
+    venue?: SortOrder
     _count?: StallCountOrderByAggregateInput
     _avg?: StallAvgOrderByAggregateInput
     _max?: StallMaxOrderByAggregateInput
@@ -38108,9 +43100,14 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Stall"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Stall"> | Date | string
     description?: StringWithAggregatesFilter<"Stall"> | string
-    price?: StringWithAggregatesFilter<"Stall"> | string
     stallNo?: StringWithAggregatesFilter<"Stall"> | string
-    teamSize?: StringWithAggregatesFilter<"Stall"> | string
+    menuItems?: JsonNullableWithAggregatesFilter<"Stall">
+    qrCodeUrl?: StringNullableWithAggregatesFilter<"Stall"> | string | null
+    qrTargetUrl?: StringNullableWithAggregatesFilter<"Stall"> | string | null
+    recommendedItem?: StringWithAggregatesFilter<"Stall"> | string
+    teamName?: StringWithAggregatesFilter<"Stall"> | string
+    timings?: StringWithAggregatesFilter<"Stall"> | string
+    venue?: StringWithAggregatesFilter<"Stall"> | string
   }
 
   export type SportRegistrationWhereInput = {
@@ -38330,6 +43327,194 @@ export namespace Prisma {
     adjustmentReason?: StringNullableWithAggregatesFilter<"BranchPoints"> | string | null
   }
 
+  export type AchievementBadgeWhereInput = {
+    AND?: AchievementBadgeWhereInput | AchievementBadgeWhereInput[]
+    OR?: AchievementBadgeWhereInput[]
+    NOT?: AchievementBadgeWhereInput | AchievementBadgeWhereInput[]
+    id?: StringFilter<"AchievementBadge"> | string
+    name?: StringFilter<"AchievementBadge"> | string
+    description?: StringFilter<"AchievementBadge"> | string
+    icon?: StringFilter<"AchievementBadge"> | string
+    bonusEnergy?: IntFilter<"AchievementBadge"> | number
+    category?: StringFilter<"AchievementBadge"> | string
+    createdAt?: DateTimeFilter<"AchievementBadge"> | Date | string
+  }
+
+  export type AchievementBadgeOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    icon?: SortOrder
+    bonusEnergy?: SortOrder
+    category?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AchievementBadgeWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AchievementBadgeWhereInput | AchievementBadgeWhereInput[]
+    OR?: AchievementBadgeWhereInput[]
+    NOT?: AchievementBadgeWhereInput | AchievementBadgeWhereInput[]
+    name?: StringFilter<"AchievementBadge"> | string
+    description?: StringFilter<"AchievementBadge"> | string
+    icon?: StringFilter<"AchievementBadge"> | string
+    bonusEnergy?: IntFilter<"AchievementBadge"> | number
+    category?: StringFilter<"AchievementBadge"> | string
+    createdAt?: DateTimeFilter<"AchievementBadge"> | Date | string
+  }, "id">
+
+  export type AchievementBadgeOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    icon?: SortOrder
+    bonusEnergy?: SortOrder
+    category?: SortOrder
+    createdAt?: SortOrder
+    _count?: AchievementBadgeCountOrderByAggregateInput
+    _avg?: AchievementBadgeAvgOrderByAggregateInput
+    _max?: AchievementBadgeMaxOrderByAggregateInput
+    _min?: AchievementBadgeMinOrderByAggregateInput
+    _sum?: AchievementBadgeSumOrderByAggregateInput
+  }
+
+  export type AchievementBadgeScalarWhereWithAggregatesInput = {
+    AND?: AchievementBadgeScalarWhereWithAggregatesInput | AchievementBadgeScalarWhereWithAggregatesInput[]
+    OR?: AchievementBadgeScalarWhereWithAggregatesInput[]
+    NOT?: AchievementBadgeScalarWhereWithAggregatesInput | AchievementBadgeScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AchievementBadge"> | string
+    name?: StringWithAggregatesFilter<"AchievementBadge"> | string
+    description?: StringWithAggregatesFilter<"AchievementBadge"> | string
+    icon?: StringWithAggregatesFilter<"AchievementBadge"> | string
+    bonusEnergy?: IntWithAggregatesFilter<"AchievementBadge"> | number
+    category?: StringWithAggregatesFilter<"AchievementBadge"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"AchievementBadge"> | Date | string
+  }
+
+  export type CadetProfileWhereInput = {
+    AND?: CadetProfileWhereInput | CadetProfileWhereInput[]
+    OR?: CadetProfileWhereInput[]
+    NOT?: CadetProfileWhereInput | CadetProfileWhereInput[]
+    id?: StringFilter<"CadetProfile"> | string
+    userId?: StringFilter<"CadetProfile"> | string
+    totalEnergy?: IntFilter<"CadetProfile"> | number
+    badgeIds?: StringNullableListFilter<"CadetProfile">
+    createdAt?: DateTimeFilter<"CadetProfile"> | Date | string
+    updatedAt?: DateTimeFilter<"CadetProfile"> | Date | string
+    User?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type CadetProfileOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    totalEnergy?: SortOrder
+    badgeIds?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    User?: UserOrderByWithRelationInput
+  }
+
+  export type CadetProfileWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId?: string
+    AND?: CadetProfileWhereInput | CadetProfileWhereInput[]
+    OR?: CadetProfileWhereInput[]
+    NOT?: CadetProfileWhereInput | CadetProfileWhereInput[]
+    totalEnergy?: IntFilter<"CadetProfile"> | number
+    badgeIds?: StringNullableListFilter<"CadetProfile">
+    createdAt?: DateTimeFilter<"CadetProfile"> | Date | string
+    updatedAt?: DateTimeFilter<"CadetProfile"> | Date | string
+    User?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "userId">
+
+  export type CadetProfileOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    totalEnergy?: SortOrder
+    badgeIds?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CadetProfileCountOrderByAggregateInput
+    _avg?: CadetProfileAvgOrderByAggregateInput
+    _max?: CadetProfileMaxOrderByAggregateInput
+    _min?: CadetProfileMinOrderByAggregateInput
+    _sum?: CadetProfileSumOrderByAggregateInput
+  }
+
+  export type CadetProfileScalarWhereWithAggregatesInput = {
+    AND?: CadetProfileScalarWhereWithAggregatesInput | CadetProfileScalarWhereWithAggregatesInput[]
+    OR?: CadetProfileScalarWhereWithAggregatesInput[]
+    NOT?: CadetProfileScalarWhereWithAggregatesInput | CadetProfileScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CadetProfile"> | string
+    userId?: StringWithAggregatesFilter<"CadetProfile"> | string
+    totalEnergy?: IntWithAggregatesFilter<"CadetProfile"> | number
+    badgeIds?: StringNullableListFilter<"CadetProfile">
+    createdAt?: DateTimeWithAggregatesFilter<"CadetProfile"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CadetProfile"> | Date | string
+  }
+
+  export type EnergyTransactionWhereInput = {
+    AND?: EnergyTransactionWhereInput | EnergyTransactionWhereInput[]
+    OR?: EnergyTransactionWhereInput[]
+    NOT?: EnergyTransactionWhereInput | EnergyTransactionWhereInput[]
+    id?: StringFilter<"EnergyTransaction"> | string
+    userId?: StringFilter<"EnergyTransaction"> | string
+    amount?: IntFilter<"EnergyTransaction"> | number
+    reason?: EnumEnergyReasonFilter<"EnergyTransaction"> | $Enums.EnergyReason
+    note?: StringNullableFilter<"EnergyTransaction"> | string | null
+    createdAt?: DateTimeFilter<"EnergyTransaction"> | Date | string
+    User?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type EnergyTransactionOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    reason?: SortOrder
+    note?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    User?: UserOrderByWithRelationInput
+  }
+
+  export type EnergyTransactionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: EnergyTransactionWhereInput | EnergyTransactionWhereInput[]
+    OR?: EnergyTransactionWhereInput[]
+    NOT?: EnergyTransactionWhereInput | EnergyTransactionWhereInput[]
+    userId?: StringFilter<"EnergyTransaction"> | string
+    amount?: IntFilter<"EnergyTransaction"> | number
+    reason?: EnumEnergyReasonFilter<"EnergyTransaction"> | $Enums.EnergyReason
+    note?: StringNullableFilter<"EnergyTransaction"> | string | null
+    createdAt?: DateTimeFilter<"EnergyTransaction"> | Date | string
+    User?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type EnergyTransactionOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    reason?: SortOrder
+    note?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: EnergyTransactionCountOrderByAggregateInput
+    _avg?: EnergyTransactionAvgOrderByAggregateInput
+    _max?: EnergyTransactionMaxOrderByAggregateInput
+    _min?: EnergyTransactionMinOrderByAggregateInput
+    _sum?: EnergyTransactionSumOrderByAggregateInput
+  }
+
+  export type EnergyTransactionScalarWhereWithAggregatesInput = {
+    AND?: EnergyTransactionScalarWhereWithAggregatesInput | EnergyTransactionScalarWhereWithAggregatesInput[]
+    OR?: EnergyTransactionScalarWhereWithAggregatesInput[]
+    NOT?: EnergyTransactionScalarWhereWithAggregatesInput | EnergyTransactionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"EnergyTransaction"> | string
+    userId?: StringWithAggregatesFilter<"EnergyTransaction"> | string
+    amount?: IntWithAggregatesFilter<"EnergyTransaction"> | number
+    reason?: EnumEnergyReasonWithAggregatesFilter<"EnergyTransaction"> | $Enums.EnergyReason
+    note?: StringNullableWithAggregatesFilter<"EnergyTransaction"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"EnergyTransaction"> | Date | string
+  }
+
   export type AdminCreateInput = {
     id?: string
     name?: string | null
@@ -38506,6 +43691,8 @@ export namespace Prisma {
     phone?: string | null
     createdAt?: Date | string
     stdid?: string | null
+    CadetProfile?: CadetProfileCreateNestedOneWithoutUserInput
+    EnergyTransaction?: EnergyTransactionCreateNestedManyWithoutUserInput
     registrations?: RegistrationCreateNestedManyWithoutUserInput
     leaderOf?: TeamCreateNestedManyWithoutLeaderInput
     teamMembers?: TeamMemberCreateNestedManyWithoutUserInput
@@ -38522,6 +43709,8 @@ export namespace Prisma {
     phone?: string | null
     createdAt?: Date | string
     stdid?: string | null
+    CadetProfile?: CadetProfileUncheckedCreateNestedOneWithoutUserInput
+    EnergyTransaction?: EnergyTransactionUncheckedCreateNestedManyWithoutUserInput
     registrations?: RegistrationUncheckedCreateNestedManyWithoutUserInput
     leaderOf?: TeamUncheckedCreateNestedManyWithoutLeaderInput
     teamMembers?: TeamMemberUncheckedCreateNestedManyWithoutUserInput
@@ -38538,6 +43727,8 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stdid?: NullableStringFieldUpdateOperationsInput | string | null
+    CadetProfile?: CadetProfileUpdateOneWithoutUserNestedInput
+    EnergyTransaction?: EnergyTransactionUpdateManyWithoutUserNestedInput
     registrations?: RegistrationUpdateManyWithoutUserNestedInput
     leaderOf?: TeamUpdateManyWithoutLeaderNestedInput
     teamMembers?: TeamMemberUpdateManyWithoutUserNestedInput
@@ -38554,6 +43745,8 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stdid?: NullableStringFieldUpdateOperationsInput | string | null
+    CadetProfile?: CadetProfileUncheckedUpdateOneWithoutUserNestedInput
+    EnergyTransaction?: EnergyTransactionUncheckedUpdateManyWithoutUserNestedInput
     registrations?: RegistrationUncheckedUpdateManyWithoutUserNestedInput
     leaderOf?: TeamUncheckedUpdateManyWithoutLeaderNestedInput
     teamMembers?: TeamMemberUncheckedUpdateManyWithoutUserNestedInput
@@ -39321,7 +44514,6 @@ export namespace Prisma {
     id?: string
     snapshotDate?: Date | string
     totalOnlineRegistrations?: number
-    totalOfflineRegistrations?: number
     totalAttendance?: number
     totalRevenue?: number
     avgAttendanceRate?: number
@@ -39334,13 +44526,13 @@ export namespace Prisma {
     pendingRegistrations?: number
     pendingRevenue?: number
     waitlistRegistrations?: number
+    totalSpotRegistrations?: number
   }
 
   export type AnalyticsSnapshotUncheckedCreateInput = {
     id?: string
     snapshotDate?: Date | string
     totalOnlineRegistrations?: number
-    totalOfflineRegistrations?: number
     totalAttendance?: number
     totalRevenue?: number
     avgAttendanceRate?: number
@@ -39353,13 +44545,13 @@ export namespace Prisma {
     pendingRegistrations?: number
     pendingRevenue?: number
     waitlistRegistrations?: number
+    totalSpotRegistrations?: number
   }
 
   export type AnalyticsSnapshotUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     snapshotDate?: DateTimeFieldUpdateOperationsInput | Date | string
     totalOnlineRegistrations?: IntFieldUpdateOperationsInput | number
-    totalOfflineRegistrations?: IntFieldUpdateOperationsInput | number
     totalAttendance?: IntFieldUpdateOperationsInput | number
     totalRevenue?: FloatFieldUpdateOperationsInput | number
     avgAttendanceRate?: FloatFieldUpdateOperationsInput | number
@@ -39372,13 +44564,13 @@ export namespace Prisma {
     pendingRegistrations?: IntFieldUpdateOperationsInput | number
     pendingRevenue?: FloatFieldUpdateOperationsInput | number
     waitlistRegistrations?: IntFieldUpdateOperationsInput | number
+    totalSpotRegistrations?: IntFieldUpdateOperationsInput | number
   }
 
   export type AnalyticsSnapshotUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     snapshotDate?: DateTimeFieldUpdateOperationsInput | Date | string
     totalOnlineRegistrations?: IntFieldUpdateOperationsInput | number
-    totalOfflineRegistrations?: IntFieldUpdateOperationsInput | number
     totalAttendance?: IntFieldUpdateOperationsInput | number
     totalRevenue?: FloatFieldUpdateOperationsInput | number
     avgAttendanceRate?: FloatFieldUpdateOperationsInput | number
@@ -39391,13 +44583,13 @@ export namespace Prisma {
     pendingRegistrations?: IntFieldUpdateOperationsInput | number
     pendingRevenue?: FloatFieldUpdateOperationsInput | number
     waitlistRegistrations?: IntFieldUpdateOperationsInput | number
+    totalSpotRegistrations?: IntFieldUpdateOperationsInput | number
   }
 
   export type AnalyticsSnapshotCreateManyInput = {
     id?: string
     snapshotDate?: Date | string
     totalOnlineRegistrations?: number
-    totalOfflineRegistrations?: number
     totalAttendance?: number
     totalRevenue?: number
     avgAttendanceRate?: number
@@ -39410,13 +44602,13 @@ export namespace Prisma {
     pendingRegistrations?: number
     pendingRevenue?: number
     waitlistRegistrations?: number
+    totalSpotRegistrations?: number
   }
 
   export type AnalyticsSnapshotUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     snapshotDate?: DateTimeFieldUpdateOperationsInput | Date | string
     totalOnlineRegistrations?: IntFieldUpdateOperationsInput | number
-    totalOfflineRegistrations?: IntFieldUpdateOperationsInput | number
     totalAttendance?: IntFieldUpdateOperationsInput | number
     totalRevenue?: FloatFieldUpdateOperationsInput | number
     avgAttendanceRate?: FloatFieldUpdateOperationsInput | number
@@ -39429,13 +44621,13 @@ export namespace Prisma {
     pendingRegistrations?: IntFieldUpdateOperationsInput | number
     pendingRevenue?: FloatFieldUpdateOperationsInput | number
     waitlistRegistrations?: IntFieldUpdateOperationsInput | number
+    totalSpotRegistrations?: IntFieldUpdateOperationsInput | number
   }
 
   export type AnalyticsSnapshotUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     snapshotDate?: DateTimeFieldUpdateOperationsInput | Date | string
     totalOnlineRegistrations?: IntFieldUpdateOperationsInput | number
-    totalOfflineRegistrations?: IntFieldUpdateOperationsInput | number
     totalAttendance?: IntFieldUpdateOperationsInput | number
     totalRevenue?: FloatFieldUpdateOperationsInput | number
     avgAttendanceRate?: FloatFieldUpdateOperationsInput | number
@@ -39448,6 +44640,7 @@ export namespace Prisma {
     pendingRegistrations?: IntFieldUpdateOperationsInput | number
     pendingRevenue?: FloatFieldUpdateOperationsInput | number
     waitlistRegistrations?: IntFieldUpdateOperationsInput | number
+    totalSpotRegistrations?: IntFieldUpdateOperationsInput | number
   }
 
   export type PromoVideoCreateInput = {
@@ -40301,6 +45494,90 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PushSubscriptionCreateInput = {
+    id?: string
+    username: string
+    endpoint: string
+    p256dh: string
+    auth: string
+    expirationTime?: Date | string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PushSubscriptionUncheckedCreateInput = {
+    id?: string
+    username: string
+    endpoint: string
+    p256dh: string
+    auth: string
+    expirationTime?: Date | string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PushSubscriptionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    endpoint?: StringFieldUpdateOperationsInput | string
+    p256dh?: StringFieldUpdateOperationsInput | string
+    auth?: StringFieldUpdateOperationsInput | string
+    expirationTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PushSubscriptionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    endpoint?: StringFieldUpdateOperationsInput | string
+    p256dh?: StringFieldUpdateOperationsInput | string
+    auth?: StringFieldUpdateOperationsInput | string
+    expirationTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PushSubscriptionCreateManyInput = {
+    id?: string
+    username: string
+    endpoint: string
+    p256dh: string
+    auth: string
+    expirationTime?: Date | string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PushSubscriptionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    endpoint?: StringFieldUpdateOperationsInput | string
+    p256dh?: StringFieldUpdateOperationsInput | string
+    auth?: StringFieldUpdateOperationsInput | string
+    expirationTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PushSubscriptionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    endpoint?: StringFieldUpdateOperationsInput | string
+    p256dh?: StringFieldUpdateOperationsInput | string
+    auth?: StringFieldUpdateOperationsInput | string
+    expirationTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CertificateThemeCreateInput = {
     id: string
     name: string
@@ -41103,9 +46380,14 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     description?: string
-    price?: string
     stallNo?: string
-    teamSize?: string
+    menuItems?: NullableJsonNullValueInput | InputJsonValue
+    qrCodeUrl?: string | null
+    qrTargetUrl?: string | null
+    recommendedItem?: string
+    teamName?: string
+    timings?: string
+    venue?: string
   }
 
   export type StallUncheckedCreateInput = {
@@ -41118,9 +46400,14 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     description?: string
-    price?: string
     stallNo?: string
-    teamSize?: string
+    menuItems?: NullableJsonNullValueInput | InputJsonValue
+    qrCodeUrl?: string | null
+    qrTargetUrl?: string | null
+    recommendedItem?: string
+    teamName?: string
+    timings?: string
+    venue?: string
   }
 
   export type StallUpdateInput = {
@@ -41132,9 +46419,14 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     description?: StringFieldUpdateOperationsInput | string
-    price?: StringFieldUpdateOperationsInput | string
     stallNo?: StringFieldUpdateOperationsInput | string
-    teamSize?: StringFieldUpdateOperationsInput | string
+    menuItems?: NullableJsonNullValueInput | InputJsonValue
+    qrCodeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    qrTargetUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    recommendedItem?: StringFieldUpdateOperationsInput | string
+    teamName?: StringFieldUpdateOperationsInput | string
+    timings?: StringFieldUpdateOperationsInput | string
+    venue?: StringFieldUpdateOperationsInput | string
   }
 
   export type StallUncheckedUpdateInput = {
@@ -41147,9 +46439,14 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     description?: StringFieldUpdateOperationsInput | string
-    price?: StringFieldUpdateOperationsInput | string
     stallNo?: StringFieldUpdateOperationsInput | string
-    teamSize?: StringFieldUpdateOperationsInput | string
+    menuItems?: NullableJsonNullValueInput | InputJsonValue
+    qrCodeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    qrTargetUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    recommendedItem?: StringFieldUpdateOperationsInput | string
+    teamName?: StringFieldUpdateOperationsInput | string
+    timings?: StringFieldUpdateOperationsInput | string
+    venue?: StringFieldUpdateOperationsInput | string
   }
 
   export type StallCreateManyInput = {
@@ -41162,9 +46459,14 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     description?: string
-    price?: string
     stallNo?: string
-    teamSize?: string
+    menuItems?: NullableJsonNullValueInput | InputJsonValue
+    qrCodeUrl?: string | null
+    qrTargetUrl?: string | null
+    recommendedItem?: string
+    teamName?: string
+    timings?: string
+    venue?: string
   }
 
   export type StallUpdateManyMutationInput = {
@@ -41176,9 +46478,14 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     description?: StringFieldUpdateOperationsInput | string
-    price?: StringFieldUpdateOperationsInput | string
     stallNo?: StringFieldUpdateOperationsInput | string
-    teamSize?: StringFieldUpdateOperationsInput | string
+    menuItems?: NullableJsonNullValueInput | InputJsonValue
+    qrCodeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    qrTargetUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    recommendedItem?: StringFieldUpdateOperationsInput | string
+    teamName?: StringFieldUpdateOperationsInput | string
+    timings?: StringFieldUpdateOperationsInput | string
+    venue?: StringFieldUpdateOperationsInput | string
   }
 
   export type StallUncheckedUpdateManyInput = {
@@ -41191,9 +46498,14 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     description?: StringFieldUpdateOperationsInput | string
-    price?: StringFieldUpdateOperationsInput | string
     stallNo?: StringFieldUpdateOperationsInput | string
-    teamSize?: StringFieldUpdateOperationsInput | string
+    menuItems?: NullableJsonNullValueInput | InputJsonValue
+    qrCodeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    qrTargetUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    recommendedItem?: StringFieldUpdateOperationsInput | string
+    teamName?: StringFieldUpdateOperationsInput | string
+    timings?: StringFieldUpdateOperationsInput | string
+    venue?: StringFieldUpdateOperationsInput | string
   }
 
   export type SportRegistrationCreateInput = {
@@ -41426,6 +46738,200 @@ export namespace Prisma {
     points?: IntFieldUpdateOperationsInput | number
     manualAdjustment?: IntFieldUpdateOperationsInput | number
     adjustmentReason?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AchievementBadgeCreateInput = {
+    id: string
+    name: string
+    description: string
+    icon: string
+    bonusEnergy?: number
+    category?: string
+    createdAt?: Date | string
+  }
+
+  export type AchievementBadgeUncheckedCreateInput = {
+    id: string
+    name: string
+    description: string
+    icon: string
+    bonusEnergy?: number
+    category?: string
+    createdAt?: Date | string
+  }
+
+  export type AchievementBadgeUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    icon?: StringFieldUpdateOperationsInput | string
+    bonusEnergy?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AchievementBadgeUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    icon?: StringFieldUpdateOperationsInput | string
+    bonusEnergy?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AchievementBadgeCreateManyInput = {
+    id: string
+    name: string
+    description: string
+    icon: string
+    bonusEnergy?: number
+    category?: string
+    createdAt?: Date | string
+  }
+
+  export type AchievementBadgeUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    icon?: StringFieldUpdateOperationsInput | string
+    bonusEnergy?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AchievementBadgeUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    icon?: StringFieldUpdateOperationsInput | string
+    bonusEnergy?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CadetProfileCreateInput = {
+    id: string
+    totalEnergy?: number
+    badgeIds?: CadetProfileCreatebadgeIdsInput | string[]
+    createdAt?: Date | string
+    updatedAt: Date | string
+    User: UserCreateNestedOneWithoutCadetProfileInput
+  }
+
+  export type CadetProfileUncheckedCreateInput = {
+    id: string
+    userId: string
+    totalEnergy?: number
+    badgeIds?: CadetProfileCreatebadgeIdsInput | string[]
+    createdAt?: Date | string
+    updatedAt: Date | string
+  }
+
+  export type CadetProfileUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    totalEnergy?: IntFieldUpdateOperationsInput | number
+    badgeIds?: CadetProfileUpdatebadgeIdsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    User?: UserUpdateOneRequiredWithoutCadetProfileNestedInput
+  }
+
+  export type CadetProfileUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    totalEnergy?: IntFieldUpdateOperationsInput | number
+    badgeIds?: CadetProfileUpdatebadgeIdsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CadetProfileCreateManyInput = {
+    id: string
+    userId: string
+    totalEnergy?: number
+    badgeIds?: CadetProfileCreatebadgeIdsInput | string[]
+    createdAt?: Date | string
+    updatedAt: Date | string
+  }
+
+  export type CadetProfileUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    totalEnergy?: IntFieldUpdateOperationsInput | number
+    badgeIds?: CadetProfileUpdatebadgeIdsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CadetProfileUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    totalEnergy?: IntFieldUpdateOperationsInput | number
+    badgeIds?: CadetProfileUpdatebadgeIdsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EnergyTransactionCreateInput = {
+    id: string
+    amount: number
+    reason: $Enums.EnergyReason
+    note?: string | null
+    createdAt?: Date | string
+    User: UserCreateNestedOneWithoutEnergyTransactionInput
+  }
+
+  export type EnergyTransactionUncheckedCreateInput = {
+    id: string
+    userId: string
+    amount: number
+    reason: $Enums.EnergyReason
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type EnergyTransactionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    reason?: EnumEnergyReasonFieldUpdateOperationsInput | $Enums.EnergyReason
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    User?: UserUpdateOneRequiredWithoutEnergyTransactionNestedInput
+  }
+
+  export type EnergyTransactionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    reason?: EnumEnergyReasonFieldUpdateOperationsInput | $Enums.EnergyReason
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EnergyTransactionCreateManyInput = {
+    id: string
+    userId: string
+    amount: number
+    reason: $Enums.EnergyReason
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type EnergyTransactionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    reason?: EnumEnergyReasonFieldUpdateOperationsInput | $Enums.EnergyReason
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EnergyTransactionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    reason?: EnumEnergyReasonFieldUpdateOperationsInput | $Enums.EnergyReason
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -41738,6 +47244,17 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type CadetProfileNullableScalarRelationFilter = {
+    is?: CadetProfileWhereInput | null
+    isNot?: CadetProfileWhereInput | null
+  }
+
+  export type EnergyTransactionListRelationFilter = {
+    every?: EnergyTransactionWhereInput
+    some?: EnergyTransactionWhereInput
+    none?: EnergyTransactionWhereInput
+  }
+
   export type RegistrationListRelationFilter = {
     every?: RegistrationWhereInput
     some?: RegistrationWhereInput
@@ -41754,6 +47271,10 @@ export namespace Prisma {
     every?: TeamMemberWhereInput
     some?: TeamMemberWhereInput
     none?: TeamMemberWhereInput
+  }
+
+  export type EnergyTransactionOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type RegistrationOrderByRelationAggregateInput = {
@@ -42395,7 +47916,6 @@ export namespace Prisma {
     id?: SortOrder
     snapshotDate?: SortOrder
     totalOnlineRegistrations?: SortOrder
-    totalOfflineRegistrations?: SortOrder
     totalAttendance?: SortOrder
     totalRevenue?: SortOrder
     avgAttendanceRate?: SortOrder
@@ -42408,11 +47928,11 @@ export namespace Prisma {
     pendingRegistrations?: SortOrder
     pendingRevenue?: SortOrder
     waitlistRegistrations?: SortOrder
+    totalSpotRegistrations?: SortOrder
   }
 
   export type AnalyticsSnapshotAvgOrderByAggregateInput = {
     totalOnlineRegistrations?: SortOrder
-    totalOfflineRegistrations?: SortOrder
     totalAttendance?: SortOrder
     totalRevenue?: SortOrder
     avgAttendanceRate?: SortOrder
@@ -42424,13 +47944,13 @@ export namespace Prisma {
     pendingRegistrations?: SortOrder
     pendingRevenue?: SortOrder
     waitlistRegistrations?: SortOrder
+    totalSpotRegistrations?: SortOrder
   }
 
   export type AnalyticsSnapshotMaxOrderByAggregateInput = {
     id?: SortOrder
     snapshotDate?: SortOrder
     totalOnlineRegistrations?: SortOrder
-    totalOfflineRegistrations?: SortOrder
     totalAttendance?: SortOrder
     totalRevenue?: SortOrder
     avgAttendanceRate?: SortOrder
@@ -42443,13 +47963,13 @@ export namespace Prisma {
     pendingRegistrations?: SortOrder
     pendingRevenue?: SortOrder
     waitlistRegistrations?: SortOrder
+    totalSpotRegistrations?: SortOrder
   }
 
   export type AnalyticsSnapshotMinOrderByAggregateInput = {
     id?: SortOrder
     snapshotDate?: SortOrder
     totalOnlineRegistrations?: SortOrder
-    totalOfflineRegistrations?: SortOrder
     totalAttendance?: SortOrder
     totalRevenue?: SortOrder
     avgAttendanceRate?: SortOrder
@@ -42462,11 +47982,11 @@ export namespace Prisma {
     pendingRegistrations?: SortOrder
     pendingRevenue?: SortOrder
     waitlistRegistrations?: SortOrder
+    totalSpotRegistrations?: SortOrder
   }
 
   export type AnalyticsSnapshotSumOrderByAggregateInput = {
     totalOnlineRegistrations?: SortOrder
-    totalOfflineRegistrations?: SortOrder
     totalAttendance?: SortOrder
     totalRevenue?: SortOrder
     avgAttendanceRate?: SortOrder
@@ -42478,6 +47998,7 @@ export namespace Prisma {
     pendingRegistrations?: SortOrder
     pendingRevenue?: SortOrder
     waitlistRegistrations?: SortOrder
+    totalSpotRegistrations?: SortOrder
   }
 
   export type PromoVideoCountOrderByAggregateInput = {
@@ -42916,6 +48437,42 @@ export namespace Prisma {
     isArchived?: SortOrder
     priority?: SortOrder
     type?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PushSubscriptionCountOrderByAggregateInput = {
+    id?: SortOrder
+    username?: SortOrder
+    endpoint?: SortOrder
+    p256dh?: SortOrder
+    auth?: SortOrder
+    expirationTime?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PushSubscriptionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    username?: SortOrder
+    endpoint?: SortOrder
+    p256dh?: SortOrder
+    auth?: SortOrder
+    expirationTime?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PushSubscriptionMinOrderByAggregateInput = {
+    id?: SortOrder
+    username?: SortOrder
+    endpoint?: SortOrder
+    p256dh?: SortOrder
+    auth?: SortOrder
+    expirationTime?: SortOrder
+    userAgent?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -43453,9 +49010,14 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     description?: SortOrder
-    price?: SortOrder
     stallNo?: SortOrder
-    teamSize?: SortOrder
+    menuItems?: SortOrder
+    qrCodeUrl?: SortOrder
+    qrTargetUrl?: SortOrder
+    recommendedItem?: SortOrder
+    teamName?: SortOrder
+    timings?: SortOrder
+    venue?: SortOrder
   }
 
   export type StallAvgOrderByAggregateInput = {
@@ -43472,9 +49034,13 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     description?: SortOrder
-    price?: SortOrder
     stallNo?: SortOrder
-    teamSize?: SortOrder
+    qrCodeUrl?: SortOrder
+    qrTargetUrl?: SortOrder
+    recommendedItem?: SortOrder
+    teamName?: SortOrder
+    timings?: SortOrder
+    venue?: SortOrder
   }
 
   export type StallMinOrderByAggregateInput = {
@@ -43487,9 +49053,13 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     description?: SortOrder
-    price?: SortOrder
     stallNo?: SortOrder
-    teamSize?: SortOrder
+    qrCodeUrl?: SortOrder
+    qrTargetUrl?: SortOrder
+    recommendedItem?: SortOrder
+    teamName?: SortOrder
+    timings?: SortOrder
+    venue?: SortOrder
   }
 
   export type StallSumOrderByAggregateInput = {
@@ -43616,6 +49186,129 @@ export namespace Prisma {
   export type BranchPointsSumOrderByAggregateInput = {
     points?: SortOrder
     manualAdjustment?: SortOrder
+  }
+
+  export type AchievementBadgeCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    icon?: SortOrder
+    bonusEnergy?: SortOrder
+    category?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AchievementBadgeAvgOrderByAggregateInput = {
+    bonusEnergy?: SortOrder
+  }
+
+  export type AchievementBadgeMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    icon?: SortOrder
+    bonusEnergy?: SortOrder
+    category?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AchievementBadgeMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    icon?: SortOrder
+    bonusEnergy?: SortOrder
+    category?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AchievementBadgeSumOrderByAggregateInput = {
+    bonusEnergy?: SortOrder
+  }
+
+  export type CadetProfileCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    totalEnergy?: SortOrder
+    badgeIds?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CadetProfileAvgOrderByAggregateInput = {
+    totalEnergy?: SortOrder
+  }
+
+  export type CadetProfileMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    totalEnergy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CadetProfileMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    totalEnergy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CadetProfileSumOrderByAggregateInput = {
+    totalEnergy?: SortOrder
+  }
+
+  export type EnumEnergyReasonFilter<$PrismaModel = never> = {
+    equals?: $Enums.EnergyReason | EnumEnergyReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.EnergyReason[] | ListEnumEnergyReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EnergyReason[] | ListEnumEnergyReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumEnergyReasonFilter<$PrismaModel> | $Enums.EnergyReason
+  }
+
+  export type EnergyTransactionCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    reason?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnergyTransactionAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type EnergyTransactionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    reason?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnergyTransactionMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    reason?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnergyTransactionSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type EnumEnergyReasonWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EnergyReason | EnumEnergyReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.EnergyReason[] | ListEnumEnergyReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EnergyReason[] | ListEnumEnergyReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumEnergyReasonWithAggregatesFilter<$PrismaModel> | $Enums.EnergyReason
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEnergyReasonFilter<$PrismaModel>
+    _max?: NestedEnumEnergyReasonFilter<$PrismaModel>
   }
 
   export type AnnouncementCreateNestedManyWithoutCreatorInput = {
@@ -43970,6 +49663,19 @@ export namespace Prisma {
     deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
   }
 
+  export type CadetProfileCreateNestedOneWithoutUserInput = {
+    create?: XOR<CadetProfileCreateWithoutUserInput, CadetProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: CadetProfileCreateOrConnectWithoutUserInput
+    connect?: CadetProfileWhereUniqueInput
+  }
+
+  export type EnergyTransactionCreateNestedManyWithoutUserInput = {
+    create?: XOR<EnergyTransactionCreateWithoutUserInput, EnergyTransactionUncheckedCreateWithoutUserInput> | EnergyTransactionCreateWithoutUserInput[] | EnergyTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EnergyTransactionCreateOrConnectWithoutUserInput | EnergyTransactionCreateOrConnectWithoutUserInput[]
+    createMany?: EnergyTransactionCreateManyUserInputEnvelope
+    connect?: EnergyTransactionWhereUniqueInput | EnergyTransactionWhereUniqueInput[]
+  }
+
   export type RegistrationCreateNestedManyWithoutUserInput = {
     create?: XOR<RegistrationCreateWithoutUserInput, RegistrationUncheckedCreateWithoutUserInput> | RegistrationCreateWithoutUserInput[] | RegistrationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: RegistrationCreateOrConnectWithoutUserInput | RegistrationCreateOrConnectWithoutUserInput[]
@@ -43991,6 +49697,19 @@ export namespace Prisma {
     connect?: TeamMemberWhereUniqueInput | TeamMemberWhereUniqueInput[]
   }
 
+  export type CadetProfileUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<CadetProfileCreateWithoutUserInput, CadetProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: CadetProfileCreateOrConnectWithoutUserInput
+    connect?: CadetProfileWhereUniqueInput
+  }
+
+  export type EnergyTransactionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<EnergyTransactionCreateWithoutUserInput, EnergyTransactionUncheckedCreateWithoutUserInput> | EnergyTransactionCreateWithoutUserInput[] | EnergyTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EnergyTransactionCreateOrConnectWithoutUserInput | EnergyTransactionCreateOrConnectWithoutUserInput[]
+    createMany?: EnergyTransactionCreateManyUserInputEnvelope
+    connect?: EnergyTransactionWhereUniqueInput | EnergyTransactionWhereUniqueInput[]
+  }
+
   export type RegistrationUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<RegistrationCreateWithoutUserInput, RegistrationUncheckedCreateWithoutUserInput> | RegistrationCreateWithoutUserInput[] | RegistrationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: RegistrationCreateOrConnectWithoutUserInput | RegistrationCreateOrConnectWithoutUserInput[]
@@ -44010,6 +49729,30 @@ export namespace Prisma {
     connectOrCreate?: TeamMemberCreateOrConnectWithoutUserInput | TeamMemberCreateOrConnectWithoutUserInput[]
     createMany?: TeamMemberCreateManyUserInputEnvelope
     connect?: TeamMemberWhereUniqueInput | TeamMemberWhereUniqueInput[]
+  }
+
+  export type CadetProfileUpdateOneWithoutUserNestedInput = {
+    create?: XOR<CadetProfileCreateWithoutUserInput, CadetProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: CadetProfileCreateOrConnectWithoutUserInput
+    upsert?: CadetProfileUpsertWithoutUserInput
+    disconnect?: CadetProfileWhereInput | boolean
+    delete?: CadetProfileWhereInput | boolean
+    connect?: CadetProfileWhereUniqueInput
+    update?: XOR<XOR<CadetProfileUpdateToOneWithWhereWithoutUserInput, CadetProfileUpdateWithoutUserInput>, CadetProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type EnergyTransactionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<EnergyTransactionCreateWithoutUserInput, EnergyTransactionUncheckedCreateWithoutUserInput> | EnergyTransactionCreateWithoutUserInput[] | EnergyTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EnergyTransactionCreateOrConnectWithoutUserInput | EnergyTransactionCreateOrConnectWithoutUserInput[]
+    upsert?: EnergyTransactionUpsertWithWhereUniqueWithoutUserInput | EnergyTransactionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: EnergyTransactionCreateManyUserInputEnvelope
+    set?: EnergyTransactionWhereUniqueInput | EnergyTransactionWhereUniqueInput[]
+    disconnect?: EnergyTransactionWhereUniqueInput | EnergyTransactionWhereUniqueInput[]
+    delete?: EnergyTransactionWhereUniqueInput | EnergyTransactionWhereUniqueInput[]
+    connect?: EnergyTransactionWhereUniqueInput | EnergyTransactionWhereUniqueInput[]
+    update?: EnergyTransactionUpdateWithWhereUniqueWithoutUserInput | EnergyTransactionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: EnergyTransactionUpdateManyWithWhereWithoutUserInput | EnergyTransactionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: EnergyTransactionScalarWhereInput | EnergyTransactionScalarWhereInput[]
   }
 
   export type RegistrationUpdateManyWithoutUserNestedInput = {
@@ -44052,6 +49795,30 @@ export namespace Prisma {
     update?: TeamMemberUpdateWithWhereUniqueWithoutUserInput | TeamMemberUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: TeamMemberUpdateManyWithWhereWithoutUserInput | TeamMemberUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: TeamMemberScalarWhereInput | TeamMemberScalarWhereInput[]
+  }
+
+  export type CadetProfileUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<CadetProfileCreateWithoutUserInput, CadetProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: CadetProfileCreateOrConnectWithoutUserInput
+    upsert?: CadetProfileUpsertWithoutUserInput
+    disconnect?: CadetProfileWhereInput | boolean
+    delete?: CadetProfileWhereInput | boolean
+    connect?: CadetProfileWhereUniqueInput
+    update?: XOR<XOR<CadetProfileUpdateToOneWithWhereWithoutUserInput, CadetProfileUpdateWithoutUserInput>, CadetProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type EnergyTransactionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<EnergyTransactionCreateWithoutUserInput, EnergyTransactionUncheckedCreateWithoutUserInput> | EnergyTransactionCreateWithoutUserInput[] | EnergyTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EnergyTransactionCreateOrConnectWithoutUserInput | EnergyTransactionCreateOrConnectWithoutUserInput[]
+    upsert?: EnergyTransactionUpsertWithWhereUniqueWithoutUserInput | EnergyTransactionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: EnergyTransactionCreateManyUserInputEnvelope
+    set?: EnergyTransactionWhereUniqueInput | EnergyTransactionWhereUniqueInput[]
+    disconnect?: EnergyTransactionWhereUniqueInput | EnergyTransactionWhereUniqueInput[]
+    delete?: EnergyTransactionWhereUniqueInput | EnergyTransactionWhereUniqueInput[]
+    connect?: EnergyTransactionWhereUniqueInput | EnergyTransactionWhereUniqueInput[]
+    update?: EnergyTransactionUpdateWithWhereUniqueWithoutUserInput | EnergyTransactionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: EnergyTransactionUpdateManyWithWhereWithoutUserInput | EnergyTransactionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: EnergyTransactionScalarWhereInput | EnergyTransactionScalarWhereInput[]
   }
 
   export type RegistrationUncheckedUpdateManyWithoutUserNestedInput = {
@@ -45090,6 +50857,47 @@ export namespace Prisma {
     update?: XOR<XOR<SportUpdateToOneWithWhereWithoutBranchPointsInput, SportUpdateWithoutBranchPointsInput>, SportUncheckedUpdateWithoutBranchPointsInput>
   }
 
+  export type CadetProfileCreatebadgeIdsInput = {
+    set: string[]
+  }
+
+  export type UserCreateNestedOneWithoutCadetProfileInput = {
+    create?: XOR<UserCreateWithoutCadetProfileInput, UserUncheckedCreateWithoutCadetProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCadetProfileInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type CadetProfileUpdatebadgeIdsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type UserUpdateOneRequiredWithoutCadetProfileNestedInput = {
+    create?: XOR<UserCreateWithoutCadetProfileInput, UserUncheckedCreateWithoutCadetProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCadetProfileInput
+    upsert?: UserUpsertWithoutCadetProfileInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCadetProfileInput, UserUpdateWithoutCadetProfileInput>, UserUncheckedUpdateWithoutCadetProfileInput>
+  }
+
+  export type UserCreateNestedOneWithoutEnergyTransactionInput = {
+    create?: XOR<UserCreateWithoutEnergyTransactionInput, UserUncheckedCreateWithoutEnergyTransactionInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEnergyTransactionInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumEnergyReasonFieldUpdateOperationsInput = {
+    set?: $Enums.EnergyReason
+  }
+
+  export type UserUpdateOneRequiredWithoutEnergyTransactionNestedInput = {
+    create?: XOR<UserCreateWithoutEnergyTransactionInput, UserUncheckedCreateWithoutEnergyTransactionInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEnergyTransactionInput
+    upsert?: UserUpsertWithoutEnergyTransactionInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutEnergyTransactionInput, UserUpdateWithoutEnergyTransactionInput>, UserUncheckedUpdateWithoutEnergyTransactionInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -45555,6 +51363,23 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumMatchWinnerNullableFilter<$PrismaModel>
     _max?: NestedEnumMatchWinnerNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumEnergyReasonFilter<$PrismaModel = never> = {
+    equals?: $Enums.EnergyReason | EnumEnergyReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.EnergyReason[] | ListEnumEnergyReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EnergyReason[] | ListEnumEnergyReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumEnergyReasonFilter<$PrismaModel> | $Enums.EnergyReason
+  }
+
+  export type NestedEnumEnergyReasonWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EnergyReason | EnumEnergyReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.EnergyReason[] | ListEnumEnergyReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EnergyReason[] | ListEnumEnergyReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumEnergyReasonWithAggregatesFilter<$PrismaModel> | $Enums.EnergyReason
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEnergyReasonFilter<$PrismaModel>
+    _max?: NestedEnumEnergyReasonFilter<$PrismaModel>
   }
 
   export type AnnouncementCreateWithoutCreatorInput = {
@@ -46265,6 +52090,53 @@ export namespace Prisma {
     data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyWithoutAssignedCoordinatorsInput>
   }
 
+  export type CadetProfileCreateWithoutUserInput = {
+    id: string
+    totalEnergy?: number
+    badgeIds?: CadetProfileCreatebadgeIdsInput | string[]
+    createdAt?: Date | string
+    updatedAt: Date | string
+  }
+
+  export type CadetProfileUncheckedCreateWithoutUserInput = {
+    id: string
+    totalEnergy?: number
+    badgeIds?: CadetProfileCreatebadgeIdsInput | string[]
+    createdAt?: Date | string
+    updatedAt: Date | string
+  }
+
+  export type CadetProfileCreateOrConnectWithoutUserInput = {
+    where: CadetProfileWhereUniqueInput
+    create: XOR<CadetProfileCreateWithoutUserInput, CadetProfileUncheckedCreateWithoutUserInput>
+  }
+
+  export type EnergyTransactionCreateWithoutUserInput = {
+    id: string
+    amount: number
+    reason: $Enums.EnergyReason
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type EnergyTransactionUncheckedCreateWithoutUserInput = {
+    id: string
+    amount: number
+    reason: $Enums.EnergyReason
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type EnergyTransactionCreateOrConnectWithoutUserInput = {
+    where: EnergyTransactionWhereUniqueInput
+    create: XOR<EnergyTransactionCreateWithoutUserInput, EnergyTransactionUncheckedCreateWithoutUserInput>
+  }
+
+  export type EnergyTransactionCreateManyUserInputEnvelope = {
+    data: EnergyTransactionCreateManyUserInput | EnergyTransactionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type RegistrationCreateWithoutUserInput = {
     id?: string
     studentName: string
@@ -46413,6 +52285,61 @@ export namespace Prisma {
   export type TeamMemberCreateManyUserInputEnvelope = {
     data: TeamMemberCreateManyUserInput | TeamMemberCreateManyUserInput[]
     skipDuplicates?: boolean
+  }
+
+  export type CadetProfileUpsertWithoutUserInput = {
+    update: XOR<CadetProfileUpdateWithoutUserInput, CadetProfileUncheckedUpdateWithoutUserInput>
+    create: XOR<CadetProfileCreateWithoutUserInput, CadetProfileUncheckedCreateWithoutUserInput>
+    where?: CadetProfileWhereInput
+  }
+
+  export type CadetProfileUpdateToOneWithWhereWithoutUserInput = {
+    where?: CadetProfileWhereInput
+    data: XOR<CadetProfileUpdateWithoutUserInput, CadetProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CadetProfileUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    totalEnergy?: IntFieldUpdateOperationsInput | number
+    badgeIds?: CadetProfileUpdatebadgeIdsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CadetProfileUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    totalEnergy?: IntFieldUpdateOperationsInput | number
+    badgeIds?: CadetProfileUpdatebadgeIdsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EnergyTransactionUpsertWithWhereUniqueWithoutUserInput = {
+    where: EnergyTransactionWhereUniqueInput
+    update: XOR<EnergyTransactionUpdateWithoutUserInput, EnergyTransactionUncheckedUpdateWithoutUserInput>
+    create: XOR<EnergyTransactionCreateWithoutUserInput, EnergyTransactionUncheckedCreateWithoutUserInput>
+  }
+
+  export type EnergyTransactionUpdateWithWhereUniqueWithoutUserInput = {
+    where: EnergyTransactionWhereUniqueInput
+    data: XOR<EnergyTransactionUpdateWithoutUserInput, EnergyTransactionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type EnergyTransactionUpdateManyWithWhereWithoutUserInput = {
+    where: EnergyTransactionScalarWhereInput
+    data: XOR<EnergyTransactionUpdateManyMutationInput, EnergyTransactionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type EnergyTransactionScalarWhereInput = {
+    AND?: EnergyTransactionScalarWhereInput | EnergyTransactionScalarWhereInput[]
+    OR?: EnergyTransactionScalarWhereInput[]
+    NOT?: EnergyTransactionScalarWhereInput | EnergyTransactionScalarWhereInput[]
+    id?: StringFilter<"EnergyTransaction"> | string
+    userId?: StringFilter<"EnergyTransaction"> | string
+    amount?: IntFilter<"EnergyTransaction"> | number
+    reason?: EnumEnergyReasonFilter<"EnergyTransaction"> | $Enums.EnergyReason
+    note?: StringNullableFilter<"EnergyTransaction"> | string | null
+    createdAt?: DateTimeFilter<"EnergyTransaction"> | Date | string
   }
 
   export type RegistrationUpsertWithWhereUniqueWithoutUserInput = {
@@ -47041,6 +52968,8 @@ export namespace Prisma {
     phone?: string | null
     createdAt?: Date | string
     stdid?: string | null
+    CadetProfile?: CadetProfileCreateNestedOneWithoutUserInput
+    EnergyTransaction?: EnergyTransactionCreateNestedManyWithoutUserInput
     leaderOf?: TeamCreateNestedManyWithoutLeaderInput
     teamMembers?: TeamMemberCreateNestedManyWithoutUserInput
   }
@@ -47056,6 +52985,8 @@ export namespace Prisma {
     phone?: string | null
     createdAt?: Date | string
     stdid?: string | null
+    CadetProfile?: CadetProfileUncheckedCreateNestedOneWithoutUserInput
+    EnergyTransaction?: EnergyTransactionUncheckedCreateNestedManyWithoutUserInput
     leaderOf?: TeamUncheckedCreateNestedManyWithoutLeaderInput
     teamMembers?: TeamMemberUncheckedCreateNestedManyWithoutUserInput
   }
@@ -47231,6 +53162,8 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stdid?: NullableStringFieldUpdateOperationsInput | string | null
+    CadetProfile?: CadetProfileUpdateOneWithoutUserNestedInput
+    EnergyTransaction?: EnergyTransactionUpdateManyWithoutUserNestedInput
     leaderOf?: TeamUpdateManyWithoutLeaderNestedInput
     teamMembers?: TeamMemberUpdateManyWithoutUserNestedInput
   }
@@ -47246,6 +53179,8 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stdid?: NullableStringFieldUpdateOperationsInput | string | null
+    CadetProfile?: CadetProfileUncheckedUpdateOneWithoutUserNestedInput
+    EnergyTransaction?: EnergyTransactionUncheckedUpdateManyWithoutUserNestedInput
     leaderOf?: TeamUncheckedUpdateManyWithoutLeaderNestedInput
     teamMembers?: TeamMemberUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -47422,6 +53357,8 @@ export namespace Prisma {
     phone?: string | null
     createdAt?: Date | string
     stdid?: string | null
+    CadetProfile?: CadetProfileCreateNestedOneWithoutUserInput
+    EnergyTransaction?: EnergyTransactionCreateNestedManyWithoutUserInput
     registrations?: RegistrationCreateNestedManyWithoutUserInput
     teamMembers?: TeamMemberCreateNestedManyWithoutUserInput
   }
@@ -47437,6 +53374,8 @@ export namespace Prisma {
     phone?: string | null
     createdAt?: Date | string
     stdid?: string | null
+    CadetProfile?: CadetProfileUncheckedCreateNestedOneWithoutUserInput
+    EnergyTransaction?: EnergyTransactionUncheckedCreateNestedManyWithoutUserInput
     registrations?: RegistrationUncheckedCreateNestedManyWithoutUserInput
     teamMembers?: TeamMemberUncheckedCreateNestedManyWithoutUserInput
   }
@@ -47681,6 +53620,8 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stdid?: NullableStringFieldUpdateOperationsInput | string | null
+    CadetProfile?: CadetProfileUpdateOneWithoutUserNestedInput
+    EnergyTransaction?: EnergyTransactionUpdateManyWithoutUserNestedInput
     registrations?: RegistrationUpdateManyWithoutUserNestedInput
     teamMembers?: TeamMemberUpdateManyWithoutUserNestedInput
   }
@@ -47696,6 +53637,8 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stdid?: NullableStringFieldUpdateOperationsInput | string | null
+    CadetProfile?: CadetProfileUncheckedUpdateOneWithoutUserNestedInput
+    EnergyTransaction?: EnergyTransactionUncheckedUpdateManyWithoutUserNestedInput
     registrations?: RegistrationUncheckedUpdateManyWithoutUserNestedInput
     teamMembers?: TeamMemberUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -47864,6 +53807,8 @@ export namespace Prisma {
     phone?: string | null
     createdAt?: Date | string
     stdid?: string | null
+    CadetProfile?: CadetProfileCreateNestedOneWithoutUserInput
+    EnergyTransaction?: EnergyTransactionCreateNestedManyWithoutUserInput
     registrations?: RegistrationCreateNestedManyWithoutUserInput
     leaderOf?: TeamCreateNestedManyWithoutLeaderInput
   }
@@ -47879,6 +53824,8 @@ export namespace Prisma {
     phone?: string | null
     createdAt?: Date | string
     stdid?: string | null
+    CadetProfile?: CadetProfileUncheckedCreateNestedOneWithoutUserInput
+    EnergyTransaction?: EnergyTransactionUncheckedCreateNestedManyWithoutUserInput
     registrations?: RegistrationUncheckedCreateNestedManyWithoutUserInput
     leaderOf?: TeamUncheckedCreateNestedManyWithoutLeaderInput
   }
@@ -48002,6 +53949,8 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stdid?: NullableStringFieldUpdateOperationsInput | string | null
+    CadetProfile?: CadetProfileUpdateOneWithoutUserNestedInput
+    EnergyTransaction?: EnergyTransactionUpdateManyWithoutUserNestedInput
     registrations?: RegistrationUpdateManyWithoutUserNestedInput
     leaderOf?: TeamUpdateManyWithoutLeaderNestedInput
   }
@@ -48017,6 +53966,8 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stdid?: NullableStringFieldUpdateOperationsInput | string | null
+    CadetProfile?: CadetProfileUncheckedUpdateOneWithoutUserNestedInput
+    EnergyTransaction?: EnergyTransactionUncheckedUpdateManyWithoutUserNestedInput
     registrations?: RegistrationUncheckedUpdateManyWithoutUserNestedInput
     leaderOf?: TeamUncheckedUpdateManyWithoutLeaderNestedInput
   }
@@ -50305,6 +56256,174 @@ export namespace Prisma {
     winnerAnnouncement?: SportWinnerAnnouncementUncheckedUpdateOneWithoutSportNestedInput
   }
 
+  export type UserCreateWithoutCadetProfileInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    branch?: string | null
+    currentYear?: string | null
+    phone?: string | null
+    createdAt?: Date | string
+    stdid?: string | null
+    EnergyTransaction?: EnergyTransactionCreateNestedManyWithoutUserInput
+    registrations?: RegistrationCreateNestedManyWithoutUserInput
+    leaderOf?: TeamCreateNestedManyWithoutLeaderInput
+    teamMembers?: TeamMemberCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCadetProfileInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    branch?: string | null
+    currentYear?: string | null
+    phone?: string | null
+    createdAt?: Date | string
+    stdid?: string | null
+    EnergyTransaction?: EnergyTransactionUncheckedCreateNestedManyWithoutUserInput
+    registrations?: RegistrationUncheckedCreateNestedManyWithoutUserInput
+    leaderOf?: TeamUncheckedCreateNestedManyWithoutLeaderInput
+    teamMembers?: TeamMemberUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCadetProfileInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCadetProfileInput, UserUncheckedCreateWithoutCadetProfileInput>
+  }
+
+  export type UserUpsertWithoutCadetProfileInput = {
+    update: XOR<UserUpdateWithoutCadetProfileInput, UserUncheckedUpdateWithoutCadetProfileInput>
+    create: XOR<UserCreateWithoutCadetProfileInput, UserUncheckedCreateWithoutCadetProfileInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCadetProfileInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCadetProfileInput, UserUncheckedUpdateWithoutCadetProfileInput>
+  }
+
+  export type UserUpdateWithoutCadetProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    currentYear?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    stdid?: NullableStringFieldUpdateOperationsInput | string | null
+    EnergyTransaction?: EnergyTransactionUpdateManyWithoutUserNestedInput
+    registrations?: RegistrationUpdateManyWithoutUserNestedInput
+    leaderOf?: TeamUpdateManyWithoutLeaderNestedInput
+    teamMembers?: TeamMemberUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCadetProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    currentYear?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    stdid?: NullableStringFieldUpdateOperationsInput | string | null
+    EnergyTransaction?: EnergyTransactionUncheckedUpdateManyWithoutUserNestedInput
+    registrations?: RegistrationUncheckedUpdateManyWithoutUserNestedInput
+    leaderOf?: TeamUncheckedUpdateManyWithoutLeaderNestedInput
+    teamMembers?: TeamMemberUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutEnergyTransactionInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    branch?: string | null
+    currentYear?: string | null
+    phone?: string | null
+    createdAt?: Date | string
+    stdid?: string | null
+    CadetProfile?: CadetProfileCreateNestedOneWithoutUserInput
+    registrations?: RegistrationCreateNestedManyWithoutUserInput
+    leaderOf?: TeamCreateNestedManyWithoutLeaderInput
+    teamMembers?: TeamMemberCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutEnergyTransactionInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    branch?: string | null
+    currentYear?: string | null
+    phone?: string | null
+    createdAt?: Date | string
+    stdid?: string | null
+    CadetProfile?: CadetProfileUncheckedCreateNestedOneWithoutUserInput
+    registrations?: RegistrationUncheckedCreateNestedManyWithoutUserInput
+    leaderOf?: TeamUncheckedCreateNestedManyWithoutLeaderInput
+    teamMembers?: TeamMemberUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutEnergyTransactionInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutEnergyTransactionInput, UserUncheckedCreateWithoutEnergyTransactionInput>
+  }
+
+  export type UserUpsertWithoutEnergyTransactionInput = {
+    update: XOR<UserUpdateWithoutEnergyTransactionInput, UserUncheckedUpdateWithoutEnergyTransactionInput>
+    create: XOR<UserCreateWithoutEnergyTransactionInput, UserUncheckedCreateWithoutEnergyTransactionInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutEnergyTransactionInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutEnergyTransactionInput, UserUncheckedUpdateWithoutEnergyTransactionInput>
+  }
+
+  export type UserUpdateWithoutEnergyTransactionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    currentYear?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    stdid?: NullableStringFieldUpdateOperationsInput | string | null
+    CadetProfile?: CadetProfileUpdateOneWithoutUserNestedInput
+    registrations?: RegistrationUpdateManyWithoutUserNestedInput
+    leaderOf?: TeamUpdateManyWithoutLeaderNestedInput
+    teamMembers?: TeamMemberUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutEnergyTransactionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    branch?: NullableStringFieldUpdateOperationsInput | string | null
+    currentYear?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    stdid?: NullableStringFieldUpdateOperationsInput | string | null
+    CadetProfile?: CadetProfileUncheckedUpdateOneWithoutUserNestedInput
+    registrations?: RegistrationUncheckedUpdateManyWithoutUserNestedInput
+    leaderOf?: TeamUncheckedUpdateManyWithoutLeaderNestedInput
+    teamMembers?: TeamMemberUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type AnnouncementCreateManyCreatorInput = {
     id?: string
     title: string
@@ -50949,6 +57068,14 @@ export namespace Prisma {
     status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
   }
 
+  export type EnergyTransactionCreateManyUserInput = {
+    id: string
+    amount: number
+    reason: $Enums.EnergyReason
+    note?: string | null
+    createdAt?: Date | string
+  }
+
   export type RegistrationCreateManyUserInput = {
     id?: string
     eventId: string
@@ -51004,6 +57131,30 @@ export namespace Prisma {
     status?: $Enums.MemberStatus
     joinedAt?: Date | string
     sportRegistrationId?: string | null
+  }
+
+  export type EnergyTransactionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    reason?: EnumEnergyReasonFieldUpdateOperationsInput | $Enums.EnergyReason
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EnergyTransactionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    reason?: EnumEnergyReasonFieldUpdateOperationsInput | $Enums.EnergyReason
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EnergyTransactionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    reason?: EnumEnergyReasonFieldUpdateOperationsInput | $Enums.EnergyReason
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RegistrationUpdateWithoutUserInput = {

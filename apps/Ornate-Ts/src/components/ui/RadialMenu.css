@@ -1,0 +1,242 @@
+/* RadialMenu.css - Tablet/Mobile styles only */
+.radial-menu-wrapper {
+    position: fixed;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+}
+
+.radial-menu {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.radial-toggle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #2a2a2a 0%, #111 80%);
+    border: 2px solid #555;
+    color: #00ffca;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 0 15px rgba(0, 255, 202, 0.4), inset 0 0 10px rgba(0, 255, 202, 0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.radial-menu.is-open .radial-toggle {
+    border-color: #00ffca;
+    box-shadow: 0 0 30px rgba(0, 255, 202, 0.6), inset 0 0 15px rgba(0, 255, 202, 0.4);
+}
+
+.radial-toggle-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.4s ease;
+}
+
+.radial-menu.is-open .radial-toggle-icon {
+    transform: rotate(90deg);
+}
+
+.spin-slow {
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Branch Items - The "Dial" marks */
+.radial-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150px;
+    height: 45px;
+    margin: -22.5px 0 0 -22.5px;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.5) translate(0, 0);
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: white;
+    font-family: var(--font-orbitron);
+    text-align: left;
+    cursor: pointer;
+}
+
+.radial-menu.is-open .radial-item {
+    opacity: 1;
+    pointer-events: auto;
+    /* Rotate outward using trigonometry baked into the CSS angle and radius */
+    transform: scale(1) translate(calc(var(--radius) * cos(var(--angle))),
+            calc(var(--radius) * sin(var(--angle))));
+    transition-delay: var(--delay);
+}
+
+.radial-item:hover {
+    transform: scale(1.1) translate(calc(var(--radius) * cos(var(--angle))),
+            calc(var(--radius) * sin(var(--angle))));
+    transition-delay: 0s;
+}
+
+/* Exact clone of Desktop Menu CSS styles */
+.radial-item .preview {
+    width: 45px;
+    height: 45px;
+    float: left;
+    background-size: auto 100% !important;
+    position: absolute;
+    border-radius: 100px;
+    box-shadow: 0 -13px 10px 2px black inset;
+    transition: all 0.3s ease;
+}
+
+.radial-item .info {
+    position: relative;
+    left: 65px;
+    top: 5px;
+}
+
+.radial-item h2,
+.radial-item h3 {
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: 100;
+    letter-spacing: 2px;
+}
+
+.radial-item h2 {
+    font-size: 15px;
+    opacity: 0.4;
+    margin-bottom: 4px;
+    transition: opacity 0.3s ease;
+}
+
+.radial-item h2 .pip {
+    width: 0;
+    height: 9px;
+    float: left;
+    position: relative;
+    top: 3px;
+    transition: all 0.3s;
+    margin-right: 0px;
+}
+
+.radial-item h3 {
+    font-size: 8px;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    opacity: 0.3;
+}
+
+/* Branch specific colors and previews */
+.radial-item.hho .preview {
+    background: url("/assets/sarvasrijana.webp") !important;
+}
+
+.radial-item.cse .preview {
+    background: url("/assets/CSE.webp") !important;
+}
+
+.radial-item.ece .preview {
+    background: url("/assets/ECE.webp") !important;
+}
+
+.radial-item.eee .preview {
+    background: url("/assets/EEE.webp") !important;
+}
+
+.radial-item.civil .preview {
+    background: url("/assets/civil.webp") !important;
+}
+
+.radial-item.mech .preview {
+    background: url("/assets/Mechanical.webp") !important;
+}
+
+/* Pip colors */
+.radial-item.hho h2 .pip {
+    background: #E8927C;
+}
+
+.radial-item.cse h2 .pip {
+    background: #b45d15;
+}
+
+.radial-item.ece h2 .pip {
+    background: #26daaa;
+}
+
+.radial-item.eee h2 .pip {
+    background: #e55f45;
+}
+
+.radial-item.civil h2 .pip {
+    background: orange;
+}
+
+.radial-item.mech h2 .pip {
+    background: #b29d81;
+}
+
+/* Active states (equivalent to hover/checked on desktop) */
+.radial-item.active .preview,
+.radial-item:hover .preview {
+    filter: brightness(1.2);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.radial-item.active h2,
+.radial-item:hover h2,
+.radial-item.active h3,
+.radial-item:hover h3 {
+    opacity: 1;
+}
+
+.radial-item.active h2 .pip,
+.radial-item:hover h2 .pip {
+    width: 30px;
+    margin-right: 6px;
+}
+
+/* Active colors */
+.radial-item.active.hho h3 {
+    color: #E8927C;
+}
+
+.radial-item.active.cse h3 {
+    color: #b45d15;
+}
+
+.radial-item.active.ece h3 {
+    color: #26daaa;
+}
+
+.radial-item.active.eee h3 {
+    color: #e55f45;
+}
+
+.radial-item.active.civil h3 {
+    color: orange;
+}
+
+.radial-item.active.mech h3 {
+    color: #b29d81;
+}

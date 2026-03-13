@@ -257,7 +257,6 @@ exports.Prisma.AnalyticsSnapshotScalarFieldEnum = {
   id: 'id',
   snapshotDate: 'snapshotDate',
   totalOnlineRegistrations: 'totalOnlineRegistrations',
-  totalOfflineRegistrations: 'totalOfflineRegistrations',
   totalAttendance: 'totalAttendance',
   totalRevenue: 'totalRevenue',
   avgAttendanceRate: 'avgAttendanceRate',
@@ -269,7 +268,8 @@ exports.Prisma.AnalyticsSnapshotScalarFieldEnum = {
   confirmedRegistrations: 'confirmedRegistrations',
   pendingRegistrations: 'pendingRegistrations',
   pendingRevenue: 'pendingRevenue',
-  waitlistRegistrations: 'waitlistRegistrations'
+  waitlistRegistrations: 'waitlistRegistrations',
+  totalSpotRegistrations: 'totalSpotRegistrations'
 };
 
 exports.Prisma.PromoVideoScalarFieldEnum = {
@@ -390,6 +390,18 @@ exports.Prisma.NotificationScalarFieldEnum = {
   isArchived: 'isArchived',
   priority: 'priority',
   type: 'type',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  endpoint: 'endpoint',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  expirationTime: 'expirationTime',
+  userAgent: 'userAgent',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -515,9 +527,14 @@ exports.Prisma.StallScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   description: 'description',
-  price: 'price',
   stallNo: 'stallNo',
-  teamSize: 'teamSize'
+  menuItems: 'menuItems',
+  qrCodeUrl: 'qrCodeUrl',
+  qrTargetUrl: 'qrTargetUrl',
+  recommendedItem: 'recommendedItem',
+  teamName: 'teamName',
+  timings: 'timings',
+  venue: 'venue'
 };
 
 exports.Prisma.SportRegistrationScalarFieldEnum = {
@@ -551,6 +568,34 @@ exports.Prisma.BranchPointsScalarFieldEnum = {
   points: 'points',
   manualAdjustment: 'manualAdjustment',
   adjustmentReason: 'adjustmentReason'
+};
+
+exports.Prisma.AchievementBadgeScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  icon: 'icon',
+  bonusEnergy: 'bonusEnergy',
+  category: 'category',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CadetProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  totalEnergy: 'totalEnergy',
+  badgeIds: 'badgeIds',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EnergyTransactionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  reason: 'reason',
+  note: 'note',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -665,6 +710,29 @@ exports.MatchWinner = exports.$Enums.MatchWinner = {
   DRAW: 'DRAW'
 };
 
+exports.EnergyReason = exports.$Enums.EnergyReason = {
+  REGISTRATION_BONUS: 'REGISTRATION_BONUS',
+  PROFILE_COMPLETE: 'PROFILE_COMPLETE',
+  AVATAR_UPLOAD: 'AVATAR_UPLOAD',
+  EVENT_REGISTER: 'EVENT_REGISTER',
+  EVENT_ATTEND: 'EVENT_ATTEND',
+  MISSION_PARTICIPATE: 'MISSION_PARTICIPATE',
+  MISSION_THIRD: 'MISSION_THIRD',
+  MISSION_SECOND: 'MISSION_SECOND',
+  MISSION_FIRST: 'MISSION_FIRST',
+  SPORT_REGISTER: 'SPORT_REGISTER',
+  SPORT_PARTICIPATE: 'SPORT_PARTICIPATE',
+  SPORT_THIRD: 'SPORT_THIRD',
+  SPORT_SECOND: 'SPORT_SECOND',
+  SPORT_FIRST: 'SPORT_FIRST',
+  WEBSITE_ACTIVITY: 'WEBSITE_ACTIVITY',
+  GAME_SCORE: 'GAME_SCORE',
+  BADGE_UNLOCK: 'BADGE_UNLOCK',
+  SOCIAL_SHARE: 'SOCIAL_SHARE',
+  INVITE_FRIEND: 'INVITE_FRIEND',
+  ADMIN_GRANT: 'ADMIN_GRANT'
+};
+
 exports.Prisma.ModelName = {
   Admin: 'Admin',
   User: 'User',
@@ -682,6 +750,7 @@ exports.Prisma.ModelName = {
   WinnerAnnouncement: 'WinnerAnnouncement',
   AuditLog: 'AuditLog',
   Notification: 'Notification',
+  PushSubscription: 'PushSubscription',
   CertificateTheme: 'CertificateTheme',
   Sport: 'Sport',
   SportTeam: 'SportTeam',
@@ -691,7 +760,10 @@ exports.Prisma.ModelName = {
   Stall: 'Stall',
   SportRegistration: 'SportRegistration',
   SportWinnerAnnouncement: 'SportWinnerAnnouncement',
-  BranchPoints: 'BranchPoints'
+  BranchPoints: 'BranchPoints',
+  AchievementBadge: 'AchievementBadge',
+  CadetProfile: 'CadetProfile',
+  EnergyTransaction: 'EnergyTransaction'
 };
 
 /**

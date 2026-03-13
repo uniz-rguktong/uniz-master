@@ -1,0 +1,96 @@
+<svg width="600" height="240" viewBox="0 0 600 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="600" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0e0800"/>
+      <stop offset="50%" stop-color="#1a1000"/>
+      <stop offset="100%" stop-color="#0a0600"/>
+    </linearGradient>
+    <radialGradient id="burst" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.25"/>
+      <stop offset="40%" stop-color="#f59e0b" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur1"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="blur2"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="2"/></filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="240" fill="url(#bg)"/>
+
+  <!-- Grid -->
+  <g stroke="#fbbf24" stroke-opacity="0.05" stroke-width="0.5">
+    <line x1="0" y1="30" x2="600" y2="30"/><line x1="0" y1="60" x2="600" y2="60"/>
+    <line x1="0" y1="90" x2="600" y2="90"/><line x1="0" y1="120" x2="600" y2="120"/>
+    <line x1="0" y1="150" x2="600" y2="150"/><line x1="0" y1="180" x2="600" y2="180"/>
+    <line x1="0" y1="210" x2="600" y2="210"/>
+    <line x1="60" y1="0" x2="60" y2="240"/><line x1="120" y1="0" x2="120" y2="240"/>
+    <line x1="180" y1="0" x2="180" y2="240"/><line x1="240" y1="0" x2="240" y2="240"/>
+    <line x1="300" y1="0" x2="300" y2="240"/><line x1="360" y1="0" x2="360" y2="240"/>
+    <line x1="420" y1="0" x2="420" y2="240"/><line x1="480" y1="0" x2="480" y2="240"/>
+    <line x1="540" y1="0" x2="540" y2="240"/>
+  </g>
+
+  <!-- Central energy burst -->
+  <ellipse cx="300" cy="120" rx="200" ry="120" fill="url(#burst)"/>
+  <ellipse cx="300" cy="120" rx="80" ry="60" fill="#fbbf24" fill-opacity="0.08" filter="url(#blur1)"/>
+
+  <!-- Radial rays from center -->
+  <g stroke="#fbbf24" stroke-opacity="0.15" stroke-width="0.8">
+    <line x1="300" y1="120" x2="300" y2="0"/>
+    <line x1="300" y1="120" x2="300" y2="240"/>
+    <line x1="300" y1="120" x2="0" y2="120"/>
+    <line x1="300" y1="120" x2="600" y2="120"/>
+    <line x1="300" y1="120" x2="90" y2="0"/>
+    <line x1="300" y1="120" x2="510" y2="0"/>
+    <line x1="300" y1="120" x2="90" y2="240"/>
+    <line x1="300" y1="120" x2="510" y2="240"/>
+    <line x1="300" y1="120" x2="0" y2="50"/>
+    <line x1="300" y1="120" x2="600" y2="50"/>
+    <line x1="300" y1="120" x2="0" y2="190"/>
+    <line x1="300" y1="120" x2="600" y2="190"/>
+  </g>
+
+  <!-- Orbiting category icons (text labels around center) -->
+  <!-- Technical - top -->
+  <g font-family="monospace" font-weight="800" letter-spacing="2">
+    <text x="258" y="30" font-size="9" fill="#fbbf24" fill-opacity="0.85">TECHNICAL</text>
+    <!-- Cultural - bottom -->
+    <text x="260" y="224" font-size="9" fill="#fbbf24" fill-opacity="0.85">CULTURAL</text>
+    <!-- Sports - left -->
+    <text x="14" y="108" font-size="9" fill="#fbbf24" fill-opacity="0.85">SPORTS</text>
+    <!-- Gaming - right -->
+    <text x="500" y="108" font-size="9" fill="#fbbf24" fill-opacity="0.85">GAMING</text>
+    <!-- Workshops - top-left -->
+    <text x="60" y="52" font-size="8" fill="#f59e0b" fill-opacity="0.75">WORKSHOPS</text>
+    <!-- Hackathons - top-right -->
+    <text x="430" y="52" font-size="8" fill="#f59e0b" fill-opacity="0.75">HACKATHONS</text>
+    <!-- Fun - bottom-left -->
+    <text x="80" y="205" font-size="8" fill="#f59e0b" fill-opacity="0.75">FUN</text>
+    <!-- Center HHo label -->
+    <text x="268" y="116" font-size="14" fill="#fbbf24" fill-opacity="0.6" letter-spacing="6">HHo</text>
+  </g>
+
+  <!-- Dot nodes for categories -->
+  <g fill="#fbbf24">
+    <circle cx="300" cy="18" r="3.5" fill-opacity="0.8"/>
+    <circle cx="300" cy="222" r="3.5" fill-opacity="0.8"/>
+    <circle cx="12" cy="120" r="3.5" fill-opacity="0.8"/>
+    <circle cx="588" cy="120" r="3.5" fill-opacity="0.8"/>
+    <circle cx="90" cy="40" r="3" fill-opacity="0.7"/>
+    <circle cx="510" cy="40" r="3" fill-opacity="0.7"/>
+    <circle cx="90" cy="200" r="3" fill-opacity="0.7"/>
+    <!-- Center core -->
+    <circle cx="300" cy="120" r="5" fill-opacity="0.9"/>
+    <circle cx="300" cy="120" r="15" fill-opacity="0.12" filter="url(#blur2)"/>
+    <circle cx="300" cy="120" r="35" fill-opacity="0.06" filter="url(#blur1)"/>
+  </g>
+
+  <!-- Decorative circles -->
+  <circle cx="300" cy="120" r="55" stroke="#fbbf24" stroke-opacity="0.1" stroke-width="0.8" fill="none" stroke-dasharray="4 6"/>
+  <circle cx="300" cy="120" r="100" stroke="#fbbf24" stroke-opacity="0.06" stroke-width="0.6" fill="none" stroke-dasharray="3 8"/>
+
+  <!-- Corner accents -->
+  <polygon points="0,0 35,0 0,35" fill="#fbbf24" fill-opacity="0.12"/>
+  <polygon points="600,240 565,240 600,205" fill="#fbbf24" fill-opacity="0.08"/>
+</svg>

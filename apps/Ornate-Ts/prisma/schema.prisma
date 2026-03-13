@@ -1,0 +1,716 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Admin {
+  id                           String                @id
+  name                         String?
+  email                        String                @unique
+  password                     String
+  role                         UserRole
+  branch                       String?
+  clubId                       String?
+  createdAt                    DateTime              @default(now())
+  bio                          String?
+  designation                  String?
+  notificationSettings         Json?
+  phone                        String?
+  preferences                  Json?
+  profilePicture               String?
+  coordinatorToken             String?               @unique
+  coordinatorTokenExpiry       DateTime?
+  Announcement                 Announcement[]
+  BestOutgoingStudent          BestOutgoingStudent[]
+  BrandLogo                    BrandLogo[]
+  Event_Event_creatorIdToAdmin Event[]               @relation("Event_creatorIdToAdmin")
+  GalleryAlbum                 GalleryAlbum[]
+  PromoVideo                   PromoVideo[]
+  Task                         Task[]
+  Event_EventCoordinators      Event[]               @relation("EventCoordinators")
+
+  @@index([branch])
+  @@index([clubId])
+  @@index([role])
+}
+
+model AnalyticsSnapshot {
+  id                       String   @id
+  snapshotDate             DateTime @unique @default(now()) @db.Date
+  totalOnlineRegistrations Int      @default(0)
+  totalAttendance          Int      @default(0)
+  totalRevenue             Float    @default(0)
+  avgAttendanceRate        Float    @default(0)
+  totalEvents              Int      @default(0)
+  createdAt                DateTime @default(now())
+  activeParticipants       Int      @default(0)
+  cancelledRegistrations   Int      @default(0)
+  completionRate           Float    @default(0)
+  confirmedRegistrations   Int      @default(0)
+  pendingRegistrations     Int      @default(0)
+  pendingRevenue           Float    @default(0)
+  waitlistRegistrations    Int      @default(0)
+  totalSpotRegistrations   Int      @default(0)
+}
+
+model Announcement {
+  id             String   @id
+  title          String
+  content        String
+  category       String
+  isPinned       Boolean  @default(false)
+  targetAudience String
+  expiryDate     DateTime
+  status         String   @default("active")
+  viewCount      Int      @default(0)
+  creatorId      String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime
+  Admin          Admin    @relation(fields: [creatorId], references: [id])
+
+  @@index([creatorId])
+}
+
+model AuditLog {
+  id          String   @id
+  action      String
+  entityType  String
+  entityId    String
+  metadata    Json?
+  performedBy String
+  ipAddress   String?
+  userAgent   String?
+  timestamp   DateTime @default(now())
+
+  @@index([action])
+  @@index([entityId])
+  @@index([performedBy])
+}
+
+model BestOutgoingStudent {
+  id              String   @id
+  name            String
+  rollNumber      String
+  photo           String?
+  branch          String
+  year            String   @default("IV")
+  cgpa            Float
+  achievements    String[]
+  placementStatus String?
+  company         String?
+  package         String?
+  gender          String
+  awardYear       Int
+  isPublished     Boolean  @default(true)
+  isOverall       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime
+  creatorId       String?
+  Admin           Admin?   @relation(fields: [creatorId], references: [id])
+
+  @@index([awardYear])
+  @@index([branch])
+  @@index([isPublished])
+}
+
+model BranchPoints {
+  id               String  @id
+  sportId          String
+  branch           String
+  points           Int     @default(0)
+  manualAdjustment Int     @default(0)
+  adjustmentReason String?
+  Sport            Sport   @relation(fields: [sportId], references: [id], onDelete: Cascade)
+
+  @@unique([sportId, branch])
+  @@index([branch])
+  @@index([sportId])
+}
+
+model BrandLogo {
+  id         String   @id
+  name       String
+  type       String
+  format     String
+  size       String?
+  dimensions String?
+  url        String
+  status     String   @default("active")
+  uploadDate DateTime @default(now())
+  thumbnail  String?
+  creatorId  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  Admin      Admin    @relation(fields: [creatorId], references: [id])
+}
+
+model CertificateTheme {
+  id        String   @id
+  name      String
+  preview   String
+  colors    String[]
+  style     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+model Event {
+  id                           String              @id
+  title                        String
+  description                  String
+  date                         DateTime
+  venue                        String
+  category                     String?
+  creatorId                    String
+  posterUrl                    String?
+  additionalImages             String[]
+  registrationOpen             Boolean             @default(true)
+  fee                          String?             @default("Free")
+  price                        Float               @default(0)
+  maxCapacity                  Int                 @default(100)
+  createdAt                    DateTime            @default(now())
+  updatedAt                    DateTime
+  certificateIssuedAt          DateTime?
+  certificateStatus            String              @default("DRAFT")
+  certificateTemplates         Json?
+  certificateTheme             String?
+  customFields                 Json?
+  documents                    Json?
+  eligibility                  Json?
+  endDate                      DateTime?
+  endTime                      String?
+  eventType                    String?
+  locationType                 String?             @default("physical")
+  minParticipants              Int?
+  prizes                       Json?
+  rules                        String?
+  shortDescription             String?
+  startTime                    String?
+  teamSizeMax                  Int?
+  teamSizeMin                  Int?
+  time                         String?
+  waitlistEnabled              Boolean             @default(false)
+  paymentGateway               String?             @default("All Methods")
+  status                       EventStatus         @default(DRAFT)
+  Admin_Event_creatorIdToAdmin Admin               @relation("Event_creatorIdToAdmin", fields: [creatorId], references: [id])
+  Registration                 Registration[]
+  Team                         Team[]
+  WinnerAnnouncement           WinnerAnnouncement?
+  Admin_EventCoordinators      Admin[]             @relation("EventCoordinators")
+
+  @@index([category])
+  @@index([category, status])
+  @@index([creatorId])
+  @@index([date])
+  @@index([status])
+}
+
+model FestSettings {
+  id                 String    @id @default("singleton")
+  festName           String    @default("ORNATE 2K26")
+  tagline            String?   @default("Innovation Meets Culture")
+  logoUrl            String?
+  brochureUrl        String?
+  description        String?   @default("The biggest technical and cultural fest of RGUKT Ongole...")
+  startDate          DateTime?
+  endDate            DateTime?
+  venue              String?   @default("RGUKT Ongole Campus")
+  registrationOpen   Boolean   @default(true)
+  maintenanceMode    Boolean   @default(false)
+  guestRegistration  Boolean   @default(true)
+  emailNotifications Boolean   @default(true)
+  instagramUrl       String?
+  youtubeUrl         String?
+  supportEmail       String?
+  updatedAt          DateTime
+}
+
+model GalleryAlbum {
+  id           String         @id
+  title        String
+  description  String?
+  coverImage   String?
+  creatorId    String
+  tags         String[]
+  isArchived   Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime
+  Admin        Admin          @relation(fields: [creatorId], references: [id])
+  GalleryImage GalleryImage[]
+
+  @@index([creatorId])
+}
+
+model GalleryImage {
+  id           String       @id
+  url          String
+  caption      String?
+  albumId      String
+  uploadedAt   DateTime     @default(now())
+  GalleryAlbum GalleryAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+}
+
+model Match {
+  id         String       @id
+  round      String
+  matchId    String?
+  team1Id    String?
+  team1Name  String?
+  team2Id    String?
+  team2Name  String?
+  time       String?
+  venue      String?
+  score1     String?
+  score2     String?
+  note       String?
+  referee    String?
+  matchOrder Int          @default(0)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime
+  sportId    String
+  date       DateTime?
+  status     MatchStatus  @default(PENDING)
+  winner     MatchWinner?
+  Sport      Sport        @relation(fields: [sportId], references: [id], onDelete: Cascade)
+
+  @@index([date])
+  @@index([matchId])
+  @@index([sportId])
+  @@index([sportId, status])
+  @@index([status])
+}
+
+model Notification {
+  id            String   @id
+  senderId      String
+  senderName    String
+  senderRole    String
+  senderBranch  String?
+  recipientId   String
+  recipientName String?
+  recipientRole String?
+  message       String
+  isRead        Boolean  @default(false)
+  isStarred     Boolean  @default(false)
+  isArchived    Boolean  @default(false)
+  priority      String   @default("medium")
+  type          String   @default("admin")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime
+
+  @@index([createdAt])
+  @@index([recipientId])
+  @@index([recipientId, isRead])
+  @@index([senderId])
+}
+
+model PromoVideo {
+  id         String   @id
+  title      String
+  url        String
+  platform   String   @default("YouTube")
+  thumbnail  String?
+  status     String   @default("active")
+  views      Int      @default(0)
+  duration   String?
+  uploadDate DateTime @default(now())
+  creatorId  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  category   String   @default("video")
+  Admin      Admin    @relation(fields: [creatorId], references: [id])
+}
+
+model Registration {
+  id                  String             @id
+  eventId             String
+  userId              String?
+  studentName         String
+  studentId           String
+  status              RegistrationStatus @default(PENDING)
+  paymentStatus       PaymentStatus      @default(PENDING)
+  amount              Float              @default(0)
+  transactionId       String?
+  screenshotUrl       String?
+  createdAt           DateTime           @default(now())
+  certificateIssuedAt DateTime?
+  certificateType     String?
+  certificateUrl      String?
+  rank                Int?
+  email               String?
+  phone               String?
+  branch              String?
+  year                String?
+  section             String?
+  Event               Event              @relation(fields: [eventId], references: [id])
+  User                User?              @relation(fields: [userId], references: [id])
+  Team                Team?
+
+  @@unique([eventId, studentId])
+  @@index([createdAt])
+  @@index([eventId, status])
+  @@index([paymentStatus])
+  @@index([status])
+  @@index([userId])
+}
+
+model Sport {
+  id                      String                   @id
+  name                    String
+  gender                  SportGender
+  category                SportCategory            @default(TEAM)
+  format                  SportFormat              @default(KNOCKOUT)
+  status                  SportStatus              @default(UPCOMING)
+  description             String?
+  icon                    String?
+  bannerUrl               String?
+  winnerPoints            Int                      @default(0)
+  runnerUpPoints          Int                      @default(0)
+  participationPoints     Int                      @default(0)
+  awards                  String[]
+  maxTeamsPerBranch       Int?
+  minPlayersPerTeam       Int?
+  maxPlayersPerTeam       Int?
+  rules                   String?
+  eligibility             String[]
+  registrationDeadline    DateTime?
+  matchDuration           Int?
+  certificateStatus       String                   @default("DRAFT")
+  certificateIssuedAt     DateTime?
+  certificateTheme        String?
+  certificateTemplates    Json?
+  isActive                Boolean                  @default(true)
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime
+  BranchPoints            BranchPoints[]
+  Match                   Match[]
+  SportRegistration       SportRegistration[]
+  SportTeam               SportTeam[]
+  SportWinnerAnnouncement SportWinnerAnnouncement?
+
+  @@unique([name, gender])
+  @@index([isActive])
+  @@index([name, gender])
+  @@index([status])
+}
+
+model SportRegistration {
+  id          String             @id
+  sportId     String
+  studentName String
+  studentId   String
+  email       String?
+  phone       String?
+  branch      String?
+  year        String?
+  section     String?
+  status      RegistrationStatus @default(PENDING)
+  createdAt   DateTime           @default(now())
+  Sport       Sport              @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  TeamMember  TeamMember?
+
+  @@unique([sportId, studentId])
+  @@index([branch])
+  @@index([createdAt])
+  @@index([sportId, status])
+}
+
+model SportTeam {
+  id        String   @id
+  sportId   String
+  teamId    String   @unique
+  createdAt DateTime @default(now())
+  Sport     Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  Team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([sportId])
+}
+
+model SportWinnerAnnouncement {
+  id          String    @id
+  sportId     String    @unique
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  positions   Json
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+  Sport       Sport     @relation(fields: [sportId], references: [id], onDelete: Cascade)
+}
+
+model Stall {
+  id              Int      @id @default(autoincrement())
+  name            String
+  type            String   @default("Other")
+  owner           String   @default("-")
+  bidAmount       String   @default("-")
+  status          String   @default("Vacant")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime
+  description     String   @default("No description available.")
+  stallNo         String   @default("-")
+  menuItems       Json?    @default("[]")
+  qrCodeUrl       String?
+  qrTargetUrl     String?
+  recommendedItem String   @default("-")
+  teamName        String   @default("-")
+  timings         String   @default("-")
+  venue           String   @default("-")
+}
+
+model Task {
+  id          String   @id
+  title       String
+  description String?
+  date        DateTime
+  time        String?
+  assignedTo  String
+  priority    String   @default("medium")
+  status      String   @default("pending")
+  creatorId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  Admin       Admin    @relation(fields: [creatorId], references: [id])
+}
+
+model Team {
+  id             String             @id
+  teamName       String
+  teamCode       String             @unique
+  eventId        String?
+  leaderId       String
+  leaderName     String
+  leaderEmail    String
+  leaderPhone    String?
+  status         RegistrationStatus @default(PENDING)
+  paymentStatus  PaymentStatus      @default(PENDING)
+  amount         Float              @default(0)
+  transactionId  String?
+  screenshotUrl  String?
+  registrationId String?            @unique
+  isLocked       Boolean            @default(false)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime
+  SportTeam      SportTeam?
+  Event          Event?             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  User           User               @relation(fields: [leaderId], references: [id])
+  Registration   Registration?      @relation(fields: [registrationId], references: [id])
+  TeamMember     TeamMember[]
+
+  @@index([eventId])
+  @@index([eventId, status])
+  @@index([leaderId])
+}
+
+model TeamMember {
+  id                  String             @id
+  teamId              String
+  userId              String?
+  name                String
+  email               String
+  phone               String?
+  rollNumber          String?
+  department          String?
+  year                String?
+  section             String?
+  role                TeamRole           @default(MEMBER)
+  status              MemberStatus       @default(ACCEPTED)
+  joinedAt            DateTime           @default(now())
+  sportRegistrationId String?            @unique
+  SportRegistration   SportRegistration? @relation(fields: [sportRegistrationId], references: [id])
+  Team                Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  User                User?              @relation(fields: [userId], references: [id])
+
+  @@unique([teamId, email])
+  @@index([sportRegistrationId])
+  @@index([teamId])
+}
+
+model User {
+  id                String              @id
+  name              String?
+  email             String              @unique
+  password          String
+  role              UserRole            @default(STUDENT)
+  branch            String?
+  currentYear       String?
+  phone             String?
+  createdAt         DateTime            @default(now())
+  stdid             String?             @unique @db.VarChar
+  CadetProfile      CadetProfile?
+  EnergyTransaction EnergyTransaction[]
+  Registration      Registration[]
+  Team              Team[]
+  TeamMember        TeamMember[]
+}
+
+model CadetProfile {
+  id          String   @id
+  userId      String   @unique
+  totalEnergy Int      @default(0)
+  badgeIds    String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([totalEnergy])
+  @@index([userId])
+}
+
+model EnergyTransaction {
+  id        String       @id
+  userId    String
+  amount    Int
+  reason    EnergyReason
+  note      String?
+  createdAt DateTime     @default(now())
+  User      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([reason])
+}
+
+model AchievementBadge {
+  id          String   @id
+  name        String
+  description String
+  icon        String
+  bonusEnergy Int      @default(50)
+  category    String   @default("general")
+  createdAt   DateTime @default(now())
+}
+
+model WinnerAnnouncement {
+  id          String    @id
+  eventId     String    @unique
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  positions   Json
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+  Event       Event     @relation(fields: [eventId], references: [id])
+}
+
+model PushSubscription {
+  id             String    @id
+  username       String
+  endpoint       String    @unique
+  p256dh         String
+  auth           String
+  expirationTime DateTime?
+  userAgent      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime
+
+  @@index([username])
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum MatchStatus {
+  PENDING
+  SCHEDULED
+  LIVE
+  COMPLETED
+}
+
+enum MatchWinner {
+  TEAM1
+  TEAM2
+  DRAW
+}
+
+enum MemberStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum RegistrationStatus {
+  PENDING
+  CONFIRMED
+  WAITLISTED
+  ATTENDED
+  CANCELLED
+  REJECTED
+}
+
+enum SportCategory {
+  INDIVIDUAL
+  TEAM
+}
+
+enum SportFormat {
+  KNOCKOUT
+  LEAGUE
+  GROUP_KNOCKOUT
+}
+
+enum SportGender {
+  MALE
+  FEMALE
+  MIXED
+}
+
+enum SportStatus {
+  UPCOMING
+  REGISTRATION_OPEN
+  ONGOING
+  COMPLETED
+}
+
+enum TeamRole {
+  LEADER
+  MEMBER
+  VICE_CAPTAIN
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  BRANCH_ADMIN
+  CLUB_COORDINATOR
+  SPORTS_ADMIN
+  HHO
+  STUDENT
+  EVENT_COORDINATOR
+  BRANCH_SPORTS_ADMIN
+}
+
+enum EnergyReason {
+  REGISTRATION_BONUS
+  PROFILE_COMPLETE
+  AVATAR_UPLOAD
+  EVENT_REGISTER
+  EVENT_ATTEND
+  MISSION_PARTICIPATE
+  MISSION_THIRD
+  MISSION_SECOND
+  MISSION_FIRST
+  SPORT_REGISTER
+  SPORT_PARTICIPATE
+  SPORT_THIRD
+  SPORT_SECOND
+  SPORT_FIRST
+  WEBSITE_ACTIVITY
+  GAME_SCORE
+  BADGE_UNLOCK
+  SOCIAL_SHARE
+  INVITE_FRIEND
+  ADMIN_GRANT
+}

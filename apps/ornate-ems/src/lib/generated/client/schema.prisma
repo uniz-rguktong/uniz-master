@@ -42,19 +42,21 @@ model Admin {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  name          String?
-  email         String         @unique
-  password      String
-  role          UserRole       @default(STUDENT)
-  branch        String?
-  currentYear   String?
-  phone         String?
-  createdAt     DateTime       @default(now())
-  stdid         String?        @unique @db.VarChar
-  registrations Registration[]
-  leaderOf      Team[]         @relation("TeamLeader")
-  teamMembers   TeamMember[]
+  id                String              @id @default(cuid())
+  name              String?
+  email             String              @unique
+  password          String
+  role              UserRole            @default(STUDENT)
+  branch            String?
+  currentYear       String?
+  phone             String?
+  createdAt         DateTime            @default(now())
+  stdid             String?             @unique @db.VarChar
+  CadetProfile      CadetProfile?
+  EnergyTransaction EnergyTransaction[]
+  registrations     Registration[]
+  leaderOf          Team[]              @relation("TeamLeader")
+  teamMembers       TeamMember[]
 }
 
 model Event {
@@ -195,22 +197,22 @@ model TeamMember {
 }
 
 model AnalyticsSnapshot {
-  id                        String   @id @default(cuid())
-  snapshotDate              DateTime @unique @default(now()) @db.Date
-  totalOnlineRegistrations  Int      @default(0)
-  totalOfflineRegistrations Int      @default(0)
-  totalAttendance           Int      @default(0)
-  totalRevenue              Float    @default(0)
-  avgAttendanceRate         Float    @default(0)
-  totalEvents               Int      @default(0)
-  createdAt                 DateTime @default(now())
-  activeParticipants        Int      @default(0)
-  cancelledRegistrations    Int      @default(0)
-  completionRate            Float    @default(0)
-  confirmedRegistrations    Int      @default(0)
-  pendingRegistrations      Int      @default(0)
-  pendingRevenue            Float    @default(0)
-  waitlistRegistrations     Int      @default(0)
+  id                       String   @id @default(cuid())
+  snapshotDate             DateTime @unique @default(now()) @db.Date
+  totalOnlineRegistrations Int      @default(0)
+  totalAttendance          Int      @default(0)
+  totalRevenue             Float    @default(0)
+  avgAttendanceRate        Float    @default(0)
+  totalEvents              Int      @default(0)
+  createdAt                DateTime @default(now())
+  activeParticipants       Int      @default(0)
+  cancelledRegistrations   Int      @default(0)
+  completionRate           Float    @default(0)
+  confirmedRegistrations   Int      @default(0)
+  pendingRegistrations     Int      @default(0)
+  pendingRevenue           Float    @default(0)
+  waitlistRegistrations    Int      @default(0)
+  totalSpotRegistrations   Int      @default(0)
 }
 
 model PromoVideo {
@@ -356,6 +358,20 @@ model Notification {
   @@index([createdAt])
 }
 
+model PushSubscription {
+  id             String    @id @default(cuid())
+  username       String
+  endpoint       String    @unique
+  p256dh         String
+  auth           String
+  expirationTime DateTime?
+  userAgent      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([username])
+}
+
 model CertificateTheme {
   id        String   @id
   name      String
@@ -494,18 +510,23 @@ model BestOutgoingStudent {
 }
 
 model Stall {
-  id          Int      @id @default(autoincrement())
-  name        String
-  type        String   @default("Other")
-  owner       String   @default("-")
-  bidAmount   String   @default("-")
-  status      String   @default("Vacant")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  description String   @default("No description available.")
-  price       String   @default("-")
-  stallNo     String   @default("-")
-  teamSize    String   @default("-")
+  id              Int      @id @default(autoincrement())
+  name            String
+  type            String   @default("Other")
+  owner           String   @default("-")
+  bidAmount       String   @default("-")
+  status          String   @default("Vacant")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  description     String   @default("No description available.")
+  stallNo         String   @default("-")
+  menuItems       Json?    @default("[]")
+  qrCodeUrl       String?
+  qrTargetUrl     String?
+  recommendedItem String   @default("-")
+  teamName        String   @default("-")
+  timings         String   @default("-")
+  venue           String   @default("-")
 }
 
 model SportRegistration {
@@ -552,6 +573,43 @@ model BranchPoints {
   @@unique([sportId, branch])
   @@index([sportId])
   @@index([branch])
+}
+
+model AchievementBadge {
+  id          String   @id
+  name        String
+  description String
+  icon        String
+  bonusEnergy Int      @default(50)
+  category    String   @default("general")
+  createdAt   DateTime @default(now())
+}
+
+model CadetProfile {
+  id          String   @id
+  userId      String   @unique
+  totalEnergy Int      @default(0)
+  badgeIds    String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([totalEnergy])
+  @@index([userId])
+}
+
+model EnergyTransaction {
+  id        String       @id
+  userId    String
+  amount    Int
+  reason    EnergyReason
+  note      String?
+  createdAt DateTime     @default(now())
+  User      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([reason])
+  @@index([userId])
 }
 
 enum UserRole {
@@ -635,4 +693,27 @@ enum MatchWinner {
   TEAM1
   TEAM2
   DRAW
+}
+
+enum EnergyReason {
+  REGISTRATION_BONUS
+  PROFILE_COMPLETE
+  AVATAR_UPLOAD
+  EVENT_REGISTER
+  EVENT_ATTEND
+  MISSION_PARTICIPATE
+  MISSION_THIRD
+  MISSION_SECOND
+  MISSION_FIRST
+  SPORT_REGISTER
+  SPORT_PARTICIPATE
+  SPORT_THIRD
+  SPORT_SECOND
+  SPORT_FIRST
+  WEBSITE_ACTIVITY
+  GAME_SCORE
+  BADGE_UNLOCK
+  SOCIAL_SHARE
+  INVITE_FRIEND
+  ADMIN_GRANT
 }
