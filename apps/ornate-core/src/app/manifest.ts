@@ -31,13 +31,13 @@ export default function manifest(): MetadataRoute.Manifest {
                 src: '/assets/icon-192x192.png',
                 sizes: '192x192',
                 type: 'image/png',
-                purpose: 'any maskable',
+                purpose: 'maskable',
             },
             {
                 src: '/assets/icon-512x512.png',
                 sizes: '512x512',
                 type: 'image/png',
-                purpose: 'any maskable',
+                purpose: 'maskable',
             },
         ],
     };

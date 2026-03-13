@@ -124,7 +124,7 @@ deploy_logic() {
         if [[ "$DIR" == "uniz-portal" ]]; then
           BUILD_ARGS="--build-arg VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg VITE_API_URL=$VITE_API_URL --build-arg VITE_CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME --build-arg VITE_CLOUDINARY_UPLOAD_PRESET=$CLOUDINARY_UPLOAD_PRESET"
         elif [[ "$DIR" == "ornate" ]]; then
-          BUILD_ARGS="--build-arg NEXT_PUBLIC_ASSETS_URL=$NEXT_PUBLIC_ASSETS_URL --build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$ORNATE_VAPID_PUBLIC_KEY"
+          BUILD_ARGS="--build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$ORNATE_VAPID_PUBLIC_KEY"
         elif [[ "$DIR" == "ornate-core" ]]; then
           BUILD_ARGS="--build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$ORNATE_VAPID_PUBLIC_KEY"
         fi
