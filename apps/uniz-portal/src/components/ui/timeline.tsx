@@ -42,7 +42,7 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
         >
             <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-slate-200 bg-slate-50 mb-8">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-navy-900"></div>
                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">How it works</span>
                 </div>
                 <h2 className="text-4xl md:text-6xl font-black mb-6 text-slate-900 tracking-tighter leading-tight">
@@ -61,7 +61,7 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
                         className="flex justify-start pt-10 md:pt-40 md:gap-10"
                     >
                         <div className="sticky flex flex-col md:flex-row z-40 items-center top-40 self-start max-w-[40px] md:max-w-xs lg:max-w-sm md:w-full">
-                            <div className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-white flex items-center justify-center border border-slate-200 shadow-sm z-50 text-blue-600">
+                            <div className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-white flex items-center justify-center border border-slate-200 shadow-sm z-50 text-navy-900">
                                 <item.icon size={20} strokeWidth={2.5} />
                             </div>
                             <h3 className="hidden md:block text-3xl md:pl-20 md:text-6xl font-black text-slate-400 leading-none">
@@ -71,7 +71,7 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
 
                         <div className="relative pl-14 md:pl-4 pr-4 w-full">
                             <div className="mb-4">
-                                <div className="inline-block px-3 py-1 rounded-full border border-blue-100 bg-blue-50/50 text-blue-600 text-[10px] font-bold mb-4">
+                                <div className="inline-block px-3 py-1 rounded-full border border-navy-100 bg-navy-50 text-navy-900 text-[10px] font-bold mb-4">
                                     {item.step}
                                 </div>
                                 <h3 className="md:hidden block text-2xl mb-4 text-left font-black text-slate-400">
@@ -95,7 +95,7 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
                             height: heightTransform,
                             opacity: opacityTransform,
                         }}
-                        className="absolute inset-x-0 top-0 w-[2px] bg-blue-600"
+                        className="absolute inset-x-0 top-0 w-[2px] bg-navy-900"
                     />
                 </div>
             </div>

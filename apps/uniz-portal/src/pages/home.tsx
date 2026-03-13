@@ -56,7 +56,7 @@ export default function Home() {
             <a
               href="#"
               onClick={handleInstallClick}
-              className="group flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-full font-black text-sm shadow-2xl hover:bg-blue-600 transition-all active:scale-95 no-underline"
+              className="group flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-full font-black text-sm shadow-2xl hover:bg-navy-900 transition-all active:scale-95 no-underline"
             >
               <Download
                 size={20}
@@ -80,7 +80,7 @@ export default function Home() {
                   key={i}
                   className="flex items-center gap-3 text-slate-600 text-sm font-bold"
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-navy-900"></div>
                   {point}
                 </li>
               ))}
@@ -115,7 +115,7 @@ export default function Home() {
                   key={pointIdx}
                   className="flex items-center gap-3 text-slate-600 text-sm font-bold"
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-navy-900"></div>
                   {point}
                 </li>
               ))}
@@ -151,7 +151,7 @@ export default function Home() {
                   key={itemIdx}
                   className="flex items-center gap-3 text-slate-600 text-sm font-bold"
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-navy-900"></div>
                   {itemText}
                 </li>
               ))}

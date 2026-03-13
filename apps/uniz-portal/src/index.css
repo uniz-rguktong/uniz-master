@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cabin+Condensed:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -8,7 +9,7 @@
 @layer base {
   body {
     font-family: theme("fontFamily.body");
-    @apply bg-slate-50 text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900;
+    @apply bg-slate-50 text-[#222222] antialiased selection:bg-navy-100 selection:text-navy-900;
   }
 
   h1,
@@ -81,9 +82,9 @@
 @layer components {
   .uniz-primary-btn {
     @apply h-10 flex items-center justify-center font-medium text-sm rounded-full transition-all duration-200;
-    @apply bg-blue-600 text-white shadow-none ring-offset-2;
-    @apply hover:bg-blue-600/95 hover:-translate-y-[1px];
-    @apply focus:ring-2 focus:ring-blue-600 focus:outline-none;
+    @apply bg-navy-900 text-white shadow-none ring-offset-2;
+    @apply hover:bg-navy-800 hover:-translate-y-[1px];
+    @apply focus:ring-2 focus:ring-navy-900 focus:outline-none;
     @apply disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed;
   }
 
@@ -100,7 +101,7 @@
     box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.03);
     width: 100%;
     transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-    --component-active-color: #2563eb;
+    --component-active-color: var(--navy-900);
   }
 
   .menu__item {
@@ -151,7 +152,7 @@
     position: absolute;
     bottom: 0;
     height: 2px;
-    background-color: #2563eb;
+    background-color: var(--navy-900);
     border-radius: 9999px;
     transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
     width: 0;
@@ -234,6 +235,30 @@
     transform: rotate(330deg) translateY(-130%);
     animation-delay: -0.75s;
   }
+
+  .cabin-condensed-regular {
+    font-family: "Cabin Condensed", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .cabin-condensed-medium {
+    font-family: "Cabin Condensed", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+  }
+
+  .cabin-condensed-semibold {
+    font-family: "Cabin Condensed", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+  }
+
+  .cabin-condensed-bold {
+    font-family: "Cabin Condensed", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+  }
 }
 
 @keyframes spinner-blade {
@@ -270,7 +295,6 @@
   }
 
   @keyframes iconBounce {
-
     0%,
     100% {
       transform: translateY(0);
@@ -296,17 +320,37 @@
   .bg-grid {
     background-size: 40px 40px;
     background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px);
-    mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 70%, transparent 100%);
+    mask-image: radial-gradient(
+      ellipse 50% 50% at 50% 50%,
+      #000 70%,
+      transparent 100%
+    );
   }
-
 }
 
 :root {
+  --navy-900: #0b2a47;
+  --navy-800: #0f3b63;
+  --navy-700: #174a7c;
+  --navy-600: #1e5a91;
+  --navy-500: #256aa6;
+  --navy-400: #3c82bc;
+  --navy-300: #60a1d4;
+  --navy-200: #9cc7e8;
+  --navy-100: #e6f0f7;
+  --navy-50: #f0f5f9;
+  --white: #ffffff;
+  --bg-page: #f4f6f8;
+  --card-bg: #ffffff;
+  --text-primary: #222222;
+  --text-secondary: #4f4f4f;
+  --accent-hover: #174a7c;
+
   --muted-foreground: #64748b;
   --card: #ffffff;
   --border: #e2e8f0;
   --secondary: #f1f5f9;
-  --accent-foreground: #2563eb;
+  --accent-foreground: var(--navy-900);
 
   --component-inactive-color: var(--muted-foreground);
   --component-bg: var(--card);
@@ -353,7 +397,8 @@
 
 /* Modern Mobile Menu Additions */
 @keyframes iconBounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   20% {
