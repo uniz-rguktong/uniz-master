@@ -34,10 +34,8 @@ export default function SeatingArrangement({
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-slate-300">
-        <div className="w-10 h-10 border-4 border-t-blue-600 border-slate-100 rounded-full animate-spin mb-4"></div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em]">
-          Synchronizing Records...
-        </p>
+        <div className="w-10 h-10 border-4 border-t-navy-900 border-slate-100 rounded-full animate-spin mb-4"></div>
+      
       </div>
     );
   }
@@ -62,8 +60,8 @@ export default function SeatingArrangement({
   return (
     <div className="space-y-8 animate-in fade-in duration-700 pb-20">
       <div className="flex flex-col gap-1.5 px-1">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full border border-blue-100 mb-2 w-fit">
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-navy-50 text-navy-800 rounded-full border border-navy-100 mb-2 w-fit">
+          <span className="w-1.5 h-1.5 rounded-full bg-navy-900 animate-pulse"></span>
           <span className="text-[10px] font-bold uppercase tracking-widest">
             {semester?.name}
           </span>
@@ -92,7 +90,7 @@ export default function SeatingArrangement({
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
               <div className="space-y-4 flex-1">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-slate-900 text-white rounded-2xl shadow-lg shadow-slate-200 group-hover:bg-blue-600 transition-colors">
+                  <div className="p-3 bg-slate-900 text-white rounded-2xl shadow-lg shadow-slate-200 group-hover:bg-navy-900 transition-colors">
                     <Calendar size={20} />
                   </div>
                   <div>
@@ -126,11 +124,11 @@ export default function SeatingArrangement({
               </div>
 
               <div className="flex items-center gap-3 w-full lg:w-auto">
-                <div className="flex-1 lg:flex-none bg-blue-50 border border-blue-100 p-5 rounded-3xl min-w-[140px] text-center group-hover:bg-blue-600 group-hover:border-blue-700 transition-all duration-300">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600 group-hover:text-blue-100 mb-2">
+                <div className="flex-1 lg:flex-none bg-navy-50 border border-navy-100 p-5 rounded-3xl min-w-[140px] text-center group-hover:bg-navy-900 group-hover:border-navy-800 transition-all duration-300">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-navy-900 group-hover:text-navy-100 mb-2">
                     Hall / Room
                   </p>
-                  <p className="text-2xl font-black text-blue-900 group-hover:text-white leading-none tracking-tight">
+                  <p className="text-2xl font-black text-navy-900 group-hover:text-white leading-none tracking-tight">
                     {item.room}
                   </p>
                 </div>

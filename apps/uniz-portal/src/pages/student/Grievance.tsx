@@ -93,7 +93,7 @@ export default function Grievance() {
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 md:py-3.5 font-semibold text-sm md:text-[15px] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all appearance-none text-slate-900"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 md:py-3.5 font-semibold text-sm md:text-[15px] focus:outline-none focus:border-navy-900 focus:ring-1 focus:ring-navy-900 transition-all appearance-none text-slate-900"
                     >
                       <option value="Hostel">Hostel</option>
                       <option value="Mess">Mess</option>
@@ -128,7 +128,7 @@ export default function Grievance() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Provide detailed information about your grievance..."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-5 font-semibold text-sm md:text-[15px] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all h-[100px] md:min-h-[160px] resize-none text-slate-900 placeholder:text-slate-300 placeholder:font-normal"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-5 font-semibold text-sm md:text-[15px] focus:outline-none focus:border-navy-900 focus:ring-1 focus:ring-navy-900 transition-all h-[100px] md:min-h-[160px] resize-none text-slate-900 placeholder:text-slate-300 placeholder:font-normal"
                   />
                 </div>
 
@@ -139,7 +139,7 @@ export default function Grievance() {
                     id="anonymous"
                     checked={isAnonymous}
                     onChange={(e) => setIsAnonymous(e.target.checked)}
-                    className="w-5 h-5 rounded-md border-slate-300 text-blue-600 focus:ring-blue-600 focus:ring-offset-0 transition-all cursor-pointer"
+                    className="w-5 h-5 rounded-md border-slate-300 text-navy-900 focus:ring-navy-900 focus:ring-offset-0 transition-all cursor-pointer"
                   />
                   <label
                     htmlFor="anonymous"
@@ -152,7 +152,7 @@ export default function Grievance() {
                 {/* Action Buttons */}
                 <div className="pt-4">
                   <button
-                    className="w-full py-3.5 md:py-4 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-lg shadow-slate-200"
+                    className="w-full py-3.5 md:py-4 bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-lg shadow-slate-200"
                     onClick={() => handleSubmit()}
                     disabled={loading}
                   >

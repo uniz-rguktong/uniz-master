@@ -146,7 +146,7 @@ export default function CourseRegistration({
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <Loader2 className="animate-spin text-blue-600" size={40} />
+        <Loader2 className="animate-spin text-navy-900" size={40} />
         <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">
           Fetching available courses...
         </p>
@@ -180,7 +180,7 @@ export default function CourseRegistration({
   if (!isOpen) {
     return (
       <div className="bg-white rounded-[40px] p-12 text-center border-2 border-dashed border-slate-100 max-w-2xl mx-auto shadow-xl">
-        <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center text-blue-600 mx-auto mb-6">
+        <div className="w-20 h-20 bg-navy-50 rounded-3xl flex items-center justify-center text-navy-900 mx-auto mb-6">
           <ShieldCheck size={40} />
         </div>
         <h3 className="text-2xl font-black text-slate-900 mb-2">
@@ -215,7 +215,7 @@ export default function CourseRegistration({
 
   return (
     <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
-      <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[40px] p-10 text-white relative overflow-hidden shadow-2xl">
+      <div className="bg-gradient-to-br from-navy-900 to-navy-800 rounded-[40px] p-10 text-white relative overflow-hidden shadow-2xl">
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full border border-white/20 text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur-md">
@@ -225,7 +225,7 @@ export default function CourseRegistration({
               Semester Subject <br />
               Registration
             </h2>
-            <p className="text-blue-100 font-medium max-w-sm font-outfit leading-relaxed opacity-90">
+            <p className="text-navy-100 font-medium max-w-sm font-outfit leading-relaxed opacity-90">
               Select the core and elective subjects for your current branch to
               finalize your academic session enrollment.
             </p>
@@ -233,7 +233,7 @@ export default function CourseRegistration({
 
           <div className="flex items-center gap-6">
             <div className="text-right">
-              <p className="text-[10px] font-black uppercase tracking-widest text-blue-200 mb-1">
+              <p className="text-[10px] font-black uppercase tracking-widest text-navy-200 mb-1">
                 Total Selected Credits
               </p>
               <h3 className="text-5xl font-black text-white italic">
@@ -242,7 +242,7 @@ export default function CourseRegistration({
             </div>
             <div className="h-16 w-[1px] bg-white/20" />
             <div className="text-right">
-              <p className="text-[10px] font-black uppercase tracking-widest text-blue-200 mb-1">
+              <p className="text-[10px] font-black uppercase tracking-widest text-navy-200 mb-1">
                 Subjects Selected
               </p>
               <h3 className="text-5xl font-black text-white italic">
@@ -273,14 +273,14 @@ export default function CourseRegistration({
               }
               className={`p-6 rounded-[32px] border-2 transition-all flex items-start gap-4 text-left group overflow-hidden relative ${
                 isSelected
-                  ? "bg-white border-blue-600 shadow-xl shadow-blue-50"
+                  ? "bg-white border-navy-900 shadow-xl shadow-navy-50"
                   : "bg-white border-slate-50 hover:border-slate-200"
               }`}
             >
               <div
                 className={`p-4 rounded-xl transition-all ${
                   isSelected
-                    ? "bg-blue-600 text-white"
+                    ? "bg-navy-900 text-white"
                     : "bg-slate-50 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-600"
                 }`}
               >
@@ -292,7 +292,7 @@ export default function CourseRegistration({
                   <div className="flex items-center gap-2">
                     <span
                       className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
-                        isSelected ? "text-blue-600" : "text-slate-300"
+                        isSelected ? "text-navy-900" : "text-slate-300"
                       }`}
                     >
                       {sub.subject?.code}
@@ -303,7 +303,7 @@ export default function CourseRegistration({
                       </span>
                     )}
                     {sub.electiveGroupId && (
-                      <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-[8px] font-black uppercase tracking-tighter border border-blue-100">
+                      <span className="px-2 py-0.5 bg-navy-50 text-navy-900 rounded-md text-[8px] font-black uppercase tracking-tighter border border-navy-100">
                         Group: {sub.electiveGroupId}
                       </span>
                     )}
@@ -336,8 +336,8 @@ export default function CourseRegistration({
               </div>
 
               {isSelected && (
-                <div className="absolute -top-10 -right-10 w-24 h-24 bg-blue-600/5 rounded-full flex items-end justify-start p-6">
-                  <CheckCircle2 className="text-blue-600" size={24} />
+                <div className="absolute -top-10 -right-10 w-24 h-24 bg-navy-900/5 rounded-full flex items-end justify-start p-6">
+                  <CheckCircle2 className="text-navy-900" size={24} />
                 </div>
               )}
             </button>
@@ -356,7 +356,7 @@ export default function CourseRegistration({
         <button
           disabled={submitting || selectedIds.length === 0}
           onClick={handleRegister}
-          className="w-full max-w-md bg-slate-900 text-white h-20 rounded-[32px] font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-black hover:shadow-2xl hover:-translate-y-1 transition-all disabled:opacity-20 active:translate-y-0 active:scale-95 shadow-xl"
+          className="w-full max-w-md bg-navy-900 text-white h-20 rounded-[32px] font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-navy-800 hover:shadow-2xl hover:-translate-y-1 transition-all disabled:opacity-20 active:translate-y-0 active:scale-95 shadow-xl"
         >
           {submitting ? (
             <Loader2 className="animate-spin w-6 h-6" />
