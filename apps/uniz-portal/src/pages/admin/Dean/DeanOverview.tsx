@@ -19,7 +19,8 @@ import {
   TrendChart, 
   ComparisonChart, 
   PulseFeed, 
-  DonutChart 
+  DonutChart,
+  SubjectGradeChart
 } from "../AnalyticsUI";
 
 export default function DeanOverview() {
@@ -27,6 +28,7 @@ export default function DeanOverview() {
   const [heatmap, setHeatmap] = useState<any[]>([]);
   const [grievances, setGrievances] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedBranch, setSelectedBranch] = useState<string>("CSE");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,6 +83,19 @@ export default function DeanOverview() {
       value: Number((stats.total / stats.count).toFixed(2))
     })).sort((a, b) => b.value - a.value);
   }, [heatmap]);
+
+  // Unique branches for dropdown
+  const uniqueBranches = useMemo(() => {
+    const b = Array.from(new Set(heatmap.map(item => item.branch))).filter(Boolean);
+    return b.length ? b.sort() : ["CSE", "ECE", "EEE", "MECH", "CIVIL"];
+  }, [heatmap]);
+
+  // Filtered heatmap data for the selected branch
+  const branchFilteredData = useMemo(() => {
+    return heatmap
+      .filter(item => item.branch === selectedBranch)
+      .sort((a, b) => (Number(b.average_grade) || 0) - (Number(a.average_grade) || 0));
+  }, [heatmap, selectedBranch]);
 
   // Handle Grievance Data Fallback (since API is empty)
   const grievanceData = useMemo(() => {
@@ -205,6 +220,17 @@ export default function DeanOverview() {
                 </div>
            </div>
         </div>
+      </div>
+
+      {/* Dynamic Branch Analytics Section */}
+      <div className="w-full">
+         <SubjectGradeChart 
+           title="Branch Performance Intelligence"
+           data={branchFilteredData}
+           branches={uniqueBranches}
+           selectedBranch={selectedBranch}
+           onBranchChange={setSelectedBranch}
+         />
       </div>
     </div>
   );
