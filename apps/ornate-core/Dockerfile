@@ -25,6 +25,8 @@ COPY . .
 # Build Next.js
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ARG NEXT_PUBLIC_VAPID_PUBLIC_KEY
+ENV NEXT_PUBLIC_VAPID_PUBLIC_KEY=$NEXT_PUBLIC_VAPID_PUBLIC_KEY
 RUN npm run build
 
 # ── Stage 3: Base runner (Puppeteer & Fonts) ────────────────

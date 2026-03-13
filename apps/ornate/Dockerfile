@@ -19,6 +19,8 @@ RUN npx prisma generate
 
 # Build the application
 ENV NEXT_TELEMETRY_DISABLED 1
+ARG NEXT_PUBLIC_VAPID_PUBLIC_KEY
+ENV NEXT_PUBLIC_VAPID_PUBLIC_KEY=$NEXT_PUBLIC_VAPID_PUBLIC_KEY
 RUN npm run build
 
 # --- STAGE 3: Runner (App) ---

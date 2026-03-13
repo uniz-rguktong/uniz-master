@@ -1,13 +1,20 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+  output          = "../src/generated/prisma"
+  binaryTargets   = ["native", "windows", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["ornate_core"]
 }
 
 model Admin {
+  @@schema(" ornate_core\)
+  @@schema("ornate_core")
   id                           String                @id
   name                         String?
   email                        String                @unique
@@ -39,6 +46,7 @@ model Admin {
 }
 
 model AnalyticsSnapshot {
+  @@schema(" ornate_core\)
   id                       String   @id
   snapshotDate             DateTime @unique @default(now()) @db.Date
   totalOnlineRegistrations Int      @default(0)
@@ -58,6 +66,7 @@ model AnalyticsSnapshot {
 }
 
 model Announcement {
+  @@schema(" ornate_core\)
   id             String   @id
   title          String
   content        String
@@ -76,6 +85,7 @@ model Announcement {
 }
 
 model AuditLog {
+  @@schema(" ornate_core\)
   id          String   @id
   action      String
   entityType  String
@@ -92,6 +102,7 @@ model AuditLog {
 }
 
 model BestOutgoingStudent {
+  @@schema(" ornate_core\)
   id              String   @id
   name            String
   rollNumber      String
@@ -118,6 +129,7 @@ model BestOutgoingStudent {
 }
 
 model BranchPoints {
+  @@schema(" ornate_core\)
   id               String  @id
   sportId          String
   branch           String
@@ -132,6 +144,7 @@ model BranchPoints {
 }
 
 model BrandLogo {
+  @@schema(" ornate_core\)
   id         String   @id
   name       String
   type       String
@@ -149,6 +162,7 @@ model BrandLogo {
 }
 
 model CertificateTheme {
+  @@schema(" ornate_core\)
   id        String   @id
   name      String
   preview   String
@@ -159,6 +173,7 @@ model CertificateTheme {
 }
 
 model Event {
+  @@schema(" ornate_core\)
   id                           String              @id
   title                        String
   description                  String
@@ -210,6 +225,7 @@ model Event {
 }
 
 model FestSettings {
+  @@schema(" ornate_core\)
   id                 String    @id @default("singleton")
   festName           String    @default("ORNATE 2K26")
   tagline            String?   @default("Innovation Meets Culture")
@@ -230,6 +246,7 @@ model FestSettings {
 }
 
 model GalleryAlbum {
+  @@schema(" ornate_core\)
   id           String         @id
   title        String
   description  String?
@@ -246,6 +263,7 @@ model GalleryAlbum {
 }
 
 model GalleryImage {
+  @@schema(" ornate_core\)
   id           String       @id
   url          String
   caption      String?
@@ -255,6 +273,7 @@ model GalleryImage {
 }
 
 model Match {
+  @@schema(" ornate_core\)
   id         String       @id
   round      String
   matchId    String?
@@ -285,6 +304,7 @@ model Match {
 }
 
 model Notification {
+  @@schema(" ornate_core\)
   id            String   @id
   senderId      String
   senderName    String
@@ -309,6 +329,7 @@ model Notification {
 }
 
 model PromoVideo {
+  @@schema(" ornate_core\)
   id         String   @id
   title      String
   url        String
@@ -326,6 +347,7 @@ model PromoVideo {
 }
 
 model Registration {
+  @@schema(" ornate_core\)
   id                  String             @id
   eventId             String
   userId              String?
@@ -359,6 +381,7 @@ model Registration {
 }
 
 model Sport {
+  @@schema(" ornate_core\)
   id                      String                   @id
   name                    String
   gender                  SportGender
@@ -399,6 +422,7 @@ model Sport {
 }
 
 model SportRegistration {
+  @@schema(" ornate_core\)
   id          String             @id
   sportId     String
   studentName String
@@ -420,6 +444,7 @@ model SportRegistration {
 }
 
 model SportTeam {
+  @@schema(" ornate_core\)
   id        String   @id
   sportId   String
   teamId    String   @unique
@@ -431,6 +456,7 @@ model SportTeam {
 }
 
 model SportWinnerAnnouncement {
+  @@schema(" ornate_core\)
   id          String    @id
   sportId     String    @unique
   isPublished Boolean   @default(false)
@@ -442,6 +468,7 @@ model SportWinnerAnnouncement {
 }
 
 model Stall {
+  @@schema(" ornate_core\)
   id              Int      @id @default(autoincrement())
   name            String
   type            String   @default("Other")
@@ -462,6 +489,7 @@ model Stall {
 }
 
 model Task {
+  @@schema(" ornate_core\)
   id          String   @id
   title       String
   description String?
@@ -477,6 +505,7 @@ model Task {
 }
 
 model Team {
+  @@schema(" ornate_core\)
   id             String             @id
   teamName       String
   teamCode       String             @unique
@@ -506,6 +535,7 @@ model Team {
 }
 
 model TeamMember {
+  @@schema(" ornate_core\)
   id                  String             @id
   teamId              String
   userId              String?
@@ -530,6 +560,7 @@ model TeamMember {
 }
 
 model User {
+  @@schema(" ornate_core\)
   id                String              @id
   name              String?
   email             String              @unique
@@ -548,6 +579,7 @@ model User {
 }
 
 model CadetProfile {
+  @@schema(" ornate_core\)
   id          String   @id
   userId      String   @unique
   totalEnergy Int      @default(0)
@@ -561,6 +593,7 @@ model CadetProfile {
 }
 
 model EnergyTransaction {
+  @@schema(" ornate_core\)
   id        String       @id
   userId    String
   amount    Int
@@ -575,6 +608,7 @@ model EnergyTransaction {
 }
 
 model AchievementBadge {
+  @@schema(" ornate_core\)
   id          String   @id
   name        String
   description String
@@ -585,6 +619,7 @@ model AchievementBadge {
 }
 
 model WinnerAnnouncement {
+  @@schema(" ornate_core\)
   id          String    @id
   eventId     String    @unique
   isPublished Boolean   @default(false)
@@ -596,6 +631,7 @@ model WinnerAnnouncement {
 }
 
 model PushSubscription {
+  @@schema(" ornate_core\)
   id             String    @id
   username       String
   endpoint       String    @unique
@@ -610,6 +646,7 @@ model PushSubscription {
 }
 
 enum EventStatus {
+  @@schema(" ornate_core\)
   DRAFT
   PUBLISHED
   ONGOING
@@ -618,6 +655,7 @@ enum EventStatus {
 }
 
 enum MatchStatus {
+  @@schema(" ornate_core\)
   PENDING
   SCHEDULED
   LIVE
@@ -625,24 +663,28 @@ enum MatchStatus {
 }
 
 enum MatchWinner {
+  @@schema(" ornate_core\)
   TEAM1
   TEAM2
   DRAW
 }
 
 enum MemberStatus {
+  @@schema(" ornate_core\)
   PENDING
   ACCEPTED
   DECLINED
 }
 
 enum PaymentStatus {
+  @@schema(" ornate_core\)
   PENDING
   PAID
   FAILED
 }
 
 enum RegistrationStatus {
+  @@schema(" ornate_core\)
   PENDING
   CONFIRMED
   WAITLISTED
@@ -652,23 +694,27 @@ enum RegistrationStatus {
 }
 
 enum SportCategory {
+  @@schema(" ornate_core\)
   INDIVIDUAL
   TEAM
 }
 
 enum SportFormat {
+  @@schema(" ornate_core\)
   KNOCKOUT
   LEAGUE
   GROUP_KNOCKOUT
 }
 
 enum SportGender {
+  @@schema(" ornate_core\)
   MALE
   FEMALE
   MIXED
 }
 
 enum SportStatus {
+  @@schema(" ornate_core\)
   UPCOMING
   REGISTRATION_OPEN
   ONGOING
@@ -676,12 +722,14 @@ enum SportStatus {
 }
 
 enum TeamRole {
+  @@schema(" ornate_core\)
   LEADER
   MEMBER
   VICE_CAPTAIN
 }
 
 enum UserRole {
+  @@schema(" ornate_core\)
   SUPER_ADMIN
   BRANCH_ADMIN
   CLUB_COORDINATOR
@@ -693,6 +741,7 @@ enum UserRole {
 }
 
 enum EnergyReason {
+  @@schema(" ornate_core\)
   REGISTRATION_BONUS
   PROFILE_COMPLETE
   AVATAR_UPLOAD
