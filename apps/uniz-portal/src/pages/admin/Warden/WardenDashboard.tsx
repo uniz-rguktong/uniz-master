@@ -341,7 +341,7 @@ export default function WardenDashboard() {
               className={`
                 w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group hover:bg-red-50 hover:text-red-500 text-slate-500
               `}
-              title={!isSidebarOpen ? "Logout" : ""}
+              title={!isSidebarOpen ? "LOGOUT" : ""}
             >
               <div className="flex items-center justify-center min-w-[22px]">
                 <LogOut
