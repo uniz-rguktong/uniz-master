@@ -349,7 +349,7 @@ export default function UnifiedAcademicManager() {
               fetchSemesters();
               fetchMasterSubjects();
             }}
-            className="p-3 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-blue-600 transition-all active:scale-95"
+            className="p-3 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-navy-900 transition-all active:scale-95"
           >
             <RefreshCcw size={20} className={loading ? "animate-spin" : ""} />
           </button>
@@ -385,7 +385,7 @@ export default function UnifiedAcademicManager() {
               className={`
                 flex items-center gap-3 px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all
                 ${activeTab === tabId
-                  ? "bg-white text-blue-600 border border-slate-100"
+                  ? "bg-white text-navy-900 border border-slate-100"
                   : "text-slate-400 hover:text-slate-900 hover:bg-white/80"
                 }
                 ${tabId === "rollout" && !selectedSem ? "opacity-30 cursor-not-allowed" : ""}
@@ -428,7 +428,7 @@ export default function UnifiedAcademicManager() {
                     </span>
                   </div>
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors uppercase">
+                <h3 className="text-2xl font-black text-slate-900 tracking-tight group-hover:text-navy-900 transition-colors uppercase">
                   {sem.name}
                 </h3>
                 <div className="flex items-center gap-6 mt-6 mb-8">
@@ -454,14 +454,14 @@ export default function UnifiedAcademicManager() {
                 </div>
                 <div className="w-full h-2 bg-slate-50 rounded-full overflow-hidden mt-auto">
                   <div
-                    className={`h-full transition-all duration-1000 ${sem.status === "REGISTRATION_OPEN" ? "w-full bg-emerald-500" : "w-1/3 bg-blue-500"}`}
+                    className={`h-full transition-all duration-1000 ${sem.status === "REGISTRATION_OPEN" ? "w-full bg-emerald-500" : "w-1/3 bg-navy-500"}`}
                   ></div>
                 </div>
               </div>
             ))}
             {semesters.length === 0 && (
               <div className="col-span-full py-24 bg-white rounded-xl border-dashed border-2 border-slate-100 p-12 text-center animate-in fade-in zoom-in-95 duration-700">
-                <div className="w-24 h-24 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-white shadow-none">
+                <div className="w-24 h-24 bg-navy-50 text-navy-900 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-white shadow-none">
                   <BookOpen size={40} strokeWidth={2.5} />
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight italic">
@@ -495,7 +495,7 @@ export default function UnifiedAcademicManager() {
                   placeholder="Search master subjects..."
                   value={subSearch}
                   onChange={(e) => setSubSearch(e.target.value)}
-                  className="w-full h-12 pl-14 pr-6 bg-slate-50 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 font-bold text-slate-900"
+                  className="w-full h-12 pl-14 pr-6 bg-slate-50 rounded-xl outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 font-bold text-slate-900"
                 />
               </div>
               <select
@@ -522,7 +522,7 @@ export default function UnifiedAcademicManager() {
                   });
                   setShowSubModal(true);
                 }}
-                className="h-12 px-8 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 border-2 border-white/20 shadow-none"
+                className="h-12 px-8 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 border-2 border-white/20 shadow-none"
               >
                 <PlusCircle size={16} /> Add New Subject
               </button>
@@ -535,7 +535,7 @@ export default function UnifiedAcademicManager() {
                   className="bg-white border border-slate-100 rounded-xl p-5 group overflow-hidden"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-50 transition-all">
+                    <div className="p-3 bg-navy-50 rounded-xl text-navy-900 border border-navy-100 transition-all">
                       <BookText size={20} />
                     </div>
                     <div className="px-3 py-1 bg-slate-50 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-400">
@@ -561,7 +561,7 @@ export default function UnifiedAcademicManager() {
                         });
                         setShowSubModal(true);
                       }}
-                      className="text-slate-300 hover:text-blue-600 transition-colors"
+                      className="text-slate-300 hover:text-navy-900 transition-colors"
                     >
                       <Edit3 size={16} />
                     </button>
@@ -578,7 +578,7 @@ export default function UnifiedAcademicManager() {
               <div className="relative z-10 flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="px-4 py-1.5 bg-blue-500/20 text-blue-400 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-500/30">
+                    <span className="px-4 py-1.5 bg-navy-500/20 text-blue-400 rounded-xl text-[10px] font-black uppercase tracking-widest border border-navy-100/30">
                       Active Rollout
                     </span>
                     <span className="text-slate-500">•</span>
@@ -618,7 +618,7 @@ export default function UnifiedAcademicManager() {
                   </button>
                 </div>
               </div>
-              <div className="absolute right-0 top-0 w-64 h-64 bg-blue-600/10 blur-[120px] rounded-full"></div>
+              <div className="absolute right-0 top-0 w-64 h-64 bg-navy-900/10 blur-[120px] rounded-full"></div>
             </div>
 
             <div className="flex items-center justify-between border-b border-slate-200 pb-2">
@@ -628,13 +628,13 @@ export default function UnifiedAcademicManager() {
                     key={v}
                     onClick={() => setRolloutView(v)}
                     className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${rolloutView === v
-                      ? "text-blue-600"
+                      ? "text-navy-900"
                       : "text-slate-400 hover:text-slate-600"
                       }`}
                   >
                     {v}
                     {rolloutView === v && (
-                      <div className="absolute bottom-0 left-0 w-full h-1 bg-blue-600 rounded-full animate-in fade-in duration-500"></div>
+                      <div className="absolute bottom-0 left-0 w-full h-1 bg-navy-900 rounded-full animate-in fade-in duration-500"></div>
                     )}
                   </button>
                 ))}
@@ -689,7 +689,7 @@ export default function UnifiedAcademicManager() {
                 {rolloutView === "allocations" && (
                   <button
                     onClick={() => setShowAddAllocModal(true)}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-none hover:scale-105 active:scale-95 transition-all"
+                    className="flex items-center gap-2 bg-navy-900 text-white px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-none hover:scale-105 active:scale-95 transition-all"
                   >
                     <Plus size={14} /> Add 🎓
                   </button>
@@ -716,7 +716,7 @@ export default function UnifiedAcademicManager() {
                       >
                         <td className="px-10 py-6">
                           <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 group-hover:text-blue-500 group-hover:bg-blue-50 transition-all">
+                            <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 group-hover:text-navy-900 group-hover:bg-navy-50 transition-all">
                               <BookOpen size={20} />
                             </div>
                             <div>
@@ -736,7 +736,7 @@ export default function UnifiedAcademicManager() {
                             <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
                               {item.branch}
                             </span>
-                            <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                            <span className="px-3 py-1 bg-navy-50 text-navy-900 rounded-xl text-[9px] font-black uppercase tracking-widest">
                               {item.academicYear}
                             </span>
                             {item.batch && (
@@ -840,8 +840,8 @@ export default function UnifiedAcademicManager() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
           <div className="bg-white rounded-xl w-full max-w-xl p-10 animate-in zoom-in-95 duration-300">
             <div className="flex items-center gap-4 mb-10">
-              <div className="p-5 bg-blue-50 text-blue-600 rounded-xl shadow-none">
-                <Zap size={32} className="fill-blue-600 opacity-20" />
+              <div className="p-5 bg-navy-50 text-navy-900 rounded-xl shadow-none">
+                <Zap size={32} className="fill-navy-900 opacity-20" />
               </div>
               <div>
                 <h2 className="text-3xl font-black italic tracking-tighter text-slate-900">
@@ -862,7 +862,7 @@ export default function UnifiedAcademicManager() {
                   type="text"
                   value={newSemName}
                   onChange={(e) => setNewSemName(e.target.value)}
-                  className="w-full h-16 px-8 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-xl outline-none font-black text-slate-900 transition-all"
+                  className="w-full h-16 px-8 bg-slate-50 border-2 border-transparent focus:border-navy-100 focus:bg-white rounded-xl outline-none font-black text-slate-900 transition-all"
                   placeholder="e.g. AY 2024-25 SEM-II"
                 />
               </div>
@@ -903,7 +903,7 @@ export default function UnifiedAcademicManager() {
                 <button
                   onClick={handleInitSemester}
                   disabled={loading}
-                  className="h-16 flex-[2] bg-blue-600 text-white rounded-xl font-black uppercase tracking-[0.2em] text-xs shadow-none hover:bg-blue-700 transition-all"
+                  className="h-16 flex-[2] bg-navy-900 text-white rounded-xl font-black uppercase tracking-[0.2em] text-xs shadow-none hover:bg-navy-800 transition-all"
                 >
                   {loading ? "Initializing Engine..." : "Launch Rollout 🎓"}
                 </button>
@@ -1133,7 +1133,7 @@ export default function UnifiedAcademicManager() {
 
               <button
                 type="submit"
-                className="w-full h-16 bg-blue-600 text-white rounded-xl font-black uppercase tracking-[0.2em] text-xs shadow-none hover:bg-blue-700 transition-all mt-6"
+                className="w-full h-16 bg-navy-900 text-white rounded-xl font-black uppercase tracking-[0.2em] text-xs shadow-none hover:bg-navy-800 transition-all mt-6"
               >
                 {editingSub
                   ? "Update Architectural Database"
