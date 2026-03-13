@@ -276,7 +276,7 @@ export default function BannerManager() {
               className={cn(
                 "h-full min-h-[200px] border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center p-6 cursor-pointer transition-all bg-slate-50",
                 isDragActive
-                  ? "border-blue-500 bg-blue-50"
+                  ? "border-navy-100 bg-navy-50"
                   : "border-slate-300 hover:border-slate-400 hover:bg-slate-100",
                 image && "border-emerald-500 bg-emerald-50",
               )}
@@ -319,7 +319,7 @@ export default function BannerManager() {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Enter the details..."
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all resize-none h-24"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:ring-2 focus:ring-navy-900 focus:bg-white outline-none transition-all resize-none h-24"
               />
             </div>
 

@@ -134,8 +134,8 @@ export function FileUploader({
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                     className={cn(
-                        "flex h-48 cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 transition-all hover:bg-slate-50 hover:border-blue-400",
-                        isDragging && "border-blue-500 bg-blue-50/50",
+                        "flex h-48 cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 transition-all hover:bg-slate-50 hover:border-navy-900",
+                        isDragging && "border-navy-900 bg-navy-50/50",
                     )}
                 >
                     <div className="rounded-full bg-white p-4 shadow-sm border border-slate-100 transition-transform group-hover:scale-110">
@@ -160,7 +160,7 @@ export function FileUploader({
                         ) : (
                             <div className="flex flex-col items-center gap-3">
                                 {fileName?.endsWith('.csv') || fileName?.endsWith('.xlsx') || fileName?.endsWith('.xls') ? (
-                                    <FileSpreadsheet className="h-12 w-12 text-blue-600" />
+                                    <FileSpreadsheet className="h-12 w-12 text-navy-900" />
                                 ) : (
                                     <FileText className="h-12 w-12 text-slate-400" />
                                 )}

@@ -205,7 +205,7 @@ export default function AddStudents() {
           <select
             value={sem}
             onChange={(e) => setSem(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-navy-900 focus:border-navy-100 block p-2.5"
           >
             <option value="Sem - 1">Semester 1</option>
             <option value="Sem - 2">Semester 2</option>
@@ -219,7 +219,7 @@ export default function AddStudents() {
           <select
             value={branch}
             onChange={(e) => setBranch(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-navy-900 focus:border-navy-100 block p-2.5"
           >
             {["CSE", "ECE", "EEE", "CIVIL", "MECH"].map((b) => (
               <option key={b} value={b}>

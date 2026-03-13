@@ -203,7 +203,7 @@ export default function BannersSection() {
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="h-11 px-6 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2"
+          className="h-11 px-6 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-navy-800 active:scale-95 transition-all flex items-center justify-center gap-2"
         >
           <Plus size={16} /> New Banner
         </button>
@@ -295,7 +295,7 @@ export default function BannersSection() {
                     </button>
                     <button
                       onClick={() => handleEditClick(banner)}
-                      className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-blue-50 hover:text-blue-600 border border-slate-100 transition-all active:scale-95"
+                      className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-navy-50 hover:text-navy-900 border border-slate-100 transition-all active:scale-95"
                     >
                       <Edit3 size={14} />
                     </button>
@@ -353,7 +353,7 @@ export default function BannersSection() {
           />
           <div className="bg-white w-full max-w-xl rounded-xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
             <div
-              className={`${editingBanner ? "bg-slate-900" : "bg-blue-600"} p-8 text-white relative flex items-center gap-5 transition-colors duration-500`}
+              className={`${editingBanner ? "bg-slate-900" : "bg-navy-900"} p-8 text-white relative flex items-center gap-5 transition-colors duration-500`}
             >
               <div className="p-3.5 bg-white/20 rounded-xl">
                 {editingBanner ? <Edit3 size={26} /> : <Plus size={26} />}
@@ -398,7 +398,7 @@ export default function BannersSection() {
                       setNewBanner({ ...newBanner, title: e.target.value })
                     }
                     placeholder="e.g. UniZ v2.0 is Live!"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900"
                   />
                 </div>
 
@@ -432,7 +432,7 @@ export default function BannersSection() {
                       setNewBanner({ ...newBanner, imageUrl: e.target.value })
                     }
                     placeholder="https://images.unsplash.com/..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900"
                   />
                 </div>
 
@@ -455,7 +455,7 @@ export default function BannersSection() {
               <button
                 disabled={!!actionLoading}
                 type="submit"
-                className={`w-full ${editingBanner ? "bg-slate-900" : "bg-blue-600"} text-white py-5 rounded-xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:opacity-90 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95`}
+                className={`w-full ${editingBanner ? "bg-slate-900" : "bg-navy-900"} text-white py-5 rounded-xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:opacity-90 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95`}
               >
                 {actionLoading === "creating" ||
                   actionLoading === "updating" ? (

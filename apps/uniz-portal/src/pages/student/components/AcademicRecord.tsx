@@ -36,7 +36,7 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
       {semesters.map((sem) => (
         <div key={sem} className="space-y-6">
           <div className="flex items-center gap-3">
-            <div className="h-6 w-1.5 bg-blue-600 rounded-full"></div>
+            <div className="h-6 w-1.5 bg-navy-900 rounded-full"></div>
             <h2 className="text-[17px] font-semibold tracking-tight text-slate-900">
               {sem} Terminal Records
             </h2>
@@ -48,7 +48,7 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
               <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
                 <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100 flex items-center justify-between">
                   <h3 className="font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 text-slate-400">
-                    <Award size={14} className="text-blue-500" /> Subject
+                    <Award size={14} className="text-navy-900" /> Subject
                     Performance
                   </h3>
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
@@ -79,7 +79,7 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                           <td className="px-5 py-4 text-right">
                             <div className="flex flex-col items-end gap-1">
                               <span
-                                className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold border ${g.grade === 0 ? "bg-red-50 text-red-600 border-red-100/50" : "bg-blue-50 text-blue-600 border-blue-100/50"}`}
+                                className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold border ${g.grade === 0 ? "bg-red-50 text-red-600 border-red-100/50" : "bg-navy-50 text-navy-900 border-navy-100/50"}`}
                               >
                                 {g.grade === 0 ? "R" : g.grade}
                               </span>
@@ -103,7 +103,7 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
               <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm h-fit">
                 <div className="bg-slate-50/50 px-5 py-4 border-b border-slate-100">
                   <h3 className="font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 text-slate-400">
-                    <Percent size={14} className="text-blue-500" /> Attendance
+                    <Percent size={14} className="text-navy-900" /> Attendance
                     Matrix
                   </h3>
                 </div>
