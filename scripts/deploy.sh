@@ -124,9 +124,9 @@ deploy_logic() {
         if [[ "$DIR" == "uniz-portal" ]]; then
           BUILD_ARGS="--build-arg VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg VITE_API_URL=$VITE_API_URL --build-arg VITE_CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME --build-arg VITE_CLOUDINARY_UPLOAD_PRESET=$CLOUDINARY_UPLOAD_PRESET"
         elif [[ "$DIR" == "ornate" ]]; then
-          BUILD_ARGS="--build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$ORNATE_VAPID_PUBLIC_KEY --build-arg DATABASE_URL=$DATABASE_URL --build-arg REDIS_URL=$REDIS_URL"
+          BUILD_ARGS="--build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$ORNATE_VAPID_PUBLIC_KEY --build-arg DATABASE_URL=$ORNATE_DATABASE_URL --build-arg DIRECT_URL=$ORNATE_DIRECT_URL --build-arg REDIS_URL=$REDIS_URL"
         elif [[ "$DIR" == "ornate-core" ]]; then
-          BUILD_ARGS="--build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$ORNATE_VAPID_PUBLIC_KEY --build-arg DATABASE_URL=$DATABASE_URL --build-arg REDIS_URL=$REDIS_URL"
+          BUILD_ARGS="--build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$ORNATE_VAPID_PUBLIC_KEY --build-arg DATABASE_URL=$ORNATE_DATABASE_URL --build-arg DIRECT_URL=$ORNATE_DIRECT_URL --build-arg REDIS_URL=$REDIS_URL"
         fi
 
         if docker build --network host --no-cache --platform linux/amd64 $BUILD_ARGS -t $IMG:$TAG $BUILD_CONTEXT; then
