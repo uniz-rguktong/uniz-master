@@ -4,7 +4,6 @@ import {
   Upload,
   Loader2,
   CheckCircle2,
-  Filter,
   Download,
   ChevronDown,
 } from "lucide-react";
@@ -153,29 +152,29 @@ export default function StudentBulkSection() {
   };
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
+    <div className="p-10 space-y-8 animate-in fade-in duration-700 pb-20 text-slate-900 bg-transparent min-h-screen">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex flex-col gap-1.5">
-          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+        <div className="flex flex-col gap-2">
+          <h2 className="text-[28px] font-bold tracking-tight text-slate-900 leading-none">
             Student Bulk Operations
           </h2>
-          <p className="text-slate-500 font-medium text-[15px]">
+          <p className="text-slate-500 font-medium text-[16px]">
             Bulk onboard students or extract batch records to Excel.
           </p>
         </div>
 
-        <div className="flex bg-slate-100/80 p-1.5 rounded-xl border border-slate-200/60 backdrop-blur-sm shadow-none">
+        <div className="flex bg-slate-100/50 p-1.5 rounded-2xl border border-slate-100/50 backdrop-blur-sm shadow-none">
           <button
             onClick={() => setActiveTab("upload")}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "upload" ? "bg-white text-blue-700 shadow-none border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
+            className={`flex items-center gap-2 px-8 py-2.5 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "upload" ? "bg-white text-indigo-600 shadow-sm border border-slate-100" : "text-slate-400 hover:text-indigo-500"}`}
           >
-            <Upload size={14} /> Bulk Upload
+            <Upload size={14} strokeWidth={2.5} /> Bulk Upload
           </button>
           <button
             onClick={() => setActiveTab("export")}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "export" ? "bg-white text-blue-700 shadow-none border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
+            className={`flex items-center gap-2 px-8 py-2.5 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "export" ? "bg-white text-indigo-600 shadow-sm border border-slate-100" : "text-slate-400 hover:text-indigo-500"}`}
           >
-            <Download size={14} /> Batch Export
+            <Download size={14} strokeWidth={2.5} /> Batch Export
           </button>
         </div>
       </div>
@@ -229,28 +228,14 @@ export default function StudentBulkSection() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-100 p-12 text-slate-900 animate-in slide-in-from-right-8 duration-700 shadow-none transition-all">
-          <div className="max-w-4xl mx-auto space-y-12">
-            <div className="flex items-center gap-6">
-              <div className="p-5 bg-blue-600 text-white rounded-xl shadow-none">
-                <Filter size={26} />
-              </div>
-              <div className="space-y-1.5">
-                <h3 className="text-3xl font-semibold tracking-tight leading-none">
-                  Filtering Engine
-                </h3>
-                <p className="text-slate-500 font-medium text-[17px]">
-                  Export selective student cohorts with specific data fields.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
                   Branch Focus
                 </label>
-                <div className="relative group">
+                <div className="relative">
                   <select
                     value={exportParams.branch}
                     onChange={(e) =>
@@ -259,7 +244,7 @@ export default function StudentBulkSection() {
                         branch: e.target.value,
                       })
                     }
-                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
+                    className="w-full h-14 pl-6 pr-10 bg-slate-50/50 border border-slate-100/50 rounded-2xl outline-none font-bold text-slate-900 text-[13px] appearance-none uppercase tracking-widest cursor-pointer"
                   >
                     <option value="ALL">All Departments</option>
                     {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
@@ -269,22 +254,23 @@ export default function StudentBulkSection() {
                     )}
                   </select>
                   <ChevronDown
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none"
                     size={16}
                   />
                 </div>
               </div>
+
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
                   Academic Year
                 </label>
-                <div className="relative group">
+                <div className="relative">
                   <select
                     value={exportParams.year}
                     onChange={(e) =>
                       setExportParams({ ...exportParams, year: e.target.value })
                     }
-                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
+                    className="w-full h-14 pl-6 pr-10 bg-slate-50/50 border border-slate-100/50 rounded-2xl outline-none font-bold text-slate-900 text-[13px] appearance-none uppercase tracking-widest cursor-pointer"
                   >
                     <option value="ALL">All Years</option>
                     {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
@@ -292,17 +278,17 @@ export default function StudentBulkSection() {
                     ))}
                   </select>
                   <ChevronDown
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none"
                     size={16}
                   />
                 </div>
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
                   Batch Focus
                 </label>
-                <div className="relative group">
+                <div className="relative">
                   <select
                     value={exportParams.batch}
                     onChange={(e) =>
@@ -311,7 +297,7 @@ export default function StudentBulkSection() {
                         batch: e.target.value,
                       })
                     }
-                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
+                    className="w-full h-14 pl-6 pr-10 bg-slate-50/50 border border-slate-100/50 rounded-2xl outline-none font-bold text-slate-900 text-[13px] appearance-none uppercase tracking-widest cursor-pointer"
                   >
                     <option value="ALL">All Batches</option>
                     {availableBatches.map((b) => (
@@ -321,43 +307,42 @@ export default function StudentBulkSection() {
                     ))}
                   </select>
                   <ChevronDown
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none"
                     size={16}
                   />
                 </div>
               </div>
-              <div className="md:col-span-2 space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
-                  Data Columns (Comma Separated)
-                </label>
-                <input
-                  type="text"
-                  value={exportParams.fields}
-                  onChange={(e) =>
-                    setExportParams({ ...exportParams, fields: e.target.value })
-                  }
-                  className="w-full h-14 px-8 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] transition-all shadow-none tracking-wide"
-                />
-              </div>
             </div>
 
-            <div className="pt-8 space-y-8">
-              <button
-                onClick={handleExport}
-                disabled={loading}
-                className="w-full h-16 flex items-center justify-center gap-3.5 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-none active:scale-[0.98] disabled:opacity-50"
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin w-5 h-5" />
-                ) : (
-                  <Download size={20} />
-                )}
-                Generate Excel Report
-              </button>
-              <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] opacity-60">
-                Secure export protocol active • All access events timestamped
-              </p>
+            <div className="space-y-3">
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
+                Data Columns (Comma Separated)
+              </label>
+              <input
+                type="text"
+                value={exportParams.fields}
+                onChange={(e) =>
+                  setExportParams({ ...exportParams, fields: e.target.value })
+                }
+                className="w-full h-14 px-8 bg-slate-50/50 border border-slate-100/50 rounded-2xl outline-none font-bold text-slate-900 text-[13px] tracking-wide"
+              />
             </div>
+
+            <button
+              onClick={handleExport}
+              disabled={loading}
+              className="w-full h-16 flex items-center justify-center gap-3.5 bg-slate-950 text-white rounded-[1.2rem] font-bold uppercase tracking-widest text-[11px] hover:bg-black transition-all active:scale-[0.98] disabled:opacity-50"
+            >
+              {loading ? (
+                <Loader2 className="animate-spin w-5 h-5" />
+              ) : (
+                <Download size={18} strokeWidth={3} />
+              )}
+              Generate Excel Report
+            </button>
+            <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-[0.5em] mt-8 opacity-40">
+              Secure Export Engine Active
+            </p>
           </div>
         </div>
       )}
