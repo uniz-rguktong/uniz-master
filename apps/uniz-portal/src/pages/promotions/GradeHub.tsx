@@ -4,7 +4,12 @@ import { toast } from "react-toastify";
 import { apiClient, downloadFile } from "../../api/apiClient";
 import { student, studentAuthLoading } from "../../store";
 
-import { ChevronDown, GraduationCap, AlertCircle, Download } from "lucide-react";
+import {
+  ChevronDown,
+  GraduationCap,
+  AlertCircle,
+  Download,
+} from "lucide-react";
 import { GET_GRADES, DOWNLOAD_GRADES } from "../../api/endpoints";
 
 // Helper function to truncate long text
@@ -181,13 +186,13 @@ export default function GradeHub() {
                 Academic Year
               </label>
               <div
-                className="w-full flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg p-3 cursor-pointer hover:border-blue-600 transition-colors"
+                className="w-full flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg p-3 cursor-pointer hover:border-navy-900 transition-colors"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
                 <span className="font-bold text-sm">{selectedYear}</span>
                 <ChevronDown
                   size={16}
-                  className="text-slate-400 group-hover:text-blue-600 transition-colors"
+                  className="text-slate-400 group-hover:text-navy-900 transition-colors"
                 />
               </div>
 
@@ -196,10 +201,11 @@ export default function GradeHub() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${selectedYear === year
-                        ? "bg-slate-950 text-white"
-                        : "hover:bg-slate-50 text-slate-600"
-                        }`}
+                      className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${
+                        selectedYear === year
+                          ? "bg-navy-900 text-white"
+                          : "hover:bg-slate-50 text-slate-600"
+                      }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setShowDropdown(false);
@@ -224,7 +230,7 @@ export default function GradeHub() {
                     setSelectedSemester(e.target.value);
                     setResultsFetched(false);
                   }}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 font-bold text-sm appearance-none focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 font-bold text-sm appearance-none focus:outline-none focus:border-navy-900 focus:ring-1 focus:ring-navy-900 transition-all"
                 >
                   {semesterOptions.map((opt) => (
                     <option key={opt} value={opt}>
@@ -242,7 +248,7 @@ export default function GradeHub() {
             <div className="flex items-end">
               <button
                 onClick={handleFetchResults}
-                className="w-full h-[46px] bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm"
+                className="w-full h-[46px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm"
                 disabled={isLoading || !user?.username}
               >
                 {isLoading ? (
@@ -272,9 +278,7 @@ export default function GradeHub() {
               alt="Pikachu"
               className="w-16 h-16 mx-auto mb-4 opacity-50 contrast-50 grayscale"
             />
-            <h3 className="text-base font-semibold text-slate-600 mb-1">
-              Synchronizing Terminal Data
-            </h3>
+
             <p className="text-slate-400 text-xs font-medium">
               {loadingMessage}
             </p>
@@ -315,7 +319,7 @@ export default function GradeHub() {
 
             {/* Content */}
             {!grades.calculation_details ||
-              grades.calculation_details.length === 0 ? (
+            grades.calculation_details.length === 0 ? (
               <div className="p-12 text-center">
                 <AlertCircle
                   size={48}
@@ -334,13 +338,13 @@ export default function GradeHub() {
                   {/* Grades Section */}
                   <div>
                     <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                      <div className="w-1 h-3 bg-blue-500 rounded-full"></div>{" "}
+                      <div className="w-1 h-3 bg-navy-900 rounded-full"></div>{" "}
                       Detailed Grades
                     </h3>
                     <div className="md:rounded-xl md:border md:border-slate-200 md:bg-white bg-transparent">
                       <table className="w-full text-sm table-fixed">
                         <thead>
-                          <tr className="md:bg-blue-50/50 border-b border-slate-200 bg-transparent">
+                          <tr className="md:bg-navy-50/50 border-b border-slate-200 bg-transparent">
                             <th className="px-2 py-3 text-left font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[55%]">
                               Subjects
                             </th>
@@ -374,10 +378,11 @@ export default function GradeHub() {
                                 <td className="px-2 py-2.5 text-center">
                                   <div className="flex flex-col items-center gap-0.5">
                                     <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${item.grade === "Ex"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-slate-100 text-slate-800"
-                                        }`}
+                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
+                                        item.grade === "Ex"
+                                          ? "bg-navy-900 text-white"
+                                          : "bg-slate-100 text-slate-800"
+                                      }`}
                                     >
                                       {item.grade}
                                     </span>
@@ -394,8 +399,8 @@ export default function GradeHub() {
                                 <td className="px-2 py-2.5 text-center text-slate-400 font-medium text-[10px]">
                                   {item.passDate
                                     ? new Date(
-                                      item.passDate,
-                                    ).toLocaleDateString()
+                                        item.passDate,
+                                      ).toLocaleDateString()
                                     : "-"}
                                 </td>
                               </tr>
@@ -417,10 +422,11 @@ export default function GradeHub() {
                                   </td>
                                   <td className="px-2 py-2.5 text-center">
                                     <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${grade === "Ex"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-slate-100 text-slate-800"
-                                        }`}
+                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
+                                        grade === "Ex"
+                                          ? "bg-navy-900 text-white"
+                                          : "bg-slate-100 text-slate-800"
+                                      }`}
                                     >
                                       {grade}
                                     </span>
@@ -444,7 +450,7 @@ export default function GradeHub() {
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
                       Semester GPA
                     </span>
-                    <span className="text-4xl font-black text-blue-600 tracking-tighter">
+                    <span className="text-4xl font-black text-navy-900 tracking-tighter">
                       {grades.gpa !== null && grades.gpa !== undefined
                         ? Number(grades.gpa).toFixed(2)
                         : "N/A"}
@@ -502,7 +508,7 @@ export default function GradeHub() {
         {!authLoading && !user?.username && !isLoading && !resultsFetched && (
           <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center">
             <div className="bg-white w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
-              <AlertCircle size={40} className="text-blue-600" />
+              <AlertCircle size={40} className="text-navy-900" />
             </div>
             <h3 className="text-2xl font-black mb-3">Sign In Required</h3>
             <p className="text-slate-500 mb-8 max-w-md mx-auto font-medium">
@@ -523,7 +529,7 @@ export default function GradeHub() {
           !error && (
             <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center">
               <div className="md:bg-white w-20 h-20 md:rounded-2xl flex items-center justify-center mx-auto mb-6 md:shadow-sm md:border md:border-slate-100 bg-transparent">
-                <GraduationCap size={40} className="text-blue-600" />
+                <GraduationCap size={40} className="text-navy-900" />
               </div>
 
               <h3 className="text-2xl font-black mb-3">No Results Selected</h3>

@@ -123,7 +123,7 @@ export const InstallPWA = () => {
             initial={{ width: "100%" }}
             animate={{ width: "0%" }}
             transition={{ duration: 8, ease: "linear" }}
-            className="absolute top-0 left-0 h-[2px] bg-blue-600/40"
+            className="absolute top-0 left-0 h-[2px] bg-navy-900/40"
           />
 
           <div className="flex items-center justify-between gap-4">
@@ -132,7 +132,7 @@ export const InstallPWA = () => {
                 <h3 className="unifrakturcook-bold text-xl text-slate-800 tracking-tight leading-none">
                   uniZ
                 </h3>
-                <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                <span className="text-[9px] font-bold text-navy-900 bg-navy-50 px-1.5 py-0.5 rounded uppercase tracking-wider">
                   App
                 </span>
               </div>
@@ -160,7 +160,7 @@ export const InstallPWA = () => {
 
           {isIOS && (
             <div className="mt-3 pt-2 border-t border-slate-100 flex items-center gap-1.5 text-[9px] text-slate-400 font-medium italic">
-              <Share size={10} className="text-blue-500" />
+              <Share size={10} className="text-navy-900" />
               <span>Safari: Tap 'Share' then 'Add to Home Screen'</span>
             </div>
           )}

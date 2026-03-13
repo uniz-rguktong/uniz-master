@@ -20,13 +20,13 @@ export default function LoginScreen({
     bottomText
 }: LoginScreenProps) {
     return (
-        <div className="w-full min-h-screen flex bg-white font-sans selection:bg-blue-100 selection:text-blue-900">
+        <div className="w-full min-h-screen flex bg-white font-sans selection:bg-navy-100 selection:text-navy-900">
             {/* Left side - Hero section */}
-            <div className="hidden lg:flex flex-1 bg-slate-900 items-center justify-center p-12 relative overflow-hidden">
+            <div className="hidden lg:flex flex-1 bg-navy-900 items-center justify-center p-12 relative overflow-hidden">
                 {/* Abstract background elements */}
                 <div className="absolute top-0 left-0 w-full h-full opacity-20">
-                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500 rounded-full blur-[120px]" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600 rounded-full blur-[120px]" />
+                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-navy-500 rounded-full blur-[120px]" />
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-navy-700 rounded-full blur-[120px]" />
                 </div>
 
                 {heroTitle && (
@@ -34,7 +34,7 @@ export default function LoginScreen({
                         <h1 className="text-6xl font-black mb-8 leading-[1.1] tracking-tight">
                             {heroTitle}
                         </h1>
-                        <div className="w-20 h-1.5 bg-blue-500 rounded-full mx-auto" />
+                        <div className="w-20 h-1.5 bg-navy-500 rounded-full mx-auto" />
                     </div>
                 )}
 
@@ -92,7 +92,7 @@ export default function LoginScreen({
                             <button
                                 type="button"
                                 onClick={onToggleMode}
-                                className="text-blue-600 hover:text-blue-700 font-bold transition-colors"
+                                className="text-navy-900 hover:text-navy-800 font-bold transition-colors"
                             >
                                 {isLogin ? 'Sign Up' : 'Login'}
                             </button>
