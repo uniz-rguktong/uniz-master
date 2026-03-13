@@ -48,7 +48,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ornate-landing-config
+  name: ornate-config
 data:
   NODE_ENV: "production"
   NEXTAUTH_URL: "https://ornate.rguktong.in"

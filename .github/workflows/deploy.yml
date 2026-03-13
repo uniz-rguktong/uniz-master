@@ -3,10 +3,7 @@ name: VPS Automated Deployment
 on:
   push:
     branches:
-      - main
-    paths-ignore:
-      - "apps/ornate/**"
-      - "apps/ornate-core/**"
+      - ornate
   workflow_dispatch:
     inputs:
       commit_message:
@@ -108,8 +105,8 @@ jobs:
             echo "[CI/CD] Triggered by ${{ github.actor }} on commit ${{ github.sha }}"
 
             # Security: Verify repo integrity
-            git fetch origin main
-            git reset --hard origin/main
+            git fetch origin ornate
+            git reset --hard origin/ornate
 
             # Extract commit message for build-detection
             COMMIT_MSG=$(git log -1 --pretty=%B)

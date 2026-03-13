@@ -43,22 +43,8 @@ deploy_logic() {
   
   # Service mapping: "folder_name:image_name:deployment_name:container_name"
   ALL_SERVICES=(
-    "uniz-academics:uniz-academics-service:uniz-academics-service:academics-service"
-    "uniz-auth:uniz-auth-service:uniz-auth-service:auth-service"
-    "uniz-cron:uniz-cron-service:uniz-maintenance-job:cron-worker"
-    "uniz-cron:uniz-cron-service:uniz-storage-cleanup-job:storage-cleaner"
-    "uniz-cron:uniz-cron-service:uniz-cron-service:cron-worker"
-    "uniz-files:uniz-files-service:uniz-files-service:files-service"
-    "uniz-gateway:uniz-gateway-api:uniz-gateway-api:gateway-api"
-    "uniz-mail:uniz-mail-service:uniz-mail-service:mail-service"
-    "uniz-notifications:uniz-notification-service:uniz-notification-service:notification-service"
-    "uniz-outpass:uniz-outpass-service:uniz-outpass-service:outpass-service"
-    "uniz-portal:uniz-portal:uniz-portal:portal"
-    "uniz-landing:uniz-landing:uniz-landing:landing"
-    "uniz-user:uniz-user-service:uniz-user-service:user-service"
-    "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
     "ornate-core:ornate-core:ornate-core:ornate-core"
-    "ornate:ornate-landing:ornate-landing:ornate-landing"
+    "ornate:ornate:ornate:ornate"
   )
 
   # Prevent kubectl apply from overwriting current images with :local
@@ -195,8 +181,8 @@ else
   echo "[Deploy] Triggering VPS Deployment via SSH..."
   ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
     cd /root/uniz-master
-    git fetch origin main
-    git reset --hard origin/main
+    git fetch origin ornate
+    git reset --hard origin/ornate
     # Fixed the nested quote issue by using simple arguments
     /bin/bash ./scripts/deploy.sh "remote-trigger"
 EOF
