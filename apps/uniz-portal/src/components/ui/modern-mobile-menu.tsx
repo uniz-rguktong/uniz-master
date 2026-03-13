@@ -97,7 +97,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
             whileTap={{ scale: 0.9 }}
             onClick={toggleMore}
             className={`flex items-center justify-center w-[52px] h-[32px] rounded-2xl transition-all duration-300
-              ${isMoreOpen ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-blue-600'}`}
+              ${isMoreOpen ? 'bg-navy-900 text-white' : 'text-slate-400 hover:text-navy-900'}`}
           >
             {primaryItems[1] ? (
               (() => {
@@ -106,7 +106,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
               })()
             ) : <Plus size={22} />}
           </motion.button>
-          <span className={`text-[10px] font-bold tracking-tight transition-colors ${isMoreOpen ? 'text-blue-600' : 'text-slate-400'}`}>
+          <span className={`text-[10px] font-bold tracking-tight transition-colors ${isMoreOpen ? 'text-navy-900' : 'text-slate-400'}`}>
             {primaryItems[1]?.label || "More"}
           </span>
         </div>
@@ -144,10 +144,10 @@ const NavItem = ({ item, isActive, onClick }: { item: InteractiveMenuItem; isAct
   return (
     <button onClick={onClick} className="flex flex-col items-center gap-1 min-w-[64px]">
       <div className={`relative flex items-center justify-center w-[52px] h-[32px] rounded-2xl transition-all duration-300
-        ${isActive ? 'bg-blue-100 text-blue-600' : 'text-slate-400 hover:text-blue-600'}`}>
+        ${isActive ? 'bg-navy-100 text-navy-900' : 'text-slate-400 hover:text-navy-900'}`}>
         <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
       </div>
-      <span className={`text-[10px] font-bold tracking-tight transition-colors ${isActive ? 'text-blue-600' : 'text-slate-400'}`}>
+      <span className={`text-[10px] font-bold tracking-tight transition-colors ${isActive ? 'text-navy-900' : 'text-slate-400'}`}>
         {item.label}
       </span>
     </button>

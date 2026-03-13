@@ -208,14 +208,14 @@ export default function UpdatesSection() {
           <button
             onClick={fetchUpdates}
             disabled={loading}
-            className="w-11 h-11 flex items-center justify-center bg-slate-100/80 border border-slate-200/50 rounded-xl text-slate-400 hover:text-blue-600 transition-all active:scale-95"
+            className="w-11 h-11 flex items-center justify-center bg-slate-100/80 border border-slate-200/50 rounded-xl text-slate-400 hover:text-navy-900 transition-all active:scale-95"
             title="Refresh Stream"
           >
             <Loader2 size={16} className={loading ? "animate-spin" : ""} />
           </button>
           <button
             onClick={() => setShowAddModal(true)}
-            className="h-11 px-6 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2.5"
+            className="h-11 px-6 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-navy-800 active:scale-95 transition-all flex items-center justify-center gap-2.5"
           >
             <Plus size={16} /> New Update
           </button>
@@ -264,7 +264,7 @@ export default function UpdatesSection() {
                         <div className="h-4 w-20 bg-slate-50 rounded shadow-sm opacity-60" />
                       </td>
                       <td className="px-10 py-6">
-                        <div className="h-7 w-16 bg-blue-50/50 rounded-xl border border-blue-100/50 shadow-sm opacity-60" />
+                        <div className="h-7 w-16 bg-navy-50/50 rounded-xl border border-navy-100/50 shadow-sm opacity-60" />
                       </td>
                       <td className="px-10 py-6">
                         <div className="space-y-2">
@@ -289,7 +289,7 @@ export default function UpdatesSection() {
                     <td className="px-10 py-6">
                       <div className="flex items-center gap-4">
                         <div
-                          className={`w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm border-2 border-white ring-1 ring-slate-100 ${update.isVisible ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-400"}`}
+                          className={`w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm border-2 border-white ring-1 ring-slate-100 ${update.isVisible ? "bg-navy-900 text-white" : "bg-slate-100 text-slate-400"}`}
                         >
                           <Bell size={18} />
                         </div>
@@ -311,7 +311,7 @@ export default function UpdatesSection() {
                           href={update.link}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-all group/link"
+                          className="flex items-center gap-2 text-navy-900 hover:text-navy-800 transition-all group/link"
                         >
                           <span className="text-[10px] font-bold uppercase tracking-widest underline decoration-blue-200 group-hover/link:decoration-blue-600">
                             Visit Link
@@ -363,7 +363,7 @@ export default function UpdatesSection() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleEditClick(update)}
-                          className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-blue-50 hover:text-blue-600 border border-slate-100 transition-all active:scale-95 shadow-none"
+                          className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-navy-50 hover:text-navy-900 border border-slate-100 transition-all active:scale-95 shadow-none"
                         >
                           <Edit3 size={14} />
                         </button>
@@ -422,7 +422,7 @@ export default function UpdatesSection() {
           />
           <div className="bg-white w-full max-w-xl rounded-xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
             <div
-              className={`${editingUpdate ? "bg-slate-900" : "bg-blue-600"} p-8 text-white relative flex items-center gap-5 transition-colors duration-500`}
+              className={`${editingUpdate ? "bg-slate-900" : "bg-navy-900"} p-8 text-white relative flex items-center gap-5 transition-colors duration-500`}
             >
               <div className="p-3.5 bg-white/20 rounded-xl">
                 {editingUpdate ? <Edit3 size={26} /> : <Bell size={26} />}
@@ -467,7 +467,7 @@ export default function UpdatesSection() {
                       setNewUpdate({ ...newUpdate, title: e.target.value })
                     }
                     placeholder="e.g. Semester Registration"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900"
                   />
                 </div>
 
@@ -500,15 +500,15 @@ export default function UpdatesSection() {
                       setNewUpdate({ ...newUpdate, link: e.target.value })
                     }
                     placeholder="https://..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900"
                   />
                 </div>
 
                 {/* Link Preview Hint */}
                 {newUpdate.link && (
-                  <div className="flex items-center gap-3 p-4 bg-blue-50/50 rounded-xl border border-blue-100">
-                    <AlertCircle className="text-blue-500 shrink-0" size={16} />
-                    <p className="text-[10px] font-bold text-blue-700 leading-tight">
+                  <div className="flex items-center gap-3 p-4 bg-navy-50/50 rounded-xl border border-navy-100">
+                    <AlertCircle className="text-navy-900 shrink-0" size={16} />
+                    <p className="text-[10px] font-bold text-navy-800 leading-tight">
                       Students will be redirected to this link when they click
                       the broadcast.
                     </p>
@@ -519,7 +519,7 @@ export default function UpdatesSection() {
               <button
                 disabled={!!actionLoading}
                 type="submit"
-                className={`w-full ${editingUpdate ? "bg-slate-900" : "bg-blue-600"} text-white py-5 rounded-xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:opacity-90 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95 shadow-none`}
+                className={`w-full ${editingUpdate ? "bg-slate-900" : "bg-navy-900"} text-white py-5 rounded-xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:opacity-90 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95 shadow-none`}
               >
                 {actionLoading === "creating" ||
                   actionLoading === "updating" ? (
