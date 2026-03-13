@@ -146,9 +146,9 @@ export default function UpdateStatus() {
                   .map((outing: any) => (
                     <div
                       key={outing._id}
-                      className="bg-blue-50/50 rounded-md p-3 border border-blue-100"
+                      className="bg-navy-50 rounded-md p-3 border border-navy-100"
                     >
-                      <div className="flex items-center gap-2 text-xs font-bold text-blue-700 uppercase mb-2">
+                      <div className="flex items-center gap-2 text-xs font-bold text-navy-900 uppercase mb-2">
                         <Clock className="w-3.5 h-3.5" /> Outing
                       </div>
                       <div className="flex justify-between text-sm mb-1">
@@ -185,9 +185,9 @@ export default function UpdateStatus() {
                   .map((outpass: any) => (
                     <div
                       key={outpass._id}
-                      className="bg-purple-50/50 rounded-md p-3 border border-purple-100"
+                      className="bg-navy-50 rounded-md p-3 border border-navy-100"
                     >
-                      <div className="flex items-center gap-2 text-xs font-bold text-purple-700 uppercase mb-2">
+                      <div className="flex items-center gap-2 text-xs font-bold text-navy-900 uppercase mb-2">
                         <CalendarDays className="w-3.5 h-3.5" /> Outpass
                       </div>
                       <div className="flex justify-between text-sm mb-1">

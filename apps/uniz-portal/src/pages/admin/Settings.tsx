@@ -246,7 +246,7 @@ export default function Settings() {
                   value="Reset Password"
                   loading={isLoading}
                   onclickFunction={sendDataToBackend}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  className="w-full bg-navy-900 hover:bg-navy-800"
                 />
               </div>
             </div>
@@ -256,7 +256,7 @@ export default function Settings() {
           <div className="md:w-2/5 bg-slate-50 border-t md:border-t-0 md:border-l border-slate-200 p-8 lg:p-12 flex flex-col justify-between">
             <div>
               <h3 className="font-semibold text-slate-900 flex items-center gap-2 mb-6">
-                <ShieldCheck className="w-5 h-5 text-blue-600" /> Security
+                <ShieldCheck className="w-5 h-5 text-navy-900" /> Security
                 Requirements
               </h3>
 
@@ -276,10 +276,10 @@ export default function Settings() {
               </ul>
             </div>
 
-            <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100 mt-8">
+            <div className="bg-navy-50/50 rounded-xl p-4 border border-navy-100 mt-8">
               <div className="flex gap-3">
-                <AlertTriangle className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                <p className="text-sm text-blue-800 leading-relaxed">
+                <AlertTriangle className="w-5 h-5 text-navy-900 shrink-0 mt-0.5" />
+                <p className="text-sm text-navy-800 leading-relaxed">
                   For security reasons, you will be automatically logged out
                   after successfully changing your password.
                 </p>
