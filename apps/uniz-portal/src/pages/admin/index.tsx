@@ -288,7 +288,7 @@ export default function Admin() {
               onClick={handleLogout}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-100 hover:bg-red-50 text-neutral-600 hover:text-red-600 font-bold text-xs uppercase tracking-wider transition-all"
             >
-              <LogOut className="w-4 h-4" /> Logout
+              <LogOut className="w-4 h-4" /> LOGOUT
             </button>
           </div>
         </div>
