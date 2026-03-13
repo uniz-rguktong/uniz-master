@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { AlertCircle, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { BASE_URL } from "../../api/endpoints";
 
 export default function Grievance() {
@@ -80,10 +80,7 @@ export default function Grievance() {
           <div className="md:flex">
             {/* Form Section */}
             <div className="md:w-2/3 md:p-10 md:border-r border-slate-50 py-2 md:py-6 px-0">
-              <div className="hidden md:flex items-center gap-4 md:mb-8 mb-4">
-                <div className="text-blue-500">
-                  <AlertCircle size={24} />
-                </div>
+              <div className="md:mb-8 mb-4">
               </div>
 
               <div className="space-y-3 md:space-y-6">
