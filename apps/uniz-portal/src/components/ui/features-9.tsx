@@ -155,7 +155,7 @@ export function Features() {
                         <div>
                             <div className="flex items-center gap-2">
                                 <span className="flex justify-center items-center size-5 rounded-full border border-slate-200 bg-white shadow-sm">
-                                    <span className="size-3 rounded-full bg-blue-500" />
+                                    <span className="size-3 rounded-full bg-navy-500" />
                                 </span>
                                 <span className="text-slate-500 font-medium text-xs">Sat 22 Feb</span>
                             </div>
@@ -163,7 +163,7 @@ export function Features() {
                         </div>
 
                         <div>
-                            <div className="rounded-xl shadow-md border border-blue-500 ml-auto w-4/5 sm:w-3/5 bg-blue-600 p-4 text-sm font-medium text-white mb-2">We've identified the issue and pushed a patch. You should be able to log in now.</div>
+                            <div className="rounded-xl shadow-md border border-navy-100 ml-auto w-4/5 sm:w-3/5 bg-navy-900 p-4 text-sm font-medium text-white mb-2">We've identified the issue and pushed a patch. You should be able to log in now.</div>
                             <span className="text-slate-400 font-medium block text-right text-xs">Just now</span>
                         </div>
                     </div>
@@ -172,7 +172,7 @@ export function Features() {
                     <p className="text-center text-5xl md:text-6xl font-black tracking-tight text-slate-900 mb-4">99.99% Uptime</p>
                     {health && (
                         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-200">
-                            <div className={`w-2 h-2 rounded-full animate-pulse ${health.status === 'ok' ? 'bg-blue-600' : 'bg-red-500'}`}></div>
+                            <div className={`w-2 h-2 rounded-full animate-pulse ${health.status === 'ok' ? 'bg-navy-900' : 'bg-red-500'}`}></div>
                             <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">
                                 Systems {health.status === 'ok' ? 'Operating Normally' : 'Degraded'}
                             </span>

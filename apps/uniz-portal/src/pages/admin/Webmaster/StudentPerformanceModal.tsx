@@ -81,7 +81,7 @@ export default function StudentPerformanceModal({
                     {/* Header */}
                     <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-none">
+                            <div className="w-12 h-12 rounded-xl bg-navy-900 flex items-center justify-center text-white shadow-none">
                                 <GraduationCap size={24} />
                             </div>
                             <div>
@@ -101,7 +101,7 @@ export default function StudentPerformanceModal({
                         {/* Summary Stats */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <StatCard
-                                icon={<TrendingUp className="text-blue-600" />}
+                                icon={<TrendingUp className="text-navy-900" />}
                                 label="Cumulative GPA"
                                 value={data.cgpa.toFixed(2)}
                                 subValue="Institutional Average: 7.8"
@@ -124,11 +124,11 @@ export default function StudentPerformanceModal({
                         </div>
 
                         {/* Motivation Alert */}
-                        <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-4 flex gap-3 items-center">
-                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                                <CheckCircle2 size={16} className="text-blue-600" />
+                        <div className="bg-navy-50/50 border border-navy-100 rounded-xl p-4 flex gap-3 items-center">
+                            <div className="w-8 h-8 rounded-full bg-navy-100 flex items-center justify-center shrink-0">
+                                <CheckCircle2 size={16} className="text-navy-900" />
                             </div>
-                            <p className="text-sm font-medium text-blue-800 italic">"{data.motivation}"</p>
+                            <p className="text-sm font-medium text-navy-800 italic">"{data.motivation}"</p>
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -142,7 +142,7 @@ export default function StudentPerformanceModal({
                                     {data.grades.slice(0, 6).map((grade) => (
                                         <div key={grade.id} className="p-4 rounded-xl border border-slate-50 bg-slate-50/30 flex items-center justify-between hover:bg-slate-50 transition-colors group">
                                             <div className="flex flex-col gap-0.5">
-                                                <p className="font-bold text-slate-900 text-[13px] group-hover:text-blue-600 transition-colors">{grade.subject.name}</p>
+                                                <p className="font-bold text-slate-900 text-[13px] group-hover:text-navy-900 transition-colors">{grade.subject.name}</p>
                                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{grade.subject.code} • {grade.semesterId}</p>
                                             </div>
                                             <div className="flex items-center gap-3">
@@ -220,7 +220,7 @@ export default function StudentPerformanceModal({
 
 function StatCard({ icon, label, value, subValue, color }: { icon: React.ReactNode, label: string, value: string, subValue: string, color: string }) {
     const colors: Record<string, string> = {
-        blue: "bg-blue-50 border-blue-100",
+        blue: "bg-navy-50 border-navy-100",
         emerald: "bg-emerald-50 border-emerald-100",
         red: "bg-red-50 border-red-100",
         slate: "bg-slate-50 border-slate-100",

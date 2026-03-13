@@ -171,13 +171,13 @@ export default function Attendance() {
                 Academic Year
               </label>
               <div
-                className="w-full flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg p-3 cursor-pointer hover:border-blue-600 transition-colors"
+                className="w-full flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg p-3 cursor-pointer hover:border-navy-900 transition-colors"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
                 <span className="font-bold text-sm">{selectedYear}</span>
                 <ChevronDown
                   size={16}
-                  className={`transition-transform duration-300 ${showDropdown ? "rotate-180" : ""} group-hover:text-blue-600`}
+                  className={`transition-transform duration-300 ${showDropdown ? "rotate-180" : ""} group-hover:text-navy-900`}
                 />
               </div>
 
@@ -187,7 +187,7 @@ export default function Attendance() {
                     <div
                       key={year}
                       className={`p-3 cursor-pointer text-sm font-semibold hover:bg-slate-50 transition-colors ${selectedYear === year
-                        ? "bg-slate-950 text-white"
+                        ? "bg-navy-900 text-white"
                         : "text-slate-600"
                         }`}
                       onClick={() => {
@@ -220,7 +220,7 @@ export default function Attendance() {
                     setResultsFetched(false);
                     setAttendanceData(null);
                   }}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 font-bold text-sm appearance-none focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors cursor-pointer"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 font-bold text-sm appearance-none focus:outline-none focus:border-navy-900 focus:ring-1 focus:ring-navy-900 transition-colors cursor-pointer"
                 >
                   {availableSemesters.map((semester) => (
                     <option key={semester} value={semester}>
@@ -238,7 +238,7 @@ export default function Attendance() {
             <div className="flex items-end">
               <button
                 onClick={handleFetchAttendance}
-                className="w-full h-[46px] bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm flex items-center justify-center"
+                className="w-full h-[46px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm flex items-center justify-center"
                 disabled={isLoading || !user?.username}
               >
                 {isLoading ? (
@@ -253,7 +253,7 @@ export default function Attendance() {
           </div>
 
           {error && (
-            <div className="mt-8 bg-blue-600 text-white rounded-xl p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 shadow-lg shadow-blue-100">
+            <div className="mt-8 bg-navy-900 text-white rounded-xl p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 shadow-lg shadow-navy-100">
               <AlertCircle size={20} className="text-white flex-shrink-0" />
               <div className="font-medium">{error}</div>
             </div>
@@ -376,7 +376,7 @@ export default function Attendance() {
                                   <span
                                     className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${parseFloat(String(record.percentage)) >=
                                       75
-                                      ? "bg-blue-600 text-white"
+                                      ? "bg-navy-900 text-white"
                                       : parseFloat(
                                         String(record.percentage),
                                       ) >= 65
@@ -394,7 +394,7 @@ export default function Attendance() {
                     </table>
                   </div>
 
-                  <div className="px-6 py-8 md:bg-slate-950 text-white md:mt-0 shadow-inner bg-transparent mt-4 border-t border-slate-100">
+                  <div className="px-6 py-8 md:bg-navy-900 text-white md:mt-0 shadow-inner bg-transparent mt-4 border-t border-slate-100">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                       <div>
                         <h3 className="text-base font-semibold tracking-tight text-slate-800 md:text-white">
@@ -440,7 +440,7 @@ export default function Attendance() {
               Please authenticate to access your institutional attendance
               terminal.
             </p>
-            <button className="h-[46px] px-8 bg-slate-950 text-white rounded-xl font-bold text-sm transition-all hover:bg-black active:scale-[0.98]">
+            <button className="h-[46px] px-8 bg-navy-900 text-white rounded-xl font-bold text-sm transition-all hover:bg-navy-800 active:scale-[0.98]">
               Sign In to Continue
             </button>
           </div>

@@ -103,8 +103,8 @@ export function ModernSidebar({
                 />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-slate-800 text-lg tracking-tight">
-                  Ongole
+                <span className="font-bold text-navy-900 text-lg tracking-tight">
+                  uniZ
                 </span>
                 <span className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">
                   Student Portal
@@ -152,7 +152,7 @@ export function ModernSidebar({
                       w-full flex items-center space-x-3 px-3 py-3 rounded-md text-left transition-all duration-200 group relative
                       ${
                         isActive
-                          ? "bg-blue-50 text-blue-700 shadow-sm"
+                          ? "bg-navy-50 text-navy-900 shadow-sm"
                           : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                       }
                       ${isCollapsed ? "justify-center px-2" : ""}
@@ -165,7 +165,7 @@ export function ModernSidebar({
                           h-[22px] w-[22px] flex-shrink-0
                           ${
                             isActive
-                              ? "text-blue-600"
+                              ? "text-navy-900"
                               : "text-slate-400 group-hover:text-slate-700"
                           }
                         `}
@@ -185,7 +185,7 @@ export function ModernSidebar({
                             px-1.5 py-0.5 text-[10px] font-bold rounded-full
                             ${
                               isActive
-                                ? "bg-blue-100 text-blue-700"
+                                ? "bg-navy-100 text-navy-900"
                                 : "bg-slate-100 text-slate-600"
                             }
                           `}
@@ -198,8 +198,8 @@ export function ModernSidebar({
 
                     {/* Badge for collapsed state */}
                     {isCollapsed && item.badge && (
-                      <div className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center rounded-full bg-blue-100 border border-white">
-                        <span className="text-[10px] font-medium text-blue-700">
+                      <div className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center rounded-full bg-navy-100 border border-white">
+                        <span className="text-[10px] font-medium text-navy-900">
                           {parseInt(item.badge) > 9 ? "9+" : item.badge}
                         </span>
                       </div>
@@ -261,7 +261,7 @@ export function ModernSidebar({
             ) : (
               <div className="flex justify-center">
                 <div className="relative group cursor-pointer">
-                  <div className="w-10 h-10 bg-white shadow-sm rounded-full flex items-center justify-center overflow-hidden border border-slate-200 hover:border-blue-400 transition-colors">
+                  <div className="w-10 h-10 bg-white shadow-sm rounded-full flex items-center justify-center overflow-hidden border border-slate-200 hover:border-navy-100 transition-colors">
                     {userData?.profile_url ? (
                       <img
                         src={userData.profile_url}

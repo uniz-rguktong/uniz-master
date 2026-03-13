@@ -480,14 +480,14 @@ export default function FacultyManagement({
             <button
               onClick={() => setMode(mode === "single" ? "bulk" : "single")}
               title={mode === "single" ? "Switch to Bulk Mode" : "Switch to Individual Mode"}
-              className="p-2.5 text-slate-500 hover:text-blue-600 transition-all"
+              className="p-2.5 text-slate-500 hover:text-navy-900 transition-all"
             >
               <Layers size={18} />
             </button>
             <button
               onClick={fetchFaculty}
               title="Refresh Registry"
-              className={`p-2.5 text-slate-500 hover:text-blue-600 transition-all ${loading ? "animate-spin" : ""}`}
+              className={`p-2.5 text-slate-500 hover:text-navy-900 transition-all ${loading ? "animate-spin" : ""}`}
             >
               <RefreshCw size={18} />
             </button>
@@ -495,7 +495,7 @@ export default function FacultyManagement({
 
           <div className="relative group">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors pointer-events-none"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors pointer-events-none"
               size={16}
             />
             <input
@@ -503,7 +503,7 @@ export default function FacultyManagement({
               placeholder="Search registry..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-11 pr-5 h-12 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[240px] shadow-none placeholder:text-slate-400"
+              className="pl-11 pr-5 h-12 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all w-[240px] shadow-none placeholder:text-slate-400"
             />
           </div>
 
@@ -600,7 +600,7 @@ export default function FacultyManagement({
                     value={csvText}
                     onChange={(e) => setCsvText(e.target.value)}
                     rows={8}
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-xl font-mono text-xs outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all resize-none shadow-none"
+                    className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-xl font-mono text-xs outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all resize-none shadow-none"
                     placeholder={`username,name,email,department,designation,role\nktejokiran,K Tejo Kiran,ktejokiran@rguktong.ac.in,CSE,Lecturer,teacher`}
                   />
                 </div>
@@ -609,7 +609,7 @@ export default function FacultyManagement({
               <button
                 onClick={handleBulkAdd}
                 disabled={bulkLoading || !csvText.trim()}
-                className="w-full h-12 bg-blue-600 text-white rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-blue-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.99]"
+                className="w-full h-12 bg-navy-900 text-white rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-navy-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.99]"
               >
                 {bulkLoading ? (
                   <Loader2 className="animate-spin w-4 h-4" />
@@ -624,9 +624,9 @@ export default function FacultyManagement({
           {/* ── Bulk Update ── */}
           {bulkTab === "update" && (
             <div className="space-y-4">
-              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-center gap-3">
-                <CheckSquare size={18} className="text-blue-600 shrink-0" />
-                <p className="text-sm text-blue-700 font-semibold">
+              <div className="bg-navy-50 border border-navy-100 rounded-xl p-4 flex items-center gap-3">
+                <CheckSquare size={18} className="text-navy-900 shrink-0" />
+                <p className="text-sm text-navy-800 font-semibold">
                   Select faculty from the table below, then pick fields to
                   update.
                   <span className="font-black ml-1">
@@ -652,7 +652,7 @@ export default function FacultyManagement({
                             role: e.target.value,
                           }))
                         }
-                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 appearance-none cursor-pointer"
+                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 appearance-none cursor-pointer"
                       >
                         <option value="">— No change —</option>
                         {ROLES.map((r) => (
@@ -680,7 +680,7 @@ export default function FacultyManagement({
                             department: e.target.value,
                           }))
                         }
-                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 appearance-none cursor-pointer"
+                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 appearance-none cursor-pointer"
                       >
                         <option value="">— No change —</option>
                         {DEPARTMENTS.map((d) => (
@@ -708,7 +708,7 @@ export default function FacultyManagement({
                         }))
                       }
                       placeholder="e.g. Senior Lecturer"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -724,7 +724,7 @@ export default function FacultyManagement({
                         }))
                       }
                       placeholder="Apply same name to all"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -740,7 +740,7 @@ export default function FacultyManagement({
                         }))
                       }
                       placeholder="Apply same contact to all"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -756,7 +756,7 @@ export default function FacultyManagement({
                         }))
                       }
                       placeholder="Apply same image to all"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all"
                     />
                   </div>
                 </div>
@@ -954,7 +954,7 @@ export default function FacultyManagement({
                     >
                       {selectedUsernames.size === faculty.length &&
                         faculty.length > 0 ? (
-                        <CheckSquare size={18} className="text-blue-600" />
+                        <CheckSquare size={18} className="text-navy-900" />
                       ) : (
                         <Square size={18} />
                       )}
@@ -1028,12 +1028,12 @@ export default function FacultyManagement({
                           ? toggleSelect(member.Username)
                           : undefined
                       }
-                      className={`transition-all group ${mode === "bulk" ? "cursor-pointer select-none" : ""} ${isSelected ? "bg-blue-50/60 hover:bg-blue-50" : "hover:bg-slate-50/30"}`}
+                      className={`transition-all group ${mode === "bulk" ? "cursor-pointer select-none" : ""} ${isSelected ? "bg-navy-50/60 hover:bg-navy-50" : "hover:bg-slate-50/30"}`}
                     >
                       {mode === "bulk" && (
                         <td className="px-6 py-6">
                           {isSelected ? (
-                            <CheckSquare size={18} className="text-blue-600" />
+                            <CheckSquare size={18} className="text-navy-900" />
                           ) : (
                             <Square
                               size={18}
@@ -1045,7 +1045,7 @@ export default function FacultyManagement({
                       <td className="px-6 py-6">
                         <div className="flex items-center gap-4">
                           <div
-                            className={`w-11 h-11 rounded-full text-white flex items-center justify-center font-bold text-sm shadow-none border-2 border-white ring-1 ring-slate-100 overflow-hidden ${isSelected ? "bg-blue-600" : "bg-slate-900"}`}
+                            className={`w-11 h-11 rounded-full text-white flex items-center justify-center font-bold text-sm shadow-none border-2 border-white ring-1 ring-slate-100 overflow-hidden ${isSelected ? "bg-navy-900" : "bg-slate-900"}`}
                           >
                             {member.ProfileUrl ? (
                               <img
@@ -1104,7 +1104,7 @@ export default function FacultyManagement({
                                 setSelectedFaculty(member);
                                 setShowViewModal(true);
                               }}
-                              className="p-2.5 bg-slate-100 text-slate-600 rounded-full hover:bg-blue-600 hover:text-white transition-all active:scale-95 shadow-none"
+                              className="p-2.5 bg-slate-100 text-slate-600 rounded-full hover:bg-navy-900 hover:text-white transition-all active:scale-95 shadow-none"
                               title="View Details"
                             >
                               <Eye size={16} />
@@ -1178,7 +1178,7 @@ export default function FacultyManagement({
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-bold transition-all ${page === i + 1 ? "bg-blue-600 text-white shadow-none" : "bg-white border border-slate-200 text-slate-400 hover:border-blue-400 hover:text-blue-500"}`}
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-bold transition-all ${page === i + 1 ? "bg-navy-900 text-white shadow-none" : "bg-white border border-slate-200 text-slate-400 hover:border-navy-100 hover:text-navy-900"}`}
                   >
                     {i + 1}
                   </button>
@@ -1235,14 +1235,14 @@ export default function FacultyManagement({
                     )}
                     {isUploading && (
                       <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
-                        <Loader2 className="animate-spin text-blue-600 w-5 h-5" />
+                        <Loader2 className="animate-spin text-navy-900 w-5 h-5" />
                       </div>
                     )}
                   </div>
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-none hover:bg-blue-700 transition-all active:scale-90 border-2 border-white"
+                    className="absolute -bottom-2 -right-2 w-8 h-8 bg-navy-900 text-white rounded-full flex items-center justify-center shadow-none hover:bg-navy-800 transition-all active:scale-90 border-2 border-white"
                   >
                     <Camera size={14} />
                   </button>
@@ -1279,7 +1279,7 @@ export default function FacultyManagement({
                         username: e.target.value.toLowerCase(),
                       })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-sm disabled:opacity-50"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-sm disabled:opacity-50"
                     placeholder="e.g. jdoe"
                   />
                 </div>
@@ -1293,7 +1293,7 @@ export default function FacultyManagement({
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold"
                     placeholder="Prof. Surname"
                   />
                 </div>
@@ -1310,7 +1310,7 @@ export default function FacultyManagement({
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold disabled:opacity-60"
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold disabled:opacity-60"
                   placeholder="faculty@rguktong.ac.in"
                 />
               </div>
@@ -1325,7 +1325,7 @@ export default function FacultyManagement({
                       onChange={(e) =>
                         setFormData({ ...formData, department: e.target.value })
                       }
-                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-xl font-bold outline-none"
+                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-navy-100 rounded-xl font-bold outline-none"
                     >
                       {DEPARTMENTS.map((d) => (
                         <option key={d} value={d}>
@@ -1344,7 +1344,7 @@ export default function FacultyManagement({
                     onChange={(e) =>
                       setFormData({ ...formData, role: e.target.value })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold cursor-pointer"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none font-bold cursor-pointer"
                   >
                     {ROLES.map((r) => (
                       <option key={r} value={r}>
@@ -1364,7 +1364,7 @@ export default function FacultyManagement({
                   onChange={(e) =>
                     setFormData({ ...formData, designation: e.target.value })
                   }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold"
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold"
                   placeholder="e.g. HOD, Lecturer"
                 />
               </div>
@@ -1379,7 +1379,7 @@ export default function FacultyManagement({
                 <button
                   disabled={isSubmitting}
                   type="submit"
-                  className="flex-[2] bg-blue-600 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-none flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+                  className="flex-[2] bg-navy-900 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-navy-800 transition-all shadow-none flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <Loader2 className="animate-spin w-4 h-4" />
@@ -1416,7 +1416,7 @@ export default function FacultyManagement({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-3xl font-black bg-blue-600">
+                    <div className="w-full h-full flex items-center justify-center text-3xl font-black bg-navy-900">
                       {selectedFaculty.Name?.[0]}
                     </div>
                   )}
@@ -1426,7 +1426,7 @@ export default function FacultyManagement({
                     {selectedFaculty.Name}
                   </h3>
                   <p className="text-blue-400 font-black uppercase tracking-widest text-[10px] flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-blue-500/20 rounded">
+                    <span className="px-2 py-0.5 bg-navy-500/20 rounded">
                       {selectedFaculty.Designation || "Lecturer"}
                     </span>
                     <span className="text-slate-500">•</span>
@@ -1479,7 +1479,7 @@ export default function FacultyManagement({
                             key={key}
                             className="bg-white p-6 rounded-xl border border-slate-100 shadow-none"
                           >
-                            <label className="text-[10px] font-black uppercase tracking-widest text-blue-600 block mb-3">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-navy-900 block mb-3">
                               {key.replace(/_/g, " ")}
                             </label>
                             {Array.isArray(val) ? (
