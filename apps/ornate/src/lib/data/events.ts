@@ -43,11 +43,11 @@ type MissionEventInput = {
     price: number;
     teamSizeMin: number | null;
     teamSizeMax: number | null;
-    Admin_Event_creatorIdToAdmin: {
+    creator: {
         branch: string | null;
         clubId: string | null;
     } | null;
-    Admin_EventCoordinators: Array<{
+    assignedCoordinators: Array<{
         name: string | null;
         phone: string | null;
         email: string | null;
@@ -70,7 +70,7 @@ export function mapEventToMission(event: MissionEventInput, registrationCount: n
 
     // Prioritize explicitly matched category, otherwise fallback to admin's branch/club
     const rawCat = (event.category ?? '').toUpperCase();
-    const adminRef = event.Admin_Event_creatorIdToAdmin;
+    const adminRef = event.creator;
     const adminBranch = (adminRef?.branch ?? '').toUpperCase();
     const adminClub = (adminRef?.clubId ?? '').toUpperCase();
 
@@ -138,8 +138,8 @@ export function mapEventToMission(event: MissionEventInput, registrationCount: n
         isTeam: (event.teamSizeMin ?? 0) > 1,
         teamSizeMin: event.teamSizeMin,
         teamSizeMax: event.teamSizeMax,
-        coordinators: Array.isArray(event.Admin_EventCoordinators)
-            ? event.Admin_EventCoordinators
+        coordinators: Array.isArray(event.assignedCoordinators)
+            ? event.assignedCoordinators
                 .map((c: { name?: string | null; phone?: string | null; email?: string | null }) => ({
                     name: (c.name || c.email || 'Coordinator').toString(),
                     phone: c.phone ?? null,
@@ -168,11 +168,11 @@ async function fetchPublishedEvents(limit: number): Promise<MissionData[]> {
             price: true,
             teamSizeMin: true,
             teamSizeMax: true,
-            _count: { select: { Registration: true } },
-            Admin_Event_creatorIdToAdmin: {
+            _count: { select: { registrations: true } },
+            creator: {
                 select: { branch: true, clubId: true }
             },
-            Admin_EventCoordinators: {
+            assignedCoordinators: {
                 select: {
                     name: true,
                     phone: true,
@@ -184,7 +184,7 @@ async function fetchPublishedEvents(limit: number): Promise<MissionData[]> {
         take: limit,
     });
 
-    return events.map((e) => mapEventToMission(e, e._count.Registration));
+    return events.map((e) => mapEventToMission(e, e._count.registrations));
 }
 
 const getPublishedEventsCached = unstable_cache(

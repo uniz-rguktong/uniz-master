@@ -38,7 +38,7 @@ export async function GET() {
                     status: { in: ['LIVE', 'COMPLETED'] },
                 },
                 include: {
-                    Sport: { select: { name: true, gender: true } },
+                    sport: { select: { name: true, gender: true } },
                 },
                 orderBy: { updatedAt: 'desc' },
                 take: 20,
@@ -46,8 +46,8 @@ export async function GET() {
 
             data = matches.map((m) => ({
                 id: m.id,
-                sport: m.Sport.name,
-                gender: m.Sport.gender,
+                sport: m.sport.name,
+                gender: m.sport.gender,
                 round: m.round,
                 team1: m.team1Name,
                 team2: m.team2Name,

@@ -24,15 +24,15 @@ export async function getEventParticipationSnapshot(userId: string): Promise<Eve
             email: true,
             branch: true,
             currentYear: true,
-            Registration: {
+            registrations: {
                 select: { eventId: true },
             },
-            Team: {
+            leaderOf: {
                 select: { eventId: true },
             },
-            TeamMember: {
+            teamMembers: {
                 select: {
-                    Team: {
+                    team: {
                         select: { eventId: true },
                     },
                 },
@@ -47,9 +47,9 @@ export async function getEventParticipationSnapshot(userId: string): Promise<Eve
         };
     }
 
-    const regIds = user.Registration.map((r) => r.eventId);
-    const leaderIds = user.Team.map((t) => t.eventId).filter((id): id is string => !!id);
-    const teamIds = user.TeamMember.map((tm) => tm.Team?.eventId).filter((id): id is string => !!id);
+    const regIds = user.registrations.map((r: any) => r.eventId);
+    const leaderIds = user.leaderOf.map((t: any) => t.eventId).filter((id): id is string => !!id);
+    const teamIds = user.teamMembers.map((tm: any) => tm.team?.eventId).filter((id): id is string => !!id);
 
     return {
         registeredEventIds: Array.from(new Set([...regIds, ...leaderIds, ...teamIds])),

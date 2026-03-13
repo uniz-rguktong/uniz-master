@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getPublishedEvents, type MissionData } from '@/lib/data/events';
 
+
+
 type PlanetStats = {
     events: number;
     registrations: number;
@@ -45,8 +47,6 @@ const SUBCATEGORY_TO_PLANET: Record<string, string> = {
     PIXLERO: 'jupiter',
     PIXELRO: 'jupiter',
     SARVASRIJANA: 'uranus',
-    TECHXCEL: 'neptune',
-    TECHXCEL: 'neptune',
     TECHXCEL: 'neptune',
 };
 

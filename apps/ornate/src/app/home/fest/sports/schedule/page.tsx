@@ -1,6 +1,8 @@
 import { getSportsScheduleData } from '@/lib/data/sports';
 import SportsScheduleClient, { Match, MatchStatus } from './SportsScheduleClient';
 
+export const revalidate = 60;
+
 export default async function SportsSchedulePage() {
     const sports = await getSportsScheduleData();
 

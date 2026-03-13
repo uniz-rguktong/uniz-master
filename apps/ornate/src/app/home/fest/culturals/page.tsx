@@ -4,6 +4,8 @@ import { getEventParticipationSnapshot } from '@/lib/data/user-participation';
 import CulturalsClient from './CulturalsClient';
 import { getSession } from '@/lib/auth';
 
+export const revalidate = 60;
+
 export default async function CulturalsPage() {
     const session = await getSession();
     const [events, albums, promoVideos, allImages, logos] = await Promise.all([

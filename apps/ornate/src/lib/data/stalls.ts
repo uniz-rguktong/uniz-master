@@ -81,7 +81,7 @@ export async function getStallsPromoVideos(): Promise<StallPromoVideoData[]> {
         where: {
             status: 'active',
             OR: [
-                { Admin: { role: 'SUPER_ADMIN' } }
+                { creator: { role: 'SUPER_ADMIN' } }
             ]
         },
         select: {
@@ -90,7 +90,7 @@ export async function getStallsPromoVideos(): Promise<StallPromoVideoData[]> {
             url: true,
             thumbnail: true,
             category: true,
-            Admin: {
+            creator: {
                 select: {
                     role: true,
                     branch: true,
@@ -108,7 +108,7 @@ export async function getStallsPromoVideos(): Promise<StallPromoVideoData[]> {
         url: v.url,
         thumbnail: v.thumbnail,
         category: v.category,
-        creator: v.Admin
+        creator: v.creator
     }));
 }
 

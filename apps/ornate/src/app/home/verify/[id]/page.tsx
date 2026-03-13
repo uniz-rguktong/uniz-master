@@ -12,7 +12,7 @@ export default async function VerifyEventCertificatePage({
     const reg = await prisma.registration.findUnique({
         where: { id },
         include: {
-            Event: { select: { title: true, date: true, venue: true } }
+            event: { select: { title: true, date: true, venue: true } }
         },
     });
 
@@ -59,7 +59,7 @@ export default async function VerifyEventCertificatePage({
                                     <span className="text-3xl">🏆</span>
                                 </div>
                                 <h2 className="text-[#D6FF00] font-black tracking-[0.3em] uppercase text-lg">Certificate Issued</h2>
-                                <p className="text-white/60 text-sm tracking-widest">{reg.Event.title}</p>
+                                <p className="text-white/60 text-sm tracking-widest">{reg.event.title}</p>
                                 {issuedDate && (
                                     <p className="text-white/30 text-xs tracking-widest font-mono">Issued: {issuedDate}</p>
                                 )}
@@ -104,7 +104,7 @@ export default async function VerifyEventCertificatePage({
                     {[
                         { label: 'Participant', value: reg.studentName },
                         { label: 'Student ID', value: reg.studentId },
-                        { label: 'Event', value: reg.Event.title },
+                        { label: 'Event', value: reg.event.title },
                         { label: 'Status', value: reg.status },
                     ].map(({ label, value }) => (
                         <div key={label}>

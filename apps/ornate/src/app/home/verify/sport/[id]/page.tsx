@@ -12,16 +12,16 @@ export default async function VerifySportCertificatePage({
     const sportReg = await prisma.sportRegistration.findUnique({
         where: { id },
         include: {
-            Sport: { select: { name: true, category: true, gender: true, certificateStatus: true, certificateIssuedAt: true } }
+            sport: { select: { name: true, category: true, gender: true, certificateStatus: true, certificateIssuedAt: true } }
         },
     });
 
     if (!sportReg) notFound();
 
     // For sports, check if the sport's certificate has been issued by admin
-    const hasCert = sportReg.Sport.certificateStatus === 'ISSUED' || !!sportReg.Sport.certificateIssuedAt;
-    const issuedDate = sportReg.Sport.certificateIssuedAt
-        ? new Date(sportReg.Sport.certificateIssuedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+    const hasCert = sportReg.sport.certificateStatus === 'ISSUED' || !!sportReg.sport.certificateIssuedAt;
+    const issuedDate = sportReg.sport.certificateIssuedAt
+        ? new Date(sportReg.sport.certificateIssuedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
         : null;
 
     // Download route — the API will resolve from R2
@@ -41,8 +41,8 @@ export default async function VerifySportCertificatePage({
                                 <span className="text-3xl">🏅</span>
                             </div>
                             <h2 className="text-sky-400 font-black tracking-[0.3em] uppercase text-lg">Sport Certificate Issued</h2>
-                            <p className="text-white/60 text-sm tracking-widest">{sportReg.Sport.name}</p>
-                            <p className="text-white/40 text-xs tracking-widest">{sportReg.Sport.category} · {sportReg.Sport.gender}</p>
+                            <p className="text-white/60 text-sm tracking-widest">{sportReg.sport.name}</p>
+                            <p className="text-white/40 text-xs tracking-widest">{sportReg.sport.category} · {sportReg.sport.gender}</p>
                             {issuedDate && (
                                 <p className="text-white/30 text-xs tracking-widest font-mono">Issued: {issuedDate}</p>
                             )}
@@ -80,7 +80,7 @@ export default async function VerifySportCertificatePage({
                     {[
                         { label: 'Participant', value: sportReg.studentName },
                         { label: 'Student ID', value: sportReg.studentId },
-                        { label: 'Sport', value: sportReg.Sport.name },
+                        { label: 'Sport', value: sportReg.sport.name },
                         { label: 'Status', value: sportReg.status },
                     ].map(({ label, value }) => (
                         <div key={label}>
@@ -92,7 +92,7 @@ export default async function VerifySportCertificatePage({
                     ))}
                 </div>
                 <p className="text-white/15 text-[8px] tracking-widest font-mono mt-4">
-                    VERIFICATION ID: {id} · ORNATE '26 · RGUKT ONG
+                    VERIFICATION ID: {id} · ORNATE &apos;26 · RGUKT ONG
                 </p>
             </div>
         </div>

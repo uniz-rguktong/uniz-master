@@ -90,31 +90,31 @@ export async function getMyProfile() {
         let userData = await prisma.user.findUnique({
             where: { id: user.id },
             include: {
-                Registration: {
-                    include: { Event: { select: { title: true, date: true, venue: true, price: true, category: true } } },
+                registrations: {
+                    include: { event: { select: { title: true, date: true, venue: true, price: true, category: true } } },
                     orderBy: { createdAt: 'desc' },
                     take: 100,
                 },
-                Team: {
+                leaderOf: {
                     include: {
-                        Event: { select: { title: true, date: true, venue: true } },
-                        TeamMember: { select: { name: true, role: true, status: true } },
-                        SportTeam: {
+                        event: { select: { title: true, date: true, venue: true } },
+                        members: { select: { name: true, role: true, status: true } },
+                        sportTeam: {
                             include: {
-                                Sport: { select: { name: true, category: true, gender: true, status: true } }
+                                sport: { select: { name: true, category: true, gender: true, status: true } }
                             }
                         }
                     },
                     take: 50,
                 },
-                TeamMember: {
+                teamMembers: {
                     include: {
-                        Team: {
+                        team: {
                             include: {
-                                Event: { select: { title: true, date: true, venue: true } },
-                                SportTeam: {
+                                event: { select: { title: true, date: true, venue: true } },
+                                sportTeam: {
                                     include: {
-                                        Sport: { select: { name: true, category: true, gender: true, status: true } }
+                                        sport: { select: { name: true, category: true, gender: true, status: true } }
                                     }
                                 }
                             }
@@ -129,31 +129,31 @@ export async function getMyProfile() {
             userData = await prisma.user.findUnique({
                 where: { email: user.email },
                 include: {
-                    Registration: {
-                        include: { Event: { select: { title: true, date: true, venue: true, price: true, category: true } } },
+                    registrations: {
+                        include: { event: { select: { title: true, date: true, venue: true, price: true, category: true } } },
                         orderBy: { createdAt: 'desc' },
                         take: 100,
                     },
-                    Team: {
+                    leaderOf: {
                         include: {
-                            Event: { select: { title: true, date: true, venue: true } },
-                            TeamMember: { select: { name: true, role: true, status: true } },
-                            SportTeam: {
+                            event: { select: { title: true, date: true, venue: true } },
+                            members: { select: { name: true, role: true, status: true } },
+                            sportTeam: {
                                 include: {
-                                    Sport: { select: { name: true, category: true, gender: true, status: true } }
+                                    sport: { select: { name: true, category: true, gender: true, status: true } }
                                 }
                             }
                         },
                         take: 50,
                     },
-                    TeamMember: {
+                    teamMembers: {
                         include: {
-                            Team: {
+                            team: {
                                 include: {
-                                    Event: { select: { title: true, date: true, venue: true } },
-                                    SportTeam: {
+                                    event: { select: { title: true, date: true, venue: true } },
+                                    sportTeam: {
                                         include: {
-                                            Sport: { select: { name: true, category: true, gender: true, status: true } }
+                                            sport: { select: { name: true, category: true, gender: true, status: true } }
                                         }
                                     }
                                 }
@@ -169,7 +169,7 @@ export async function getMyProfile() {
 
         const sportRegistrations = await prisma.sportRegistration.findMany({
             where: { email: user.email || undefined },
-            include: { Sport: { select: { name: true, category: true, gender: true, status: true } } },
+            include: { sport: { select: { name: true, category: true, gender: true, status: true } } },
             orderBy: { createdAt: 'desc' }
         });
 
@@ -227,15 +227,15 @@ export async function getMyProfile() {
 
         // ─── Compute stats from real data ────────────────────────────────────
         const uniqueSportTeamIds = new Set<string>();
-        userData.Team.forEach((t: any) => { if (t.SportTeam) uniqueSportTeamIds.add(t.id); });
-        userData.TeamMember.forEach((tm: any) => { if (tm.Team?.SportTeam) uniqueSportTeamIds.add(tm.Team.id); });
+        userData.leaderOf.forEach((t: any) => { if (t.sportTeam) uniqueSportTeamIds.add(t.id); });
+        userData.teamMembers.forEach((tm: any) => { if (tm.team?.sportTeam) uniqueSportTeamIds.add(tm.team.id); });
 
         const missionsCount = 
-            userData.Registration.length + 
+            userData.registrations.length + 
             sportRegistrations.length + 
             uniqueSportTeamIds.size;
 
-        const achievementsCount = userData.Registration.filter(
+        const achievementsCount = userData.registrations.filter(
             (r: { rank: number | null; certificateUrl: string | null }) => (r.rank && r.rank > 0) || r.certificateUrl
         ).length;
 
@@ -258,63 +258,63 @@ export async function getMyProfile() {
                 following: 0,
             },
             gamification,
-            registrations: userData.Registration.map((r) => ({
+            registrations: userData.registrations.map((r) => ({
                 id: r.id,
-                eventTitle: r.Event.title,
-                eventDate: r.Event.date.toISOString(),
-                venue: r.Event.venue,
+                eventTitle: r.event.title,
+                eventDate: r.event.date.toISOString(),
+                venue: r.event.venue,
                 status: r.status,
                 paymentStatus: r.paymentStatus,
                 certificateUrl: r.certificateUrl,
                 certificateIssuedAt: r.certificateIssuedAt?.toISOString() ?? null,
                 rank: r.rank,
-                isPaid: r.Event.price > 0,
-                type: r.Event.category,
+                isPaid: r.event.price > 0,
+                type: r.event.category,
             })),
-            teams: userData.Team.map((t: any) => ({
+            teams: userData.leaderOf.map((t: any) => ({
                 id: t.id,
                 teamName: t.teamName,
                 teamCode: t.teamCode,
-                eventTitle: t.SportTeam
-                    ? `${t.SportTeam.Sport.name} (${t.SportTeam.Sport.category})`
-                    : t.Event?.title ?? 'Unknown',
-                eventDate: t.Event?.date?.toISOString() ?? null,
-                venue: t.Event?.venue ?? null,
-                sportName: t.SportTeam?.Sport.name ?? null,
-                sportStatus: t.SportTeam?.Sport.status ?? null,
+                eventTitle: t.sportTeam
+                    ? `${t.sportTeam.sport.name} (${t.sportTeam.sport.category})`
+                    : t.event?.title ?? 'Unknown',
+                eventDate: t.event?.date?.toISOString() ?? null,
+                venue: t.event?.venue ?? null,
+                sportName: t.sportTeam?.sport.name ?? null,
+                sportStatus: t.sportTeam?.sport.status ?? null,
                 status: t.status,
                 role: 'LEADER',
-                isSport: !!t.SportTeam,
-                members: t.TeamMember.map((m: any) => ({
+                isSport: !!t.sportTeam,
+                members: t.members.map((m: any) => ({
                     name: m.name,
                     role: m.role,
                     status: m.status,
                 })),
             })),
-            teamMemberships: userData.TeamMember
-                .filter((tm: any) => tm.Team?.leaderId !== userData?.id)
+            teamMemberships: userData.teamMembers
+                .filter((tm: any) => tm.team?.leaderId !== userData?.id)
                 .map((tm: any) => ({
                     id: tm.id,
-                    teamId: tm.Team?.id,
-                    teamName: tm.Team?.teamName,
+                    teamId: tm.team?.id,
+                    teamName: tm.team?.teamName,
                     role: tm.role,
                     status: tm.status,
-                    eventTitle: tm.Team?.SportTeam
-                        ? `${tm.Team.SportTeam.Sport.name} (${tm.Team.SportTeam.Sport.category})`
-                        : tm.Team?.Event?.title ?? 'Unknown',
-                    eventDate: tm.Team?.Event?.date?.toISOString() ?? null,
-                    venue: tm.Team?.Event?.venue ?? null,
-                    sportName: tm.Team?.SportTeam?.Sport.name ?? null,
-                    sportStatus: tm.Team?.SportTeam?.Sport.status ?? null,
-                    isSport: !!tm.Team?.SportTeam,
+                    eventTitle: tm.team?.sportTeam
+                        ? `${tm.team.sportTeam.sport.name} (${tm.team.sportTeam.sport.category})`
+                        : tm.team?.event?.title ?? 'Unknown',
+                    eventDate: tm.team?.event?.date?.toISOString() ?? null,
+                    venue: tm.team?.event?.venue ?? null,
+                    sportName: tm.team?.sportTeam?.sport.name ?? null,
+                    sportStatus: tm.team?.sportTeam?.sport.status ?? null,
+                    isSport: !!tm.team?.sportTeam,
                 })),
             sportRegistrations: sportRegistrations.map((sr) => ({
                 id: sr.id,
-                sportName: sr.Sport.name,
-                category: sr.Sport.category,
-                gender: sr.Sport.gender,
+                sportName: sr.sport.name,
+                category: sr.sport.category,
+                gender: sr.sport.gender,
                 status: sr.status,
-                sportStatus: sr.Sport.status,
+                sportStatus: sr.sport.status,
             }))
         };
     } catch (error: unknown) {
@@ -328,33 +328,33 @@ export async function getStudentProfileByEmail(email: string) {
         const userData = await prisma.user.findUnique({
             where: { email },
             include: {
-                Registration: {
+                registrations: {
                     include: {
-                        Event: { select: { title: true, date: true, venue: true, price: true, category: true } }
+                        event: { select: { title: true, date: true, venue: true, price: true, category: true } }
                     },
                     orderBy: { createdAt: 'desc' },
                     take: 100,
                 },
-                Team: {
+                leaderOf: {
                     include: {
-                        Event: { select: { title: true, date: true, venue: true } },
-                        TeamMember: { select: { name: true, role: true, status: true } },
-                        SportTeam: {
+                        event: { select: { title: true, date: true, venue: true } },
+                        members: { select: { name: true, role: true, status: true } },
+                        sportTeam: {
                             include: {
-                                Sport: { select: { name: true, category: true, gender: true, status: true } }
+                                sport: { select: { name: true, category: true, gender: true, status: true } }
                             }
                         }
                     },
                     take: 50,
                 },
-                TeamMember: {
+                teamMembers: {
                     include: {
-                        Team: {
+                        team: {
                             include: {
-                                Event: { select: { title: true, date: true, venue: true } },
-                                SportTeam: {
+                                event: { select: { title: true, date: true, venue: true } },
+                                sportTeam: {
                                     include: {
-                                        Sport: { select: { name: true, category: true, gender: true, status: true } }
+                                        sport: { select: { name: true, category: true, gender: true, status: true } }
                                     }
                                 }
                             }
@@ -370,24 +370,24 @@ export async function getStudentProfileByEmail(email: string) {
         // Individual sport registrations
         const sportRegistrations = await prisma.sportRegistration.findMany({
             where: { email: userData.email },
-            include: { Sport: { select: { name: true, category: true, gender: true, status: true } } },
+            include: { sport: { select: { name: true, category: true, gender: true, status: true } } },
             orderBy: { createdAt: 'desc' }
         });
 
         // ─── Compute real counts ────────────────────────────────────────────────
         // Missions = event regs + individual sport regs + team sport memberships
         const uniqueSportTeamIds = new Set<string>();
-        userData.Team.forEach((t: { id: string; SportTeam: unknown | null }) => { if (t.SportTeam) uniqueSportTeamIds.add(t.id); });
-        userData.TeamMember.forEach((tm: { Team: { id: string; SportTeam: unknown | null } | null }) => { if (tm.Team?.SportTeam) uniqueSportTeamIds.add(tm.Team.id); });
+        userData.leaderOf.forEach((t: { id: string; sportTeam: unknown | null }) => { if (t.sportTeam) uniqueSportTeamIds.add(t.id); });
+        userData.teamMembers.forEach((tm: { team: { id: string; sportTeam: unknown | null } | null }) => { if (tm.team?.sportTeam) uniqueSportTeamIds.add(tm.team.id); });
 
         const missionsCount =
-            userData.Registration.length +
+            userData.registrations.length +
             sportRegistrations.length +
             uniqueSportTeamIds.size;
 
         // Achievements = events with rank > 0 OR with a certificate issued
         const achievementsCount =
-            userData.Registration.filter((r: { rank: number | null; certificateUrl: string | null }) => (r.rank && r.rank > 0) || r.certificateUrl).length;
+            userData.registrations.filter((r: { rank: number | null; certificateUrl: string | null }) => (r.rank && r.rank > 0) || r.certificateUrl).length;
 
         const userExt = userData as Record<string, unknown>;
         const followersCount = typeof userExt.followersCount === 'number' ? userExt.followersCount : 0;
@@ -410,87 +410,87 @@ export async function getStudentProfileByEmail(email: string) {
                 following: followingCount,
                 xp: (missionsCount * 100) + (achievementsCount * 500)
             },
-            registrations: userData.Registration.map((r) => ({
+            registrations: userData.registrations.map((r: any) => ({
                 id: r.id,
-                eventTitle: r.Event.title,
-                eventDate: r.Event.date.toISOString(),
-                venue: r.Event.venue,
+                eventTitle: r.event.title,
+                eventDate: r.event.date.toISOString(),
+                venue: r.event.venue,
                 status: r.status,
                 paymentStatus: r.paymentStatus,
                 certificateUrl: r.certificateUrl,
                 certificateIssuedAt: r.certificateIssuedAt?.toISOString() ?? null,
                 rank: r.rank,
-                isPaid: r.Event.price > 0,
-                type: r.Event.category,
+                isPaid: r.event.price > 0,
+                type: r.event.category,
             })),
             // Teams where this user is the LEADER
-            teams: userData.Team.map((t: {
+            teams: userData.leaderOf.map((t: {
                 id: string;
                 teamName: string;
                 teamCode: string;
-                Event: { title: string; date: Date; venue: string } | null;
-                SportTeam: { Sport: { name: string; category: string; status: string } } | null;
+                event: { title: string; date: Date; venue: string } | null;
+                sportTeam: { sport: { name: string; category: string; status: string } } | null;
                 status: string;
-                TeamMember: Array<{ name: string; role: string; status: string }>;
+                members: Array<{ name: string; role: string; status: string }>;
             }) => ({
                 id: t.id,
                 teamName: t.teamName,
                 teamCode: t.teamCode,
-                eventTitle: t.SportTeam
-                    ? `${t.SportTeam.Sport.name} (${t.SportTeam.Sport.category})`
-                    : t.Event?.title ?? 'Unknown',
-                eventDate: t.Event?.date?.toISOString() ?? null,
-                venue: t.Event?.venue ?? null,
-                sportName: t.SportTeam?.Sport.name ?? null,
-                sportStatus: t.SportTeam?.Sport.status ?? null,
+                eventTitle: t.sportTeam
+                    ? `${t.sportTeam.sport.name} (${t.sportTeam.sport.category})`
+                    : t.event?.title ?? 'Unknown',
+                eventDate: t.event?.date?.toISOString() ?? null,
+                venue: t.event?.venue ?? null,
+                sportName: t.sportTeam?.sport.name ?? null,
+                sportStatus: t.sportTeam?.sport.status ?? null,
                 status: t.status,
                 role: 'LEADER',
-                isSport: !!t.SportTeam,
-                members: t.TeamMember.map((m: { name: string; role: string; status: string }) => ({
+                isSport: !!t.sportTeam,
+                members: t.members.map((m: { name: string; role: string; status: string }) => ({
                     name: m.name,
                     role: m.role,
                     status: m.status,
                 })),
             })),
             // Teams where this user is a MEMBER (not leader)
-            teamMemberships: userData.TeamMember
-                .filter((tm: { Team: { leaderId: string } }) => tm.Team.leaderId !== userData.id) // exclude teams led by self (already in teams)
+            teamMemberships: userData.teamMembers
+                .filter((tm: { team: { leaderId: string } }) => tm.team.leaderId !== userData.id) // exclude teams led by self (already in teams)
                 .map((tm: {
                     id: string;
                     role: string;
                     status: string;
-                    Team: {
+                    team: {
                         id: string;
                         teamName: string;
-                        Event: { title: string; date: Date; venue: string } | null;
-                        SportTeam: { Sport: { name: string; category: string; status: string } } | null;
+                        event: { title: string; date: Date; venue: string } | null;
+                        sportTeam: { sport: { name: string; category: string; status: string } } | null;
                     };
                 }) => ({
                     id: tm.id,
-                    teamId: tm.Team.id,
-                    teamName: tm.Team.teamName,
+                    teamId: tm.team.id,
+                    teamName: tm.team.teamName,
                     role: tm.role,
                     status: tm.status,
-                    eventTitle: tm.Team.SportTeam
-                        ? `${tm.Team.SportTeam.Sport.name} (${tm.Team.SportTeam.Sport.category})`
-                        : tm.Team.Event?.title ?? 'Unknown',
-                    eventDate: tm.Team.Event?.date?.toISOString() ?? null,
-                    venue: tm.Team.Event?.venue ?? null,
-                    sportName: tm.Team.SportTeam?.Sport.name ?? null,
-                    sportStatus: tm.Team.SportTeam?.Sport.status ?? null,
-                    isSport: !!tm.Team.SportTeam,
+                    eventTitle: tm.team.sportTeam
+                        ? `${tm.team.sportTeam.sport.name} (${tm.team.sportTeam.sport.category})`
+                        : tm.team.event?.title ?? 'Unknown',
+                    eventDate: tm.team.event?.date?.toISOString() ?? null,
+                    venue: tm.team.event?.venue ?? null,
+                    sportName: tm.team.sportTeam?.sport.name ?? null,
+                    sportStatus: tm.team.sportTeam?.sport.status ?? null,
+                    isSport: !!tm.team.sportTeam,
                 })),
             sportRegistrations: sportRegistrations.map((sr: {
                 id: string;
                 status: string;
-                Sport: { name: string; category: string; gender: string; status: string };
+                sport: { name: string; category: string; gender: string; status: string };
             }) => ({
                 id: sr.id,
-                sportName: sr.Sport.name,
-                category: sr.Sport.category,
-                gender: sr.Sport.gender,
+                sportName: sr.sport.name,
+                category: sr.sport.category,
+                gender: sr.sport.gender,
                 status: sr.status,
-                sportStatus: sr.Sport.status,
+                sportStatus: sr.sport.status,
             }))
         };
     } catch (error) {

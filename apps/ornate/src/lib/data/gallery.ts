@@ -61,12 +61,12 @@ export const getGalleryAlbums = unstable_cache(async (
             description: true,
             coverImage: true,
             tags: true,
-            GalleryImage: {
+            images: {
                 select: { id: true, url: true, caption: true },
                 orderBy: { uploadedAt: 'desc' },
                 take: boundedImageLimit,
             },
-            Admin: {
+            creator: {
                 select: {
                     id: true,
                     name: true,
@@ -84,14 +84,14 @@ export const getGalleryAlbums = unstable_cache(async (
         id: a.id,
         title: a.title,
         description: a.description,
-        coverImage: a.coverImage || a.GalleryImage[0]?.url || null,
+        coverImage: a.coverImage || a.images[0]?.url || null,
         tags: a.tags,
-        images: a.GalleryImage.map((img: (typeof a.GalleryImage)[number]) => ({
+        images: a.images.map((img: (typeof a.images)[number]) => ({
             id: img.id,
             url: img.url,
             caption: img.caption,
         })),
-        creator: a.Admin,
+        creator: a.creator,
     }));
 }, ['gallery-albums'], { revalidate: 300, tags: ['gallery'] });
 
@@ -121,7 +121,7 @@ export async function getSportsGalleryAlbums(): Promise<AlbumData[]> {
         const albums = await prisma.galleryAlbum.findMany({
             where: {
                 isArchived: false,
-                Admin: {
+                creator: {
                     role: {
                         in: ['SPORTS_ADMIN', 'BRANCH_SPORTS_ADMIN']
                     }
@@ -134,12 +134,12 @@ export async function getSportsGalleryAlbums(): Promise<AlbumData[]> {
                 coverImage: true,
                 tags: true,
                 // Only load first 3 image URLs for preview, not the entire collection
-                GalleryImage: {
+                images: {
                     select: { id: true, url: true, caption: true },
                     orderBy: { uploadedAt: 'desc' },
                     take: 3,
                 },
-                Admin: {
+                creator: {
                     select: {
                         id: true,
                         name: true,
@@ -157,14 +157,14 @@ export async function getSportsGalleryAlbums(): Promise<AlbumData[]> {
             id: a.id,
             title: a.title,
             description: a.description,
-            coverImage: a.coverImage || a.GalleryImage[0]?.url || null,
+            coverImage: a.coverImage || a.images[0]?.url || null,
             tags: a.tags,
-            images: a.GalleryImage.map((img: (typeof a.GalleryImage)[number]) => ({
+            images: a.images.map((img: (typeof a.images)[number]) => ({
                 id: img.id,
                 url: img.url,
                 caption: img.caption,
             })),
-            creator: a.Admin,
+            creator: a.creator,
         }));
 
         if (redis && data.length > 0) {
@@ -201,7 +201,7 @@ export async function getPromoVideos(): Promise<PromoVideoData[]> {
             url: true,
             thumbnail: true,
             category: true,
-            Admin: {
+            creator: {
                 select: {
                     role: true,
                     branch: true,
@@ -219,7 +219,7 @@ export async function getPromoVideos(): Promise<PromoVideoData[]> {
         url: v.url,
         thumbnail: v.thumbnail,
         category: v.category,
-        creator: v.Admin
+        creator: v.creator
     }));
 }
 
@@ -231,7 +231,7 @@ export async function getCulturalGalleryAlbums(limit = GALLERY_ALBUM_LIMIT, imag
         where: {
             isArchived: false,
             OR: [
-                { Admin: { clubId: { in: ['KALADHARINI', 'KALADHARANI', 'kaladharini', 'kaladharani', 'khaladharini', 'khaladharani', 'KHALADHARINI', 'KHALADHARANI'] } } },
+                { creator: { clubId: { in: ['KALADHARINI', 'KALADHARANI', 'kaladharini', 'kaladharani', 'khaladharini', 'khaladharani', 'KHALADHARINI', 'KHALADHARANI'] } } },
                 { title: { contains: 'CULTURAL', mode: 'insensitive' } }
             ]
         },
@@ -241,12 +241,12 @@ export async function getCulturalGalleryAlbums(limit = GALLERY_ALBUM_LIMIT, imag
             description: true,
             coverImage: true,
             tags: true,
-            GalleryImage: {
+            images: {
                 select: { id: true, url: true, caption: true },
                 orderBy: { uploadedAt: 'desc' },
                 take: boundedImageLimit,
             },
-            Admin: {
+            creator: {
                 select: {
                     id: true,
                     name: true,
@@ -264,14 +264,14 @@ export async function getCulturalGalleryAlbums(limit = GALLERY_ALBUM_LIMIT, imag
         id: a.id,
         title: a.title,
         description: a.description,
-        coverImage: a.coverImage || a.GalleryImage[0]?.url || null,
+        coverImage: a.coverImage || a.images[0]?.url || null,
         tags: a.tags,
-        images: a.GalleryImage.map((img: (typeof a.GalleryImage)[number]) => ({
+        images: a.images.map((img: (typeof a.images)[number]) => ({
             id: img.id,
             url: img.url,
             caption: img.caption,
         })),
-        creator: a.Admin,
+        creator: a.creator,
     }));
 }
 
@@ -280,8 +280,8 @@ export async function getCulturalPromoVideos(): Promise<PromoVideoData[]> {
         where: {
             status: 'active',
             OR: [
-                { Admin: { clubId: { in: ['KALADHARINI', 'KALADHARANI', 'kaladharini', 'kaladharani', 'khaladharini', 'khaladharani', 'KHALADHARINI', 'KHALADHARANI'] } } },
-                { Admin: { role: 'SUPER_ADMIN' } }
+                { creator: { clubId: { in: ['KALADHARINI', 'KALADHARANI', 'kaladharini', 'kaladharani', 'khaladharini', 'khaladharani', 'KHALADHARINI', 'KHALADHARANI'] } } },
+                { creator: { role: 'SUPER_ADMIN' } }
             ]
         },
         select: {
@@ -290,7 +290,7 @@ export async function getCulturalPromoVideos(): Promise<PromoVideoData[]> {
             url: true,
             thumbnail: true,
             category: true,
-            Admin: {
+            creator: {
                 select: {
                     role: true,
                     branch: true,
@@ -308,7 +308,7 @@ export async function getCulturalPromoVideos(): Promise<PromoVideoData[]> {
         url: v.url,
         thumbnail: v.thumbnail,
         category: v.category,
-        creator: v.Admin
+        creator: v.creator
     }));
 }
 
@@ -317,9 +317,9 @@ export async function getAllCulturalImages(limit = CULTURAL_IMAGE_LIMIT): Promis
 
     const images = await prisma.galleryImage.findMany({
         where: {
-            GalleryAlbum: {
+            album: {
                 OR: [
-                    { Admin: { clubId: { in: ['KALADHARINI', 'KALADHARANI', 'kaladharini', 'kaladharani', 'khaladharini', 'khaladharani', 'KHALADHARINI', 'KHALADHARANI'] } } },
+                    { creator: { clubId: { in: ['KALADHARINI', 'KALADHARANI', 'kaladharini', 'kaladharani', 'khaladharini', 'khaladharani', 'KHALADHARINI', 'KHALADHARANI'] } } },
                     { title: { contains: 'CULTURAL', mode: 'insensitive' } }
                 ]
             }
@@ -336,7 +336,7 @@ export async function getCulturalBrandLogos(): Promise<string[]> {
     const logos = await prisma.brandLogo.findMany({
         where: {
             status: 'active',
-            Admin: {
+            creator: {
                 OR: [
                     { clubId: { in: ['KALADHARINI', 'KALADHARANI', 'kaladharini', 'kaladharani', 'khaladharini', 'khaladharani', 'KHALADHARINI', 'KHALADHARANI'] } },
                     { branch: { in: ['CULTURAL', 'cultural'] } }

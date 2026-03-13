@@ -31,13 +31,13 @@ export async function registerForEvent(input: z.infer<typeof RegisterEventSchema
         // Fetch event with capacity check
         const event = await prisma.event.findUnique({
             where: { id: eventId },
-            include: { _count: { select: { Registration: true } } },
+            include: { _count: { select: { registrations: true } } },
         });
 
         if (!event) return { success: false, error: 'Event not found.' };
         if (event.status !== 'PUBLISHED') return { success: false, error: 'Event is not open for registration.' };
         if (!event.registrationOpen) return { success: false, error: 'Registration is closed.' };
-        if (event._count.Registration >= event.maxCapacity) return { success: false, error: 'Event is full.' };
+        if (event._count.registrations >= event.maxCapacity) return { success: false, error: 'Event is full.' };
 
         // Get user details
         let userData = await prisma.user.findUnique({ where: { id: user.id } });

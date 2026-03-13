@@ -216,8 +216,8 @@ export async function joinTeam(input: z.infer<typeof JoinTeamSchema>) {
         const team = await prisma.team.findUnique({
             where: { teamCode },
             include: {
-                Event: true,
-                TeamMember: true,
+                event: true,
+                members: true,
             },
         });
 
@@ -225,11 +225,11 @@ export async function joinTeam(input: z.infer<typeof JoinTeamSchema>) {
         if (team.isLocked) return { success: false, error: 'Team is locked.' };
 
         // Check team size
-        const maxSize = team.Event?.teamSizeMax ?? 10;
-        if (team.TeamMember.length >= maxSize) return { success: false, error: 'Team is full.' };
+        const maxSize = team.event?.teamSizeMax ?? 10;
+        if (team.members.length >= maxSize) return { success: false, error: 'Team is full.' };
 
         // Check not already a member
-        const isMember = team.TeamMember.some((m) => m.userId === userData.id);
+        const isMember = team.members.some((m) => m.userId === userData.id);
         if (isMember) return { success: false, error: 'Already in this team.' };
 
         await prisma.teamMember.create({
@@ -267,12 +267,12 @@ export async function getTeamDetails(eventId: string) {
         const team = await prisma.team.findFirst({
             where: {
                 eventId,
-                TeamMember: {
+                members: {
                     some: { userId: user.id }
                 }
             },
             include: {
-                TeamMember: {
+                members: {
                     orderBy: [
                         { role: 'asc' }, // LEADER usually comes first if alphanumeric (L vs M) or add specific sorting
                         { joinedAt: 'asc' }
@@ -284,7 +284,7 @@ export async function getTeamDetails(eventId: string) {
         if (!team) return { success: false, error: 'Team not found.' };
 
         // Ensure LEADER is always first in the returned array
-        const sortedMembers = [...team.TeamMember].sort((a, b) => {
+        const sortedMembers = [...team.members].sort((a, b) => {
             if (a.role === 'LEADER') return -1;
             if (b.role === 'LEADER') return 1;
             return 0;

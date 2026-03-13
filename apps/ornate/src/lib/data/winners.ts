@@ -23,7 +23,7 @@ export const getEventWinners = unstable_cache(
                 eventId: true,
                 positions: true,
                 publishedAt: true,
-                Event: { select: { title: true } },
+                event: { select: { title: true } },
             },
             orderBy: { publishedAt: 'desc' },
             take: 50,
@@ -31,7 +31,7 @@ export const getEventWinners = unstable_cache(
 
         return winners.map((w) => ({
             eventId: w.eventId,
-            eventTitle: w.Event.title,
+            eventTitle: w.event.title,
             positions: w.positions,
             publishedAt: w.publishedAt?.toISOString() ?? null,
         }));
@@ -48,7 +48,7 @@ export const getSportWinners = unstable_cache(
                 sportId: true,
                 positions: true,
                 publishedAt: true,
-                Sport: { select: { name: true } },
+                sport: { select: { name: true } },
             },
             orderBy: { publishedAt: 'desc' },
             take: 50,
@@ -56,7 +56,7 @@ export const getSportWinners = unstable_cache(
 
         return winners.map((w) => ({
             sportId: w.sportId,
-            sportName: w.Sport.name,
+            sportName: w.sport.name,
             positions: w.positions,
             publishedAt: w.publishedAt?.toISOString() ?? null,
         }));

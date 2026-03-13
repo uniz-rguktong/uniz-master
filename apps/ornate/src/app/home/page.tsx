@@ -4,6 +4,8 @@ import { getActiveAnnouncements } from '@/lib/data/announcements';
 import { getPublishedEvents } from '@/lib/data/events';
 import { getFestSettings } from '@/lib/data/fest-settings';
 
+export const revalidate = 60;
+
 export default async function HomePage() {
     let neonStats: any = { totalEnergy: 0, totalCadets: 0, topCadets: [] };
     let announcements: any[] = [];

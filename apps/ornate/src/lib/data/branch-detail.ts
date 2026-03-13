@@ -38,14 +38,14 @@ export const getBranchDetail = unstable_cache(
                         status: 'PUBLISHED',
                         OR: [
                             { category: category },
-                            { Admin_Event_creatorIdToAdmin: { branch: slug.toLowerCase() } },
-                            { Admin_Event_creatorIdToAdmin: { clubId: slug.toLowerCase() } }
+                            { creator: { branch: slug.toLowerCase() } },
+                            { creator: { clubId: slug.toLowerCase() } }
                         ]
                     },
                     include: {
-                        _count: { select: { Registration: true } },
-                        Admin_Event_creatorIdToAdmin: { select: { branch: true, clubId: true } },
-                        Admin_EventCoordinators: {
+                        _count: { select: { registrations: true } },
+                        creator: { select: { branch: true, clubId: true } },
+                        assignedCoordinators: {
                             select: {
                                 name: true,
                                 phone: true,
@@ -59,19 +59,19 @@ export const getBranchDetail = unstable_cache(
                 prisma.galleryAlbum.findMany({
                     where: {
                         isArchived: false,
-                        Admin: {
+                        creator: {
                             OR: [
                                 { branch: slug.toLowerCase() },
                                 { clubId: slug.toLowerCase() }
                             ]
                         }
                     },
-                    include: { GalleryImage: { take: 20 } },
+                    include: { images: { take: 20 } },
                 }),
                 prisma.promoVideo.findMany({
                     where: {
                         status: 'active',
-                        Admin: {
+                        creator: {
                             OR: [
                                 { branch: slug.toLowerCase() },
                                 { clubId: slug.toLowerCase() },
@@ -84,7 +84,7 @@ export const getBranchDetail = unstable_cache(
                 }),
                 prisma.branchPoints.findMany({
                     where: { branch: category },
-                    include: { Sport: { select: { name: true } } },
+                    include: { sport: { select: { name: true } } },
                 }),
                 prisma.announcement.findMany({
                     where: { category, status: 'active', expiryDate: { gt: new Date() } },
@@ -94,9 +94,9 @@ export const getBranchDetail = unstable_cache(
                 prisma.winnerAnnouncement.findMany({
                     where: {
                         isPublished: true,
-                        Event: { category },
+                        event: { category },
                     },
-                    include: { Event: { select: { title: true } } },
+                    include: { event: { select: { title: true } } },
                 }),
                 prisma.bestOutgoingStudent.findMany({
                     where: {
@@ -107,7 +107,7 @@ export const getBranchDetail = unstable_cache(
                         ],
                     },
                     include: {
-                        Admin: {
+                        creator: {
                             select: {
                                 role: true,
                             }
@@ -118,7 +118,7 @@ export const getBranchDetail = unstable_cache(
                 prisma.brandLogo.findMany({
                     where: {
                         status: 'active',
-                        Admin: {
+                        creator: {
                             OR: [
                                 { branch: slug.toLowerCase() },
                                 { clubId: slug.toLowerCase() }
@@ -129,11 +129,11 @@ export const getBranchDetail = unstable_cache(
                 })
             ]);
 
-        const galleryUrls = albums.flatMap((a) => a.GalleryImage.map((img) => img.url));
+        const galleryUrls = albums.flatMap((a) => a.images.map((img) => img.url));
 
         // Map the events to MissionData based on standardized mapping logic
         const mappedEvents: MissionData[] = events.map((event) =>
-            mapEventToMission(event, event._count.Registration)
+            mapEventToMission(event, event._count.registrations)
         );
 
         const hallOfFame = bestOutgoingStudents.map((bos) => ({
@@ -187,7 +187,7 @@ export const getBranchDetail = unstable_cache(
             hallOfFame: hallOfFame,
             winners: eventWinners.map((w) => ({
                 eventId: w.eventId,
-                eventTitle: w.Event.title,
+                eventTitle: w.event.title,
                 positions: w.positions,
             })),
             videos: videos.map((v) => ({
@@ -200,11 +200,11 @@ export const getBranchDetail = unstable_cache(
             albums: albums.map((a) => ({
                 id: a.id,
                 title: a.title,
-                images: a.GalleryImage.map((img) => img.url),
-                coverImage: a.coverImage || a.GalleryImage[0]?.url || null,
+                images: a.images.map((img) => img.url),
+                coverImage: a.coverImage || a.images[0]?.url || null,
             })),
             standings: branchPoints.map((bp) => ({
-                sport: bp.Sport.name,
+                sport: bp.sport.name,
                 branch: bp.branch,
                 points: bp.points + bp.manualAdjustment,
             })),

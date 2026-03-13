@@ -184,8 +184,8 @@ export async function getPromoVideosData(): Promise<PromoVideoData[]> {
             where: {
                 status: 'active',
                 OR: [
-                    { Admin: { role: { in: ['SPORTS_ADMIN', 'BRANCH_SPORTS_ADMIN'] } } },
-                    { Admin: { role: 'SUPER_ADMIN' } }
+                    { creator: { role: { in: ['SPORTS_ADMIN', 'BRANCH_SPORTS_ADMIN'] } } },
+                    { creator: { role: 'SUPER_ADMIN' } }
                 ]
             },
             select: {
@@ -199,7 +199,7 @@ export async function getPromoVideosData(): Promise<PromoVideoData[]> {
                 duration: true,
                 uploadDate: true,
                 category: true,
-                Admin: {
+                creator: {
                     select: {
                         role: true,
                         branch: true,
@@ -222,7 +222,7 @@ export async function getPromoVideosData(): Promise<PromoVideoData[]> {
             duration: v.duration,
             uploadDate: v.uploadDate.toISOString(),
             category: v.category,
-            creator: v.Admin
+            creator: v.creator
         }));
 
         // Write to cache
@@ -265,7 +265,7 @@ export async function getSportsStandingsData(): Promise<SportData[]> {
                 description: true,
                 icon: true,
                 bannerUrl: true,
-                BranchPoints: {
+                branchPoints: {
                     select: {
                         branch: true,
                         points: true,
@@ -273,7 +273,7 @@ export async function getSportsStandingsData(): Promise<SportData[]> {
                     },
                     orderBy: { points: 'desc' },
                 },
-                SportWinnerAnnouncement: {
+                winnerAnnouncement: {
                     select: {
                         isPublished: true,
                         positions: true,
@@ -294,11 +294,11 @@ export async function getSportsStandingsData(): Promise<SportData[]> {
             format: '',
             status: '',
             matches: [],
-            branchPoints: s.BranchPoints.map((bp) => ({
+            branchPoints: s.branchPoints.map((bp) => ({
                 branch: bp.branch,
                 points: bp.points + bp.manualAdjustment,
             })),
-            winnerAnnouncement: s.SportWinnerAnnouncement,
+            winnerAnnouncement: s.winnerAnnouncement,
         }));
 
         if (redis && data.length > 0) {
@@ -337,7 +337,7 @@ export async function getSportsScheduleData(): Promise<SportData[]> {
                 name: true,
                 gender: true,
                 category: true,
-                Match: {
+                matches: {
                     select: {
                         id: true,
                         round: true,
@@ -362,7 +362,7 @@ export async function getSportsScheduleData(): Promise<SportData[]> {
             category: s.category,
             format: '',
             status: '',
-            matches: s.Match.map((m) => ({
+            matches: s.matches.map((m) => ({
                 id: m.id,
                 round: m.round,
                 team1Name: m.team1Name ?? 'TBD',
@@ -402,7 +402,7 @@ export async function getSportsResultsData(): Promise<SportData[]> {
                 name: true,
                 gender: true,
                 category: true,
-                Match: {
+                matches: {
                     where: { status: 'COMPLETED' },
                     select: {
                         id: true,
@@ -430,7 +430,7 @@ export async function getSportsResultsData(): Promise<SportData[]> {
             category: s.category,
             format: '',
             status: '',
-            matches: s.Match.map((m) => ({
+            matches: s.matches.map((m) => ({
                 id: m.id,
                 round: m.round,
                 team1Name: m.team1Name ?? 'TBD',
@@ -493,7 +493,7 @@ export async function getSportsFixturesData(): Promise<SportData[]> {
                 name: true,
                 gender: true,
                 category: true,
-                Match: {
+                matches: {
                     select: {
                         id: true,
                         round: true,
@@ -521,7 +521,7 @@ export async function getSportsFixturesData(): Promise<SportData[]> {
             category: s.category,
             format: '',
             status: '',
-            matches: s.Match.map((m) => ({
+            matches: s.matches.map((m) => ({
                 id: m.id,
                 round: m.round,
                 team1Name: m.team1Name ?? 'TBD',
@@ -581,7 +581,7 @@ export async function getTodaysMatchesData(): Promise<MatchData[]> {
                 status: true,
                 winner: true,
                 updatedAt: true,
-                Sport: {
+                sport: {
                     select: { name: true } // only fetch sport name, not full Sport record
                 },
             },
@@ -589,7 +589,7 @@ export async function getTodaysMatchesData(): Promise<MatchData[]> {
             take: 200, // Hard cap to prevent unbounded fetches
         });
 
-        const data = matches.map((m) => ({
+        const data = matches.map((m: any) => ({
             id: m.id,
             round: m.round,
             team1Name: m.team1Name ?? 'TBD',
@@ -601,7 +601,7 @@ export async function getTodaysMatchesData(): Promise<MatchData[]> {
             time: m.time,
             status: m.status,
             winner: m.winner,
-            sportName: m.Sport.name,
+            sportName: m.sport.name,
             updatedAt: m.updatedAt.toISOString(),
         } as MatchData));
 
@@ -665,7 +665,7 @@ export async function getAthleticsData(): Promise<SportData[]> {
                 description: true,
                 icon: true,
                 bannerUrl: true,
-                SportWinnerAnnouncement: {
+                winnerAnnouncement: {
                     select: {
                         isPublished: true,
                         positions: true,
@@ -687,7 +687,7 @@ export async function getAthleticsData(): Promise<SportData[]> {
             status: '',
             matches: [],
             branchPoints: [],
-            winnerAnnouncement: s.SportWinnerAnnouncement,
+            winnerAnnouncement: s.winnerAnnouncement,
         }));
 
         if (redis && data.length > 0) {

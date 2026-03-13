@@ -31,7 +31,7 @@ export async function getOrCreateCadetProfile(userId: string) {
   const existing = await prisma.cadetProfile.findUnique({ where: { userId } });
   if (existing) return existing;
   const created = await prisma.cadetProfile.create({
-    data: { id: crypto.randomUUID(), userId, totalEnergy: 0, badgeIds: [] }
+    data: { id: crypto.randomUUID(), userId, totalEnergy: 0, badgeIds: [], updatedAt: new Date() }
   });
   await invalidateRankCache(userId);
   return created;
@@ -63,8 +63,8 @@ export async function syncCadetEnergy(userId: string) {
       prisma.user.findUnique({
         where: { id: userId },
         include: {
-          Registration: { include: { Event: { select: { title: true } } } },
-          TeamMember: { include: { Team: { include: { SportTeam: { include: { Sport: true } } } } } },
+          registrations: { include: { event: { select: { title: true } } } },
+          teamMembers: { include: { team: { include: { sportTeam: { include: { sport: true } } } } } },
           CadetProfile: true,
         }
       }),
@@ -104,7 +104,7 @@ export async function syncCadetEnergy(userId: string) {
     }
 
     // 3. Event Registrations (CONFIRMED = register bonus if > 0, ATTENDED = attend bonus + rank)
-    for (const reg of user.Registration) {
+    for (const reg of user.registrations) {
       if (reg.status === 'CONFIRMED' || reg.status === 'ATTENDED' || reg.status === 'WAITLISTED') {
         if (ENERGY_REWARDS.EVENT_REGISTER > 0) {
           awardIfNew(ENERGY_REWARDS.EVENT_REGISTER, 'EVENT_REGISTER', `REG:${reg.id}`);
@@ -132,7 +132,7 @@ export async function syncCadetEnergy(userId: string) {
     }
 
     // 5. Sport Team Participations
-    for (const tm of user.TeamMember) {
+    for (const tm of user.teamMembers) {
       if (tm.status === 'ACCEPTED') {
         awardIfNew(ENERGY_REWARDS.SPORT_PARTICIPATE, 'SPORT_PARTICIPATE', `TEAM:${tm.teamId}`);
       }
@@ -164,12 +164,12 @@ export async function syncCadetEnergy(userId: string) {
         badgesChanged = true;
       }
       // FIRST MISSION: Any event registration
-      if (user.Registration.length > 0 && !newBadgeIds.includes('first-mission')) {
+      if (user.registrations.length > 0 && !newBadgeIds.includes('first-mission')) {
         newBadgeIds.push('first-mission');
         badgesChanged = true;
       }
       // SPORTS WARRIOR: Any team membership or individual sport registration
-      if ((user.TeamMember.length > 0 || sportRegs.length > 0) && !newBadgeIds.includes('sports-warrior')) {
+      if ((user.teamMembers.length > 0 || sportRegs.length > 0) && !newBadgeIds.includes('sports-warrior')) {
         newBadgeIds.push('sports-warrior');
         badgesChanged = true;
       }
@@ -209,8 +209,8 @@ export async function awardEnergyToUser(
 
     await prisma.cadetProfile.upsert({
       where: { userId },
-      create: { id: crypto.randomUUID(), userId, totalEnergy: amount, badgeIds: [] },
-      update: { totalEnergy: { increment: amount } },
+      create: { id: crypto.randomUUID(), userId, totalEnergy: amount, badgeIds: [], updatedAt: new Date() },
+      update: { totalEnergy: { increment: amount }, updatedAt: new Date() },
     });
 
     await invalidateRankCache(userId);
@@ -337,16 +337,16 @@ export async function getMyGamificationProfile() {
       prisma.user.findUnique({
         where: { id: user.id },
         include: {
-          Registration: {
-            include: { Event: { select: { title: true, category: true, date: true } } },
+          registrations: {
+            include: { event: { select: { title: true, category: true, date: true } } },
             orderBy: { createdAt: 'desc' },
           },
-          TeamMember: {
+          teamMembers: {
             include: {
-              Team: {
+              team: {
                 include: {
-                  Event: { select: { title: true } },
-                  SportTeam: { include: { Sport: { select: { name: true } } } }
+                  event: { select: { title: true } },
+                  sportTeam: { include: { sport: { select: { name: true } } } }
                 }
               }
             }
@@ -355,7 +355,7 @@ export async function getMyGamificationProfile() {
       }),
       prisma.sportRegistration.findMany({
         where: { studentId },
-        include: { Sport: { select: { name: true } } }
+        include: { sport: { select: { name: true } } }
       })
     ]);
 
@@ -365,28 +365,28 @@ export async function getMyGamificationProfile() {
     noteDescriptions.set('PROFILE_SYNC', 'Completed Profile');
 
     const rankLabel = (r: number) => r === 1 ? '1st Place' : r === 2 ? '2nd Place' : '3rd Place';
-    for (const reg of userWithMissions?.Registration ?? []) {
-      const title = reg.Event.title;
+    for (const reg of userWithMissions?.registrations ?? []) {
+      const title = reg.event.title;
       noteDescriptions.set(`REG:${reg.id}`, `Registered for "${title}"`);
       noteDescriptions.set(`ATTEND:${reg.id}`, `Attended "${title}"`);
       if (reg.rank && reg.rank > 0) {
         noteDescriptions.set(`RANK:${reg.id}`, `${rankLabel(reg.rank)} at "${title}"`);
       }
     }
-    for (const tm of userWithMissions?.TeamMember ?? []) {
-      const sportName = tm.Team?.SportTeam?.Sport?.name;
-      const eventName = tm.Team?.Event?.title;
-      const label = sportName ? `Sports: ${sportName}` : eventName ? `Team Event: ${eventName}` : 'Team Participation';
+    for (const tm of userWithMissions?.teamMembers ?? []) {
+      const sportName = tm.team?.sportTeam?.sport?.name;
+      const eventName = tm.team?.event?.title;
+      const label = sportName ? `Sports: ${sportName}` : eventName ? `Team event: ${eventName}` : 'Team Participation';
       noteDescriptions.set(`TEAM:${tm.teamId}`, label);
     }
     for (const sr of sportRegData ?? []) {
-      noteDescriptions.set(`SPORT_REG:${sr.id}`, `Registered for ${sr.Sport?.name || 'Sport'}`);
+      noteDescriptions.set(`SPORT_REG:${sr.id}`, `Registered for ${sr.sport?.name || 'Sport'}`);
     }
 
     const missionsCount = registrations + sportRegistrations + teamMemberships;
-    const recentMissions = (userWithMissions?.Registration ?? []).slice(0, 10).map((reg) => ({
-      title: reg.Event.title,
-      category: (reg.Event.category || 'Mission').toUpperCase(),
+    const recentMissions = (userWithMissions?.registrations ?? []).slice(0, 10).map((reg) => ({
+      title: reg.event.title,
+      category: (reg.event.category || 'Mission').toUpperCase(),
       date: reg.createdAt.toISOString(),
       status: reg.status,
       energy: reg.status === 'ATTENDED' ? ENERGY_REWARDS.EVENT_ATTEND : ENERGY_REWARDS.EVENT_REGISTER
@@ -455,7 +455,7 @@ export async function getMyGamificationProfile() {
   }
 }
 
-// ─── Admin: grant energy ──────────────────────────────────────────────────────
+// ─── creator: grant energy ──────────────────────────────────────────────────────
 export async function adminGrantEnergy(targetUserId: string, amount: number, note?: string) {
   try {
     const admin = await requireAuth();

@@ -3,7 +3,7 @@ import BranchDetailClient from './BranchDetailClient';
 import { notFound } from 'next/navigation';
 import { getSportsStandingsData, computeDynamicStandings } from '@/lib/data/sports';
 
-export const revalidate = 60; // Cache and regenerate page every 60 seconds
+export const revalidate = 60; // Cache and regenerate page every 60 seconds (ISR)
 
 export async function generateStaticParams() {
     const slugs = [
