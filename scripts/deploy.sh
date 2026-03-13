@@ -57,8 +57,6 @@ deploy_logic() {
     "uniz-landing:uniz-landing:uniz-landing:landing"
     "uniz-user:uniz-user-service:uniz-user-service:user-service"
     "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
-    "ornate-core:ornate-core:ornate-core:ornate-core"
-    "ornate:ornate-landing:ornate-landing:ornate-landing"
   )
 
   # Prevent kubectl apply from overwriting current images with :local
