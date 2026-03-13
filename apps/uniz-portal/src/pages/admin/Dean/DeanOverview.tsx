@@ -17,11 +17,14 @@ import {
 import { 
   KPICard, 
   TrendChart, 
-  ComparisonChart, 
   PulseFeed, 
   DonutChart,
-  SubjectGradeChart
+  SubjectHeatmap 
 } from "../AnalyticsUI";
+import { DonutChart as DonutUI } from "@/components/ui/donut-chart";
+import { Card } from "@/components/ui/card";
+import { AnimatePresence, motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export default function DeanOverview() {
   const [occupancy, setOccupancy] = useState<any>(null);
@@ -29,6 +32,7 @@ export default function DeanOverview() {
   const [grievances, setGrievances] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [selectedBranch, setSelectedBranch] = useState<string>("CSE");
+  const [hoveredOccupancy, setHoveredOccupancy] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -126,19 +130,19 @@ export default function DeanOverview() {
     const outside = Number(occupancy?.["Outside Campus"]) || 0;
     const total = inside + outside;
 
+    const data = [
+      { value: inside, color: "hsl(142.1 76.2% 36.3%)", label: "Inside Campus" },
+      { value: outside, color: "hsl(214.7 95% 40%)", label: "Outside Campus" }
+    ];
+
     if (total === 0 && !occupancy) {
         // Fallback or Initial Seed
         return {
             total: 3450,
             inside: 2800,
-            trend: [
-                { name: "Mon", in: 2700, out: 750 },
-                { name: "Tue", in: 2850, out: 600 },
-                { name: "Wed", in: 2800, out: 650 },
-                { name: "Thu", in: 2900, out: 550 },
-                { name: "Fri", in: 2500, out: 950 },
-                { name: "Sat", in: 1800, out: 1650 },
-                { name: "Sun", in: 1200, out: 2250 },
+            data: [
+              { value: 2800, color: "hsl(142.1 76.2% 36.3%)", label: "Inside Campus" },
+              { value: 650, color: "hsl(214.7 95% 40%)", label: "Outside Campus" }
             ]
         };
     }
@@ -146,9 +150,7 @@ export default function DeanOverview() {
     return {
         total,
         inside,
-        trend: [
-            { name: "Current", in: inside, out: outside }
-        ]
+        data
     };
   }, [occupancy]);
 
@@ -174,15 +176,93 @@ export default function DeanOverview() {
         <KPICard title="Pending Actions" value={grievanceData.pendingCount || 0} icon={AlertCircle} badge="Urgent" />
       </div>
 
-      {/* Campus Occupancy Trend */}
-      <ComparisonChart 
-        title="Campus Occupancy Dynamics"
-        data={occupancyStats.trend}
-        lines={[
-          { key: "in", label: "In-Campus", color: "#10b981" },
-          { key: "out", label: "External / Leave", color: "#6366f1", dashed: true }
-        ]}
-      />
+      {/* Campus Occupancy Analytics */}
+      <Card className="p-10 w-full flex flex-col items-center justify-center space-y-10 bg-transparent border-slate-100 shadow-sm rounded-[2rem] hover:shadow-lg transition-all duration-500">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Campus Occupancy Intelligence</h2>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Real-time resident distribution</p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-16 w-full">
+          <div className="relative flex items-center justify-center">
+            <DonutUI
+              data={occupancyStats.data}
+              size={320}
+              strokeWidth={40}
+              animationDuration={1.5}
+              highlightOnHover={true}
+              centerContent={
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={hoveredOccupancy || "total"}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="flex flex-col items-center justify-center text-center"
+                  >
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                      {hoveredOccupancy || "Total Population"}
+                    </p>
+                    <p className="text-5xl font-black text-slate-900 tracking-tighter">
+                      {hoveredOccupancy 
+                        ? occupancyStats.data.find(d => d.label === hoveredOccupancy)?.value 
+                        : occupancyStats.total}
+                    </p>
+                    {hoveredOccupancy && (
+                        <p className="text-sm font-black text-blue-600 mt-2">
+                            [{( (occupancyStats.data.find(d => d.label === hoveredOccupancy)?.value || 0) / occupancyStats.total * 100).toFixed(0)}%]
+                        </p>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              }
+            />
+          </div>
+
+          <div className="flex flex-col gap-4 min-w-[240px]">
+            {occupancyStats.data.map((segment) => (
+              <motion.div
+                key={segment.label}
+                onMouseEnter={() => setHoveredOccupancy(segment.label)}
+                onMouseLeave={() => setHoveredOccupancy(null)}
+                className={cn(
+                  "flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 cursor-pointer",
+                  hoveredOccupancy === segment.label 
+                    ? "bg-slate-900 border-slate-900 shadow-xl -translate-x-2" 
+                    : "bg-white border-slate-100 hover:border-slate-200"
+                )}
+              >
+                <div className="flex items-center gap-4">
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: segment.color }} 
+                  />
+                  <span className={cn(
+                    "text-xs font-black uppercase tracking-widest",
+                    hoveredOccupancy === segment.label ? "text-white" : "text-slate-600"
+                  )}>
+                    {segment.label}
+                  </span>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className={cn(
+                    "text-sm font-black",
+                    hoveredOccupancy === segment.label ? "text-white" : "text-slate-900"
+                  )}>
+                    {segment.value.toLocaleString()}
+                  </span>
+                  <span className={cn(
+                    "text-[9px] font-bold opacity-60",
+                    hoveredOccupancy === segment.label ? "text-blue-400" : "text-slate-400"
+                  )}>
+                    {((segment.value / occupancyStats.total) * 100).toFixed(1)}%
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Academic Heatmap */}
@@ -224,7 +304,7 @@ export default function DeanOverview() {
 
       {/* Dynamic Branch Analytics Section */}
       <div className="w-full">
-         <SubjectGradeChart 
+         <SubjectHeatmap 
            title="Branch Performance Intelligence"
            data={branchFilteredData}
            branches={uniqueBranches}
