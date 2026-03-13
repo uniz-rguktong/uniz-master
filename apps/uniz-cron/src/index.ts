@@ -197,21 +197,10 @@ export const runMaintenance = async () => {
   }
 };
 
-// Job 1: Expire Outpasses (Runs daily at 2:00 AM)
-const maintenanceJob = new CronJob("0 2 * * *", runMaintenance);
-maintenanceJob.start();
+// Note: Internal Cron timers have been removed in favor of Kubernetes CronJobs (see infra/core-infra/kubernetes/base/storage-cleanup-job.yaml)
+// This prevents redundant execution when the pod is used for both a long-running service and ephemeral jobs.
 
-// Job 2: Automate Storage Cleanup (Runs every day at 3 AM)
-const storageCleanupJob = new CronJob("0 3 * * *", async () => {
-  try {
-    await runStorageCleanup();
-  } catch (err: any) {
-    console.error("[CRON] Storage cleanup job failed:", err.message);
-  }
-});
-storageCleanupJob.start();
-
-console.log("Cron Service Started");
+console.log("Cron Service (API Mode) Started");
 
 import express from "express";
 const app = express();
