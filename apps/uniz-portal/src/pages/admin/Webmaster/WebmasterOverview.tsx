@@ -13,6 +13,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../../../api/endpoints";
+import SystemUserAnalytics from "./SystemUserAnalytics";
+import DeanOverview from "../Dean/DeanOverview";
 
 const CLOUDINARY_CLOUD = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -135,7 +137,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
   };
 
   const displayName = profile?.name || username || "Webmaster";
-  const initials = displayName[0].toUpperCase();
+  const initials = (displayName[0] || "W").toUpperCase();
   const email = (profile?.email || `${username}@rguktong.ac.in`).toLowerCase();
 
   return (
@@ -354,6 +356,26 @@ export default function WebmasterOverview({ username }: { username: string }) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <div className="w-full max-w-6xl mt-12 pt-12 border-t border-slate-100 space-y-20">
+        {(() => {
+          const role = (
+            localStorage.getItem("admin_role") || "admin"
+          ).replace(/"/g, "").toLowerCase();
+
+          if (role === "webmaster") {
+            return (
+              <>
+                <SystemUserAnalytics />
+              </>
+            );
+          } else if (role === "dean" || role === "hod" || role === "swo" || role === "dsw") {
+            return <DeanOverview />;
+          }
+          return null;
+        })()}
+      </div>
     </div>
+
   );
 }

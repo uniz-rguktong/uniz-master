@@ -17,6 +17,15 @@ async function seed() {
     await client.connect();
     const hash = await bcrypt.hash("password123", 10);
 
+    // --- CLEANUP (Fresh Start for Local Dev) ---
+    console.log("- Cleaning up existing data...");
+    await client.query('TRUNCATE TABLE auth_v2."AuthCredential" CASCADE;');
+    await client.query('TRUNCATE TABLE user_v2."AdminProfile" CASCADE;');
+    await client.query('TRUNCATE TABLE user_v2."FacultyProfile" CASCADE;');
+    await client.query('TRUNCATE TABLE user_v2."StudentProfile" CASCADE;');
+    await client.query('TRUNCATE TABLE user_v2."Banner" CASCADE;');
+    await client.query('TRUNCATE TABLE user_v2."PublicNotification" CASCADE;');
+
     const upsertUser = async (
       id: string,
       username: string,
@@ -30,7 +39,11 @@ async function seed() {
         `
         INSERT INTO auth_v2."AuthCredential" (id, username, "passwordHash", role, "updatedAt")
         VALUES ($1, $2, $3, $4, NOW())
-        ON CONFLICT (username) DO UPDATE SET "passwordHash" = EXCLUDED."passwordHash";
+        ON CONFLICT (id) DO UPDATE SET 
+          username = EXCLUDED.username,
+          "passwordHash" = EXCLUDED."passwordHash",
+          role = EXCLUDED.role,
+          "updatedAt" = NOW();
       `,
         [id, username, hash, role],
       );
@@ -41,7 +54,12 @@ async function seed() {
           `
           INSERT INTO user_v2."AdminProfile" (id, username, email, name, role, "updatedAt")
           VALUES ($1, $2, $3, $4, $5, NOW())
-          ON CONFLICT (username) DO UPDATE SET name = EXCLUDED.name, email = EXCLUDED.email;
+          ON CONFLICT (id) DO UPDATE SET 
+            username = EXCLUDED.username,
+            name = EXCLUDED.name, 
+            email = EXCLUDED.email,
+            role = EXCLUDED.role,
+            "updatedAt" = NOW();
         `,
           [
             id,
@@ -56,7 +74,14 @@ async function seed() {
           `
           INSERT INTO user_v2."FacultyProfile" (id, username, name, email, department, designation, role, "updatedAt")
           VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
-          ON CONFLICT (username) DO UPDATE SET department = EXCLUDED.department, designation = EXCLUDED.designation;
+          ON CONFLICT (id) DO UPDATE SET 
+            username = EXCLUDED.username,
+            name = EXCLUDED.name,
+            email = EXCLUDED.email,
+            department = EXCLUDED.department, 
+            designation = EXCLUDED.designation,
+            role = EXCLUDED.role,
+            "updatedAt" = NOW();
         `,
           [
             id,
@@ -73,7 +98,14 @@ async function seed() {
           `
           INSERT INTO user_v2."StudentProfile" (id, username, name, email, branch, year, semester, "updatedAt")
           VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
-          ON CONFLICT (username) DO UPDATE SET branch = EXCLUDED.branch, year = EXCLUDED.year;
+          ON CONFLICT (id) DO UPDATE SET 
+            username = EXCLUDED.username,
+            name = EXCLUDED.name,
+            email = EXCLUDED.email,
+            branch = EXCLUDED.branch, 
+            year = EXCLUDED.year,
+            semester = EXCLUDED.semester,
+            "updatedAt" = NOW();
         `,
           [
             id,
@@ -102,7 +134,7 @@ async function seed() {
     );
     await upsertUser(
       "dean-id",
-      "dean_academics",
+      "dean",
       "dean",
       "Dean of Academic Affairs",
       "Admin",
