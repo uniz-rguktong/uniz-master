@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
+import { cn } from "../../../utils/cn";
 import {
   BookOpen,
   Plus,
@@ -837,38 +838,38 @@ export default function UnifiedAcademicManager() {
       </div>
 
       {showNewSemModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-          <div className="bg-white rounded-xl w-full max-w-xl p-10 animate-in zoom-in-95 duration-300">
-            <div className="flex items-center gap-4 mb-10">
-              <div className="p-5 bg-blue-50 text-blue-600 rounded-xl shadow-none">
-                <Zap size={32} className="fill-blue-600 opacity-20" />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+          <div className="bg-white w-full max-w-xl rounded-[2rem] p-10 shadow-2xl border border-slate-100 animate-in zoom-in-95 duration-300">
+            <div className="flex items-center gap-5 mb-10">
+              <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
+                <Zap size={30} strokeWidth={2.5} />
               </div>
               <div>
-                <h2 className="text-3xl font-black italic tracking-tighter text-slate-900">
+                <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none mb-1.5">
                   Launch Academic Rollout
                 </h2>
-                <p className="text-slate-400 text-sm font-bold">
+                <p className="text-slate-500 font-bold text-[10px] uppercase tracking-widest">
                   Initialize a new semester registration event.
                 </p>
               </div>
             </div>
 
             <div className="space-y-8">
-              <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
+              <div>
+                <label className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3 block ml-1">
                   Semester Label (Internal Display)
                 </label>
                 <input
                   type="text"
                   value={newSemName}
                   onChange={(e) => setNewSemName(e.target.value)}
-                  className="w-full h-16 px-8 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-xl outline-none font-black text-slate-900 transition-all"
+                  className="w-full px-6 py-4 bg-slate-50 border border-transparent focus:border-indigo-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all placeholder:text-slate-300"
                   placeholder="e.g. AY 2024-25 SEM-II"
                 />
               </div>
 
-              <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
+              <div>
+                <label className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-4 block ml-1">
                   Applicable Branches
                 </label>
                 <div className="grid grid-cols-3 gap-3">
@@ -882,10 +883,12 @@ export default function UnifiedAcademicManager() {
                             : [...prev, b],
                         )
                       }
-                      className={`h-14 rounded-xl font-black text-xs transition-all border ${selectedBranches.includes(b)
-                        ? "bg-slate-900 text-white border-slate-900 shadow-none"
-                        : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-300"
-                        }`}
+                      className={cn(
+                        "py-3 rounded-xl font-black text-[10px] uppercase tracking-widest border transition-all active:scale-95",
+                        selectedBranches.includes(b)
+                          ? "bg-[#0f172a] text-white border-[#0f172a] shadow-lg shadow-slate-900/20"
+                          : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-200 hover:text-slate-600"
+                      )}
                     >
                       {b}
                     </button>
@@ -896,16 +899,16 @@ export default function UnifiedAcademicManager() {
               <div className="flex gap-4 pt-6">
                 <button
                   onClick={() => setShowNewSemModal(false)}
-                  className="h-16 flex-1 bg-slate-100 text-slate-500 rounded-xl font-black uppercase tracking-widest text-xs"
+                  className="flex-1 py-4 bg-slate-50 text-slate-500 hover:bg-slate-100 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleInitSemester}
                   disabled={loading}
-                  className="h-16 flex-[2] bg-blue-600 text-white rounded-xl font-black uppercase tracking-[0.2em] text-xs shadow-none hover:bg-blue-700 transition-all"
+                  className="flex-[2] px-10 py-4 bg-indigo-600 text-white rounded-xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-indigo-500/20 hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50"
                 >
-                  {loading ? "Initializing Engine..." : "Launch Rollout 🎓"}
+                  {loading ? "Launching..." : "Launch Rollout"}
                 </button>
               </div>
             </div>
@@ -1137,7 +1140,7 @@ export default function UnifiedAcademicManager() {
               >
                 {editingSub
                   ? "Update Architectural Database"
-                  : "Finalize Course Entry 🎓"}
+                  : "Finalize Course Entry"}
               </button>
             </form>
           </div>

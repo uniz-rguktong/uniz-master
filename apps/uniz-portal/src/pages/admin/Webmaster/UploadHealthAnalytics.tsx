@@ -12,7 +12,6 @@ import {
 import {
   TrendingUp,
   AlertCircle,
-  Loader2,
   ChevronDown,
 } from "lucide-react";
 import { cn } from "../../../utils/cn";
@@ -64,13 +63,7 @@ export default function UploadHealthAnalytics({ hideHeader = false }: { hideHead
 
   if (loading) {
     return (
-      <div className="w-full h-80 flex flex-col items-center justify-center gap-4 bg-slate-50/50 rounded-[2.5rem] border border-slate-100">
-        <div className="relative">
-          <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-          <div className="absolute inset-0 bg-blue-600/5 blur-xl rounded-full animate-pulse" />
-        </div>
-        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.3em]">Connecting to Intelligence Service...</p>
-      </div>
+      <div className="w-full h-80 animate-pulse bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-slate-100" />
     );
   }
 

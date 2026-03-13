@@ -41,13 +41,13 @@ export const KPICard = ({
     <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-transparent p-10 rounded-xl border border-slate-100 flex flex-col gap-4"
+      className="bg-white/40 backdrop-blur-md p-10 rounded-[2rem] border border-slate-100/50 flex flex-col gap-4 shadow-sm hover:shadow-lg transition-all"
     >
       <div className="flex items-start justify-between">
         <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", iconBg, iconColor)}>
           <Icon size={18} />
         </div>
-        <div className="px-3 py-1 bg-slate-50 border border-slate-100/50 rounded-full flex items-center gap-1.5 translate-y-[-2px]">
+        <div className="px-3 py-1 bg-white/50 border border-slate-100/50 rounded-full flex items-center gap-1.5 translate-y-[-2px]">
           <Check size={10} className="text-slate-400" />
           <span className="text-[10px] font-bold text-slate-500">{badge}</span>
         </div>

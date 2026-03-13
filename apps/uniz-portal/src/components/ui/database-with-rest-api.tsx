@@ -279,19 +279,19 @@ const DatabaseWithRestApi = ({
         <div className="absolute -bottom-2 h-[100px] w-full max-w-[95%] rounded-[3rem] bg-blue-500/10 scale-95" />
         {/* box title */}
         <div className="absolute -top-3 z-20 flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 shadow-sm sm:-top-4 sm:py-2">
-          <span className="text-[12px] font-bold text-slate-800">{title}</span>
+          <span className="text-[10px] sm:text-[12px] font-bold text-slate-800">{title}</span>
         </div>
         {/* box outter circle */}
-        <div className="absolute -bottom-12 z-30 grid h-[100px] w-[100px] place-items-center rounded-full border border-slate-200 bg-white shadow-md text-slate-950 font-black group cursor-pointer">
-          <span className="unifrakturcook-bold text-[3rem] text-slate-900 tracking-tight leading-none group-hover:scale-110 transition-transform duration-300">
+        <div className="absolute -bottom-10 sm:-bottom-12 z-30 grid h-[80px] w-[80px] sm:h-[100px] sm:w-[100px] place-items-center rounded-full border border-slate-200 bg-white shadow-md text-slate-950 font-black group cursor-pointer">
+          <span className="unifrakturcook-bold text-[2rem] sm:text-[3rem] text-slate-900 tracking-tight leading-none group-hover:scale-110 transition-transform duration-300">
             uniZ
           </span>
         </div>
         {/* box content */}
-        <div className="relative z-10 flex h-[250px] w-full items-center justify-center overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
+        <div className="relative z-10 flex h-[180px] sm:h-[250px] w-full items-center justify-center overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
           {/* Floating Badges */}
           <motion.div
-            className="absolute top-6 left-4 sm:left-12 z-20 h-9 rounded-full bg-slate-50 px-4 text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
+            className="absolute top-4 left-3 sm:top-6 sm:left-12 z-20 h-8 sm:h-9 rounded-full bg-slate-50 px-3 sm:px-4 text-[10px] sm:text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
             animate={{ y: [0, -6, 0] }}
             transition={{
               duration: 4,
@@ -305,7 +305,7 @@ const DatabaseWithRestApi = ({
           </motion.div>
 
           <motion.div
-            className="absolute bottom-6 left-16 sm:left-32 z-20 h-9 rounded-full bg-slate-50 px-4 text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
+            className="absolute bottom-4 left-3 sm:bottom-6 sm:left-32 z-20 h-8 sm:h-9 rounded-full bg-slate-50 px-3 sm:px-4 text-[10px] sm:text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
             animate={{ y: [0, -8, 0] }}
             transition={{
               duration: 5,
@@ -319,7 +319,7 @@ const DatabaseWithRestApi = ({
           </motion.div>
 
           <motion.div
-            className="absolute top-8 right-16 sm:right-32 z-20 h-9 rounded-full bg-slate-50 px-4 text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
+            className="absolute top-4 right-3 sm:top-8 sm:right-32 z-20 h-8 sm:h-9 rounded-full bg-slate-50 px-3 sm:px-4 text-[10px] sm:text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
             animate={{ y: [0, -5, 0] }}
             transition={{
               duration: 4.5,
@@ -333,7 +333,7 @@ const DatabaseWithRestApi = ({
           </motion.div>
 
           <motion.div
-            className="absolute bottom-6 right-4 sm:right-12 z-20 h-9 rounded-full bg-slate-50 px-4 text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
+            className="absolute bottom-4 right-3 sm:bottom-6 sm:right-12 z-20 h-8 sm:h-9 rounded-full bg-slate-50 px-3 sm:px-4 text-[10px] sm:text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
             animate={{ y: [0, -7, 0] }}
             transition={{
               duration: 3.5,
@@ -378,7 +378,7 @@ const DatabaseWithRestApi = ({
           {/* Floating Internal Cards */}
           <div className="absolute inset-0 flex items-center justify-center gap-4 sm:gap-8 z-30 pointer-events-none px-4">
             <motion.div
-              className="flex flex-col items-center justify-center bg-white/70 backdrop-blur-md border border-slate-200 shadow-sm rounded-2xl p-4 w-[110px] h-[100px] sm:w-[140px] sm:h-[120px]"
+              className="hidden sm:flex flex-col items-center justify-center bg-white/70 backdrop-blur-md border border-slate-200 shadow-sm rounded-2xl p-4 w-[110px] h-[100px] sm:w-[140px] sm:h-[120px]"
               animate={{ y: [-2, 2, -2] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             >
@@ -392,7 +392,7 @@ const DatabaseWithRestApi = ({
             </motion.div>
 
             <motion.div
-              className="flex flex-col items-center justify-center bg-white/70 backdrop-blur-md border border-slate-200 shadow-sm rounded-2xl p-4 w-[120px] h-[110px] sm:w-[160px] sm:h-[130px] border-b-2 border-b-blue-500 mb-4"
+              className="hidden sm:flex flex-col items-center justify-center bg-white/70 backdrop-blur-md border border-slate-200 shadow-sm rounded-2xl p-4 w-[120px] h-[110px] sm:w-[160px] sm:h-[130px] border-b-2 border-b-blue-500 mb-4"
               animate={{ y: [2, -2, 2] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             >
@@ -406,7 +406,7 @@ const DatabaseWithRestApi = ({
             </motion.div>
 
             <motion.div
-              className="flex flex-col items-center justify-center bg-white/70 backdrop-blur-md border border-slate-200 shadow-sm rounded-2xl p-4 w-[110px] h-[100px] sm:w-[140px] sm:h-[120px]"
+              className="hidden sm:flex flex-col items-center justify-center bg-white/70 backdrop-blur-md border border-slate-200 shadow-sm rounded-2xl p-4 w-[110px] h-[100px] sm:w-[140px] sm:h-[120px]"
               animate={{ y: [-2, 2, -2] }}
               transition={{
                 duration: 3.5,

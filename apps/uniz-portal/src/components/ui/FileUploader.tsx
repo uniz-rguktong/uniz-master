@@ -1,7 +1,7 @@
 import { Button } from "./button"
 import { Input } from "./input"
 import { useImageUpload } from "../../hooks/use-image-upload"
-import { FileUp, X, Upload, Trash2, FileText, FileSpreadsheet, Loader2, CheckCircle2 } from "lucide-react"
+import { FileUp, X, Upload, Trash2, FileText, FileSpreadsheet, CheckCircle2 } from "lucide-react"
 import { useCallback, useState } from "react"
 import { cn } from "@/lib/utils"
 
@@ -86,21 +86,21 @@ export function FileUploader({
     const isImage = selectedFile?.type.startsWith("image/");
 
     return (
-        <div className="w-full space-y-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="w-full space-y-4 rounded-2xl border border-slate-100 bg-white/60 backdrop-blur-md p-6 shadow-sm overflow-hidden">
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
                     <h3 className="text-lg font-bold text-slate-900 tracking-tight">{label}</h3>
-                    <p className="text-sm text-slate-500 font-medium">
+                    <p className="text-sm text-slate-500 font-medium italic opacity-70">
                         {description}
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
                     {isUploading && (
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-100 animate-in fade-in slide-in-from-right-2">
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50/80 rounded-lg border border-emerald-100 backdrop-blur-sm animate-in fade-in slide-in-from-right-2">
                             <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
                                 Uploading {typeof progress === 'number' ? `${progress}%` : ""}
                             </span>
-                            <Loader2 className="h-3.5 w-3.5 text-emerald-500 animate-spin" />
+                            <div className="h-3.5 w-3.5 rounded-full border-2 border-emerald-200 border-t-emerald-500 animate-spin" />
                         </div>
                     )}
                     {isSuccess && !isUploading && (
@@ -134,10 +134,11 @@ export function FileUploader({
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                     className={cn(
-                        "flex h-48 cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 transition-all hover:bg-slate-50 hover:border-blue-400",
+                        "flex h-48 cursor-pointer flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 transition-all hover:bg-white hover:border-blue-400 group relative overflow-hidden",
                         isDragging && "border-blue-500 bg-blue-50/50",
                     )}
                 >
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="rounded-full bg-white p-4 shadow-sm border border-slate-100 transition-transform group-hover:scale-110">
                         <FileUp className="h-6 w-6 text-slate-400" />
                     </div>

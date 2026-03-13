@@ -9,6 +9,22 @@ import UploadHealthAnalytics from "./UploadHealthAnalytics";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../../utils/cn";
 
+function SystemUserAnalyticsSkeleton() {
+  return (
+    <div className="space-y-8 animate-pulse">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-40 bg-white border border-slate-100 rounded-xl" />
+        ))}
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        <div className="lg:col-span-4 h-[500px] bg-white border border-slate-100 rounded-xl" />
+        <div className="lg:col-span-8 h-[500px] bg-white border border-slate-100 rounded-xl" />
+      </div>
+    </div>
+  );
+}
+
 export default function SystemUserAnalytics() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,7 +81,7 @@ export default function SystemUserAnalytics() {
   const totalUsersCount = useMemo(() => roleData.reduce((sum, d) => sum + d.value, 0), [roleData]);
   const activeSegment = useMemo(() => roleData.find(s => s.label === hoveredSegment), [roleData, hoveredSegment]);
 
-  if (loading) return null;
+  if (loading) return <SystemUserAnalyticsSkeleton />;
 
   const totalActive = data.reduce((acc, curr) => acc + (Number(curr.Active) || 0), 0);
   const totalDisabled = data.reduce((acc, curr) => acc + (Number(curr.Disabled) || 0), 0);

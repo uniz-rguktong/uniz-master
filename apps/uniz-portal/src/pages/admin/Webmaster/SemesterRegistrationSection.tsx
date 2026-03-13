@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { cn } from "../../../utils/cn";
 import {
   Plus,
   Trash2,
@@ -648,31 +649,39 @@ export default function SemesterRegistrationSection({
 
       {/* New Event Modal */}
       {showNewModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-xl rounded-xl p-10 shadow-none animate-in zoom-in-95 duration-300">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="p-4 bg-blue-50 text-blue-600 rounded-xl">
-                <Zap size={32} />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+          <div className="bg-white w-full max-w-xl rounded-[2rem] p-10 shadow-2xl border border-slate-100 animate-in zoom-in-95 duration-300">
+            <div className="flex items-center gap-5 mb-10">
+              <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
+                <Zap size={30} strokeWidth={2.5} />
               </div>
-              <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">
-                Rollout Enrollment
-              </h2>
-            </div>
-            <div className="space-y-6">
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block">
-                  Semester Label
+                <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none mb-1.5">
+                  Launch Academic Rollout
+                </h2>
+                <p className="text-slate-500 font-bold text-[10px] uppercase tracking-widest">
+                  Initialize a new semester registration event.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-8">
+              <div>
+                <label className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3 block ml-1">
+                  Semester Label (Internal Display)
                 </label>
                 <input
                   type="text"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="w-full px-6 py-5 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-xl font-bold text-slate-900 outline-none"
+                  className="w-full px-6 py-4 bg-slate-50 border border-transparent focus:border-indigo-500 focus:bg-white rounded-2xl font-bold text-slate-900 outline-none transition-all placeholder:text-slate-300"
+                  placeholder="e.g. AY 2024-25 SEM-2"
                 />
               </div>
+
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block text-center">
-                  Branches
+                <label className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-4 block ml-1">
+                  Applicable Branches
                 </label>
                 <div className="grid grid-cols-3 gap-3">
                   {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
@@ -685,26 +694,32 @@ export default function SemesterRegistrationSection({
                           )
                           : setSelectedBranches([...selectedBranches, b])
                       }
-                      className={`py-3 rounded-xl font-bold text-xs border transition-all ${selectedBranches.includes(b) ? "bg-blue-600 text-white shadow-none" : "bg-slate-50 text-slate-400 border-slate-100"}`}
+                      className={cn(
+                        "py-3 rounded-xl font-black text-[10px] uppercase tracking-widest border transition-all active:scale-95",
+                        selectedBranches.includes(b)
+                          ? "bg-[#0f172a] text-white border-[#0f172a] shadow-lg shadow-slate-900/20"
+                          : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-200 hover:text-slate-600"
+                      )}
                     >
                       {b}
                     </button>
                   ))}
                 </div>
               </div>
-              <div className="flex gap-4 pt-4">
+
+              <div className="flex gap-4 pt-6">
                 <button
                   onClick={() => setShowNewModal(false)}
-                  className="flex-1 py-5 bg-slate-50 text-slate-500 rounded-xl font-bold"
+                  className="flex-1 py-4 bg-slate-50 text-slate-500 hover:bg-slate-100 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={initSemester}
                   disabled={loading}
-                  className="flex-2 px-10 py-5 bg-slate-900 text-white rounded-xl font-bold shadow-none"
+                  className="flex-[2] px-10 py-4 bg-indigo-600 text-white rounded-xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-indigo-500/20 hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50"
                 >
-                  Start Rolling 🚀
+                  {loading ? "Launching..." : "Launch Rollout"}
                 </button>
               </div>
             </div>
@@ -804,7 +819,7 @@ export default function SemesterRegistrationSection({
                   disabled={loading || !addSubjectData.subjectId}
                   className="flex-2 px-10 py-5 bg-slate-900 text-white rounded-xl font-bold shadow-none"
                 >
-                  {loading ? "Adding..." : "Confirm Add 🎓"}
+                  {loading ? "Adding..." : "Confirm Add"}
                 </button>
               </div>
             </div>

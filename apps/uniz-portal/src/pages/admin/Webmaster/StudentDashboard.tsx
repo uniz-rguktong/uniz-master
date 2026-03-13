@@ -57,27 +57,25 @@ export default function StudentDashboard({ data, onSuspendToggle, onResetPasswor
             {/* Centered Profile Hero */}
             <div className={`bg-white rounded-[2rem] border-2 ${student.is_suspended ? 'border-red-500/20' : 'border-emerald-500/20'} p-10 flex flex-col items-center text-center relative overflow-hidden shadow-none`}>
                 <div className="relative mb-8">
-                    <div className={`w-32 h-32 rounded-full flex items-center justify-center bg-slate-50 border-2 ${student.is_suspended ? 'border-red-500/50 bg-red-50/50' : 'border-emerald-500/50 bg-emerald-50/50'} shadow-xl overflow-hidden transition-all duration-500 ring-4 ring-white`}>
-                        {student.profile_url ? (
-                            <img
-                                src={student.profile_url}
-                                alt={student.name}
-                                className="w-full h-full object-cover"
-                            />
-                        ) : (
-                            <span className={`text-4xl font-black ${student.is_suspended ? 'text-red-300' : 'text-emerald-300'} uppercase`}>
-                                {(student.name || 'S')[0]}
-                            </span>
-                        )}
+                    <div className={cn(
+                        "w-32 h-32 rounded-full p-[3px] shadow-2xl transition-all duration-500",
+                        student.is_suspended ? "bg-red-500" : "bg-emerald-500"
+                    )}>
+                        <div className="w-full h-full rounded-full border-[5px] border-white flex items-center justify-center overflow-hidden bg-[#003d33]">
+                            {student.profile_url ? (
+                                <img
+                                    src={student.profile_url}
+                                    alt={student.name}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <span className="text-5xl font-black text-white uppercase tracking-tighter">
+                                    {(student.name || 'S')[0]}
+                                </span>
+                            )}
+                        </div>
                     </div>
 
-                    {!student.is_suspended ? (
-                        <div className="absolute top-1 right-1 w-6 h-6 bg-emerald-500 rounded-full border-4 border-white shadow-md animate-pulse" title="Active Account" />
-                    ) : (
-                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 bg-red-600 text-white text-[8px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg border-2 border-white whitespace-nowrap">
-                            Suspended
-                        </div>
-                    )}
                 </div>
 
                 <div className="space-y-4 mb-10">
