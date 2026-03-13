@@ -4,6 +4,8 @@ metadata:
   name: uniz-storage-cleanup-job
 spec:
   schedule: "0 3 * * *" # Run daily at 3:00 AM
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
       template:
@@ -18,13 +20,17 @@ spec:
                   "-e",
                   "require('./dist/utils/storage.js').runStorageCleanup().then(() => process.exit(0))",
                 ]
-              # Mount the host's docker and containerd sockets to allow cleanup from within the pod
-              # Note: This requires the pod to have sufficient privileges
+              securityContext:
+                privileged: true
+              # Mount the host sockets and log directories to allow cleanup
               volumeMounts:
                 - name: docker-sock
                   mountPath: /var/run/docker.sock
                 - name: containerd-sock
                   mountPath: /run/k3s/containerd/containerd.sock
+                - name: docker-logs
+                  mountPath: /var/lib/docker/containers
+                  readOnly: false
               envFrom:
                 - configMapRef:
                     name: uniz-config
@@ -40,3 +46,7 @@ spec:
               hostPath:
                 path: /run/k3s/containerd/containerd.sock
                 type: Socket
+            - name: docker-logs
+              hostPath:
+                path: /var/lib/docker/containers
+                type: Directory
