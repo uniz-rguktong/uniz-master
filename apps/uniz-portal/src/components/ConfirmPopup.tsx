@@ -49,7 +49,7 @@ export function ConfirmModal({
                 onConfirm();
                 onClose();
               }}
-              className="flex-1 py-2.5 rounded-xl bg-blue-600  text-white font-bold shadow-md shadow-blue-200"
+              className="flex-1 py-2.5 rounded-xl bg-navy-900 text-white font-bold shadow-md shadow-navy-100"
             >
               Confirm
             </button>

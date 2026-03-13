@@ -138,7 +138,7 @@ export default function AdminProfile() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="animate-spin text-blue-600" />
+        <Loader2 className="animate-spin text-navy-900" />
       </div>
     );
   }
@@ -177,14 +177,14 @@ export default function AdminProfile() {
 
                     {isUploading && (
                       <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
-                        <Loader2 className="animate-spin text-blue-600" />
+                        <Loader2 className="animate-spin text-navy-900" />
                       </div>
                     )}
                   </div>
                 </div>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-2 right-2 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all active:scale-90 border-4 border-white"
+                  className="absolute bottom-2 right-2 w-10 h-10 bg-navy-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-navy-800 transition-all active:scale-90 border-4 border-white"
                 >
                   <Camera size={18} />
                 </button>
@@ -207,7 +207,7 @@ export default function AdminProfile() {
                         onChange={(e) =>
                           setFormData({ ...formData, name: e.target.value })
                         }
-                        className="text-3xl font-bold text-slate-900 tracking-tight bg-slate-50 border-b-2 border-blue-600 focus:outline-none px-2 py-1 rounded-t-lg"
+                        className="text-3xl font-bold text-slate-900 tracking-tight bg-slate-50 border-b-2 border-navy-100 focus:outline-none px-2 py-1 rounded-t-lg"
                         placeholder="Your Name"
                       />
                     ) : (
@@ -215,7 +215,7 @@ export default function AdminProfile() {
                         {profile?.name || username}
                       </h1>
                     )}
-                    <div className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[9px] font-black uppercase tracking-widest border border-blue-100 flex items-center gap-1.5 shrink-0">
+                    <div className="px-3 py-1 bg-navy-50 text-navy-900 rounded-full text-[9px] font-black uppercase tracking-widest border border-navy-100 flex items-center gap-1.5 shrink-0">
                       <Shield size={10} /> {profile?.role}
                     </div>
                   </div>
@@ -225,7 +225,7 @@ export default function AdminProfile() {
                       else setIsEditing(true);
                     }}
                     className={`px-6 py-2.5 rounded-full font-bold text-[10px] uppercase tracking-widest border transition-all ${isEditing
-                      ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100 hover:bg-blue-700"
+                      ? "bg-navy-900 text-white border-navy-100 shadow-lg shadow-navy-100 hover:bg-navy-800"
                       : "bg-white text-slate-900 border-slate-200 hover:border-slate-300"
                       }`}
                   >
@@ -250,13 +250,13 @@ export default function AdminProfile() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-slate-100">
               <ProfileItem
-                icon={<Mail className="text-blue-500" />}
+                icon={<Mail className="text-navy-900" />}
                 label="Email Address"
                 value={formData.email || `${username}@rguktong.ac.in`}
                 editable={false}
               />
               <ProfileItem
-                icon={<User className="text-indigo-500" />}
+                icon={<User className="text-navy-900" />}
                 label="Username"
                 value={username ?? ""}
               />
@@ -268,7 +268,7 @@ export default function AdminProfile() {
                 onChange={(val) => setFormData({ ...formData, contact: val })}
               />
               <ProfileItem
-                icon={<Building className="text-purple-500" />}
+                icon={<Building className="text-navy-900" />}
                 label="Department"
                 value={formData.department || "Administration"}
                 editable={isEditing}
@@ -277,7 +277,7 @@ export default function AdminProfile() {
                 }
               />
               <ProfileItem
-                icon={<Briefcase className="text-cyan-500" />}
+                icon={<Briefcase className="text-navy-900" />}
                 label="Designation"
                 value={formData.designation || "Webmaster"}
                 editable={isEditing}
@@ -307,7 +307,7 @@ export default function AdminProfile() {
                     setFormData({ ...formData, bio: e.target.value })
                   }
                   rows={4}
-                  className="w-full text-sm font-medium text-slate-600 leading-relaxed bg-slate-50 border border-slate-200 rounded-2xl p-4 focus:outline-none focus:border-blue-500"
+                  className="w-full text-sm font-medium text-slate-600 leading-relaxed bg-slate-50 border border-slate-200 rounded-2xl p-4 focus:outline-none focus:border-navy-100"
                   placeholder="Tell us about your professional background and interests..."
                 />
               ) : (
@@ -323,9 +323,9 @@ export default function AdminProfile() {
         <div className="mt-6 flex gap-4">
           <button
             onClick={() => navigate("/admin/settings")}
-            className="flex-1 bg-white border border-slate-200 p-6 rounded-2xl hover:border-blue-600 transition-all group"
+            className="flex-1 bg-white border border-slate-200 p-6 rounded-2xl hover:border-navy-100 transition-all group"
           >
-            <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-1">
+            <h4 className="font-bold text-slate-900 group-hover:text-navy-900 transition-colors mb-1">
               Security Settings
             </h4>
             <p className="text-xs text-slate-400 font-medium uppercase tracking-widest">
@@ -365,7 +365,7 @@ function ProfileItem({
             type="text"
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
-            className="text-sm font-semibold text-slate-900 tracking-tight bg-white border border-slate-200 rounded px-2 py-1 w-full focus:outline-none focus:border-blue-500"
+            className="text-sm font-semibold text-slate-900 tracking-tight bg-white border border-slate-200 rounded px-2 py-1 w-full focus:outline-none focus:border-navy-100"
           />
         ) : (
           <p className="text-sm font-semibold text-slate-900 tracking-tight">

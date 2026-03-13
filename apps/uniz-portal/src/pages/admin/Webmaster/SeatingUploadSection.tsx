@@ -170,9 +170,9 @@ export default function SeatingUploadSection() {
 
         <button
           onClick={downloadTemplate}
-          className="group flex items-center gap-2.5 px-4 py-2 bg-white text-slate-500 rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all font-bold uppercase tracking-widest text-[9px] shadow-none active:scale-95 mb-1"
+          className="group flex items-center gap-2.5 px-4 py-2 bg-white text-slate-500 rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-navy-900 hover:border-navy-100 transition-all font-bold uppercase tracking-widest text-[9px] shadow-none active:scale-95 mb-1"
         >
-          <div className="p-1.5 bg-slate-50 rounded-lg group-hover:bg-blue-50 transition-colors">
+          <div className="p-1.5 bg-slate-50 rounded-lg group-hover:bg-navy-50 transition-colors">
             <FileDown size={13} className="group-hover:scale-110 transition-transform" />
           </div>
           Download Template
@@ -189,7 +189,7 @@ export default function SeatingUploadSection() {
               <select
                 value={semesterId}
                 onChange={(e) => setSemesterId(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
                 disabled={semestersLoading}
               >
                 {semestersLoading ? (
@@ -217,7 +217,7 @@ export default function SeatingUploadSection() {
               <select
                 value={branch}
                 onChange={(e) => setBranch(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
               >
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
                   (b) => (
@@ -242,7 +242,7 @@ export default function SeatingUploadSection() {
               <select
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
               >
                 {["E1", "E2", "E3", "E4"].map((y) => (
                   <option key={y} value={y}>
@@ -265,7 +265,7 @@ export default function SeatingUploadSection() {
               <select
                 value={examName}
                 onChange={(e) => setExamName(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
               >
                 {["MID-1", "MID-2", "SEM-END", "REMEDIAL"].map((e) => (
                   <option key={e} value={e}>
@@ -301,7 +301,7 @@ export default function SeatingUploadSection() {
               <button
                 disabled={!file || loading || !!uploadId || !semesterId}
                 onClick={handleUpload}
-                className="w-full h-20 bg-blue-600 text-white rounded-2xl font-bold uppercase tracking-[0.3em] text-[12px] shadow-none hover:bg-blue-700 hover:scale-[1.01] transition-all flex items-center justify-center gap-4 disabled:opacity-50 active:scale-[0.98]"
+                className="w-full h-20 bg-navy-900 text-white rounded-2xl font-bold uppercase tracking-[0.3em] text-[12px] shadow-none hover:bg-navy-800 hover:scale-[1.01] transition-all flex items-center justify-center gap-4 disabled:opacity-50 active:scale-[0.98]"
               >
                 {loading || uploadId ? (
                   <div className="flex items-center gap-4">
