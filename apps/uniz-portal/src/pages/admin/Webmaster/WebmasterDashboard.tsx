@@ -23,7 +23,6 @@ import StudentDetails from "./StudentDetails";
 import UnifiedAcademicManager from "./UnifiedAcademicManager";
 import FacultyManagement from "./FacultyManagement";
 import UploadSection from "./UploadSection";
-import SystemUserAnalytics from "./SystemUserAnalytics";
 
 import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";
@@ -50,7 +49,6 @@ export default function WebmasterDashboard() {
     | "system_logs"
     | "exam_seating"
     | "security"
-    | "intelligence"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
@@ -120,7 +118,6 @@ export default function WebmasterDashboard() {
       group: "Management",
       items: [
         { id: "faculty_mgmt", label: "Staff Management", icon: Users },
-        { id: "intelligence", label: "Intelligence", icon: Activity },
         { id: "exam_seating", label: "Exam Seating", icon: ScanLine },
         { id: "system_logs", label: "System & Logs", icon: Activity },
         { id: "security", label: "Security", icon: Lock },
@@ -161,8 +158,6 @@ export default function WebmasterDashboard() {
         return <SeatingUploadSection />;
       case "security":
         return <SecuritySection username={username} />;
-      case "intelligence":
-        return <SystemUserAnalytics />;
       default:
         return (
           <div className="animate-in fade-in duration-500">
