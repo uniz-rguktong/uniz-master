@@ -28,7 +28,6 @@ import {
   TrendingUp,
   TrendingDown,
 } from "lucide-react";
-import { apiClient } from "../../../api/apiClient";
 import {
   STUDENT_ATTENDANCE_ANALYTICS,
   STUDENT_GRADES_TREND_ANALYTICS,
@@ -130,16 +129,12 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
       setLoading(true);
       try {
         const [attendanceRes, gradesRes] = await Promise.all([
-          apiClient<AttendanceData[]>(
-            STUDENT_ATTENDANCE_ANALYTICS(studentId),
-            { headers: { "X-API-Key": API_KEY } },
-            false,
-          ),
-          apiClient<GradeTrendData[]>(
-            STUDENT_GRADES_TREND_ANALYTICS(studentId),
-            { headers: { "X-API-Key": API_KEY } },
-            false,
-          ),
+          fetch(STUDENT_ATTENDANCE_ANALYTICS(studentId), {
+            headers: { "X-API-Key": API_KEY }
+          }).then(res => res.json()),
+          fetch(STUDENT_GRADES_TREND_ANALYTICS(studentId), {
+            headers: { "X-API-Key": API_KEY }
+          }).then(res => res.json())
         ]);
         if (attendanceRes) setAttendance(attendanceRes);
         if (gradesRes) setGradesTrend(gradesRes);
