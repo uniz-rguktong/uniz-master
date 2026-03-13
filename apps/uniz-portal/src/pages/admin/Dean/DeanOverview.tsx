@@ -1,26 +1,22 @@
 
 import { useState, useEffect, useMemo } from "react";
-import { 
-  Users, 
+import {
+  Users,
   Home,
   CheckCircle2,
   AlertCircle,
-  Target,
   Loader2
 } from "lucide-react";
-import { 
-  ANALYTICS_CAMPUS_OCCUPANCY, 
-  ANALYTICS_ACADEMIC_HEATMAP, 
+import {
+  ANALYTICS_CAMPUS_OCCUPANCY,
+  ANALYTICS_ACADEMIC_HEATMAP,
   ANALYTICS_GRIEVANCE_TRENDS,
   ANALYTICS_KEY
 } from "../../../api/endpoints";
-import { 
-  KPICard, 
-  TrendChart,
-  PulseFeed, 
-  DonutChart,
-  SubjectHeatmap,
-  SubjectGradeChart
+import {
+  KPICard,
+
+  SubjectHeatmap
 } from "../AnalyticsUI";
 import { DonutChart as DonutUI } from "@/components/ui/donut-chart";
 import { Card } from "@/components/ui/card";
@@ -69,25 +65,7 @@ export default function DeanOverview() {
   }, []);
 
   // Process Heatmap Data: Group by branch and calculate average grade
-  const processedHeatmap = useMemo(() => {
-    if (!heatmap.length) return [];
-    
-    const branchStats: Record<string, { total: number; count: number }> = {};
-    
-    heatmap.forEach(item => {
-      const branch = item.branch || "Unknown";
-      if (!branchStats[branch]) {
-        branchStats[branch] = { total: 0, count: 0 };
-      }
-      branchStats[branch].total += Number(item.average_grade) || 0;
-      branchStats[branch].count += 1;
-    });
 
-    return Object.entries(branchStats).map(([name, stats]) => ({
-      name,
-      value: Number((stats.total / stats.count).toFixed(2))
-    })).sort((a, b) => b.value - a.value);
-  }, [heatmap]);
 
   // Unique branches for dropdown
   const uniqueBranches = useMemo(() => {
@@ -137,33 +115,33 @@ export default function DeanOverview() {
     ];
 
     if (total === 0 && !occupancy) {
-        // Fallback or Initial Seed
-        return {
-            total: 3450,
-            inside: 2800,
-            data: [
-              { value: 2800, color: "hsl(142.1 76.2% 36.3%)", label: "Inside Campus" },
-              { value: 650, color: "hsl(214.7 95% 40%)", label: "Outside Campus" }
-            ]
-        };
+      // Fallback or Initial Seed
+      return {
+        total: 3450,
+        inside: 2800,
+        data: [
+          { value: 2800, color: "hsl(142.1 76.2% 36.3%)", label: "Inside Campus" },
+          { value: 650, color: "hsl(214.7 95% 40%)", label: "Outside Campus" }
+        ]
+      };
     }
 
     return {
-        total,
-        inside,
-        data
+      total,
+      inside,
+      data
     };
   }, [occupancy]);
 
   if (loading) {
     return (
-        <div className="w-full h-[60vh] flex flex-col items-center justify-center gap-6">
-            <div className="relative">
-                <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-                <div className="absolute inset-0 bg-blue-600/10 blur-xl rounded-full animate-pulse" />
-            </div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Aggregating Campus Intelligence...</p>
+      <div className="w-full h-[60vh] flex flex-col items-center justify-center gap-6">
+        <div className="relative">
+          <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+          <div className="absolute inset-0 bg-blue-600/10 blur-xl rounded-full animate-pulse" />
         </div>
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Aggregating Campus Intelligence...</p>
+      </div>
     );
   }
 
@@ -172,7 +150,7 @@ export default function DeanOverview() {
       {/* KPI Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard title="Total Residents" value={occupancyStats.total.toLocaleString()} icon={Users} badge="+2.4%" />
-        <KPICard title="Present in Campus" value={occupancyStats.inside.toLocaleString()} icon={Home} badge={`${((occupancyStats.inside/occupancyStats.total)*100 || 0).toFixed(0)}% Cap`} />
+        <KPICard title="Present in Campus" value={occupancyStats.inside.toLocaleString()} icon={Home} badge={`${((occupancyStats.inside / occupancyStats.total) * 100 || 0).toFixed(0)}% Cap`} />
         <KPICard title="Resolution Rate" value={`${grievanceData.resolutionRate || 0}%`} icon={CheckCircle2} badge="Target Hit" />
         <KPICard title="Pending Actions" value={grievanceData.pendingCount || 0} icon={AlertCircle} badge="Urgent" />
       </div>
@@ -205,14 +183,14 @@ export default function DeanOverview() {
                       {hoveredOccupancy || "Total Population"}
                     </p>
                     <p className="text-5xl font-black text-slate-900 tracking-tighter">
-                      {hoveredOccupancy 
-                        ? occupancyStats.data.find(d => d.label === hoveredOccupancy)?.value 
+                      {hoveredOccupancy
+                        ? occupancyStats.data.find(d => d.label === hoveredOccupancy)?.value
                         : occupancyStats.total}
                     </p>
                     {hoveredOccupancy && (
-                        <p className="text-sm font-black text-blue-600 mt-2">
-                            [{( (occupancyStats.data.find(d => d.label === hoveredOccupancy)?.value || 0) / occupancyStats.total * 100).toFixed(0)}%]
-                        </p>
+                      <p className="text-sm font-black text-blue-600 mt-2">
+                        [{((occupancyStats.data.find(d => d.label === hoveredOccupancy)?.value || 0) / occupancyStats.total * 100).toFixed(0)}%]
+                      </p>
                     )}
                   </motion.div>
                 </AnimatePresence>
@@ -228,15 +206,15 @@ export default function DeanOverview() {
                 onMouseLeave={() => setHoveredOccupancy(null)}
                 className={cn(
                   "flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 cursor-pointer",
-                  hoveredOccupancy === segment.label 
-                    ? "bg-slate-900 border-slate-900 shadow-xl -translate-x-2" 
+                  hoveredOccupancy === segment.label
+                    ? "bg-slate-900 border-slate-900 shadow-xl -translate-x-2"
                     : "bg-white border-slate-100 hover:border-slate-200"
                 )}
               >
                 <div className="flex items-center gap-4">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
-                    style={{ backgroundColor: segment.color }} 
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: segment.color }}
                   />
                   <span className={cn(
                     "text-xs font-black uppercase tracking-widest",
@@ -264,63 +242,15 @@ export default function DeanOverview() {
           </div>
         </div>
       </Card>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Academic Heatmap */}
-        <div className="lg:col-span-1">
-          <DonutChart 
-            title="Academic Engagement" 
-            subtitle="Avg Grade by Department" 
-            data={processedHeatmap.length ? processedHeatmap : heatmap}
-          />
-        </div>
-        
-        {/* Pulse Feed */}
-        <div className="lg:col-span-1">
-             <PulseFeed title="Campus Pulse" activities={grievanceData.feed} />
-        </div>
-
-        {/* Resolution Trend */}
-        <div className="lg:col-span-1">
-           <TrendChart 
-             title="Grievance Trajectory" 
-             subtitle="Volume of monthly filings" 
-             data={grievanceData.trend} 
-             dataKey="count" 
-             color="#f59e0b"
-           />
-           
-           <div className="mt-6 bg-slate-900 rounded-[2rem] p-8 flex items-center justify-between group shadow-xl overflow-hidden relative">
-                <div className="absolute top-0 left-0 w-full h-full bg-blue-600/10 blur-[50px]" />
-                <div className="relative z-10">
-                    <p className="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1">Strategic Goal</p>
-                    <p className="text-xl font-black text-white tracking-tight">Zero-Friction Campus</p>
-                </div>
-                <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-white relative z-10">
-                    <Target size={24} />
-                </div>
-           </div>
-        </div>
-      </div>
-
+      {/* Dynamic Branch Analytics Section */}
       <div className="w-full">
-         <SubjectHeatmap 
-           title="Branch Performance Intelligence"
-           data={branchFilteredData}
-           branches={uniqueBranches}
-           selectedBranch={selectedBranch}
-           onBranchChange={setSelectedBranch}
-         />
-      </div>
-
-      <div className="w-full">
-         <SubjectGradeChart
-           title="Subject Performance Metrics"
-           data={branchFilteredData}
-           branches={uniqueBranches}
-           selectedBranch={selectedBranch}
-           onBranchChange={setSelectedBranch}
-         />
+        <SubjectHeatmap
+          title="Branch Performance Intelligence"
+          data={branchFilteredData}
+          branches={uniqueBranches}
+          selectedBranch={selectedBranch}
+          onBranchChange={setSelectedBranch}
+        />
       </div>
     </div>
   );
