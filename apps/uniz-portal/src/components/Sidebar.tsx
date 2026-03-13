@@ -17,16 +17,13 @@ import {
   X,
   Layers,
   ScanLine,
-  ChevronLeft,
   LayoutGrid,
-  BookOpen,
   Lock,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
 import { motion, AnimatePresence } from "framer-motion";
-import { Dock } from "./ui/dock-two";
-import { InteractiveMenu, InteractiveMenuItem } from "./ui/modern-mobile-menu";
+import { InAppNotificationBell } from "./InAppNotificationBell";
 
 const Attendance = lazy(() => import("../pages/attendance/Attendance"));
 const OutpassOuting = lazy(() => import("../pages/student/outpass&outing"));
@@ -74,6 +71,21 @@ export default function Sidebar({ content }: MainContent) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [showNotice, setShowNotice] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Auto-close sidebar on mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -212,76 +224,6 @@ export default function Sidebar({ content }: MainContent) {
     },
   ];
 
-  const dockItems = [
-    ...navItems.map((item) => ({
-      icon: item.icon,
-      label: item.label,
-      activeColor: item.activeColor,
-      hoverColor: item.hoverColor,
-      onClick: () => {
-        navigate(item.href);
-      },
-      isActive: content === item.content,
-    })),
-    {
-      icon: LogOut,
-      label: "Logout",
-      onClick: () => setShowConfirm(true),
-      isActive: false,
-      activeColor: "text-red-600",
-      hoverColor: "hover:text-red-600",
-    },
-  ];
-
-  const primaryMobileItems: InteractiveMenuItem[] = [
-    {
-      label: "Password",
-      icon: Lock,
-      onClick: () => navigate("/student/resetpassword"),
-      isActive: content === "resetpassword",
-    },
-    {
-      label: "Explore",
-      icon: LayoutGrid,
-      isActive: ["currentSemester", "gradehub", "attendance", "grievance"].includes(
-        content
-      ),
-    },
-    {
-      label: "Profile",
-      icon: User,
-      onClick: () => navigate("/student"),
-      isActive: content === "dashboard",
-    },
-  ];
-
-  const moreMobileItems: InteractiveMenuItem[] = [
-    {
-      label: "Current Sem",
-      icon: BookOpen,
-      onClick: () => navigate("/student/current-semester"),
-      isActive: content === "currentSemester",
-    },
-    {
-      label: "Results",
-      icon: GraduationCap,
-      onClick: () => navigate("/student/gradehub"),
-      isActive: content === "gradehub",
-    },
-    {
-      label: "Attendance",
-      icon: CalendarCheck,
-      onClick: () => navigate("/student/attendance"),
-      isActive: content === "attendance",
-    },
-    {
-      label: "Grievance",
-      icon: AlertCircle,
-      onClick: () => navigate("/student/grievance"),
-      isActive: content === "grievance",
-    },
-  ];
-
   const contentMap: Record<MainContent["content"], JSX.Element> = {
     outing: <OutpassOuting request="outing" />,
     outpass: <OutpassOuting request="outpass" />,
@@ -298,127 +240,170 @@ export default function Sidebar({ content }: MainContent) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-premium-gradient text-slate-900 selection:bg-navy-100 selection:text-navy-900">
-      <AnimatePresence>
-        {showNotice && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="bg-gradient-to-r from-[#0B2A47] to-[#0F3B63] text-white py-2.5 px-6 flex items-center justify-between shadow-lg relative z-[100]"
+    <div className="flex h-screen bg-[#fcfcfd] overflow-hidden">
+      {/* 1. Traditional Sidebar (Desktop) / Drawer (Mobile) */}
+      <aside
+        className={`bg-white transition-all duration-300 z-50 fixed lg:static h-full border-r border-slate-200/60 shadow-[4px_0_24px_rgba(0,0,0,0.02)] flex flex-col ${
+          isSidebarOpen ? "w-[280px] translate-x-0" : "w-0 lg:w-24 -translate-x-full lg:translate-x-0"
+        }`}
+      >
+        {/* Sidebar Header/Logo */}
+        <div className="px-6 py-8 flex items-center justify-between shrink-0">
+          <h1 className={`unifrakturcook-bold text-4xl text-slate-900 transition-opacity duration-300 ${!isSidebarOpen && "lg:opacity-0"}`}>
+            {isSidebarOpen ? "uniZ" : "Z"}
+          </h1>
+          <button 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="lg:hidden p-2 hover:bg-slate-50 rounded-lg text-slate-400"
           >
-            <div className="flex-1 text-center text-[11px] md:text-[13px] font-sans font-bold tracking-tight">
-              Outpass and outing feature has been currently disabled by the
-              administration
-            </div>
-            <button
-              onClick={() => setShowNotice(false)}
-              className="p-1 hover:bg-white/20 rounded-full transition-all shrink-0"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <div className="flex flex-col flex-1 relative">
-        {/* Floating Desktop Dock */}
-        <div className="hidden md:flex fixed left-6 top-1/2 -translate-y-1/2 z-50">
-          <Dock
-            items={dockItems}
-            className="shadow-[0_8px_30px_rgb(0,0,0,0.06)] border-slate-100"
-          />
+            <X size={20} />
+          </button>
         </div>
 
-        {/* Main Content Area */}
-        <main ref={mainRef} className="flex-1 md:overflow-y-auto md:max-h-screen">
-          {/* Mobile Header */}
-          <header className={`md:hidden sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16 transition-all duration-300 ${isScrolled ? "bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm" : "bg-transparent border-transparent"}`}>
-            <h1 className={`unifrakturcook-bold text-3xl tracking-tighter transition-colors duration-300 ${isScrolled ? "text-slate-900" : "text-slate-800"}`}>
-              uniZ
-            </h1>
-            <button
-              onClick={() => setShowConfirm(true)}
-              className={`p-2 transition-all font-sans ${isScrolled ? "text-slate-400 active:text-red-500" : "text-slate-500 active:text-red-600"}`}
-            >
-              <LogOut size={22} />
-            </button>
-          </header>
-
-          {/* Re-designed Desktop Header (Pharmacy App Style) */}
-          <header className={`sticky top-0 z-40 p-4 px-8 md:pl-36 justify-between items-center hidden md:flex transition-all duration-300 ${isScrolled ? "bg-white/60 backdrop-blur-md border-b border-white/20 shadow-sm" : "bg-transparent border-transparent shadow-none"}`}>
-            {/* Left: App Branding */}
-            <div className="flex items-center gap-4">
-              <h1 className="unifrakturcook-bold text-3xl text-slate-800 tracking-tight">
-                uniZ
-              </h1>
-            </div>
-
-            {/* Right: Profile */}
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-[14px] font-bold text-slate-900 leading-none">
-                  {userData?.name || "Student User"}
-                </p>
-                <p className="text-[11px] font-semibold text-slate-400 mt-1 lowercase tracking-tight">
-                  {userData?.email || "N/A"}
-                </p>
-              </div>
-              <div className="w-11 h-11 rounded-full ring-2 ring-navy-50 border-2 border-white overflow-hidden shadow-sm">
-                {userData?.profile_url ? (
-                  <img
-                    src={userData.profile_url}
-                    className="w-full h-full object-cover"
-                    alt=""
+        {/* Navigation Items */}
+        <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto custom-sidebar-scroll py-2">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = content === item.content;
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  navigate(item.href);
+                  if (window.innerWidth < 1024) setIsSidebarOpen(false);
+                }}
+                className={`w-full flex items-center ${
+                  isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"
+                } py-2.5 rounded-xl text-left transition-all duration-200 group relative ${
+                  isActive
+                    ? "bg-slate-100 text-slate-900 shadow-sm ring-1 ring-slate-200/50"
+                    : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
+                }`}
+              >
+                <div className="flex items-center justify-center min-w-[22px]">
+                  <Icon
+                    size={20}
+                    className={`shrink-0 transition-colors ${
+                      isActive ? "text-navy-900" : "text-slate-400 group-hover:text-slate-600"
+                    }`}
                   />
+                </div>
+                {isSidebarOpen && (
+                  <span className={`text-[13.5px] font-semibold tracking-tight ${isActive ? "text-slate-900" : "text-slate-500"}`}>
+                    {item.label}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* User Info (Bottom of Sidebar) */}
+        <div className="p-4 border-t border-slate-100 mt-auto">
+          <button
+            onClick={() => setShowConfirm(true)}
+            className={`w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-500 transition-all group`}
+          >
+             <LogOut size={20} className="text-slate-400 group-hover:text-red-500" />
+             {isSidebarOpen && <span className="text-[13.5px] font-semibold">Sign Out</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* 2. Main Layout */}
+      <div className="flex-1 flex flex-col min-w-0 bg-[#fcfcfd] relative">
+        {/* Banner Notice */}
+        <AnimatePresence>
+          {showNotice && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="bg-navy-900 text-white py-2 px-6 flex items-center justify-between relative z-[60]"
+            >
+              <div className="flex-1 text-center text-[12px] font-bold tracking-tight">
+                Outpass and outing feature has been currently disabled by the administration
+              </div>
+              <button onClick={() => setShowNotice(false)} className="p-1 hover:bg-white/10 rounded-full">
+                <X className="w-4 h-4" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Header */}
+        <header className={`sticky top-0 z-40 transition-all duration-300 h-16 px-6 lg:px-10 flex items-center justify-between shrink-0 ${
+          isScrolled 
+          ? "bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shadow-sm" 
+          : "bg-transparent border-transparent shadow-none"
+        }`}>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-2 hover:bg-slate-50 rounded-lg text-slate-500"
+            >
+              <LayoutGrid size={20} />
+            </button>
+            <h2 className="text-[15px] font-bold text-slate-900 capitalize hidden sm:block">
+              {content === "dashboard" ? "Student Profile" : content.replace(/([A-Z])/g, ' $1').trim()}
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-5">
+            <InAppNotificationBell />
+            
+            <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
+              <div className="text-right hidden sm:block">
+                <p className="text-[13px] font-bold text-slate-900 leading-none">{userData?.name || "Student"}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">{userData?.username || "ID"}</p>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0 shadow-sm ring-2 ring-white">
+                {userData?.profile_url ? (
+                  <img src={userData.profile_url} className="w-full h-full object-cover" alt="" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-navy-900 text-white font-bold text-xs">
+                  <div className="w-full h-full flex items-center justify-center bg-navy-900 text-white font-bold text-xs uppercase">
                     {userData?.name?.charAt(0) || "S"}
                   </div>
                 )}
               </div>
-              <button
-                onClick={() => setShowConfirm(true)}
-                className="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full border border-slate-100 transition-all ml-2"
-              >
-                <LogOut size={18} />
-              </button>
             </div>
-          </header>
+          </div>
+        </header>
 
-          <div className="pt-4 px-4 pb-32 md:p-10 md:ml-28 min-h-full">
-            {/* Mobile Back Button (Below Header) */}
-            {content !== "dashboard" && (
-              <div className="md:hidden mb-6">
-                <button
-                  onClick={() => navigate("/student")}
-                  className="flex items-center gap-1 text-slate-500 font-bold text-[10px] uppercase tracking-widest py-2"
-                >
-                  <ChevronLeft size={20} strokeWidth={3} />
-
-                </button>
-              </div>
-            )}
+        {/* Content Section */}
+        <main 
+          ref={mainRef}
+          className="flex-1 overflow-y-auto"
+        >
+          <div className="p-6 lg:p-10 max-w-[1600px] mx-auto min-h-full">
             <Suspense fallback={<ContentSkeleton />}>
               {contentMap[content] || <Error />}
             </Suspense>
           </div>
         </main>
 
-        <ConfirmModal
-          open={showConfirm}
-          onClose={() => setShowConfirm(false)}
-          onConfirm={handleLogout}
-          message="Are you sure you want to end your session?"
-        />
-
-        {/* Modern Mobile Bottom Navigation - Sticky Animated Bar */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
-          <InteractiveMenu 
-            primaryItems={primaryMobileItems} 
-            moreItems={moreMobileItems} 
-          />
-        </div>
+        <footer className="py-4 px-10 text-center border-t border-slate-100 bg-white/50">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+            &copy; {new Date().getFullYear()} UniZ Educational Ecosystem. All rights Reserved.
+          </p>
+        </footer>
       </div>
+
+      {/* Logout Confirmation */}
+      <ConfirmModal
+        open={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={handleLogout}
+        message="Are you sure you want to end your session?"
+      />
+
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 lg:hidden shadow-2xl"
+        />
+      )}
     </div>
   );
 }

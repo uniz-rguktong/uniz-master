@@ -37,9 +37,11 @@ export default function UploadHealthAnalytics({ hideHeader = false }: { hideHead
     const fetchData = async () => {
       try {
         setLoading(true);
+        const token = localStorage.getItem("admin_token") || localStorage.getItem("token");
         const res = await fetch(ANALYTICS_UPLOAD_HEALTH, {
           headers: {
             "x-api-key": ANALYTICS_KEY,
+            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json"
           }
         });

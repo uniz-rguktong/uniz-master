@@ -160,6 +160,10 @@ export const SYSTEM_HEALTH = `${BASE_URL}/system/health`;
 export const PUSH_SUBSCRIBE = `${BASE_URL}/notifications/subscribe`;
 export const PUSH_SUBSCRIBERS = `${BASE_URL}/notifications/push/subscribers`;
 export const PUSH_SEND = `${BASE_URL}/notifications/push/send`;
+export const IN_APP_NOTIFICATIONS = `${BASE_URL}/notifications/in-app`;
+export const MARK_NOTIFICATION_READ = (id: string) => `${BASE_URL}/notifications/in-app/${id}/read`;
+export const MARK_ALL_NOTIFICATIONS_READ = `${BASE_URL}/notifications/in-app/read-all`;
+export const DELETE_NOTIFICATION = (id: string) => `${BASE_URL}/notifications/in-app/${id}`;
 
 export const BULK_UPDATE_GRADES = `${BASE_URL}/academics/grades/bulk-update`;
 export const GET_BATCH_GRADES = `${BASE_URL}/academics/grades/batch`;

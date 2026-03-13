@@ -35,8 +35,10 @@ export default function DeanOverview() {
     const fetchData = async () => {
       try {
         setLoading(true);
+        const token = localStorage.getItem("admin_token") || localStorage.getItem("token");
         const authHeaders = {
           "x-api-key": ANALYTICS_KEY,
+          "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         };
         const [occRes, hMapRes, gvRes] = await Promise.all([

@@ -25,6 +25,7 @@ import {
   BookOpen,
   Menu,
 } from "lucide-react";
+import { InAppNotificationBell } from "../../components/InAppNotificationBell";
 import { useLogout } from "../../hooks/useLogout";
 import {
   BASE_URL,
@@ -244,7 +245,9 @@ export default function FacultyDashboard() {
           >
             {isSidebarOpen ? <Menu size={20} /> : <ChevronRight size={20} />}
           </button>
-          <div className="flex items-center gap-4 ml-auto">
+          <div className="flex items-center gap-6 ml-auto">
+            <InAppNotificationBell />
+            <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-semibold text-neutral-900 leading-none tracking-tight">
                 {profile?.Name || username}
@@ -266,7 +269,8 @@ export default function FacultyDashboard() {
               )}
             </div>
           </div>
-        </header>
+        </div>
+      </header>
 
         <div className="max-w-7xl mx-auto">{renderContent()}</div>
       </main>

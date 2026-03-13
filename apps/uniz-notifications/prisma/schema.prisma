@@ -122,3 +122,18 @@ model PushSubscription {
 
   @@index([username])
 }
+
+model InAppNotification {
+  id        String   @id @default(uuid())
+  username  String   // Target user (Student/Faculty/Admin)
+  title     String
+  message   String
+  type      String   @default("INFO") // "INFO", "SUCCESS", "WARNING", "ERROR"
+  link      String?  // Optional redirect link
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([username])
+  @@index([isRead])
+}

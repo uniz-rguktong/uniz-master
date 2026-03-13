@@ -22,6 +22,7 @@ import SystemLogsSection from "../Webmaster/SystemLogsSection";
 import SemesterRegistrationSection from "../Webmaster/SemesterRegistrationSection";
 import FacultyManagement from "../Webmaster/FacultyManagement";
 import DeanOverview from "./DeanOverview";
+import { InAppNotificationBell } from "../../../components/InAppNotificationBell";
 
 export default function DeanDashboard() {
   useIsAuth();
@@ -329,8 +330,10 @@ export default function DeanDashboard() {
       <main className="flex-1 overflow-y-auto max-h-screen">
         {/* New minimal header */}
         <header className=" sticky top-0 z-40 px-10 py-5 flex items-center justify-end bg-white/40 backdrop-blur-md border-b border-white/20">
-          {/* Right group: name+email → avatar → logout */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
+            <InAppNotificationBell />
+            {/* Right group: name+email → avatar → logout */}
+            <div className="flex items-center gap-4">
             {/* Name + email — left of avatar */}
             <div className="text-right">
               <p className="text-[15px] font-bold text-slate-900 leading-tight tracking-tight">
@@ -373,7 +376,8 @@ export default function DeanDashboard() {
               <LogOut size={18} />
             </button>
           </div>
-        </header>
+        </div>
+      </header>
 
         {/* Profile popup portal */}
         <ProfilePopup
