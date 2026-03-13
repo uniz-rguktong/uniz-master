@@ -239,7 +239,7 @@ export default function DeanReview() {
           </button>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold text-xs hover:bg-blue-700 transition-all shadow-xl"
+            className="flex items-center gap-2 px-6 py-3 bg-navy-900 text-white rounded-2xl font-bold text-xs hover:bg-navy-800 transition-all shadow-xl"
           >
             <Plus size={16} />
             Add Subject
@@ -266,7 +266,7 @@ export default function DeanReview() {
               className={`bg-white border-2 rounded-[32px] p-8 transition-all ${
                 alloc.isApproved
                   ? "border-emerald-50 opacity-80"
-                  : "border-slate-100 shadow-xl hover:border-blue-200"
+                  : "border-slate-100 shadow-xl hover:border-navy-100"
               } group`}
             >
               <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-8">
@@ -275,7 +275,7 @@ export default function DeanReview() {
                     className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${
                       alloc.isApproved
                         ? "bg-emerald-50 text-emerald-600"
-                        : "bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white"
+                        : "bg-navy-50 text-navy-900 group-hover:bg-navy-900 group-hover:text-white"
                     }`}
                   >
                     <BookOpen size={28} />
@@ -367,12 +367,12 @@ export default function DeanReview() {
                   <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
                     Year
                   </span>
-                  <span className="font-bold text-slate-600 text-xs text-blue-600">
+                  <span className="font-bold text-slate-600 text-xs text-navy-900">
                     {alloc.academicYear}
                   </span>
                 </div>
                 {!alloc.isApproved && (
-                  <div className="ml-auto flex items-center gap-2 text-[10px] font-bold text-blue-600 uppercase tracking-widest">
+                  <div className="ml-auto flex items-center gap-2 text-[10px] font-bold text-navy-900 uppercase tracking-widest">
                     Ready for Review <ArrowRight size={12} />
                   </div>
                 )}
@@ -397,7 +397,7 @@ export default function DeanReview() {
           <div className="bg-white rounded-[40px] w-full max-w-xl p-10 shadow-2xl space-y-8 animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
-                <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em]">
+                <span className="text-[10px] font-black text-navy-900 uppercase tracking-[0.2em]">
                   {editing.subject.code}
                 </span>
                 <h3 className="text-3xl font-black text-slate-900 italic">
@@ -425,7 +425,7 @@ export default function DeanReview() {
                   onChange={(e) =>
                     setEditing({ ...editing, customName: e.target.value })
                   }
-                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 focus:bg-white focus:border-blue-600 outline-none transition-all shadow-sm"
+                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 focus:bg-white focus:border-navy-100 outline-none transition-all shadow-sm"
                   placeholder="e.g. ELECTIVE (NPTEL - Deep Learning)"
                 />
               </div>
@@ -443,7 +443,7 @@ export default function DeanReview() {
                       customCredits: parseInt(e.target.value) || null,
                     })
                   }
-                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 focus:bg-white focus:border-blue-600 outline-none transition-all shadow-sm"
+                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 focus:bg-white focus:border-navy-100 outline-none transition-all shadow-sm"
                 />
               </div>
 
@@ -457,7 +457,7 @@ export default function DeanReview() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-2 bg-blue-600 text-white px-12 py-5 rounded-[24px] font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 active:scale-95"
+                  className="flex-2 bg-navy-900 text-white px-12 py-5 rounded-[24px] font-black uppercase tracking-widest text-xs hover:bg-navy-800 transition-all shadow-xl shadow-navy-100/20 active:scale-95"
                 >
                   Save Changes
                 </button>
@@ -501,7 +501,7 @@ export default function DeanReview() {
                       subjectId: e.target.value,
                     })
                   }
-                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 appearance-none focus:bg-white focus:border-blue-600 outline-none transition-all shadow-sm"
+                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 appearance-none focus:bg-white focus:border-navy-100 outline-none transition-all shadow-sm"
                 >
                   <option value="">Choose a subject...</option>
                   {allSubjects.map((s) => (
@@ -524,7 +524,7 @@ export default function DeanReview() {
                       academicYear: e.target.value,
                     })
                   }
-                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 appearance-none focus:bg-white focus:border-blue-600 outline-none transition-all shadow-sm"
+                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 appearance-none focus:bg-white focus:border-navy-100 outline-none transition-all shadow-sm"
                 >
                   {["E1", "E2", "E3", "E4"].map((y) => (
                     <option key={y} value={y}>
@@ -546,7 +546,7 @@ export default function DeanReview() {
                       batch: e.target.value,
                     })
                   }
-                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 appearance-none focus:bg-white focus:border-blue-600 outline-none transition-all shadow-sm"
+                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-3xl px-6 py-4 font-bold text-slate-700 appearance-none focus:bg-white focus:border-navy-100 outline-none transition-all shadow-sm"
                 >
                   <option value="">Infer from Year</option>
                   {availableBatches.map((b) => (
@@ -567,7 +567,7 @@ export default function DeanReview() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-2 bg-blue-600 text-white px-12 py-5 rounded-[24px] font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 active:scale-95"
+                  className="flex-2 bg-navy-900 text-white px-12 py-5 rounded-[24px] font-black uppercase tracking-widest text-xs hover:bg-navy-800 transition-all shadow-xl shadow-navy-100/20 active:scale-95"
                 >
                   Deploy Subject
                 </button>

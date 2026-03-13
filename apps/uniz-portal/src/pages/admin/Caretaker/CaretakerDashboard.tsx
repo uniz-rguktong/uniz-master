@@ -141,7 +141,7 @@ export default function CaretakerDashboard() {
                     <h3 className="font-bold text-slate-900 text-[14px] mb-1 leading-tight transition-colors">
                       {item.label}
                     </h3>
-                    <p className="text-[8px] text-slate-400 uppercase tracking-[0.2em] font-black opacity-60 group-hover:text-blue-500 transition-colors">
+                    <p className="text-[8px] text-slate-400 uppercase tracking-[0.2em] font-black opacity-60 group-hover:text-navy-900 transition-colors">
                       Initialize Module
                     </p>
                   </div>
@@ -154,7 +154,7 @@ export default function CaretakerDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+    <div className="flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 selection:bg-navy-100 selection:text-blue-900">
       {/* Sidebar */}
       <aside
         className={`bg-white border-r border-slate-100 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"} hidden md:flex flex-col premium-shadow h-screen sticky top-0`}
@@ -230,7 +230,7 @@ export default function CaretakerDashboard() {
                 Ongole
               </span>
               <span
-                className={`text-[10px] uppercase tracking-[0.2em] ${isMale ? "text-blue-600/80" : "text-pink-600/80"} font-semibold mt-1.5 px-0.5`}
+                className={`text-[10px] uppercase tracking-[0.2em] ${isMale ? "text-navy-900/80" : "text-pink-600/80"} font-semibold mt-1.5 px-0.5`}
               >
                 {portalLabel}
               </span>
@@ -294,7 +294,7 @@ export default function CaretakerDashboard() {
                           size={20}
                           className={`shrink-0 transition-colors
                             ${isActive
-                              ? "text-blue-600"
+                              ? "text-navy-900"
                               : "text-slate-400 group-hover:text-slate-600"
                             }`}
                         />
@@ -378,7 +378,7 @@ export default function CaretakerDashboard() {
         <header className="bg-white/95 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-100/80 p-5 px-8 flex justify-between items-center shadow-sm shadow-slate-50/50">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="w-10 h-10 flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full hover:bg-white hover:shadow-lg transition-all md:flex hidden text-slate-400 hover:text-blue-600 active:scale-95"
+            className="w-10 h-10 flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full hover:bg-white hover:shadow-lg transition-all md:flex hidden text-slate-400 hover:text-navy-900 active:scale-95"
           >
             {isSidebarOpen ? <Menu size={18} /> : <ChevronRight size={18} />}
           </button>
@@ -396,7 +396,7 @@ export default function CaretakerDashboard() {
             <button
               ref={headerAvatarRef}
               title="Profile"
-              className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 hover:ring-blue-400 transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50"
+              className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 hover:ring-navy-900 transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50"
             >
               {profilePhoto ? (
                 <img
@@ -406,7 +406,7 @@ export default function CaretakerDashboard() {
                 />
               ) : (
                 <div
-                  className={`w-full h-full flex items-center justify-center ${isMale ? "bg-blue-600" : "bg-rose-600"} text-white font-bold text-sm`}
+                  className={`w-full h-full flex items-center justify-center ${isMale ? "bg-navy-900" : "bg-rose-600"} text-white font-bold text-sm`}
                 >
                   {initial}
                 </div>
