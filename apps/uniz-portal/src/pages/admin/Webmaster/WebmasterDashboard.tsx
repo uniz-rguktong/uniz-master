@@ -296,14 +296,14 @@ export default function WebmasterDashboard() {
               className={`
                 w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group hover:bg-red-50 hover:text-red-500 text-slate-500
               `}
-              title={!isSidebarOpen ? "Logout" : ""}
+              title={!isSidebarOpen ? "LOGOUT" : ""}
             >
               <div className="flex items-center justify-center min-w-[22px]">
                 <LogOut size={20} className="text-slate-400 group-hover:text-red-500 transition-colors" />
               </div>
               {isSidebarOpen && (
                 <span className="text-[13.5px] font-semibold whitespace-nowrap tracking-tight leading-none">
-                  Logout System
+                  LOGOUT
                 </span>
               )}
             </button>
