@@ -142,9 +142,7 @@ const finalConfig = (() => {
     dest: "public",
     register: true,
     skipWaiting: true,
-    workboxOptions: {
-      importScripts: ["/push-sw.js"],
-    },
+    importScripts: ["/push-sw.js"],
   });
 
   return withPWA(nextConfig);
