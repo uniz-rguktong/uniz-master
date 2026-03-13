@@ -209,7 +209,8 @@ export const UPLOAD_SEATING = `${BASE_URL}/academics/seating/upload`;
 export const GET_STUDENT_SEATING = `${BASE_URL}/academics/seating/student`;
 
 // Analytics Centralized
-export const ANALYTICS_URL = import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app/api";
+const RAW_ANALYTICS_URL = import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app";
+export const ANALYTICS_URL = RAW_ANALYTICS_URL.endsWith("/api") ? RAW_ANALYTICS_URL : `${RAW_ANALYTICS_URL}/api`;
 export const ANALYTICS_KEY = import.meta.env.VITE_ANALYTICS_KEY || import.meta.env.VITE_ANALYTICS_API_KEY || "";
 
 export const ANALYTICS_UPLOAD_HEALTH = `${ANALYTICS_URL}/analytics/webmaster/upload-health`;
