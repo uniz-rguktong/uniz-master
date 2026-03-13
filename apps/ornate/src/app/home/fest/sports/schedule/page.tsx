@@ -3,7 +3,8 @@ import SportsScheduleClient, { Match, MatchStatus } from './SportsScheduleClient
 
 export const revalidate = 60;
 
-export default async function SportsSchedulePage() {
+export default async function SportsSchedulePage({ searchParams }: { searchParams: Promise<any> }) {
+    await searchParams; // Mark as dynamic to skip build-time DB check
     const sports = await getSportsScheduleData();
 
     const matches: Match[] = [];

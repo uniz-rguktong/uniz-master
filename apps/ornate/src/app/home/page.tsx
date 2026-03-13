@@ -6,7 +6,8 @@ import { getFestSettings } from '@/lib/data/fest-settings';
 
 export const revalidate = 60;
 
-export default async function HomePage() {
+export default async function HomePage({ searchParams }: { searchParams: Promise<any> }) {
+    await searchParams; // Mark as dynamic to skip build-time DB check
     let neonStats: any = { totalEnergy: 0, totalCadets: 0, topCadets: [] };
     let announcements: any[] = [];
     let todaysMissions: any[] = [];

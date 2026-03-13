@@ -3,7 +3,8 @@ import GalleryClient from './GalleryClient';
 
 export const revalidate = 300;
 
-export default async function GalleryPage() {
+export default async function GalleryPage({ searchParams }: { searchParams: Promise<any> }) {
+    await searchParams; // Mark as dynamic to skip build-time DB check
     const albums = await getGalleryAlbums(45, 30);
     const promoVideos = await getPromoVideos();
 

@@ -6,7 +6,8 @@ import { getSession } from '@/lib/auth';
 
 export const revalidate = 60;
 
-export default async function CulturalsPage() {
+export default async function CulturalsPage({ searchParams }: { searchParams: Promise<any> }) {
+    await searchParams; // Mark as dynamic to skip build-time DB check
     const session = await getSession();
     const [events, albums, promoVideos, allImages, logos] = await Promise.all([
         getPublishedEvents(250),

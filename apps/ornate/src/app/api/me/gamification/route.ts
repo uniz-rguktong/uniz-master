@@ -3,7 +3,7 @@ import { getSession } from '@/lib/auth';
 import { getMyGamificationProfile, syncCadetEnergy } from '@/lib/actions/gamification';
 import { redis } from '@/lib/redis';
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
         const session = await getSession();
         if (!session?.user?.id) {

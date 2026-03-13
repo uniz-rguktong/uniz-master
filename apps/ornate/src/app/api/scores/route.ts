@@ -7,7 +7,7 @@ export const revalidate = 60;
 const CACHE_KEY = 'live-scores';
 const CACHE_TTL = 10; // 10 seconds
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
         // Try to get Redis client (lazy load inside function to avoid top-level issues)
         let redis: any = null;

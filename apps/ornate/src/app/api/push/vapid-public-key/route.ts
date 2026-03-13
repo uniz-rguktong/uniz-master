@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: Request) {
   const publicKey = process.env.VAPID_PUBLIC_KEY;
 
   if (!publicKey) {

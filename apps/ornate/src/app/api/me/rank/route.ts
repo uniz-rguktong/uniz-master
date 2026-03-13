@@ -6,7 +6,7 @@ import { redis } from '@/lib/redis';
 const getRankCacheKey = (userId: string) => `rank:${userId}`;
 const RANK_CACHE_TTL_SECONDS = 300;
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
         const session = await getSession();
         if (!session?.user?.id) {
