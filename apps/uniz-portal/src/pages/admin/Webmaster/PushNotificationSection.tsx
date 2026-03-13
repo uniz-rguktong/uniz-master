@@ -90,7 +90,7 @@ export default function PushNotificationSection() {
         <div className="flex items-center gap-4">
           <div className="relative group">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors"
               size={14}
             />
             <input
@@ -98,13 +98,13 @@ export default function PushNotificationSection() {
               placeholder="Subscriber Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-5 h-11 bg-white border border-slate-200 rounded-xl text-[11px] font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[240px]"
+              className="pl-10 pr-5 h-11 bg-white border border-slate-200 rounded-xl text-[11px] font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all w-[240px]"
             />
           </div>
 
           <button
             onClick={() => setShowSendModal(true)}
-            className="h-11 px-6 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2.5"
+            className="h-11 px-6 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-navy-800 active:scale-95 transition-all flex items-center justify-center gap-2.5"
           >
             <Zap size={16} className="text-amber-300" />
             Send Broadcast
@@ -172,7 +172,7 @@ export default function PushNotificationSection() {
                         <div className="w-11 h-11 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm border-2 border-white ring-1 ring-slate-100 uppercase">
                           {sub.username?.[0] || "U"}
                         </div>
-                        <p className="font-semibold text-slate-900 tracking-tight leading-none group-hover:text-blue-600 transition-colors">
+                        <p className="font-semibold text-slate-900 tracking-tight leading-none group-hover:text-navy-900 transition-colors">
                           {sub.username}
                         </p>
                       </div>
@@ -263,7 +263,7 @@ export default function PushNotificationSection() {
             onClick={() => setShowSendModal(false)}
           />
           <div className="bg-white w-full max-w-xl rounded-xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-            <div className="bg-blue-600 p-8 text-white relative flex items-center gap-5">
+            <div className="bg-navy-900 p-8 text-white relative flex items-center gap-5">
               <div className="p-3 bg-white/20 rounded-xl">
                 <Send size={26} />
               </div>
@@ -295,7 +295,7 @@ export default function PushNotificationSection() {
                     onChange={(e) =>
                       setBroadcast({ ...broadcast, target: e.target.value })
                     }
-                    className="w-full bg-slate-50 border border-slate-100 px-5 py-3.5 rounded-xl font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all cursor-pointer"
+                    className="w-full bg-slate-50 border border-slate-100 px-5 py-3.5 rounded-xl font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all cursor-pointer"
                   >
                     <option value="all">
                       All (Students + Faculty + Deans)
@@ -326,7 +326,7 @@ export default function PushNotificationSection() {
                         } as any)
                       }
                       placeholder="e.g. O210193"
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-slate-900"
                     />
                   </div>
                 )}
@@ -346,7 +346,7 @@ export default function PushNotificationSection() {
                         } as any)
                       }
                       placeholder="e.g. o21  (2021 batch)"
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-slate-900"
                     />
                   </div>
                 )}
@@ -363,7 +363,7 @@ export default function PushNotificationSection() {
                           year: e.target.value,
                         } as any)
                       }
-                      className="w-full bg-slate-50 border border-slate-100 px-5 py-3.5 rounded-xl font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all cursor-pointer"
+                      className="w-full bg-slate-50 border border-slate-100 px-5 py-3.5 rounded-xl font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all cursor-pointer"
                     >
                       {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
                         <option key={y} value={y}>
@@ -387,7 +387,7 @@ export default function PushNotificationSection() {
                       setBroadcast({ ...broadcast, title: e.target.value })
                     }
                     placeholder="e.g. Campus Holiday Tomorrow"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-slate-900"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-slate-900"
                   />
                 </div>
 
