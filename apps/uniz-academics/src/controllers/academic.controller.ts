@@ -498,9 +498,10 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
       motivation,
     };
 
-    // 3. Set Cache (Only if no filters)
+    // 3. Set Cache (Highly responsive 1s TTL)
+    // 4. Populate Cache (1s TTL to prevent burst load but allow real-time updates)
     if (!isFiltered) {
-      await redis.setex(cacheKey, 3600, JSON.stringify(responsePayload));
+      await redis.setex(cacheKey, 1, JSON.stringify(responsePayload));
     }
 
     return res.json({
