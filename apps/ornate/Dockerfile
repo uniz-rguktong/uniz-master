@@ -15,7 +15,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Generate Prisma Client (Prisma 7 requires these to be set during generation)
-RUN DATABASE_URL="postgresql://localhost:5432" DIRECT_URL="postgresql://localhost:5432" npx prisma generate
+ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres"
+ENV DIRECT_URL="postgresql://postgres:postgres@localhost:5432/postgres"
+RUN npx prisma generate
 
 # Build the application
 ENV NEXT_TELEMETRY_DISABLED=1

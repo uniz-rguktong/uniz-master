@@ -10,7 +10,9 @@ RUN npm ci || npm install
 
 # Set binary target for Alpine
 ENV PRISMA_CLI_BINARY_TARGETS=linux-musl-openssl-3.0.x
-RUN DATABASE_URL="postgresql://localhost:5432" DIRECT_URL="postgresql://localhost:5432" npx prisma generate
+ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres"
+ENV DIRECT_URL="postgresql://postgres:postgres@localhost:5432/postgres"
+RUN npx prisma generate
 
 # ── Stage 2: Build the application ────────────────────────
 FROM node:22-alpine AS builder
