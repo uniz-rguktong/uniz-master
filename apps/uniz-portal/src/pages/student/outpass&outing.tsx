@@ -24,7 +24,7 @@ export function OutButton({ request }: requestProps) {
     <div className="flex justify-center items-center w-full md:w-auto mt-2 md:mt-0">
       <button
         onClick={() => navigateTo(`/student/${request}/request${request}`)}
-        className="w-full md:w-auto px-10 h-[48px] bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-md shadow-indigo-100 flex items-center justify-center gap-2"
+        className="w-full md:w-auto px-10 h-[48px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-md shadow-navy-100 flex items-center justify-center gap-2"
       >
         <Plus className="w-4 h-4" />
         <span>New {request.charAt(0).toUpperCase() + request.slice(1)}</span>
@@ -74,7 +74,7 @@ export default function Outpass_Outing({ request }: requestProps) {
     if (req.isApproved || req.is_approved)
       return {
         label: "Approved",
-        color: "bg-blue-600 text-white shadow-lg shadow-blue-50",
+        color: "bg-navy-900 text-white shadow-lg shadow-navy-100/10",
         icon: <CheckCircle className="w-3.5 h-3.5" />,
       };
     if (req.isRejected || req.is_rejected)
@@ -208,7 +208,7 @@ export default function Outpass_Outing({ request }: requestProps) {
                         >
                           <td className="px-8 py-5 text-nowrap">
                             <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
+                              <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-navy-900 group-hover:text-white transition-all duration-300">
                                 {request === "outing" ? (
                                   <Clock size={16} />
                                 ) : (
@@ -235,7 +235,7 @@ export default function Outpass_Outing({ request }: requestProps) {
                                 <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
                                   {dateStr}
                                 </span>
-                                <span className="px-1.5 py-0.5 bg-slate-900 text-white rounded text-[9px] font-bold uppercase tracking-wider">
+                                <span className="px-1.5 py-0.5 bg-navy-900 text-white rounded text-[9px] font-bold uppercase tracking-wider">
                                   {durationText}
                                 </span>
                               </div>
@@ -251,7 +251,7 @@ export default function Outpass_Outing({ request }: requestProps) {
                           </td>
                           <td className="px-8 py-5 text-right">
                             <div
-                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border border-current opacity-80 ${status.color.includes("bg-blue-600") ? "text-indigo-600 bg-indigo-50 border-indigo-100" : status.color.includes("bg-white border border-red-50") ? "text-red-500 bg-red-50 border-red-100" : "text-slate-400 bg-slate-50 border-slate-100"}`}
+                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border border-current opacity-80 ${status.color.includes("bg-navy-900") ? "text-navy-900 bg-navy-50 border-navy-100" : status.color.includes("bg-white border border-red-50") ? "text-red-500 bg-red-50 border-red-100" : "text-slate-400 bg-slate-50 border-slate-100"}`}
                             >
                               {status.label}
                             </div>
@@ -320,7 +320,7 @@ export default function Outpass_Outing({ request }: requestProps) {
                         </div>
                       </div>
                       <div
-                        className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest border border-current ${status.color.includes("bg-blue-600") ? "text-indigo-600 bg-indigo-50 border-indigo-100" : status.color.includes("bg-white border border-red-50") ? "text-red-500 bg-red-50 border-red-100" : "text-slate-400 bg-slate-50 border-slate-100"}`}
+                        className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest border border-current ${status.color.includes("bg-navy-900") ? "text-navy-900 bg-navy-50 border-navy-100" : status.color.includes("bg-white border border-red-50") ? "text-red-500 bg-red-50 border-red-100" : "text-slate-400 bg-slate-50 border-slate-100"}`}
                       >
                         {status.label}
                       </div>
@@ -340,7 +340,7 @@ export default function Outpass_Outing({ request }: requestProps) {
                           <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest leading-none mb-1">
                             {dateStr}
                           </p>
-                          <span className="px-2 py-0.5 bg-slate-900 text-white rounded text-[9px] font-bold uppercase tracking-wider">
+                          <span className="px-2 py-0.5 bg-navy-900 text-white rounded text-[9px] font-bold uppercase tracking-wider">
                             {durationText}
                           </span>
                         </div>

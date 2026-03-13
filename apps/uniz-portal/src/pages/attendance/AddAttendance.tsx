@@ -113,7 +113,7 @@ export default function AddAttendance() {
             "border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200",
             error
               ? "border-red-300 bg-red-50"
-              : "border-slate-300 hover:border-blue-500 hover:bg-slate-50",
+              : "border-slate-300 hover:border-navy-900 hover:bg-slate-50",
           )}
         >
           <input
@@ -130,7 +130,7 @@ export default function AddAttendance() {
             htmlFor="fileInput"
             className="cursor-pointer flex flex-col items-center gap-4"
           >
-            <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 bg-navy-50 text-navy-900 rounded-full flex items-center justify-center">
               <Upload className="w-8 h-8" />
             </div>
             <div>
@@ -151,7 +151,7 @@ export default function AddAttendance() {
       ) : (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* File Info Bar */}
-          <div className="bg-slate-900 text-white p-4 rounded-xl flex items-center justify-between shadow-lg">
+          <div className="bg-navy-900 text-white p-4 rounded-xl flex items-center justify-between shadow-lg shadow-navy-100/20">
             <div className="flex items-center gap-4">
               <div className="p-2 bg-slate-800 rounded-lg">
                 <FileSpreadsheet className="w-6 h-6 text-green-400" />
@@ -177,7 +177,7 @@ export default function AddAttendance() {
               onClick={handleUpload}
               isLoading={uploading}
               disabled={uploading}
-              className="bg-blue-600 hover:bg-blue-700 w-full md:w-auto"
+              className="bg-navy-900 hover:bg-navy-800 w-full md:w-auto"
             >
               <Upload className="w-4 h-4 mr-2" /> Process File
             </Button>

@@ -120,11 +120,11 @@ export default function SemesterRegistration() {
         return "bg-amber-50 text-amber-600 border-amber-100";
       case "REGISTRATION":
       case "REGISTRATION_OPEN":
-        return "bg-blue-50 text-blue-600 border-blue-100";
+        return "bg-navy-50 text-navy-900 border-navy-100";
       case "ONGOING":
         return "bg-emerald-50 text-emerald-600 border-emerald-100";
       case "COMPLETED":
-        return "bg-purple-50 text-purple-600 border-purple-100";
+        return "bg-navy-50 text-navy-900 border-navy-100";
       default:
         return "bg-slate-100 text-slate-600";
     }
@@ -143,7 +143,7 @@ export default function SemesterRegistration() {
         </div>
         <button
           onClick={() => setShowInitModal(true)}
-          className="bg-blue-600 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs flex items-center gap-2.5 hover:bg-blue-700 hover:-translate-y-1 transition-all shadow-none active:scale-95 active:translate-y-0"
+          className="bg-navy-900 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs flex items-center gap-2.5 hover:bg-navy-800 hover:-translate-y-1 transition-all shadow-none active:scale-95 active:translate-y-0"
         >
           <Plus size={18} /> Initialize New Semester
         </button>
@@ -200,7 +200,7 @@ export default function SemesterRegistration() {
                         onClick={() =>
                           handleStatusUpdate(sem.id, "REGISTRATION_OPEN")
                         }
-                        className="px-6 py-3 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-blue-700 transition-all shadow-none"
+                        className="px-6 py-3 bg-navy-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-navy-800 transition-all shadow-none"
                       >
                         <Play size={14} fill="currentColor" /> Open Registration
                       </button>
@@ -250,7 +250,7 @@ export default function SemesterRegistration() {
                       </div>
                     </div>
                     <ChevronRight
-                      className="text-slate-300 group-hover:text-blue-500 transition-colors"
+                      className="text-slate-300 group-hover:text-navy-900 transition-colors"
                       size={24}
                     />
                   </div>
@@ -289,7 +289,7 @@ export default function SemesterRegistration() {
           <div className="bg-white w-full max-w-2xl rounded-xl shadow-none relative overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="p-10">
               <div className="flex items-center gap-4 mb-8">
-                <div className="p-4 bg-blue-600 text-white rounded-xl shadow-none">
+                <div className="p-4 bg-navy-900 text-white rounded-xl shadow-none">
                   <ShieldCheck size={28} />
                 </div>
                 <div>
@@ -309,14 +309,14 @@ export default function SemesterRegistration() {
                   </label>
                   <div className="relative group">
                     <Calendar
-                      className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors"
+                      className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-navy-900 transition-colors"
                       size={20}
                     />
                     <input
                       required
                       value={academicSemester}
                       onChange={(e) => setAcademicSemester(e.target.value)}
-                      className="w-full pl-16 pr-6 py-5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-8 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-black text-slate-700 placeholder:text-slate-300"
+                      className="w-full pl-16 pr-6 py-5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-8 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-black text-slate-700 placeholder:text-slate-300"
                       placeholder="e.g. AY 2024-25 E4 S2"
                     />
                   </div>
@@ -347,8 +347,8 @@ export default function SemesterRegistration() {
                             )
                           }
                           className={`px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${selectedBranches.includes(branch)
-                              ? "bg-blue-600 text-white shadow-none scale-105"
-                              : "bg-slate-50 text-slate-400 border border-slate-100 hover:border-blue-200"
+                              ? "bg-navy-900 text-white shadow-none scale-105"
+                              : "bg-slate-50 text-slate-400 border border-slate-100 hover:border-navy-100"
                             }`}
                         >
                           {branch}

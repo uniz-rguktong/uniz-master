@@ -27,7 +27,7 @@ export default function CurrentSemester() {
     return (
       <div className="flex h-[60vh] items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-navy-900 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">
             Loading Semester Data...
           </p>
@@ -86,7 +86,7 @@ export default function CurrentSemester() {
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               Total Credits
             </span>
-            <span className="text-2xl font-black text-blue-600">
+            <span className="text-2xl font-black text-navy-900">
               {studentData?.summary?.totalCredits || 0}
             </span>
           </div>
@@ -98,14 +98,14 @@ export default function CurrentSemester() {
         {studentData?.registrations?.map((reg: any) => (
           <div
             key={reg.id}
-            className="group md:bg-white p-5 md:rounded-3xl md:border md:border-slate-100 md:shadow-sm hover:shadow-xl hover:border-blue-100 transition-all duration-300 relative overflow-hidden bg-transparent border-b border-slate-100 last:border-0"
+            className="group md:bg-white p-5 md:rounded-3xl md:border md:border-slate-100 md:shadow-sm hover:shadow-xl hover:border-navy-100 transition-all duration-300 relative overflow-hidden bg-transparent border-b border-slate-100 last:border-0"
           >
             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
               <Book className="w-20 h-20" />
             </div>
 
             <div className="flex items-start justify-between mb-4">
-              <div className="w-12 h-12 bg-slate-50 text-slate-900 rounded-2xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+              <div className="w-12 h-12 bg-slate-50 text-slate-900 rounded-2xl flex items-center justify-center group-hover:bg-navy-900 group-hover:text-white transition-colors duration-300">
                 <Book className="w-6 h-6" />
               </div>
               <div className="flex flex-col items-end">
@@ -119,10 +119,10 @@ export default function CurrentSemester() {
             </div>
 
             <div className="relative z-10">
-              <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md mb-2 inline-block">
+              <span className="text-[10px] font-bold text-navy-900 bg-navy-50 px-2 py-0.5 rounded-md mb-2 inline-block">
                 {reg.subjectCode}
               </span>
-              <h3 className="text-lg font-black text-slate-900 tracking-tight leading-tight group-hover:text-blue-600 transition-colors">
+              <h3 className="text-lg font-black text-slate-900 tracking-tight leading-tight group-hover:text-navy-900 transition-colors">
                 {reg.subjectName}
               </h3>
             </div>

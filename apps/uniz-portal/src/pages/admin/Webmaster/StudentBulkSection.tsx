@@ -167,13 +167,13 @@ export default function StudentBulkSection() {
         <div className="flex bg-slate-100/80 p-1.5 rounded-xl border border-slate-200/60 backdrop-blur-sm shadow-none">
           <button
             onClick={() => setActiveTab("upload")}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "upload" ? "bg-white text-blue-700 shadow-none border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "upload" ? "bg-white text-navy-800 shadow-none border border-navy-100" : "text-slate-500 hover:text-navy-900"}`}
           >
             <Upload size={14} /> Bulk Upload
           </button>
           <button
             onClick={() => setActiveTab("export")}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "export" ? "bg-white text-blue-700 shadow-none border border-blue-100" : "text-slate-500 hover:text-blue-600"}`}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "export" ? "bg-white text-navy-800 shadow-none border border-navy-100" : "text-slate-500 hover:text-navy-900"}`}
           >
             <Download size={14} /> Batch Export
           </button>
@@ -185,9 +185,9 @@ export default function StudentBulkSection() {
           <div className="flex justify-end pr-2">
             <button
               onClick={handleDownloadTemplate}
-              className="group flex items-center gap-2.5 px-4 py-2 bg-white text-slate-500 rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all font-bold uppercase tracking-widest text-[9px] shadow-sm active:scale-95"
+              className="group flex items-center gap-2.5 px-4 py-2 bg-white text-slate-500 rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-navy-900 hover:border-navy-100 transition-all font-bold uppercase tracking-widest text-[9px] shadow-sm active:scale-95"
             >
-              <div className="p-1.5 bg-slate-50 rounded-lg group-hover:bg-blue-50 transition-colors">
+              <div className="p-1.5 bg-slate-50 rounded-lg group-hover:bg-navy-50 transition-colors">
                 <Download size={13} className="group-hover:scale-110 transition-transform" />
               </div>
               Download Template
@@ -212,7 +212,7 @@ export default function StudentBulkSection() {
             <button
               onClick={handleUpload}
               disabled={!file || loading || !!uploadId}
-              className="w-full h-16 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[11px] shadow-none hover:bg-blue-700 hover:scale-[1.01] transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
+              className="w-full h-16 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[11px] shadow-none hover:bg-navy-800 hover:scale-[1.01] transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
             >
               {loading ? (
                 <Loader2 className="animate-spin w-5 h-5" />
@@ -232,7 +232,7 @@ export default function StudentBulkSection() {
         <div className="bg-white rounded-xl border border-slate-100 p-12 text-slate-900 animate-in slide-in-from-right-8 duration-700 shadow-none transition-all">
           <div className="max-w-4xl mx-auto space-y-12">
             <div className="flex items-center gap-6">
-              <div className="p-5 bg-blue-600 text-white rounded-xl shadow-none">
+              <div className="p-5 bg-navy-900 text-white rounded-xl shadow-none">
                 <Filter size={26} />
               </div>
               <div className="space-y-1.5">
@@ -259,7 +259,7 @@ export default function StudentBulkSection() {
                         branch: e.target.value,
                       })
                     }
-                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
+                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
                   >
                     <option value="ALL">All Departments</option>
                     {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
@@ -284,7 +284,7 @@ export default function StudentBulkSection() {
                     onChange={(e) =>
                       setExportParams({ ...exportParams, year: e.target.value })
                     }
-                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
+                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
                   >
                     <option value="ALL">All Years</option>
                     {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
@@ -311,7 +311,7 @@ export default function StudentBulkSection() {
                         batch: e.target.value,
                       })
                     }
-                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
+                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
                   >
                     <option value="ALL">All Batches</option>
                     {availableBatches.map((b) => (
@@ -336,7 +336,7 @@ export default function StudentBulkSection() {
                   onChange={(e) =>
                     setExportParams({ ...exportParams, fields: e.target.value })
                   }
-                  className="w-full h-14 px-8 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none font-bold text-slate-900 text-[13px] transition-all shadow-none tracking-wide"
+                  className="w-full h-14 px-8 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none font-bold text-slate-900 text-[13px] transition-all shadow-none tracking-wide"
                 />
               </div>
             </div>
@@ -345,7 +345,7 @@ export default function StudentBulkSection() {
               <button
                 onClick={handleExport}
                 disabled={loading}
-                className="w-full h-16 flex items-center justify-center gap-3.5 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-none active:scale-[0.98] disabled:opacity-50"
+                className="w-full h-16 flex items-center justify-center gap-3.5 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-navy-800 transition-all shadow-none active:scale-[0.98] disabled:opacity-50"
               >
                 {loading ? (
                   <Loader2 className="animate-spin w-5 h-5" />
