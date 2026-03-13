@@ -198,8 +198,8 @@ export const sendOtpEmail = async (
     const success = await sendEmailUnified({
       from: '"UniZ Official" <no-reply@rguktong.in>',
       to: email,
-      subject: `[SECURE] ${otp} is your verification code`,
-      html: emailTemplate("Security Verification", content),
+      subject: `Your UniZ Access Code: ${otp}`,
+      html: emailTemplate("Verification Required", content),
     });
     return success;
   } catch (error) {
