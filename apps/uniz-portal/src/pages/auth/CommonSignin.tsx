@@ -437,7 +437,7 @@ export default function Signin({ type }: SigninProps) {
               <div className="flex items-center justify-end">
                 <button
                   type="button"
-                  className="text-sm text-blue-600 hover:text-blue-700 font-bold transition-all"
+                  className="text-sm text-navy-900 hover:text-navy-800 font-bold transition-all"
                   onClick={() => setStep("forgot")}
                 >
                   Forgot password?
@@ -445,7 +445,7 @@ export default function Signin({ type }: SigninProps) {
               </div>
 
               <Button
-                className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[15px] font-bold shadow-xl shadow-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-12 bg-navy-900 hover:bg-navy-800 text-white rounded-xl text-[15px] font-bold shadow-xl shadow-navy-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 size="lg"
                 isLoading={isLoading}
                 type="submit"
@@ -490,7 +490,7 @@ export default function Signin({ type }: SigninProps) {
                 className="h-12"
               />
               <Button
-                className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[15px] font-bold"
+                className="w-full h-12 bg-navy-900 hover:bg-navy-800 text-white rounded-xl text-[15px] font-bold"
                 size="lg"
                 isLoading={isLoading}
                 onClick={requestOtp}
@@ -525,7 +525,7 @@ export default function Signin({ type }: SigninProps) {
               {!resetToken && (
                 <div className="space-y-4">
                   <Button
-                    className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[15px] font-bold"
+                    className="w-full h-12 bg-navy-900 hover:bg-navy-800 text-white rounded-xl text-[15px] font-bold"
                     size="lg"
                     isLoading={isLoading}
                     onClick={handleVerifyOtp}
@@ -557,7 +557,7 @@ export default function Signin({ type }: SigninProps) {
                     className="h-12"
                   />
                   <Button
-                    className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[15px] font-bold"
+                    className="w-full h-12 bg-navy-900 hover:bg-navy-800 text-white rounded-xl text-[15px] font-bold"
                     size="lg"
                     isLoading={isLoading}
                     onClick={resetPassword}

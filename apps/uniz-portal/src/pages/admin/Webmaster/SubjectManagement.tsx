@@ -160,7 +160,7 @@ export default function SubjectManagement() {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="h-11 px-6 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2"
+          className="h-11 px-6 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-navy-800 active:scale-95 transition-all flex items-center justify-center gap-2"
         >
           <Plus size={16} /> New Subject
         </button>
@@ -169,7 +169,7 @@ export default function SubjectManagement() {
       <div className="flex flex-wrap gap-4 items-center">
         <div className="relative group flex-1 min-w-[300px]">
           <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors"
             size={16}
           />
           <input
@@ -177,19 +177,19 @@ export default function SubjectManagement() {
             placeholder="Search by name or code..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-11 pl-12 pr-5 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 text-sm placeholder:text-slate-400 placeholder:font-medium shadow-none"
+            className="w-full h-11 pl-12 pr-5 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900 text-sm placeholder:text-slate-400 placeholder:font-medium shadow-none"
           />
         </div>
 
         <div className="relative group">
           <Filter
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 pointer-events-none"
             size={14}
           />
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            className="bg-white border border-slate-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
+            className="bg-white border border-slate-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Departments</option>
             <option value="CSE">CSE</option>
@@ -208,13 +208,13 @@ export default function SubjectManagement() {
 
         <div className="relative group">
           <Calendar
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 pointer-events-none"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 pointer-events-none"
             size={14}
           />
           <select
             value={semester}
             onChange={(e) => setSemester(e.target.value)}
-            className="bg-white border border-slate-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
+            className="bg-white border border-slate-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] uppercase tracking-widest text-slate-600 outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Semesters</option>
             {["E1", "E2", "E3", "E4"].map((y) => (
@@ -233,7 +233,7 @@ export default function SubjectManagement() {
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="animate-spin text-blue-600" size={32} />
+          <Loader2 className="animate-spin text-navy-900" size={32} />
         </div>
       ) : subjects.length > 0 ? (
         <>
@@ -241,10 +241,10 @@ export default function SubjectManagement() {
             {subjects.map((sub, idx) => (
               <div
                 key={idx}
-                className="bg-white border border-slate-100 rounded-xl p-7 hover:translate-y-[-2px] hover:border-blue-100 transition-all group overflow-hidden relative shadow-none"
+                className="bg-white border border-slate-100 rounded-xl p-7 hover:translate-y-[-2px] hover:border-navy-100 transition-all group overflow-hidden relative shadow-none"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-blue-50 rounded-xl text-blue-600 border border-blue-50 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300 shadow-none">
+                  <div className="p-3 bg-navy-50 rounded-xl text-navy-900 border border-navy-100 group-hover:bg-navy-900 group-hover:text-white transition-colors duration-300 shadow-none">
                     <BookText size={20} />
                   </div>
                   <div className="px-3 py-1.5 bg-slate-50 rounded-xl text-[9px] font-semibold uppercase tracking-widest text-slate-400 border border-slate-100 shadow-none">
@@ -253,7 +253,7 @@ export default function SubjectManagement() {
                   <div className="ml-auto flex gap-1 transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                     <button
                       onClick={() => handleEditClick(sub)}
-                      className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                      className="p-2 text-slate-400 hover:text-navy-900 hover:bg-navy-50 rounded-xl transition-all"
                     >
                       <Edit3 size={14} />
                     </button>
@@ -275,7 +275,7 @@ export default function SubjectManagement() {
                       Dept
                     </p>
                     <p className="font-semibold text-slate-700 text-xs flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-600/20 group-hover:bg-blue-600 transition-colors"></div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-navy-900/20 group-hover:bg-navy-900 transition-colors"></div>
                       {sub.department}
                     </p>
                   </div>
@@ -293,7 +293,7 @@ export default function SubjectManagement() {
                       <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
                         Credits
                       </p>
-                      <span className="text-xs font-semibold text-blue-600">
+                      <span className="text-xs font-semibold text-navy-900">
                         {sub.credits} Units
                       </span>
                     </div>
@@ -301,9 +301,9 @@ export default function SubjectManagement() {
                       {[...Array(Number(sub.credits))].map((_, i) => (
                         <div
                           key={i}
-                          className="flex-1 h-1 rounded-xl bg-slate-100 group-hover:bg-blue-600/10 transition-colors overflow-hidden shadow-none"
+                          className="flex-1 h-1 rounded-xl bg-slate-100 group-hover:bg-navy-900/10 transition-colors overflow-hidden shadow-none"
                         >
-                          <div className="w-full h-full bg-blue-600 translate-x-0 group-hover:translate-x-0 transition-transform duration-500"></div>
+                          <div className="w-full h-full bg-navy-900 translate-x-0 group-hover:translate-x-0 transition-transform duration-500"></div>
                         </div>
                       ))}
                     </div>
@@ -336,8 +336,8 @@ export default function SubjectManagement() {
                         key={p}
                         onClick={() => setPage(p)}
                         className={`w-10 h-10 rounded-xl font-semibold text-xs border transition-all ${page === p
-                          ? "bg-blue-600 text-white border-blue-600"
-                          : "bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-600"
+                          ? "bg-navy-900 text-white border-navy-100"
+                          : "bg-white text-slate-400 border-slate-100 hover:border-navy-100 hover:text-navy-900"
                           }`}
                       >
                         {p}
@@ -385,7 +385,7 @@ export default function SubjectManagement() {
               setDepartment("");
               setSemester("");
             }}
-            className="text-blue-600 font-semibold text-sm uppercase tracking-widest hover:underline active:scale-95"
+            className="text-navy-900 font-semibold text-sm uppercase tracking-widest hover:underline active:scale-95"
           >
             Clear all filters
           </button>
@@ -418,7 +418,7 @@ export default function SubjectManagement() {
                     onChange={(e) =>
                       setNewSubject({ ...newSubject, name: e.target.value })
                     }
-                    className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-sm shadow-none"
+                    className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-sm shadow-none"
                     placeholder="e.g. Artificial Intelligence"
                   />
                 </div>
@@ -438,7 +438,7 @@ export default function SubjectManagement() {
                         code: e.target.value.toUpperCase(),
                       })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 shadow-none"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900 shadow-none"
                     placeholder="CSE402"
                   />
                 </div>
@@ -458,7 +458,7 @@ export default function SubjectManagement() {
                         credits: parseInt(e.target.value),
                       })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 shadow-none"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900 shadow-none"
                   />
                 </div>
               </div>
@@ -476,7 +476,7 @@ export default function SubjectManagement() {
                         department: e.target.value,
                       })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 cursor-pointer shadow-none"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900 cursor-pointer shadow-none"
                   >
                     <option>CSE</option>
                     <option>ECE</option>
@@ -494,7 +494,7 @@ export default function SubjectManagement() {
                     onChange={(e) =>
                       setNewSubject({ ...newSubject, semester: e.target.value })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-semibold text-slate-900 cursor-pointer shadow-none"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900 cursor-pointer shadow-none"
                   >
                     {["E1", "E2", "E3", "E4"].map((y) => (
                       <React.Fragment key={y}>

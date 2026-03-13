@@ -3,40 +3,71 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Google Sans"', "Inter", "system-ui", "sans-serif"],
-        body: ['"Google Sans Text"', "Inter", "system-ui", "sans-serif"],
+        sans: [
+          '"Google Sans"',
+          "Inter",
+          "system-ui",
+          "sans-serif",
+        ],
+        body: [
+          '"Google Sans Text"',
+          "Inter",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       fontSize: {
+        xs: ["14px", { lineHeight: "20px" }],
+        sm: ["16px", { lineHeight: "24px" }],
+        base: ["20px", { lineHeight: "30px" }],
+        lg: ["24px", { lineHeight: "32px" }],
+        xl: ["28px", { lineHeight: "36px" }],
+        "2xl": ["32px", { lineHeight: "42px" }],
+        "3xl": ["40px", { lineHeight: "50px" }],
+
         h1: [
-          "48px",
-          { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "600" },
+          "68px",
+          { lineHeight: "76px", letterSpacing: "-0.02em", fontWeight: "600" },
         ],
         h2: [
-          "36px",
-          { lineHeight: "44px", letterSpacing: "-0.01em", fontWeight: "600" },
+          "54px",
+          { lineHeight: "62px", letterSpacing: "-0.01em", fontWeight: "600" },
         ],
         h3: [
-          "28px",
-          { lineHeight: "36px", letterSpacing: "-0.01em", fontWeight: "600" },
+          "42px",
+          { lineHeight: "50px", letterSpacing: "-0.01em", fontWeight: "600" },
         ],
-        h4: ["22px", { lineHeight: "30px", fontWeight: "500" }],
-        base: ["16px", { lineHeight: "24px", fontWeight: "400" }],
-        small: ["14px", { lineHeight: "20px", fontWeight: "400" }],
-        micro: ["12px", { lineHeight: "16px", fontWeight: "500" }],
+        h4: ["32px", { lineHeight: "40px", fontWeight: "500" }],
+
+        small: ["18px", { lineHeight: "26px", fontWeight: "400" }],
+        micro: ["16px", { lineHeight: "22px", fontWeight: "500" }],
       },
       colors: {
-        blue: {
-          50: "#eef2ff",
-          100: "#e0e7ff",
-          200: "#c7d2fe",
-          300: "#a5b4fc",
-          400: "#818cf8",
-          500: "#6366f1",
-          600: "#4f46e5", // A deeper, royal-indigo leaning blue
-          700: "#4338ca",
-          800: "#3730a3",
-          900: "#312e81",
-          950: "#1e1b4b",
+        background: "var(--white)",
+        foreground: "var(--text-primary)",
+        primary: {
+          DEFAULT: "var(--navy-900)",
+          foreground: "var(--white)",
+        },
+        muted: {
+          DEFAULT: "var(--bg-page)",
+          foreground: "var(--text-secondary)",
+        },
+        accent: {
+          DEFAULT: "var(--navy-50)",
+          foreground: "var(--navy-900)",
+        },
+        navy: {
+          900: "var(--navy-900)",
+          800: "var(--navy-800)",
+          700: "var(--navy-700)",
+          600: "var(--navy-600)",
+          500: "var(--navy-500)",
+          400: "var(--navy-400)",
+          300: "var(--navy-300)",
+          200: "var(--navy-200)",
+          100: "var(--navy-100)",
+          50: "var(--navy-50)",
         },
         slate: {
           50: "#f8fafc",
@@ -44,6 +75,7 @@ module.exports = {
           200: "#e2e8f0",
           300: "#cbd5e1",
           400: "#94a3b8",
+          490: "#222222", // text-primary equivalent
           500: "#64748b",
           600: "#475569",
           700: "#334155",
