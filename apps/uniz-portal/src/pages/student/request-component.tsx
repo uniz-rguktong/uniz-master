@@ -121,7 +121,7 @@ export default function RequestComp({ type }: RequestCompProps) {
       <div className="mb-10 mt-2 md:mt-0">
         <button
           onClick={() => navigateTo("/student")}
-          className="text-slate-400 hover:text-indigo-600 font-bold text-[11px] uppercase tracking-[0.2em] flex items-center gap-2 mb-10 transition-all group"
+          className="text-slate-400 hover:text-navy-900 font-bold text-[11px] uppercase tracking-[0.2em] flex items-center gap-2 mb-10 transition-all group"
         >
           <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
           Protocol Terminal
@@ -139,7 +139,7 @@ export default function RequestComp({ type }: RequestCompProps) {
               Campus Leave Authorization Protocol
             </p>
           </div>
-          <div className="text-indigo-600 flex-shrink-0 hidden md:block">
+          <div className="text-navy-900 flex-shrink-0 hidden md:block">
             {type === "outpass" ? (
               <Calendar className="w-10 h-10" />
             ) : (
@@ -161,7 +161,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                 <textarea
                   onChange={handleInputChange(setReason)}
                   placeholder="Clearly explain the purpose of your request..."
-                  className="w-full bg-slate-50 border border-slate-50 rounded-xl p-6 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 focus:outline-none min-h-[160px] font-semibold text-base text-slate-800 placeholder:text-slate-300 placeholder:font-normal resize-none transition-all"
+                  className="w-full bg-slate-50 border border-slate-50 rounded-xl p-6 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none min-h-[160px] font-semibold text-base text-slate-800 placeholder:text-slate-300 placeholder:font-normal resize-none transition-all"
                 />
               </div>
 
@@ -175,7 +175,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                       <Input
                         type="date"
                         onchangeFunction={handleInputChange(setFromDate)}
-                        className="w-full bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-50 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 focus:outline-none font-semibold text-base text-slate-800 transition-all cursor-pointer"
+                        className="w-full bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-50 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-base text-slate-800 transition-all cursor-pointer"
                       />
                     </div>
                     <div className="space-y-3">
@@ -185,7 +185,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                       <Input
                         type="date"
                         onchangeFunction={handleInputChange(setToDate)}
-                        className="w-full bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-50 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 focus:outline-none font-semibold text-base text-slate-800 transition-all cursor-pointer"
+                        className="w-full bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-50 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-base text-slate-800 transition-all cursor-pointer"
                       />
                     </div>
                   </>
@@ -198,7 +198,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                       <Input
                         type="time"
                         onchangeFunction={handleInputChange(setFromTime)}
-                        className="w-full bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-50 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 focus:outline-none font-semibold text-base text-slate-800 transition-all cursor-pointer"
+                        className="w-full bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-50 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-base text-slate-800 transition-all cursor-pointer"
                       />
                     </div>
                     <div className="space-y-3">
@@ -208,7 +208,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                       <Input
                         type="time"
                         onchangeFunction={handleInputChange(setToTime)}
-                        className="w-full bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-50 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 focus:outline-none font-semibold text-base text-slate-800 transition-all cursor-pointer"
+                        className="w-full bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-50 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-base text-slate-800 transition-all cursor-pointer"
                       />
                     </div>
                   </>
@@ -222,7 +222,7 @@ export default function RequestComp({ type }: RequestCompProps) {
         <div className="space-y-6">
           <div className="bg-white rounded-xl p-8 border border-slate-100 shadow-sm">
             <div className="flex gap-4 items-start mb-6">
-              <div className="text-blue-500 flex-shrink-0">
+              <div className="text-navy-900 flex-shrink-0">
                 <AlertCircle className="w-6 h-6" />
               </div>
               <div className="space-y-1">
@@ -250,7 +250,7 @@ export default function RequestComp({ type }: RequestCompProps) {
             <button
               onClick={sendDataToBackend}
               disabled={isLoading}
-              className="w-full h-[58px] bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-base transition-all active:scale-[0.98] shadow-lg shadow-indigo-100 flex items-center justify-center gap-3"
+              className="w-full h-[58px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-base transition-all active:scale-[0.98] shadow-lg shadow-navy-100 flex items-center justify-center gap-3"
             >
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

@@ -56,7 +56,7 @@ export default function GlobeFeature() {
             <div className="flex flex-col-reverse items-center justify-between gap-10 md:flex-row">
                 <div className="z-10 max-w-xl text-left">
                     <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6">
-                        Global Campus <span className="text-blue-600">Connectivity</span>{" "}
+                        Global Campus <span className="text-navy-900">Connectivity</span>{" "}
                     </h2>
                     <p className="text-lg text-slate-500 font-medium leading-relaxed mb-8 max-w-lg">
                         Connect your entire university ecosystem with a unified, real-time data sync. UniZ provides a seamless platform for students, faculty, and administrators to interact globally.
@@ -86,7 +86,7 @@ const GLOBE_CONFIG: COBEOptions = {
     mapSamples: 16000,
     mapBrightness: 1.2,
     baseColor: [1, 1, 1],
-    markerColor: [37 / 255, 99 / 255, 235 / 255], // Blue color
+    markerColor: [11 / 255, 42 / 255, 71 / 255], // Institutional Navy color
     glowColor: [1, 1, 1],
     markers: [
         { location: [14.5995, 120.9842], size: 0.03 },

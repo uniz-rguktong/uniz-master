@@ -220,7 +220,7 @@ export default function ApproveComp({ type }: ApproveProps) {
                   {!request.is_approved &&
                     !request.is_rejected &&
                     request.current_level && (
-                      <span className="flex items-center gap-1 text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                      <span className="flex items-center gap-1 text-xs font-semibold text-navy-900 bg-navy-50 px-2 py-0.5 rounded border border-navy-100">
                         <Forward className="w-3 h-3" />{" "}
                         {request.current_level.toUpperCase()}
                       </span>
