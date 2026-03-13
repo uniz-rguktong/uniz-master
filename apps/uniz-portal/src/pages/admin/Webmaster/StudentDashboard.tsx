@@ -83,7 +83,7 @@ export default function StudentDashboard({ data, onSuspendToggle, onResetPasswor
                 <div className="space-y-4 mb-10">
                     <div className="space-y-1">
                         <h2 className="text-3xl font-black text-slate-900 tracking-tight lowercase first-letter:uppercase">
-                            {(student.name || '').split(' ')[0]} <span className="text-blue-600">{(student.name || '').split(' ').slice(1).join(' ')}</span>
+                            {(student.name || '').split(' ')[0]} <span className="text-navy-900">{(student.name || '').split(' ').slice(1).join(' ')}</span>
                         </h2>
                         <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-[10px]">{student.username}</p>
                     </div>

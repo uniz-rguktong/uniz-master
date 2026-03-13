@@ -213,9 +213,9 @@ export default function UploadSection({ type }: { type: UploadType }) {
         {type === "grades" && (
           <button
             onClick={downloadTemplate}
-            className="group flex items-center gap-2.5 px-4 py-2 bg-white text-slate-500 rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all font-bold uppercase tracking-widest text-[9px] shadow-none active:scale-95 mb-1"
+            className="group flex items-center gap-2.5 px-4 py-2 bg-white text-slate-500 rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-navy-900 hover:border-navy-100 transition-all font-bold uppercase tracking-widest text-[9px] shadow-none active:scale-95 mb-1"
           >
-            <div className="p-1.5 bg-slate-50 rounded-lg group-hover:bg-blue-50 transition-colors">
+            <div className="p-1.5 bg-slate-50 rounded-lg group-hover:bg-navy-50 transition-colors">
               <FileDown size={13} className="group-hover:scale-110 transition-transform" />
             </div>
             Download {type} Template
@@ -235,7 +235,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
               <select
                 value={branch}
                 onChange={(e) => setBranch(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
               >
                 <option value="ALL">ALL BRANCHES</option>
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
@@ -261,7 +261,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
               <select
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
               >
                 <option value="ALL">ALL YEARS</option>
                 {["E1", "E2", "E3", "E4"].map((y) => (
@@ -285,7 +285,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
               <select
                 value={semester}
                 onChange={(e) => setSemester(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
               >
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                   <option key={s} value={`SEM-${s}`}>
@@ -308,7 +308,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
               <select
                 value={batch}
                 onChange={(e) => setBatch(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl font-bold text-[11px] uppercase tracking-widest text-slate-600 appearance-none outline-none focus:border-blue-500"
+                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl font-bold text-[11px] uppercase tracking-widest text-slate-600 appearance-none outline-none focus:border-navy-100"
               >
                 <option value="ALL">ALL BATCHES</option>
                 {availableBatches.map((b) => (
@@ -330,7 +330,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                   Subject Code
                   {subjectsLoading && (
-                    <span className="ml-2 text-blue-500 normal-case tracking-normal font-medium">
+                    <span className="ml-2 text-navy-900 normal-case tracking-normal font-medium">
                       loading...
                     </span>
                   )}
@@ -339,7 +339,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                   <select
                     value={subjectCode}
                     onChange={(e) => setSubjectCode(e.target.value)}
-                    className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none disabled:opacity-50"
+                    className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none disabled:opacity-50"
                     disabled={subjectsLoading}
                   >
                     <option value="">
@@ -361,7 +361,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                   />
                 </div>
                 {subjectCode && (
-                  <p className="text-[10px] text-blue-600 font-semibold ml-2 mt-1">
+                  <p className="text-[10px] text-navy-900 font-semibold ml-2 mt-1">
                     ✓ {subjects.find((s) => s.code === subjectCode)?.name}
                   </p>
                 )}
@@ -373,13 +373,13 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 <div className="flex bg-slate-100/80 p-1 rounded-xl w-fit border border-slate-200/50 shadow-none">
                   <button
                     onClick={() => setRemedialsOnly(false)}
-                    className={`px-6 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${!remedialsOnly ? "bg-white text-blue-700 shadow-none border border-slate-200/50" : "text-slate-500 hover:text-slate-700"}`}
+                    className={`px-6 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${!remedialsOnly ? "bg-white text-navy-800 shadow-none border border-slate-200/50" : "text-slate-500 hover:text-slate-700"}`}
                   >
                     Regular
                   </button>
                   <button
                     onClick={() => setRemedialsOnly(true)}
-                    className={`px-6 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${remedialsOnly ? "bg-white text-blue-700 shadow-none border border-slate-200/50" : "text-slate-500 hover:text-slate-700"}`}
+                    className={`px-6 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${remedialsOnly ? "bg-white text-navy-800 shadow-none border border-slate-200/50" : "text-slate-500 hover:text-slate-700"}`}
                   >
                     Remedial
                   </button>
@@ -392,7 +392,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
             <div className="flex items-end lg:col-span-2">
               <button
                 onClick={downloadTemplate}
-                className="h-11 px-10 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-xl shadow-none text-blue-700 font-bold uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2.5 active:scale-95 w-full whitespace-nowrap"
+                className="h-11 px-10 bg-slate-50 hover:bg-navy-50 border border-slate-100 hover:border-navy-100 rounded-xl shadow-none text-navy-800 font-bold uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2.5 active:scale-95 w-full whitespace-nowrap"
               >
                 <FileDown size={14} /> Download {type} Template
               </button>
@@ -415,7 +415,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
           <button
             disabled={!file || loading || !!uploadId}
             onClick={handleUpload}
-            className="w-full bg-blue-600 text-white py-5 rounded-xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:bg-blue-700 transition-all shadow-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 active:scale-95"
+            className="w-full bg-navy-900 text-white py-5 rounded-xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:bg-navy-800 transition-all shadow-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 active:scale-95"
           >
             {loading ? (
               <Loader2 className="animate-spin w-5 h-5" />

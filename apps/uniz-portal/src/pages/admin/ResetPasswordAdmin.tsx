@@ -48,7 +48,7 @@ export default function Resetpassword() {
       case 2:
         return { score, label: "Moderate", color: "bg-slate-400" };
       case 3:
-        return { score, label: "Strong", color: "bg-blue-600" };
+        return { score, label: "Strong", color: "bg-navy-900" };
       default:
         return { score: 0, label: "", color: "" };
     }
@@ -176,7 +176,7 @@ export default function Resetpassword() {
             {/* Form Section */}
             <div className="md:w-2/3 p-6 md:p-8 md:px-10">
               <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-100">
+                <div className="p-3 bg-navy-900 text-white rounded-xl shadow-lg shadow-navy-100">
                   <svg
                     className="w-6 h-6"
                     fill="none"
@@ -212,7 +212,7 @@ export default function Resetpassword() {
                       type="password"
                       onchangeFunction={handleInputChange(setOldPassword)}
                       placeholder="Enter current password"
-                      className="focus:border-blue-600 focus:ring-blue-600"
+                      className="focus:border-navy-100 focus:ring-navy-900"
                     />
                   </div>
                 </div>
@@ -227,7 +227,7 @@ export default function Resetpassword() {
                       type="password"
                       onchangeFunction={handleInputChange(setPassword)}
                       placeholder="Enter new password"
-                      className="focus:border-blue-600 focus:ring-blue-600"
+                      className="focus:border-navy-100 focus:ring-navy-900"
                     />
                   </div>
                   {password && (
@@ -244,7 +244,7 @@ export default function Resetpassword() {
                         <span
                           className={`text-xs font-bold uppercase tracking-wider w-20 text-right ${
                             passwordStrength.score === 3
-                              ? "text-blue-600"
+                              ? "text-navy-900"
                               : passwordStrength.score === 2
                                 ? "text-slate-600"
                                 : "text-slate-400"
@@ -267,13 +267,13 @@ export default function Resetpassword() {
                       type="password"
                       onchangeFunction={handleInputChange(setRePassword)}
                       placeholder="Confirm new password"
-                      className="focus:border-blue-600 focus:ring-blue-600"
+                      className="focus:border-navy-100 focus:ring-navy-900"
                     />
                   </div>
                   {password && repassword && (
                     <div className="mt-2 ml-1">
                       {password === repassword ? (
-                        <p className="text-xs font-bold text-blue-600 flex items-center gap-1.5 uppercase tracking-wide">
+                        <p className="text-xs font-bold text-navy-900 flex items-center gap-1.5 uppercase tracking-wide">
                           <svg
                             className="h-4 w-4"
                             fill="none"
@@ -340,10 +340,10 @@ export default function Resetpassword() {
 
                 <div className="space-y-6">
                   <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${password.length >= 8 ? "text-blue-600" : "text-slate-400"}`}
+                    className={`flex items-center gap-3 transition-colors duration-300 ${password.length >= 8 ? "text-navy-900" : "text-slate-400"}`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${password.length >= 8 ? "border-blue-600 bg-blue-600 text-white" : "border-slate-200"}`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${password.length >= 8 ? "border-navy-100 bg-navy-900 text-white" : "border-slate-200"}`}
                     >
                       {password.length >= 8 && (
                         <svg
@@ -365,10 +365,10 @@ export default function Resetpassword() {
                   </div>
 
                   <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${/[0-9]/.test(password) ? "text-blue-600" : "text-slate-400"}`}
+                    className={`flex items-center gap-3 transition-colors duration-300 ${/[0-9]/.test(password) ? "text-navy-900" : "text-slate-400"}`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[0-9]/.test(password) ? "border-blue-600 bg-blue-600 text-white" : "border-slate-200"}`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[0-9]/.test(password) ? "border-navy-100 bg-navy-900 text-white" : "border-slate-200"}`}
                     >
                       {/[0-9]/.test(password) && (
                         <svg
@@ -390,10 +390,10 @@ export default function Resetpassword() {
                   </div>
 
                   <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${/[^A-Za-z0-9]/.test(password) ? "text-blue-600" : "text-slate-400"}`}
+                    className={`flex items-center gap-3 transition-colors duration-300 ${/[^A-Za-z0-9]/.test(password) ? "text-navy-900" : "text-slate-400"}`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[^A-Za-z0-9]/.test(password) ? "border-blue-600 bg-blue-600 text-white" : "border-slate-200"}`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[^A-Za-z0-9]/.test(password) ? "border-navy-100 bg-navy-900 text-white" : "border-slate-200"}`}
                     >
                       {/[^A-Za-z0-9]/.test(password) && (
                         <svg
@@ -419,7 +419,7 @@ export default function Resetpassword() {
               <div className="mt-8 p-6 bg-slate-50/50 rounded-xl border border-slate-100 hidden md:block">
                 <div className="flex items-start gap-3">
                   <svg
-                    className="h-5 w-5 text-blue-500 mt-0.5"
+                    className="h-5 w-5 text-navy-900 mt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
