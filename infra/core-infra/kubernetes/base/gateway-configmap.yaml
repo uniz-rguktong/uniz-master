@@ -20,6 +20,7 @@ data:
         
         # Rate Limiting
         limit_req_zone $binary_remote_addr zone=api_limit:10m rate=500r/s;
+        limit_req_zone $binary_remote_addr zone=download_limit:10m rate=1r/m;
         limit_req_status 429;
 
         log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
@@ -69,6 +70,11 @@ data:
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_set_header X-Forwarded-Proto $scheme;
+            }
+
+            location /download/uniz.apk {
+                limit_req zone=download_limit burst=5 nodelay;
+                return 302 https://github.com/uniz-rguktong/uniz-master/releases/download/v2.0.0-stable/uniz.apk;
             }
 
             location / {
