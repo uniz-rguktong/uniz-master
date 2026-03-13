@@ -160,9 +160,9 @@ export function NotificationPanel() {
 
               const colors = [
                 "border-l-red-500",
-                "border-l-purple-500",
+                "border-l-navy-600",
                 "border-l-yellow-500",
-                "border-l-blue-500",
+                "border-l-navy-400",
                 "border-l-green-500",
               ];
 
@@ -291,7 +291,7 @@ export function NotificationPanel() {
             className={cn(
               "flex-1 py-3 text-sm font-bold uppercase tracking-wider transition-colors border-b-2",
               activeTab === "careers"
-                ? "border-[#800000] text-[#800000] bg-[#800000]/5"
+                ? "border-navy-900 text-navy-900 bg-navy-50"
                 : "border-transparent text-slate-400 hover:text-slate-600 hover:bg-slate-50",
             )}
           >

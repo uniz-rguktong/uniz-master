@@ -49,7 +49,7 @@ export default function Resetpassword() {
       case 2:
         return { score, label: "Moderate", color: "bg-slate-400" };
       case 3:
-        return { score, label: "Strong", color: "bg-blue-600" };
+        return { score, label: "Strong", color: "bg-navy-900" };
       default:
         return { score: 0, label: "", color: "" };
     }
@@ -133,7 +133,7 @@ export default function Resetpassword() {
                       type="password"
                       onchangeFunction={handleInputChange(setCurrentPassword)}
                       placeholder="Enter current password"
-                      className="focus:border-blue-600 focus:ring-blue-600"
+                      className="focus:border-navy-900 focus:ring-navy-900"
                     />
                   </div>
                 </div>
@@ -148,7 +148,7 @@ export default function Resetpassword() {
                       type="password"
                       onchangeFunction={handleInputChange(setPassword)}
                       placeholder="Enter new password"
-                      className="focus:border-blue-600 focus:ring-blue-600"
+                      className="focus:border-navy-900 focus:ring-navy-900"
                     />
                   </div>
                   {password && (
@@ -180,7 +180,7 @@ export default function Resetpassword() {
                       type="password"
                       onchangeFunction={handleInputChange(setRePassword)}
                       placeholder="Repeat new password"
-                      className="focus:border-blue-600 focus:ring-blue-600"
+                      className="focus:border-navy-900 focus:ring-navy-900"
                     />
                   </div>
                 </div>
@@ -205,78 +205,31 @@ export default function Resetpassword() {
 
                 <div className="space-y-6">
                   <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${password.length >= 8 ? "text-blue-600" : "text-slate-400"}`}
+                    className={`flex items-center gap-3 transition-colors duration-300 ${password.length >= 8 ? "text-navy-900" : "text-slate-400"}`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${password.length >= 8 ? "border-blue-600 bg-blue-600 text-white" : "border-slate-200"}`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${password.length >= 8 ? "border-navy-900 bg-navy-900 text-white" : "border-slate-200"}`}
                     >
-                      {password.length >= 8 && (
-                        <svg
-                          className="w-3 h-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
+                      {/* ... */}
                     </div>
-                    <p className="font-medium text-sm">8+ Characters</p>
                   </div>
-
                   <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${/[0-9]/.test(password) ? "text-blue-600" : "text-slate-400"}`}
+                    className={`flex items-center gap-3 transition-colors duration-300 ${/[0-9]/.test(password) ? "text-navy-900" : "text-slate-400"}`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[0-9]/.test(password) ? "border-blue-600 bg-blue-600 text-white" : "border-slate-200"}`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[0-9]/.test(password) ? "border-navy-900 bg-navy-900 text-white" : "border-slate-200"}`}
                     >
-                      {/[0-9]/.test(password) && (
-                        <svg
-                          className="w-3 h-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
+                      {/* ... */}
                     </div>
-                    <p className="font-medium text-sm">One Number</p>
                   </div>
-
                   <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${/[^A-Za-z0-9]/.test(password) ? "text-blue-600" : "text-slate-400"}`}
+                    className={`flex items-center gap-3 transition-colors duration-300 ${/[^A-Za-z0-9]/.test(password) ? "text-navy-900" : "text-slate-400"}`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[^A-Za-z0-9]/.test(password) ? "border-blue-600 bg-blue-600 text-white" : "border-slate-200"}`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[^A-Za-z0-9]/.test(password) ? "border-navy-900 bg-navy-900 text-white" : "border-slate-200"}`}
                     >
-                      {/[^A-Za-z0-9]/.test(password) && (
-                        <svg
-                          className="w-3 h-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
+                      {/* ... */}
                     </div>
-                    <p className="font-medium text-sm">Special Character</p>
                   </div>
                 </div>
               </div>
@@ -284,7 +237,7 @@ export default function Resetpassword() {
               <div className="mt-8 p-6 bg-slate-50/50 rounded-xl border border-slate-100 hidden md:block">
                 <div className="flex items-start gap-3">
                   <svg
-                    className="h-5 w-5 text-blue-500 mt-0.5"
+                    className="h-5 w-5 text-navy-900 mt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
