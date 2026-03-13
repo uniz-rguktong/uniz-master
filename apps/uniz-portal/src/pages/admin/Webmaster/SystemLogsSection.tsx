@@ -100,7 +100,7 @@ export default function SystemLogsSection() {
             <button
               onClick={fetchHistory}
               title="Refresh Logs"
-              className={`p-2.5 text-slate-500 hover:text-blue-600 transition-all ${loading ? "animate-spin" : ""}`}
+              className={`p-2.5 text-slate-500 hover:text-navy-900 transition-all ${loading ? "animate-spin" : ""}`}
             >
               <RefreshCw size={18} />
             </button>
@@ -116,7 +116,7 @@ export default function SystemLogsSection() {
 
           <div className="relative group">
             <Filter
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors pointer-events-none"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors pointer-events-none"
               size={13}
             />
             <select
@@ -125,7 +125,7 @@ export default function SystemLogsSection() {
                 setFilterType(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-10 pr-10 h-11 bg-white border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-[0.1em] outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[160px] shadow-none appearance-none cursor-pointer text-slate-600"
+              className="pl-10 pr-10 h-11 bg-white border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-[0.1em] outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all w-[160px] shadow-none appearance-none cursor-pointer text-slate-600"
             >
               <option value="ALL">All Assets</option>
               <option value="STUDENTS">Students</option>
@@ -133,14 +133,14 @@ export default function SystemLogsSection() {
               <option value="GRADES">Grades</option>
             </select>
             <ChevronDown
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors pointer-events-none"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors pointer-events-none"
               size={14}
             />
           </div>
 
           <div className="relative group">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors"
               size={16}
             />
             <input
@@ -151,7 +151,7 @@ export default function SystemLogsSection() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-11 pr-5 h-12 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all w-[240px] shadow-none placeholder:text-slate-400"
+              className="pl-11 pr-5 h-12 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all w-[240px] shadow-none placeholder:text-slate-400"
             />
           </div>
         </div>
@@ -241,13 +241,13 @@ export default function SystemLogsSection() {
                                 target="_blank"
                                 rel="noreferrer"
                                 title="Download Source File"
-                                className="text-slate-400 hover:text-blue-600 transition-colors bg-white hover:bg-slate-50 p-1.5 rounded-md border border-slate-200"
+                                className="text-slate-400 hover:text-navy-900 transition-colors bg-white hover:bg-slate-50 p-1.5 rounded-md border border-slate-200"
                               >
                                 <Download size={14} />
                               </a>
                             )}
                           </div>
-                          <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-bold uppercase tracking-wider w-fit border border-blue-100">
+                          <span className="px-2 py-0.5 bg-navy-50 text-navy-900 rounded text-[9px] font-bold uppercase tracking-wider w-fit border border-navy-100">
                             {log.type || "NONE"}
                           </span>
                         </div>
@@ -283,7 +283,7 @@ export default function SystemLogsSection() {
                               </span>
                             </div>
                           ) : (
-                            <div className="flex items-center gap-1.5 text-blue-500 bg-blue-50 px-3 py-1 rounded-xl border border-blue-100">
+                            <div className="flex items-center gap-1.5 text-navy-900 bg-navy-50 px-3 py-1 rounded-xl border border-navy-100">
                               <span className="text-[9px] font-bold uppercase tracking-widest">
                                 {log.status || "PROCESSING"}
                               </span>
