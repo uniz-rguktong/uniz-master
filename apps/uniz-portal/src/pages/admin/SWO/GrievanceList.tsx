@@ -79,7 +79,7 @@ export default function GrievanceList() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-blue-600 font-bold text-[10px] uppercase tracking-[0.2em] mb-3 bg-blue-50 w-fit px-3 py-1 rounded-full border border-blue-100/50">
+          <div className="flex items-center gap-2 text-navy-900 font-bold text-[10px] uppercase tracking-[0.2em] mb-3 bg-navy-50 w-fit px-3 py-1 rounded-full border border-navy-100/50">
             <ShieldCheck size={12} />
             Resolution Control
           </div>
@@ -105,12 +105,12 @@ export default function GrievanceList() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between group hover:border-blue-200 transition-all duration-300">
+        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between group hover:border-navy-100 transition-all duration-300">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl group-hover:scale-110 transition-transform">
+            <div className="p-3 bg-navy-50 text-navy-900 rounded-2xl group-hover:scale-110 transition-transform">
               <MessageSquare size={20} />
             </div>
-            <span className="text-blue-600 font-black text-2xl">
+            <span className="text-navy-900 font-black text-2xl">
               {grievances.length}
             </span>
           </div>
@@ -160,7 +160,7 @@ export default function GrievanceList() {
             placeholder="Search by username or description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-50 border border-transparent rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:bg-white focus:border-blue-100 focus:ring-4 focus:ring-blue-50 transition-all outline-none"
+            className="w-full bg-slate-50 border border-transparent rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:bg-white focus:border-navy-100 focus:ring-4 focus:ring-navy-900 transition-all outline-none"
           />
         </div>
 
@@ -219,12 +219,12 @@ export default function GrievanceList() {
                 {filteredGrievances.map((g) => (
                   <tr
                     key={g.id}
-                    className="group hover:bg-blue-50/30 transition-colors"
+                    className="group hover:bg-navy-50/30 transition-colors"
                   >
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm ${g.isAnonymous ? "bg-slate-100 text-slate-400" : "bg-blue-100 text-blue-600"}`}
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm ${g.isAnonymous ? "bg-slate-100 text-slate-400" : "bg-navy-100 text-navy-900"}`}
                         >
                           {g.isAnonymous
                             ? "??"
@@ -273,7 +273,7 @@ export default function GrievanceList() {
                       </div>
                     </td>
                     <td className="px-8 py-6 text-right">
-                      <button className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-100 hover:shadow-lg transition-all active:scale-95 group/btn">
+                      <button className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-navy-900 hover:border-navy-100 hover:shadow-lg transition-all active:scale-95 group/btn">
                         <ChevronRight
                           size={18}
                           className="group-hover/btn:translate-x-0.5 transition-transform"
