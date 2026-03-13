@@ -179,7 +179,7 @@ function PasswordInput({
             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5">
                 {label}
             </label>
-            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus-within:border-blue-400 focus-within:bg-white transition-all">
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus-within:border-navy-100 focus-within:bg-white transition-all">
                 <input
                     type={show ? "text" : "password"}
                     value={value}

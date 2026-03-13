@@ -237,7 +237,7 @@ export default function RoleManagement() {
             className={cn(
               "flex items-center gap-2 px-6 py-3 text-sm font-medium border-b-2 transition-all hover:bg-slate-50",
               tab === t.key
-                ? "border-blue-600 text-blue-600"
+                ? "border-navy-100 text-navy-900"
                 : "border-transparent text-slate-500 hover:text-slate-700",
             )}
           >
@@ -305,7 +305,7 @@ export default function RoleManagement() {
                         key={a.id}
                         className="hover:bg-slate-50 transition-colors group"
                       >
-                        <td className="px-6 py-4 font-medium text-slate-900 group-hover:text-blue-600 transition-colors">
+                        <td className="px-6 py-4 font-medium text-slate-900 group-hover:text-navy-900 transition-colors">
                           {a.username}
                         </td>
                         <td className="px-6 py-4">
@@ -315,7 +315,7 @@ export default function RoleManagement() {
                               onChange={(e) =>
                                 assignRole(a.username, e.target.value as Role)
                               }
-                              className="appearance-none w-full bg-white border border-slate-200 text-slate-700 py-1.5 pl-3 pr-8 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium shadow-sm transition-all hover:border-slate-300"
+                              className="appearance-none w-full bg-white border border-slate-200 text-slate-700 py-1.5 pl-3 pr-8 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent font-medium shadow-sm transition-all hover:border-slate-300"
                             >
                               {roles.map((r) => (
                                 <option
@@ -360,7 +360,7 @@ export default function RoleManagement() {
           <div className="max-w-xl mx-auto animate-in fade-in duration-300 pt-8">
             <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
               <div className="text-center mb-8">
-                <div className="mx-auto h-12 w-12 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-600">
+                <div className="mx-auto h-12 w-12 bg-navy-50 rounded-full flex items-center justify-center mb-4 text-navy-900">
                   <UserPlus className="w-6 h-6" />
                 </div>
                 <h2 className="text-xl font-bold text-slate-900">
@@ -399,7 +399,7 @@ export default function RoleManagement() {
                     onChange={(e) =>
                       setNewAdmin({ ...newAdmin, role: e.target.value as Role })
                     }
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:ring-2 focus:ring-navy-900 focus:bg-white outline-none transition-all"
                   >
                     {roles.map((r) => (
                       <option key={r} value={r} className="capitalize">
@@ -413,7 +413,7 @@ export default function RoleManagement() {
                   <Button
                     onclickFunction={addAdmin}
                     value="Create Admin Account"
-                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    className="w-full bg-navy-900 hover:bg-navy-800"
                   />
                 </div>
               </div>
@@ -455,7 +455,7 @@ export default function RoleManagement() {
                       className={cn(
                         "w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors capitalize",
                         selectedRole === r
-                          ? "bg-blue-50 text-blue-700"
+                          ? "bg-navy-50 text-navy-800"
                           : "text-slate-600 hover:bg-slate-50",
                       )}
                     >
@@ -470,7 +470,7 @@ export default function RoleManagement() {
                 {selectedRole ? (
                   <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm">
                     <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-100">
-                      <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 font-bold uppercase text-lg">
+                      <div className="h-10 w-10 rounded-lg bg-navy-100 flex items-center justify-center text-navy-900 font-bold uppercase text-lg">
                         {selectedRole[0]}
                       </div>
                       <div>
@@ -508,7 +508,7 @@ export default function RoleManagement() {
                             className={cn(
                               "flex items-center p-4 border rounded-xl cursor-pointer transition-all",
                               isChecked
-                                ? "border-blue-200 bg-blue-50/50"
+                                ? "border-navy-100 bg-navy-50/50"
                                 : "border-slate-200 hover:border-slate-300",
                             )}
                           >
@@ -516,7 +516,7 @@ export default function RoleManagement() {
                               className={cn(
                                 "w-5 h-5 rounded border flex items-center justify-center mr-4 transition-colors",
                                 isChecked
-                                  ? "bg-blue-600 border-blue-600 text-white"
+                                  ? "bg-navy-900 border-navy-100 text-white"
                                   : "border-slate-300 bg-white",
                               )}
                             >
