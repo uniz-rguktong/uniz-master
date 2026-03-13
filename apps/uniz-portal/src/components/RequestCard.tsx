@@ -23,7 +23,7 @@ export default function RequestCard({
   const StatusBadge = () => {
     if (isApproved)
       return (
-        <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-100 uppercase tracking-widest">
+        <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-navy-50 text-navy-900 border-navy-100 uppercase tracking-widest">
           <CheckCircle className="w-3 h-3" /> Approved
         </span>
       );
@@ -45,7 +45,7 @@ export default function RequestCard({
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4 border-b border-slate-50 pb-4">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-slate-50 text-blue-500 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+          <div className="w-10 h-10 rounded-xl bg-slate-50 text-navy-900 flex items-center justify-center group-hover:bg-navy-900 group-hover:text-white transition-all duration-300">
             {type === "outing" ? <Clock size={18} /> : <Calendar size={18} />}
           </div>
           <div>
@@ -73,7 +73,7 @@ export default function RequestCard({
           {isPending && request.current_level && (
             <div className="text-[10px] uppercase tracking-[0.1em] font-black text-slate-300 flex items-center gap-1.5">
               Pending at {request.current_level.replace(/_/g, " ")}{" "}
-              <ArrowRight className="w-3 h-3 text-blue-600/50" />
+              <ArrowRight className="w-3 h-3 text-navy-900/50" />
             </div>
           )}
         </div>
@@ -103,7 +103,7 @@ export default function RequestCard({
           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
             Interval Net
           </p>
-          <div className="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 font-bold text-[10px] uppercase tracking-wider border border-blue-100">
+          <div className="inline-flex items-center px-2 py-0.5 rounded-md bg-navy-50 text-navy-900 font-bold text-[10px] uppercase tracking-wider border border-navy-100">
             {formatDuration(
               calculateDuration(
                 type === "outing" ? request.from_time : request.from_day,
@@ -149,7 +149,7 @@ export default function RequestCard({
                     <span
                       className={`font-black uppercase text-[11px] tracking-widest ${
                         log.action === "approve"
-                          ? "text-blue-600"
+                          ? "text-navy-900"
                           : log.action === "reject"
                             ? "text-red-500"
                             : "text-slate-400"

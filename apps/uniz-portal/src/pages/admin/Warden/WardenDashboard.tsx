@@ -171,7 +171,7 @@ export default function WardenDashboard() {
                     <h3 className="font-bold text-slate-900 text-[14px] mb-1 leading-tight transition-colors">
                       {item.label}
                     </h3>
-                    <p className="text-[8px] text-slate-400 uppercase tracking-[0.2em] font-black opacity-60 group-hover:text-blue-500 transition-colors">
+                    <p className="text-[8px] text-slate-400 uppercase tracking-[0.2em] font-black opacity-60 group-hover:text-navy-900 transition-colors">
                       INITIALIZE MODULE
                     </p>
                   </div>
@@ -184,7 +184,7 @@ export default function WardenDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+    <div className="flex min-h-screen bg-[#fcfcfd] relative overflow-hidden text-slate-900 selection:bg-navy-100 selection:text-blue-900">
       {/* Sidebar */}
       <aside
         className={`bg-white border-r border-slate-100 transition-all duration-300 z-[70] 
@@ -314,7 +314,7 @@ export default function WardenDashboard() {
                           size={20}
                           className={`shrink-0 transition-colors
                             ${isActive
-                              ? "text-blue-600"
+                              ? "text-navy-900"
                               : "text-slate-400 group-hover:text-slate-600"
                             }`}
                         />
@@ -393,7 +393,7 @@ export default function WardenDashboard() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="w-10 h-10 flex items-center justify-center bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:shadow-lg transition-all text-slate-400 hover:text-blue-600 active:scale-95"
+              className="w-10 h-10 flex items-center justify-center bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:shadow-lg transition-all text-slate-400 hover:text-navy-900 active:scale-95"
             >
               {isSidebarOpen ? <ChevronLeft size={18} /> : <Menu size={18} />}
             </button>
@@ -417,7 +417,7 @@ export default function WardenDashboard() {
             <button
               ref={headerAvatarRef}
               title="Profile"
-              className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 hover:ring-blue-400 transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50"
+              className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-[3px] border-white hover:ring-2 hover:ring-navy-900 transition-all active:scale-95 shrink-0 shadow-md ring-1 ring-slate-200/50"
             >
               {profilePhoto ? (
                 <img
@@ -426,7 +426,7 @@ export default function WardenDashboard() {
                   alt=""
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-bold text-sm">
+                <div className="w-full h-full flex items-center justify-center bg-navy-900 text-white font-bold text-sm">
                   {initial}
                 </div>
               )}
@@ -454,10 +454,10 @@ export default function WardenDashboard() {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id as any)}
-                className={`flex flex-col items-center justify-center h-full flex-1 gap-1 transition-all ${isActive ? "text-blue-600" : "text-slate-400"}`}
+                className={`flex flex-col items-center justify-center h-full flex-1 gap-1 transition-all ${isActive ? "text-navy-900" : "text-slate-400"}`}
               >
                 <div
-                  className={`p-1.5 rounded-xl transition-all ${isActive ? "bg-blue-50" : ""}`}
+                  className={`p-1.5 rounded-xl transition-all ${isActive ? "bg-navy-50" : ""}`}
                 >
                   <Icon size={isActive ? 20 : 18} />
                 </div>
