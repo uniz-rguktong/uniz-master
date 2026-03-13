@@ -208,6 +208,15 @@ export const GET_SEATING_TEMPLATE = (
 export const UPLOAD_SEATING = `${BASE_URL}/academics/seating/upload`;
 export const GET_STUDENT_SEATING = `${BASE_URL}/academics/seating/student`;
 
-// Analytics Service
+// Analytics Centralized
+export const ANALYTICS_URL = import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app/api";
+export const ANALYTICS_KEY = import.meta.env.VITE_ANALYTICS_KEY || import.meta.env.VITE_ANALYTICS_API_KEY || "";
+
+export const ANALYTICS_UPLOAD_HEALTH = `${ANALYTICS_URL}/analytics/webmaster/upload-health`;
+export const ANALYTICS_SYSTEM_USERS = `${ANALYTICS_URL}/analytics/webmaster/system-users`;
+export const ANALYTICS_CAMPUS_OCCUPANCY = `${ANALYTICS_URL}/analytics/dean/campus-occupancy`;
+export const ANALYTICS_ACADEMIC_HEATMAP = `${ANALYTICS_URL}/analytics/dean/academic-heatmap`;
+export const ANALYTICS_GRIEVANCE_TRENDS = `${ANALYTICS_URL}/analytics/dean/grievance-trends`;
+
 export const STUDENT_ATTENDANCE_ANALYTICS = (id: string) => `${ANALYTICS_BASE_URL}/api/analytics/student/${id}/attendance`;
 export const STUDENT_GRADES_TREND_ANALYTICS = (id: string) => `${ANALYTICS_BASE_URL}/api/analytics/student/${id}/grades-trend`;
