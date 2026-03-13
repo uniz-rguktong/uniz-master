@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../hooks/is_authenticated";
 import { useLogout } from "../hooks/useLogout";
 import { useStudentData } from "../hooks/student_info";
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense, useRef } from "react";
 import { enableOutingsAndOutpasses } from "../pages/student/student";
 import {
   User,
@@ -69,6 +69,7 @@ export default function Sidebar({ content }: MainContent) {
   useStudentData();
   const userData = useRecoilValue<any>(student);
   const navigate = useNavigate();
+  const mainRef = useRef<HTMLDivElement>(null);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [showNotice, setShowNotice] = useState(true);
@@ -76,9 +77,17 @@ export default function Sidebar({ content }: MainContent) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      if (mainRef.current) {
+        setIsScrolled(mainRef.current.scrollTop > 10 || window.scrollY > 10);
+      } else {
+        setIsScrolled(window.scrollY > 10);
+      }
     };
     window.addEventListener("scroll", handleScroll);
+    const mainEl = mainRef.current;
+    if (mainEl) {
+      mainEl.addEventListener("scroll", handleScroll);
+    }
 
     // Pull to Refresh Implementation
     let touchStartPos = 0;
@@ -101,6 +110,9 @@ export default function Sidebar({ content }: MainContent) {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      if (mainEl) {
+        mainEl.removeEventListener("scroll", handleScroll);
+      }
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
     };
@@ -318,7 +330,7 @@ export default function Sidebar({ content }: MainContent) {
         </div>
 
         {/* Main Content Area */}
-        <main className="flex-1 md:pl-28 md:overflow-y-auto md:max-h-screen">
+        <main ref={mainRef} className="flex-1 md:overflow-y-auto md:max-h-screen">
           {/* Mobile Header */}
           <header className={`md:hidden sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16 transition-all duration-300 ${isScrolled ? "bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm" : "bg-transparent border-transparent"}`}>
             <h1 className={`unifrakturcook-bold text-3xl tracking-tighter transition-colors duration-300 ${isScrolled ? "text-slate-900" : "text-slate-800"}`}>
@@ -333,7 +345,7 @@ export default function Sidebar({ content }: MainContent) {
           </header>
 
           {/* Re-designed Desktop Header (Pharmacy App Style) */}
-          <header className="bg-white/60 backdrop-blur-md border-b border-white/20 sticky top-0 z-40 p-4 px-8 justify-between items-center hidden md:flex">
+          <header className={`sticky top-0 z-40 p-4 px-8 md:pl-36 justify-between items-center hidden md:flex transition-all duration-300 ${isScrolled ? "bg-white/60 backdrop-blur-md border-b border-white/20 shadow-sm" : "bg-transparent border-transparent shadow-none"}`}>
             {/* Left: App Branding */}
             <div className="flex items-center gap-4">
               <h1 className="unifrakturcook-bold text-3xl text-slate-800 tracking-tight">
@@ -373,7 +385,7 @@ export default function Sidebar({ content }: MainContent) {
             </div>
           </header>
 
-          <div className="pt-4 px-4 pb-32 md:p-10 min-h-full">
+          <div className="pt-4 px-4 pb-32 md:p-10 md:ml-28 min-h-full">
             {/* Mobile Back Button (Below Header) */}
             {content !== "dashboard" && (
               <div className="md:hidden mb-6">
