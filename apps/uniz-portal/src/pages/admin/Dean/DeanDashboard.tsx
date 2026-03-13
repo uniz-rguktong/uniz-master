@@ -21,7 +21,7 @@ import StudentBulkSection from "../Webmaster/StudentBulkSection";
 import SystemLogsSection from "../Webmaster/SystemLogsSection";
 import SemesterRegistrationSection from "../Webmaster/SemesterRegistrationSection";
 import FacultyManagement from "../Webmaster/FacultyManagement";
-import WebmasterOverview from "../Webmaster/WebmasterOverview";
+import DeanOverview from "./DeanOverview";
 
 export default function DeanDashboard() {
   useIsAuth();
@@ -155,7 +155,7 @@ export default function DeanDashboard() {
       default:
         return (
           <div className="animate-in fade-in duration-500">
-            <WebmasterOverview username={username} />
+            <DeanOverview />
           </div>
         );
     }
