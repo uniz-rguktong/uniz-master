@@ -977,19 +977,28 @@ export const searchFaculty = async (
     }
     if (department) where.department = department;
 
-    const [faculty, total] = await Promise.all([
-      prisma.facultyProfile.findMany({
-        where,
-        skip,
-        take: Number(limit),
-        orderBy: { name: "asc" },
-      }),
-      prisma.facultyProfile.count({ where }),
+    const [facultyProfiles, adminProfiles] = await Promise.all([
+      prisma.facultyProfile.findMany({ where }),
+      prisma.adminProfile.findMany({ where }),
     ]);
+
+    const combined = [
+      ...facultyProfiles.map(mapFacultyProfile),
+      ...adminProfiles.map((p: any) => ({
+        ...mapFacultyProfile(p),
+        is_suspended: false, // AdminProfile doesn't have isSuspended field
+      })),
+    ];
+
+    // Sort combined results alphabetically by name
+    combined.sort((a, b) => (a.Name || "").localeCompare(b.Name || ""));
+
+    const total = combined.length;
+    const paginated = combined.slice(skip, skip + Number(limit));
 
     return res.json({
       success: true,
-      faculty: faculty.map(mapFacultyProfile),
+      faculty: paginated,
       pagination: {
         page: Number(page),
         totalPages: Math.ceil(total / Number(limit)),

@@ -32,11 +32,13 @@ interface ActionButton {
   variant?: 'default' | 'outline' | 'ghost';
 }
 
-interface ToasterProps {
+export interface ToasterProps {
   title?: string;
   message: string;
   variant?: Variant;
   duration?: number;
+  autoClose?: number;
+  icon?: React.ReactNode;
   position?: Position;
   actions?: ActionButton;
   onDismiss?: () => void;
@@ -77,14 +79,17 @@ const Toaster = forwardRef<ToasterRef, { defaultPosition?: Position }>(
         message,
         variant = 'default',
         duration = 4000,
+        autoClose,
+        icon: customIcon,
         position = defaultPosition,
         actions,
         onDismiss,
       }) {
         const Icon = variantIcons[variant];
+        const finalDuration = autoClose || duration;
 
         toastReference.current = sonnerToast.custom(
-          (toastId) => (
+          (toastId: any) => (
             <motion.div
               variants={toastAnimation}
               initial="initial"
@@ -100,7 +105,13 @@ const Toaster = forwardRef<ToasterRef, { defaultPosition?: Position }>(
                 variantStyles[variant]
               )}
             >
-              <Icon className="h-4 w-4 flex-shrink-0 text-white" />
+              {customIcon ? (
+                <div className="flex-shrink-0 text-white flex items-center justify-center">
+                  {customIcon}
+                </div>
+              ) : (
+                <Icon className="h-4 w-4 flex-shrink-0 text-white" />
+              )}
 
               <div className="flex-1 min-w-0 pr-2">
                 <p className="text-[12px] text-white font-bold whitespace-nowrap overflow-hidden text-ellipsis">
@@ -132,7 +143,7 @@ const Toaster = forwardRef<ToasterRef, { defaultPosition?: Position }>(
               </button>
             </motion.div>
           ),
-          { duration, position }
+          { duration: finalDuration, position }
         );
       },
     }));
