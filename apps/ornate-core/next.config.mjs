@@ -1,7 +1,17 @@
 import withBundleAnalyzer from '@next/bundle-analyzer';
 
+const r2PublicHost = (() => {
+    const raw = process.env.R2_PUBLIC_DOMAIN || process.env.R2_PUBLIC_URL;
+    if (!raw) return null;
+    try {
+        return new URL(raw).hostname;
+    } catch {
+        return null;
+    }
+})();
+
 /** @type {import('next').NextConfig} */
-// Force rebuild
+// Force rebuild for Production Sync (2026-03-14)
 const nextConfig = {
     output: 'standalone',
     // ── File Size Limits ──────────────────────────────────────
@@ -22,6 +32,10 @@ const nextConfig = {
                 protocol: "https",
                 hostname: "*.r2.dev",
             },
+            ...(r2PublicHost ? [{
+                protocol: "https",
+                hostname: r2PublicHost,
+            }] : []),
             {
                 protocol: "https",
                 hostname: "ui-avatars.com",
@@ -79,9 +93,15 @@ const nextConfig = {
                             "default-src 'self'",
                             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com",
                             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com",
-                            "img-src 'self' data: blob: https://images.unsplash.com https://*.r2.dev https://img.youtube.com https://vumbnail.com https://i.vimeocdn.com",
+                            [
+                                "img-src 'self' data: blob: https://images.unsplash.com https://*.r2.dev https://img.youtube.com https://vumbnail.com https://i.vimeocdn.com",
+                                ...(r2PublicHost ? [`https://${r2PublicHost}`] : []),
+                            ].join(' '),
                             "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com",
-                            "connect-src 'self' ws: wss: https://*.r2.dev https://cdn.jsdelivr.net https://unpkg.com",
+                            [
+                                "connect-src 'self' ws: wss: https://*.r2.dev https://cdn.jsdelivr.net https://unpkg.com",
+                                ...(r2PublicHost ? [`https://${r2PublicHost}`] : []),
+                            ].join(' '),
                             "frame-src https://www.youtube.com https://youtube.com https://player.vimeo.com",
                             "object-src 'none'",
                             "frame-ancestors 'none'",
