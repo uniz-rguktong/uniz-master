@@ -145,9 +145,9 @@ deploy_logic() {
 
       echo "[Deploy] Updating $DEP to use $IMG:$TAG..."
       if [[ "$DEP" == *"job"* ]]; then
-        kubectl set image "cronjob/$DEP" "$CON=docker.io/library/$IMG:$TAG"
+        kubectl set image "cronjob/$DEP" "$CON=$IMG:$TAG"
       else
-        if kubectl set image "deployment/$DEP" "$CON=docker.io/library/$IMG:$TAG"; then
+        if kubectl set image "deployment/$DEP" "$CON=$IMG:$TAG"; then
           kubectl rollout restart "deployment/$DEP"
         else
           echo "[Warning] Deployment update failed for $DEP"

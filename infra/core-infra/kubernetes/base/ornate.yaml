@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: ornate
-          image: docker.io/library/ornate:local
+          image: ornate:local
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
           envFrom:
