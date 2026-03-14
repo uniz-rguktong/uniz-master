@@ -1,22 +1,34 @@
-import { ToasterRef } from "@/components/ui/toast";
+import { ToasterProps, ToasterRef } from "@/components/ui/toast";
 import { createRef } from "react";
 
 export const toasterRef = createRef<ToasterRef>();
 
 export const toast = {
-  show: (props: Parameters<ToasterRef["show"]>[0]) => {
+  show: (props: ToasterProps) => {
     toasterRef.current?.show(props);
   },
-  success: (message: string, title?: string) => {
-    toasterRef.current?.show({ message, title, variant: "success" });
+  success: (message: string, optionsOrTitle?: string | Partial<ToasterProps>) => {
+    const props: ToasterProps = typeof optionsOrTitle === 'object' 
+      ? { message, variant: 'success', ...optionsOrTitle }
+      : { message, title: optionsOrTitle, variant: 'success' };
+    toasterRef.current?.show(props);
   },
-  error: (message: string, title?: string) => {
-    toasterRef.current?.show({ message, title, variant: "error" });
+  error: (message: string, optionsOrTitle?: string | Partial<ToasterProps>) => {
+    const props: ToasterProps = typeof optionsOrTitle === 'object' 
+      ? { message, variant: 'error', ...optionsOrTitle }
+      : { message, title: optionsOrTitle, variant: 'error' };
+    toasterRef.current?.show(props);
   },
-  warning: (message: string, title?: string) => {
-    toasterRef.current?.show({ message, title, variant: "warning" });
+  warning: (message: string, optionsOrTitle?: string | Partial<ToasterProps>) => {
+    const props: ToasterProps = typeof optionsOrTitle === 'object' 
+      ? { message, variant: 'warning', ...optionsOrTitle }
+      : { message, title: optionsOrTitle, variant: 'warning' };
+    toasterRef.current?.show(props);
   },
-  info: (message: string, title?: string) => {
-    toasterRef.current?.show({ message, title, variant: "default" });
+  info: (message: string, optionsOrTitle?: string | Partial<ToasterProps>) => {
+    const props: ToasterProps = typeof optionsOrTitle === 'object' 
+      ? { message, variant: 'default', ...optionsOrTitle }
+      : { message, title: optionsOrTitle, variant: 'default' };
+    toasterRef.current?.show(props);
   },
 };
