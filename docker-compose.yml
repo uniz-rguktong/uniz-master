@@ -6,8 +6,8 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_MULTIPLE_DATABASES: uniz_auth,uniz_user,uniz_academics,uniz_outpass,uniz_files,uniz_mail,uniz_notifications,uniz_cron,ornate_core
     volumes:
       - uniz_db_data:/var/lib/postgresql/data
