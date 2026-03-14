@@ -37,6 +37,9 @@ ENV DIRECT_URL=$DIRECT_URL
 ARG REDIS_URL
 ENV REDIS_URL=$REDIS_URL
 
+ARG NEXTAUTH_URL
+ENV NEXTAUTH_URL=$NEXTAUTH_URL
+
 RUN npm run build
 
 # ── Stage 3: Base runner (Puppeteer & Fonts) ────────────────
