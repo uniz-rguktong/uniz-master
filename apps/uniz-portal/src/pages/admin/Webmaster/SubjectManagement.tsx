@@ -16,7 +16,7 @@ import {
   ADD_SUBJECT,
   SUBJECT_BY_ID,
 } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { apiClient } from "../../../api/apiClient";
 import { Edit3 } from "lucide-react";
 

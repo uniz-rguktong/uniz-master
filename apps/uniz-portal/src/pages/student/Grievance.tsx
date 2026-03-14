@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { Send } from "lucide-react";
 import { BASE_URL } from "../../api/endpoints";
 

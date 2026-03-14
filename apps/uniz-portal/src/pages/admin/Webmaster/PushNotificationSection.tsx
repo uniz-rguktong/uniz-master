@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { PUSH_SUBSCRIBERS, PUSH_SEND } from "../../../api/endpoints";
 import { apiClient } from "../../../api/apiClient";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 
 export default function PushNotificationSection() {
   const [subscribers, setSubscribers] = useState<any[]>([]);

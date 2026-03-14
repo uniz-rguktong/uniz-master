@@ -15,7 +15,7 @@ import {
   GET_AVAILABLE_BATCHES,
   ADMIN_STUDENT_TEMPLATE,
 } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { FileUploader } from "../../../components/ui/FileUploader";
 import { downloadFile } from "../../../api/apiClient";
 

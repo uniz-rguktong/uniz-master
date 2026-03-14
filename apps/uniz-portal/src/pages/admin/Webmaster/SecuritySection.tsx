@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Lock, Eye, EyeOff, CheckCircle, XCircle, AlertTriangle, Loader2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { ADMIN_RESET_PASS } from "../../../api/endpoints";
 import { cn } from "../../../utils/cn";
 

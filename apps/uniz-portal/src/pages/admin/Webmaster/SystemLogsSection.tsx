@@ -10,7 +10,7 @@ import {
   Download,
 } from "lucide-react";
 import { ADMIN_UPLOAD_HISTORY, TRIGGER_CRON } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 
 export default function SystemLogsSection() {
   const [history, setHistory] = useState<any[]>([]);

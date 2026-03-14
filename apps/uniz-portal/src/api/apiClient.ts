@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { ANALYTICS_KEY } from "./endpoints";
 
 export enum ErrorCode {

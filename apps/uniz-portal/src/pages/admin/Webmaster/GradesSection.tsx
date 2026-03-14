@@ -35,7 +35,7 @@ import {
   UPLOAD_GRADES,
   GET_GRADES_TEMPLATE,
 } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { apiClient } from "../../../api/apiClient";
 import { FileUploader } from "../../../components/ui/FileUploader";
 
