@@ -7,5 +7,6 @@ resources:
   - gateway-configmap.yaml
   - ingress.yaml
   - redis.yaml
+  - postgres.yaml
   - db-ui.yaml
   - secrets.yaml
