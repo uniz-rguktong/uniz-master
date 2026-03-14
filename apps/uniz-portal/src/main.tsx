@@ -4,6 +4,9 @@ import "./index.css";
 import { Layout } from "./layout.tsx";
 import { RecoilRoot } from "recoil";
 import { BrowserRouter } from "react-router-dom";
+import { initializeGlobalInterceptor } from "./api/networkInterceptor.ts";
+
+initializeGlobalInterceptor();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
