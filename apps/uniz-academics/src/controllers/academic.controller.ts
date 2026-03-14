@@ -1477,7 +1477,7 @@ export const addSubject = async (req: AuthenticatedRequest, res: Response) => {
     const subject = await prisma.subject.upsert({
       where: { code },
       update: { name, credits: Number(credits), department, semester },
-      create: { code, name, credits: Number(credits), department, semester },
+      create: { id: code, code, name, credits: Number(credits), department, semester },
     });
     return res.json({ success: true, subject });
   } catch (e: any) {
