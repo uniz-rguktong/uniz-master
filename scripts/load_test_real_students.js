@@ -5,6 +5,8 @@ const CONCURRENCY = parseInt(process.env.CONCURRENCY || '50', 10);
 const API_URL = 'https://api.uniz.rguktong.in';
 const FRONTEND_URL = 'https://portal.uniz.rguktong.in';
 const LANDING_URL = 'https://uniz.rguktong.in';
+const ANALYTICS_BASE_URL = 'https://college-analytics.vercel.app';
+const ANALYTICS_KEY = 'rgukt-uniz-secure-key-2026';
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -91,9 +93,9 @@ async function runRealStudentTest() {
   console.log(`✅ Real students hijacked, resetted passwords safely: ${successFlows}/${testUsers.length} in ${timeEnd - timeStart}ms`);
 
 
-  console.log(`\n🔥 [Phase 2: Full System Login & Data Storm]`);
+  console.log(`\n🔥 [Phase 2: Full System Login & Data Storm (+ Analytics)]`);
   timeStart = Date.now();
-  let logins = 0, dataPulls = 0;
+  let logins = 0, dataPulls = 0, analyticsHits = 0;
 
   await Promise.all(testUsers.map(async (user) => {
     try {
@@ -118,21 +120,32 @@ async function runRealStudentTest() {
         const token = loginData.token;
 
         // Immediately fetch their grades and attendance to simulate Dashboard Loading
-        const [meRes, gradesRes, attendanceRes] = await Promise.all([
+        // ALSO fetch Analytics as requested
+        const [meRes, gradesRes, attendanceRes, ana1, ana2] = await Promise.all([
           fetch(`${API_URL}/api/v1/users/me`, { headers: { 'Authorization': `Bearer ${token}` } }),
           fetch(`${API_URL}/api/v1/academics/grades`, { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch(`${API_URL}/api/v1/academics/attendance`, { headers: { 'Authorization': `Bearer ${token}` } })
+          fetch(`${API_URL}/api/v1/academics/attendance`, { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch(`${ANALYTICS_BASE_URL}/api/analytics/student/${user.username}/attendance`, { 
+            headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': ANALYTICS_KEY } 
+          }),
+          fetch(`${ANALYTICS_BASE_URL}/api/analytics/student/${user.username}/grades-trend`, { 
+            headers: { 'Authorization': `Bearer ${token}`, 'x-api-key': ANALYTICS_KEY } 
+          })
         ]);
 
         if (meRes.ok && gradesRes.ok && attendanceRes.ok) {
           dataPulls++;
+        }
+        if (ana1.ok && ana2.ok) {
+          analyticsHits++;
         }
       }
     } catch(e) {}
   }));
   timeEnd = Date.now();
   console.log(`✅ Logins Succeeded: ${logins}/${testUsers.length}`);
-  console.log(`✅ Parallel Data Extracts Completed (/me, /grades, /attendance): ${dataPulls}/${logins} in ${timeEnd - timeStart}ms`);
+  console.log(`✅ Parallel Data Extracts Completed (/me, /grades, /attendance): ${dataPulls}/${logins}`);
+  console.log(`✅ Analytics Fetches Completed (Bearer token used): ${analyticsHits}/${logins} in ${timeEnd - timeStart}ms`);
 
 
   console.log(`\n🧹 [Rollback] Restoring Real Passwords...`);

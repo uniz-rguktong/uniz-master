@@ -123,6 +123,15 @@ deploy_logic() {
     echo "[Infra] Using VPS_IP: $VPS_IP"
     envsubst < infra/core-infra/kubernetes/base/shared/postgres.yaml.template > infra/core-infra/kubernetes/base/shared/postgres.yaml
   fi
+
+  if [ -f "infra/core-infra/kubernetes/base/shared/redis.yaml.template" ]; then
+    echo "[Infra] Generating redis service from template..."
+    # VPS_IP should already be exported from the block above
+    if [ -z "$VPS_IP" ]; then
+      export VPS_IP=$(hostname -I | awk '{print $1}')
+    fi
+    envsubst < infra/core-infra/kubernetes/base/shared/redis.yaml.template > infra/core-infra/kubernetes/base/shared/redis.yaml
+  fi
   
   export NEXT_PUBLIC_ASSETS_URL="https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
 
