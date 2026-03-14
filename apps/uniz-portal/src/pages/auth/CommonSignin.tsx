@@ -119,7 +119,12 @@ export default function Signin({ type }: SigninProps) {
         }),
       });
 
-      if (!data) return;
+      if (!data) {
+        // Reset Turnstile on failure (401/403/etc) to allow retry without refresh
+        turnstileRef.current?.reset?.();
+        setCaptchaToken(null);
+        return;
+      }
 
       // Explicit Role Mismatch Checks
       if (type === "admin" && data.role === "student") {
