@@ -12,10 +12,14 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 function runDbQuery(db, query) {
   try {
-    const safeQuery = query.replace(/"/g, '\\"').replace(/\$/g, '\\$');
+    // Escape double quotes for the shell and for the remote shell
+    const safeQuery = query.replace(/"/g, '\\\\\\"');
     const cmd = `ssh -o StrictHostKeyChecking=no root@76.13.241.174 "docker exec uniz-postgres psql -U uniz_admin -d ${db} -t -A -c \\"${safeQuery}\\""`;
-    return execSync(cmd, { stdio: 'pipe' }).toString().trim();
+    const out = execSync(cmd, { stdio: 'pipe' }).toString().trim();
+    return out;
   } catch (e) {
+    console.error("Query Error:", e.message);
+    if (e.stderr) console.error("Stderr:", e.stderr.toString());
     return '';
   }
 }
@@ -115,9 +119,12 @@ async function runRealStudentTest() {
       ]);
       
       const loginData = await loginRes.json();
-      if (loginData.success && loginData.token) {
+      if (!loginData.success) {
+        // console.log(`Login failed for ${user.username}:`, loginData);
+      }
+      if (loginData.success && (loginData.token || loginData.accessToken)) {
         logins++;
-        const token = loginData.token;
+        const token = loginData.token || loginData.accessToken;
 
         // Immediately fetch their grades and attendance to simulate Dashboard Loading
         // ALSO fetch Analytics as requested

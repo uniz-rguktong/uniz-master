@@ -9,7 +9,7 @@ datasource db {
 }
 
 model StudentProfile {
-  id                   String    @id @default(uuid())
+  id                   String    @id @default(uuid()) @db.Uuid
   username             String    @unique
   name                 String    @default("")
   email                String    @default("")
@@ -47,7 +47,7 @@ model StudentProfile {
 }
 
 model FacultyProfile {
-  id          String   @id @default(uuid())
+  id          String   @id @default(uuid()) @db.Uuid
   username    String   @unique
   name        String
   email       String   @unique
@@ -65,7 +65,7 @@ model FacultyProfile {
 }
 
 model AdminProfile {
-  id          String   @id @default(uuid())
+  id          String   @id @default(uuid()) @db.Uuid
   username    String   @unique
   name        String   @default("")
   email       String   @unique @default("")
@@ -80,7 +80,7 @@ model AdminProfile {
 }
 
 model Banner {
-  id        String   @id @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid
   title     String
   text      String
   imageUrl  String
@@ -90,7 +90,7 @@ model Banner {
 }
 
 model PublicNotification {
-  id        String   @id @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid
   title     String
   content   String
   link      String?
@@ -100,7 +100,7 @@ model PublicNotification {
 }
 
 model Tender {
-  id          String    @id @default(uuid())
+  id          String    @id @default(uuid()) @db.Uuid
   title       String
   description String
   pdfUrl      String?
@@ -111,7 +111,7 @@ model Tender {
 }
 
 model UploadHistory {
-  id           String   @id @default(uuid())
+  id           String   @id @default(uuid()) @db.Uuid
   type         String // "STUDENTS" | "GRADES" | "ATTENDANCE" | "FACULTY"
   filename     String?
   totalRows    Int      @default(0)
@@ -127,7 +127,7 @@ model UploadHistory {
 }
 
 model PushSubscription {
-  id        String   @id @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid
   username  String   // Link to StudentProfile.username, etc.
   endpoint  String   @unique
   p256dh    String

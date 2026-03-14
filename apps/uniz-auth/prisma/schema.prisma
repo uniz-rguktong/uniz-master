@@ -9,7 +9,7 @@ datasource db {
 }
 
 model AuthCredential {
-  id           String   @id @default(uuid())
+  id           String   @id @default(uuid()) @db.Uuid
   username     String   @unique
   passwordHash String
   role         String   @default("student")
@@ -19,7 +19,7 @@ model AuthCredential {
 }
 
 model OtpLog {
-  id         String    @id @default(uuid())
+  id         String    @id @default(uuid()) @db.Uuid
   username   String
   otp        String
   expiresAt  DateTime

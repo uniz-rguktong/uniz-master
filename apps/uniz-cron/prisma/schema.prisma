@@ -10,7 +10,7 @@ datasource db {
 
 
 model Outpass {
-  id            String   @id @default(uuid())
+  id            String   @id @default(uuid()) @db.Uuid
   studentId     String   // Reference to User ID
   studentGender String   @default("M") // Added for gender-based filtering
   reason        String
@@ -40,7 +40,7 @@ model Outpass {
 }
 
 model Outing {
-  id             String   @id @default(uuid())
+  id             String   @id @default(uuid()) @db.Uuid
   studentId      String   // Reference to User ID
   studentGender  String   @default("M") // Added for gender-based filtering
   reason         String
@@ -70,7 +70,7 @@ model Outing {
 }
 
 model Grievance {
-  id            String   @id @default(uuid())
+  id            String   @id @default(uuid()) @db.Uuid
   studentId     String?  // Optional: Null if truly anonymous
   studentEmail  String?
   category      String   // e.g., "Hostel", "Mess", "Academic", "Other"
@@ -90,7 +90,7 @@ model Grievance {
 
 
 model OtpLog {
-  id         String    @id @default(uuid())
+  id         String    @id @default(uuid()) @db.Uuid
   username   String
   otp        String
   expiresAt  DateTime
