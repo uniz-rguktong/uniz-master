@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/bhanu/uniz-master/apps/ornate-ems/src/app/%28auth%29/layout.tsx"],"sourcesContent":["export default function AuthLayout({\n  children,\n}: {\n  children: React.ReactNode;\n}) {\n  return (\n    <div className=\"flex min-h-screen flex-col items-center justify-center py-12 sm:px-6 lg:px-8 bg-gray-50\">\n      {children}\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;;AAAe,SAAS,WAAW,EACjC,QAAQ,EAGT;IACC,qBACE,uQAAC;QAAI,WAAU;kBACZ;;;;;;AAGP"}}]
-}
