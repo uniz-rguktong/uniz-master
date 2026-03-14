@@ -142,7 +142,6 @@ export async function processNextStudentBatch() {
               updatedAt: new Date(),
             },
             create: {
-              id,
               username: id,
               name,
               email: finalEmail,
