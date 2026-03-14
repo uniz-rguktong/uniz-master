@@ -114,6 +114,16 @@ deploy_logic() {
     envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > infra/core-infra/kubernetes/base/shared/secrets.yaml
   fi
   
+  if [ -f "infra/core-infra/kubernetes/base/shared/postgres.yaml.template" ]; then
+    echo "[Infra] Generating postgres service from template..."
+    # Auto-detect VPS_IP if not set
+    if [ -z "$VPS_IP" ]; then
+      export VPS_IP=$(hostname -I | awk '{print $1}')
+    fi
+    echo "[Infra] Using VPS_IP: $VPS_IP"
+    envsubst < infra/core-infra/kubernetes/base/shared/postgres.yaml.template > infra/core-infra/kubernetes/base/shared/postgres.yaml
+  fi
+  
   export NEXT_PUBLIC_ASSETS_URL="https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
 
   echo "[Deploy] Branch detected: $CURRENT_BRANCH"

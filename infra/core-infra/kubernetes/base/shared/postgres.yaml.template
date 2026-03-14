@@ -14,6 +14,6 @@ metadata:
   name: uniz-postgres
 subsets:
   - addresses:
-      - ip: 76.13.241.174
+      - ip: ${VPS_IP}
     ports:
       - port: 5432
