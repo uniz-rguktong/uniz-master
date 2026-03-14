@@ -68,8 +68,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-gateway-api
-  minReplicas: 3
-  maxReplicas: 15
+  minReplicas: 5
+  maxReplicas: 30
   metrics:
     - type: Resource
       resource:
