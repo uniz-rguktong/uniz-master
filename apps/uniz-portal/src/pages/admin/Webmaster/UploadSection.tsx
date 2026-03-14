@@ -17,7 +17,7 @@ import {
   ACADEMICS_PROGRESS,
   GET_AVAILABLE_BATCHES,
 } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { apiClient, downloadFile } from "../../../api/apiClient";
 import { FileUploader } from "../../../components/ui/FileUploader";
 

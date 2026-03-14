@@ -2,9 +2,9 @@ import { Suspense, lazy } from "react";
 import { Route, Routes, Link, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 import "./index.css";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { PageTransition } from "./components/Transition";
+import Toaster from "@/components/ui/toast";
+import { toasterRef } from "@/utils/toast-ref";
 import { useIsAuth } from "./hooks/is_authenticated";
 import { Construction, FileQuestion, ArrowLeft } from "lucide-react";
 import { Button } from "./components/Button";
@@ -17,6 +17,7 @@ const Sidebar = lazy(() => import("./components/Sidebar"));
 
 // Admin Components
 const AddStudents = lazy(() => import("./pages/admin/AddStudents"));
+const ToasterDemo = lazy(() => import("./pages/student/ToasterDemo"));
 const FacultyDashboard = lazy(() => import("./pages/faculty/dashboard"));
 const AddGrades = lazy(() => import("./pages/admin/AddGrades"));
 const AddAttendance = lazy(() => import("./pages/attendance/AddAttendance"));
@@ -118,20 +119,7 @@ export default function App() {
   return (
     <>
       <InstallPWA />
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss={false}
-        draggable={false}
-        pauseOnHover
-        theme="light"
-        toastClassName="shadow-lg rounded-2xl font-medium text-sm"
-      />
-
+      <Toaster ref={toasterRef} defaultPosition="top-center" />
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
           {/* Public & Auth */}
@@ -176,6 +164,26 @@ export default function App() {
           />
 
           {/* Student Protected Routes */}
+          <Route
+            path="/student/help"
+            element={
+              <MaintenanceGuard>
+                <PageTransition>
+                  <Sidebar content="help" />
+                </PageTransition>
+              </MaintenanceGuard>
+            }
+          />
+          <Route
+            path="/student/toast-demo"
+            element={
+              <MaintenanceGuard>
+                <PageTransition>
+                  <ToasterDemo />
+                </PageTransition>
+              </MaintenanceGuard>
+            }
+          />
           <Route
             path="/student"
             element={
