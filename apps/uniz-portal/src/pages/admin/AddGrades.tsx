@@ -12,12 +12,11 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "../../components/Button";
-import { downloadFile } from "../../api/apiClient";
+import { apiClient, downloadFile } from "../../api/apiClient";
 import { GET_GRADES_TEMPLATE } from "../../api/endpoints";
 
 export default function AddGrades() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("admin_token");
 
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -48,20 +47,16 @@ export default function AddGrades() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch(`${BASE_URL}/academics/grades/upload`, {
+      const data = await apiClient<any>(`${BASE_URL}/academics/grades/upload`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-        },
         body: formData,
       });
-      const data = await res.json();
 
-      if (data.success) {
+      if (data && data.success) {
         setSuccess(data);
       } else {
-        setError(data.message || "Upload failed");
-        if (data.errors && data.errors.length > 0) {
+        setError(data?.message || "Upload failed");
+        if (data?.errors && data.errors.length > 0) {
           setError(data.errors.join(", "));
         }
       }
