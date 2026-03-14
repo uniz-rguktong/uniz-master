@@ -35,6 +35,7 @@ export const initSemester = async (
     // 1. Create Academic Semester record
     const semester = await prisma.academicSemester.create({
       data: {
+        id: academicSemester.replace(/\s+/g, '-').toUpperCase(),
         name: academicSemester,
         status: "DEAN_REVIEW",
       },
