@@ -7,7 +7,7 @@
     "push": "git push",
     "pull": "git pull",
     "attack": "npx autocannon -c 500 -p 10 -d 120 https://api.uniz.rguktong.in/gateway-status",
-    "watch": "ssh -o StrictHostKeyChecking=no root@76.13.241.174 \"watch -n 1 'kubectl get hpa; echo; kubectl get pods'\"",
+    "watch": "ssh -t -o StrictHostKeyChecking=no root@76.13.241.174 \"watch -n 1 'kubectl get hpa; echo; kubectl get pods'\"",
     "clean": "rm -rf logs/ *.log",
     "install:all": "for d in apps/uniz-* apps/ornate-core infra/core-infra; do (cd $d && npm install && npm audit fix); done",
     "setup": "cp secrets.env.example secrets.env && npm run vault:sync",
