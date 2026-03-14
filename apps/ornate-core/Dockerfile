@@ -95,6 +95,7 @@ FROM base-runner AS runner
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm install -g prisma@6.19.2
 
 # Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs && \

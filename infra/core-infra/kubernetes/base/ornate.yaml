@@ -25,6 +25,13 @@ spec:
                 name: ornate-config
             - secretRef:
                 name: ornate-secrets
+          resources:
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
 ---
 apiVersion: v1
 kind: Service
