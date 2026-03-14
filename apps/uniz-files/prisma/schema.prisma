@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Subject {
-  id          String   @id @default(uuid())
+  id          String   @id @default(uuid()) @db.Uuid
   code        String   @unique
   name        String
   credits     Int
@@ -21,9 +21,9 @@ model Subject {
 }
 
 model Grade {
-  id          String   @id @default(uuid())
+  id          String   @id @default(uuid()) @db.Uuid
   studentId   String
-  subjectId   String
+  subjectId   String   @db.Uuid
   semesterId  String
   grade       Float
   
@@ -36,9 +36,9 @@ model Grade {
 }
 
 model Attendance {
-  id              String   @id @default(uuid())
+  id              String   @id @default(uuid()) @db.Uuid
   studentId       String
-  subjectId       String
+  subjectId       String   @db.Uuid
   semesterId      String
   totalClasses    Int
   attendedClasses Int

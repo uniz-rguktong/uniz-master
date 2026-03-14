@@ -32,3 +32,5 @@ services:
 
 volumes:
   uniz_db_data:
+    external: true
+    name: core-infra_pg_data

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -37,6 +37,7 @@ export default function Signin({ type }: SigninProps) {
   const [newPassword, setNewPassword] = useState("");
   const [step, setStep] = useState<"signin" | "forgot" | "verifyOtp">("signin");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const turnstileRef = useRef<any>(null);
   const [resetToken, setResetToken] = useRecoilState(resetTokenState);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -185,6 +186,9 @@ export default function Signin({ type }: SigninProps) {
     } catch (error: any) {
       // apiClient handles toasts, but we can add fallback
       console.error("Signin failed:", error);
+      // Reset Turnstile on failure to allow retry without refresh
+      turnstileRef.current?.reset();
+      setCaptchaToken(null);
     } finally {
       setIsLoading(false);
     }
@@ -393,7 +397,7 @@ export default function Signin({ type }: SigninProps) {
                 label="Username / ID"
                 icon={<User className="w-4 h-4" />}
                 value={username}
-                onChange={(e) => setUsername(e.target.value.toUpperCase())}
+                onChange={(e) => setUsername(e.target.value)}
                 placeholder={
                   type === "student"
                     ? "University ID (e.g. O210001)"
@@ -420,6 +424,7 @@ export default function Signin({ type }: SigninProps) {
               {import.meta.env.VITE_TURNSTILE_SITE_KEY ? (
                 <div className="flex justify-center py-2">
                   <Turnstile
+                    ref={turnstileRef}
                     siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
                     onSuccess={(token) => setCaptchaToken(token)}
                     onExpire={() => setCaptchaToken(null)}
@@ -481,7 +486,7 @@ export default function Signin({ type }: SigninProps) {
                 label="Student / Staff ID"
                 icon={<User className="w-4 h-4" />}
                 value={username}
-                onChange={(e) => setUsername(e.target.value.toUpperCase())}
+                onChange={(e) => setUsername(e.target.value)}
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck={false}
