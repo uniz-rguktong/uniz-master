@@ -14,7 +14,7 @@ We take the security of our systems seriously.
 If you believe you have found a security vulnerability in any UniZ module:
 
 1. Do NOT open an issue.
-2. Please report it responsibly by emailing **security@uniz.org**.
+2. Please report it responsibly by emailing **uniz@rguktong.ac.in**.
 3. Include a description of the vulnerability, steps to reproduce, and potential impact.
 
 We will acknowledge your report within 48 hours and provide an estimated timeline for a fix.
