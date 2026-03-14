@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { apiClient } from "../../api/apiClient";
 import { BASE_URL } from "../../api/endpoints";
 import {

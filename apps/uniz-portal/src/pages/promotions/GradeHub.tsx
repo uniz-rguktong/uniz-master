@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { apiClient, downloadFile } from "../../api/apiClient";
 import { student, studentAuthLoading } from "../../store";
 

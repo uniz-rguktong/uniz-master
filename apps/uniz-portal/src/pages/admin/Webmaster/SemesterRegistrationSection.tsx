@@ -23,7 +23,7 @@ import {
   BASE_URL,
   GET_SUBJECTS,
 } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 
 interface Semester {
   id: string;

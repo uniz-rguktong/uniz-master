@@ -19,7 +19,7 @@ import {
   SECURITY_CHECKOUT,
   SEARCH_STUDENTS,
 } from "../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { apiClient } from "../../api/apiClient";
 import { useSmartPolling } from "../../hooks/useSmartPolling";
 import { useIsAuth } from "../../hooks/is_authenticated";

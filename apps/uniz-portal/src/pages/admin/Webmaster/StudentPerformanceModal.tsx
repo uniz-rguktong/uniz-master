@@ -76,7 +76,7 @@ export default function StudentPerformanceModal({
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="relative w-full max-w-5xl max-h-[90vh] bg-white rounded-xl shadow-none overflow-hidden border border-slate-100 flex flex-col"
+                    className="relative w-full max-w-5xl max-h-[90vh] bg-white rounded-xl shadow-none overflow-hidden border border-slate-100 flex flex-col font-condensed"
                 >
                     {/* Header */}
                     <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">

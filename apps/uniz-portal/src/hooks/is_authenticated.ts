@@ -3,7 +3,7 @@ import { is_authenticated } from "../store";
 import { useRecoilState } from "recoil";
 import { useNavigate, useLocation } from "react-router-dom";
 import { isTokenValid, parseJwt, clearSession } from "../utils/security";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { initPushNotifications } from "../utils/pushNotifications";
 import { NOTIFICATION_SERVICE_URL } from "../api/endpoints";
 
