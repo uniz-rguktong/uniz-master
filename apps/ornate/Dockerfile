@@ -52,6 +52,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Install prisma and sharp for production
+RUN npm install -g prisma@6.19.2
+RUN npm install sharp@0.34.5
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
