@@ -44,6 +44,7 @@ model Admin {
   @@index([clubId])
 }
 
+
 model User {
   @@schema("ornate_core")
   id                String              @id @default(cuid())
