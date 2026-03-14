@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { Spinner } from "../../../components/ui/ios-spinner";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { BASE_URL } from "../../../api/endpoints";
 
 const CLOUDINARY_CLOUD = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;

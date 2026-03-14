@@ -34,7 +34,7 @@ import {
   BULK_UPDATE_FACULTY,
   BULK_DELETE_FACULTY,
 } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { FileUploader } from "../../../components/ui/FileUploader";
 
 const ROLES = [

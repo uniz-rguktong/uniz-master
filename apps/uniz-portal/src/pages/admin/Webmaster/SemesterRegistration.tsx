@@ -20,7 +20,7 @@ import {
   INIT_SEMESTER,
   UPDATE_SEMESTER_STATUS,
 } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { apiClient } from "../../../api/apiClient";
 
 export default function SemesterRegistration() {
