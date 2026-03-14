@@ -52,7 +52,7 @@ export default function StudentDashboard({ data, onSuspendToggle, onResetPasswor
         <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="space-y-6 pb-20"
+            className="space-y-6 pb-20 font-condensed"
         >
             {/* Centered Profile Hero */}
             <div className={`bg-white rounded-[2rem] border-2 ${student.is_suspended ? 'border-red-500/20' : 'border-emerald-500/20'} p-10 flex flex-col items-center text-center relative overflow-hidden shadow-none`}>

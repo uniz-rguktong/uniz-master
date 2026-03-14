@@ -4,7 +4,7 @@ import { UPDATE_STUDENT_STATUS } from "../api/endpoints";
 import { Button } from "./Button";
 import { useState, useEffect } from "react";
 import { useIsAuth } from "../hooks/is_authenticated";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { useOutsideCampus } from "../hooks/useOutsideCampus";
 import {
   Search,

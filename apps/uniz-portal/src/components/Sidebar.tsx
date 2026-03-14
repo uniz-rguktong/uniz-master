@@ -7,7 +7,6 @@ import { useStudentData } from "../hooks/student_info";
 import { useState, useEffect, lazy, Suspense, useRef } from "react";
 import { enableOutingsAndOutpasses } from "../pages/student/student";
 import {
-  User,
   Clock,
   CalendarDays,
   GraduationCap,
@@ -19,8 +18,9 @@ import {
   ScanLine,
   ChevronLeft,
   LayoutGrid,
-  BookOpen,
   Lock,
+  Home,
+  HelpCircle,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -39,6 +39,7 @@ const Grievance = lazy(() => import("../pages/student/Grievance"));
 const SeatingArrangement = lazy(
   () => import("../pages/student/components/SeatingArrangement"),
 );
+const HelpSupport = lazy(() => import("../pages/student/HelpSupport"));
 
 export { enableOutingsAndOutpasses } from "../pages/student/student";
 
@@ -55,6 +56,7 @@ interface MainContent {
   | "grievance"
   | "currentSemester"
   | "seating"
+  | "help"
   | "error";
 }
 
@@ -130,7 +132,7 @@ export default function Sidebar({ content }: MainContent) {
       label: "My Profile",
       href: "/student",
       content: "dashboard",
-      icon: User,
+      icon: Home,
       activeColor: "text-navy-900",
       hoverColor: "hover:text-navy-900",
     },
@@ -210,6 +212,15 @@ export default function Sidebar({ content }: MainContent) {
       activeColor: "text-rose-600",
       hoverColor: "hover:text-rose-600",
     },
+    {
+      id: "help",
+      label: "Help & Support",
+      href: "/student/help",
+      content: "help",
+      icon: HelpCircle,
+      activeColor: "text-navy-900",
+      hoverColor: "hover:text-navy-900",
+    },
   ];
 
   const dockItems = [
@@ -235,7 +246,13 @@ export default function Sidebar({ content }: MainContent) {
 
   const primaryMobileItems: InteractiveMenuItem[] = [
     {
-      label: "Password",
+      label: "Home",
+      icon: Home,
+      onClick: () => navigate("/student"),
+      isActive: content === "dashboard",
+    },
+    {
+      label: "Security",
       icon: Lock,
       onClick: () => navigate("/student/resetpassword"),
       isActive: content === "resetpassword",
@@ -243,25 +260,25 @@ export default function Sidebar({ content }: MainContent) {
     {
       label: "Explore",
       icon: LayoutGrid,
-      isActive: ["currentSemester", "gradehub", "attendance", "grievance"].includes(
+      isActive: ["gradehub", "attendance", "grievance"].includes(
         content
       ),
     },
     {
-      label: "Profile",
-      icon: User,
-      onClick: () => navigate("/student"),
-      isActive: content === "dashboard",
+      label: "Current Sem",
+      icon: Layers,
+      onClick: () => navigate("/student/current-semester"),
+      isActive: content === "currentSemester",
+    },
+    {
+      label: "Help",
+      icon: HelpCircle,
+      onClick: () => navigate("/student/help"),
+      isActive: content === "help",
     },
   ];
 
   const moreMobileItems: InteractiveMenuItem[] = [
-    {
-      label: "Current Sem",
-      icon: BookOpen,
-      onClick: () => navigate("/student/current-semester"),
-      isActive: content === "currentSemester",
-    },
     {
       label: "Results",
       icon: GraduationCap,
@@ -294,6 +311,7 @@ export default function Sidebar({ content }: MainContent) {
     attendance: <Attendance />,
     grievance: <Grievance />,
     seating: <SeatingArrangement />,
+    help: <HelpSupport />,
     error: <Error />,
   };
 

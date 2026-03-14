@@ -19,7 +19,7 @@ import {
   formatDuration,
   formatRequestTime,
 } from "../../utils/timeUtils";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { CheckCircle, Search, Ban, Forward, Inbox } from "lucide-react";
 import { Input } from "../../components/Input";
 import { cn } from "../../utils/cn";
