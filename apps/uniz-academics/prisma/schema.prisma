@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Subject {
-  id                String             @id @default(uuid()) @db.Uuid
+  id                String             @id
   code              String             @unique
   name              String
   credits           Float
@@ -25,8 +25,8 @@ model Subject {
 model Grade {
   id         String   @id @default(uuid()) @db.Uuid
   studentId  String
-  subjectId  String   @db.Uuid
-  semesterId String   @db.Uuid
+  subjectId  String
+  semesterId String
   grade      Float
   batch      String? // e.g. "O21"
   isRemedial Boolean  @default(false)
@@ -43,8 +43,8 @@ model Grade {
 model Attendance {
   id              String   @id @default(uuid()) @db.Uuid
   studentId       String
-  subjectId       String   @db.Uuid
-  semesterId      String   @db.Uuid
+  subjectId       String
+  semesterId      String
   totalClasses    Int
   attendedClasses Int
   batch           String? // e.g. "O21"
@@ -67,7 +67,7 @@ enum SemesterStatus {
 }
 
 model AcademicSemester {
-  id                String             @id @default(uuid()) @db.Uuid
+  id                String             @id
   name              String // e.g. "AY 2024-25 SEM-II"
   status            SemesterStatus     @default(DRAFT)
   branchAllocations   BranchAllocation[]
@@ -103,8 +103,8 @@ model BranchAllocation {
   branch        String // e.g. "CSE", "ECE"
   academicYear  String?          @default("E1") // e.g. "E1", "E2", "E3", "E4"
   batch         String?          @default("")   // e.g. "O21"
-  subjectId     String           @db.Uuid
-  semesterId    String           @db.Uuid
+  subjectId     String
+  semesterId    String
   customName    String? // For electives (e.g. ELECTIVE (NPTEL Course))
   customCredits Int? // Ability to override default subject credits
   status        AllocationStatus @default(DEAN_PENDING)
@@ -126,8 +126,8 @@ model Registration {
   id         String           @id @default(uuid()) @db.Uuid
   studentId  String
   batch      String?          @default("") // e.g. "O21"
-  subjectId  String           @db.Uuid
-  semesterId String           @db.Uuid
+  subjectId  String
+  semesterId String
   status     String           @default("REGISTERED") // "REGISTERED", "DROPPED"
   subject    Subject          @relation(fields: [subjectId], references: [id])
   semester   AcademicSemester @relation(fields: [semesterId], references: [id])
@@ -144,8 +144,8 @@ model SeatingArrangement {
   id         String           @id @default(uuid()) @db.Uuid
   studentId  String
   batch      String?          @default("") // e.g. "O21"
-  subjectId  String           @db.Uuid
-  semesterId String           @db.Uuid
+  subjectId  String
+  semesterId String
   room       String
   seatNumber String?
   examName   String // e.g. "MID-1", "MID-2", "SEM-END"
