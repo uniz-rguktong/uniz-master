@@ -3,6 +3,8 @@ import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   try {
     const session = await getServerSession(authOptions)
@@ -37,7 +39,11 @@ export default async function Home() {
           break;
       }
     }
-  } catch (error) {
+  } catch (error: any) {
+    // If it's a dynamic server error, we must re-throw it so Next.js handles it
+    if (error?.digest === 'DYNAMIC_SERVER_USAGE' || (error?.message && error.message.includes('Dynamic server usage'))) {
+      throw error;
+    }
     console.error("Auth session check failed:", error)
     // Fallback to login instead of crashing the whole page
     redirect('/login')
