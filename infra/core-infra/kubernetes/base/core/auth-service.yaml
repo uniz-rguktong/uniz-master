@@ -79,7 +79,7 @@ spec:
     kind: Deployment
     name: uniz-auth-service
   minReplicas: 4
-  maxReplicas: 12
+  maxReplicas: 20
   metrics:
     - type: Resource
       resource:
