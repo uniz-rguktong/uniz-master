@@ -43,6 +43,9 @@ export const login = async (req: Request, res: Response) => {
   }
 
   try {
+    const userCount = await prisma.authCredential.count();
+    console.log(`[AUTH-DEBUG] Total users in AuthCredential: ${userCount}`);
+
     const user = await prisma.authCredential.findFirst({
       where: { username: { equals: username, mode: "insensitive" } },
     });

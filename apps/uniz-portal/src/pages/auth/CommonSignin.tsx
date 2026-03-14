@@ -467,21 +467,6 @@ export default function Signin({ type }: SigninProps) {
               >
                 Sign In
               </Button>
-
-              {type === "admin" && (
-                <div className="text-center pt-2">
-                  <button
-                    type="button"
-                    className="text-[11px] text-slate-400 hover:text-slate-600 font-bold uppercase tracking-widest transition-all"
-                    onClick={() => {
-                      setUsername("security");
-                      setPassword("security@uniz");
-                    }}
-                  >
-                    Quick Access (Security)
-                  </button>
-                </div>
-              )}
             </div>
           )}
 
