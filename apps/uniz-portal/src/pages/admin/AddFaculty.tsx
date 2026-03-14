@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
 import { useIsAuth } from "../../hooks/is_authenticated";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { useNavigate } from "react-router-dom";
 import {
   UserPlus,

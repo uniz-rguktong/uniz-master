@@ -15,7 +15,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { UPDATES_BASE, GET_NOTIFICATIONS } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 
 export default function UpdatesSection() {
   const [updates, setUpdates] = useState<any[]>([]);
