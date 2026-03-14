@@ -14,7 +14,7 @@ import {
   GET_AVAILABLE_SUBJECTS,
   REGISTER_SUBJECTS,
 } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { apiClient } from "../../../api/apiClient";
 
 export default function CourseRegistration({

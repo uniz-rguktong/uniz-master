@@ -11,7 +11,7 @@ import {
   Tag,
 } from "lucide-react";
 import { GET_GRIEVANCES_LIST } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 
 export default function GrievanceSection() {
   const [grievances, setGrievances] = useState<any[]>([]);
