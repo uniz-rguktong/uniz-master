@@ -108,7 +108,6 @@ async function importStudents() {
             phone: phone || "",
           },
           create: {
-            id,
             username: id,
             name,
             email,
