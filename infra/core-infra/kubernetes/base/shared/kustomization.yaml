@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - cluster-issuer.yaml
+  - configmap.yaml
+  - gateway-configmap.yaml
+  - ingress.yaml
+  - redis.yaml
+  - db-ui.yaml
+  - secrets.yaml
