@@ -14,6 +14,7 @@ import {
   Phone,
 } from "lucide-react";
 import { CREATE_FACULTY } from "../../api/endpoints";
+import { apiClient } from "../../api/apiClient";
 
 export default function AddFaculty() {
   useIsAuth();
@@ -49,18 +50,12 @@ export default function AddFaculty() {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem("admin_token");
-      if (!token) return;
-      const res = await fetch(CREATE_FACULTY, {
+      const data = await apiClient<any>(CREATE_FACULTY, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-        },
         body: JSON.stringify(formData),
       });
-      const data = await res.json();
-      if (data.success) {
+
+      if (data && data.success) {
         toast.success("Faculty created successfully!");
         setFormData({
           username: "",
@@ -73,7 +68,7 @@ export default function AddFaculty() {
           contact: "",
         });
       } else {
-        toast.error(data.msg || "Failed to create faculty");
+        toast.error(data?.msg || "Failed to create faculty");
       }
     } catch (err) {
       toast.error("An error occurred");

@@ -15,10 +15,10 @@ import {
 import { BASE_URL } from "../../api/endpoints";
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
+import { apiClient, downloadFile } from "../../api/apiClient";
 
 export default function AddStudents() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("admin_token");
 
   const [file, setFile] = useState<File | null>(null);
   const [rows, setRows] = useState<any[]>([]);
@@ -83,12 +83,8 @@ export default function AddStudents() {
     setUploading(true);
     setError(null);
     try {
-      const res = await fetch(`${BASE_URL}/admin/addstudents`, {
+      const data = await apiClient<any>(`${BASE_URL}/admin/addstudents`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-        },
         body: JSON.stringify({
           year,
           SemesterName: sem,
@@ -101,13 +97,13 @@ export default function AddStudents() {
           })),
         }),
       });
-      const data = await res.json();
-      if (data.success) {
+
+      if (data && data.success) {
         setProcessId(data.processId);
-        // Simulate progress for UX since we don't have websocket here for this specific task yet
-        // In a real scenario, we'd listen to socket events with processId
         _setProgress({ status: "completed", percentage: 100 });
-      } else setError(data.msg);
+      } else {
+        setError(data?.msg || "Upload failed");
+      }
     } catch {
       setError("Upload failed due to network error");
     } finally {
@@ -117,22 +113,11 @@ export default function AddStudents() {
 
   const downloadTemplate = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/admin/students/template`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-        },
-        body: JSON.stringify({ year, semester: sem, branch }),
-      });
-      if (!res.ok) throw new Error("Download failed");
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${year}_${sem}_${branch}_students_template.xlsx`;
-      a.click();
-      a.remove();
+      await downloadFile(
+        `${BASE_URL}/admin/students/template`,
+        `${year}_${sem}_${branch}_students_template.xlsx`,
+        { year, semester: sem, branch }
+      );
     } catch {
       setError("Error downloading template");
     }
