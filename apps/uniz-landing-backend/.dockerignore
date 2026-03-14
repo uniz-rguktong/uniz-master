@@ -1,0 +1,28 @@
+# Git
+.git
+.gitignore
+
+# Python caching and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments (Crucial!)
+.venv/
+env/
+venv/
+
+# Environment variables (Security)
+.env
+*.env
+
+# IDEs and OS specific files
+.vscode/
+.idea/
+.DS_Store
+
+# Testing and coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.coverage
