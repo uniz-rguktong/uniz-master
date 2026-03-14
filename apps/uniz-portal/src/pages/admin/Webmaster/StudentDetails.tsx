@@ -23,7 +23,7 @@ import {
   ADMIN_SUSPEND_STUDENT,
   ADMIN_GLOBAL_RESET_PASS,
 } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 
 function StudentTableSkeleton() {
   return (
@@ -488,27 +488,27 @@ export default function StudentDetails() {
             </div>
 
             <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-md p-0.5">
-               <button 
+              <button
                 onClick={() => {
                   setSearchMode("filter");
                   setSearchResults([]);
                   setSelectedStudentFullData(null);
                 }}
                 className={cn(
-                  "px-3 py-1 rounded-[4px] text-[10px] font-bold uppercase tracking-wider transition-all", 
+                  "px-3 py-1 rounded-[4px] text-[10px] font-bold uppercase tracking-wider transition-all",
                   searchMode === "filter" ? "bg-slate-100 text-slate-900 shadow-sm" : "text-slate-400 hover:text-slate-600"
                 )}
               >
                 Filter
               </button>
-              <button 
+              <button
                 onClick={() => {
                   setSearchMode("id");
                   setSearchResults([]);
                   setSelectedStudentFullData(null);
                 }}
                 className={cn(
-                  "px-3 py-1 rounded-[4px] text-[10px] font-bold uppercase tracking-wider transition-all", 
+                  "px-3 py-1 rounded-[4px] text-[10px] font-bold uppercase tracking-wider transition-all",
                   searchMode === "id" ? "bg-slate-100 text-slate-900 shadow-sm" : "text-slate-400 hover:text-slate-600"
                 )}
               >
@@ -516,7 +516,7 @@ export default function StudentDetails() {
               </button>
             </div>
 
-            <button 
+            <button
               onClick={() => {
                 searchMode === "id" ? fetchStudentById() : handleSearchByFilter(1);
               }}
@@ -538,7 +538,7 @@ export default function StudentDetails() {
             </div>
           ) : selectedStudentFullData ? (
             <div className="animate-in fade-in slide-in-from-bottom-5 duration-700">
-               <StudentDashboard
+              <StudentDashboard
                 data={selectedStudentFullData}
                 onSuspendToggle={(username, status) => {
                   handleToggleSuspension(username, status);
@@ -558,7 +558,7 @@ export default function StudentDetails() {
                 <h3 className="text-[12px] font-bold uppercase tracking-wider text-slate-900">Student Explorer</h3>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
-                     <select
+                    <select
                       value={branch}
                       onChange={(e) => setBranch(e.target.value)}
                       className="bg-transparent border-none text-[12px] font-bold text-slate-500 outline-none cursor-pointer hover:text-slate-900 transition-colors"
@@ -589,7 +589,7 @@ export default function StudentDetails() {
               {searchResults.length > 0 ? (
                 <div className="bg-white border border-slate-200 rounded-lg overflow-hidden divide-y divide-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
                   {searchResults.map((std) => (
-                    <div 
+                    <div
                       key={std.username}
                       onClick={() => handleOpenPerformance(std)}
                       className="p-6 hover:bg-[#fafafa] transition-all cursor-pointer group flex items-start justify-between"
@@ -598,10 +598,10 @@ export default function StudentDetails() {
                         <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-white text-[11px] font-black border-2 border-white shadow-sm overflow-hidden shrink-0">
                           {std.profile_url ? <img src={std.profile_url} alt="" className="w-full h-full object-cover" /> : (std.name?.[0] || 'U')}
                         </div>
-                        
+
                         <div className="space-y-4">
                           <div>
-                             <div className="flex items-center gap-3 mb-0.5">
+                            <div className="flex items-center gap-3 mb-0.5">
                               <h4 className="text-[15px] font-bold text-slate-900 leading-none group-hover:underline underline-offset-4 decoration-slate-300">{std.username}</h4>
                               <span className="text-[13px] font-medium text-slate-400">{std.email}</span>
                             </div>
@@ -619,7 +619,7 @@ export default function StudentDetails() {
                             <div className="flex items-center gap-2">
                               <CheckCircle2 size={12} className={cn(std.is_suspended ? "text-slate-300" : "text-emerald-500")} />
                               <span className="text-[11px] font-medium text-slate-500">
-                                {std.is_suspended ? "Restricted on " : "Active on "} 
+                                {std.is_suspended ? "Restricted on " : "Active on "}
                                 <span className="font-bold text-slate-900 uppercase">main</span>
                               </span>
                             </div>
@@ -629,7 +629,7 @@ export default function StudentDetails() {
 
                       <div className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-100 group-hover:bg-white group-hover:border-slate-200 transition-all">
-                           {std.is_suspended ? <ShieldAlert size={14} className="text-red-500" /> : <Shield size={14} className="text-emerald-500" />}
+                          {std.is_suspended ? <ShieldAlert size={14} className="text-red-500" /> : <Shield size={14} className="text-emerald-500" />}
                         </div>
                         <button className="p-1 px-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400">
                           <MoreHorizontal size={18} />
@@ -697,7 +697,7 @@ export default function StudentDetails() {
                   </label>
                   <div className="relative group">
                     <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" size={16} />
-                    <input 
+                    <input
                       type="text"
                       value={resetPasswordValue}
                       onChange={(e) => setResetPasswordValue(e.target.value)}
@@ -728,4 +728,3 @@ export default function StudentDetails() {
     </div>
   );
 }
-

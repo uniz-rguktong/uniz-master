@@ -20,7 +20,7 @@ import {
   REJECT_OUTPASS,
   FORWARD_OUTPASS,
 } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 
 interface RequestManagementProps {
   type: "outing" | "outpass";

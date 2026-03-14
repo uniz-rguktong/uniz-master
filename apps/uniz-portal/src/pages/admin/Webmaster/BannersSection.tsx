@@ -15,7 +15,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { BANNERS_BASE, UPDATE_BANNER_VISIBILITY } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 
 export default function BannersSection() {
   const [banners, setBanners] = useState<any[]>([]);

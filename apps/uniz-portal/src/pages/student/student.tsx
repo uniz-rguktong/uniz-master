@@ -33,7 +33,7 @@ import {
 } from "../../api/endpoints";
 import { motion, AnimatePresence } from "framer-motion";
 import RequestCard from "../../components/RequestCard";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { Pagination } from "../../components/Pagination";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { InfoCard } from "./components/InfoCard";

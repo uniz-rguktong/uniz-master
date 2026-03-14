@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { is_authenticated, student } from "../../store";
 import { useStudentData } from "../../hooks/student_info";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { BASE_URL } from "../../api/endpoints";
 
 export default function Resetpassword() {

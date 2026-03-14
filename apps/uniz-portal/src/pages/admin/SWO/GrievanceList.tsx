@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import {
   MessageSquare,
   Clock,

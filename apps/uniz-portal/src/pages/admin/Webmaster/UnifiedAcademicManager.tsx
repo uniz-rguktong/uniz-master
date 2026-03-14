@@ -32,7 +32,7 @@ import {
   BASE_URL,
   GET_AVAILABLE_BATCHES,
 } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 
 // --- Types ---
 interface Semester {

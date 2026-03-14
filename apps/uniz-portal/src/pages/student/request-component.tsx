@@ -9,7 +9,7 @@ import { useStudentData } from "../../hooks/student_info";
 import { REQUEST_OUTING, REQUEST_OUTPASS } from "../../api/endpoints";
 import { useIsAuth } from "../../hooks/is_authenticated";
 import { apiClient } from "../../api/apiClient";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import {
   ArrowLeft,
   Calendar,

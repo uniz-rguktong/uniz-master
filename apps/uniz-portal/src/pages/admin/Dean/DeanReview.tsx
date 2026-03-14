@@ -25,7 +25,7 @@ import {
   GET_SUBJECTS,
   GET_AVAILABLE_BATCHES,
 } from "../../../api/endpoints";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import { apiClient } from "../../../api/apiClient";
 
 interface Allocation {

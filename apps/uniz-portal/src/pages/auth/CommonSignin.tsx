@@ -5,7 +5,7 @@ import { Button } from "../../components/Button";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { adminUsername, is_authenticated, resetTokenState } from "../../store";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/utils/toast-ref";
 import {
   SIGNIN,
   FORGOT_PASS_ENDPOINT,
