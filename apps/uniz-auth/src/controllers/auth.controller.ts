@@ -47,7 +47,10 @@ export const login = async (req: Request, res: Response) => {
       where: { username: { equals: username, mode: "insensitive" } },
     });
 
+    console.log(`[AUTH-DEBUG] Login attempt for username: "${username}"`);
+
     if (!user) {
+      console.warn(`[AUTH-DEBUG] User not found for: "${username}"`);
       return res.status(401).json({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
         message: "Invalid username or password",
@@ -66,6 +69,8 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const isValid = await comparePassword(password, user.passwordHash);
+    console.log(`[AUTH-DEBUG] Password valid for ${user.username}: ${isValid}`);
+    
     if (!isValid) {
       return res.status(401).json({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
