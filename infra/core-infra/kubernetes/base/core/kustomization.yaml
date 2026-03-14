@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - academics-service.yaml
+  - auth-service.yaml
+  - cron-job.yaml
+  - cron-service.yaml
+  - files-service.yaml
+  - gateway-api.yaml
+  - gateway.yaml
+  - mail-service.yaml
+  - notification-service.yaml
+  - outpass-service.yaml
+  - portal.yaml
+  - storage-cleanup-job.yaml
+  - user-service.yaml
