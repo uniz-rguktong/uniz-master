@@ -61,7 +61,7 @@ export default function Header() {
                             className="flex items-center gap-2 flex-shrink-0"
                         >
                             <Image
-                                src="/assets/Rgukt_Logo.png"
+                                src="/assets/rgukt_logo.png"
                                 alt="RGUKT Logo"
                                 width={24}
                                 height={24}
@@ -117,7 +117,7 @@ export default function Header() {
                     {/* Left Brand */}
                     <Link href="/" className="absolute top-1/2 left-6 md:left-8 -translate-y-1/2 flex items-center gap-3 group overflow-hidden">
                         <Image
-                            src="/assets/Rgukt_Logo.png"
+                            src="/assets/rgukt_logo.png"
                             alt="RGUKT Logo"
                             width={28}
                             height={28}

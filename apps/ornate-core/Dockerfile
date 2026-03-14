@@ -76,7 +76,21 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 WORKDIR /app
 
-# ── Stage 4: Production App runner ──────────────────────────
+# ── Stage 4: Notification Worker runner ─────────────────────
+FROM base-runner AS worker
+
+ENV NODE_ENV=production
+
+# Worker needs full source and full node_modules (including devDeps for ts-node)
+COPY --from=builder /app ./
+
+# Optional: ensure chromium-browser is findable
+RUN ln -sf /usr/bin/chromium-browser /usr/bin/chromium
+
+# Worker entry point
+CMD ["npm", "run", "worker:notifications"]
+
+# ── Stage 5: Production App runner ──────────────────────────
 FROM base-runner AS runner
 
 ENV NODE_ENV=production
@@ -90,6 +104,9 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/start.sh ./scripts/start.sh
+RUN chmod +x ./scripts/start.sh
 COPY --from=builder /app/prisma ./prisma
 # Ensure custom Prisma client is included if Next.js standalone misses it
 COPY --from=builder /app/src/lib/generated ./src/lib/generated
@@ -104,18 +121,4 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Main app entry point
-CMD ["node", "server.js"]
-
-# ── Stage 5: Notification Worker runner ─────────────────────
-FROM base-runner AS worker
-
-ENV NODE_ENV=production
-
-# Worker needs full source and full node_modules (including devDeps for ts-node)
-COPY --from=builder /app ./
-
-# Optional: ensure chromium-browser is findable
-RUN ln -sf /usr/bin/chromium-browser /usr/bin/chromium
-
-# Worker entry point
-CMD ["npm", "run", "worker:notifications"]
+CMD ["./scripts/start.sh"]

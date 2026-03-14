@@ -63,6 +63,26 @@ const prismaClientSingleton = () => {
     return baseClient.$extends({
         query: {
             $allModels: {
+                async $allOperations({ model, operation, args, query }) {
+                    try {
+                        return await query(args);
+                    } catch (err: any) {
+                        const dbUrl = process.env.DATABASE_URL;
+                        const isConnectionError = err.message?.includes('Can\'t reach database server') || 
+                                              err.code === 'P1001' ||
+                                              !dbUrl || dbUrl === 'base';
+                        
+                        if (isConnectionError) {
+                            console.warn(`[Prisma Build Safety] Suppressing DB error for ${model}.${operation}`);
+                            if (operation.startsWith('findMany')) return [];
+                            if (operation.startsWith('findUnique') || operation.startsWith('findFirst')) return null;
+                            if (operation.startsWith('count')) return 0;
+                            if (operation.startsWith('aggregate')) return {};
+                            if (operation.startsWith('groupBy')) return [];
+                        }
+                        throw err;
+                    }
+                },
                 async findMany({ model, args, query }) {
                     const inputArgs = (args ?? {}) as { take?: number }
                     const currentTake = inputArgs.take

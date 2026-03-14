@@ -131,7 +131,13 @@ deploy_logic() {
 
         if docker build --platform linux/amd64 $BUILD_ARGS -t $IMG:$TAG $BUILD_CONTEXT; then
           echo "[Docker] Importing $IMG:$TAG to K3s..."
-          docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
+          # Verify image exists first
+          if ! docker image inspect $IMG:$TAG > /dev/null 2>&1; then
+            echo "[Error] Image $IMG:$TAG not found after build!"
+            exit 1
+          fi
+          # Stream directly and capture potential errors
+          docker save $IMG:$TAG | k3s ctr -n k8s.io images import - || { echo "[Error] K3s image import failed"; exit 1; }
           BUILT_IMAGES[$IMG]=$TAG
           ((REBUILT_COUNT++))
         else
@@ -161,9 +167,12 @@ deploy_logic() {
     docker system prune -f
     docker image prune -a -f --filter "until=24h"
     USED_IMAGES=$(kubectl get pods,deployments,cronjobs -A -o jsonpath='{..image}' | tr ' ' '\n' | sort -u)
-    k3s ctr images ls -q | grep "local-" | while read -r img; do
-      if ! echo "$USED_IMAGES" | grep -q "$img"; then
-        k3s ctr images rm "$img" || true
+    k3s ctr images ls -q | grep "local-" | while read -r img_full; do
+      # Strip potential registry prefixes to get the base image name and tag
+      IMG_CLEAN=$(echo "$img_full" | sed 's|docker.io/library/||')
+      if ! echo "$USED_IMAGES" | grep -q "$IMG_CLEAN"; then
+        echo "[Cleanup] Removing unused image: $img_full"
+        k3s ctr images rm "$img_full" || true
       fi
     done
     echo "[OK] Redeployed $REBUILT_COUNT services."
