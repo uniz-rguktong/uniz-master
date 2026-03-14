@@ -129,7 +129,7 @@ deploy_logic() {
           BUILD_ARGS="--build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$ORNATE_VAPID_PUBLIC_KEY --build-arg DATABASE_URL=$ORNATE_DATABASE_URL --build-arg DIRECT_URL=$ORNATE_DIRECT_URL --build-arg REDIS_URL=$REDIS_URL --build-arg NEXTAUTH_URL=$NEXTAUTH_URL --build-arg R2_ENDPOINT=$ORNATE_R2_ENDPOINT --build-arg R2_ACCESS_KEY_ID=$ORNATE_R2_ACCESS_KEY_ID --build-arg R2_SECRET_ACCESS_KEY=$ORNATE_R2_SECRET_ACCESS_KEY --build-arg R2_PUBLIC_DOMAIN=$ORNATE_R2_PUBLIC_DOMAIN"
         fi
 
-        if docker build --no-cache --platform linux/amd64 $BUILD_ARGS -t $IMG:$TAG $BUILD_CONTEXT; then
+        if docker build --platform linux/amd64 $BUILD_ARGS -t $IMG:$TAG $BUILD_CONTEXT; then
           echo "[Docker] Importing $IMG:$TAG to K3s..."
           docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
           BUILT_IMAGES[$IMG]=$TAG
