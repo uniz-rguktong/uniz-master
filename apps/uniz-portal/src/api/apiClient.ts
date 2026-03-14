@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { toast } from "react-toastify";
+import { ANALYTICS_KEY } from "./endpoints";
 
 export enum ErrorCode {
   AUTH_UNAUTHORIZED = "AUTH_UNAUTHORIZED",
@@ -44,6 +44,7 @@ export async function apiClient<T = any>(
 
   const defaultHeaders: Record<string, string> = {
     ...(cleanToken ? { Authorization: `Bearer ${cleanToken}` } : {}),
+    ...(ANALYTICS_KEY ? { "x-api-key": ANALYTICS_KEY } : {}),
   };
 
   if (!isFormData) {

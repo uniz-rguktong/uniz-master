@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
-import axios from "axios";
 import { student, studentAuthLoading } from "../../store";
 import {
   ChevronDown,
@@ -9,7 +8,7 @@ import {
   Download,
 } from "lucide-react";
 import { GET_ATTENDANCE, DOWNLOAD_ATTENDANCE } from "../../api/endpoints";
-import { downloadFile } from "../../api/apiClient";
+import { apiClient, downloadFile } from "../../api/apiClient";
 
 interface AttendanceRecord {
   subject: string | { name: string;[key: string]: any };
@@ -93,31 +92,24 @@ export default function Attendance() {
     setAttendanceData(null);
 
     try {
-      const token = localStorage
-        .getItem("student_token")
-        ?.replace(/^"|"$/g, "");
-
       // Map "Sem - 1" -> "SEM-1" for API consistency
       const mappedSemester = selectedSemester.replace("Sem - ", "SEM-");
 
       // Fetch attendance with mapped parameters: studentId, year, semester
-      const response = await axios.get<AttendanceResponse>(GET_ATTENDANCE, {
+      const data = await apiClient<AttendanceResponse>(GET_ATTENDANCE, {
+        method: "GET",
         params: {
           studentId: user.username,
           year: selectedYear,
           semester: mappedSemester,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        }
       });
 
-      if (response.data.success) {
-        setAttendanceData(response.data);
+      if (data && data.success) {
+        setAttendanceData(data);
         setResultsFetched(true);
       } else {
-        setError(response.data.msg || "Failed to fetch attendance");
+        setError(data?.msg || "Failed to fetch attendance");
         setAttendanceData(null);
       }
     } catch (err) {

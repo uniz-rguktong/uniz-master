@@ -31,6 +31,7 @@ import {
 import {
   STUDENT_ATTENDANCE_ANALYTICS,
   STUDENT_GRADES_TREND_ANALYTICS,
+  ANALYTICS_KEY,
 } from "../../../api/endpoints";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -122,18 +123,20 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
   const [subjectFilter, setSubjectFilter] = useState("all");
   const [hoverData, setHoverData] = useState<any>(null);
 
-  const API_KEY = import.meta.env.VITE_ANALYTICS_API_KEY;
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
+        const authHeaders = {
+          "x-api-key": ANALYTICS_KEY,
+          "Content-Type": "application/json"
+        };
         const [attendanceRes, gradesRes] = await Promise.all([
           fetch(STUDENT_ATTENDANCE_ANALYTICS(studentId), {
-            headers: { "X-API-Key": API_KEY }
+            headers: authHeaders
           }).then(res => res.json()),
           fetch(STUDENT_GRADES_TREND_ANALYTICS(studentId), {
-            headers: { "X-API-Key": API_KEY }
+            headers: authHeaders
           }).then(res => res.json())
         ]);
         if (attendanceRes) setAttendance(attendanceRes);
@@ -145,7 +148,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
       }
     };
     if (studentId) fetchData();
-  }, [studentId, API_KEY]);
+  }, [studentId]);
 
   const filteredAttendance = useMemo(() => {
     return attendance.filter((sub) => {
