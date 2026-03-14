@@ -61,7 +61,14 @@ deploy_logic() {
 
   # Prevent kubectl apply from overwriting current images with :local
   echo "[Infra] Preserving current image tags..."
-  K_FILE="infra/core-infra/kubernetes/base/kustomization.yaml"
+  # Determine correct kustomization file based on branch
+  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  if [ "$CURRENT_BRANCH" == "ornate" ]; then
+    K_FILE="infra/core-infra/kubernetes/base/ornate/kustomization.yaml"
+  else
+    K_FILE="infra/core-infra/kubernetes/base/core/kustomization.yaml"
+  fi
+  
   # Use a temporary file to rebuild kustomization.yaml to be safe
   sed -n '/^images:/q;p' "$K_FILE" > "$K_FILE.tmp"
   
@@ -93,7 +100,7 @@ deploy_logic() {
   fi
 
   echo "[K8s] Applying Kubernetes configurations..."
-  if [ -f "infra/core-infra/kubernetes/base/secrets.yaml.template" ]; then
+  if [ -f "infra/core-infra/kubernetes/base/shared/secrets.yaml.template" ]; then
     echo "[Vault] Generating secrets from template..."
     if [ -f "/root/uniz-secrets.env" ]; then
       while IFS='=' read -r key value || [ -n "$key" ]; do
@@ -104,11 +111,24 @@ deploy_logic() {
         export "$key"="$value"
       done < /root/uniz-secrets.env
     fi
-    envsubst < infra/core-infra/kubernetes/base/secrets.yaml.template > infra/core-infra/kubernetes/base/secrets.yaml
+    envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > infra/core-infra/kubernetes/base/shared/secrets.yaml
   fi
   
   export NEXT_PUBLIC_ASSETS_URL="https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
-  kubectl apply -k infra/core-infra/kubernetes/base/
+
+  echo "[Deploy] Branch detected: $CURRENT_BRANCH"
+  if [ "$CURRENT_BRANCH" == "main" ]; then
+    echo "[Deploy] Target: Shared + Core"
+    kubectl apply -k infra/core-infra/kubernetes/base/shared/
+    kubectl apply -k infra/core-infra/kubernetes/base/core/
+  elif [ "$CURRENT_BRANCH" == "ornate" ]; then
+    echo "[Deploy] Target: Shared + Ornate"
+    kubectl apply -k infra/core-infra/kubernetes/base/shared/
+    kubectl apply -k infra/core-infra/kubernetes/base/ornate/
+  else
+    echo "[Deploy] Target: Full (Legacy Mode)"
+    kubectl apply -k infra/core-infra/kubernetes/base/
+  fi
 
   REBUILT_COUNT=0
   declare -A BUILT_IMAGES
