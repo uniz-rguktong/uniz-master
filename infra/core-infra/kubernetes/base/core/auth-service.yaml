@@ -33,11 +33,11 @@ spec:
                 name: uniz-secrets
           resources:
             limits:
-              cpu: "800m"
-              memory: "512Mi"
+              cpu: "1000m"
+              memory: "1024Mi"
             requests:
               cpu: "100m"
-              memory: "256Mi"
+              memory: "512Mi"
           livenessProbe:
             httpGet:
               path: /health
@@ -86,7 +86,13 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 50
+          averageUtilization: 45
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
   behavior:
     scaleUp:
       stabilizationWindowSeconds: 0
