@@ -21,6 +21,7 @@ import {
   BookOpen,
   Calendar,
   Camera,
+  UserPlus,
 } from "lucide-react";
 import Papa from "papaparse";
 import axios from "axios";
@@ -36,6 +37,13 @@ import {
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 import { FileUploader } from "../../../components/ui/FileUploader";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
 
 const ROLES = [
   "teacher",
@@ -510,9 +518,9 @@ export default function FacultyManagement({
           {mode === "single" && (
             <button
               onClick={openAdd}
-              className="h-12 px-6 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-slate-800 active:scale-95 transition-all flex items-center gap-2.5 shadow-none"
+              className="h-12 px-6 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-black active:scale-95 transition-all flex items-center gap-2.5 shadow-none whitespace-nowrap"
             >
-              <Plus size={16} /> Provision Staff
+              <UserPlus size={16} /> Add Faculty
             </button>
           )}
         </div>
@@ -1196,29 +1204,28 @@ export default function FacultyManagement({
         )}
       </div>
 
-      {/* ─── Single Add/Edit Modal ─── */}
-      {showModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-lg rounded-xl p-10 shadow-none relative animate-in zoom-in-95 duration-300 border border-slate-100">
+      <AlertDialog
+        open={showModal}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowModal(false);
+          }
+        }}
+      >
+        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-slate-100 rounded-2xl shadow-2xl">
+          <div className="relative">
+            {/* Close Button */}
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-8 right-8 p-2 hover:bg-slate-50 rounded-full text-slate-400"
+              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
             >
-              <X size={24} />
+              <X size={20} />
             </button>
-            <h3 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 mb-2">
-              {editMode ? "Edit Staff Details" : "Register Staff Member"}
-            </h3>
-            <p className="text-slate-400 font-medium text-sm mb-8">
-              {editMode
-                ? "Update profile information and permissions"
-                : "Create a new faculty or administrative account"}
-            </p>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Profile Picture Upload Section */}
-              <div className="flex flex-col items-center gap-4 py-4 border-b border-slate-50 mb-4">
-                <div className="relative group">
-                  <div className="w-24 h-24 rounded-full bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden relative shadow-none">
+
+            <AlertDialogHeader className="p-8 pb-4 flex flex-col items-center text-center gap-2">
+              <div className="relative mb-4 group">
+                <div className="p-1 bg-white ring-4 ring-navy-50 rounded-full shadow-sm">
+                  <div className="w-24 h-24 rounded-full bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden relative">
                     {formData.profileUrl ? (
                       <img
                         src={formData.profileUrl}
@@ -1239,161 +1246,171 @@ export default function FacultyManagement({
                       </div>
                     )}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="absolute -bottom-2 -right-2 w-8 h-8 bg-navy-900 text-white rounded-full flex items-center justify-center shadow-none hover:bg-navy-800 transition-all active:scale-90 border-2 border-white"
-                  >
-                    <Camera size={14} />
-                  </button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                  />
                 </div>
-                <div className="text-center">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">
-                    Profile Identity Photo
-                  </p>
-                  <p className="text-[9px] font-medium text-slate-400">
-                    Cloudinary Optimized • 500x500 crop
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                    Username / ID
-                  </label>
-                  <input
-                    required
-                    disabled={editMode}
-                    value={formData.username}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        username: e.target.value.toLowerCase(),
-                      })
-                    }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-sm disabled:opacity-50"
-                    placeholder="e.g. jdoe"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400">
-                    Full Name
-                  </label>
-                  <input
-                    required
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold"
-                    placeholder="Prof. Surname"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-black uppercase tracking-widest text-slate-400">
-                  Email Address
-                </label>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-navy-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-black transition-all active:scale-90 border-2 border-white z-10"
+                >
+                  <Camera size={14} />
+                </button>
                 <input
-                  required
-                  type="email"
-                  disabled={editMode}
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold disabled:opacity-60"
-                  placeholder="faculty@rguktong.ac.in"
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageUpload}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                {!deptRestrict && (
+              <AlertDialogTitle className="text-2xl font-black text-slate-900 tracking-tight uppercase italic">
+                {editMode ? "Institutional Update" : "Faculty Onboarding"}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-[14px] font-medium text-slate-500 mt-1 leading-relaxed">
+                {editMode
+                  ? "Modify professional credentials and access level."
+                  : "Create a new entry in the high-performance registry."}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-6">
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block">
-                      Department
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      Personnel ID / Username
+                    </label>
+                    <input
+                      required
+                      disabled={editMode}
+                      value={formData.username}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          username: e.target.value.toLowerCase(),
+                        })
+                      }
+                      className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all disabled:opacity-50"
+                      placeholder="e.g. jdoe"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      Legal Full Name
+                    </label>
+                    <input
+                      required
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all"
+                      placeholder="e.g. Dr. John Wick"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    University Email
+                  </label>
+                  <input
+                    required
+                    type="email"
+                    disabled={editMode}
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all disabled:opacity-50"
+                    placeholder="personnel@rguktong.ac.in"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {!deptRestrict && (
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                        Department
+                      </label>
+                      <select
+                        value={formData.department}
+                        onChange={(e) =>
+                          setFormData({ ...formData, department: e.target.value })
+                        }
+                        className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
+                      >
+                        {DEPARTMENTS.map((d) => (
+                          <option key={d} value={d}>
+                            {d}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      System Privileges
                     </label>
                     <select
-                      value={formData.department}
+                      value={formData.role}
                       onChange={(e) =>
-                        setFormData({ ...formData, department: e.target.value })
+                        setFormData({ ...formData, role: e.target.value })
                       }
-                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-navy-100 rounded-xl font-bold outline-none"
+                      className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
                     >
-                      {DEPARTMENTS.map((d) => (
-                        <option key={d} value={d}>
-                          {d}
+                      {ROLES.map((r) => (
+                        <option key={r} value={r}>
+                          {r.toUpperCase()}
                         </option>
                       ))}
                     </select>
                   </div>
-                )}
+                </div>
+
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400">
-                    System Role
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    Professional Designation
                   </label>
-                  <select
-                    value={formData.role}
+                  <input
+                    required
+                    value={formData.designation}
                     onChange={(e) =>
-                      setFormData({ ...formData, role: e.target.value })
+                      setFormData({ ...formData, designation: e.target.value })
                     }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none font-bold cursor-pointer"
-                  >
-                    {ROLES.map((r) => (
-                      <option key={r} value={r}>
-                        {r.charAt(0).toUpperCase() + r.slice(1)}
-                      </option>
-                    ))}
-                  </select>
+                    className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all"
+                    placeholder="e.g. Senior Lecturer / Head of Dept"
+                  />
                 </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-xs font-black uppercase tracking-widest text-slate-400">
-                  Designation
-                </label>
-                <input
-                  required
-                  value={formData.designation}
-                  onChange={(e) =>
-                    setFormData({ ...formData, designation: e.target.value })
-                  }
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold"
-                  placeholder="e.g. HOD, Lecturer"
-                />
-              </div>
-              <div className="pt-6 flex gap-4">
+
+              {/* Actions */}
+              <div className="flex gap-3 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs border border-slate-200 text-slate-400 hover:bg-slate-50 transition-all active:scale-95"
+                  className="flex-1 py-3.5 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 font-black uppercase tracking-widest text-[10px] transition-all"
                 >
                   Cancel
                 </button>
                 <button
-                  disabled={isSubmitting}
                   type="submit"
-                  className="flex-[2] bg-navy-900 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-navy-800 transition-all shadow-none flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+                  disabled={isSubmitting}
+                  className="flex-[2] py-3.5 rounded-xl bg-navy-900 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-lg shadow-navy-100 hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <Loader2 className="animate-spin w-4 h-4" />
                   ) : editMode ? (
-                    "Update"
+                    <CheckCircle2 size={16} />
                   ) : (
-                    "Register Account"
+                    <UserPlus size={16} />
                   )}
+                  {isSubmitting ? "PROCESSING..." : editMode ? "UPDATE REGISTRY" : "ONBOARD FACULTY"}
                 </button>
               </div>
             </form>
           </div>
-        </div>
-      )}
+        </AlertDialogContent>
+      </AlertDialog>
       {/* ─── Bio View Modal ─── */}
       {showViewModal && selectedFaculty && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">

@@ -8,7 +8,7 @@ import {
   LogOut,
   LayoutDashboard,
   Activity,
-  Layout,
+  // Layout, // commented out with Sem Registration
   Search,
 } from "lucide-react";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -19,7 +19,7 @@ import SubjectManagement from "../Webmaster/SubjectManagement";
 import UploadSection from "../Webmaster/UploadSection";
 import StudentBulkSection from "../Webmaster/StudentBulkSection";
 import SystemLogsSection from "../Webmaster/SystemLogsSection";
-import SemesterRegistrationSection from "../Webmaster/SemesterRegistrationSection";
+// import SemesterRegistrationSection from "../Webmaster/SemesterRegistrationSection";
 import FacultyManagement from "../Webmaster/FacultyManagement";
 import DeanOverview from "./DeanOverview";
 
@@ -99,7 +99,9 @@ export default function DeanDashboard() {
         { id: "subjects", label: "Manage Subjects", icon: BookOpen },
         { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
         { id: "grades", label: "Grades Upload", icon: GraduationCap },
+/*
         { id: "semester_review", label: "Course Review", icon: Layout },
+*/
       ],
     },
     {
@@ -129,6 +131,7 @@ export default function DeanDashboard() {
         return <UploadSection type="attendance" />;
       case "grades":
         return <UploadSection type="grades" />;
+/*
       case "semester_review":
         return (
           <SemesterRegistrationSection
@@ -140,6 +143,7 @@ export default function DeanDashboard() {
             }
           />
         );
+*/
       case "faculty":
         return (
           <FacultyManagement
@@ -155,7 +159,7 @@ export default function DeanDashboard() {
       default:
         return (
           <div className="animate-in fade-in duration-500">
-            <DeanOverview />
+            <DeanOverview username={username} />
           </div>
         );
     }

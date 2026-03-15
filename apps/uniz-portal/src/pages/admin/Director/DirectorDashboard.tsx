@@ -23,7 +23,7 @@ import WebmasterOverview from "../Webmaster/WebmasterOverview";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import StudentDetails from "../Webmaster/StudentDetails";
-import UnifiedAcademicManager from "../Webmaster/UnifiedAcademicManager";
+// import UnifiedAcademicManager from "../Webmaster/UnifiedAcademicManager";
 import FacultyManagement from "../Webmaster/FacultyManagement";
 import UploadSection from "../Webmaster/UploadSection";
 
@@ -109,7 +109,9 @@ export default function DirectorDashboard() {
         {
             group: "Academic",
             items: [
+/*
                 { id: "academic_mgmt", label: "Sem Registration", icon: Layout },
+*/
                 { id: "subjects", label: "Manage Subjects", icon: BookOpen },
                 { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
                 { id: "grades", label: "Grades Upload", icon: GraduationCap },
@@ -149,8 +151,10 @@ export default function DirectorDashboard() {
                 return <StudentBulkSection />;
             case "status_update":
                 return <UpdateStudentStatus />;
+/*
             case "academic_mgmt":
                 return <UnifiedAcademicManager />;
+*/
             case "subjects":
                 return <SubjectManagement />;
             case "attendance":
