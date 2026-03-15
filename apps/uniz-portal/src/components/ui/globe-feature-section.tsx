@@ -12,8 +12,8 @@ export default function GlobeFeature() {
         <section className="relative w-full bg-transparent overflow-hidden px-6 py-12 md:px-16 md:py-20">
             <div className="flex flex-col-reverse items-center justify-between gap-10 md:flex-row">
                 <div className="z-10 max-w-xl text-left">
-                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6">
-                        Global Campus <span className="text-navy-900">Connectivity</span>{" "}
+                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6 uppercase">
+                        Make your first <span className="text-navy-900">contribution</span>{" "}
                     </h2>
                     <p className="text-xl text-slate-900 font-bold tracking-tight mb-2">
                         contribute to the campus.
