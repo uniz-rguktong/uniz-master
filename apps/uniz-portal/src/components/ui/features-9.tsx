@@ -1,5 +1,5 @@
 "use client"
-import { Activity, MessageCircle, Bell } from "lucide-react"
+import { Activity, MessageCircle, Bell, CheckCircle, Ticket, FileText, ShieldAlert, Key } from "lucide-react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "./chart"
 import { useEffect, useState } from "react"
@@ -10,7 +10,7 @@ import { AnimatedList } from "./animated-list"
 interface Item {
     name: string
     description: string
-    icon: string
+    icon: any
     color: string
     time: string
 }
@@ -20,42 +20,42 @@ let notifications = [
         name: "Sem registration started",
         description: "Academics",
         time: "1m ago",
-        icon: "✅",
-        color: "#00C9A7",
+        icon: CheckCircle,
+        color: "#10b981",
     },
     {
-        name: "Outpass granted sucessfully",
+        name: "Outpass granted successfully",
         description: "Requests",
         time: "5m ago",
-        icon: "🎟️",
-        color: "#FFB800",
+        icon: Ticket,
+        color: "#f59e0b",
     },
     {
         name: "Sem results uploaded",
         description: "Academics",
         time: "12m ago",
-        icon: "📄",
-        color: "#1E86FF",
+        icon: FileText,
+        color: "#3b82f6",
     },
     {
         name: "New Login detected",
         description: "Security",
         time: "18m ago",
-        icon: "🚨",
-        color: "#FF3D71",
+        icon: ShieldAlert,
+        color: "#ef4444",
     },
     {
         name: "Password changed.",
         description: "Security",
         time: "30m ago",
-        icon: "🔑",
-        color: "#8F9BB3",
+        icon: Key,
+        color: "#64748b",
     },
 ]
 
 notifications = Array.from({ length: 10 }, () => notifications).flat()
 
-const Notification = ({ name, description, icon, color, time }: Item) => {
+const Notification = ({ name, description, icon: Icon, color, time }: Item) => {
     return (
         <figure
             className={cn(
@@ -75,7 +75,7 @@ const Notification = ({ name, description, icon, color, time }: Item) => {
                         backgroundColor: color,
                     }}
                 >
-                    <span className="text-lg">{icon}</span>
+                    <Icon className="size-5 text-white" />
                 </div>
                 <div className="flex flex-col overflow-hidden">
                     <figcaption className="flex flex-row items-center text-lg font-medium whitespace-pre dark:text-white">
