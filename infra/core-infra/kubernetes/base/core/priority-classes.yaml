@@ -1,0 +1,15 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: uniz-high-priority
+value: 1000000
+globalDefault: false
+description: "Used for core microservices that must handle peak student load."
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: uniz-medium-priority
+value: 500000
+globalDefault: false
+description: "Used for standard user services."
