@@ -171,3 +171,9 @@ export const resetTokenState = atom<string | null>({
   key: "resetTokenState",
   default: null,
 });
+
+export const pwaInstallAtom = atom<any | null>({
+  key: "pwaInstallAtom",
+  default: null,
+  dangerouslyAllowMutability: true,
+});

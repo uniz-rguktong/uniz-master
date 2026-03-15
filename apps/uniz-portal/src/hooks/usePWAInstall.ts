@@ -1,30 +1,22 @@
 import { useState, useEffect } from "react";
-
-interface BeforeInstallPromptEvent extends Event {
-  readonly platforms: string[];
-  readonly userChoice: Promise<{
-    outcome: "accepted" | "dismissed";
-    platform: string;
-  }>;
-  prompt(): Promise<void>;
-}
+import { useRecoilState } from "recoil";
+import { pwaInstallAtom } from "../store/atoms";
 
 export const usePWAInstall = () => {
-  const [deferredPrompt, setDeferredPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useRecoilState(pwaInstallAtom);
   const [isInstallable, setIsInstallable] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
     // Check if already installed
-    if (window.matchMedia("(display-mode: standalone)").matches) {
-      setIsInstalled(true);
-    }
+    const standaloneMatch = window.matchMedia("(display-mode: standalone)").matches || 
+                           (window.navigator as any).standalone === true;
+    setIsInstalled(standaloneMatch);
 
     // Check if iOS
     const userAgent = window.navigator.userAgent.toLowerCase();
-    const ios = /iphone|ipad|ipod/.test(userAgent);
+    const ios = /iphone|ipad|ipod/.test(userAgent) && !(window as any).MSStream;
     setIsIOS(ios);
 
     const handler = (e: any) => {
@@ -35,10 +27,14 @@ export const usePWAInstall = () => {
       setIsInstallable(true);
     };
 
-    window.addEventListener("beforeinstallprompt", handler);
+    if (!deferredPrompt) {
+      window.addEventListener("beforeinstallprompt", handler);
+    } else {
+      setIsInstallable(true);
+    }
 
     return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
+  }, [deferredPrompt, setDeferredPrompt]);
 
   const install = async () => {
     if (!deferredPrompt) {
