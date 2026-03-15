@@ -77,7 +77,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-user-service
-  minReplicas: 6
+  minReplicas: 4
   maxReplicas: 30
   metrics:
     - type: Resource
@@ -95,3 +95,7 @@ spec:
           periodSeconds: 15
     scaleDown:
       stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 10
+          periodSeconds: 60

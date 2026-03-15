@@ -18,16 +18,10 @@ export const options = {
 };
 
 export default function () {
-  const vpsIp = 'https://76.13.241.174:31234';
-  const params = {
-    headers: {
-      'Host': 'uniz.rguktong.in',
-    },
-    insecureSkipTLSVerify: true,
-  };
+  const url = 'https://uniz.rguktong.in';
   
   // 1. Test Landing Page
-  const res1 = http.get(`${vpsIp}/`, params);
+  const res1 = http.get(`${url}/`);
   check(res1, {
     'landing: status was 200': (r) => r.status === 200,
     'landing: duration was <= 500ms': (r) => r.timings.duration <= 500,
@@ -36,7 +30,7 @@ export default function () {
   sleep(0.5);
 
   // 2. Test Sign-in Page
-  const res2 = http.get(`${vpsIp}/student/signin`, params);
+  const res2 = http.get(`${url}/student/signin`);
   check(res2, {
     'signin: status was 200': (r) => r.status === 200,
     'signin: duration was <= 500ms': (r) => r.timings.duration <= 500,
