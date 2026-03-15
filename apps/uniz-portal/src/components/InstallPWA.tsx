@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Download, Share } from "lucide-react";
-import { useRecoilValue } from "recoil";
-import { is_authenticated } from "../store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { is_authenticated, pwaInstallAtom } from "../store";
 
 export const InstallPWA = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useRecoilState(pwaInstallAtom);
   const [isVisible, setIsVisible] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
@@ -33,7 +33,9 @@ export const InstallPWA = () => {
       }
     };
 
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    if (!deferredPrompt) {
+      window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    }
 
     return () => {
       window.removeEventListener(
@@ -41,7 +43,7 @@ export const InstallPWA = () => {
         handleBeforeInstallPrompt,
       );
     };
-  }, []);
+  }, [deferredPrompt, setDeferredPrompt]);
 
   // 4. Force visibility check for mobile
   useEffect(() => {
