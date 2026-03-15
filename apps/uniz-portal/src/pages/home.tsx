@@ -29,7 +29,7 @@ const Home = () => {
   useIsAuth();
   const navigate = useNavigate();
   const [banners, setBanners] = useState<any[]>([]);
-  const { install } = usePWAInstall();
+  const { install, isInstalled } = usePWAInstall();
 
   const handleInstallClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -60,18 +60,20 @@ const Home = () => {
             app stores.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 items-start">
-            <a
-              href="#"
-              onClick={handleInstallClick}
-              className="group flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-full font-black text-sm shadow-2xl hover:bg-navy-900 transition-all active:scale-95 no-underline"
-            >
-              <Download
-                size={20}
-                strokeWidth={2.5}
-                className="group-hover:-translate-y-1 transition-transform"
-              />
-              Download Portal App
-            </a>
+            {!isInstalled && (
+              <a
+                href="#"
+                onClick={handleInstallClick}
+                className="group flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-full font-black text-sm shadow-2xl hover:bg-navy-900 transition-all active:scale-95 no-underline"
+              >
+                <Download
+                  size={20}
+                  strokeWidth={2.5}
+                  className="group-hover:-translate-y-1 transition-transform"
+                />
+                Download Portal App
+              </a>
+            )}
           </div>
         </div>
       ),
