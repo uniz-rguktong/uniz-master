@@ -34,10 +34,10 @@ spec:
           resources:
             limits:
               cpu: "1000m"
-              memory: "512Mi"
+              memory: "1024Mi"
             requests:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: "150m"
+              memory: "512Mi"
           readinessProbe:
             httpGet:
               path: /health
@@ -85,7 +85,13 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 50
+          averageUtilization: 45
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
   behavior:
     scaleUp:
       stabilizationWindowSeconds: 0
