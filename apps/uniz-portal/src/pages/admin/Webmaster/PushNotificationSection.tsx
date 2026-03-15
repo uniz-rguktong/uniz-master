@@ -260,7 +260,7 @@ export default function PushNotificationSection() {
 
       <AlertDialog
         open={showSendModal}
-        onOpenChange={(open) => {
+        onOpenChange={(open: boolean) => {
           if (!open) {
             setShowSendModal(false);
             setBroadcast({ target: "all", title: "", body: "", image: "" });
