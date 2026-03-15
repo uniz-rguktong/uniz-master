@@ -3,11 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from contextlib import asynccontextmanager
 from database import engine, Base
-from routers import home, institute, academics, departments, notifications
+from routers import home, institute, academics, departments, notifications, analytics
+
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
 
 # --- ASYNC TABLE CREATION ---
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+
+    FastAPICache.init(InMemoryBackend())
     # --- 1. STARTUP LOGIC ---
     print("Server starting up: Creating tables...")
     async with engine.begin() as conn:
@@ -21,6 +26,7 @@ async def lifespan(app: FastAPI):
     await engine.dispose()  # Safely closes all DB connections
 
 app = FastAPI(title="Uniz-Landing-Page-API", lifespan=lifespan)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -36,6 +42,9 @@ app.include_router(institute.router)
 app.include_router(academics.router)
 app.include_router(departments.router)
 app.include_router(notifications.router)
+app.include_router(analytics.router)
+
+
 
 @app.get("/health", tags=["system"])
 async def health_check():
