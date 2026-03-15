@@ -14,6 +14,7 @@ spec:
       labels:
         app: uniz-auth-service
     spec:
+      priorityClassName: uniz-high-priority
       containers:
         - name: auth-service
           image: uniz-auth-service:local
@@ -33,11 +34,11 @@ spec:
                 name: uniz-secrets
           resources:
             limits:
-              cpu: "1000m"
+              cpu: "800m"
               memory: "1024Mi"
             requests:
-              cpu: "50m"
-              memory: "128Mi"
+              cpu: "150m"
+              memory: "256Mi"
           livenessProbe:
             httpGet:
               path: /health
@@ -79,7 +80,7 @@ spec:
     kind: Deployment
     name: uniz-auth-service
   minReplicas: 4
-  maxReplicas: 30
+  maxReplicas: 10
   metrics:
     - type: Resource
       resource:
