@@ -41,13 +41,15 @@ const CACHE_PATH = path.join(CACHE_DIR, "university_logo.jpg");
 let cachedLogo: Buffer | null = null;
 const getLogo = async (): Promise<Buffer | null> => {
   if (cachedLogo) return cachedLogo;
-  const logoUrl =
-    "https://res.cloudinary.com/dy2fjgt46/image/upload/v1771604895/rguktongole_logo_kbpaui.jpg";
+  const logoUrl = process.env.INSTITUTION_LOGO_URL || "https://res.cloudinary.com/dy2fjgt46/image/upload/v1771604895/rguktongole_logo_kbpaui.jpg";
 
   try {
     const response = await axios.get(logoUrl, {
       responseType: "arraybuffer",
-      timeout: 5000,
+      timeout: 10000,
+      headers: {
+        'User-Agent': 'UniZ-Core-Engine/1.0 (Enterprise PDF Generator)'
+      }
     });
     cachedLogo = Buffer.from(response.data);
     console.log("[PDF] Logo fetched successfully, size:", cachedLogo.length);
