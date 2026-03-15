@@ -5,7 +5,7 @@ metadata:
   labels:
     app: uniz-portal
 spec:
-  replicas: 8
+  replicas: 15
   selector:
     matchLabels:
       app: uniz-portal
@@ -22,10 +22,10 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: "300m"
+              cpu: "500m"
               memory: "256Mi"
             requests:
-              cpu: "100m"
+              cpu: "200m"
               memory: "128Mi"
 ---
 apiVersion: v1
@@ -49,8 +49,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-portal
-  minReplicas: 8
-  maxReplicas: 25
+  minReplicas: 10
+  maxReplicas: 30
   metrics:
     - type: Resource
       resource:
