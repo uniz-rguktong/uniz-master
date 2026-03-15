@@ -17,7 +17,7 @@ spec:
         - api.uniz.rguktong.in
         - ornate-core.rguktong.in
         - ornate.rguktong.in
-        - landing-api.uniz.rguktong.in
+        - landing-api.rguktong.in
       secretName: uniz-tls-cert
   rules:
     - host: rguktong.in
@@ -70,7 +70,7 @@ spec:
                 name: ornate-landing
                 port:
                   number: 80
-    - host: landing-api.uniz.rguktong.in
+    - host: landing-api.rguktong.in
       http:
         paths:
           - path: /
