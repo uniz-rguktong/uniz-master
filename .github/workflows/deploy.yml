@@ -23,16 +23,43 @@ jobs:
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          # --- ORNATE SECRETS ---
+          ORNATE_DATABASE_URL: ${{ secrets.ORNATE_DATABASE_URL }}
+          ORNATE_DIRECT_URL: ${{ secrets.ORNATE_DIRECT_URL }}
+          ORNATE_NEXTAUTH_URL: ${{ secrets.ORNATE_NEXTAUTH_URL }}
+          ORNATE_NEXTAUTH_URL_CORE: ${{ secrets.ORNATE_NEXTAUTH_URL_CORE }}
+          ORNATE_NEXTAUTH_SECRET: ${{ secrets.ORNATE_NEXTAUTH_SECRET }}
+          ORNATE_REDIS_URL: ${{ secrets.ORNATE_REDIS_URL }}
+          
+          # Storage & Media
+          ORNATE_R2_ACCOUNT_ID: ${{ secrets.ORNATE_R2_ACCOUNT_ID }}
+          ORNATE_R2_ENDPOINT: ${{ secrets.ORNATE_R2_ENDPOINT }}
+          ORNATE_R2_BUCKET_NAME: ${{ secrets.ORNATE_R2_BUCKET_NAME }}
+          ORNATE_R2_ACCESS_KEY_ID: ${{ secrets.ORNATE_R2_ACCESS_KEY_ID }}
+          ORNATE_R2_SECRET_ACCESS_KEY: ${{ secrets.ORNATE_R2_SECRET_ACCESS_KEY }}
+          ORNATE_R2_PUBLIC_DOMAIN: ${{ secrets.ORNATE_R2_PUBLIC_DOMAIN }}
+          
+          # Comms & Assets
+          NEXT_PUBLIC_ASSETS_URL: ${{ secrets.NEXT_PUBLIC_ASSETS_URL }}
+          ORNATE_AWS_REGION: ${{ secrets.ORNATE_AWS_REGION }}
+          ORNATE_AWS_ACCESS_KEY_ID: ${{ secrets.ORNATE_AWS_ACCESS_KEY_ID }}
+          ORNATE_AWS_SECRET_ACCESS_KEY: ${{ secrets.ORNATE_AWS_SECRET_ACCESS_KEY }}
+          ORNATE_SES_FROM_EMAIL: ${{ secrets.ORNATE_SES_FROM_EMAIL }}
+          ORNATE_VAPID_PUBLIC_KEY: ${{ secrets.ORNATE_VAPID_PUBLIC_KEY }}
+          ORNATE_VAPID_PRIVATE_KEY: ${{ secrets.ORNATE_VAPID_PRIVATE_KEY }}
+          ORNATE_VAPID_SUBJECT: ${{ secrets.ORNATE_VAPID_SUBJECT }}
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
-          timeout: 60s
-          command_timeout: 20m
+          timeout: 60m
+          command_timeout: 60m
+          envs: ORNATE_DATABASE_URL,ORNATE_DIRECT_URL,ORNATE_NEXTAUTH_URL,ORNATE_NEXTAUTH_URL_CORE,ORNATE_NEXTAUTH_SECRET,ORNATE_REDIS_URL,ORNATE_R2_ACCOUNT_ID,ORNATE_R2_ENDPOINT,ORNATE_R2_BUCKET_NAME,ORNATE_R2_ACCESS_KEY_ID,ORNATE_R2_SECRET_ACCESS_KEY,ORNATE_R2_PUBLIC_DOMAIN,NEXT_PUBLIC_ASSETS_URL,ORNATE_AWS_REGION,ORNATE_AWS_ACCESS_KEY_ID,ORNATE_AWS_SECRET_ACCESS_KEY,ORNATE_SES_FROM_EMAIL,ORNATE_VAPID_PUBLIC_KEY,ORNATE_VAPID_PRIVATE_KEY,ORNATE_VAPID_SUBJECT
           script: |
             export DEPLOY_CONTEXT="GITHUB_ACTIONS"
             cd /root/uniz-master
-            
+
             echo "[CI/CD] Triggered by ${{ github.actor }} on commit ${{ github.sha }}"
 
             # Security: Verify repo integrity
@@ -44,4 +71,5 @@ jobs:
             echo "[Log] Last Commit: $COMMIT_MSG"
 
             # Execute the heavy lifter
+            # Note: Secrets are passed via 'envs' and will be visible to deploy.sh
             /bin/bash ./scripts/deploy.sh "$COMMIT_MSG"
