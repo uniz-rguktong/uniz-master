@@ -70,6 +70,46 @@ jobs:
             COMMIT_MSG=$(git log -1 --pretty=%B)
             echo "[Log] Last Commit: $COMMIT_MSG"
 
+            echo "[Security] Regenerating ornate secrets on VPS..."
+            # Note: We use a separate block to avoid overwriting the main uniz-secrets.env if we want to be safe, 
+            # but since the user said "secrets are shared no problem", we can update the main one or a specific one.
+            # Let's update /root/uniz-secrets.env to keep everything central.
+            
+            # Use a temp file to avoid partial writes
+            cat <<EOF > /root/uniz-secrets.env.tmp
+            # Shared & Ornate Secrets
+            ORNATE_DATABASE_URL="$ORNATE_DATABASE_URL"
+            ORNATE_DIRECT_URL="$ORNATE_DIRECT_URL"
+            ORNATE_NEXTAUTH_URL="$ORNATE_NEXTAUTH_URL"
+            ORNATE_NEXTAUTH_URL_CORE="$ORNATE_NEXTAUTH_URL_CORE"
+            ORNATE_NEXTAUTH_SECRET="$ORNATE_NEXTAUTH_SECRET"
+            ORNATE_REDIS_URL="$ORNATE_REDIS_URL"
+            ORNATE_R2_ACCOUNT_ID="$ORNATE_R2_ACCOUNT_ID"
+            ORNATE_R2_ENDPOINT="$ORNATE_R2_ENDPOINT"
+            ORNATE_R2_BUCKET_NAME="$ORNATE_R2_BUCKET_NAME"
+            ORNATE_R2_ACCESS_KEY_ID="$ORNATE_R2_ACCESS_KEY_ID"
+            ORNATE_R2_SECRET_ACCESS_KEY="$ORNATE_R2_SECRET_ACCESS_KEY"
+            ORNATE_R2_PUBLIC_DOMAIN="$ORNATE_R2_PUBLIC_DOMAIN"
+            NEXT_PUBLIC_ASSETS_URL="$NEXT_PUBLIC_ASSETS_URL"
+            ORNATE_AWS_REGION="$ORNATE_AWS_REGION"
+            ORNATE_AWS_ACCESS_KEY_ID="$ORNATE_AWS_ACCESS_KEY_ID"
+            ORNATE_AWS_SECRET_ACCESS_KEY="$ORNATE_AWS_SECRET_ACCESS_KEY"
+            ORNATE_SES_FROM_EMAIL="$ORNATE_SES_FROM_EMAIL"
+            ORNATE_VAPID_PUBLIC_KEY="$ORNATE_VAPID_PUBLIC_KEY"
+            ORNATE_VAPID_PRIVATE_KEY="$ORNATE_VAPID_PRIVATE_KEY"
+            ORNATE_VAPID_SUBJECT="$ORNATE_VAPID_SUBJECT"
+            EOF
+
+            # Merge with existing if it exists, or just move
+            if [ -f "/root/uniz-secrets.env" ]; then
+              # Keep existing uniz secrets, update ornate ones
+              grep -v "^ORNATE_\|^NEXT_PUBLIC_ASSETS_URL" /root/uniz-secrets.env > /root/uniz-secrets.env.bak
+              cat /root/uniz-secrets.env.bak /root/uniz-secrets.env.tmp > /root/uniz-secrets.env
+              rm /root/uniz-secrets.env.bak /root/uniz-secrets.env.tmp
+            else
+              mv /root/uniz-secrets.env.tmp /root/uniz-secrets.env
+            fi
+            chmod 600 /root/uniz-secrets.env
+
             # Execute the heavy lifter
-            # Note: Secrets are passed via 'envs' and will be visible to deploy.sh
             /bin/bash ./scripts/deploy.sh "$COMMIT_MSG"
