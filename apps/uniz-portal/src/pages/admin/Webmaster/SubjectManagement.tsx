@@ -10,6 +10,8 @@ import {
   Search,
   ChevronDown,
   Filter,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   GET_SUBJECTS,
@@ -19,6 +21,14 @@ import {
 import { toast } from "@/utils/toast-ref";
 import { apiClient } from "../../../api/apiClient";
 import { Edit3 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
 
 export default function SubjectManagement() {
   const [subjects, setSubjects] = useState<any[]>([]);
@@ -241,70 +251,77 @@ export default function SubjectManagement() {
             {subjects.map((sub, idx) => (
               <div
                 key={idx}
-                className="bg-white border border-slate-100 rounded-xl p-7 hover:translate-y-[-2px] hover:border-navy-100 transition-all group overflow-hidden relative shadow-none"
+                className="bg-white border border-slate-100 rounded-xl p-5 transition-all group overflow-hidden relative"
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-navy-50 rounded-xl text-navy-900 border border-navy-100 group-hover:bg-navy-900 group-hover:text-white transition-colors duration-300 shadow-none">
-                    <BookText size={20} />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2.5 bg-navy-50 rounded-lg text-navy-900 border border-navy-100 transition-colors duration-300">
+                    <BookText size={18} />
                   </div>
-                  <div className="px-3 py-1.5 bg-slate-50 rounded-xl text-[9px] font-semibold uppercase tracking-widest text-slate-400 border border-slate-100 shadow-none">
-                    {sub.code}
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-2">
+                       <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                        {sub.code}
+                      </span>
+                    </div>
+                    <h3 className="text-[14px] font-bold text-slate-900 tracking-tight leading-tight truncate">
+                      {sub.name}
+                    </h3>
                   </div>
                   <div className="ml-auto flex gap-1 transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                     <button
                       onClick={() => handleEditClick(sub)}
-                      className="p-2 text-slate-400 hover:text-navy-900 hover:bg-navy-50 rounded-xl transition-all"
+                      className="p-1.5 text-slate-400 hover:text-navy-900 hover:bg-navy-50 rounded-lg transition-all"
                     >
-                      <Edit3 size={14} />
+                      <Edit3 size={12} />
                     </button>
                     <button
                       onClick={() => handleDeleteSubject(sub.id)}
-                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                      className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={12} />
                     </button>
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900 tracking-tight mb-2 leading-tight">
-                  {sub.name}
-                </h3>
 
-                <div className="grid grid-cols-2 gap-4 mt-8">
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest leading-none">
-                      Dept
+                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-50">
+                  <div className="flex flex-col">
+                    <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">
+                      Department
                     </p>
-                    <p className="font-semibold text-slate-700 text-xs flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-navy-900/20 group-hover:bg-navy-900 transition-colors"></div>
+                    <p className="font-bold text-slate-600 text-[10px] flex items-center gap-1.5">
+                      <div className="w-1 h-1 rounded-full bg-navy-900"></div>
                       {sub.department}
                     </p>
                   </div>
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest leading-none">
-                      Term
+                  <div className="flex flex-col">
+                    <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">
+                      Semester
                     </p>
-                    <p className="font-semibold text-slate-700 text-xs flex items-center gap-2">
-                      <Calendar size={13} className="text-slate-400" />{" "}
+                    <p className="font-bold text-slate-600 text-[10px] flex items-center gap-1.5">
+                      <Calendar size={10} className="text-slate-400" />{" "}
                       {sub.semester}
                     </p>
                   </div>
-                  <div className="col-span-2 mt-4 space-y-2.5">
-                    <div className="flex items-center justify-between">
-                      <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                        Credits
+                  <div className="col-span-2 pt-1">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">
+                        Academic Weight
                       </p>
-                      <span className="text-xs font-semibold text-navy-900">
-                        {sub.credits} Units
+                      <span className="text-[9px] font-black text-navy-900 px-1.5 py-0.5 bg-navy-50 rounded-md">
+                        {sub.credits} CREDITS
                       </span>
                     </div>
-                    <div className="flex gap-2">
-                      {[...Array(Number(sub.credits))].map((_, i) => (
+                    <div className="flex gap-1.5">
+                      {[...Array(10)].map((_, i) => (
                         <div
                           key={i}
-                          className="flex-1 h-1 rounded-xl bg-slate-100 group-hover:bg-navy-900/10 transition-colors overflow-hidden shadow-none"
-                        >
-                          <div className="w-full h-full bg-navy-900 translate-x-0 group-hover:translate-x-0 transition-transform duration-500"></div>
-                        </div>
+                          className={cn(
+                            "flex-1 h-1 rounded-full transition-all duration-500",
+                            i < Number(sub.credits) 
+                              ? "bg-navy-900" 
+                              : "bg-slate-100"
+                          )}
+                        ></div>
                       ))}
                     </div>
                   </div>
@@ -318,12 +335,12 @@ export default function SubjectManagement() {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="uniz-primary-btn w-12 h-12 p-0 bg-white text-slate-900 border border-slate-200 shadow-none"
+                className="w-10 h-10 flex items-center justify-center bg-white text-slate-500 border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-navy-900 transition-all active:scale-90 disabled:opacity-40"
               >
-                <Plus size={20} className="rotate-[135deg]" />
+                <ChevronLeft size={18} />
               </button>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 {[...Array(meta.totalPages)].map((_, i) => {
                   const p = i + 1;
                   if (
@@ -335,9 +352,9 @@ export default function SubjectManagement() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl font-semibold text-xs border transition-all ${page === p
-                          ? "bg-navy-900 text-white border-navy-100"
-                          : "bg-white text-slate-400 border-slate-100 hover:border-navy-100 hover:text-navy-900"
+                        className={`w-10 h-10 rounded-xl font-bold text-[11px] border transition-all ${page === p
+                          ? "bg-navy-900 text-white border-navy-900"
+                          : "bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:text-slate-600"
                           }`}
                       >
                         {p}
@@ -346,7 +363,7 @@ export default function SubjectManagement() {
                   }
                   if (p === 2 || p === meta.totalPages - 1) {
                     return (
-                      <span key={p} className="text-slate-300 font-bold">
+                      <span key={p} className="text-slate-300 font-black px-1">
                         ...
                       </span>
                     );
@@ -358,9 +375,9 @@ export default function SubjectManagement() {
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                className="uniz-primary-btn w-12 h-12 p-0 bg-white text-slate-900 border border-slate-200 shadow-none"
+                className="w-10 h-10 flex items-center justify-center bg-white text-slate-500 border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-navy-900 transition-all active:scale-90 disabled:opacity-40"
               >
-                <Plus size={20} className="rotate-45" />
+                <ChevronRight size={18} />
               </button>
             </div>
           )}
@@ -392,147 +409,149 @@ export default function SubjectManagement() {
         </div>
       )}
 
-      {showAddModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-lg rounded-xl p-8 relative animate-in zoom-in-95 duration-300 shadow-none">
-            <button
-              onClick={() => setShowAddModal(false)}
-              className="absolute top-6 right-6 p-2 hover:bg-slate-50 rounded-full transition-colors"
-            >
-              <Trash2 size={20} className="text-slate-400" />
-            </button>
-            <h3 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 mb-6">
-              {editingSubject ? "Edit Subject" : "Create New Subject"}
-            </h3>
+      <AlertDialog open={showAddModal} onOpenChange={setShowAddModal}>
+        <AlertDialogContent className="max-w-xl bg-white/80 backdrop-blur-xl border-white/20 shadow-2xl rounded-[2.5rem] p-10">
+          <AlertDialogHeader className="flex flex-col items-center text-center space-y-2 mb-4">
+            <AlertDialogTitle className="text-3xl font-black text-navy-900 tracking-tighter italic uppercase">
+              {editingSubject ? "Update Curriculum" : "New Subject Portal"}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] leading-tight">
+              {editingSubject 
+                ? "Modify the existing academic subject parameters" 
+                : "Initialize a new course into the institutional registry"}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
 
-            <form onSubmit={handleSaveSubject} className="space-y-6">
+          <form onSubmit={handleSaveSubject} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                Subject Name
+              </label>
+              <div className="relative">
+                <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4" />
+                <input
+                  required
+                  value={newSubject.name}
+                  onChange={(e) =>
+                    setNewSubject({ ...newSubject, name: e.target.value })
+                  }
+                  className="w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-sm shadow-none"
+                  placeholder="e.g. Artificial Intelligence"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                  Subject Name
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                  Catalogue Code
                 </label>
-                <div className="relative">
-                  <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4" />
-                  <input
-                    required
-                    value={newSubject.name}
-                    onChange={(e) =>
-                      setNewSubject({ ...newSubject, name: e.target.value })
-                    }
-                    className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-sm shadow-none"
-                    placeholder="e.g. Artificial Intelligence"
-                  />
-                </div>
+                <input
+                  required
+                  value={newSubject.code}
+                  onChange={(e) =>
+                    setNewSubject({
+                      ...newSubject,
+                      code: e.target.value.toUpperCase(),
+                    })
+                  }
+                  className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-slate-900 shadow-none uppercase"
+                  placeholder="CSE402"
+                />
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                    Code
-                  </label>
-                  <input
-                    required
-                    value={newSubject.code}
-                    onChange={(e) =>
-                      setNewSubject({
-                        ...newSubject,
-                        code: e.target.value.toUpperCase(),
-                      })
-                    }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900 shadow-none"
-                    placeholder="CSE402"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                    Credits
-                  </label>
-                  <input
-                    required
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={newSubject.credits}
-                    onChange={(e) =>
-                      setNewSubject({
-                        ...newSubject,
-                        credits: parseInt(e.target.value),
-                      })
-                    }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900 shadow-none"
-                  />
-                </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                  Credit Weighting
+                </label>
+                <input
+                  required
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={newSubject.credits}
+                  onChange={(e) =>
+                    setNewSubject({
+                      ...newSubject,
+                      credits: parseInt(e.target.value),
+                    })
+                  }
+                  className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-slate-900 shadow-none"
+                />
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                    Department
-                  </label>
-                  <select
-                    value={newSubject.department}
-                    onChange={(e) =>
-                      setNewSubject({
-                        ...newSubject,
-                        department: e.target.value,
-                      })
-                    }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900 cursor-pointer shadow-none"
-                  >
-                    <option>CSE</option>
-                    <option>ECE</option>
-                    <option>EEE</option>
-                    <option>MECH</option>
-                    <option>CIVIL</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1">
-                    Semester
-                  </label>
-                  <select
-                    value={newSubject.semester}
-                    onChange={(e) =>
-                      setNewSubject({ ...newSubject, semester: e.target.value })
-                    }
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900 cursor-pointer shadow-none"
-                  >
-                    {["E1", "E2", "E3", "E4"].map((y) => (
-                      <React.Fragment key={y}>
-                        <option value={`${y}-SEM-1`}>{y} SEM-1</option>
-                        <option value={`${y}-SEM-2`}>{y} SEM-2</option>
-                      </React.Fragment>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="pt-8 flex gap-4">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-8 py-4 rounded-xl font-semibold uppercase tracking-widest text-[11px] border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all active:scale-95 shadow-none"
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                  Operating Department
+                </label>
+                <select
+                  value={newSubject.department}
+                  onChange={(e) =>
+                    setNewSubject({
+                      ...newSubject,
+                      department: e.target.value,
+                    })
+                  }
+                  className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-black text-[11px] uppercase tracking-widest text-slate-900 cursor-pointer shadow-none appearance-none"
                 >
-                  Cancel
-                </button>
-                <button
-                  disabled={isAdding}
-                  type="submit"
-                  className={`flex-1 uniz-primary-btn ${editingSubject ? "bg-slate-900 hover:bg-black shadow-none" : ""}`}
-                >
-                  {isAdding ? (
-                    <Loader2 className="animate-spin w-5 h-5" />
-                  ) : editingSubject ? (
-                    <Edit3 size={18} />
-                  ) : (
-                    <Plus size={18} />
-                  )}
-                  {editingSubject ? "Update Subject" : "Create Subject"}
-                </button>
+                  <option>CSE</option>
+                  <option>ECE</option>
+                  <option>EEE</option>
+                  <option>MECH</option>
+                  <option>CIVIL</option>
+                </select>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                  Academic Term
+                </label>
+                <select
+                  value={newSubject.semester}
+                  onChange={(e) =>
+                    setNewSubject({ ...newSubject, semester: e.target.value })
+                  }
+                  className="w-full px-5 py-4 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-black text-[11px] uppercase tracking-widest text-slate-900 cursor-pointer shadow-none appearance-none"
+                >
+                  {["E1", "E2", "E3", "E4"].map((y) => (
+                    <React.Fragment key={y}>
+                      <option value={`${y}-SEM-1`}>{y} SEM-1</option>
+                      <option value={`${y}-SEM-2`}>{y} SEM-2</option>
+                    </React.Fragment>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="pt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAddModal(false);
+                  setEditingSubject(null);
+                }}
+                className="flex-1 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all active:scale-95 shadow-none"
+              >
+                Discard
+              </button>
+              <button
+                disabled={isAdding}
+                type="submit"
+                className="flex-[2] py-4 rounded-2xl bg-navy-900 text-white text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-black transition-all disabled:opacity-50 shadow-xl shadow-navy-900/20"
+              >
+                {isAdding ? (
+                  <Loader2 className="animate-spin w-4 h-4" />
+                ) : editingSubject ? (
+                  <Edit3 size={16} />
+                ) : (
+                  <Plus size={16} />
+                )}
+                {editingSubject ? "Confirm Changes" : "Commit to Registry"}
+              </button>
+            </div>
+          </form>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -6,16 +6,24 @@ import {
   Loader2,
   Eye,
   EyeOff,
-  Type,
-  AlignLeft,
-  Link,
   CheckCircle2,
   X,
   Edit3,
   Trash2,
+  Upload,
 } from "lucide-react";
 import { BANNERS_BASE, UPDATE_BANNER_VISIBILITY } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { 
+  AlertDialog, 
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
+
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
 export default function BannersSection() {
   const [banners, setBanners] = useState<any[]>([]);
@@ -31,6 +39,8 @@ export default function BannersSection() {
     isVisible: true,
   });
   const [editingBanner, setEditingBanner] = useState<any>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchBanners();
@@ -66,6 +76,42 @@ export default function BannersSection() {
       toast.error("Error connecting to banner service");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
+      toast.error("Cloudinary configuration missing");
+      return;
+    }
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await res.json();
+      if (data.secure_url) {
+        setNewBanner((prev) => ({ ...prev, imageUrl: data.secure_url }));
+        toast.success("Image uploaded successfully");
+      } else {
+        toast.error("Upload failed");
+      }
+    } catch (error) {
+      toast.error("Error uploading image");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -205,7 +251,7 @@ export default function BannersSection() {
           onClick={() => setShowAddModal(true)}
           className="h-11 px-6 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-navy-800 active:scale-95 transition-all flex items-center justify-center gap-2"
         >
-          <Plus size={16} /> New Banner
+          <Plus size={16} /> New Banners
         </button>
       </div>
 
@@ -335,60 +381,49 @@ export default function BannersSection() {
         </div>
       )}
 
-      {/* Add Banner Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
-          <div
-            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
-            onClick={() => {
-              setShowAddModal(false);
-              setEditingBanner(null);
-              setNewBanner({
-                title: "",
-                text: "",
-                imageUrl: "",
-                isVisible: true,
-              });
-            }}
-          />
-          <div className="bg-white w-full max-w-xl rounded-xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-            <div
-              className={`${editingBanner ? "bg-slate-900" : "bg-navy-900"} p-8 text-white relative flex items-center gap-5 transition-colors duration-500`}
+      <AlertDialog 
+        open={showAddModal} 
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowAddModal(false);
+            setEditingBanner(null);
+            setNewBanner({ title: "", text: "", imageUrl: "", isVisible: true });
+          }
+        }}
+      >
+        <AlertDialogContent className="max-w-md p-0 overflow-hidden bg-white border-slate-100 rounded-2xl shadow-2xl">
+          <div className="relative">
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => {
+                setShowAddModal(false);
+                setEditingBanner(null);
+                setNewBanner({ title: "", text: "", imageUrl: "", isVisible: true });
+              }}
+              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
             >
-              <div className="p-3.5 bg-white/20 rounded-xl">
-                {editingBanner ? <Edit3 size={26} /> : <Plus size={26} />}
-              </div>
-              <div>
-                <h3 className="text-2xl font-semibold tracking-[-0.02em]">
-                  {editingBanner ? "Edit Banner" : "New Banner"}
-                </h3>
-                <p className="text-white/70 text-[10px] font-semibold uppercase tracking-[0.2em] mt-1.5">
-                  Configure Spotlight Content
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  setShowAddModal(false);
-                  setEditingBanner(null);
-                  setNewBanner({
-                    title: "",
-                    text: "",
-                    imageUrl: "",
-                    isVisible: true,
-                  });
-                }}
-                className="absolute top-8 right-8 text-white/60 hover:text-white transition-colors"
-              >
-                <X size={26} />
-              </button>
-            </div>
+              <X size={20} />
+            </button>
 
-            <form onSubmit={handleSaveBanner} className="p-10 space-y-8">
-              <div className="space-y-6">
+            <form onSubmit={handleSaveBanner} className="p-8">
+              {/* Header */}
+              <AlertDialogHeader className="flex flex-col items-center text-center gap-2 mb-8">
+                <AlertDialogTitle className="text-2xl font-black text-slate-900 tracking-tight uppercase italic">
+                  {editingBanner ? "Edit Banner" : "New Banner"}
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-[14px] font-medium text-slate-500 mt-1 leading-relaxed">
+                  {editingBanner
+                    ? "Update your featured spotlight content."
+                    : "Configure a new spotlight for the student portal."}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <div className="space-y-5">
                 {/* Title */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <Type size={14} /> Banner Title
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    Banner Title
                   </label>
                   <input
                     required
@@ -398,14 +433,14 @@ export default function BannersSection() {
                       setNewBanner({ ...newBanner, title: e.target.value })
                     }
                     placeholder="e.g. UniZ v2.0 is Live!"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900"
+                    className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
                   />
                 </div>
 
                 {/* Text */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <AlignLeft size={14} /> Body Content
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    Body Content
                   </label>
                   <textarea
                     required
@@ -415,62 +450,103 @@ export default function BannersSection() {
                       setNewBanner({ ...newBanner, text: e.target.value })
                     }
                     placeholder="Briefly describe what this banner is about..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-semibold text-slate-900 resize-none"
+                    className="w-full bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl px-6 py-4 font-bold text-slate-900 outline-none transition-all resize-none placeholder:text-slate-300"
                   />
                 </div>
 
-                {/* Image URL */}
-                <div className="space-y-2">
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <Link size={14} /> Image URL
-                  </label>
-                  <input
-                    required
-                    type="url"
-                    value={newBanner.imageUrl}
-                    onChange={(e) =>
-                      setNewBanner({ ...newBanner, imageUrl: e.target.value })
-                    }
-                    placeholder="https://images.unsplash.com/..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900"
-                  />
+                {/* Image URL & Upload */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between px-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      Banner Image
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="flex items-center gap-2 text-[10px] font-bold text-navy-900 hover:text-black transition-colors"
+                    >
+                      {uploading ? (
+                        <Loader2 size={12} className="animate-spin" />
+                      ) : (
+                        <Upload size={12} />
+                      )}
+                      {uploading ? "UPLOADING..." : "UPLOAD FILE"}
+                    </button>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      accept="image/*"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <input
+                      required
+                      type="url"
+                      value={newBanner.imageUrl}
+                      onChange={(e) =>
+                        setNewBanner({ ...newBanner, imageUrl: e.target.value })
+                      }
+                      placeholder="Or paste image URL (https://...)"
+                      className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
+                    />
+                  </div>
                 </div>
 
-                {/* Preview mini */}
+                {/* Image Preview */}
                 {newBanner.imageUrl && (
-                  <div className="h-24 w-full rounded-xl overflow-hidden border border-slate-200">
+                  <div className="h-24 w-full rounded-xl overflow-hidden border-2 border-slate-100 relative group">
                     <img
                       src={newBanner.imageUrl}
                       alt="preview"
                       className="w-full h-full object-cover"
                       onError={(e: any) =>
-                      (e.target.src =
-                        "https://placehold.co/600x400?text=Invalid+Image+URL")
+                        (e.target.src =
+                          "https://placehold.co/600x400?text=Invalid+URL")
                       }
                     />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                       <p className="text-[10px] font-bold text-white uppercase tracking-widest">Current Selection</p>
+                    </div>
                   </div>
                 )}
               </div>
 
-              <button
-                disabled={!!actionLoading}
-                type="submit"
-                className={`w-full ${editingBanner ? "bg-slate-900" : "bg-navy-900"} text-white py-5 rounded-xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:opacity-90 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95`}
-              >
-                {actionLoading === "creating" ||
-                  actionLoading === "updating" ? (
-                  <Loader2 className="animate-spin w-5 h-5" />
-                ) : editingBanner ? (
-                  <CheckCircle2 size={18} />
-                ) : (
-                  <Plus size={18} />
-                )}
-                {editingBanner ? "Update Banner" : "Launch Banner"}
-              </button>
+              {/* Actions */}
+              <div className="flex gap-3 mt-10">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setEditingBanner(null);
+                    setNewBanner({ title: "", text: "", imageUrl: "", isVisible: true });
+                  }}
+                  className="flex-1 py-3.5 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 font-black uppercase tracking-widest text-[10px] transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!!actionLoading}
+                  className="flex-[2] py-3.5 rounded-xl bg-navy-900 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-lg shadow-navy-100 hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {actionLoading === "creating" || actionLoading === "updating" ? (
+                    <Loader2 className="animate-spin w-4 h-4" />
+                  ) : editingBanner ? (
+                    <CheckCircle2 size={16} />
+                  ) : (
+                    <Plus size={16} />
+                  )}
+                  {editingBanner ? "UPDATE BANNER" : "LAUNCH BANNER"}
+                </button>
+              </div>
             </form>
           </div>
-        </div>
-      )}
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
