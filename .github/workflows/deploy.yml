@@ -70,14 +70,11 @@ jobs:
             COMMIT_MSG=$(git log -1 --pretty=%B)
             echo "[Log] Last Commit: $COMMIT_MSG"
 
-            echo "[Security] Regenerating ornate secrets on VPS..."
-            # Note: We use a separate block to avoid overwriting the main uniz-secrets.env if we want to be safe, 
-            # but since the user said "secrets are shared no problem", we can update the main one or a specific one.
-            # Let's update /root/uniz-secrets.env to keep everything central.
+            echo "[Vault] Syncing Ornate Secrets & Cleaning VPS environment..."
             
-            # Use a temp file to avoid partial writes
+            # Create isolated Ornate block
             cat <<EOF > /root/uniz-secrets.env.tmp
-            # Shared & Ornate Secrets
+            # --- ORNATE REGENERATED BLOCK ---
             ORNATE_DATABASE_URL="$ORNATE_DATABASE_URL"
             ORNATE_DIRECT_URL="$ORNATE_DIRECT_URL"
             ORNATE_NEXTAUTH_URL="$ORNATE_NEXTAUTH_URL"
@@ -100,15 +97,21 @@ jobs:
             ORNATE_VAPID_SUBJECT="$ORNATE_VAPID_SUBJECT"
             EOF
 
-            # Merge with existing if it exists, or just move
             if [ -f "/root/uniz-secrets.env" ]; then
-              # Keep existing uniz secrets, update ornate ones
-              grep -v "^ORNATE_\|^NEXT_PUBLIC_ASSETS_URL" /root/uniz-secrets.env > /root/uniz-secrets.env.bak
+              # Safe Merge Strategy:~
+              # 1. Take current file
+              # 2. Keep only lines that have an "=" (retains existing Uniz vars, removes ghost garbage)
+              # 3. Remove specifically the ORNATE keys to avoid duplication
+              # 4. Append the fresh Ornate block
+              grep -E "=" /root/uniz-secrets.env | grep -v "^ORNATE_\|^NEXT_PUBLIC_ASSETS_URL" > /root/uniz-secrets.env.bak || true
               cat /root/uniz-secrets.env.bak /root/uniz-secrets.env.tmp > /root/uniz-secrets.env
               rm /root/uniz-secrets.env.bak /root/uniz-secrets.env.tmp
             else
               mv /root/uniz-secrets.env.tmp /root/uniz-secrets.env
             fi
+            
+            chmod 600 /root/uniz-secrets.env
+            
             chmod 600 /root/uniz-secrets.env
 
             # Execute the heavy lifter
