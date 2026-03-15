@@ -222,7 +222,7 @@ const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
     const chartData = healthStatus?.services?.length > 0
         ? healthStatus.services.map((svc: any) => ({
             service: svc.name,
-            latency: parseInt(svc.latency.replace('ms', '') || '0')
+            latency: svc.latency ? parseInt(svc.latency.replace('ms', '') || '0') : 0
         }))
         : defaultData;
 
