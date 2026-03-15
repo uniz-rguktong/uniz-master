@@ -14,6 +14,7 @@ spec:
       labels:
         app: uniz-user-service
     spec:
+      priorityClassName: uniz-medium-priority
       containers:
         - name: user-service
           image: uniz-user-service:local
@@ -36,8 +37,8 @@ spec:
               cpu: "1000m"
               memory: "1024Mi"
             requests:
-              cpu: "150m"
-              memory: "512Mi"
+              cpu: "50m"
+              memory: "128Mi"
           readinessProbe:
             httpGet:
               path: /health
@@ -77,8 +78,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-user-service
-  minReplicas: 4
-  maxReplicas: 30
+  minReplicas: 3
+  maxReplicas: 8
   metrics:
     - type: Resource
       resource:
