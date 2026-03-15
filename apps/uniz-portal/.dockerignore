@@ -1,9 +1,0 @@
-**/node_modules
-**/.git
-**/.vercel
-**/.github
-**/dist
-**/build
-**/*.log
-.env.local
-.env.*.local
