@@ -103,13 +103,11 @@ deploy_logic() {
   if [ -f "infra/core-infra/kubernetes/base/shared/secrets.yaml.template" ]; then
     echo "[Vault] Generating secrets from template..."
     if [ -f "/root/uniz-secrets.env" ]; then
-      while IFS='=' read -r key value || [ -n "$key" ]; do
-        [[ "$key" =~ ^#.*$ ]] && continue
-        [[ "$key" =~ ^[[:space:]]*$ ]] && continue
-        value="${value%\"}"
-        value="${value#\"}"
-        export "$key"="$value"
-      done < /root/uniz-secrets.env
+      echo "[Vault] Loading secrets from /root/uniz-secrets.env..."
+      # Use a subshell-safe way to export all variables from the env file
+      set -a
+      source /root/uniz-secrets.env
+      set +a
     fi
     envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > infra/core-infra/kubernetes/base/shared/secrets.yaml
   fi
