@@ -1,0 +1,24 @@
+second test logging in 
+
+curl 'https://api.uniz.rguktong.in/api/v1/auth/login' \
+  -H 'accept: */*' \
+  -H 'accept-language: en-GB,en-US;q=0.9,en;q=0.8' \
+  -H 'content-type: application/json' \
+  -H 'origin: https://uniz.rguktong.in' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://uniz.rguktong.in/' \
+  -H 'sec-ch-ua: "Chromium";v="146", "Not-A.Brand";v="24", "Brave";v="146"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "macOS"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-site' \
+  -H 'sec-gpc: 1' \
+  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36' \
+  -H 'x-api-key: rgukt-uniz-secure-key-2026' \
+  --data-raw '{"username":"O210008","password":"O210008@rguktong","captchaToken":"0.6jC11lHidg_Hm53kWP4rq2VUS4SuxyXTgW1-lOxzZgZt8mcmhMvBJwTkAHnLXcNzFVSteV80H4FNUbK9aT1BhuOQBE_Fnz9lQekWUTo_Pe_mQmr18G7iNkAlBA1jnM3p_kDVyHYt-gPW4karA7KSUqh1sFTQrQDZJESmFuPE2Dma7ZQEvYxPZhulY4X0KWSk7pNWC9nOdlNEmu1NsAY-R8-1Y4CSXbgrIlu-73PWyIwAvua4xON7uXo5nNZ_DxjEbKijiak5ndu0DfK796pWJij9jHbjd7We8p2P3UnYNaKQULtoracu7fgubCFGj962l8lnaiKeO3xp2keNIH2lHexzFRf_rXZEgjyt2aeGNanzemdbzbBtZT-plzN27nQl0ozAwYEPhwFjzJUbILM-KXUJ4_Ru4CwqC_nGZeulg5wRPwv-Wa_-1CGbt71jDMwPeeW6YGBrwDQuCaZb9hEK3gC0A6yAKk0wci1O50xx8CYv_1EkLeiEUAYUtuY0JB1Kb9YROgcTtYHPNq4H9M5DMMHkrVWeMaCyLKJDey5LvWbFDFzOybiCzo4ldgJpAkkZPUcJrdw4ElMZUhDwg_xYpQgMpTYc7LsKdwK0kkHKmgApfAGoI6TLjC-l-L6403aSmnKM9O8vg7zUeKjNmHF_N3KhTwltdt6WAk5QXEcEAJd7hKY2yELxuQQPyqBssPKWiPSIFb8rDbJSpsdbPLBHzZ5nDJg54i2i8A5Uzw8Jr5iFwDBCtEya3mmnV_iYNiNmkhwJNYRYMNAbY4frc40g0EKrbFGxX56fBSS9QMeROz6VDnC1n3XRHkZEii4mrcni7MbafGvmkJzjXkdeXshacATaeAMQ3Ehn3APXiDhs1-KltQNvPQzr_5NvOLf6w7MPmT-UY42T1hBG3IyHmyI2Xn5G6dKN6rNebWVgM73h2xJ74GP8j405iGPVI3f90J9_2l7d77xJxa_hKh0mZIfH2w.Vu3rdHcYyQZvwrwTB5VQbQ.b241331c5443ec5a1e1194723af9289d5a84c1483267a359d7c3cdc43ea14c63"}'
+
+
+with all students present in db at once 
+
+
