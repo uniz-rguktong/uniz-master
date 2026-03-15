@@ -20,7 +20,7 @@ import WebmasterOverview from "./WebmasterOverview";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import StudentDetails from "./StudentDetails";
-import UnifiedAcademicManager from "./UnifiedAcademicManager";
+// import UnifiedAcademicManager from "./UnifiedAcademicManager";
 import FacultyManagement from "./FacultyManagement";
 import UploadSection from "./UploadSection";
 
@@ -101,7 +101,9 @@ export default function WebmasterDashboard() {
     {
       group: "Academic",
       items: [
+/*
         { id: "academic_mgmt", label: "Sem Registration", icon: Layout },
+*/
         { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
         { id: "grades", label: "Grades Upload", icon: GraduationCap },
       ]
@@ -137,8 +139,10 @@ export default function WebmasterDashboard() {
         return <StudentDetails />;
       case "student_bulk":
         return <StudentBulkSection />;
+/*
       case "academic_mgmt":
         return <UnifiedAcademicManager />;
+*/
       case "attendance":
         return <UploadSection type="attendance" />;
       case "grades":
