@@ -5,7 +5,7 @@ metadata:
   labels:
     app: uniz-gateway-api
 spec:
-  replicas: 3
+  replicas: 10
   selector:
     matchLabels:
       app: uniz-gateway-api
@@ -30,7 +30,7 @@ spec:
               cpu: "1000m"
               memory: "512Mi"
             requests:
-              cpu: "20m"
+              cpu: "100m"
               memory: "256Mi"
           livenessProbe:
             httpGet:
@@ -68,15 +68,15 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-gateway-api
-  minReplicas: 5
-  maxReplicas: 30
+  minReplicas: 10
+  maxReplicas: 40
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 60
+          averageUtilization: 50
   behavior:
     scaleUp:
       stabilizationWindowSeconds: 0
