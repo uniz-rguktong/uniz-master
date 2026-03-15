@@ -2198,12 +2198,12 @@ export const downloadGrades = async (
       orderBy: { subject: { code: "asc" } },
     });
 
-    if (!grades.length) {
-      return res.status(404).json({
-        success: false,
-        message: "No grades found for this semester.",
-      });
-    }
+    // if (!grades.length) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: "No grades found for this semester.",
+    //   });
+    // }
 
     // Attempt to fetch profile details using GATEWAY_URL (optional)
     let profileName = targetStudentId;
@@ -2305,12 +2305,12 @@ export const downloadAttendance = async (
       orderBy: { subject: { code: "asc" } },
     });
 
-    if (!records.length) {
-      return res.status(404).json({
-        success: false,
-        message: "No attendance records found for this semester.",
-      });
-    }
+    // if (!records.length) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: "No attendance records found for this semester.",
+    //   });
+    // }
 
     let profileName = targetStudentId;
     let branch = "N/A";
