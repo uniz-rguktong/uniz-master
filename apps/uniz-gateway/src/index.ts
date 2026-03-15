@@ -11,11 +11,12 @@ dotenv.config();
 
 // Pre-configured Axios instance for internal communications with Keep-Alive
 const internalClient = axios.create({
-  timeout: 2000,
-  httpAgent: new http.Agent({ keepAlive: true, maxSockets: 100 }),
+  timeout: 5000,
+  httpAgent: new http.Agent({ keepAlive: true, maxSockets: 200 }),
 });
 
 const app = express();
+app.set("trust proxy", 1);
 const PORT = process.env.PORT || 3000;
 
 // Initialize Redis for High-Speed Caching
@@ -201,21 +202,25 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
   const path = req.url.split("/").slice(4).join("/");
   req.url = `/${path}`;
 
-  // Bypass Warp Engine for binary files or download routes to prevent corruption
-  const isBinaryRequest =
-    req.url.includes("/download/") ||
-    req.url.endsWith(".pdf") ||
-    req.url.endsWith(".xlsx") ||
-    req.url.endsWith(".zip");
+    // Bypass Warp Engine for binary files or download routes to prevent corruption
+    const isBinaryRequest =
+      req.url.includes("/download/") ||
+      req.url.endsWith(".pdf") ||
+      req.url.endsWith(".xlsx") ||
+      req.url.endsWith(".zip");
 
-  if (
-    req.method === "GET" &&
-    req.headers["cache-control"] !== "no-cache" &&
-    !isBinaryRequest
-  ) {
-    // Generate unique key based on URL and User Context (Role/UID)
-    const userKey = req.headers["uid"] || "guest";
-    const cacheKey = `p3:${service}:${Buffer.from(req.url).toString("base64").substring(0, 16)}:${userKey}`;
+    // Bypass Warp Engine for sensitive personal data to prevent accidental leaks
+    const isSensitive = req.url.includes("/me") || req.url.includes("/profile") || req.url.includes("/student/me");
+
+    if (
+      req.method === "GET" &&
+      req.headers["cache-control"] !== "no-cache" &&
+      !isBinaryRequest &&
+      !isSensitive
+    ) {
+      // Generate unique key based on URL and User Context (Auth Token / User-Agent)
+      const userKey = req.headers["authorization"] || req.headers["uid"] || "guest";
+      const cacheKey = `p3:${service}:${Buffer.from(req.url).toString("base64").substring(0, 16)}:${Buffer.from(userKey).toString("base64").substring(0, 8)}`;
 
     try {
       const cached = await redis.get(cacheKey);
