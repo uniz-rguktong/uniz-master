@@ -369,11 +369,11 @@ export default function Signin({ type }: SigninProps) {
     <div className="min-h-screen bg-white relative">
       <Button
         variant="ghost"
-        className="absolute top-8 left-8 p-2 text-white hover:text-white/80 transition-all z-50 flex items-center gap-2 font-bold"
+        className="absolute top-6 left-4 md:top-8 md:left-8 p-2 text-slate-500 hover:text-slate-900 transition-all z-50 flex items-center gap-1.5 font-bold text-sm"
         onClick={() => navigate("/")}
       >
         <ChevronLeft className="w-5 h-5" />
-        Back to Home
+        <span className="hidden sm:inline">Back to Home</span>
       </Button>
 
       <LoginScreen
