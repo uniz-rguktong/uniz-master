@@ -221,14 +221,30 @@ deploy_logic() {
         k3s ctr images rm "$img" || true
       fi
     done
-    echo "[OK] Redeployed $REBUILT_COUNT services."
-    echo "[State] Updating deployment SHA: $NEW_HEAD"
-    echo "$NEW_HEAD" > "$STATE_FILE"
-  else
-    # Even if nothing rebuilt, current commit is now "deployed"
     echo "$NEW_HEAD" > "$STATE_FILE"
   fi
+
+  # 3. Handle Docker Compose Services (Outside K8s)
+  echo "[Deploy] Checking Docker Compose services..."
+  LANDING_BACKEND_DIR="apps/uniz-landing-backend"
+  if [ "$FORCE_ALL" == "true" ] || ( [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -q "^$LANDING_BACKEND_DIR/" ); then
+    echo "[Build] Change detected in $LANDING_BACKEND_DIR. Redeploying..."
+    cd "/root/uniz-master/$LANDING_BACKEND_DIR"
+    
+    # Sync .env from uniz-secrets.env
+    if [ -f "/root/uniz-secrets.env" ]; then
+      cp /root/uniz-secrets.env .env
+      # Map shared analytics secrets back to local names if needed
+      # (Though the code now looks for DB_USER, DB_PASS etc which are in secrets.env)
+    fi
+
+    docker compose -f docker-compose.yml.vps down || true
+    docker compose -f docker-compose.yml.vps up -d --build
+    echo "[OK] $LANDING_BACKEND_DIR redeployed."
+    cd /root/uniz-master
+  fi
 }
+
 
 # Execution
 if [ -f "/root/uniz-secrets.env" ]; then
