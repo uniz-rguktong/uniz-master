@@ -37,7 +37,7 @@ spec:
               cpu: "800m"
               memory: "1024Mi"
             requests:
-              cpu: "200m"
+              cpu: "500m"
               memory: "256Mi"
           livenessProbe:
             httpGet:
@@ -79,8 +79,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-auth-service
-  minReplicas: 3
-  maxReplicas: 5
+  minReplicas: 2
+  maxReplicas: 3
   metrics:
     - type: Resource
       resource:
