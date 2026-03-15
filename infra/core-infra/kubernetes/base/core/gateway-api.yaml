@@ -46,6 +46,10 @@ spec:
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 5
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 15"]
 ---
 apiVersion: v1
 kind: Service
@@ -68,7 +72,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-gateway-api
-  minReplicas: 10
+  minReplicas: 4
   maxReplicas: 40
   metrics:
     - type: Resource
@@ -86,3 +90,7 @@ spec:
           periodSeconds: 15
     scaleDown:
       stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 10
+          periodSeconds: 60
