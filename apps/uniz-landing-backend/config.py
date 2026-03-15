@@ -11,6 +11,13 @@ class Settings(BaseSettings):
 
     DUMMY_TOKEN: str
 
+    # ISOLATED CONFIG FOR ANALYTICS
+    DB_USER: str
+    DB_PASS: str
+    DB_HOST: str 
+    DB_PORT: str
+    DB_NAME: str
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
