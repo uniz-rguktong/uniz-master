@@ -14,6 +14,7 @@ spec:
       labels:
         app: uniz-gateway
     spec:
+      priorityClassName: uniz-high-priority
       containers:
         - name: gateway-nginx
           image: uniz-gateway:local
@@ -26,7 +27,7 @@ spec:
               memory: "1024Mi"
             requests:
               cpu: "100m"
-              memory: "256Mi"
+              memory: "512Mi"
           volumeMounts:
             - name: nginx-conf
               mountPath: /etc/nginx/nginx.conf
@@ -60,7 +61,7 @@ spec:
     kind: Deployment
     name: uniz-gateway
   minReplicas: 3
-  maxReplicas: 15
+  maxReplicas: 5
   metrics:
     - type: Resource
       resource:

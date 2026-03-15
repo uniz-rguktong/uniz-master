@@ -14,6 +14,7 @@ spec:
       labels:
         app: uniz-academics-service
     spec:
+      priorityClassName: uniz-high-priority
       containers:
         - name: academics-service
           image: uniz-academics-service:local
@@ -36,8 +37,8 @@ spec:
               cpu: "1000m"
               memory: "1024Mi"
             requests:
-              cpu: "50m"
-              memory: "128Mi"
+              cpu: "200m"
+              memory: "512Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -60,15 +61,15 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-academics-service
-  minReplicas: 3
-  maxReplicas: 25
+  minReplicas: 4
+  maxReplicas: 12
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 45
+          averageUtilization: 40
     - type: Resource
       resource:
         name: memory
