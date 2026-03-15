@@ -25,8 +25,12 @@ spec:
               cpu: "500m"
               memory: "256Mi"
             requests:
-              cpu: "200m"
+              cpu: "100m"
               memory: "128Mi"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 15"]
 ---
 apiVersion: v1
 kind: Service
@@ -49,12 +53,29 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-portal
-  minReplicas: 10
-  maxReplicas: 30
+  minReplicas: 4
+  maxReplicas: 40
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 70
+          averageUtilization: 50
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 15
+        - type: Pods
+          value: 4
+          periodSeconds: 15
+      selectPolicy: Max
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 10
+          periodSeconds: 60
