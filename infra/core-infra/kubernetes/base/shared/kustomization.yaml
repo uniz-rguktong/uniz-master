@@ -10,3 +10,4 @@ resources:
   - postgres.yaml
   - db-ui.yaml
   - secrets.yaml
+  - landing-backend.yaml
