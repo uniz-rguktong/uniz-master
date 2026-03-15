@@ -28,12 +28,15 @@ export default function () {
     // Pick student sequentially per VU to avoid colliding too much if needed, 
     // or just use VU index to pick from the 813 pool.
     const studentId = students[__VU % students.length];
-    const password = `${studentId}@rguktong`; // StudentID@rguktong
+    let password = `${studentId}@rguktong`; 
+    if (studentId === "O210329") {
+        password = "12345678";
+    }
 
     const headers = { 'Content-Type': 'application/json' };
 
     // --- 1. SIGN IN ---
-    let loginRes = http.post(`${BASE_URL}/auth/login`, JSON.stringify({
+    let loginRes = http.post(`${BASE_URL}/auth/login/student`, JSON.stringify({
         username: studentId,
         password: password,
         captchaToken: CAPTCHA_BYPASS
