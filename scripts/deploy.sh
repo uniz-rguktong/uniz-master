@@ -132,6 +132,14 @@ deploy_logic() {
     fi
     envsubst < infra/core-infra/kubernetes/base/shared/redis.yaml.template > infra/core-infra/kubernetes/base/shared/redis.yaml
   fi
+
+  if [ -f "infra/core-infra/kubernetes/base/shared/landing-backend.yaml.template" ]; then
+    echo "[Infra] Generating landing-backend service from template..."
+    if [ -z "$VPS_IP" ]; then
+      export VPS_IP=$(hostname -I | awk '{print $1}')
+    fi
+    envsubst < infra/core-infra/kubernetes/base/shared/landing-backend.yaml.template > infra/core-infra/kubernetes/base/shared/landing-backend.yaml
+  fi
   
   export NEXT_PUBLIC_ASSETS_URL="https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
 
