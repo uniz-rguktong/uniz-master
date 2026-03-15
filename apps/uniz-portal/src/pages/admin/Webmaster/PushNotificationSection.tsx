@@ -6,13 +6,17 @@ import {
   Search,
   Loader2,
   X,
-  Image as ImageIcon,
-  Target,
-  Zap,
 } from "lucide-react";
 import { PUSH_SUBSCRIBERS, PUSH_SEND } from "../../../api/endpoints";
 import { apiClient } from "../../../api/apiClient";
 import { toast } from "@/utils/toast-ref";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
 
 export default function PushNotificationSection() {
   const [subscribers, setSubscribers] = useState<any[]>([]);
@@ -106,7 +110,6 @@ export default function PushNotificationSection() {
             onClick={() => setShowSendModal(true)}
             className="h-11 px-6 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-navy-800 active:scale-95 transition-all flex items-center justify-center gap-2.5"
           >
-            <Zap size={16} className="text-amber-300" />
             Send Broadcast
           </button>
         </div>
@@ -255,51 +258,52 @@ export default function PushNotificationSection() {
         )}
       </div>
 
-      {/* Broadcast Modal */}
-      {showSendModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
-          <div
-            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
-            onClick={() => setShowSendModal(false)}
-          />
-          <div className="bg-white w-full max-w-xl rounded-xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-            <div className="bg-navy-900 p-8 text-white relative flex items-center gap-5">
-              <div className="p-3 bg-white/20 rounded-xl">
-                <Send size={26} />
-              </div>
-              <div>
-                <h3 className="text-2xl font-semibold tracking-[-0.02em]">
-                  Push Broadcast
-                </h3>
-                <p className="text-white/70 text-[10px] font-semibold uppercase tracking-[0.2em] mt-1.5">
-                  Instant Pulse Delivery
-                </p>
-              </div>
-              <button
-                onClick={() => setShowSendModal(false)}
-                className="absolute top-8 right-8 text-white/60 hover:text-white transition-colors"
-              >
-                <X size={26} />
-              </button>
-            </div>
+      <AlertDialog
+        open={showSendModal}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowSendModal(false);
+            setBroadcast({ target: "all", title: "", body: "", image: "" });
+          }
+        }}
+      >
+        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-slate-100 rounded-2xl shadow-2xl">
+          <div className="relative">
+            {/* Close Button */}
+            <button
+              onClick={() => {
+                setShowSendModal(false);
+                setBroadcast({ target: "all", title: "", body: "", image: "" });
+              }}
+              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
+            >
+              <X size={20} />
+            </button>
 
-            <form onSubmit={handleSendBroadcast} className="p-10 space-y-6">
-              <div className="space-y-4">
+            <AlertDialogHeader className="p-8 pb-4 flex flex-col items-center text-center gap-2">
+              <AlertDialogTitle className="text-2xl font-black text-slate-900 tracking-tight uppercase italic">
+                Push Broadcast
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-[14px] font-medium text-slate-500 mt-1 leading-relaxed">
+                Send an instant pulse alert to campus devices.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <form onSubmit={handleSendBroadcast} className="px-8 pb-8 space-y-6">
+              <div className="space-y-5">
                 {/* Target */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <Target size={14} /> Target Audience
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    Target Audience
                   </label>
                   <select
                     value={broadcast.target}
                     onChange={(e) =>
                       setBroadcast({ ...broadcast, target: e.target.value })
                     }
-                    className="w-full bg-slate-50 border border-slate-100 px-5 py-3.5 rounded-xl font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all cursor-pointer"
+                    className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
                   >
-                    <option value="all">
-                      All (Students + Faculty + Deans)
-                    </option>
+                    <option value="all">All (Students + Faculty)</option>
                     <option value="students">All Students</option>
                     <option value="year">By Academic Year (E1/E2/E3/E4)</option>
                     <option value="batch">By Batch Prefix (e.g. O21)</option>
@@ -313,7 +317,7 @@ export default function PushNotificationSection() {
                 {broadcast.target === "user" && (
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                      Username
+                      User ID / Username
                     </label>
                     <input
                       required
@@ -326,7 +330,7 @@ export default function PushNotificationSection() {
                         } as any)
                       }
                       placeholder="e.g. O210193"
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-slate-900"
+                      className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
                     />
                   </div>
                 )}
@@ -345,8 +349,8 @@ export default function PushNotificationSection() {
                           batch: e.target.value.toLowerCase(),
                         } as any)
                       }
-                      placeholder="e.g. o21  (2021 batch)"
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-slate-900"
+                      placeholder="e.g. o21"
+                      className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
                     />
                   </div>
                 )}
@@ -363,7 +367,7 @@ export default function PushNotificationSection() {
                           year: e.target.value,
                         } as any)
                       }
-                      className="w-full bg-slate-50 border border-slate-100 px-5 py-3.5 rounded-xl font-semibold text-slate-900 outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all cursor-pointer"
+                      className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
                     >
                       {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
                         <option key={y} value={y}>
@@ -377,7 +381,7 @@ export default function PushNotificationSection() {
                 {/* Title */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                    Title
+                    Alert Title
                   </label>
                   <input
                     required
@@ -387,14 +391,14 @@ export default function PushNotificationSection() {
                       setBroadcast({ ...broadcast, title: e.target.value })
                     }
                     placeholder="e.g. Campus Holiday Tomorrow"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-slate-900"
+                    className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
                   />
                 </div>
 
                 {/* Body */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                    Message Body
+                    Payload Message
                   </label>
                   <textarea
                     required
@@ -404,14 +408,14 @@ export default function PushNotificationSection() {
                       setBroadcast({ ...broadcast, body: e.target.value })
                     }
                     placeholder="Enter the alert content..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:border-slate-900 outline-none transition-all font-bold text-slate-900 resize-none"
+                    className="w-full bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl px-6 py-4 font-bold text-slate-900 outline-none transition-all resize-none placeholder:text-slate-300"
                   />
                 </div>
 
                 {/* Image URL */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <ImageIcon size={12} /> Banner Image URL (Optional)
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    Banner Asset URL (Optional)
                   </label>
                   <input
                     type="url"
@@ -419,28 +423,41 @@ export default function PushNotificationSection() {
                     onChange={(e) =>
                       setBroadcast({ ...broadcast, image: e.target.value })
                     }
-                    placeholder="https://images.unsplash.com/..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:border-slate-900 outline-none transition-all font-bold text-slate-900"
+                    placeholder="https://..."
+                    className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
                   />
                 </div>
               </div>
 
-              <button
-                disabled={sending}
-                type="submit"
-                className="w-full uniz-primary-btn h-[60px]"
-              >
-                {sending ? (
-                  <Loader2 className="animate-spin w-5 h-5" />
-                ) : (
-                  <Send size={18} />
-                )}
-                Send Instant Alert
-              </button>
+              {/* Actions */}
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSendModal(false);
+                    setBroadcast({ target: "all", title: "", body: "", image: "" });
+                  }}
+                  className="flex-1 py-3.5 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 font-black uppercase tracking-widest text-[10px] transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="flex-[2] py-3.5 rounded-xl bg-navy-900 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-lg shadow-navy-100 hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {sending ? (
+                    <Loader2 className="animate-spin w-4 h-4" />
+                  ) : (
+                    <Send size={16} />
+                  )}
+                  {sending ? "DELIVERING..." : "DELIVER PULSE"}
+                </button>
+              </div>
             </form>
           </div>
-        </div>
-      )}
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
