@@ -1206,7 +1206,7 @@ export default function FacultyManagement({
 
       <AlertDialog
         open={showModal}
-        onOpenChange={(open) => {
+        onOpenChange={(open: boolean) => {
           if (!open) {
             setShowModal(false);
           }
