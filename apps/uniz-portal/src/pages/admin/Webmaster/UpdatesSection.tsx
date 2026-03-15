@@ -3,19 +3,22 @@ import { useState, useEffect } from "react";
 import {
   Bell,
   Plus,
-  Loader2,
-  Type,
-  AlignLeft,
-  Link as LinkIcon,
-  CheckCircle2,
   X,
-  ExternalLink,
-  AlertCircle,
   Edit3,
+  CheckCircle2,
+  Loader2,
+  ExternalLink,
   Trash2,
 } from "lucide-react";
 import { UPDATES_BASE, GET_NOTIFICATIONS } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
 
 export default function UpdatesSection() {
   const [updates, setUpdates] = useState<any[]>([]);
@@ -404,60 +407,57 @@ export default function UpdatesSection() {
 
       </div>
 
-      {/* Add Update Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
-          <div
-            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
-            onClick={() => {
-              setShowAddModal(false);
-              setEditingUpdate(null);
-              setNewUpdate({
-                title: "",
-                content: "",
-                link: "",
-                isVisible: true,
-              });
-            }}
-          />
-          <div className="bg-white w-full max-w-xl rounded-xl relative overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-            <div
-              className={`${editingUpdate ? "bg-slate-900" : "bg-navy-900"} p-8 text-white relative flex items-center gap-5 transition-colors duration-500`}
+      <AlertDialog
+        open={showAddModal}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowAddModal(false);
+            setEditingUpdate(null);
+            setNewUpdate({
+              title: "",
+              content: "",
+              link: "",
+              isVisible: true,
+            });
+          }
+        }}
+      >
+        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-slate-100 rounded-2xl shadow-2xl">
+          <div className="relative">
+            {/* Close Button */}
+            <button
+              onClick={() => {
+                setShowAddModal(false);
+                setEditingUpdate(null);
+                setNewUpdate({
+                  title: "",
+                  content: "",
+                  link: "",
+                  isVisible: true,
+                });
+              }}
+              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
             >
-              <div className="p-3.5 bg-white/20 rounded-xl">
-                {editingUpdate ? <Edit3 size={26} /> : <Bell size={26} />}
-              </div>
-              <div>
-                <h3 className="text-2xl font-semibold tracking-[-0.02em]">
-                  {editingUpdate ? "Edit Broadcast" : "New Broadcast"}
-                </h3>
-                <p className="text-white/70 text-[10px] font-semibold uppercase tracking-[0.2em] mt-1.5">
-                  Publish News to Student Dashboard
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  setShowAddModal(false);
-                  setEditingUpdate(null);
-                  setNewUpdate({
-                    title: "",
-                    content: "",
-                    link: "",
-                    isVisible: true,
-                  });
-                }}
-                className="absolute top-8 right-8 text-white/60 hover:text-white transition-colors"
-              >
-                <X size={26} />
-              </button>
-            </div>
+              <X size={20} />
+            </button>
 
-            <form onSubmit={handleSaveUpdate} className="p-10 space-y-8">
-              <div className="space-y-6">
+            <AlertDialogHeader className="p-8 pb-4 flex flex-col items-center text-center gap-2">
+              <AlertDialogTitle className="text-2xl font-black text-slate-900 tracking-tight uppercase italic">
+                {editingUpdate ? "Edit Broadcast" : "New Broadcast"}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-[14px] font-medium text-slate-500 mt-1 leading-relaxed">
+                {editingUpdate
+                  ? "Update institutional news for the student dashboard."
+                  : "Publish vital news and resources to all students."}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <form onSubmit={handleSaveUpdate} className="px-8 pb-8 space-y-6">
+              <div className="space-y-5">
                 {/* Title */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <Type size={14} /> Update Title
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    Update Title
                   </label>
                   <input
                     required
@@ -466,15 +466,15 @@ export default function UpdatesSection() {
                     onChange={(e) =>
                       setNewUpdate({ ...newUpdate, title: e.target.value })
                     }
-                    placeholder="e.g. Semester Registration"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900"
+                    placeholder="e.g. Semester Registration is Live!"
+                    className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
                   />
                 </div>
 
                 {/* Content */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <AlignLeft size={14} /> Description Content
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    Broadcast Content
                   </label>
                   <textarea
                     required
@@ -484,14 +484,14 @@ export default function UpdatesSection() {
                       setNewUpdate({ ...newUpdate, content: e.target.value })
                     }
                     placeholder="Detailed information about the update..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 outline-none transition-all font-semibold text-slate-900 resize-none"
+                    className="w-full bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl px-6 py-4 font-bold text-slate-900 outline-none transition-all resize-none placeholder:text-slate-300"
                   />
                 </div>
 
                 {/* Link */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-2">
-                    <LinkIcon size={14} /> Resource Link (Optional)
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    Resource Link (Optional)
                   </label>
                   <input
                     type="url"
@@ -500,15 +500,14 @@ export default function UpdatesSection() {
                       setNewUpdate({ ...newUpdate, link: e.target.value })
                     }
                     placeholder="https://..."
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-semibold text-slate-900"
+                    className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
                   />
                 </div>
 
                 {/* Link Preview Hint */}
                 {newUpdate.link && (
-                  <div className="flex items-center gap-3 p-4 bg-navy-50/50 rounded-xl border border-navy-100">
-                    <AlertCircle className="text-navy-900 shrink-0" size={16} />
-                    <p className="text-[10px] font-bold text-navy-800 leading-tight">
+                  <div className="p-4 bg-navy-50/50 rounded-xl border border-navy-100">
+                    <p className="text-[10px] font-bold text-navy-800 leading-tight text-center">
                       Students will be redirected to this link when they click
                       the broadcast.
                     </p>
@@ -516,25 +515,44 @@ export default function UpdatesSection() {
                 )}
               </div>
 
-              <button
-                disabled={!!actionLoading}
-                type="submit"
-                className={`w-full ${editingUpdate ? "bg-slate-900" : "bg-navy-900"} text-white py-5 rounded-xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:opacity-90 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95 shadow-none`}
-              >
-                {actionLoading === "creating" ||
+              {/* Actions */}
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setEditingUpdate(null);
+                    setNewUpdate({
+                      title: "",
+                      content: "",
+                      link: "",
+                      isVisible: true,
+                    });
+                  }}
+                  className="flex-1 py-3.5 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 font-black uppercase tracking-widest text-[10px] transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!!actionLoading}
+                  className="flex-[2] py-3.5 rounded-xl bg-navy-900 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-lg shadow-navy-100 hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {actionLoading === "creating" ||
                   actionLoading === "updating" ? (
-                  <Loader2 className="animate-spin w-5 h-5" />
-                ) : editingUpdate ? (
-                  <CheckCircle2 size={18} />
-                ) : (
-                  <Plus size={18} />
-                )}
-                {editingUpdate ? "Update Broadcast" : "Broadcast Now"}
-              </button>
+                    <Loader2 className="animate-spin w-4 h-4" />
+                  ) : editingUpdate ? (
+                    <CheckCircle2 size={16} />
+                  ) : (
+                    <Plus size={16} />
+                  )}
+                  {editingUpdate ? "UPDATE BROADCAST" : "PUBLISH NOW"}
+                </button>
+              </div>
             </form>
           </div>
-        </div>
-      )}
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
