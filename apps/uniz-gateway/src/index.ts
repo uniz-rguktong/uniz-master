@@ -201,37 +201,54 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
   const path = req.url.split("/").slice(4).join("/");
   req.url = `/${path}`;
 
-  // Use a shorter, consistent cache key
-  const userKey = req.headers["uid"] || "guest";
-  const cacheKey = `p3:${service}:${Buffer.from(req.url).toString("base64").substring(0, 16)}:${userKey}`;
+  // Bypass Warp Engine for binary files or download routes to prevent corruption
+  const isBinaryRequest =
+    req.url.includes("/download/") ||
+    req.url.endsWith(".pdf") ||
+    req.url.endsWith(".xlsx") ||
+    req.url.endsWith(".zip");
 
-  if (req.method === "GET" && req.headers["cache-control"] !== "no-cache") {
+  if (
+    req.method === "GET" &&
+    req.headers["cache-control"] !== "no-cache" &&
+    !isBinaryRequest
+  ) {
+    // Generate unique key based on URL and User Context (Role/UID)
+    const userKey = req.headers["uid"] || "guest";
+    const cacheKey = `p3:${service}:${Buffer.from(req.url).toString("base64").substring(0, 16)}:${userKey}`;
+
     try {
       const cached = await redis.get(cacheKey);
       if (cached) {
         const { data, headers, status } = JSON.parse(cached);
         res.setHeader("X-Cache", "HIT");
         res.setHeader("X-Response-Time", "sub-1ms");
-        return res.status(status).send(data);
+
+        // Restore all headers from cache
+        Object.entries(headers).forEach(([k, v]) => res.setHeader(k, v as string));
+        return res.status(status).send(Buffer.from(data, "base64"));
       }
 
       const response = await internalClient.get(
         `${target.replace(/\/$/, "")}/${path}`,
         {
           headers: { ...req.headers, host: new URL(target).host },
-          responseType: "text",
+          responseType: "arraybuffer", // Use arraybuffer to handle mixed content
           validateStatus: () => true,
         },
       );
 
-      if (response.status === 200) {
-        // Cache for 1 second instead of 60
+      const contentType = response.headers["content-type"] || "";
+      const isJson = contentType.includes("application/json");
+
+      if (response.status === 200 && isJson) {
+        // Only cache JSON responses to prevent binary blowup in Redis
         redis
           .setex(
             cacheKey,
-            1,
+            2, // 2 second cache for blazing speed
             JSON.stringify({
-              data: response.data,
+              data: Buffer.from(response.data).toString("base64"),
               headers: response.headers,
               status: response.status,
             }),
@@ -239,9 +256,14 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
           .catch(() => { });
       }
 
+      // Restore headers from upstream
+      Object.entries(response.headers).forEach(([k, v]) =>
+        res.setHeader(k, v as string),
+      );
       return res.status(response.status).send(response.data);
     } catch (e: any) {
       console.error("[Warp-Engine-Error]", e.message);
+      // Fallback to streaming proxy on any engine failure
     }
   }
 
