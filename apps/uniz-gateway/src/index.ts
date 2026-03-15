@@ -141,9 +141,9 @@ const serviceMap: Record<string, string> = {
   academics:
     process.env.ACADEMICS_SERVICE_URL ||
     "http://uniz-academics-service.default.svc.cluster.local:3004",
-  // requests:
-  //   process.env.OUTPASS_SERVICE_URL ||
-  //   "http://uniz-outpass-service.default.svc.cluster.local:3003",
+  requests:
+    process.env.OUTPASS_SERVICE_URL ||
+    "http://uniz-outpass-service.default.svc.cluster.local:3003",
   files:
     process.env.FILES_SERVICE_URL ||
     "http://uniz-files-service.default.svc.cluster.local:3005",
@@ -153,12 +153,12 @@ const serviceMap: Record<string, string> = {
   notifications:
     process.env.NOTIFICATION_SERVICE_URL ||
     "http://uniz-notification-service.default.svc.cluster.local:3007",
-  cron:
-    process.env.CRON_SERVICE_URL ||
-    "http://uniz-cron-service.default.svc.cluster.local:3008",
-  // grievance:
-  //   process.env.OUTPASS_SERVICE_URL ||
-  //   "http://uniz-outpass-service.default.svc.cluster.local:3003",
+  // cron:
+  //   process.env.CRON_SERVICE_URL ||
+  //   "http://uniz-cron-service.default.svc.cluster.local:3008",
+  grievance:
+    process.env.OUTPASS_SERVICE_URL ||
+    "http://uniz-outpass-service.default.svc.cluster.local:3003",
 };
 
 // 4. Standard Health Endpoints with Precision Timing & 2s Cache
