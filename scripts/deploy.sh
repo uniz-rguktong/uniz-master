@@ -25,8 +25,9 @@ deploy_logic() {
   # Force rebuild all if requested
   FORCE_ALL=false
   COMMIT_MSG=$(git log -1 --pretty=%B)
-  if [[ "$COMMIT_MSG" == *"[rebuild all]"* ]] || [[ "$COMMIT_MSG" == *"[force build]"* ]]; then
-    echo "[Build] Force rebuild all requested via commit message."
+  # Check commit message OR script arguments for force flags
+  if [[ "$COMMIT_MSG" == *"[rebuild all]"* ]] || [[ "$COMMIT_MSG" == *"[force build]"* ]] || [[ "$*" == *"[rebuild all]"* ]] || [[ "$*" == *"[force build]"* ]]; then
+    echo "[Build] Force rebuild all requested."
     FORCE_ALL=true
   fi
 
