@@ -113,6 +113,7 @@ deploy_logic() {
       SHOULD_BUILD=true
     fi
 
+    TAG=""
     if [ "$SHOULD_BUILD" == "true" ]; then
       if [ -z "${BUILT_IMAGES[$IMG]}" ]; then
         BUILD_CONTEXT="apps/$DIR"
@@ -146,12 +147,22 @@ deploy_logic() {
       else
         TAG=${BUILT_IMAGES[$IMG]}
       fi
+    else
+      # Not rebuilding -> Find latest local tag to ensure we don't use ":local" placeholder
+      TAG=$(k3s ctr -n k8s.io images ls -q | grep "docker.io/library/$IMG:local-" | sort -V | tail -n 1 | cut -d: -f2)
+      if [ -z "$TAG" ]; then
+          # Fallback to :local if absolutely nothing found (should not happen on VPS after first build)
+          TAG="local"
+      fi
+    fi
 
+    if [ -n "$TAG" ]; then
       echo "[Deploy] Updating $DEP -> $IMG:$TAG"
       if [[ "$DEP" == *"job"* ]]; then
         kubectl set image "cronjob/$DEP" "$CON=docker.io/library/$IMG:$TAG"
       else
         kubectl set image "deployment/$DEP" "$CON=docker.io/library/$IMG:$TAG"
+        # Always rollout restart to ensure the new pods actually start if they were stuck
         kubectl rollout restart "deployment/$DEP"
       fi
     fi
