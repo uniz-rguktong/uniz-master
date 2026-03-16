@@ -231,6 +231,7 @@ jobs:
 
             # Security: Verify repo integrity
             git fetch origin $GITHUB_REF_NAME
+            git checkout -B $GITHUB_REF_NAME origin/$GITHUB_REF_NAME
             git reset --hard origin/$GITHUB_REF_NAME
 
             # Extract commit message for build-detection
