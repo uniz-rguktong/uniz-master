@@ -94,10 +94,10 @@ deploy_logic() {
 
   # Apply Infrastructure
   echo "[Infra] Applying shared components..."
-  kubectl apply -k infra/core-infra/kubernetes/base/shared/ || true
+  kubectl apply -k infra/core-infra/kubernetes/base/shared/ --load-restrictor LoadRestrictionsNone || true
   
   echo "[Infra] Applying branch components ($K_BASE)..."
-  kubectl apply -k "$K_BASE" || true
+  kubectl apply -k "$K_BASE" --load-restrictor LoadRestrictionsNone || true
 
   # Build & Deploy Loop
   REBUILT_COUNT=0
