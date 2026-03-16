@@ -13,12 +13,13 @@ if [ ! -f "/root/uniz-secrets.env" ] && [ "$DEPLOY_CONTEXT" != "GITHUB_ACTIONS" 
   git push origin main
 fi
 
-# 2. Deploy Logic
+# 16. Deploy Logic
 deploy_logic() {
   echo "[CI/CD] Deployment Verified at $(date)"
   cd /root/uniz-master
   
-  echo "[Git] Latest Commit: $(git log -1 --format='%h - %s')"
+  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  echo "[Git] Branch: $CURRENT_BRANCH | Commit: $(git log -1 --format='%h - %s')"
   NEW_HEAD=$(git rev-parse HEAD)
 
   # Force rebuild all if requested
@@ -29,20 +30,16 @@ deploy_logic() {
     FORCE_ALL=true
   fi
 
-  # Persistently track last successful deployment SHA on VPS
+  # State tracking
   STATE_FILE="/root/.uniz_last_deploy_sha"
   LAST_SHA=$( [ -f "$STATE_FILE" ] && cat "$STATE_FILE" || echo "" )
-  
-  if [ -z "$LAST_SHA" ]; then
-    echo "[Build] First deploy or empty state. Using HEAD~1 as base."
-    LAST_SHA="HEAD~1"
-  fi
+  [ -z "$LAST_SHA" ] && LAST_SHA="HEAD~1"
 
-  echo "[Git] Verifying cumulative changes from $LAST_SHA to $NEW_HEAD"
-  CHANGED_FILES=$(git diff --name-only "$LAST_SHA" "$NEW_HEAD" 2>/dev/null || git show --name-only --format="" "$NEW_HEAD" 2>/dev/null || echo "")
+  echo "[Git] Diffing from $LAST_SHA to $NEW_HEAD"
+  CHANGED_FILES=$(git diff --name-only "$LAST_SHA" "$NEW_HEAD" 2>/dev/null || echo "")
   
-  # Service mapping: "folder_name:image_name:deployment_name:container_name"
-  ALL_SERVICES=(
+  # Service Definitions
+  UNIZ_SERVICES=(
     "uniz-academics:uniz-academics-service:uniz-academics-service:academics-service"
     "uniz-auth:uniz-auth-service:uniz-auth-service:auth-service"
     "uniz-cron:uniz-cron-service:uniz-maintenance-job:cron-worker"
@@ -59,102 +56,49 @@ deploy_logic() {
     "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
   )
 
-  # Prevent kubectl apply from overwriting current images with :local
-  echo "[Infra] Preserving current image tags..."
-  # Determine correct kustomization file based on branch
-  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  ORNATE_SERVICES=(
+    "ornate-core:ornate-core:ornate-core:ornate-core"
+    "ornate:ornate:ornate:ornate"
+  )
+
+  # Branch Filtering
   if [ "$CURRENT_BRANCH" == "ornate" ]; then
-    K_FILE="infra/core-infra/kubernetes/base/ornate/kustomization.yaml"
+    ALL_SERVICES=("${ORNATE_SERVICES[@]}")
+    K_BASE="infra/core-infra/kubernetes/base/ornate"
+    # Fallback if ornate/ folder doesn't exist in base
+    [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
   else
-    K_FILE="infra/core-infra/kubernetes/base/core/kustomization.yaml"
-  fi
-  
-  # Use a temporary file to rebuild kustomization.yaml to be safe
-  sed -n '/^images:/q;p' "$K_FILE" > "$K_FILE.tmp"
-  
-  echo "images:" >> "$K_FILE.tmp"
-  IMAGE_CONFIGURED=false
-  for s in "${ALL_SERVICES[@]}"; do
-    IFS=':' read -r DIR IMG DEP CON <<< "$s"
-    if [[ "$DEP" == *"job"* ]]; then
-      CURRENT_IMG=$(kubectl get cronjob "$DEP" -o jsonpath="{.spec.jobTemplate.spec.template.spec.containers[?(@.name=='$CON')].image}" 2>/dev/null)
-    else
-      CURRENT_IMG=$(kubectl get deployment "$DEP" -o jsonpath="{.spec.template.spec.containers[?(@.name=='$CON')].image}" 2>/dev/null)
-    fi
-    if [ -n "$CURRENT_IMG" ] && [[ "$CURRENT_IMG" != *":local" ]]; then
-      IMG_REPO="${CURRENT_IMG%:*}"
-      IMG_TAG="${CURRENT_IMG##*:}"
-      echo "  - name: ${IMG}:local" >> "$K_FILE.tmp"
-      echo "    newName: $IMG_REPO" >> "$K_FILE.tmp"
-      echo "    newTag: $IMG_TAG" >> "$K_FILE.tmp"
-      IMAGE_CONFIGURED=true
-    fi
-  done
-  
-  if [ "$IMAGE_CONFIGURED" = true ]; then
-    mv "$K_FILE.tmp" "$K_FILE"
-  else
-    # If no images found (maybe first deployment), just keep the clean version without images block
-    sed -n '/^images:/q;p' "$K_FILE.tmp" > "$K_FILE"
-    rm "$K_FILE.tmp"
+    ALL_SERVICES=("${UNIZ_SERVICES[@]}")
+    K_BASE="infra/core-infra/kubernetes/base/core"
+    [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
   fi
 
-  echo "[K8s] Applying Kubernetes configurations..."
+  # LOAD SECRETS (Sanitized)
+  if [ -f "/root/uniz-secrets.env" ]; then
+    echo "[Vault] Loading sanitized secrets..."
+    while IFS='=' read -r key value || [ -n "$key" ]; do
+      [[ "$key" =~ ^#.*$ ]] && continue
+      [[ -z "$key" ]] && continue
+      # Strip surrounding quotes and whitespace
+      clean_val=$(echo "$value" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'\'']//' -e 's/["'\'']$//')
+      export "$key"="$clean_val"
+    done < /root/uniz-secrets.env
+  fi
+
+  # Generate Infrastructure from templates
   if [ -f "infra/core-infra/kubernetes/base/shared/secrets.yaml.template" ]; then
-    echo "[Vault] Generating secrets from template..."
-    if [ -f "/root/uniz-secrets.env" ]; then
-      echo "[Vault] Loading secrets from /root/uniz-secrets.env..."
-      # Use a subshell-safe way to export all variables from the env file
-      set -a
-      source /root/uniz-secrets.env
-      set +a
-    fi
+    echo "[Infra] Generating secrets.yaml..."
     envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > infra/core-infra/kubernetes/base/shared/secrets.yaml
   fi
+
+  # Apply Infrastructure
+  echo "[Infra] Applying shared components..."
+  kubectl apply -k infra/core-infra/kubernetes/base/shared/ || true
   
-  if [ -f "infra/core-infra/kubernetes/base/shared/postgres.yaml.template" ]; then
-    echo "[Infra] Generating postgres service from template..."
-    # Auto-detect VPS_IP if not set
-    if [ -z "$VPS_IP" ]; then
-      export VPS_IP=$(hostname -I | awk '{print $1}')
-    fi
-    echo "[Infra] Using VPS_IP: $VPS_IP"
-    envsubst < infra/core-infra/kubernetes/base/shared/postgres.yaml.template > infra/core-infra/kubernetes/base/shared/postgres.yaml
-  fi
+  echo "[Infra] Applying branch components ($K_BASE)..."
+  kubectl apply -k "$K_BASE" || true
 
-  if [ -f "infra/core-infra/kubernetes/base/shared/redis.yaml.template" ]; then
-    echo "[Infra] Generating redis service from template..."
-    # VPS_IP should already be exported from the block above
-    if [ -z "$VPS_IP" ]; then
-      export VPS_IP=$(hostname -I | awk '{print $1}')
-    fi
-    envsubst < infra/core-infra/kubernetes/base/shared/redis.yaml.template > infra/core-infra/kubernetes/base/shared/redis.yaml
-  fi
-
-  if [ -f "infra/core-infra/kubernetes/base/shared/landing-backend.yaml.template" ]; then
-    echo "[Infra] Generating landing-backend service from template..."
-    if [ -z "$VPS_IP" ]; then
-      export VPS_IP=$(hostname -I | awk '{print $1}')
-    fi
-    envsubst < infra/core-infra/kubernetes/base/shared/landing-backend.yaml.template > infra/core-infra/kubernetes/base/shared/landing-backend.yaml
-  fi
-  
-  export NEXT_PUBLIC_ASSETS_URL="https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
-
-  echo "[Deploy] Branch detected: $CURRENT_BRANCH"
-  if [ "$CURRENT_BRANCH" == "main" ]; then
-    echo "[Deploy] Target: Shared + Core"
-    kubectl apply -k infra/core-infra/kubernetes/base/shared/
-    kubectl apply -k infra/core-infra/kubernetes/base/core/
-  elif [ "$CURRENT_BRANCH" == "ornate" ]; then
-    echo "[Deploy] Target: Shared + Ornate"
-    kubectl apply -k infra/core-infra/kubernetes/base/shared/
-    kubectl apply -k infra/core-infra/kubernetes/base/ornate/
-  else
-    echo "[Deploy] Target: Full (Legacy Mode)"
-    kubectl apply -k infra/core-infra/kubernetes/base/
-  fi
-
+  # Build & Deploy Loop
   REBUILT_COUNT=0
   declare -A BUILT_IMAGES
 
@@ -165,7 +109,6 @@ deploy_logic() {
     if [ "$FORCE_ALL" == "true" ]; then
        SHOULD_BUILD=true
     elif [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
-      echo "[Build] Change detected in $DIR"
       SHOULD_BUILD=true
     fi
 
@@ -173,94 +116,79 @@ deploy_logic() {
       if [ -z "${BUILT_IMAGES[$IMG]}" ]; then
         BUILD_CONTEXT="apps/$DIR"
         [[ "$DIR" == *"infra"* ]] && BUILD_CONTEXT="$DIR"
+        
+        # Verify context exists
+        if [ ! -d "$BUILD_CONTEXT" ]; then
+          echo "[Skip] Directory $BUILD_CONTEXT not found in branch $CURRENT_BRANCH"
+          continue
+        fi
 
         TAG="local-$(date +%s)"
-        echo "[Build] Rebuilding $IMG:$TAG in context $BUILD_CONTEXT..."
+        echo "[Build] Rebuilding $IMG:$TAG..."
         
         BUILD_ARGS=""
         if [[ "$DIR" == "uniz-portal" ]]; then
           BUILD_ARGS="--build-arg VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg VITE_API_URL=$VITE_API_URL --build-arg VITE_CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME --build-arg VITE_CLOUDINARY_UPLOAD_PRESET=$CLOUDINARY_UPLOAD_PRESET --build-arg VITE_ANALYTICS_URL=$VITE_ANALYTICS_URL --build-arg VITE_ANALYTICS_KEY=$VITE_ANALYTICS_API_KEY"
         elif [[ "$DIR" == "ornate" ]]; then
-          BUILD_ARGS="--build-arg NEXT_PUBLIC_ASSETS_URL=$NEXT_PUBLIC_ASSETS_URL --build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY"
+          BUILD_ARGS="--build-arg NEXT_PUBLIC_ASSETS_URL=https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets --build-arg DATABASE_URL=$ORNATE_DATABASE_URL --build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY"
         fi
 
-        if docker build --no-cache --platform linux/amd64 $BUILD_ARGS -t $IMG:$TAG $BUILD_CONTEXT; then
-          echo "[Docker] Importing $IMG:$TAG to K3s..."
+        if docker build --platform linux/amd64 $BUILD_ARGS -t $IMG:$TAG $BUILD_CONTEXT; then
+          echo "[Docker] Importing $IMG:$TAG..."
           docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
           BUILT_IMAGES[$IMG]=$TAG
           ((REBUILT_COUNT++))
         else
-          echo "[Error] Build failed for $IMG. Aborting deployment."
+          echo "[Error] Build failed for $IMG."
           exit 1
         fi
       else
         TAG=${BUILT_IMAGES[$IMG]}
-        echo "[Build] Using built image for $IMG with tag $TAG"
       fi
 
-      echo "[Deploy] Updating $DEP to use $IMG:$TAG..."
+      echo "[Deploy] Updating $DEP -> $IMG:$TAG"
       if [[ "$DEP" == *"job"* ]]; then
         kubectl set image "cronjob/$DEP" "$CON=docker.io/library/$IMG:$TAG"
       else
-        if kubectl set image "deployment/$DEP" "$CON=docker.io/library/$IMG:$TAG"; then
-          kubectl rollout restart "deployment/$DEP"
-        else
-          echo "[Warning] Deployment update failed for $DEP"
-        fi
+        kubectl set image "deployment/$DEP" "$CON=docker.io/library/$IMG:$TAG"
+        kubectl rollout restart "deployment/$DEP"
       fi
     fi
   done
 
-  if [ $REBUILT_COUNT -gt 0 ] || [ "$FORCE_ALL" == "true" ]; then
-    echo "[Cleanup] Docker & K3s Image Pruning..."
-    docker system prune -f
-    docker image prune -a -f --filter "until=24h"
-    USED_IMAGES=$(kubectl get pods,deployments,cronjobs -A -o jsonpath='{..image}' | tr ' ' '\n' | sort -u)
-    k3s ctr images ls -q | grep "local-" | while read -r img; do
-      if ! echo "$USED_IMAGES" | grep -q "$img"; then
-        k3s ctr images rm "$img" || true
-      fi
-    done
-    echo "$NEW_HEAD" > "$STATE_FILE"
-  fi
-
-  # 3. Handle Docker Compose Services (Outside K8s)
-  echo "[Deploy] Checking Docker Compose services..."
-  LANDING_BACKEND_DIR="apps/uniz-landing-backend"
-  if [ "$FORCE_ALL" == "true" ] || ( [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -q "^$LANDING_BACKEND_DIR/" ); then
-    echo "[Build] Change detected in $LANDING_BACKEND_DIR. Redeploying..."
-    cd "/root/uniz-master/$LANDING_BACKEND_DIR"
-    
-    # Sync .env from uniz-secrets.env
-    if [ -f "/root/uniz-secrets.env" ]; then
-      cp /root/uniz-secrets.env .env
-      # Map shared analytics secrets back to local names if needed
-      # (Though the code now looks for DB_USER, DB_PASS etc which are in secrets.env)
+  # Docker Compose Handling (Main branch only)
+  if [ "$CURRENT_BRANCH" == "main" ]; then
+    LANDING_BACKEND_DIR="apps/uniz-landing-backend"
+    if [ "$FORCE_ALL" == "true" ] || echo "$CHANGED_FILES" | grep -q "^$LANDING_BACKEND_DIR/"; then
+      echo "[Compose] Redeploying $LANDING_BACKEND_DIR..."
+      cd "/root/uniz-master/$LANDING_BACKEND_DIR"
+      [ -f "/root/uniz-secrets.env" ] && cp /root/uniz-secrets.env .env
+      docker compose -f docker-compose.yml.vps up -d --build
+      cd /root/uniz-master
     fi
-
-    docker compose -f docker-compose.yml.vps down || true
-    docker compose -f docker-compose.yml.vps up -d --build
-    echo "[OK] $LANDING_BACKEND_DIR redeployed."
-    cd /root/uniz-master
   fi
+
+  echo "$NEW_HEAD" > "$STATE_FILE"
 }
 
-
-# Execution
+# Execution Entry Point
 if [ -f "/root/uniz-secrets.env" ]; then
-  echo "[Deploy] Running directly on VPS context..."
   deploy_logic
 else
-  echo "[Deploy] Triggering VPS Deployment via SSH..."
-  ssh -o StrictHostKeyChecking=no root@76.13.241.174 << 'EOF'
+  # On Local Machine -> Trigger VPS
+  git add .
+  git commit -m "${1:-"chore: auto-deploy from $CURRENT_BRANCH"}" || true
+  git push origin "$CURRENT_BRANCH"
+
+  echo "[SSH] Dispatching to VPS..."
+  ssh -o StrictHostKeyChecking=no root@76.13.241.174 << EOF
     cd /root/uniz-master
-    git fetch origin main
-    git reset --hard origin/main
-    # Fixed the nested quote issue by using simple arguments
+    git fetch origin $CURRENT_BRANCH
+    git checkout -f $CURRENT_BRANCH
+    git reset --hard origin/$CURRENT_BRANCH
     /bin/bash ./scripts/deploy.sh "remote-trigger"
 EOF
 fi
 
-echo "[Health] Checking API Status..."
-curl -s -o /dev/null -w "%{http_code}" https://api.uniz.rguktong.in/api/v1/system/health || true
-echo -e "\n[Done] Process Complete!"
+echo "[Health] API: \$(curl -s -o /dev/null -w "%{http_code}" https://api.uniz.rguktong.in/api/v1/system/health || echo 'FAIL')"
+echo "[Done] Branch $CURRENT_BRANCH Deployed."
