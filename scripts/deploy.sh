@@ -113,6 +113,7 @@ deploy_logic() {
       SHOULD_BUILD=true
     fi
 
+    TAG=""
     if [ "$SHOULD_BUILD" == "true" ]; then
       if [ -z "${BUILT_IMAGES[$IMG]}" ]; then
         BUILD_CONTEXT="apps/$DIR"
@@ -146,13 +147,24 @@ deploy_logic() {
       else
         TAG=${BUILT_IMAGES[$IMG]}
       fi
+    else
+      # Not rebuilding -> Find latest local tag to avoid ":local" placeholder trap
+      TAG=$(k3s ctr -n k8s.io images ls -q | grep "docker.io/library/$IMG:local-" | sort -V | tail -n 1 | cut -d: -f2)
+      if [ -z "$TAG" ]; then
+          TAG="local"
+      fi
+    fi
 
+    if [ -n "$TAG" ]; then
       echo "[Deploy] Updating $DEP -> $IMG:$TAG"
       if [[ "$DEP" == *"job"* ]]; then
         kubectl set image "cronjob/$DEP" "$CON=docker.io/library/$IMG:$TAG"
       else
         kubectl set image "deployment/$DEP" "$CON=docker.io/library/$IMG:$TAG"
-        kubectl rollout restart "deployment/$DEP"
+        # Aggressive stabilization: Restart only if it's stuck or we built fresh
+        if [ "$SHOULD_BUILD" == "true" ] || kubectl get pod -l "app=$DEP" 2>/dev/null | grep -q "ImagePullBackOff\|ErrImagePull"; then
+           kubectl rollout restart "deployment/$DEP"
+        fi
       fi
     fi
   done
