@@ -83,6 +83,13 @@ deploy_logic() {
       clean_val=$(echo "$value" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'\'']*//' -e 's/["'\'']*$//')
       export "$key"="$clean_val"
     done < /root/uniz-secrets.env
+
+    # Ornate Variable Fallbacks (Ensure they are never empty for envsubst)
+    export ORNATE_NEXTAUTH_URL="${ORNATE_NEXTAUTH_URL:-$NEXTAUTH_URL}"
+    export ORNATE_NEXTAUTH_SECRET="${ORNATE_NEXTAUTH_SECRET:-$NEXTAUTH_SECRET}"
+    export ORNATE_AWS_REGION="${ORNATE_AWS_REGION:-$AWS_REGION}"
+    export ORNATE_AWS_ACCESS_KEY_ID="${ORNATE_AWS_ACCESS_KEY_ID:-$AWS_ACCESS_KEY_ID}"
+    export ORNATE_AWS_SECRET_ACCESS_KEY="${ORNATE_AWS_SECRET_ACCESS_KEY:-$AWS_SECRET_ACCESS_KEY}"
   fi
 
   # Generate Infrastructure from templates
@@ -134,8 +141,12 @@ deploy_logic() {
         BUILD_ARGS=""
         if [[ "$DIR" == "uniz-portal" ]]; then
           BUILD_ARGS="--build-arg VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg VITE_API_URL=$VITE_API_URL --build-arg VITE_CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME --build-arg VITE_CLOUDINARY_UPLOAD_PRESET=$CLOUDINARY_UPLOAD_PRESET --build-arg VITE_ANALYTICS_URL=$VITE_ANALYTICS_URL --build-arg VITE_ANALYTICS_KEY=$VITE_ANALYTICS_API_KEY"
-        elif [[ "$DIR" == "ornate" ]]; then
-          BUILD_ARGS="--build-arg NEXT_PUBLIC_ASSETS_URL=https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets --build-arg DATABASE_URL=$ORNATE_DATABASE_URL --build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg NEXTAUTH_URL=$NEXTAUTH_URL --build-arg REDIS_URL=$ORNATE_REDIS_URL --build-arg R2_ENDPOINT=$R2_ENDPOINT --build-arg R2_ACCESS_KEY_ID=$R2_ACCESS_KEY_ID --build-arg R2_SECRET_ACCESS_KEY=$R2_SECRET_ACCESS_KEY --build-arg R2_PUBLIC_DOMAIN=$R2_PUBLIC_DOMAIN --build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$VAPID_PUBLIC_KEY"
+        elif [[ "$DIR" == "ornate" || "$DIR" == "ornate-core" ]]; then
+          # Ensure NEXTAUTH_URL is valid and not empty
+          EFFECTIVE_AUTH_URL="${ORNATE_NEXTAUTH_URL:-$NEXTAUTH_URL}"
+          [ -z "$EFFECTIVE_AUTH_URL" ] && EFFECTIVE_AUTH_URL="https://ornate.rguktong.in"
+          
+          BUILD_ARGS="--build-arg NEXT_PUBLIC_ASSETS_URL=https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets --build-arg DATABASE_URL=$ORNATE_DATABASE_URL --build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg NEXTAUTH_URL=$EFFECTIVE_AUTH_URL --build-arg REDIS_URL=$ORNATE_REDIS_URL --build-arg R2_ENDPOINT=$R2_ENDPOINT --build-arg R2_ACCESS_KEY_ID=$R2_ACCESS_KEY_ID --build-arg R2_SECRET_ACCESS_KEY=$R2_SECRET_ACCESS_KEY --build-arg R2_PUBLIC_DOMAIN=$R2_PUBLIC_DOMAIN --build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$VAPID_PUBLIC_KEY --build-arg NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY"
         fi
 
         if docker build --platform linux/amd64 $BUILD_ARGS -t $IMG:$TAG $BUILD_CONTEXT; then
