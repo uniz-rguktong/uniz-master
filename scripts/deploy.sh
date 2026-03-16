@@ -188,12 +188,12 @@ deploy_logic() {
       echo "POSTGRES_USER=$LANDING_POSTGRES_USER" >> .env
       echo "POSTGRES_PASSWORD=$LANDING_POSTGRES_PASSWORD" >> .env
       echo "POSTGRES_DB=$LANDING_POSTGRES_DB" >> .env
-      # Include specific DB connection params
-      echo "DB_USER=$DB_USER" >> .env
-      echo "DB_PASS=$DB_PASS" >> .env
-      echo "DB_HOST=$DB_HOST" >> .env
-      echo "DB_PORT=$DB_PORT" >> .env
-      echo "DB_NAME=$DB_NAME" >> .env
+      # Include specific DB connection params with safe defaults
+      echo "DB_USER=${DB_USER:-$POSTGRES_USER}" >> .env
+      echo "DB_PASS=${DB_PASS:-$POSTGRES_PASSWORD}" >> .env
+      echo "DB_HOST=${DB_HOST:-"localhost"}" >> .env
+      echo "DB_PORT=${DB_PORT:-"5432"}" >> .env
+      echo "DB_NAME=${DB_NAME:-$POSTGRES_DB}" >> .env
 
       docker compose -f docker-compose.yml.vps up -d --build
       cd "$BASE_DIR"
