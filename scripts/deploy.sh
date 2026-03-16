@@ -66,12 +66,9 @@ deploy_logic() {
   if [ "$CURRENT_BRANCH" == "ornate" ]; then
     ALL_SERVICES=("${ORNATE_SERVICES[@]}")
     K_BASE="infra/core-infra/kubernetes/base/ornate"
-    # Fallback if ornate/ folder doesn't exist in base
-    [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
   else
     ALL_SERVICES=("${UNIZ_SERVICES[@]}")
     K_BASE="infra/core-infra/kubernetes/base/core"
-    [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
   fi
 
   # LOAD SECRETS (Sanitized)
