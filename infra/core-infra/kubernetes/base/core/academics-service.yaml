@@ -34,11 +34,11 @@ spec:
                 name: uniz-secrets
           resources:
             limits:
-              cpu: "2000m"
-              memory: "2048Mi"
+              cpu: "1000m"
+              memory: "1024Mi"
             requests:
               cpu: "100m"
-              memory: "512Mi"
+              memory: "256Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -61,8 +61,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-academics-service
-  minReplicas: 2
-  maxReplicas: 10
+  minReplicas: 1
+  maxReplicas: 2
   metrics:
     - type: Resource
       resource:
