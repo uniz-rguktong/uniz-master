@@ -161,6 +161,11 @@ deploy_logic() {
       fi
     fi
   done
+  
+  # --- INFRA CLEANUP ---
+  echo "[Infra] Cleaning up legacy ornate-landing service to prevent ingress conflicts..."
+  kubectl delete svc ornate-landing --ignore-not-found
+  kubectl delete deployment ornate-landing --ignore-not-found
 
   if [ $REBUILT_COUNT -gt 0 ] || [ "$FORCE_ALL" == "true" ]; then
     echo "[Cleanup] Docker & K3s Image Pruning..."
