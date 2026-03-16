@@ -59,6 +59,7 @@ deploy_logic() {
   ORNATE_SERVICES=(
     "ornate-core:ornate-core:ornate-core:ornate-core"
     "ornate:ornate:ornate:ornate"
+    "ornate:ornate-landing:ornate-landing:ornate-landing"
   )
 
   # Branch Filtering
