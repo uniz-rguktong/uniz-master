@@ -80,8 +80,8 @@ deploy_logic() {
     while IFS='=' read -r key value || [ -n "$key" ]; do
       [[ "$key" =~ ^#.*$ ]] && continue
       [[ -z "$key" ]] && continue
-      # Strip surrounding quotes and whitespace
-      clean_val=$(echo "$value" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'\'']//' -e 's/["'\'']$//')
+      # Strip all surrounding quotes and whitespace
+      clean_val=$(echo "$value" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'\'']*//' -e 's/["'\'']*$//')
       export "$key"="$clean_val"
     done < /root/uniz-secrets.env
   fi
