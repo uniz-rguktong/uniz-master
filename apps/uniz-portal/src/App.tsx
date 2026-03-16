@@ -113,6 +113,16 @@ const MaintenanceGuard = ({ children }: { children: JSX.Element }) => {
   return children;
 };
 
+const AuthRedirect = () => {
+  const studentToken = localStorage.getItem("student_token");
+  const adminToken = localStorage.getItem("admin_token");
+  const facultyToken = localStorage.getItem("faculty_token");
+  if (adminToken) return <Navigate to="/admin" replace />;
+  if (facultyToken) return <Navigate to="/faculty" replace />;
+  if (studentToken) return <Navigate to="/student" replace />;
+  return <Navigate to="/" replace />;
+};
+
 import { InstallPWA } from "./components/InstallPWA";
 
 export default function App() {
@@ -127,11 +137,17 @@ export default function App() {
             path="/"
             element={
               <MaintenanceGuard>
-                <PageTransition>
-                  <div className="flex justify-center">
-                    <Home />
-                  </div>
-                </PageTransition>
+                {localStorage.getItem("admin_token") ||
+                localStorage.getItem("student_token") ||
+                localStorage.getItem("faculty_token") ? (
+                  <AuthRedirect />
+                ) : (
+                  <PageTransition>
+                    <div className="flex justify-center">
+                      <Home />
+                    </div>
+                  </PageTransition>
+                )}
               </MaintenanceGuard>
             }
           />

@@ -75,6 +75,12 @@ export async function apiClient<T = any>(
       },
     });
 
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      handleHttpError(response.status, { message: "Unexpected response format (Expected JSON)" }, showToast);
+      return null;
+    }
+
     const data: ApiResponse<T> = await response.json();
 
     if (!response.ok) {
