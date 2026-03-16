@@ -34,11 +34,11 @@ spec:
                 name: uniz-secrets
           resources:
             limits:
-              cpu: "1000m"
-              memory: "1024Mi"
+              cpu: "2000m"
+              memory: "2048Mi"
             requests:
-              cpu: "50m"
-              memory: "128Mi"
+              cpu: "800m"
+              memory: "1024Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -61,15 +61,15 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-academics-service
-  minReplicas: 3
-  maxReplicas: 20
+  minReplicas: 2
+  maxReplicas: 6
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 40
+          averageUtilization: 80
     - type: Resource
       resource:
         name: memory

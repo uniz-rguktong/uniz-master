@@ -31,8 +31,8 @@ spec:
               cpu: "1000m"
               memory: "1024Mi"
             requests:
-              cpu: "50m"
-              memory: "128Mi"
+              cpu: "400m"
+              memory: "512Mi"
           livenessProbe:
             httpGet:
               path: /
@@ -74,14 +74,14 @@ spec:
     kind: Deployment
     name: uniz-gateway-api
   minReplicas: 2
-  maxReplicas: 15
+  maxReplicas: 6
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 40
+          averageUtilization: 70
     - type: Resource
       resource:
         name: memory
