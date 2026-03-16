@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-gateway
+  labels:
+    app: uniz-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uniz-gateway
+  template:
+    metadata:
+      labels:
+        app: uniz-gateway
+    spec:
+      priorityClassName: uniz-high-priority
+      containers:
+        - name: gateway-nginx
+          image: uniz-gateway:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "1024Mi"
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: gateway-nginx-conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-gateway
+spec:
+  selector:
+    app: uniz-gateway
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+  type: NodePort
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: uniz-gateway-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: uniz-gateway
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 600 # 10 minutes to prevent thrashing
+      policies:
+        - type: Percent
+          value: 10
+          periodSeconds: 60
