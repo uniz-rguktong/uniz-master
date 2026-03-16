@@ -163,7 +163,22 @@ deploy_logic() {
     if [ "$FORCE_ALL" == "true" ] || echo "$CHANGED_FILES" | grep -q "^$LANDING_BACKEND_DIR/"; then
       echo "[Compose] Redeploying $LANDING_BACKEND_DIR..."
       cd "/root/uniz-master/$LANDING_BACKEND_DIR"
-      [ -f "/root/uniz-secrets.env" ] && cp /root/uniz-secrets.env .env
+      
+      # Generate a strictly mapped .env for Python backend
+      echo "DATABASE_URL=$LANDING_DATABASE_URL" > .env
+      echo "JWT_SECURITY_KEY=$LANDING_JWT_SECURITY_KEY" >> .env
+      echo "JWT_ALGORITHM=$LANDING_JWT_ALGORITHM" >> .env
+      echo "DUMMY_TOKEN=$DUMMY_TOKEN" >> .env
+      echo "POSTGRES_USER=$LANDING_POSTGRES_USER" >> .env
+      echo "POSTGRES_PASSWORD=$LANDING_POSTGRES_PASSWORD" >> .env
+      echo "POSTGRES_DB=$LANDING_POSTGRES_DB" >> .env
+      # Include specific DB connection params
+      echo "DB_USER=$DB_USER" >> .env
+      echo "DB_PASS=$DB_PASS" >> .env
+      echo "DB_HOST=$DB_HOST" >> .env
+      echo "DB_PORT=$DB_PORT" >> .env
+      echo "DB_NAME=$DB_NAME" >> .env
+
       docker compose -f docker-compose.yml.vps up -d --build
       cd /root/uniz-master
     fi
