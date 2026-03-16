@@ -37,8 +37,8 @@ spec:
               cpu: "1000m"
               memory: "1024Mi"
             requests:
-              cpu: "400m"
-              memory: "512Mi"
+              cpu: "100m"
+              memory: "256Mi"
           livenessProbe:
             httpGet:
               path: /health
@@ -80,7 +80,7 @@ spec:
     kind: Deployment
     name: uniz-auth-service
   minReplicas: 2
-  maxReplicas: 8
+  maxReplicas: 10
   metrics:
     - type: Resource
       resource:
