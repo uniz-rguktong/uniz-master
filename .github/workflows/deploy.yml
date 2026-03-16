@@ -3,6 +3,7 @@ name: VPS Automated Deployment
 on:
   push:
     branches:
+      - main
       - ornate
   workflow_dispatch:
     inputs:
@@ -21,18 +22,92 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Deploy to VPS
+      - name: Inject Secrets and Deploy
         uses: appleboy/ssh-action@v1.0.3
         env:
+          # --- CORE SECRETS ---
+          JWT_SECURITY_KEY: ${{ secrets.JWT_SECURITY_KEY }}
+          INTERNAL_SECRET: ${{ secrets.INTERNAL_SECRET }}
+          INTERNAL_BOT_SECRET: ${{ secrets.INTERNAL_BOT_SECRET }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          
+          # email / comms
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SES_FROM_EMAIL: ${{ secrets.SES_FROM_EMAIL }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          
+          # storage / media
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_UPLOAD_PRESET: ${{ secrets.CLOUDINARY_UPLOAD_PRESET }}
+          VITE_CLOUDINARY_CLOUD_NAME: ${{ secrets.VITE_CLOUDINARY_CLOUD_NAME }}
+          VITE_CLOUDINARY_UPLOAD_PRESET: ${{ secrets.VITE_CLOUDINARY_UPLOAD_PRESET }}
+          
+          # push
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          
+          # database
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          AUTH_DATABASE_URL: ${{ secrets.AUTH_DATABASE_URL }}
+          USER_DATABASE_URL: ${{ secrets.USER_DATABASE_URL }}
+          ACADEMICS_DATABASE_URL: ${{ secrets.ACADEMICS_DATABASE_URL }}
+          OUTPASS_DATABASE_URL: ${{ secrets.OUTPASS_DATABASE_URL }}
+          FILES_DATABASE_URL: ${{ secrets.FILES_DATABASE_URL }}
+          MAIL_DATABASE_URL: ${{ secrets.MAIL_DATABASE_URL }}
+          NOTIFICATION_DATABASE_URL: ${{ secrets.NOTIFICATION_DATABASE_URL }}
+          CRON_DATABASE_URL: ${{ secrets.CRON_DATABASE_URL }}
+          
+          # portal specific
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_MAINTENANCE_MODE: ${{ secrets.VITE_MAINTENANCE_MODE }}
+          VITE_SCRAPER_URL: ${{ secrets.VITE_SCRAPER_URL }}
+          VITE_ANALYTICS_URL: ${{ secrets.VITE_ANALYTICS_URL }}
+          VITE_ANALYTICS_API_KEY: ${{ secrets.VITE_ANALYTICS_API_KEY }}
+          INSTITUTION_LOGO_URL: ${{ secrets.INSTITUTION_LOGO_URL }}
+          VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+          
+          # analytics db
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          
+          # landing backend
+          LANDING_POSTGRES_USER: ${{ secrets.LANDING_POSTGRES_USER }}
+          LANDING_POSTGRES_PASSWORD: ${{ secrets.LANDING_POSTGRES_PASSWORD }}
+          LANDING_POSTGRES_DB: ${{ secrets.LANDING_POSTGRES_DB }}
+          LANDING_DATABASE_URL: ${{ secrets.LANDING_DATABASE_URL }}
+          ORNATE_LANDING_DATABASE_URL: ${{ secrets.ORNATE_LANDING_DATABASE_URL }}
+          LANDING_JWT_SECURITY_KEY: ${{ secrets.LANDING_JWT_SECURITY_KEY }}
+          LANDING_JWT_ALGORITHM: ${{ secrets.LANDING_JWT_ALGORITHM }}
+          DUMMY_TOKEN: ${{ secrets.DUMMY_TOKEN }}
+          
           # --- ORNATE SECRETS ---
           ORNATE_DATABASE_URL: ${{ secrets.ORNATE_DATABASE_URL }}
           ORNATE_DIRECT_URL: ${{ secrets.ORNATE_DIRECT_URL }}
-          ORNATE_NEXTAUTH_URL: ${{ secrets.ORNATE_NEXTAUTH_URL }}
-          ORNATE_NEXTAUTH_URL_CORE: ${{ secrets.ORNATE_NEXTAUTH_URL_CORE }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           ORNATE_NEXTAUTH_SECRET: ${{ secrets.ORNATE_NEXTAUTH_SECRET }}
           ORNATE_REDIS_URL: ${{ secrets.ORNATE_REDIS_URL }}
+          ORNATE_LANDING_NEXTAUTH_URL: ${{ secrets.ORNATE_LANDING_NEXTAUTH_URL }}
+          ORNATE_LANDING_EMAIL_USER: ${{ secrets.ORNATE_LANDING_EMAIL_USER }}
+          ORNATE_LANDING_EMAIL_PASS: ${{ secrets.ORNATE_LANDING_EMAIL_PASS }}
           
-          # Storage & Media
+          # ornate storage
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_PUBLIC_DOMAIN: ${{ secrets.R2_PUBLIC_DOMAIN }}
           ORNATE_R2_ACCOUNT_ID: ${{ secrets.ORNATE_R2_ACCOUNT_ID }}
           ORNATE_R2_ENDPOINT: ${{ secrets.ORNATE_R2_ENDPOINT }}
           ORNATE_R2_BUCKET_NAME: ${{ secrets.ORNATE_R2_BUCKET_NAME }}
@@ -40,8 +115,12 @@ jobs:
           ORNATE_R2_SECRET_ACCESS_KEY: ${{ secrets.ORNATE_R2_SECRET_ACCESS_KEY }}
           ORNATE_R2_PUBLIC_DOMAIN: ${{ secrets.ORNATE_R2_PUBLIC_DOMAIN }}
           
-          # Comms & Assets
+          # upstash 
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
           NEXT_PUBLIC_ASSETS_URL: ${{ secrets.NEXT_PUBLIC_ASSETS_URL }}
+          
+          # ornate comms
           ORNATE_AWS_REGION: ${{ secrets.ORNATE_AWS_REGION }}
           ORNATE_AWS_ACCESS_KEY_ID: ${{ secrets.ORNATE_AWS_ACCESS_KEY_ID }}
           ORNATE_AWS_SECRET_ACCESS_KEY: ${{ secrets.ORNATE_AWS_SECRET_ACCESS_KEY }}
@@ -49,44 +128,102 @@ jobs:
           ORNATE_VAPID_PUBLIC_KEY: ${{ secrets.ORNATE_VAPID_PUBLIC_KEY }}
           ORNATE_VAPID_PRIVATE_KEY: ${{ secrets.ORNATE_VAPID_PRIVATE_KEY }}
           ORNATE_VAPID_SUBJECT: ${{ secrets.ORNATE_VAPID_SUBJECT }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
           timeout: 60m
           command_timeout: 60m
-          envs: ORNATE_DATABASE_URL,ORNATE_DIRECT_URL,ORNATE_NEXTAUTH_URL,ORNATE_NEXTAUTH_URL_CORE,ORNATE_NEXTAUTH_SECRET,ORNATE_REDIS_URL,ORNATE_R2_ACCOUNT_ID,ORNATE_R2_ENDPOINT,ORNATE_R2_BUCKET_NAME,ORNATE_R2_ACCESS_KEY_ID,ORNATE_R2_SECRET_ACCESS_KEY,ORNATE_R2_PUBLIC_DOMAIN,NEXT_PUBLIC_ASSETS_URL,ORNATE_AWS_REGION,ORNATE_AWS_ACCESS_KEY_ID,ORNATE_AWS_SECRET_ACCESS_KEY,ORNATE_SES_FROM_EMAIL,ORNATE_VAPID_PUBLIC_KEY,ORNATE_VAPID_PRIVATE_KEY,ORNATE_VAPID_SUBJECT
+          envs: JWT_SECURITY_KEY,INTERNAL_SECRET,INTERNAL_BOT_SECRET,REDIS_URL,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,SES_FROM_EMAIL,EMAIL_USER,EMAIL_PASS,CLOUDINARY_CLOUD_NAME,CLOUDINARY_UPLOAD_PRESET,VITE_CLOUDINARY_CLOUD_NAME,VITE_CLOUDINARY_UPLOAD_PRESET,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY,POSTGRES_USER,POSTGRES_PASSWORD,AUTH_DATABASE_URL,USER_DATABASE_URL,ACADEMICS_DATABASE_URL,OUTPASS_DATABASE_URL,FILES_DATABASE_URL,MAIL_DATABASE_URL,NOTIFICATION_DATABASE_URL,CRON_DATABASE_URL,VITE_API_URL,VITE_MAINTENANCE_MODE,VITE_SCRAPER_URL,VITE_ANALYTICS_URL,VITE_ANALYTICS_API_KEY,INSTITUTION_LOGO_URL,VITE_TURNSTILE_SITE_KEY,TURNSTILE_SECRET_KEY,DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME,LANDING_POSTGRES_USER,LANDING_POSTGRES_PASSWORD,LANDING_POSTGRES_DB,LANDING_DATABASE_URL,ORNATE_LANDING_DATABASE_URL,LANDING_JWT_SECURITY_KEY,LANDING_JWT_ALGORITHM,DUMMY_TOKEN,ORNATE_DATABASE_URL,ORNATE_DIRECT_URL,NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,NEXTAUTH_URL,NEXTAUTH_SECRET,ORNATE_NEXTAUTH_SECRET,ORNATE_REDIS_URL,ORNATE_LANDING_NEXTAUTH_URL,ORNATE_LANDING_EMAIL_USER,ORNATE_LANDING_EMAIL_PASS,R2_ACCOUNT_ID,R2_ENDPOINT,R2_BUCKET_NAME,R2_ACCESS_KEY_ID,R2_SECRET_ACCESS_KEY,R2_PUBLIC_DOMAIN,ORNATE_R2_ACCOUNT_ID,ORNATE_R2_ENDPOINT,ORNATE_R2_BUCKET_NAME,ORNATE_R2_ACCESS_KEY_ID,ORNATE_R2_SECRET_ACCESS_KEY,ORNATE_R2_PUBLIC_DOMAIN,UPSTASH_REDIS_REST_URL,UPSTASH_REDIS_REST_TOKEN,NEXT_PUBLIC_ASSETS_URL,ORNATE_AWS_REGION,ORNATE_AWS_ACCESS_KEY_ID,ORNATE_AWS_SECRET_ACCESS_KEY,ORNATE_SES_FROM_EMAIL,ORNATE_VAPID_PUBLIC_KEY,ORNATE_VAPID_PRIVATE_KEY,ORNATE_VAPID_SUBJECT,GITHUB_REF_NAME
           script: |
             export DEPLOY_CONTEXT="GITHUB_ACTIONS"
-            cd /root/uniz-master
-
-            echo "[CI/CD] Triggered by ${{ github.actor }} on commit ${{ github.sha }}"
-
-            # Security: Verify repo integrity
-            git fetch origin ornate
-            git reset --hard origin/ornate
-
-            # Extract commit message for build-detection
-            COMMIT_MSG=$(git log -1 --pretty=%B)
-            echo "[Log] Last Commit: $COMMIT_MSG"
-
-            echo "[Vault] Syncing Ornate Secrets & Cleaning VPS environment..."
+            export WORK_DIR="/root/uniz-master-$GITHUB_REF_NAME"
             
-            # Create isolated Ornate block
-            cat <<EOF > /root/uniz-secrets.env.tmp
-            # --- ORNATE REGENERATED BLOCK ---
+            # Setup isolated branch directory
+            if [ ! -d "$WORK_DIR" ]; then
+              echo "[Setup] Creating isolated directory for $GITHUB_REF_NAME..."
+              git clone https://github.com/uniz-rguktong/uniz-master.git "$WORK_DIR"
+            fi
+            
+            cd "$WORK_DIR"
+
+            echo "[Security] Regenerating secrets.env from GitHub Secrets..."
+            cat <<EOF > /root/uniz-secrets.env
+            # Generated by GitHub Actions - Do not edit manually
+            JWT_SECURITY_KEY="$JWT_SECURITY_KEY"
+            INTERNAL_SECRET="$INTERNAL_SECRET"
+            INTERNAL_BOT_SECRET="$INTERNAL_BOT_SECRET"
+            REDIS_URL="$REDIS_URL"
+            AWS_REGION="$AWS_REGION"
+            AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
+            AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
+            SES_FROM_EMAIL="$SES_FROM_EMAIL"
+            EMAIL_USER="$EMAIL_USER"
+            EMAIL_PASS="$EMAIL_PASS"
+            CLOUDINARY_CLOUD_NAME="$CLOUDINARY_CLOUD_NAME"
+            CLOUDINARY_UPLOAD_PRESET="$CLOUDINARY_UPLOAD_PRESET"
+            VITE_CLOUDINARY_CLOUD_NAME="$VITE_CLOUDINARY_CLOUD_NAME"
+            VITE_CLOUDINARY_UPLOAD_PRESET="$VITE_CLOUDINARY_UPLOAD_PRESET"
+            VAPID_PUBLIC_KEY="$VAPID_PUBLIC_KEY"
+            VAPID_PRIVATE_KEY="$VAPID_PRIVATE_KEY"
+            POSTGRES_USER="$POSTGRES_USER"
+            POSTGRES_PASSWORD="$POSTGRES_PASSWORD"
+            AUTH_DATABASE_URL="$AUTH_DATABASE_URL"
+            USER_DATABASE_URL="$USER_DATABASE_URL"
+            ACADEMICS_DATABASE_URL="$ACADEMICS_DATABASE_URL"
+            OUTPASS_DATABASE_URL="$OUTPASS_DATABASE_URL"
+            FILES_DATABASE_URL="$FILES_DATABASE_URL"
+            MAIL_DATABASE_URL="$MAIL_DATABASE_URL"
+            NOTIFICATION_DATABASE_URL="$NOTIFICATION_DATABASE_URL"
+            CRON_DATABASE_URL="$CRON_DATABASE_URL"
+            VITE_API_URL="$VITE_API_URL"
+            VITE_MAINTENANCE_MODE="$VITE_MAINTENANCE_MODE"
+            VITE_SCRAPER_URL="$VITE_SCRAPER_URL"
+            VITE_ANALYTICS_URL="$VITE_ANALYTICS_URL"
+            VITE_ANALYTICS_API_KEY="$VITE_ANALYTICS_API_KEY"
+            INSTITUTION_LOGO_URL="$INSTITUTION_LOGO_URL"
+            VITE_TURNSTILE_SITE_KEY="$VITE_TURNSTILE_SITE_KEY"
+            TURNSTILE_SECRET_KEY="$TURNSTILE_SECRET_KEY"
+            DB_USER="$DB_USER"
+            DB_PASS="$DB_PASS"
+            DB_HOST="$DB_HOST"
+            DB_PORT="$DB_PORT"
+            DB_NAME="$DB_NAME"
+            LANDING_POSTGRES_USER="$LANDING_POSTGRES_USER"
+            LANDING_POSTGRES_PASSWORD="$LANDING_POSTGRES_PASSWORD"
+            LANDING_POSTGRES_DB="$LANDING_POSTGRES_DB"
+            LANDING_DATABASE_URL="$LANDING_DATABASE_URL"
+            ORNATE_LANDING_DATABASE_URL="$ORNATE_LANDING_DATABASE_URL"
+            LANDING_JWT_SECURITY_KEY="$LANDING_JWT_SECURITY_KEY"
+            LANDING_JWT_ALGORITHM="$LANDING_JWT_ALGORITHM"
+            DUMMY_TOKEN="$DUMMY_TOKEN"
             ORNATE_DATABASE_URL="$ORNATE_DATABASE_URL"
             ORNATE_DIRECT_URL="$ORNATE_DIRECT_URL"
-            ORNATE_NEXTAUTH_URL="$ORNATE_NEXTAUTH_URL"
-            ORNATE_NEXTAUTH_URL_CORE="$ORNATE_NEXTAUTH_URL_CORE"
+            NEXT_PUBLIC_SUPABASE_URL="$NEXT_PUBLIC_SUPABASE_URL"
+            NEXT_PUBLIC_SUPABASE_ANON_KEY="$NEXT_PUBLIC_SUPABASE_ANON_KEY"
+            NEXTAUTH_URL="$NEXTAUTH_URL"
+            NEXTAUTH_SECRET="$NEXTAUTH_SECRET"
             ORNATE_NEXTAUTH_SECRET="$ORNATE_NEXTAUTH_SECRET"
             ORNATE_REDIS_URL="$ORNATE_REDIS_URL"
+            ORNATE_LANDING_NEXTAUTH_URL="$ORNATE_LANDING_NEXTAUTH_URL"
+            ORNATE_LANDING_EMAIL_USER="$ORNATE_LANDING_EMAIL_USER"
+            ORNATE_LANDING_EMAIL_PASS="$ORNATE_LANDING_EMAIL_PASS"
+            R2_ACCOUNT_ID="$R2_ACCOUNT_ID"
+            R2_ENDPOINT="$R2_ENDPOINT"
+            R2_BUCKET_NAME="$R2_BUCKET_NAME"
+            R2_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID"
+            R2_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY"
+            R2_PUBLIC_DOMAIN="$R2_PUBLIC_DOMAIN"
             ORNATE_R2_ACCOUNT_ID="$ORNATE_R2_ACCOUNT_ID"
             ORNATE_R2_ENDPOINT="$ORNATE_R2_ENDPOINT"
             ORNATE_R2_BUCKET_NAME="$ORNATE_R2_BUCKET_NAME"
             ORNATE_R2_ACCESS_KEY_ID="$ORNATE_R2_ACCESS_KEY_ID"
             ORNATE_R2_SECRET_ACCESS_KEY="$ORNATE_R2_SECRET_ACCESS_KEY"
             ORNATE_R2_PUBLIC_DOMAIN="$ORNATE_R2_PUBLIC_DOMAIN"
+            UPSTASH_REDIS_REST_URL="$UPSTASH_REDIS_REST_URL"
+            UPSTASH_REDIS_REST_TOKEN="$UPSTASH_REDIS_REST_TOKEN"
             NEXT_PUBLIC_ASSETS_URL="$NEXT_PUBLIC_ASSETS_URL"
             ORNATE_AWS_REGION="$ORNATE_AWS_REGION"
             ORNATE_AWS_ACCESS_KEY_ID="$ORNATE_AWS_ACCESS_KEY_ID"
@@ -96,23 +233,19 @@ jobs:
             ORNATE_VAPID_PRIVATE_KEY="$ORNATE_VAPID_PRIVATE_KEY"
             ORNATE_VAPID_SUBJECT="$ORNATE_VAPID_SUBJECT"
             EOF
+            chmod 600 /root/uniz-secrets.env
 
-            if [ -f "/root/uniz-secrets.env" ]; then
-              # Safe Merge Strategy:~
-              # 1. Take current file
-              # 2. Keep only lines that have an "=" (retains existing Uniz vars, removes ghost garbage)
-              # 3. Remove specifically the ORNATE keys to avoid duplication
-              # 4. Append the fresh Ornate block
-              grep -E "=" /root/uniz-secrets.env | grep -v "^ORNATE_\|^NEXT_PUBLIC_ASSETS_URL" > /root/uniz-secrets.env.bak || true
-              cat /root/uniz-secrets.env.bak /root/uniz-secrets.env.tmp > /root/uniz-secrets.env
-              rm /root/uniz-secrets.env.bak /root/uniz-secrets.env.tmp
-            else
-              mv /root/uniz-secrets.env.tmp /root/uniz-secrets.env
-            fi
-            
-            chmod 600 /root/uniz-secrets.env
-            
-            chmod 600 /root/uniz-secrets.env
+            echo "[CI/CD] Triggered by ${{ github.actor }} on commit ${{ github.sha }}"
+
+            # Security: Verify repo integrity
+            git fetch origin $GITHUB_REF_NAME
+            git checkout -B $GITHUB_REF_NAME origin/$GITHUB_REF_NAME
+            git reset --hard origin/$GITHUB_REF_NAME
+            git clean -fd
+
+            # Extract commit message for build-detection
+            COMMIT_MSG=$(git log -1 --pretty=%B)
+            echo "[Log] Last Commit: $COMMIT_MSG"
 
             # Execute the heavy lifter
             /bin/bash ./scripts/deploy.sh "$COMMIT_MSG"
