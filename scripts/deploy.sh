@@ -16,7 +16,6 @@ fi
 # 16. Deploy Logic
 deploy_logic() {
   echo "[CI/CD] Deployment Verified at $(date)"
-  cd /root/uniz-master
   
   CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
   echo "[Git] Branch: $CURRENT_BRANCH | Commit: $(git log -1 --format='%h - %s')"
