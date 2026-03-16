@@ -66,9 +66,12 @@ deploy_logic() {
   if [ "$CURRENT_BRANCH" == "ornate" ]; then
     ALL_SERVICES=("${ORNATE_SERVICES[@]}")
     K_BASE="infra/core-infra/kubernetes/base/ornate"
+    # Fallback if ornate/ folder doesn't exist in base
+    [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
   else
     ALL_SERVICES=("${UNIZ_SERVICES[@]}")
     K_BASE="infra/core-infra/kubernetes/base/core"
+    [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
   fi
 
   # LOAD SECRETS (Sanitized)
@@ -145,10 +148,9 @@ deploy_logic() {
         TAG=${BUILT_IMAGES[$IMG]}
       fi
     else
-      # Not rebuilding -> Find latest local tag to ensure we don't use ":local" placeholder
+      # Not rebuilding -> Find latest local tag to avoid ":local" placeholder trap
       TAG=$(k3s ctr -n k8s.io images ls -q | grep "docker.io/library/$IMG:local-" | sort -V | tail -n 1 | cut -d: -f2)
       if [ -z "$TAG" ]; then
-          # Fallback to :local if absolutely nothing found (should not happen on VPS after first build)
           TAG="local"
       fi
     fi
@@ -159,8 +161,10 @@ deploy_logic() {
         kubectl set image "cronjob/$DEP" "$CON=docker.io/library/$IMG:$TAG"
       else
         kubectl set image "deployment/$DEP" "$CON=docker.io/library/$IMG:$TAG"
-        # Always rollout restart to ensure the new pods actually start if they were stuck
-        kubectl rollout restart "deployment/$DEP"
+        # Aggressive stabilization: Restart only if it's stuck or we built fresh
+        if [ "$SHOULD_BUILD" == "true" ] || kubectl get pod -l "app=$DEP" 2>/dev/null | grep -q "ImagePullBackOff\|ErrImagePull"; then
+           kubectl rollout restart "deployment/$DEP"
+        fi
       fi
     fi
   done
