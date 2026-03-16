@@ -171,18 +171,14 @@ deploy_logic() {
       fi
     fi
   done
-  
-  # --- INFRA CLEANUP ---
-  echo "[Infra] Cleaning up legacy ornate-landing service to prevent ingress conflicts..."
-  kubectl delete svc ornate-landing --ignore-not-found
-  kubectl delete deployment ornate-landing --ignore-not-found
 
   # Docker Compose Handling (Main branch only)
   if [ "$CURRENT_BRANCH" == "main" ]; then
     LANDING_BACKEND_DIR="apps/uniz-landing-backend"
     if [ "$FORCE_ALL" == "true" ] || echo "$CHANGED_FILES" | grep -q "^$LANDING_BACKEND_DIR/"; then
       echo "[Compose] Redeploying $LANDING_BACKEND_DIR..."
-      cd "/root/uniz-master/$LANDING_BACKEND_DIR"
+      BASE_DIR=$PWD
+      cd "$BASE_DIR/$LANDING_BACKEND_DIR"
       
       # Generate a strictly mapped .env for Python backend
       echo "DATABASE_URL=$LANDING_DATABASE_URL" > .env
@@ -200,7 +196,7 @@ deploy_logic() {
       echo "DB_NAME=$DB_NAME" >> .env
 
       docker compose -f docker-compose.yml.vps up -d --build
-      cd /root/uniz-master
+      cd "$BASE_DIR"
     fi
   fi
 
@@ -218,10 +214,16 @@ else
 
   echo "[SSH] Dispatching to VPS..."
   ssh -o StrictHostKeyChecking=no root@76.13.241.174 << EOF
-    cd /root/uniz-master
+    export WORK_DIR="/root/uniz-master-$CURRENT_BRANCH"
+    if [ ! -d "\$WORK_DIR" ]; then
+      echo "[Setup] Creating isolated directory for $CURRENT_BRANCH..."
+      git clone https://github.com/uniz-rguktong/uniz-master.git "\$WORK_DIR"
+    fi
+    cd "\$WORK_DIR"
     git fetch origin $CURRENT_BRANCH
-    git checkout -f $CURRENT_BRANCH
+    git checkout -B $CURRENT_BRANCH origin/$CURRENT_BRANCH
     git reset --hard origin/$CURRENT_BRANCH
+    git clean -fd
     /bin/bash ./scripts/deploy.sh "remote-trigger"
 EOF
 fi
