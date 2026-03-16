@@ -214,7 +214,7 @@ export default function StudentDetails() {
   // Reset Password Modal State
   const [resetModalOpen, setResetModalOpen] = useState(false);
   const [resetTargetUser, setResetTargetUser] = useState("");
-  const [resetPasswordValue, setResetPasswordValue] = useState("temporary-password-123");
+  const [resetPasswordValue, setResetPasswordValue] = useState("");
 
   const handleGlobalResetPassword = (username: string) => {
     setResetTargetUser(username);
@@ -256,207 +256,34 @@ export default function StudentDetails() {
     }
   };
 
-  const MOCK_PERFORMANCE_DATA = {
-    grades: [
-      {
-        id: "25365db4-497b-4269-b584-a265b4093b6b",
-        semesterId: "E4-SEM-2",
-        grade: 7,
-        isRemedial: false,
-        updatedAt: "2026-03-06T18:33:38.719Z",
-        subject: {
-          code: "CSE-E4-SEM-2-04",
-          name: "Project-II",
-          credits: 6,
-          department: "CSE",
-        },
-      },
-      {
-        id: "1ff4ec5b-1fcf-4317-9854-11050c96f8a8",
-        semesterId: "E4-SEM-2",
-        grade: 9,
-        isRemedial: false,
-        updatedAt: "2026-03-06T18:33:38.718Z",
-        subject: {
-          code: "CSE-E4-SEM-2-02",
-          name: "Open Elective-III",
-          credits: 3,
-          department: "CSE",
-        },
-      },
-      {
-        id: "fabbf3ef-59d0-420c-8dd4-90adddc34ea6",
-        semesterId: "E4-SEM-2",
-        grade: 6,
-        isRemedial: false,
-        updatedAt: "2026-03-06T18:33:38.719Z",
-        subject: {
-          code: "CSE-E4-SEM-2-03",
-          name: "Open Elective-IV",
-          credits: 3,
-          department: "CSE",
-        },
-      },
-      {
-        id: "c557c920-5bcf-4a9b-a1c8-5c3607310d77",
-        semesterId: "E4-SEM-2",
-        grade: 6,
-        isRemedial: false,
-        updatedAt: "2026-03-06T18:33:38.718Z",
-        subject: {
-          code: "CSE-E4-SEM-2-01",
-          name: "Elective-VI",
-          credits: 3,
-          department: "CSE",
-        },
-      },
-      {
-        id: "18e77db3-f935-4f2e-bbd3-9dba16f44144",
-        semesterId: "E4-SEM-2",
-        grade: 8,
-        isRemedial: false,
-        updatedAt: "2026-03-06T18:33:38.719Z",
-        subject: {
-          code: "CSE-E4-SEM-2-05",
-          name: "Community Service",
-          credits: 2,
-          department: "CSE",
-        },
-      },
-    ],
-    gpa_stats: {
-      "E4-SEM-2": { gpa: 7.12, status: "PASSED" },
-      "E4-SEM-1": { gpa: 9.12, status: "PASSED" },
-      "E3-SEM-2": { gpa: 8.04, status: "PASSED" },
-      "E3-SEM-1": { gpa: 8.53, status: "PASSED" },
-      "E2-SEM-2": { gpa: 8.11, status: "PASSED" },
-      "E2-SEM-1": { gpa: 7.9, status: "PASSED" },
-      "E1-SEM-2": { gpa: 9.65, status: "PASSED" },
-      "E1-SEM-1": { gpa: 7.78, status: "PASSED" },
-    },
-    cgpa: 8.26,
-    total_backlogs: 0,
-    motivation: "You're on the right track. Keep refining your study habits.",
-    attendance: [
-      {
-        id: "4fe63da6-47ec-4bd6-83e5-0f247c688b74",
-        studentId: "O210329",
-        subjectId: "6d73c70f-8363-477c-90b6-3575f4a7efe0",
-        semesterId: "E4-SEM-2",
-        totalClasses: 50,
-        attendedClasses: 49,
-        batch: "O21",
-        createdAt: "2026-03-06T18:35:37.004Z",
-        updatedAt: "2026-03-06T18:35:37.004Z",
-        subject: {
-          id: "6d73c70f-8363-477c-90b6-3575f4a7efe0",
-          code: "CSE-E4-SEM-2-02",
-          name: "Open Elective-III",
-          credits: 3,
-          department: "CSE",
-          semester: "SEM-2",
-        },
-        percentage: 98,
-      },
-      {
-        id: "11e0c592-e339-41b9-b0d7-4ef625ad6069",
-        studentId: "O210329",
-        subjectId: "f407c66f-131d-45d0-bb2b-e7f1d4b844ea",
-        semesterId: "E4-SEM-2",
-        totalClasses: 50,
-        attendedClasses: 44,
-        batch: "O21",
-        createdAt: "2026-03-06T18:35:37.005Z",
-        updatedAt: "2026-03-06T18:35:37.005Z",
-        subject: {
-          id: "f407c66f-131d-45d0-bb2b-e7f1d4b844ea",
-          code: "CSE-E4-SEM-2-04",
-          name: "Project-II",
-          credits: 6,
-          department: "CSE",
-          semester: "SEM-2",
-        },
-        percentage: 88,
-      },
-      {
-        id: "dd6ce30b-b33e-410b-9b5c-24b78e05cb9c",
-        studentId: "O210329",
-        subjectId: "fa3f4efe-cbf1-4fbc-a0c5-aa62edc658bd",
-        semesterId: "E4-SEM-2",
-        totalClasses: 50,
-        attendedClasses: 49,
-        batch: "O21",
-        createdAt: "2026-03-06T18:35:37.003Z",
-        updatedAt: "2026-03-06T18:35:37.003Z",
-        subject: {
-          id: "fa3f4efe-cbf1-4fbc-a0c5-aa62edc658bd",
-          code: "CSE-E4-SEM-2-01",
-          name: "Elective-VI",
-          credits: 3,
-          department: "CSE",
-          semester: "SEM-2",
-        },
-        percentage: 98,
-      },
-      {
-        id: "c72217b3-f342-4e3b-a49f-ae2ad20f275d",
-        studentId: "O210329",
-        subjectId: "45d053bf-8eea-4996-8040-f8bc5e2b6b6f",
-        semesterId: "E4-SEM-2",
-        totalClasses: 50,
-        attendedClasses: 42,
-        batch: "O21",
-        createdAt: "2026-03-06T18:35:37.004Z",
-        updatedAt: "2026-03-06T18:35:37.004Z",
-        subject: {
-          id: "45d053bf-8eea-4996-8040-f8bc5e2b6b6f",
-          code: "CSE-E4-SEM-2-03",
-          name: "Open Elective-IV",
-          credits: 3,
-          department: "CSE",
-          semester: "SEM-2",
-        },
-        percentage: 84,
-      },
-      {
-        id: "66661118-5788-4106-b452-dc7e890a6bff",
-        studentId: "O210329",
-        subjectId: "f3dace70-f70d-4e1d-a5b1-e100f322bcf8",
-        semesterId: "E4-SEM-2",
-        totalClasses: 50,
-        attendedClasses: 43,
-        batch: "O21",
-        createdAt: "2026-03-06T18:35:37.005Z",
-        updatedAt: "2026-03-06T18:35:37.005Z",
-        subject: {
-          id: "f3dace70-f70d-4e1d-a5b1-e100f322bcf8",
-          code: "CSE-E4-SEM-2-05",
-          name: "Community Service",
-          credits: 2,
-          department: "CSE",
-          semester: "SEM-2",
-        },
-        percentage: 86,
-      },
-    ],
-    attendance_summary: {
-      "E4-SEM-2": { total: 250, attended: 227, percentage: 90.8 },
-      "E4-SEM-1": { total: 245, attended: 213, percentage: 86.94 },
-      "E3-SEM-2": { total: 390, attended: 332, percentage: 85.13 },
-      "E3-SEM-1": { total: 444, attended: 365, percentage: 82.21 },
-      "E2-SEM-2": { total: 384, attended: 327, percentage: 85.16 },
-      "E2-SEM-1": { total: 375, attended: 303, percentage: 80.8 },
-      "E1-SEM-2": { total: 260, attended: 224, percentage: 86.15 },
-      "E1-SEM-1": { total: 335, attended: 282, percentage: 84.18 },
-    },
-  };
-
-  const handleOpenPerformance = (std: any) => {
+  const handleOpenPerformance = async (std: any) => {
     setSelectedStudentName(std.name);
     setSelectedStudentId(std.username);
-    setPerformanceData(MOCK_PERFORMANCE_DATA);
-    setPerformanceModalOpen(true);
+    
+    setLoading(true);
+    const token = localStorage.getItem("admin_token");
+    try {
+      const res = await fetch(ADMIN_VIEW_STUDENT(std.username), {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
+        },
+      });
+
+      const data = await res.json();
+      if (data.success && data.student) {
+        setPerformanceData(data.student);
+        setPerformanceModalOpen(true);
+      } else {
+        toast.error(data.msg || "Failed to fetch performance records");
+      }
+    } catch (error) {
+      toast.error("Error retrieving student performance");
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-slate-900 pb-20">
