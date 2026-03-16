@@ -34,12 +34,17 @@ export const useWebSocket = (
   onMessage?: (msg: WebSocketMessage) => void,
 ) => {
   // Determine the WS URL from env or argument
-  // Prioritize specific URL if passed, else fallback to ENV
   const wsUrl =
     url ||
     import.meta.env.VITE_WS_URL ||
-    (window.location.protocol === "https:" ? "wss://" : "ws://") +
-      window.location.host;
+    (() => {
+      const host = window.location.host;
+      // If we're on Vite dev port 5173, and no WS URL is provided, 
+      // it's likely doomed to fail. We either use the API URL or silence it.
+      if (host.includes(":5173")) return null; 
+      
+      return (window.location.protocol === "https:" ? "wss://" : "ws://") + host;
+    })();
 
   // We use a ref to keep track of the message handler
   const onMessageRef = useRef(onMessage);
