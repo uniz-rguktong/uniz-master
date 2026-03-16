@@ -210,7 +210,7 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
       req.url.endsWith(".zip");
 
     // Bypass Warp Engine for sensitive personal data to prevent accidental leaks
-    const isSensitive = req.url.includes("/me") || req.url.includes("/profile") || req.url.includes("/student/me");
+    const isSensitive = req.url.includes("/me") || req.url.includes("/profile") || req.url.includes("/student/me") || req.url.includes("/grades") || req.url.includes("/attendance");
 
     if (
       req.method === "GET" &&
