@@ -94,10 +94,10 @@ deploy_logic() {
 
   # Apply Infrastructure
   echo "[Infra] Applying shared components..."
-  kubectl apply -k infra/core-infra/kubernetes/base/shared/ --load-restrictor LoadRestrictionsNone || true
+  kubectl apply -k infra/core-infra/kubernetes/base/shared/ || true
   
   echo "[Infra] Applying branch components ($K_BASE)..."
-  kubectl apply -k "$K_BASE" --load-restrictor LoadRestrictionsNone || true
+  kubectl apply -k "$K_BASE" || true
 
   # Build & Deploy Loop
   REBUILT_COUNT=0
@@ -119,10 +119,14 @@ deploy_logic() {
         BUILD_CONTEXT="apps/$DIR"
         [[ "$DIR" == *"infra"* ]] && BUILD_CONTEXT="$DIR"
         
-        # Verify context exists
+        # Verify context and Dockerfile exist
         if [ ! -d "$BUILD_CONTEXT" ]; then
           echo "[Skip] Directory $BUILD_CONTEXT not found in branch $CURRENT_BRANCH"
           continue
+        fi
+        if [ ! -f "$BUILD_CONTEXT/Dockerfile" ]; then
+            echo "[Skip] Dockerfile not found in $BUILD_CONTEXT. Skipping build."
+            continue
         fi
 
         TAG="local-$(date +%s)"
