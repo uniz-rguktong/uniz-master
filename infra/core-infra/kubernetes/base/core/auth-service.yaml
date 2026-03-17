@@ -34,11 +34,11 @@ spec:
                 name: uniz-secrets
           resources:
             limits:
-              cpu: "800m"
+              cpu: "1000m"
               memory: "1024Mi"
             requests:
-              cpu: "50m"
-              memory: "128Mi"
+              cpu: "100m"
+              memory: "256Mi"
           livenessProbe:
             httpGet:
               path: /health
@@ -80,14 +80,14 @@ spec:
     kind: Deployment
     name: uniz-auth-service
   minReplicas: 2
-  maxReplicas: 3
+  maxReplicas: 4
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 45
+          averageUtilization: 70
     - type: Resource
       resource:
         name: memory

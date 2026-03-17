@@ -37,8 +37,8 @@ spec:
               cpu: "1000m"
               memory: "1024Mi"
             requests:
-              cpu: "50m"
-              memory: "128Mi"
+              cpu: "100m"
+              memory: "256Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -61,15 +61,15 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-academics-service
-  minReplicas: 3
-  maxReplicas: 4
+  minReplicas: 1
+  maxReplicas: 2
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 40
+          averageUtilization: 80
     - type: Resource
       resource:
         name: memory
