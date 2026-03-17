@@ -96,7 +96,15 @@ deploy_logic() {
   # Generate Infrastructure from templates
   if [ -f "infra/core-infra/kubernetes/base/shared/secrets.yaml.template" ]; then
     echo "[Infra] Generating secrets.yaml..."
-    envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > infra/core-infra/kubernetes/base/shared/secrets.yaml
+    # Determine the correct generation path
+    # If K_BASE is the root base (ornate branch), we must put it there.
+    # Otherwise, it goes in shared/ where it's applied by the shared kustomization.
+    if [[ "$K_BASE" == "infra/core-infra/kubernetes/base" ]]; then
+      GEN_PATH="infra/core-infra/kubernetes/base/secrets.yaml"
+    else
+      GEN_PATH="infra/core-infra/kubernetes/base/shared/secrets.yaml"
+    fi
+    envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > "$GEN_PATH"
   fi
 
   # Apply Infrastructure
