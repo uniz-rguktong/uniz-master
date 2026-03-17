@@ -22,18 +22,7 @@ export const login = async (req: Request, res: Response) => {
   const captchaToken = req.body.captchaToken;
 
   // Cloudflare Turnstile Verification
-  let isHuman = false;
-
-  // Local development backend override (allows devs hitting prod to bypass Turnstile)
-  const DEV_BYPASS_TOKEN = "uniz_dev_bypass_token_2026";
-  if (captchaToken === DEV_BYPASS_TOKEN) {
-    isHuman = true;
-    console.log(
-      "[AUTH-DEBUG] Turnstile bypassed for local development request",
-    );
-  } else {
-    isHuman = await verifyTurnstileToken(captchaToken, req.ip);
-  }
+  const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
 
   if (!isHuman) {
     return res.status(400).json({
@@ -210,6 +199,18 @@ export const adminLogin = login;
 
 export const requestOtp = async (req: Request, res: Response) => {
   const username = String(req.body.username || "").toUpperCase();
+  const captchaToken = req.body.captchaToken;
+
+  // Cloudflare Turnstile Verification
+  const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+
+  if (!isHuman) {
+    return res.status(400).json({
+      code: "AUTH_CAPTCHA_FAILED",
+      message: "Security verification failed. Please try again.",
+    });
+  }
+
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
@@ -307,6 +308,17 @@ export const requestOtp = async (req: Request, res: Response) => {
 // Explicitly request OTP via email (Manual fallback)
 export const requestOtpEmail = async (req: Request, res: Response) => {
   const username = String(req.body.username || "").toUpperCase();
+  const captchaToken = req.body.captchaToken;
+
+  // Cloudflare Turnstile Verification
+  const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+
+  if (!isHuman) {
+    return res.status(400).json({
+      code: "AUTH_CAPTCHA_FAILED",
+      message: "Security verification failed. Please try again.",
+    });
+  }
 
   try {
     const user = await prisma.authCredential.findFirst({

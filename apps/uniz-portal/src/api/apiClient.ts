@@ -15,6 +15,7 @@ export enum ErrorCode {
   OUTPASS_ALREADY_APPROVED = "OUTPASS_ALREADY_APPROVED",
   RATE_LIMIT_EXCEEDED = "RATE_LIMIT_EXCEEDED",
   AUTH_SUSPENDED = "AUTH_SUSPENDED",
+  AUTH_CAPTCHA_FAILED = "AUTH_CAPTCHA_FAILED",
 }
 
 interface ApiResponse<T = any> {
@@ -195,6 +196,8 @@ function handleHttpError(status: number, data: any, showToast: boolean) {
     case 400:
       if (code === ErrorCode.VALIDATION_ERROR) {
         toast.error(message || "Please check the information you provided.");
+      } else if (code === ErrorCode.AUTH_CAPTCHA_FAILED || data.code === "AUTH_CAPTCHA_FAILED") {
+        toast.error(message || "Security verification failed. Please try again.");
       } else {
         toast.error(message || "Bad request. Please check your input.");
       }
