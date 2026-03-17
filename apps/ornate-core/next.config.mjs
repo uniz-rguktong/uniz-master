@@ -91,7 +91,7 @@ const nextConfig = {
                         key: 'Content-Security-Policy',
                         value: [
                             "default-src 'self'",
-                            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com",
+                            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://challenges.cloudflare.com",
                             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com",
                             [
                                 "img-src 'self' data: blob: https://images.unsplash.com https://*.r2.dev https://img.youtube.com https://vumbnail.com https://i.vimeocdn.com",
@@ -99,10 +99,10 @@ const nextConfig = {
                             ].join(' '),
                             "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com",
                             [
-                                "connect-src 'self' ws: wss: https://*.r2.dev https://cdn.jsdelivr.net https://unpkg.com",
+                                "connect-src 'self' ws: wss: https://*.r2.dev https://cdn.jsdelivr.net https://unpkg.com https://challenges.cloudflare.com",
                                 ...(r2PublicHost ? [`https://${r2PublicHost}`] : []),
                             ].join(' '),
-                            "frame-src https://www.youtube.com https://youtube.com https://player.vimeo.com",
+                            "frame-src https://www.youtube.com https://youtube.com https://player.vimeo.com https://challenges.cloudflare.com",
                             "object-src 'none'",
                             "frame-ancestors 'none'",
                         ].join('; '),

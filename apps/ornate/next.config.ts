@@ -97,7 +97,7 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://static.cloudflareinsights.com", // jsdelivr for UnicornStudio SDK, Cloudflare for analytics
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://static.cloudflareinsights.com https://challenges.cloudflare.com", // jsdelivr for UnicornStudio SDK, Cloudflare for analytics/turnstile
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               [
@@ -118,11 +118,11 @@ const nextConfig: NextConfig = {
                 "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev",
                 ...(r2PublicHost ? [`https://${r2PublicHost}`] : []),
               ].join(" "),
-              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.instagram.com https://www.facebook.com",
+              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.instagram.com https://www.facebook.com https://challenges.cloudflare.com",
               "child-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.instagram.com https://www.facebook.com",
               "worker-src 'self' blob:", // Required by Three.js and Service Workers
               [
-                "connect-src 'self' blob: https://*.unicorn.studio https://cdn.jsdelivr.net https://*.cloudfront.net https://grainy-gradients.vercel.app",
+                "connect-src 'self' blob: https://*.unicorn.studio https://cdn.jsdelivr.net https://*.cloudfront.net https://grainy-gradients.vercel.app https://challenges.cloudflare.com",
                 "https://*.r2.dev",
                 "https://*.r2.cloudflarestorage.com",
                 "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev",

@@ -118,6 +118,15 @@ export function LoginPage() {
       } else {
         showToast("Login successful", "success");
 
+        // Check for callbackUrl in search params
+        const params = new URLSearchParams(window.location.search);
+        const callbackUrl = params.get('callbackUrl');
+
+        if (callbackUrl) {
+          router.push(callbackUrl);
+          return;
+        }
+
         if (selectedRole === 'event_coordinator') {
           router.push('/coordinator');
           return;
