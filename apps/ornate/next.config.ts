@@ -160,6 +160,30 @@ const finalConfig = (() => {
     workboxOptions: {
       skipWaiting: true,
       importScripts: ["/push-sw.js"],
+      // ─── Scene Frame Cache ────────────────────────────────────────────────────
+      // The landing page animation is made of 720 individual .webp frames served
+      // from Cloudflare R2. Without this rule, they fall into the generic
+      // "cross-origin" catch-all which only caches for 1 hour (NetworkFirst).
+      //
+      // This dedicated rule MUST come before the cross-origin fallback so Workbox
+      // matches it first. Strategy: CacheFirst — once a frame is in the SW cache,
+      // it is NEVER re-fetched from R2 until 30 days expire or the user clears
+      // browser storage. This makes every refresh after the first visit load the
+      // entire 720-frame animation from local disk with zero network I/O.
+      runtimeCaching: [
+        {
+          // Matches every .webp served from our Cloudflare R2 landing-assets bucket
+          urlPattern: /^https:\/\/pub-[a-f0-9]+\.r2\.dev\/landing-assets\/.+\.webp$/i,
+          handler: "CacheFirst",
+          options: {
+            cacheName: "scene-frames-v1",
+            expiration: {
+              maxEntries: 750,             // 720 frames + a few extra for safety
+              maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+            },
+          },
+        },
+      ],
     },
   });
 

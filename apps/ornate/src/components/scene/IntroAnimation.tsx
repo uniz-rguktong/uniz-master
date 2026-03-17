@@ -5,11 +5,16 @@ import * as THREE from 'three';
 import { SVGLoader } from 'three-stdlib';
 import gsap from 'gsap';
 import { getAssetUrl } from '@/lib/assets';
+import { Great_Vibes } from 'next/font/google';
+
+const greatVibes = Great_Vibes({ weight: '400', subsets: ['latin'] });
 
 export default function IntroAnimation({ onComplete }: { onComplete: () => void }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const maskOverlayRef = useRef<HTMLDivElement>(null);
+    const signatureRef = useRef<HTMLDivElement>(null);
+    const signaturePathRef = useRef<SVGPathElement>(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -406,6 +411,30 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
                 ease: 'power2.inOut'
             }, 5.1);
 
+            // Show container
+            tl.to(signatureRef.current, {
+                opacity: 1,
+                duration: 0.1,
+            }, 3.8);
+
+            // True SVG Path Handwriting Reveal (stroke-dashoffset traces the letters elegantly and slowly)
+            if (signaturePathRef.current) {
+                const length = signaturePathRef.current.getTotalLength();
+                tl.fromTo(signaturePathRef.current, 
+                    { strokeDasharray: length, strokeDashoffset: length }, 
+                    { 
+                        strokeDashoffset: 0, 
+                        duration: 4.0, // Slower, elegant pacing exactly as requested
+                        ease: "power2.inOut" 
+                    }, 
+                3.8);
+            }
+
+            // Keep "Ornate 2026" perfectly visible holding the final frame for 0.1 seconds.
+            // When this dummy tween finishes, the entire Intro container (including this text) 
+            // smoothly fades out natively via the tl.onComplete callback (normal exit, no reverse).
+            tl.set({}, {}, "+=0.01");
+
         },
             undefined, // onProgress — no-op
             () => {
@@ -464,13 +493,74 @@ export default function IntroAnimation({ onComplete }: { onComplete: () => void 
 
     return (
         <div ref={containerRef} className="fixed inset-0 z-[150] pointer-events-none">
+            
+            {/* 
+                SCENE SIGNATURE — True Handwriting SVG Animation 
+                Uses an SVG mask path that traces left-to-right, revealing the variable-width text organically.
+            */}
+            <div 
+                ref={signatureRef} 
+                className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none select-none opacity-0"
+            >
+                <svg viewBox="0 -80 1000 350" className="w-[90vw] md:w-[60vw]" aria-label="Ornate 2026" style={{ overflow: "visible" }}>
+                    <defs>
+                        <mask id="pen-tracing-mask">
+                            {/* This is the invisible thick marker that traces and reveals the text */}
+                            <path 
+                                ref={signaturePathRef}
+                                fill="none" 
+                                stroke="white" 
+                                strokeWidth="150" 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round"
+                                // A smooth looping wave path that covers the "Ornate" and "2026" text layout beautifully sequentially
+                                d="
+                                    M 40 100 
+                                    C 20 40, 100 180, 160 120 
+                                    C 200 60, 200 160, 240 120 
+                                    C 280 60, 280 160, 320 120 
+                                    C 360 60, 360 160, 400 120 
+                                    C 440 60, 440 160, 480 120 
+                                    C 520 60, 520 160, 560 120 
+
+                                    L 580 100 
+                                    C 610 40, 610 160, 640 120 
+                                    C 670 40, 670 160, 700 120 
+                                    C 730 40, 730 160, 760 120 
+                                    C 790 40, 790 160, 820 120 
+                                    C 850 40, 850 160, 920 120
+                                "
+                            />
+                        </mask>
+                    </defs>
+
+                    {/* The premium calligraphic variable-width text */}
+                    <text 
+                        x="50%" 
+                        y="120" 
+                        textAnchor="middle" 
+                        alignmentBaseline="middle"
+                        fill="#A3FF12" 
+                        fontSize="140"
+                        className={`drop-shadow-[0_0_15px_rgba(163,255,18,0.7)] ${greatVibes.className}`}
+                        mask="url(#pen-tracing-mask)"
+                    >
+                        Ornate 2026
+                    </text>
+                </svg>
+            </div>
+
             <div
                 ref={maskOverlayRef}
                 className="absolute inset-0 z-10 bg-[#050505] pointer-events-none"
             />
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-20 pointer-events-none" />
+            
             <div className="intro-loader absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-4 text-white opacity-50">
-                <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
+                <div className="relative flex items-center justify-center w-4 h-4 shrink-0">
+                    <div className="absolute inset-0 rounded-full border border-white/20 animate-ping" />
+                    <div className="w-full h-full rounded-full border-2 border-white border-t-transparent animate-spin" />
+                </div>
                 <span className="text-[10px] tracking-[0.3em] uppercase">Initializing Core System</span>
             </div>
         </div>

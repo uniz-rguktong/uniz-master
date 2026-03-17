@@ -69,7 +69,14 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const wormholeVideoRef = useRef<HTMLVideoElement>(null);
     const imagesRef = useRef<(HTMLImageElement | null)[]>(new Array(TOTAL_FRAMES).fill(null));
+    // Track how many frames have been decoded into imagesRef so auto-scroll
+    // and text triggers can pause when they run ahead of the network.
+    const loadedFrameCountRef = useRef(0);
+    // Last frame index that was successfully drawn — used as canvas fallback
+    // when the requested frame hasn't loaded yet (prevents black flicker).
+    const lastRenderedIndexRef = useRef<number>(-1);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [isBuffering, setIsBuffering] = useState(false);
     const [showWormhole, setShowWormhole] = useState(false);
     // Ref guard so setShowWormhole never fires on every RAF tick — only on threshold crossing.
     const wormholeShownRef = useRef(false);
@@ -145,20 +152,60 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
             if (isAutoScrolling) return;
             isAutoScrolling = true;
 
-            const totalTicks = TOTAL_FRAMES * 4; // Arbitrary smoothing factor
-            let currentTick = 0;
+            // True 15 fps: advance exactly 1 frame every 66.67 ms regardless
+            // of the monitor refresh rate (60 Hz, 120 Hz, 144 Hz, etc.).
+            const TARGET_FPS = 15;
+            const MS_PER_FRAME = 1000 / TARGET_FPS; // 66.67 ms
+            let lastFrameTime: number | null = null;
 
-            const scrollFrame = () => {
+            const scrollFrame = (timestamp: number) => {
                 if (!containerRef.current || !isAutoScrolling) return;
-                const totalScroll = containerRef.current.scrollHeight - window.innerHeight;
-                const pixelsPerTick = totalScroll / totalTicks;
 
-                if (window.scrollY < totalScroll) {
-                    window.scrollBy({ top: pixelsPerTick, behavior: 'instant' });
+                const totalScroll = containerRef.current.scrollHeight - window.innerHeight;
+                // Pixels that correspond to exactly one source frame
+                const pixelsPerFrame = totalScroll / (TOTAL_FRAMES - 1);
+
+                // ── BUFFER GUARD ──────────────────────────────────────────────
+                // Don't auto-scroll past frames that haven't loaded yet.
+                // Keep a 2-frame safety margin so the canvas is never blank.
+                const safeFrame = Math.max(0, loadedFrameCountRef.current - 2);
+                const maxSafeScrollY = (safeFrame / (TOTAL_FRAMES - 1)) * totalScroll;
+
+                if (window.scrollY >= maxSafeScrollY && safeFrame < TOTAL_FRAMES - 1) {
+                    // Images not ready yet — show buffering indicator and retry next tick
+                    setIsBuffering(true);
+                    lastFrameTime = null; // reset timer so we don't skip frames on resume
                     scrollRaf = requestAnimationFrame(scrollFrame);
-                } else {
-                    isAutoScrolling = false;
+                    return;
                 }
+                setIsBuffering(false);
+                // ─────────────────────────────────────────────────────────────
+
+                if (lastFrameTime === null) lastFrameTime = timestamp;
+                const elapsed = timestamp - lastFrameTime;
+
+                if (elapsed >= MS_PER_FRAME) {
+                    // Advance by however many whole frames elapsed (catch-up if tab was hidden)
+                    const framesToAdvance = Math.floor(elapsed / MS_PER_FRAME);
+                    lastFrameTime = timestamp - (elapsed % MS_PER_FRAME);
+
+                    // Clamp scroll to never go past the safe loaded boundary
+                    const targetScrollY = Math.min(
+                        window.scrollY + pixelsPerFrame * framesToAdvance,
+                        maxSafeScrollY
+                    );
+                    const delta = targetScrollY - window.scrollY;
+
+                    if (window.scrollY < totalScroll && delta > 0) {
+                        window.scrollBy({ top: delta, behavior: 'instant' });
+                    } else if (window.scrollY >= totalScroll) {
+                        isAutoScrolling = false;
+                        setIsBuffering(false);
+                        return;
+                    }
+                }
+
+                scrollRaf = requestAnimationFrame(scrollFrame);
             };
 
             scrollRaf = requestAnimationFrame(scrollFrame);
@@ -168,6 +215,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
         const initialScrollTimer = setTimeout(startAutoScroll, 2500);
 
         const handleUserInterrupt = () => {
+            setIsBuffering(false);
             if (isAutoScrolling) {
                 isAutoScrolling = false;
                 if (scrollRaf) {
@@ -204,53 +252,61 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
     useEffect(() => {
         let isMounted = true;
 
-        const loadSequence = async (startIdx: number, frameCount: number, pathPref: string, concurrent = false) => {
-            if (concurrent) {
-                const promises: Promise<void>[] = [];
-                for (let i = 1; i <= frameCount; i++) {
-                    promises.push(new Promise((resolve) => {
+        // Modified sequence loader with controlled concurrency (e.g. 4 frames at a time).
+        // This ensures the bandwidth focuses on rendering the immediate next frames 
+        // in playback order, rather than slowing down all 120 frames equally.
+        const loadSequence = async (startIdx: number, frameCount: number, pathPref: string, batchSize = 4, onFirstFrameLoaded?: () => void) => {
+            for (let i = 1; i <= frameCount; i += batchSize) {
+                if (!isMounted) return;
+                const batchPromises: Promise<void>[] = [];
+                
+                for (let j = 0; j < batchSize && i + j <= frameCount; j++) {
+                    const currentIdx = i + j;
+                    batchPromises.push(new Promise((resolve) => {
                         const img = new window.Image();
-                        const frameIndex = i.toString().padStart(3, '0');
+                        const frameIndex = currentIdx.toString().padStart(3, '0');
                         img.src = `${pathPref}${frameIndex}.webp`;
-                        img.onload = () => { if (isMounted) imagesRef.current[startIdx + i - 1] = img; resolve(); };
+                        img.onload = () => { 
+                            if (isMounted) { 
+                                imagesRef.current[startIdx + currentIdx - 1] = img; 
+                                loadedFrameCountRef.current++; 
+                                // Unlock the UI fully the exact moment the very first frame hits the buffer
+                                if (currentIdx === 1 && onFirstFrameLoaded && !isLoaded) {
+                                    onFirstFrameLoaded();
+                                }
+                            } 
+                            resolve(); 
+                        };
                         img.onerror = () => resolve();
                     }));
                 }
-                await Promise.all(promises);
-            } else {
-                for (let i = 1; i <= frameCount; i++) {
-                    if (!isMounted) return;
-                    await new Promise<void>((resolve) => {
-                        const img = new window.Image();
-                        const frameIndex = i.toString().padStart(3, '0');
-                        img.src = `${pathPref}${frameIndex}.webp`;
-                        img.onload = () => { if (isMounted) imagesRef.current[startIdx + i - 1] = img; resolve(); };
-                        img.onerror = () => resolve();
-                    });
-                }
+                await Promise.all(batchPromises);
             }
         };
 
         const loadAllSequences = async () => {
-            // Sequence 1 Priority (Concurrent to unlock UI instantly)
-            await loadSequence(0, FRAME_COUNT_1, IMAGES_PATH_1, true);
-            if (!isMounted) return;
-            setIsLoaded(true);
-
-            // Fetch subsequent sequences sequentially to free up Next.js network thread
-            await loadSequence(FRAME_COUNT_1, FRAME_COUNT_2, IMAGES_PATH_2, false);
-            if (!isMounted) return;
-
-            await loadSequence(FRAME_COUNT_1 + FRAME_COUNT_2, FRAME_COUNT_3, IMAGES_PATH_3, false);
+            // Sequence 1 Priority: batch of 15 concurrent requests.
+            // The SW cache (scene-frames-v1) serves frames at disk speed (~2ms each),
+            // so 15 parallel reads is safe and fills imagesRef far faster than 3.
+            // On a first-ever visit (cold cache), 15 concurrent R2 requests are still
+            // reasonable — browsers limit to 6 per host anyway so the queue self-throttles.
+            // The very first frame triggers setIsLoaded(true) instantly.
+            await loadSequence(0, FRAME_COUNT_1, IMAGES_PATH_1, 15, () => setIsLoaded(true));
             if (!isMounted) return;
 
-            await loadSequence(FRAME_COUNT_1 + FRAME_COUNT_2 + FRAME_COUNT_3, FRAME_COUNT_4, IMAGES_PATH_4, false);
+            await loadSequence(FRAME_COUNT_1, FRAME_COUNT_2, IMAGES_PATH_2, 15);
             if (!isMounted) return;
 
-            await loadSequence(FRAME_COUNT_1 + FRAME_COUNT_2 + FRAME_COUNT_3 + FRAME_COUNT_4, FRAME_COUNT_5, IMAGES_PATH_5, false);
+            await loadSequence(FRAME_COUNT_1 + FRAME_COUNT_2, FRAME_COUNT_3, IMAGES_PATH_3, 15);
             if (!isMounted) return;
 
-            await loadSequence(FRAME_COUNT_1 + FRAME_COUNT_2 + FRAME_COUNT_3 + FRAME_COUNT_4 + FRAME_COUNT_5, FRAME_COUNT_6, IMAGES_PATH_6, false);
+            await loadSequence(FRAME_COUNT_1 + FRAME_COUNT_2 + FRAME_COUNT_3, FRAME_COUNT_4, IMAGES_PATH_4, 15);
+            if (!isMounted) return;
+
+            await loadSequence(FRAME_COUNT_1 + FRAME_COUNT_2 + FRAME_COUNT_3 + FRAME_COUNT_4, FRAME_COUNT_5, IMAGES_PATH_5, 15);
+            if (!isMounted) return;
+
+            await loadSequence(FRAME_COUNT_1 + FRAME_COUNT_2 + FRAME_COUNT_3 + FRAME_COUNT_4 + FRAME_COUNT_5, FRAME_COUNT_6, IMAGES_PATH_6, 15);
         };
 
         loadAllSequences();
@@ -277,8 +333,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
             const ratio = Math.max(hRatio, vRatio);
             const centerShift_x = (canvas.width - img.width * ratio) / 2;
             const centerShift_y = (canvas.height - img.height * ratio) / 2;
-            context.imageSmoothingEnabled = true;
-            context.imageSmoothingQuality = 'high';
+            context.imageSmoothingEnabled = false; // Disabled to save CPU/GPU overhead
             context.drawImage(img, 0, 0, img.width, img.height,
                 centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
         }
@@ -305,26 +360,38 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
         } | null = null;
 
         const render = (index: number) => {
-            const img = imagesRef.current[index];
-            if (img && img.complete && img.naturalHeight !== 0) {
-                // Only calculate math if canvas size changed, image size changed, or it's the first render
-                if (!renderMath || renderMath.cw !== canvas.width || renderMath.ch !== canvas.height || renderMath.iw !== img.width || renderMath.ih !== img.height) {
-                    const hRatio = canvas.width / img.width;
-                    const vRatio = canvas.height / img.height;
-                    const ratio = Math.max(hRatio, vRatio);
-                    const centerShift_x = (canvas.width - img.width * ratio) / 2;
-                    const centerShift_y = (canvas.height - img.height * ratio) / 2;
-                    renderMath = { hRatio, vRatio, ratio, centerShift_x, centerShift_y, cw: canvas.width, ch: canvas.height, iw: img.width, ih: img.height };
-                }
+            // If the requested frame isn't loaded yet, fall back to the last
+            // successfully rendered frame so the canvas never goes black.
+            const isReady = (idx: number) => {
+                const img = imagesRef.current[idx];
+                return img && img.complete && img.naturalHeight !== 0;
+            };
 
-                context.imageSmoothingEnabled = true;
-                context.imageSmoothingQuality = 'high';
+            const resolvedIndex = isReady(index)
+                ? index
+                : lastRenderedIndexRef.current >= 0 ? lastRenderedIndexRef.current : -1;
 
-                // Optimization: Removing clearRect because the drawn image has `object-cover` math (Math.max) 
-                // and perfectly fills/overflows the entire canvas bounds anyway. This cuts GPU repaints in half.
-                context.drawImage(img, 0, 0, img.width, img.height,
-                    renderMath.centerShift_x, renderMath.centerShift_y, img.width * renderMath.ratio, img.height * renderMath.ratio);
+            if (resolvedIndex < 0) return;
+            const img = imagesRef.current[resolvedIndex]!;
+
+            // Only calculate math if canvas size changed, image size changed, or first render
+            if (!renderMath || renderMath.cw !== canvas.width || renderMath.ch !== canvas.height || renderMath.iw !== img.width || renderMath.ih !== img.height) {
+                const hRatio = canvas.width / img.width;
+                const vRatio = canvas.height / img.height;
+                const ratio = Math.max(hRatio, vRatio);
+                const centerShift_x = (canvas.width - img.width * ratio) / 2;
+                const centerShift_y = (canvas.height - img.height * ratio) / 2;
+                renderMath = { hRatio, vRatio, ratio, centerShift_x, centerShift_y, cw: canvas.width, ch: canvas.height, iw: img.width, ih: img.height };
             }
+
+            context.imageSmoothingEnabled = false; // Turning off high-quality smoothing drastically improves frame rates
+
+            // Optimization: No clearRect needed — image fills canvas completely via Math.max ratio.
+            context.drawImage(img, 0, 0, img.width, img.height,
+                renderMath.centerShift_x, renderMath.centerShift_y, img.width * renderMath.ratio, img.height * renderMath.ratio);
+
+            // Only update "last rendered" when we drew the real requested frame
+            if (resolvedIndex === index) lastRenderedIndexRef.current = index;
         };
 
         render(0);
@@ -337,7 +404,12 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
             scrub: 4.5,
             onUpdate: (self) => {
                 const frameIndex = Math.floor(self.progress * (TOTAL_FRAMES - 1));
+                // Only render canvas for the real frame; if it's not loaded,
+                // render() will automatically hold the last good frame.
                 render(frameIndex);
+
+                // ── TEXT GUARD: never mount text if its frame isn't in memory yet ──
+                const frameLoaded = imagesRef.current[frameIndex] !== null;
 
                 // Show wormhole video as the background for the Auth section (Scene 1F Ending)
                 // Guard with a ref so setState fires exactly once, not on every RAF tick.
@@ -365,7 +437,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
 
                 // ── TEXT-1 SHOW/ENTRY/EXIT (state-based, ref-guarded) ───────────
                 // Enter morph handled by MorphText on mount.
-                if (frameIndex >= 10 && frameIndex < 105 && !text1MountedRef.current) {
+                if (frameIndex >= 10 && frameIndex < 105 && !text1MountedRef.current && frameLoaded) {
                     text1MountedRef.current = true;
                     text1FadeStartedRef.current = false;
                     setShowScene1aText(true);
@@ -397,7 +469,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
 
                 // ── TEXT-2 ENTER ─────────────────────────────────────────────
                 // Enters at frame 79 (after Text-1 is fully gone at 65)
-                if (frameIndex >= 79 && frameIndex < 164 && !text2ShownRef.current) {
+                if (frameIndex >= 79 && frameIndex < 164 && !text2ShownRef.current && frameLoaded) {
                     text2ShownRef.current = true;
                     text2HideStartedRef.current = false;
                     setShowScene1bText(true);
@@ -423,7 +495,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
                 }
 
                 // ── TEXT-3 ENTER ──────────────────────────────────────────────
-                if (frameIndex >= 186 && frameIndex < 223 && !text3ShownRef.current) {
+                if (frameIndex >= 186 && frameIndex < 223 && !text3ShownRef.current && frameLoaded) {
                     text3ShownRef.current = true;
                     text3HideStartedRef.current = false;
                     setShowScene3Text(true);
@@ -449,7 +521,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
                 }
 
                 // ── TEXT-4 ENTER ──────────────────────────────────────────────
-                if (frameIndex >= 283 && frameIndex < 350 && !text4ShownRef.current) {
+                if (frameIndex >= 283 && frameIndex < 350 && !text4ShownRef.current && frameLoaded) {
                     text4ShownRef.current = true;
                     text4HideStartedRef.current = false;
                     setShowScene4Text(true);
@@ -480,7 +552,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
 
 
                 // ── TEXT-6 ENTER ──────────────────────────────────────────────
-                if (frameIndex >= 374 && frameIndex < 419 && !text6ShownRef.current) {
+                if (frameIndex >= 374 && frameIndex < 419 && !text6ShownRef.current && frameLoaded) {
                     text6ShownRef.current = true;
                     text6HideStartedRef.current = false;
                     setShowScene6Text(true);
@@ -506,7 +578,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
                 }
 
                 // ── TEXT-7 ENTER ──────────────────────────────────────────────
-                if (frameIndex >= 440 && frameIndex < 479 && !text7ShownRef.current) {
+                if (frameIndex >= 440 && frameIndex < 479 && !text7ShownRef.current && frameLoaded) {
                     text7ShownRef.current = true;
                     text7HideStartedRef.current = false;
                     setShowScene7Text(true);
@@ -543,7 +615,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
                 }
 
                 // ── TEXT-8 ENTER ──────────────────────────────────────────────
-                if (frameIndex >= 509 && frameIndex < 569 && !text8ShownRef.current) {
+                if (frameIndex >= 509 && frameIndex < 569 && !text8ShownRef.current && frameLoaded) {
                     text8ShownRef.current = true;
                     text8HideStartedRef.current = false;
                     setShowScene8Text(true);
@@ -569,7 +641,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
                 }
 
                 // ── TEXT-9 ENTER ──────────────────────────────────────────────
-                if (frameIndex >= 595 && frameIndex < 644 && !text9ShownRef.current) {
+                if (frameIndex >= 595 && frameIndex < 644 && !text9ShownRef.current && frameLoaded) {
                     text9ShownRef.current = true;
                     text9HideStartedRef.current = false;
                     setShowScene9Text(true);
@@ -601,7 +673,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
                 }
 
                 // ── TEXT-10 ENTER ─────────────────────────────────────────────
-                if (frameIndex >= 660 && frameIndex < 713 && !text10ShownRef.current) {
+                if (frameIndex >= 660 && frameIndex < 713 && !text10ShownRef.current && frameLoaded) {
                     text10ShownRef.current = true;
                     text10HideStartedRef.current = false;
                     setShowScene10Text(true);
@@ -754,7 +826,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
 
             // Step 3: Fade out the UI and Canvas simultaneously
             // Since the video is now playing BEHIND it, there is no black gap.
-            tl.to(['.scene-1f-auth', canvasRef.current], {
+            tl.to(['.scene-1f-auth', canvasRef.current, '.scroll-indicator-root'], {
                 opacity: 0,
                 duration: 0.6,
                 ease: 'power2.inOut',
@@ -784,7 +856,26 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
         <div ref={containerRef} className="relative h-[2700dvh] w-full"> {/* Sextuple height for six combined scenes, dynamic vh for mobile safety */}
             <ScrollIndicators />
             <div className="fixed inset-0 h-[100dvh] w-full overflow-hidden bg-black flex items-center justify-center">
-                <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover" />
+                
+                <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover z-10" />
+
+                {/* Buffering indicator — shown when auto-scroll is waiting for images to load. Hidden at the end of the scene. */}
+                {isBuffering && !showAuthCTA && !showWormhole && (
+                    <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 px-6 py-3 rounded-full bg-black/70 backdrop-blur-md border border-[#A3FF12]/30 pointer-events-none shadow-[0_0_20px_rgba(163,255,18,0.15)] transition-all">
+                        <div className="relative flex items-center justify-center w-5 h-5 shrink-0">
+                            <div className="absolute inset-0 rounded-full border border-[#A3FF12]/20 animate-ping" />
+                            <div className="w-full h-full rounded-full border-2 border-[#A3FF12] border-t-transparent animate-spin" />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[10px] tracking-[0.3em] text-[#A3FF12] uppercase font-bold animate-pulse">
+                                Syncing Telemetry
+                            </span>
+                            <span className="text-[8px] tracking-[0.15em] text-[#A3FF12]/60 uppercase">
+                                Please wait...
+                            </span>
+                        </div>
+                    </div>
+                )}
 
                 {/* Wormhole Video Background (Scene Continuation) */}
                 <div
@@ -800,13 +891,12 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
                             router.push(isAuthenticated ? '/home' : '/login?mode=register');
                         }}
                         className="w-full h-full object-cover"
-                        style={{ transform: 'scale(1.2)' }}
                     >
                         <source src="/assets/wormhole.webm" type="video/webm" />
                     </video>
                 </div>
 
-                <div className={`absolute inset-0 z-10 grid place-items-center pointer-events-none transition-opacity duration-[50ms] ${isWarpingActive ? 'opacity-0' : 'opacity-100'}`}>
+                <div className={`absolute inset-0 z-30 grid place-items-center pointer-events-none transition-opacity duration-[50ms] ${isWarpingActive ? 'opacity-0' : 'opacity-100'}`}>
 
                     {showScene1aText && (
                         <>
@@ -920,7 +1010,7 @@ export default function SceneOne({ introComplete = false }: { introComplete?: bo
 
                             <button
                                 onClick={handleAuthSuccess}
-                                className="group relative px-10 sm:px-24 py-6 sm:py-10 transition-all duration-500 cursor-pointer"
+                                className="group relative px-10 sm:px-24 py-6 sm:py-10 transition-all duration-500 cursor-pointer pointer-events-auto"
                             >
                                 {/* Futuristic Border Base */}
                                 <div className="absolute inset-0 border border-[#A3FF12]/20 group-hover:border-[#A3FF12]/80 transition-colors duration-500 overflow-hidden bg-black/60 backdrop-blur-2xl">

@@ -23,11 +23,11 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Only allow RGUKT email domain
+        // Domain validation has been removed to allow all email accounts
         const emailLower = email.toLowerCase().trim();
-        if (!emailLower.endsWith('@rguktong.ac.in') && !emailLower.endsWith('@rgukt.ac.in') && !emailLower.endsWith('@rguktn.ac.in') && !emailLower.endsWith('@rguktsklm.ac.in') && !emailLower.endsWith('@rguktuig.ac.in')) {
+        if (!emailLower.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
             return NextResponse.json(
-                { error: 'Only RGUKT institutional email addresses are allowed.' },
+                { error: 'Enter a valid email address.' },
                 { status: 400 }
             );
         }

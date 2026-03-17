@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useId } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { pingoSpeak } from '@/lib/pingoSpeak';
 
@@ -73,7 +74,7 @@ function Corners({ size = 'w-6 h-6' }: { size?: string }) {
 
 
 /* ─── Shiny submit button ─────────────────────────────────────────── */
-function ShinyButton({ loading, label }: { loading: boolean; label: string }) {
+function ShinyButton({ loading, label, disabled }: { loading: boolean; label: string; disabled?: boolean }) {
     const btnRef = useRef<HTMLButtonElement>(null);
     const shineRef = useRef<HTMLSpanElement>(null);
 
@@ -90,7 +91,7 @@ function ShinyButton({ loading, label }: { loading: boolean; label: string }) {
         <button
             ref={btnRef}
             type="submit"
-            disabled={loading}
+            disabled={loading || disabled}
             onMouseMove={handleMouseMove}
             suppressHydrationWarning
             className="relative w-full flex items-center justify-between px-6 py-3 sm:py-3.5
@@ -135,34 +136,115 @@ function ShinyButton({ loading, label }: { loading: boolean; label: string }) {
     );
 }
 
+/* ─── Animated Eye Toggle ──────────────────────────────────────── */
+/*
+  SVG eye clipped to an ellipse. Two opaque rect "eyelid covers" sit
+  over the iris. CSS transitions slide them out of the clip area via
+  translateY(-100%) / translateY(100%) with transform-box:fill-box,
+  so the % is relative to each rect's own height — no manual px math.
+*/
+function EyeToggle({ open, id: clipId }: { open: boolean; id: string }) {
+    const lid: React.CSSProperties = {
+        transition: 'transform 340ms cubic-bezier(0.4, 0, 0.2, 1)',
+        transformBox: 'fill-box' as React.CSSProperties['transformBox'],
+    };
+    return (
+        <svg viewBox="0 0 24 16" width="20" height="14" fill="none" aria-hidden="true"
+            style={{ overflow: 'visible' }}>
+            <defs>
+                <clipPath id={clipId}>
+                    <ellipse cx="12" cy="8" rx="11.5" ry="7" />
+                </clipPath>
+            </defs>
+            {/* Outline ring — always visible */}
+            <ellipse cx="12" cy="8" rx="11.5" ry="7"
+                stroke="currentColor" strokeWidth="1.5" />
+            {/* Inner content clipped to eye shape */}
+            <g clipPath={`url(#${clipId})`}>
+                <rect x="-1" y="-1" width="26" height="18" fill="#060606" />
+                <circle cx="12" cy="8" r="5.5" fill="currentColor" opacity="0.15" />
+                <circle cx="12" cy="8" r="4.5" fill="currentColor" opacity="0.88" />
+                <circle cx="12" cy="8" r="2" fill="#060606" />
+                <circle cx="14" cy="6" r="0.9" fill="white" opacity="0.85" />
+                <circle cx="10.5" cy="10" r="0.45" fill="white" opacity="0.35" />
+                {/* Upper eyelid cover */}
+                <rect x="-1" y="-1" width="26" height="10" fill="#060606"
+                    style={{
+                        ...lid,
+                        transformOrigin: 'center top',
+                        transform: open ? 'translateY(-100%)' : 'translateY(0)',
+                    }} />
+                {/* Lower eyelid cover */}
+                <rect x="-1" y="9" width="26" height="9" fill="#060606"
+                    style={{
+                        ...lid,
+                        transformOrigin: 'center bottom',
+                        transform: open ? 'translateY(100%)' : 'translateY(0)',
+                    }} />
+            </g>
+        </svg>
+    );
+}
+
 /* ─── Field components ────────────────────────────────────────────── */
-function Field({ label, id, type, placeholder, autoFocus, forceUpper }:
-    { label: string; id: string; type: string; placeholder: string; autoFocus?: boolean; forceUpper?: boolean }) {
+function Field({ label, id, type, placeholder, autoFocus, forceUpper, disabled, autoComplete }:
+    { label: string; id: string; type: string; placeholder: string; autoFocus?: boolean; forceUpper?: boolean; disabled?: boolean; autoComplete?: string }) {
+    const [showPw, setShowPw] = useState(false);
+    const uid = useId().replace(/:/g, 'x');
+    const isPassword = type === 'password';
+
     return (
         <div className="flex flex-col">
             <label htmlFor={id} className={labelBase} style={{ color: LIME }}>{label}</label>
-            <input id={id} type={type} required suppressHydrationWarning
-                placeholder={placeholder} autoFocus={autoFocus}
-                onInput={e => {
-                    if (forceUpper) {
-                        const target = e.target as HTMLInputElement;
-                        target.value = target.value.toUpperCase();
-                    }
-                }}
-                style={forceUpper ? { textTransform: 'uppercase' } : {}}
-                className={inputBase} />
+            <div className="relative">
+                <input id={id} type={isPassword ? (showPw ? 'text' : 'password') : type} required suppressHydrationWarning
+                    disabled={disabled}
+                    placeholder={placeholder} autoFocus={autoFocus}
+                    autoComplete={autoComplete}
+                    onInput={e => {
+                        if (forceUpper) {
+                            const target = e.target as HTMLInputElement;
+                            target.value = target.value.toUpperCase();
+                        }
+                    }}
+                    style={forceUpper ? { textTransform: 'uppercase' } : {}}
+                    className={`${inputBase} ${isPassword ? 'pr-10' : ''} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                />
+                {isPassword && !disabled && (
+                    <button
+                        type="button"
+                        tabIndex={0}
+                        onClick={() => setShowPw(v => !v)}
+                        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowPw(v => !v); } }}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5
+                                   transition-all duration-200 hover:scale-110
+                                   focus:outline-none"
+                        style={{
+                            color: showPw ? LIME : 'rgba(255,255,255,0.28)',
+                            filter: showPw
+                                ? 'drop-shadow(0 0 5px rgba(163,255,18,0.65))'
+                                : 'none',
+                        }}
+                        aria-label={showPw ? 'Password visible – click to hide' : 'Password hidden – click to reveal'}
+                        aria-pressed={showPw}
+                    >
+                        <EyeToggle open={showPw} id={`eye-${uid}`} />
+                    </button>
+                )}
+            </div>
         </div>
     );
 }
 
-function SelectField({ label, id, options, placeholder }:
-    { label: string; id: string; options: string[]; placeholder: string }) {
+function SelectField({ label, id, options, placeholder, disabled }:
+    { label: string; id: string; options: string[]; placeholder: string; disabled?: boolean }) {
     return (
         <div className="flex flex-col">
             <label htmlFor={id} className={labelBase} style={{ color: LIME }}>{label}</label>
             <div className="relative">
                 <select id={id} required suppressHydrationWarning defaultValue=""
-                    className={`${inputBase} appearance-none cursor-pointer pr-8`}>
+                    disabled={disabled}
+                    className={`${inputBase} appearance-none cursor-pointer pr-8 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <option value="" disabled className="bg-neutral-950 text-white/40">{placeholder}</option>
                     {options.map(o => (
                         <option key={o} value={o} className="bg-neutral-950 text-white">{o}</option>
@@ -184,6 +266,113 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
     const [isLogin, setIsLogin] = useState(initialMode === 'login');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // Email Verification State
+    const [otpSent, setOtpSent] = useState(false);
+    const [otpLoading, setOtpLoading] = useState(false);
+    const [emailVerified, setEmailVerified] = useState(false);
+    const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [resendTimer, setResendTimer] = useState(0);
+    const [statusText, setStatusText] = useState('');
+
+    const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (resendTimer > 0) {
+            timer = setInterval(() => setResendTimer(prev => prev - 1), 1000);
+        }
+        return () => clearInterval(timer);
+    }, [resendTimer]);
+
+    const handleSendOTP = async () => {
+        const email = (document.getElementById('r-email') as HTMLInputElement)?.value;
+        if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+
+        setError('');
+        setOtpLoading(true);
+        setStatusText('Initiating secure email handshake...');
+
+        try {
+            const res = await fetch('/api/send-email-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setOtpSent(true);
+                setStatusText('Verification signal transmitted.');
+                setResendTimer(45);
+            } else {
+                setError(data.error || 'Failed to send OTP.');
+                setStatusText('');
+            }
+        } catch (err) {
+            setError('Network error. Retry.');
+        } finally {
+            setOtpLoading(false);
+        }
+    };
+
+    const handleVerifyOTP = async () => {
+        const email = (document.getElementById('r-email') as HTMLInputElement)?.value;
+        const otpString = otp.join('');
+        if (otpString.length < 6) return;
+
+        setOtpLoading(true);
+        setError('');
+
+        try {
+            const res = await fetch('/api/verify-email-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, otp: otpString }),
+            });
+            const data = await res.json();
+            if (res.ok && data.verified) {
+                setEmailVerified(true);
+                setStatusText('Secure email channel established.');
+            } else {
+                setError(data.error || 'Invalid authentication code.');
+                setStatusText('');
+            }
+        } catch (err) {
+            setError('Authentication failed. Retry.');
+        } finally {
+            setOtpLoading(false);
+        }
+    };
+
+    const handleOtpChange = (index: number, value: string) => {
+        if (!/^\d*$/.test(value)) return;
+        const newOtp = [...otp];
+        newOtp[index] = value.slice(-1);
+        setOtp(newOtp);
+
+        if (value && index < 5) {
+            otpInputRefs.current[index + 1]?.focus();
+        }
+    };
+
+    const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
+        if (e.key === 'Backspace' && !otp[index] && index > 0) {
+            otpInputRefs.current[index - 1]?.focus();
+        }
+    };
+
+    const handleOtpPaste = (e: React.ClipboardEvent) => {
+        const pasteData = e.clipboardData.getData('text').slice(0, 6).split('');
+        if (pasteData.every(char => /^\d$/.test(char))) {
+            const newOtp = [...otp];
+            pasteData.forEach((char, i) => (newOtp[i] = char));
+            setOtp(newOtp);
+            otpInputRefs.current[Math.min(pasteData.length, 5)]?.focus();
+        }
+    };
 
     useEffect(() => { setIsLogin(initialMode === 'login'); setError(''); }, [initialMode]);
 
@@ -251,11 +440,11 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
             {/* Core Logo */}
             <div className="mb-2 relative group">
                 <div className="absolute inset-0 bg-[#A3FF12]/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                <Image 
-                    src="/assets/OrnateCore.svg" 
-                    alt="Ornate Core" 
-                    width={100} 
-                    height={100} 
+                <Image
+                    src="/assets/OrnateCore.svg"
+                    alt="Ornate Core"
+                    width={100}
+                    height={100}
                     className="relative z-10 drop-shadow-[0_0_20px_rgba(163,255,18,0.4)] group-hover:scale-110 transition-transform duration-500 ease-out"
                 />
             </div>
@@ -368,71 +557,177 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
 
                         {isLogin ? (
                             /* ── SIGN IN — responsive single/inline ───────── */
-                            <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-2 sm:gap-4 items-end">
-                                <Field label="Mission ID · Email" id="si-email"
-                                    type="email" placeholder="cadet@ornate.space" autoFocus />
-                                <Field label="Access Code · Password" id="si-pw"
-                                    type="password" placeholder="••••••••••" />
-                                <div className="mt-2 md:mt-0">
-                                    <ShinyButton loading={isLoading} label="Launch Mission" />
+                            <div className="space-y-3">
+                                <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-2 sm:gap-4 items-end">
+                                    <Field label="Mission ID · Email" id="si-email"
+                                        type="email" placeholder="operative@domain.ext" autoFocus autoComplete="email" />
+                                    <Field label="Access Code · Password" id="si-pw"
+                                        type="password" placeholder="Enter access code" autoComplete="current-password" />
+                                    <div className="mt-2 md:mt-0">
+                                        <ShinyButton loading={isLoading} label="Launch Mission" />
+                                    </div>
+                                </div>
+                                {/* Forgot password link */}
+                                <div className="flex items-center justify-end gap-2 pt-0.5">
+                                    <span className="text-[9px] font-mono text-white/30 uppercase tracking-wider">Forgot Access Code?</span>
+                                    <Link href="/forgot-access"
+                                        className="text-[9px] font-black font-mono uppercase tracking-widest underline underline-offset-4 transition-colors"
+                                        style={{ color: LIME }}>
+                                        INITIATE RECOVERY
+                                    </Link>
                                 </div>
                             </div>
                         ) : (
                             /* ── REGISTER — responsive rows ───────────────── */
-                            <div className="space-y-2 sm:space-y-4">
+                            <div className="space-y-3">
 
-                                {/* ── ROW 1: Identity fields ─────────────────── */}
-                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
-                                    <div className="col-span-2 sm:col-span-1">
-                                        <Field label="Full Name" id="r-name" type="text" placeholder="Your full name" autoFocus forceUpper />
+                                {/* ── ROW 1: Identity + Email + Branch + Year ── */}
+                                {/* Mobile: each full-width stacked. Desktop: all in one row */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.4fr_1fr_1fr] gap-2 sm:gap-3">
+                                    {/* Full Name — full width on mobile, 1 col desktop */}
+                                    <div className="sm:col-span-1 lg:col-span-1">
+                                        <Field label="Full Name" id="r-name" type="text" placeholder="Enter your Name" autoFocus forceUpper />
                                     </div>
-                                    <div className="col-span-2 sm:col-span-1">
-                                        <Field label="ID Number" id="r-id" type="text" placeholder="22MCE1234" forceUpper />
+                                    {/* ID Number */}
+                                    <div className="sm:col-span-1 lg:col-span-1">
+                                        <Field label="ID Number" id="r-id" type="text" placeholder="e.g. O2XXXX1" forceUpper />
+                                    </div>
+
+                                    {/* Email + Verify — full width on mobile */}
+                                    <div className="sm:col-span-2 lg:col-span-1 flex flex-col">
+                                        <label htmlFor="r-email" className={labelBase} style={{ color: LIME }}>
+                                            {emailVerified ? (
+                                                <span className="flex items-center gap-1.5">
+                                                    Email ID
+                                                    <span className="text-[#A3FF12] tracking-normal normal-case">✓ Verified</span>
+                                                </span>
+                                            ) : 'Email ID'}
+                                        </label>
+                                        <div className="flex">
+                                            <input id="r-email" type="email" required suppressHydrationWarning
+                                                placeholder="Enter your email address"
+                                                disabled={emailVerified}
+                                                className={`${inputBase} flex-1 min-w-0 ${emailVerified ? 'opacity-60' : ''}`}
+                                                style={{ borderRight: 'none' }}
+                                            />
+                                            <button type="button" onClick={handleSendOTP}
+                                                disabled={otpLoading || emailVerified}
+                                                className="flex-shrink-0 px-3 sm:px-4 text-[9px] font-black tracking-[0.15em] uppercase border transition-all duration-200 disabled:opacity-50 whitespace-nowrap"
+                                                style={{
+                                                    color: emailVerified ? '#000' : LIME,
+                                                    borderColor: emailVerified ? LIME : 'rgba(163,255,18,0.35)',
+                                                    background: emailVerified ? LIME : 'rgba(163,255,18,0.08)',
+                                                }}>
+                                                {emailVerified ? 'CONFIRMED' : (otpLoading ? '···' : (otpSent ? 'RESEND' : 'VERIFY'))}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Branch + Year — side by side on all sizes */}
+                                    <div className="col-span-1">
+                                        <SelectField label="Branch" id="r-branch" options={BRANCHES} placeholder="Select Branch" disabled={!emailVerified} />
                                     </div>
                                     <div className="col-span-1">
-                                        <SelectField label="Branch" id="r-branch" options={BRANCHES} placeholder="Branch" />
-                                    </div>
-                                    <div className="col-span-1">
-                                        <SelectField label="Year" id="r-year" options={YEARS} placeholder="Year" />
+                                        <SelectField label="Year" id="r-year" options={YEARS} placeholder="Select Year" disabled={!emailVerified} />
                                     </div>
                                 </div>
 
+                                {/* ── OTP — wraps to 2 rows on mobile, single strip on desktop ── */}
+                                {otpSent && !emailVerified && (
+                                    <div className="border border-[#A3FF12]/15 px-4 py-3"
+                                        style={{ background: 'rgba(163,255,18,0.04)' }}>
+                                        {/* Mobile: label on top, boxes + button below */}
+                                        <p className="text-[9px] font-black tracking-[0.3em] uppercase font-mono mb-2 sm:hidden"
+                                            style={{ color: LIME }}>
+                                            EMAIL AUTH CODE
+                                        </p>
+                                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                                            {/* Label — hidden on mobile (shown above), visible on sm+ */}
+                                            <span className="hidden sm:inline text-[9px] font-black tracking-[0.25em] uppercase font-mono flex-shrink-0"
+                                                style={{ color: LIME }}>
+                                                AUTH CODE
+                                            </span>
+                                            {/* 6 digit boxes */}
+                                            <div className="flex gap-1.5" onPaste={handleOtpPaste}>
+                                                {otp.map((digit, i) => (
+                                                    <input
+                                                        key={i}
+                                                        ref={el => { otpInputRefs.current[i] = el; }}
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        maxLength={1}
+                                                        value={digit}
+                                                        onChange={e => handleOtpChange(i, e.target.value)}
+                                                        onKeyDown={e => handleOtpKeyDown(i, e)}
+                                                        className="w-9 h-10 sm:w-9 sm:h-9 bg-black/60 border border-[#A3FF12]/25 text-center text-base font-mono font-bold text-[#A3FF12] focus:border-[#A3FF12] focus:outline-none focus:shadow-[0_0_8px_rgba(163,255,18,0.2)] transition-all"
+                                                    />
+                                                ))}
+                                            </div>
+                                            {/* AUTH button */}
+                                            <button type="button" onClick={handleVerifyOTP}
+                                                disabled={otpLoading || otp.join('').length < 6}
+                                                className="h-10 sm:h-9 px-5 text-[10px] font-black tracking-[0.25em] uppercase transition-all disabled:opacity-40"
+                                                style={{ background: LIME, color: '#000' }}>
+                                                {otpLoading ? '···' : 'AUTH'}
+                                            </button>
+                                            {/* Resend timer — pushed right on desktop */}
+                                            {resendTimer > 0 && (
+                                                <span className="sm:ml-auto text-[9px] font-mono text-white/40 tracking-wider">
+                                                    RESEND IN {resendTimer}s
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Status / hint line */}
+                                {statusText && !error && (
+                                    <p className="text-[10px] font-mono uppercase tracking-[0.25em] animate-pulse" style={{ color: LIME }}>
+                                        ◈ {statusText}
+                                    </p>
+                                )}
+                                {!emailVerified && !otpSent && (
+                                    <p className="text-[9px] font-mono uppercase tracking-wider text-white/30">
+                                        ◈ Complete Email Authentication to continue.
+                                    </p>
+                                )}
+
                                 {/* thin divider */}
-                                <div className="h-px w-full my-1 sm:my-0"
+                                <div className="h-px w-full"
                                     style={{ background: `linear-gradient(to right, transparent, ${LIME_BORDER}, transparent)` }} />
 
-                                {/* ── ROW 2: Contact + credentials + CTA ────── */}
-                                <div className="grid grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto] gap-2 sm:gap-4 items-end">
+                                {/* ── ROW 2: Phone | Password | Confirm | CTA ── */}
+                                {/* Mobile: Phone full-width, Password+Confirm side-by-side, CTA full-width */}
+                                <div className="grid grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto] gap-2 sm:gap-3 items-end">
                                     <div className="col-span-2 sm:col-span-1">
-                                        <Field label="Email ID" id="r-email" type="email" placeholder="cadet@ornate.space" />
-                                    </div>
-                                    <div className="col-span-2 sm:col-span-1">
-                                        <Field label="Phone N.O." id="r-phone" type="tel" placeholder="+91 98765 43210" />
+                                        <Field label="Phone N.O." id="r-phone" type="tel" placeholder="+91 XXXXX XXXXX" disabled={!emailVerified} />
                                     </div>
                                     <div className="col-span-1">
-                                        <Field label="Password" id="r-pw" type="password" placeholder="Password" />
+                                        <Field label="Password" id="r-pw" type="password" placeholder="Min. 6 characters" disabled={!emailVerified} autoComplete="new-password" />
                                     </div>
                                     <div className="col-span-1">
-                                        <Field label="Confirm" id="r-cpw" type="password" placeholder="Confirm" />
+                                        <Field label="Confirm" id="r-cpw" type="password" placeholder="Re-enter password" disabled={!emailVerified} autoComplete="new-password" />
                                     </div>
-                                    <div className="col-span-2 lg:col-span-1 mt-2 lg:mt-0">
-                                        <ShinyButton loading={isLoading} label="Join the Crew" />
+                                    <div className="col-span-2 lg:col-span-1 mt-1 lg:mt-0">
+                                        <ShinyButton loading={isLoading} disabled={!emailVerified} label="Join the Crew" />
                                     </div>
                                 </div>
                             </div>
                         )}
+
+
                     </form>
 
                     {/* footer */}
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mt-8 relative z-10">
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-[1px]" style={{ background: LIME }} />
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 mt-6 sm:mt-8 relative z-10 text-center sm:text-left">
+                        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+                            <div className="w-10 h-[1px] hidden sm:block" style={{ background: LIME }} />
                             <p className="text-[10px] sm:text-xs tracking-[0.2em] font-mono text-white/40 uppercase">
                                 Ornate'26 · Mission Control · Secured Channel
                             </p>
                         </div>
 
-                        <p className="text-[10px] sm:text-xs tracking-[0.1em] font-mono uppercase">
+                        <p className="text-[10px] sm:text-xs tracking-[0.1em] font-mono uppercase mt-2 sm:mt-0">
                             <span className="text-white/50">
                                 {isLogin ? 'No access code?' : 'Already enlisted?'}
                             </span>{' '}

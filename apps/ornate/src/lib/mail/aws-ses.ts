@@ -17,56 +17,45 @@ type EventRegistrationEmailInput = {
     studentId?: string | null;
 };
 
-const AWS_REGION = process.env.AWS_REGION || process.env.SES_REGION || 'ap-south-1';
-const SES_FROM_EMAIL = process.env.SES_FROM_EMAIL || process.env.MAIL_FROM;
-
-function createSesClient() {
-    const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-    const sessionToken = process.env.AWS_SESSION_TOKEN;
-
-    if (!accessKeyId || !secretAccessKey) {
-        return null;
+// Lazy client initialization to ensure env vars are loaded
+let sesClient: SESClient | null = null;
+function getSesClient() {
+    if (!sesClient) {
+        sesClient = new SESClient({
+            region: process.env.ORNATE_AWS_REGION!,
+            credentials: {
+                accessKeyId: process.env.ORNATE_AWS_ACCESS_KEY_ID!,
+                secretAccessKey: process.env.ORNATE_AWS_SECRET_ACCESS_KEY!,
+            },
+        });
     }
-
-    return new SESClient({
-        region: AWS_REGION,
-        credentials: {
-            accessKeyId,
-            secretAccessKey,
-            ...(sessionToken ? { sessionToken } : {}),
-        },
-    });
+    return sesClient;
 }
 
+const FROM_EMAIL = () => process.env.ORNATE_SES_FROM_EMAIL!;
+
 async function sendSesEmail(to: string, subject: string, html: string, text: string) {
-    if (!SES_FROM_EMAIL) {
-        console.warn('[mail] SES_FROM_EMAIL is not configured. Skipping email send.');
-        return false;
-    }
-
-    const client = createSesClient();
-    if (!client) {
-        console.warn('[mail] AWS SES credentials are not configured. Skipping email send.');
-        return false;
-    }
-
-    const command = new SendEmailCommand({
-        Source: SES_FROM_EMAIL,
-        Destination: {
-            ToAddresses: [to],
-        },
-        Message: {
-            Subject: { Data: subject, Charset: 'UTF-8' },
-            Body: {
-                Html: { Data: html, Charset: 'UTF-8' },
-                Text: { Data: text, Charset: 'UTF-8' },
+    try {
+        const client = getSesClient();
+        const command = new SendEmailCommand({
+            Source: `"Ornate EMS" <${FROM_EMAIL()}>`,
+            Destination: { ToAddresses: [to] },
+            Message: {
+                Subject: { Data: subject, Charset: 'UTF-8' },
+                Body: {
+                    Html: { Data: html, Charset: 'UTF-8' },
+                    // ornate-core SendEmailCommand pattern doesn't always include Text body
+                },
             },
-        },
-    });
+        });
 
-    await client.send(command);
-    return true;
+        const result = await client.send(command);
+        console.log('[mail] SES Email sent successfully:', result.MessageId);
+        return true;
+    } catch (error) {
+        console.error('[mail] SES Email send error:', error);
+        throw error;
+    }
 }
 
 export async function sendWelcomeEmail(input: WelcomeEmailInput) {
@@ -135,6 +124,21 @@ export async function sendEventRegistrationEmail(input: EventRegistrationEmailIn
     `;
 
     return sendSesEmail(input.to, subject, html, text);
+}
+
+export async function sendOTPEmail(to: string, otp: string) {
+    const subject = `${otp} is your verification code for Ornate`;
+    const text = `Your verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nTeam Ornate`;
+    const html = `
+      <div style="font-family:Arial,sans-serif;line-height:1.5;color:#111;max-width:560px;margin:0 auto;">
+        <h2 style="margin-bottom:8px;">Email Verification</h2>
+        <p>Your verification code is:</p>
+        <p style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#A3FF12;background:#000;padding:12px;text-align:center;">${otp}</p>
+        <p>This code will expire in 10 minutes.</p>
+        <p style="margin-top:20px;">Team Ornate</p>
+      </div>
+    `;
+    return sendSesEmail(to, subject, html, text);
 }
 
 function formatDate(value: Date) {
