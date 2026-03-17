@@ -153,7 +153,7 @@ export default function ProfileClient({ profile }: { profile: ProfileData }) {
                             </button>
                             {isAuthenticated && (
                                 <button
-                                    onClick={() => signOut({ callbackUrl: '/home' })}
+                                    onClick={() => signOut({ callbackUrl: '/' })}
                                     className="group flex items-center gap-2 text-white/60 hover:text-red-400 transition-colors transform hover:scale-110 active:scale-95"
                                     title="Logout"
                                 >
