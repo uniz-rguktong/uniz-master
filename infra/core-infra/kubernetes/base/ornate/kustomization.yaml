@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - ../cluster-issuer.yaml
   - ../configmap.yaml
-  - ../shared/secrets.yaml
   - ../ornate-core.yaml
   - ../ornate.yaml
   - ../ornate-ingress.yaml
+  - ../shared/secrets.yaml
