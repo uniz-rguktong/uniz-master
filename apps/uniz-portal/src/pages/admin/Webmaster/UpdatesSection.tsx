@@ -409,7 +409,7 @@ export default function UpdatesSection() {
 
       <AlertDialog
         open={showAddModal}
-        onOpenChange={(open) => {
+        onOpenChange={(open: boolean) => {
           if (!open) {
             setShowAddModal(false);
             setEditingUpdate(null);

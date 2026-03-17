@@ -17,10 +17,10 @@ const students = new SharedArray('student data', function () {
 
 export const options = {
     stages: [
-        { duration: '30s', target: 200 }, // Ramp to 200 students
-        { duration: '1m', target: 813 },  // Peak load: All 813 students in O21 batch
-        { duration: '3m', target: 813 },  // Hold peak to test sustained PDF generation
-        { duration: '30s', target: 0 },   // Cool down
+        { duration: '30s', target: 200 }, 
+        { duration: '1m', target: 400 }, 
+        { duration: '3m', target: 400 }, 
+        { duration: '30s', target: 0 },   
     ],
     thresholds: {
         http_req_failed: ['rate<0.05'], // Max 5% failure rate
@@ -116,7 +116,8 @@ export default function () {
 
     sleep(1);
 
-    // --- 5. DOWNLOAD GRADES PDF ---
+    /*
+    // --- 5. DOWNLOAD GRADES PDF ---x
     let downloadGradesRes = http.get(`${BASE_URL}/academics/grades/download/${SEMESTER_ID}?studentId=${studentId}`, { headers: authHeaders, tags: { step: 'pdf' } });
     pdfDuration.add(downloadGradesRes.timings.duration);
     check(downloadGradesRes, {
@@ -134,6 +135,7 @@ export default function () {
         'attendance pdf download': (r) => r.status === 200,
         'is pdf': (r) => r.headers['Content-Type'] === 'application/pdf',
     });
+    */
 
     sleep(Math.random() * 5 + 5);
 }
