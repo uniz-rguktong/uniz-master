@@ -9,7 +9,9 @@ import {
   GraduationCap,
   AlertCircle,
   Download,
+  ShieldCheck,
 } from "lucide-react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { GET_GRADES, DOWNLOAD_GRADES } from "../../api/endpoints";
 
 // Helper function to truncate long text
@@ -36,6 +38,8 @@ export default function GradeHub() {
   const [error, setError] = useState("");
   const [resultsFetched, setResultsFetched] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [isCaptchaValid, setIsCaptchaValid] = useState(false);
 
   const [loadingMessage, setLoadingMessage] = useState(
     "Pikachu is fetching your records!",
@@ -89,12 +93,17 @@ export default function GradeHub() {
           studentId: user.username,
           semester: mappedSemester,
           year: selectedYear,
+          captchaToken: captchaToken || "",
         },
       });
 
       // apiClient handles status 404, 401, etc.
       if (!data) {
         setIsLoading(false);
+        // If it was a captcha error (400), the user will see a toast
+        // We should reset captcha to let them try again
+        setCaptchaToken(null);
+        setIsCaptchaValid(false);
         return;
       }
 
@@ -245,20 +254,53 @@ export default function GradeHub() {
               </div>
             </div>
 
-            <div className="flex items-end">
-              <button
-                onClick={handleFetchResults}
-                className="w-full h-[46px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm"
-                disabled={isLoading || !user?.username}
-              >
-                {isLoading ? (
-                  <span className="flex items-center gap-1.5 justify-center">
-                    Processing...
-                  </span>
+            <div className="flex flex-col md:flex-row gap-4 flex-1">
+              <div className="flex-1">
+                {import.meta.env.VITE_TURNSTILE_SITE_KEY ? (
+                  <div className="flex justify-center md:justify-start">
+                    <Turnstile
+                      siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                      onSuccess={(token) => {
+                        setCaptchaToken(token);
+                        setIsCaptchaValid(true);
+                      }}
+                      onExpire={() => {
+                        setCaptchaToken(null);
+                        setIsCaptchaValid(false);
+                      }}
+                      onError={() => {
+                        setCaptchaToken(null);
+                        setIsCaptchaValid(false);
+                      }}
+                      options={{
+                        size: "flexible",
+                        theme: "light",
+                      }}
+                    />
+                  </div>
                 ) : (
-                  <span>Get Results</span>
+                  <div className="h-[46px] border border-dashed border-slate-200 rounded-xl flex items-center justify-center text-[10px] text-slate-400 font-bold uppercase tracking-widest bg-slate-50/50">
+                    <ShieldCheck size={14} className="mr-2" />
+                    Secure Environment
+                  </div>
                 )}
-              </button>
+              </div>
+              
+              <div className="md:w-48">
+                <button
+                  onClick={handleFetchResults}
+                  className="w-full h-[46px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm disabled:opacity-50"
+                  disabled={isLoading || !user?.username || !isCaptchaValid}
+                >
+                  {isLoading ? (
+                    <span className="flex items-center gap-1.5 justify-center">
+                      Processing...
+                    </span>
+                  ) : (
+                    <span>Get Results</span>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -301,16 +343,27 @@ export default function GradeHub() {
               </div>
               <button
                 onClick={async () => {
+                  if (!captchaToken) {
+                    toast.error("Please complete the security check first");
+                    return;
+                  }
                   const mappedSemester =
                     selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
                   const semId = `${selectedYear}-${mappedSemester}`;
                   await downloadFile(
                     DOWNLOAD_GRADES(semId),
                     `Grades_${user.username}_${semId}.pdf`,
-                    { studentId: user.username },
+                    { 
+                      studentId: user.username,
+                      captchaToken: captchaToken
+                    },
                   );
+                  // Reset captcha after download to ensure fresh token for next action
+                  setCaptchaToken(null);
+                  setIsCaptchaValid(false);
                 }}
-                className="h-10 px-4 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-slate-100"
+                className="h-10 px-4 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-slate-100 disabled:opacity-50"
+                disabled={!isCaptchaValid}
               >
                 <Download size={14} />
                 Export PDF
