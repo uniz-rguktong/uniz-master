@@ -27,6 +27,7 @@ import { randomUUID } from "crypto";
 import { redis, notificationQueue } from "../utils/redis.util";
 import { processNextBatch } from "../services/upload.service";
 import { generateResultPdf, generateAttendancePdf } from "../utils/pdf.util";
+import { verifyTurnstileToken } from "../utils/turnstile.util";
 
 // GPA calculation and templates now use database-provided subject credits.
 // GRADE_MAP and mapGradeToPoint are now imported from helpers.util
@@ -238,7 +239,7 @@ export const getBatchGrades = async (
       orderBy: { studentId: "asc" },
     });
 
-    const studentIds = studentIdsOnPageResult.map((s) => s.studentId);
+    const studentIds = studentIdsOnPageResult.map((s:any) => s.studentId);
 
     // Step 2: Fetch all grades for these specific students on this page/semester
     const grades = await prisma.grade.findMany({
@@ -295,7 +296,7 @@ export const getBatchGrades = async (
     // Group by Student
     const grouped: Record<string, any> = {};
 
-    grades.forEach((g) => {
+    grades.forEach((g:any) => {
       if (!grouped[g.studentId]) {
         const profile = profileMap.get(g.studentId) || {};
         grouped[g.studentId] = {
@@ -325,7 +326,7 @@ export const getBatchGrades = async (
         totalStudents: totalStudentsCount,
         pageCount: studentsList.length,
         totalRecords: grades.length,
-        failedRecords: grades.filter((g) => g.grade <= 0).length,
+        failedRecords: grades.filter((g:any) => g.grade <= 0).length,
         timestamp: new Date().toISOString(),
       },
       meta: {
@@ -352,6 +353,19 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
   const targetStudentId = (
     (req.query.studentId as string) || user.username
   ).toUpperCase();
+
+  // Cloudflare Turnstile Verification for students
+  if (user.role === "student") {
+    const captchaToken = req.query.captchaToken as string;
+    const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+    if (!isHuman) {
+      return res.status(400).json({
+        success: false,
+        code: "AUTH_CAPTCHA_FAILED",
+        message: "Security verification failed. Please refresh the page and try again.",
+      });
+    }
+  }
 
   // Security check
   if (targetStudentId !== user.username && user.role === "student") {
@@ -436,7 +450,7 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
     const semCredits: Record<string, number> = {};
     const semFails: Record<string, boolean> = {};
 
-    grades.forEach((g) => {
+    grades.forEach((g:any) => {
       const semId = g.semesterId;
       const points = g.grade;
       // Handle optional subject relation if data integrity is poor, though include ensures it.
@@ -468,7 +482,7 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
     let totalWeightedCredits = 0;
     let backlogCount = 0;
 
-    grades.forEach((g) => {
+    grades.forEach((g:any) => {
       const points = g.grade;
       const credits = g.subject?.credits || 0;
 
@@ -535,7 +549,7 @@ export const addGrades = async (req: AuthenticatedRequest, res: Response) => {
     const resolvedSubjects = await prisma.subject.findMany({
       where: { id: { in: subjectIds } },
     });
-    const subMap = new Map(resolvedSubjects.map((s) => [s.id, s.semester]));
+    const subMap = new Map(resolvedSubjects.map((s:any) => [s.id, s.semester]));
 
     const results = await Promise.all(
       grades.map((g: any) => {
@@ -608,7 +622,7 @@ export const bulkUpdateGrades = async (
     });
 
     const subjectMap = new Map();
-    subjects.forEach((s) => {
+    subjects.forEach((s:any) => {
       subjectMap.set(s.id, s);
       subjectMap.set(s.code, s);
     });
@@ -644,7 +658,7 @@ export const bulkUpdateGrades = async (
 
         // Target Record: the one that HAS the correct canonical semesterID
         const canonicalMatch = existingGrades.find(
-          (g) => g.semesterId === canonicalSemester,
+          (g:any) => g.semesterId === canonicalSemester,
         );
 
         if (canonicalMatch) {
@@ -748,6 +762,19 @@ export const getAttendance = async (
     (req.query.studentId as string) || user.username
   ).toUpperCase();
 
+  // Cloudflare Turnstile Verification for students
+  if (user.role === "student") {
+    const captchaToken = req.query.captchaToken as string;
+    const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+    if (!isHuman) {
+      return res.status(400).json({
+        success: false,
+        code: "AUTH_CAPTCHA_FAILED",
+        message: "Security verification failed. Please refresh the page and try again.",
+      });
+    }
+  }
+
   // Security check
   if (targetStudentId !== user.username && user.role === "student") {
     return res.status(403).json({ success: false, message: "Forbidden" });
@@ -786,7 +813,7 @@ export const getAttendance = async (
     });
 
     // Calculate summaries and percentages
-    const attendanceWithInsights = attendance.map((a) => ({
+    const attendanceWithInsights = attendance.map((a:any) => ({
       ...a,
       percentage:
         a.totalClasses > 0
@@ -795,7 +822,7 @@ export const getAttendance = async (
     }));
 
     const summary: Record<string, any> = {};
-    attendance.forEach((a) => {
+    attendance.forEach((a:any) => {
       if (!summary[a.semesterId]) {
         summary[a.semesterId] = { total: 0, attended: 0 };
       }
@@ -1015,7 +1042,7 @@ export const publishResults = async (
 
       // 3. Group by Student
       const studentGrades: Record<string, typeof grades> = {};
-      grades.forEach((g) => {
+      grades.forEach((g:any) => {
         if (!studentGrades[g.studentId]) studentGrades[g.studentId] = [];
         studentGrades[g.studentId].push(g);
       });
@@ -1229,7 +1256,7 @@ export const publishAttendance = async (
       }
 
       // 2. Fetch Profiles for metadata
-      const studentIds = [...new Set(attendance.map((a) => a.studentId))];
+      const studentIds = [...new Set(attendance.map((a:any) => a.studentId))];
       const profilesMap: Record<string, any> = {};
 
       try {
@@ -1255,7 +1282,7 @@ export const publishAttendance = async (
 
       // 3. Group by Student
       const studentAttendance: Record<string, typeof attendance> = {};
-      attendance.forEach((a) => {
+      attendance.forEach((a:any) => {
         if (!studentAttendance[a.studentId])
           studentAttendance[a.studentId] = [];
         studentAttendance[a.studentId].push(a);
@@ -1668,7 +1695,7 @@ export const getGradesTemplate = async (
           semesterId: semesterId as string,
         },
       });
-      students = failures.map((f) => ({
+      students = failures.map((f:any) => ({
         username: f.studentId,
         name: "REMEDIAL STUDENT",
       }));
@@ -1718,7 +1745,7 @@ export const getGradesTemplate = async (
     const activeSubjects = isAllSubjects
       ? subjects
       : subjects.filter(
-          (s) =>
+          (s:any) =>
             s.code.toUpperCase() === subjectCodeStr ||
             s.code.toUpperCase().includes(subjectCodeStr),
         );
@@ -1727,7 +1754,7 @@ export const getGradesTemplate = async (
     );
 
     students.forEach((s: any) => {
-      activeSubjects.forEach((sub) => {
+      activeSubjects.forEach((sub:any) => {
         const rowSemId = (semesterId as string) || sub.semester;
         const finalSemId =
           rowSemId && year && !rowSemId.includes(String(year).toUpperCase())
@@ -1982,7 +2009,7 @@ export const getAttendanceTemplate = async (
     );
 
     students.forEach((s: any) => {
-      subjects.forEach((sub) => {
+      subjects.forEach((sub:any) => {
         const rowSemId = (semesterId as string) || sub.semester;
         // Standardize to YEAR-SEM-ID if not already prefixed
         const finalSemId =
@@ -2181,6 +2208,20 @@ export const downloadGrades = async (
   const targetStudentId = (
     (req.query.studentId as string) || user.username
   ).toUpperCase();
+
+  // Cloudflare Turnstile Verification for students
+  if (user.role === "student") {
+    const captchaToken = req.query.captchaToken as string;
+    const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+    if (!isHuman) {
+      return res.status(400).json({
+        success: false,
+        code: "AUTH_CAPTCHA_FAILED",
+        message: "Security verification failed. Please refresh the page and try again.",
+      });
+    }
+  }
+
   const semesterId = req.params.semesterId;
 
   // Security check
@@ -2244,7 +2285,7 @@ export const downloadGrades = async (
       branch: branch,
       campus: campus,
       semesterId,
-      grades: grades.map((g) => ({
+      grades: grades.map((g:any) => ({
         grade: g.grade,
         isRemedial: g.isRemedial,
         subject: {
@@ -2288,6 +2329,20 @@ export const downloadAttendance = async (
   const targetStudentId = (
     (req.query.studentId as string) || user.username
   ).toUpperCase();
+
+  // Cloudflare Turnstile Verification for students
+  if (user.role === "student") {
+    const captchaToken = req.query.captchaToken as string;
+    const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+    if (!isHuman) {
+      return res.status(400).json({
+        success: false,
+        code: "AUTH_CAPTCHA_FAILED",
+        message: "Security verification failed. Please refresh the page and try again.",
+      });
+    }
+  }
+
   const semesterId = req.params.semesterId;
 
   // Security check
@@ -2350,7 +2405,7 @@ export const downloadAttendance = async (
       branch: branch,
       campus: campus,
       semesterId,
-      records: records.map((r) => ({
+      records: records.map((r:any) => ({
         attendedClasses: r.attendedClasses,
         totalClasses: r.totalClasses,
         subject: {
