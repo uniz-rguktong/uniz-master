@@ -5,7 +5,7 @@ metadata:
   labels:
     app: uniz-portal
 spec:
-  replicas: 15
+  replicas: 3
   selector:
     matchLabels:
       app: uniz-portal
@@ -23,11 +23,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: "300m"
-              memory: "256Mi"
+              cpu: "1000m"
+              memory: "1024Mi"
             requests:
-              cpu: "20m"
-              memory: "64Mi"
+              cpu: "100m"
+              memory: "256Mi"
           lifecycle:
             preStop:
               exec:
