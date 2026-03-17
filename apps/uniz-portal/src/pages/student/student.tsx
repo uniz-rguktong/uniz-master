@@ -692,7 +692,9 @@ export default function StudentProfilePage() {
             {[
               "personal",
               "academic",
+/*
               "registration",
+*/
               "seating",
               "family",
               enableOutingsAndOutpasses ? "permissions" : "",
@@ -777,6 +779,7 @@ export default function StudentProfilePage() {
               </div>
             )}
 
+/*
             {activeTab === "registration" && (
               <MySubjects
                 studentId={user?.username}
@@ -784,6 +787,7 @@ export default function StudentProfilePage() {
                 year={user?.year}
               />
             )}
+*/
 
             {activeTab === "seating" && (
               <SeatingArrangement studentId={user?.username} />
