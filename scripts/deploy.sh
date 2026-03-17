@@ -151,8 +151,13 @@ deploy_logic() {
           BUILD_ARGS="--build-arg VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg VITE_API_URL=$VITE_API_URL --build-arg VITE_CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME --build-arg VITE_CLOUDINARY_UPLOAD_PRESET=$CLOUDINARY_UPLOAD_PRESET --build-arg VITE_ANALYTICS_URL=$VITE_ANALYTICS_URL --build-arg VITE_ANALYTICS_KEY=$VITE_ANALYTICS_API_KEY --build-arg VITE_SCRAPER_URL=$VITE_SCRAPER_URL"
         elif [[ "$DIR" == "ornate" || "$DIR" == "ornate-core" ]]; then
           # Ensure NEXTAUTH_URL is valid and not empty
-          EFFECTIVE_AUTH_URL="${ORNATE_NEXTAUTH_URL:-$NEXTAUTH_URL}"
-          [ -z "$EFFECTIVE_AUTH_URL" ] && EFFECTIVE_AUTH_URL="https://ornate.rguktong.in"
+          if [[ "$DIR" == "ornate-core" ]]; then
+            EFFECTIVE_AUTH_URL="${ORNATE_NEXTAUTH_URL_CORE:-$NEXTAUTH_URL}"
+            [ -z "$EFFECTIVE_AUTH_URL" ] && EFFECTIVE_AUTH_URL="https://ornate-core.rguktong.in"
+          else
+            EFFECTIVE_AUTH_URL="${ORNATE_NEXTAUTH_URL:-$NEXTAUTH_URL}"
+            [ -z "$EFFECTIVE_AUTH_URL" ] && EFFECTIVE_AUTH_URL="https://ornate.rguktong.in"
+          fi
           
           BUILD_ARGS="--build-arg NEXT_PUBLIC_ASSETS_URL=https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets --build-arg DATABASE_URL=$ORNATE_DATABASE_URL --build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg NEXTAUTH_URL=$EFFECTIVE_AUTH_URL --build-arg REDIS_URL=$ORNATE_REDIS_URL --build-arg R2_ENDPOINT=$R2_ENDPOINT --build-arg R2_ACCESS_KEY_ID=$R2_ACCESS_KEY_ID --build-arg R2_SECRET_ACCESS_KEY=$R2_SECRET_ACCESS_KEY --build-arg R2_PUBLIC_DOMAIN=$R2_PUBLIC_DOMAIN --build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$VAPID_PUBLIC_KEY --build-arg NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY"
         fi

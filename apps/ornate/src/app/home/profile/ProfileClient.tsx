@@ -144,7 +144,10 @@ export default function ProfileClient({ profile }: { profile: ProfileData }) {
                         <div className="flex items-center gap-6">
                             {isAuthenticated && (
                                 <button
-                                    onClick={() => signOut({ callbackUrl: '/' })}
+                                    onClick={() => {
+                                        const callbackUrl = typeof window !== 'undefined' ? `${window.location.origin}/` : '/';
+                                        signOut({ callbackUrl });
+                                    }}
                                     className="group flex items-center gap-2 text-white/60 hover:text-red-400 transition-colors transform hover:scale-110 active:scale-95"
                                     title="Logout"
                                 >

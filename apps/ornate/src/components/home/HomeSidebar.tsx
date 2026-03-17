@@ -212,7 +212,10 @@ export const HomeSidebar: React.FC<HomeSidebarProps> = ({
                                                 <span className="text-[10px] font-black tracking-widest uppercase">My Profile</span>
                                             </Link>
                                             <button
-                                                onClick={() => signOut({ callbackUrl: '/' })}
+                                                onClick={() => {
+                                                    const callbackUrl = typeof window !== 'undefined' ? `${window.location.origin}/` : '/';
+                                                    signOut({ callbackUrl });
+                                                }}
                                                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-500/5 text-white/50 hover:text-red-500 transition-all group"
                                             >
                                                 <LogOut size={14} className="group-hover:translate-x-0.5 transition-transform" />
