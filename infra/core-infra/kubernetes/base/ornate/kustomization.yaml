@@ -8,4 +8,3 @@ resources:
   - ornate-core.yaml
   - ornate-landing.yaml
   - uniz-landing.yaml
-  - ornate.yaml # This file exists on the VPS in the Ornate branch
