@@ -64,8 +64,9 @@ deploy_logic() {
   # Branch Filtering
   if [ "$CURRENT_BRANCH" == "ornate" ]; then
     ALL_SERVICES=("${ORNATE_SERVICES[@]}")
-    # Ornate branch uses flat base/ layout, not base/ornate/
-    K_BASE="infra/core-infra/kubernetes/base"
+    K_BASE="infra/core-infra/kubernetes/base/ornate"
+    # Fallback if ornate/ folder doesn't exist in base
+    [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
   else
     ALL_SERVICES=("${UNIZ_SERVICES[@]}")
     K_BASE="infra/core-infra/kubernetes/base/core"
@@ -96,10 +97,6 @@ deploy_logic() {
   if [ -f "infra/core-infra/kubernetes/base/shared/secrets.yaml.template" ]; then
     echo "[Infra] Generating secrets.yaml..."
     envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > infra/core-infra/kubernetes/base/shared/secrets.yaml
-    # Also generate for ornate branch flat layout (base/secrets.yaml)
-    if [ "$CURRENT_BRANCH" == "ornate" ] && [ -f "infra/core-infra/kubernetes/base/secrets.yaml" ]; then
-      envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > infra/core-infra/kubernetes/base/secrets.yaml
-    fi
   fi
 
   # Apply Infrastructure
