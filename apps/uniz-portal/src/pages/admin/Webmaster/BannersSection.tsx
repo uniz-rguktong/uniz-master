@@ -383,7 +383,7 @@ export default function BannersSection() {
 
       <AlertDialog 
         open={showAddModal} 
-        onOpenChange={(open) => {
+        onOpenChange={(open: boolean) => {
           if (!open) {
             setShowAddModal(false);
             setEditingBanner(null);
