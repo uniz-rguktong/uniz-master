@@ -7,6 +7,7 @@ import PushBootstrap from '@/components/PushBootstrap';
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
 import InstallPWA from '@/components/InstallPWA';
 import { Toaster } from 'sonner';
+import Script from 'next/script';
 
 const orbitron = Orbitron({
   subsets: ['latin'],
@@ -70,6 +71,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-DGSYH5ZCFB"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-DGSYH5ZCFB');
+          `}
+        </Script>
+      </head>
       <body className={`${orbitron.variable} ${rajdhani.variable} antialiased text-white font-orbitron`} suppressHydrationWarning>
         <AuthProvider>
           <ThemeProvider>
