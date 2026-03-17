@@ -37,6 +37,7 @@ const NAV_LINKS = [
 
 const SIDEBAR_LINKS = {
   core: [
+    { label: 'HOME', icon: <HomeIcon size={18} />, url: '/home' },
     { label: 'STORIES', icon: <BookOpen size={18} />, url: '/home/stories' },
     { label: 'ABOUT US', icon: <Info size={18} />, url: '/home/about' },
     { label: 'SPONSORS', icon: <Heart size={18} />, url: '/home/sponsors' },
@@ -45,23 +46,18 @@ const SIDEBAR_LINKS = {
     { label: 'PROFILE', icon: <User size={18} />, url: '/home/profile' },
   ],
   events: [
+    { label: 'FUN', icon: <Zap size={18} />, url: '/home/fun' },
     { label: 'STALLS', icon: <Store size={18} />, url: '/home/stalls' },
     { label: 'MISSIONS', icon: <Rocket size={18} />, url: '/home/missions' },
     { label: 'SCHEDULE', icon: <Calendar size={18} />, url: '/home/roadmap' },
     { label: 'PLANETARY VIEW', icon: <Globe size={18} />, url: '/home/planet-view' },
     { label: 'FEST', icon: <Music size={18} />, url: '/home/fest' },
-  ],
-  system: [
-    { label: 'DEVELOPERS', icon: <Code size={18} />, url: '/developers' },
-    { label: 'CONTACT', icon: <Phone size={18} />, url: '#contact' },
-    { label: 'TERMS', icon: <Shield size={18} />, url: '/terms' },
   ]
 };
 
 const SEARCH_INDEX = [
   ...SIDEBAR_LINKS.core.map(item => ({ label: item.label, url: item.url, terms: [item.label] })),
   ...SIDEBAR_LINKS.events.map(item => ({ label: item.label, url: item.url, terms: [item.label] })),
-  ...SIDEBAR_LINKS.system.map(item => ({ label: item.label, url: item.url, terms: [item.label] })),
   { label: 'ABOUT US', url: '/home/about', terms: ['ABOUT', 'ABOUT US'] },
   { label: 'SPONSORS', url: '/home/sponsors', terms: ['SPONSORS'] },
   { label: 'GALLERY', url: '/home/gallery', terms: ['GALLERY'] },
@@ -102,7 +98,6 @@ export default function HomeClient({ festSettings, announcements, todaysMissions
   const [showLeftPanel, setShowLeftPanel] = useState(false);
   const [showRightPanel, setShowRightPanel] = useState(false);
   const [selectedPlanet, setSelectedPlanet] = useState<string | null>('sun');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sidebarSearch, setSidebarSearch] = useState('');
   const [isDesktop, setIsDesktop] = useState(true);
   const [isHoloVisibleMobile, setIsHoloVisibleMobile] = useState(true);
@@ -141,7 +136,7 @@ export default function HomeClient({ festSettings, announcements, todaysMissions
 
     if (!match) return;
 
-    setIsSidebarOpen(false);
+    window.dispatchEvent(new CustomEvent('toggle-ornate-sidebar'));
     setSidebarSearch('');
     router.push(match.url);
   }, [sidebarSearch, router]);
@@ -181,39 +176,33 @@ export default function HomeClient({ festSettings, announcements, todaysMissions
         </HeaderSVG>
 
         {/* Mobile Header Icons */}
-        <div className="flex sm:hidden absolute top-[5vw] left-1/2 -translate-x-1/2 w-[88%] items-start justify-between pointer-events-auto z-[130]">
+        <div className="flex sm:hidden absolute top-[5vw] left-1/2 -translate-x-1/2 w-[88%] items-center justify-between pointer-events-auto z-[130]">
           <button 
-            onClick={() => setIsSidebarOpen(true)} 
-            className="text-[var(--color-neon)] hover:scale-110 active:scale-90 transition-all drop-shadow-[0_0_15px_var(--color-neon)] p-3 bg-[var(--color-neon)]/5 rounded-xl border border-[var(--color-neon)]/20"
+            onClick={() => window.dispatchEvent(new CustomEvent('toggle-ornate-sidebar'))} 
+            className="text-[var(--color-neon)] hover:scale-110 active:scale-90 transition-all drop-shadow-[0_0_15px_var(--color-neon)] p-2.5 bg-black/40 backdrop-blur-md rounded-xl border border-[var(--color-neon)]/20"
             aria-label="Open Navigation Sidebar"
           >
-            <Menu size={28} strokeWidth={2.5} />
+            <Menu size={22} strokeWidth={2.5} />
           </button>
           <Link 
             href={isAuthenticated ? '/home/profile' : '/login'} 
-            className="text-[var(--color-neon)] hover:scale-110 active:scale-90 transition-all drop-shadow-[0_0_15px_var(--color-neon)] p-2.5 bg-[var(--color-neon)]/5 rounded-xl border border-[var(--color-neon)]/20 shadow-[0_0_20px_rgba(var(--color-neon-rgb),0.05)]"
+            className="relative group transition-all"
             aria-label="User Profile"
           >
-            <User size={30} strokeWidth={2} />
+            <div className="w-9 h-9 border border-[var(--color-neon)]/30 group-hover:border-[var(--color-neon)] relative flex items-center justify-center bg-black/40 backdrop-blur-md rounded-md transition-all overflow-hidden shadow-[0_0_15px_rgba(var(--color-neon-rgb),0.1)]">
+                <img
+                    src="/cybernetic_astronaut_profile.png"
+                    alt="Profile"
+                    className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all"
+                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://www.gravatar.com/avatar/000?d=mp'; }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-40 pointer-events-none" />
+                <Rocket className="absolute w-2.5 h-2.5 bottom-0.5 right-0.5 animate-pulse text-[var(--color-neon)] drop-shadow-[0_0_5px_var(--color-neon)]" />
+            </div>
           </Link>
         </div>
       </header>
 
-      {/* Sidebar Navigation */}
-      <AnimatePresence>
-        {isSidebarOpen && (
-          <HomeSidebar
-            isOpen={isSidebarOpen}
-            onClose={() => setIsSidebarOpen(false)}
-            sidebarSearch={sidebarSearch}
-            setSidebarSearch={setSidebarSearch}
-            handleSidebarSearch={handleSidebarSearch}
-            sidebarCoreLinks={SIDEBAR_LINKS.core}
-            sidebarEventsLinks={SIDEBAR_LINKS.events}
-            sidebarSystemLinks={SIDEBAR_LINKS.system}
-          />
-        )}
-      </AnimatePresence>
 
       {/* Main Center Area */}
       <div className="absolute inset-0 flex flex-col items-center pt-24 z-10 pointer-events-none">

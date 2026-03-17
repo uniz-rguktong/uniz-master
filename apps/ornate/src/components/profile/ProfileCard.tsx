@@ -6,7 +6,6 @@ import {
     User, Shield, Camera, Gamepad2, Diamond, Heart, Users, Trophy, Target,
     Edit2, Save, X, Loader2, Zap
 } from 'lucide-react';
-import QRCode from 'react-qr-code';
 import ShipInterface from './ShipInterface';
 import MissionSection from './MissionSection';
 import { updateProfile } from '@/lib/actions/profile';
@@ -434,29 +433,7 @@ export default function ProfileCard({ profile }: { profile?: any }) {
                         viewport={{ once: true }}
                         className="flex flex-col gap-6"
                     >
-                        {/* QR Code Card */}
-                        <div
-                            className="relative p-6 flex flex-col items-center"
-                            style={{
-                                background: 'rgba(10, 10, 20, 0.7)',
-                                border: '1.5px solid rgba(214, 255, 0, 0.2)',
-                                clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%)',
-                                backdropFilter: 'blur(16px)'
-                            }}
-                        >
-                            <span className="text-[9px] text-[#D6FF00]/60 font-black tracking-[0.3em] uppercase mb-5">IDENTITY DECODER</span>
-                            <div className="relative p-3 bg-white/5 border border-[#D6FF00]/15">
-                                <QRCode
-                                    value={profile?.id || 'ORN-UNID'}
-                                    size={120}
-                                    style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                                    fgColor="#D6FF00"
-                                    bgColor="transparent"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#D6FF00]/20 to-transparent -translate-y-full animate-[scan_3s_ease-in-out_infinite]" />
-                            </div>
-                            <span className="text-[8px] text-white/30 font-mono tracking-widest mt-4 uppercase">SCAN TO VERIFY</span>
-                        </div>
+
 
                         {/* Clearance Card */}
                         <div

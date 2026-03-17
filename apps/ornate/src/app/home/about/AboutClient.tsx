@@ -3,10 +3,11 @@
 import { useRef, memo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Github, Linkedin, Globe, ChevronRight, Star, Users, GraduationCap, Award, Building, Rocket, Target, Eye, Sparkles, Layout, DraftingCompass, Cpu, Layers } from 'lucide-react';
-import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import { ArrowLeft, Github, Linkedin, Globe, ChevronRight, Star, Users, GraduationCap, Award, Building, Rocket, Target, Eye, Sparkles, Layout, DraftingCompass, Cpu, Layers, Database, ShieldCheck, Terminal } from 'lucide-react';
+import { motion, useScroll, useTransform, useSpring, useInView, AnimatePresence } from 'framer-motion';
 import MissionsFooter from '@/components/missions/MissionsFooter';
 import SectorHeader from '@/components/layout/SectorHeader';
+import { TEAM_DATA, TeamMember } from '@/lib/data/team';
 
 /* ─── Animated Counter Component ─── */
 const AnimatedCounter = ({ value, suffix = '', prefix = '' }: { value: number; suffix?: string; prefix?: string }) => {
@@ -58,92 +59,91 @@ const SectionHeader = memo(({ subtitle, title }: { subtitle: string; title: stri
 });
 SectionHeader.displayName = 'SectionHeader';
 
-/* ─── Leadership Card ─── */
-const LeadershipCard = memo(({ person, i }: { person: any; i: number }) => {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: '-50px' });
+
+/* ─── Team Member Card (Identity Badge / Sports Style) ─── */
+/* ─── Team Member Card (Modern Square Style) ─── */
+const TeamMemberCard = memo(({ dev, i }: { dev: any; i: number }) => {
+    const roleIcons: Record<string, any> = {
+        'UI/UX Designing': DraftingCompass,
+        'Frontend Engineering': Layout,
+        'Backend & Database': Database,
+        'Full Stack Development': Terminal, 
+        'Production': Cpu,
+        'Testing & QA': ShieldCheck
+    };
 
     return (
         <motion.div
-            ref={ref}
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: i * 0.1, ease: [0.19, 1, 0.22, 1] }}
-            className="flex flex-col items-center group cursor-pointer"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: i * 0.1 }}
+            className="group relative"
         >
-            <div className="relative w-full aspect-[3/4] mb-6 rounded-2xl overflow-hidden border border-white/10 group-hover:border-[#D4AF37]/50 transition-all duration-700 shadow-[0_0_50px_rgba(0,0,0,0.5)] group-hover:shadow-[0_0_80px_rgba(212,175,55,0.1)]">
-                <Image src={person.image} alt={person.name} fill className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80" />
-                
-                {/* Floating Role Badge */}
-                <div className="absolute bottom-4 left-4 right-4 z-10 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                    <div className="bg-[#D4AF37] px-3 py-1 rounded-sm">
-                        <p className="text-black font-black font-mono text-[8px] tracking-[0.2em] text-center uppercase">OFFICIAL_COMMANDER</p>
+            {/* Minimalist Team Lead Indicator */}
+            {dev.isTeamLead && (
+                <div className="absolute -top-2 left-6 z-50">
+                    <div className="px-3 py-1 bg-gradient-to-r from-[#D4AF37] to-[#BF953F] rounded-md shadow-[0_0_20px_rgba(212,175,55,0.3)]">
+                        <span className="text-[8px] font-black tracking-[0.2em] text-black uppercase">TEAM_LEAD</span>
                     </div>
                 </div>
+            )}
 
-                {/* Sci-fi corners */}
-                <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-[#D4AF37]/0 group-hover:border-[#D4AF37]/60 transition-all duration-500" />
-                <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-[#D4AF37]/0 group-hover:border-[#D4AF37]/60 transition-all duration-500" />
-            </div>
-            <div className="flex flex-col items-center gap-1">
-                <h4 className="text-lg font-black uppercase tracking-wider text-white/90 group-hover:text-[#D4AF37] transition-all duration-500 text-center">
-                    {person.name}
-                </h4>
-                <p className="text-[#D4AF37]/50 font-mono text-[9px] tracking-[0.4em] uppercase group-hover:text-[#D4AF37] transition-colors font-bold">
-                    {person.role}
-                </p>
+            <div 
+                className={`relative bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl p-4 transition-all duration-500 hover:bg-white/[0.05] hover:border-[#D4AF37]/30 group-hover:-translate-y-1`}
+            >
+                {/* Compact Image Container */}
+                <div className="relative w-full aspect-[1.1/1] rounded-xl overflow-hidden mb-4 border border-white/5">
+                    <Image
+                        src={dev.image}
+                        alt={dev.name}
+                        fill
+                        className="object-cover transition-all duration-700 group-hover:scale-105 grayscale group-hover:grayscale-0"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
+                    
+                    {/* Minimal LinkedIn Icon */}
+                    <Link 
+                        href={dev.linkedin || "#"} 
+                        target="_blank" 
+                        className="absolute bottom-3 right-3 z-30 flex items-center justify-center w-7 h-7 bg-black/60 backdrop-blur-md rounded-lg border border-white/10 hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all"
+                    >
+                        <Linkedin className="w-3 h-3" />
+                    </Link>
+                </div>
+
+                {/* Name - Single Line & Smaller */}
+                <div className="mb-3">
+                    <h4 className="text-lg font-black tracking-tight text-white uppercase italic truncate group-hover:text-[#D4AF37] transition-colors">
+                        {dev.name}
+                    </h4>
+                </div>
+
+                {/* Categories - Extra Compact List */}
+                <div className="flex flex-col gap-2 pt-3 border-t border-white/5">
+                    {dev.categories.slice(0, 2).map((cat: string, idx: number) => {
+                        const Icon = roleIcons[cat] || Star;
+                        return (
+                            <div key={idx} className="flex items-center gap-3 group/item">
+                                <div className="w-6 h-6 rounded-md bg-white/[0.04] flex items-center justify-center border border-white/5 group-hover/item:border-[#D4AF37]/30 transition-all">
+                                    <Icon className="w-3 h-3 text-white/50 group-hover/item:text-[#D4AF37]" />
+                                </div>
+                                <span className="text-[9px] font-bold tracking-[0.1em] text-white/40 uppercase truncate group-hover/item:text-white/80">
+                                    {cat}
+                                </span>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* Subtle Decorative Badge */}
+                <div className="mt-4 flex justify-between items-center opacity-30">
+                    <span className="text-[7px] font-mono tracking-tighter text-white/40">SEC_ID: {i + 104}</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-pulse" />
+                </div>
             </div>
         </motion.div>
     );
 });
-LeadershipCard.displayName = 'LeadershipCard';
-
-/* ─── Team Member Card (Identity Badge / Sports Style) ─── */
-/* ─── Team Member Card (Modern Square Style) ─── */
-const TeamMemberCard = memo(({ dev, i }: { dev: any; i: number }) => (
-    <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        whileHover={{ y: -5 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: i * 0.05 }}
-        className="relative w-full aspect-square bg-[#0a0a0c] border border-white/10 rounded-2xl overflow-hidden group shadow-2xl"
-    >
-        {/* Full Place Image */}
-        <Image 
-            src={dev.image} 
-            alt={dev.name} 
-            fill 
-            className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110" 
-        />
-        
-        {/* Gradient Overlay for Text Legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80" />
-
-        {/* LinkedIn Profile - Top Right Corner */}
-        <div className="absolute top-3 right-3 z-30">
-            <Link 
-                href={dev.linkedin || "#"} 
-                target="_blank"
-                className="flex items-center justify-center w-8 h-8 rounded-lg bg-black/40 backdrop-blur-md border border-white/10 text-white/40 hover:text-[#D4AF37] hover:border-[#D4AF37] transition-all"
-            >
-                <Linkedin className="w-4 h-4" />
-            </Link>
-        </div>
-
-        {/* Name and Role Section - Full Width Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 bg-black/60 backdrop-blur-xl border-t border-white/10 z-20">
-            <div className="flex flex-col gap-1">
-                <span className="text-xl font-black uppercase tracking-tight text-white group-hover:text-[#D4AF37] transition-colors">{dev.name}</span>
-                <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-gray-400 font-bold">{dev.role}</span>
-            </div>
-        </div>
-
-        {/* Decorative Corner Accents (Subtle) */}
-        <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-[#D4AF37]/0 group-hover:border-[#D4AF37]/40 transition-all duration-500 rounded-tl-2xl" />
-    </motion.div>
-));
 TeamMemberCard.displayName = 'TeamMemberCard';
 
 /* ─── Partner Logo ─── */
@@ -197,7 +197,7 @@ export default function AboutPage() {
         const end = (i + 1) / timelineData.length;
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const stepOpacity = useTransform(timelineProgress, [start - 0.05, start, end, end + 0.05], [0.2, 1, 1, 0.2]);
-        
+
         return {
             ...step,
             opacity: stepOpacity,
@@ -216,33 +216,32 @@ export default function AboutPage() {
         { icon: <Rocket className="w-6 h-6" />, value: 50, suffix: '+', label: 'ACTIVE STUDENT CLUBS' },
     ];
 
-    const leadership = [
-        { name: "Prof. Sudhir Prem", role: "CHANCELLOR", image: "https://images.unsplash.com/photo-1540324155974-7523202daa3f?w=800&q=80" },
-        { name: "Dr. Amarendra", role: "VICE CHANCELLOR", image: "https://images.unsplash.com/photo-1544333346-64e4fe186e8a?w=800&q=80" },
-        { name: "Dr. B. Jayarami", role: "DIRECTOR", image: "https://images.unsplash.com/photo-1551836022-deaf237a65b7?w=800&q=80" },
-        { name: "P. Raghunath", role: "FACULTY DEAN", image: "https://images.unsplash.com/photo-1542385151-efd9000785a0?w=800&q=80" },
-    ];
-
-    const webTeam = [
-        { name: "P. Rohith", role: "LEAD ARCHITECT", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80" },
-        { name: "K. Teja", role: "UI/UX VISIONARY", image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&q=80" },
-        { name: "J. Naveen", role: "SYSTEM STRATEGIST", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&q=80" },
-        { name: "S. Kiran", role: "FRONTEND NINJA", image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=800&q=80" },
-        { name: "M. Prasad", role: "BACKEND WIZARD", image: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=800&q=80" },
-        { name: "T. Vamsi", role: "FULLSTACK ENGINEER", image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=800&q=80" },
-        { name: "A. Suresh", role: "CLOUD DEPLOYER", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&q=80" },
-        { name: "V. Ravi", role: "DOCS SPECIALIST", image: "https://images.unsplash.com/photo-1542385151-efd9000785a0?w=800&q=80" },
-        { name: "L. Madhu", role: "QA ANALYST", image: "https://images.unsplash.com/photo-1513956589380-bad6acb9b9d4?w=800&q=80" },
-        { name: "N. Giri", role: "DEVOPS LEAD", image: "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=800&q=80" },
-    ];
 
     const partners = ['TCS', 'WIPRO', 'INFOSYS', 'IBM', 'COGNIZANT', 'ACCENTURE'];
+
+    const [activeMainTab, setActiveMainTab] = useState(TEAM_DATA[0].id);
+    const [activeSubTab, setActiveSubTab] = useState('ALL');
+
+    const subTabs = [
+        { name: 'ALL', icon: Layers },
+        { name: 'UI/UX Designing', icon: DraftingCompass },
+        { name: 'Frontend Engineering', icon: Layout },
+        { name: 'Backend & Database', icon: Database },
+        { name: 'Production', icon: Cpu },
+        { name: 'Testing & QA', icon: ShieldCheck },
+    ];
+
+    const currentProject = TEAM_DATA.find(p => p.id === activeMainTab)!;
+
+    const filteredMembers = currentProject.members.filter(m =>
+        activeSubTab === 'ALL' ? true : m.categories.includes(activeSubTab)
+    );
 
     return (
         <main className="relative w-screen bg-[#030308] font-orbitron text-white overflow-x-hidden">
 
             {/* ── Navigation ── */}
-            <SectorHeader 
+            <SectorHeader
                 accentColor="#D4AF37"
                 showTitle={false}
             />
@@ -296,7 +295,7 @@ export default function AboutPage() {
                     <div className="w-full lg:w-[55%] flex flex-col gap-8">
                         <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
                             className="w-full aspect-[16/10] relative rounded-2xl overflow-hidden border border-[#D4AF37]/20 shadow-[0_0_60px_rgba(212,175,55,0.08)] group">
-                            <Image src="/assets/rgukt_building.jpeg" alt="RGUKT Campus" fill className="object-cover transition-transform duration-[2000ms] group-hover:scale-[1.03] opacity-80 group-hover:opacity-100" />
+                            <Image src="/assets/5.png" alt="RGUKT Campus" fill className="object-cover transition-transform duration-[2000ms] group-hover:scale-[1.03] opacity-80 group-hover:opacity-100" />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#08080a] via-transparent to-transparent opacity-60" />
                             <div className="absolute top-4 left-4 w-5 h-5 border-t-2 border-l-2 border-[#D4AF37]/50 z-20" />
                             <div className="absolute top-4 right-4 w-5 h-5 border-t-2 border-r-2 border-[#D4AF37]/50 z-20" />
@@ -324,7 +323,7 @@ export default function AboutPage() {
                                     {/* Background decorative elements */}
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/[0.02] rounded-full blur-[60px] group-hover:bg-[#D4AF37]/[0.1] transition-all duration-700" />
                                     <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/[0.05] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                                    
+
                                     {/* Corner Brackets */}
                                     <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#D4AF37]/20 group-hover:border-[#D4AF37]/60 transition-colors duration-500" />
                                     <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#D4AF37]/20 group-hover:border-[#D4AF37]/60 transition-colors duration-500" />
@@ -403,19 +402,19 @@ export default function AboutPage() {
                             {/* Decorative aura */}
                             <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#D4AF37]/[0.05] rounded-full blur-[100px] group-hover:bg-[#D4AF37]/[0.15] transition-all duration-1000" />
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#D4AF37]/20 to-transparent" />
-                            
+
                             <div className="relative z-10">
                                 <div className="mb-10 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-[#D4AF37]/5 border border-[#D4AF37]/20 text-[#D4AF37] shadow-[0_0_30px_rgba(212,175,55,0.05)] group-hover:scale-110 transition-transform duration-700">
                                     {item.icon}
                                 </div>
-                                
+
                                 <h3 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-8 group-hover:text-[#D4AF37] transition-colors duration-500">{item.title}</h3>
-                                
+
                                 <div className="flex items-center gap-4 mb-8">
                                     <div className="h-[2px] w-16 bg-[#D4AF37]/40 group-hover:w-24 group-hover:bg-[#D4AF37] transition-all duration-700" />
                                     <div className="w-2 h-2 rounded-full bg-[#D4AF37]/40 group-hover:bg-[#D4AF37] animate-pulse" />
                                 </div>
-                                
+
                                 <p className="text-gray-300 text-lg md:text-xl leading-relaxed font-medium group-hover:text-white transition-colors duration-500">
                                     {item.text}
                                 </p>
@@ -444,7 +443,7 @@ export default function AboutPage() {
                     {timelineSteps.map((step, i) => (
                         <motion.div key={i} style={{ opacity: step.opacity }}
                             className="relative grid grid-cols-1 md:grid-cols-[1fr_80px_1fr] gap-4 md:gap-0 mb-16 md:mb-0 md:min-h-[250px]">
-                            
+
                             {/* Left content - Even index (2016, 2018...) */}
                             <div className="p-6 md:p-10 flex flex-col items-start md:items-end text-left md:text-right group">
                                 {i % 2 === 0 && (
@@ -480,63 +479,98 @@ export default function AboutPage() {
                 </div>
             </div>
 
-            {/* ══════ 5) LEADERSHIP BOARD ══════ */}
-            <div className="relative z-20 w-full bg-[#030304] text-white flex flex-col items-center px-4 md:px-12 pt-24 pb-32 border-t border-white/5 overflow-hidden">
-                <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '50px 50px' }} />
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#D4AF37]/[0.03] blur-[150px] -z-10" />
-
-                <SectionHeader subtitle="THE COMMANDERS" title="LEADERSHIP BOARD" />
-
-                <div className="relative z-10 w-full max-w-[1200px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
-                    {leadership.map((person, i) => (
-                        <LeadershipCard key={i} person={person} i={i} />
-                    ))}
-                </div>
-            </div>
 
             {/* ══════ 6) WEB TEAM (RE-ENGINEERED SHOWCASE) ══════ */}
-            <div className="relative z-20 w-full bg-[#050507] text-white flex flex-col px-4 md:px-12 py-24 md:py-32 border-t border-white/5 overflow-hidden">
-                {/* Section-specific background elements */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-[#D4AF37]/[0.02] rounded-full blur-[250px] pointer-events-none" />
-                <div className="absolute inset-0 opacity-[0.03] pointer-events-none select-none overflow-hidden h-full w-full">
-                    <div className="absolute top-10 left-1/2 -translate-x-1/2 text-[25vw] font-black text-[#D4AF37] whitespace-nowrap opacity-10 leading-none">ARCHITECTS</div>
+            <div className="relative z-20 w-full bg-[#030308] text-white flex flex-col px-4 md:px-12 py-16 md:py-20 border-t border-white/5 overflow-hidden">
+                {/* Space Atmosphere */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1400px] h-[800px] bg-blue-500/[0.03] rounded-full blur-[200px] pointer-events-none" />
+                <div className="absolute inset-0 opacity-10 bg-[url('/assets/stars_bg.png')] pointer-events-none bg-repeat" />
+
+                <div className="max-w-[1400px] mx-auto w-full mb-12 text-center">
+                    <motion.div initial={{ opacity: 0, y: -20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex flex-col items-center gap-4">
+                        <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-white uppercase italic">
+                            CREW BEHIND <span className="text-[#D4AF37]">ORNATE</span> UNIVERSE
+                        </h2>
+                        <p className="text-xs sm:text-sm font-medium tracking-widest text-white/40 max-w-2xl px-4">
+                            A cross-functional team that designed, engineered, and launched a narrative-driven fest ecosystem
+                        </p>
+                    </motion.div>
                 </div>
 
-                <div className="max-w-[1400px] mx-auto w-full mb-20 md:mb-32">
-                    <SectionHeader subtitle="THE DIGITAL VANGUARD" title="DEVELOPMENT CORE" />
-                </div>
-
-                <div className="max-w-[1400px] mx-auto w-full relative z-10">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8 md:gap-10">
-                        {webTeam.map((dev, i) => (
-                            <TeamMemberCard key={dev.name} dev={dev} i={i} />
+                {/* Main Tabs (Centered Slanted Style) */}
+                <div className="max-w-[1000px] mx-auto w-full mb-12">
+                    <div className="flex justify-center gap-4 border-b border-white/5 relative">
+                        {TEAM_DATA.map(project => (
+                            <button
+                                key={project.id}
+                                onClick={() => setActiveMainTab(project.id)}
+                                className={`relative px-12 py-5 text-xs font-black tracking-[0.4em] uppercase transition-all duration-500 overflow-hidden
+                                    ${activeMainTab === project.id ? 'text-[#D4AF37]' : 'text-white/20 hover:text-white/40'}`}
+                                style={{ clipPath: 'polygon(15% 0, 85% 0, 100% 100%, 0 100%)' }}
+                            >
+                                <span className="relative z-10">{project.title}</span>
+                                {activeMainTab === project.id && (
+                                    <motion.div layoutId="mainTabGlow" className="absolute inset-0 bg-[#D4AF37]/5 blur-xl z-0" />
+                                )}
+                                {activeMainTab === project.id && (
+                                    <motion.div layoutId="mainTabIndicator" className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent shadow-[0_0_15px_#D4AF37]" />
+                                )}
+                            </button>
                         ))}
                     </div>
                 </div>
 
+                <div className="max-w-[1400px] mx-auto w-full">
+                    <div className="mb-16">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={activeMainTab}
+                                initial={{ opacity: 0, scale: 0.98 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.98 }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                <div className="flex items-center gap-6 mb-16 px-4">
+                                     <h3 className="text-3xl md:text-5xl font-black tracking-tighter text-white uppercase italic">
+                                        {TEAM_DATA.find(p => p.id === activeMainTab)?.title}
+                                     </h3>
+                                     <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
+                                     <span className="text-[10px] font-mono tracking-[0.5em] text-white/20 uppercase">{activeMainTab.replace('-', '_')}</span>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8 lg:gap-12">
+                                     {TEAM_DATA.find(p => p.id === activeMainTab)?.members.map((dev, i) => (
+                                         <TeamMemberCard key={dev.name} dev={dev} i={i} />
+                                     ))}
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+                </div>
+
                 {/* Decorative Tech Banner */}
-                <div className="mt-32 w-full max-w-[1400px] mx-auto opacity-20 border-y border-white/10 py-6 flex justify-around items-center grayscale pointer-events-none">
-                    <span className="font-mono text-[10px] tracking-[1em]">SYSTEM_VERSION_10.2.0</span>
-                    <span className="font-mono text-[10px] tracking-[1em]">CORE_ARCH_STABLE</span>
-                    <span className="font-mono text-[10px] tracking-[1em]">DEPLOYED_2026</span>
+                <div className="mt-12 w-full max-w-[1400px] mx-auto opacity-10 border-y border-white/10 py-10 flex justify-around items-center grayscale pointer-events-none">
+                    <span className="font-mono text-[10px] tracking-[1.2em]">ACCESS_CONTROL_V10.2</span>
+                    <span className="font-mono text-[10px] tracking-[1.2em]">SECURE_PERSONNEL_HUB</span>
+                    <span className="font-mono text-[10px] tracking-[1.2em]">SYSTEM_STABLE</span>
                 </div>
             </div>
 
             {/* ══════ 7) PARTNERS ══════ */}
             <div className="relative z-20 w-full bg-[#0a0a0d] border-t border-white/5 py-24 md:py-32 flex flex-col items-center px-4 overflow-hidden">
                 <SectionHeader subtitle="TRUSTED BY THE BEST" title="OUR PARTNERS" />
-                
+
                 <div className="w-full relative overflow-hidden group">
                     {/* Gradient Fades for Marquee */}
                     <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#0a0a0d] to-transparent z-10 pointer-events-none" />
                     <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#0a0a0d] to-transparent z-10 pointer-events-none" />
 
-                    <motion.div 
+                    <motion.div
                         className="flex gap-12 w-max py-4"
                         animate={{ x: [0, -1000] }}
-                        transition={{ 
-                            repeat: Infinity, 
-                            duration: 30, 
+                        transition={{
+                            repeat: Infinity,
+                            duration: 30,
                             ease: "linear"
                         }}
                     >
@@ -566,10 +600,10 @@ export default function AboutPage() {
                 <div className="w-full relative overflow-hidden py-4">
                     <motion.div className="flex gap-4 w-max" animate={{ x: ["0%", "-50%"] }} transition={{ repeat: Infinity, ease: "linear", duration: 60 }}>
                         {[
-                            "/assets/rgukt_building.jpeg", "/assets/ornate_falcon.png", "/assets/space_themes.png",
-                            "/assets/rgukt_building.jpeg", "/assets/ornate_falcon.png", "/assets/space_themes.png",
-                            "/assets/rgukt_building.jpeg", "/assets/ornate_falcon.png", "/assets/space_themes.png",
-                            "/assets/rgukt_building.jpeg", "/assets/ornate_falcon.png", "/assets/space_themes.png",
+                            "/assets/5.png", "/assets/6.png", "/assets/4.png",
+                            "/assets/5.png", "/assets/6.png", "/assets/4.png",
+                            "/assets/5.png", "/assets/6.png", "/assets/4.png",
+                            "/assets/5.png", "/assets/6.png", "/assets/4.png",
                         ].map((src, i) => (
                             <div key={i} className="relative flex-none w-[300px] sm:w-[400px] aspect-[16/9] rounded-xl overflow-hidden border border-white/5 opacity-60 hover:opacity-100 transition-opacity duration-500">
                                 <Image src={src} alt="Campus" fill className={`${src.includes('falcon') ? 'object-contain p-8' : 'object-cover'} grayscale hover:grayscale-0 transition-all duration-700`} />
@@ -598,7 +632,7 @@ export default function AboutPage() {
             <div className="relative z-20 w-full bg-black flex flex-col px-6 md:px-16 pt-32 pb-12 border-t border-white/5 overflow-hidden">
                 {/* Background Grid Pattern */}
                 <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#D4AF37 0.5px, transparent 0.5px)', backgroundSize: '40px 40px' }} />
-                
+
                 <div className="relative z-10 w-full flex flex-col lg:flex-row justify-between items-start lg:items-end gap-16 lg:gap-24 border-b border-white/10 pb-20">
                     {/* Left: Branding/Campus Name */}
                     <div className="flex flex-col items-start text-left max-w-4xl">
@@ -609,8 +643,8 @@ export default function AboutPage() {
                             RGUKT <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#BF953F] to-[#FCF6BA]">ONGOLE</span>
                             <br />
-                    {  /*  <span className="text-[8vw] sm:text-[6vw] lg:text-[4.5rem] opacity-40">CAMPUS</span> */}
-                      </h2>
+                            {  /*  <span className="text-[8vw] sm:text-[6vw] lg:text-[4.5rem] opacity-40">CAMPUS</span> */}
+                        </h2>
                     </div>
 
                     {/* Right: Info & Links */}

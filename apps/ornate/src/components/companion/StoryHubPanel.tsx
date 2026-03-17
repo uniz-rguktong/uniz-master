@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Volume2, VolumeX, Minus, X } from 'lucide-react';
+import { Volume2, VolumeX, Minus, X, MessageSquare, MessageSquareOff } from 'lucide-react';
 import { STORY_CARDS } from './constants';
 
 interface StoryHubPanelProps {
@@ -11,12 +11,16 @@ interface StoryHubPanelProps {
     botRef: React.RefObject<HTMLDivElement | null>;
     isVoiceEnabled: boolean;
     setIsVoiceEnabled: (val: boolean) => void;
+    isMessagesEnabled: boolean;
+    setIsMessagesEnabled: (val: boolean) => void;
 }
 
 export function StoryHubPanel({
     onClose,
     isVoiceEnabled,
-    setIsVoiceEnabled
+    setIsVoiceEnabled,
+    isMessagesEnabled,
+    setIsMessagesEnabled
 }: StoryHubPanelProps) {
     const router = useRouter();
 
@@ -74,6 +78,24 @@ export function StoryHubPanel({
                             </div>
                         </div>
                         <div className="flex items-center gap-1.5 sm:gap-2">
+                            {/* Toggle Messages */}
+                            <button
+                                aria-label={isMessagesEnabled ? "Turn Off Greetings" : "Enable Greetings"}
+                                onClick={() => setIsMessagesEnabled(!isMessagesEnabled)}
+                                className="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 flex-shrink-0 mt-0.5 group"
+                                style={{ 
+                                    background: isMessagesEnabled ? 'rgba(57,255,20,0.1)' : 'rgba(255,255,255,0.05)', 
+                                    border: `1px solid ${isMessagesEnabled ? 'rgba(57,255,20,0.3)' : 'rgba(255,255,255,0.08)'}` 
+                                }}
+                            >
+                                {isMessagesEnabled ? (
+                                    <MessageSquare className="w-3.5 h-3.5 text-[var(--color-neon)] drop-shadow-[0_0_8px_var(--color-neon)]" />
+                                ) : (
+                                    <MessageSquareOff className="w-3.5 h-3.5 text-white/40 group-hover:text-amber-400 group-hover:drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]" />
+                                )}
+                            </button>
+
+                            {/* Toggle Voice */}
                             <button
                                 aria-label={isVoiceEnabled ? "Mute Voice" : "Enable Voice"}
                                 onClick={() => setIsVoiceEnabled(!isVoiceEnabled)}
@@ -96,17 +118,6 @@ export function StoryHubPanel({
                                 style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
                             >
                                 <Minus className="w-3.5 h-3.5 text-white/40 group-hover:text-[var(--color-neon)] group-hover:drop-shadow-[0_0_8px_var(--color-neon)]" />
-                            </button>
-                            <button
-                                id="story-hub-close"
-                                onClick={onClose}
-                                aria-label="Close"
-                                className="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200 flex-shrink-0 mt-0.5 group"
-                                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
-                                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.15)'; e.currentTarget.style.borderColor = 'rgba(239,68,68,0.3)'; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
-                            >
-                                <X className="w-3.5 h-3.5 text-white/40 group-hover:text-white" />
                             </button>
                         </div>
                     </div>

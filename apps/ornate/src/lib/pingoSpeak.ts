@@ -40,6 +40,6 @@ export function pingoSpeak(text: string) {
         window.speechSynthesis.speak(utterance);
     };
 
-    // Small delay to let cancel() flush — Chrome bug fix
-    setTimeout(speak, 60);
+    // Tiny delay to let cancel() flush — Chrome bug fix
+    setTimeout(speak, 10);
 }

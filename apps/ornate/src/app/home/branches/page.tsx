@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Settings, Menu as MenuIcon } from 'lucide-react';
 import { LiquidButton } from '@/components/ui/liquid-glass-button';
+import ScrollIndicator from '@/components/ui/ScrollIndicator';
 
 
 const BRANCH_PLANETS = ['hho', 'cse', 'ece', 'eee', 'civil', 'mech'].reverse();
@@ -394,6 +395,7 @@ export default function BranchesPage() {
                     </div>
                 </div>
             </div>
+            <ScrollIndicator />
         </div>
     );
 }

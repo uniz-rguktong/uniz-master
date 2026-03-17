@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Camera } from 'lucide-react';
+import { AlbumCardSkeleton } from '@/components/gallery/GallerySkeleton'
+import GalleryEmptyState from '@/components/gallery/GalleryEmptyState';
 
 type AlbumItem = {
   id: string;
@@ -15,19 +17,26 @@ type AlbumItem = {
 export default function GalleryAlbumGrid({
   albums,
   onOpen,
+  isMounted,
   emptyMessage,
 }: {
   albums: AlbumItem[];
   onOpen: (id: string) => void;
+  isMounted: boolean;
   emptyMessage?: string;
 }) {
-  if (albums.length === 0) {
+  if (!isMounted) {
     return (
-      <div className="col-span-full py-20 text-center opacity-40">
-        <Camera className="w-12 h-12 mx-auto mb-4 opacity-20" />
-        <p className="text-xl font-black tracking-widest uppercase">{emptyMessage || 'No Archives Found'}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <AlbumCardSkeleton key={i} />
+        ))}
       </div>
     );
+  }
+
+  if (albums.length === 0) {
+    return <div className="col-span-full"><GalleryEmptyState type="search" /></div>;
   }
 
   return (

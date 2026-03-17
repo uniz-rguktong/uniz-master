@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { memo, useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Home, Rocket } from 'lucide-react';
+import { ArrowLeft, Home, Rocket, Menu } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { addAlpha } from '@/lib/utils';
 
@@ -101,12 +101,29 @@ const SectorHeader = ({
                         )}
 
                         {!hideHome && (
-                            <Link href="/home" className="group flex items-center gap-2 sm:gap-3 text-white/50 hover:text-[var(--color-neon)] transition-colors mr-4">
-                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-white/20 group-hover:border-[var(--color-neon)] flex items-center justify-center transition-all bg-black/50 shadow-md">
-                                    <Home className="w-4 h-4 sm:w-5 sm:h-5" />
-                                </div>
-                                <span className="hidden md:block text-xs font-black tracking-widest uppercase">Dashboard</span>
-                            </Link>
+                            <>
+                                {/* Mobile: Menu Toggle */}
+                                <button 
+                                    onClick={() => window.dispatchEvent(new CustomEvent('toggle-ornate-sidebar'))} 
+                                    className="sm:hidden group flex items-center gap-2 text-white/50 hover:text-[var(--color-neon)] transition-colors mr-2"
+                                    aria-label="Open Navigation Menu"
+                                >
+                                    <div className="w-8 h-8 rounded-full border border-white/20 group-hover:border-[var(--color-neon)] flex items-center justify-center transition-all bg-black/50 shadow-md">
+                                        <Menu className="w-4 h-4" />
+                                    </div>
+                                </button>
+
+                                {/* Desktop: Dashboard Link */}
+                                <Link 
+                                    href="/home" 
+                                    className="hidden sm:flex group items-center gap-3 text-white/50 hover:text-[var(--color-neon)] transition-colors mr-4"
+                                >
+                                    <div className="w-10 h-10 rounded-full border border-white/20 group-hover:border-[var(--color-neon)] flex items-center justify-center transition-all bg-black/50 shadow-md">
+                                        <Home className="w-5 h-5" />
+                                    </div>
+                                    <span className="hidden md:block text-xs font-black tracking-widest uppercase">Dashboard</span>
+                                </Link>
+                            </>
                         )}
                     </>
                 )}

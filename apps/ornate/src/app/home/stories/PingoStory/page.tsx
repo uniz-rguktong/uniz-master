@@ -17,6 +17,7 @@ const PINGO_STORY: StoryData = {
     pages: [
         {
             title: 'A Normal Penguin',
+            image: '/assets/pingo1.png',
             content: `"Before I became PINGO…"
 
 I was just a normal penguin, living with my colony near the icy shores.
@@ -27,6 +28,7 @@ Cold winds, quiet waters, and endless stars above.`,
         },
         {
             title: 'The Broken Heart',
+            image: '/assets/pingo2.jpeg',
             content: `Then life changed.
 
 "I fell in love once.
@@ -36,6 +38,7 @@ So I left the colony and climbed the mountains, just to be alone with my thought
         },
         {
             title: 'The Night of the Stars',
+            image: '/assets/pingo3.png',
             content: `The night everything changed.
 
 "While standing on the snowy peak, looking at the stars…
@@ -45,6 +48,7 @@ Before I knew it, I was taken by something… not from this world."`,
         },
         {
             title: 'The Escape',
+            image: '/assets/pingo4.png',
             content: `They tried to control me.
 
 "The aliens turned me into a machine navigator.
@@ -55,6 +59,7 @@ And one day… I escaped."`,
         },
         {
             title: 'Why I Am Here',
+            image: '/assets/pingo5.png',
             content: `And that’s how I found you.
 
 "After traveling through space, I discovered something special here.

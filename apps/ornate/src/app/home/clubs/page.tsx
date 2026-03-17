@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Settings, Menu as MenuIcon, X } from 'lucide-react';
 import { LiquidButton } from '@/components/ui/liquid-glass-button';
+import ScrollIndicator from '@/components/ui/ScrollIndicator';
 
 import './clubs.css';
 
@@ -430,8 +431,8 @@ export default function ClubsPage() {
                         <div className='overlay' onClick={() => handlePlanetClick('sarvasrijana')}></div>
                     </div>
                 </div>
-
             </div>
+            <ScrollIndicator color="#FF00E5" align="left" />
         </div >
     );
 }

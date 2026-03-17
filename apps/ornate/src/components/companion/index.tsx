@@ -22,6 +22,7 @@ export default function CompanionBot() {
     const [showBoredPrompt, setShowBoredPrompt] = useState(false);
     const [activePrompt, setActivePrompt] = useState<BoredomPrompt | null>(null);
     const [pingoSide, setPingoSide] = useState<'left' | 'right'>('left');
+    const [isMessagesEnabled, setIsMessagesEnabled] = useState(true);
     
     // Position constraint state for docking
     const [isDocked, setIsDocked] = useState(false);
@@ -126,17 +127,29 @@ export default function CompanionBot() {
         if (savedVoice !== null) {
             setIsVoiceEnabled(savedVoice === 'true');
         }
+        const savedMessages = localStorage.getItem('pingoMessagesEnabled');
+        if (savedMessages !== null) {
+            setIsMessagesEnabled(savedMessages === 'true');
+        }
         setHasLoaded(true);
     }, []);
 
     useEffect(() => {
         if (hasLoaded) {
             localStorage.setItem('pingoVoiceEnabled', isVoiceEnabled.toString());
+            localStorage.setItem('pingoMessagesEnabled', isMessagesEnabled.toString());
             if (!isVoiceEnabled && typeof window !== 'undefined' && window.speechSynthesis) {
                 window.speechSynthesis.cancel();
             }
         }
-    }, [isVoiceEnabled, hasLoaded]);
+    }, [isVoiceEnabled, isMessagesEnabled, hasLoaded]);
+
+    const hideGreetingOnly = () => {
+        if (typeof window !== 'undefined' && window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        setShowGreeting(false);
+    };
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -158,19 +171,44 @@ export default function CompanionBot() {
             window.speechSynthesis.getVoices();
         }
         const timer = setTimeout(() => setIsLoaded(true), 1500);
-        return () => clearTimeout(timer);
+
+        const handleSidebarMove = () => {
+            if (window.innerWidth < 640) {
+                setPingoSide('right');
+                setIsDocked(true);
+                setShowPanel(false);
+                setShowGreeting(false);
+                
+                if (botRef.current) {
+                    const ww = window.innerWidth;
+                    const bw = botRef.current.offsetWidth || 100;
+                    const zeroLeft = ww * 0.1;
+                    const minVisX = bw * 0.35;
+                    animate(x, ww - zeroLeft - minVisX, { type: 'spring', damping: 20, stiffness: 100 });
+                }
+            }
+        };
+
+        window.addEventListener('open-ornate-sidebar', handleSidebarMove);
+        window.addEventListener('toggle-ornate-sidebar', handleSidebarMove);
+
+        return () => {
+            clearTimeout(timer);
+            window.removeEventListener('open-ornate-sidebar', handleSidebarMove);
+            window.removeEventListener('toggle-ornate-sidebar', handleSidebarMove);
+        };
     }, []);
 
     useEffect(() => {
-        if (!hasLoaded) return;
+        if (!hasLoaded || !isMessagesEnabled) return;
         
         const pageKey = pathname || 'default';
         if (spokenPages.has(pageKey)) return;
         
-        let currentGreeting = "Coordinates scanned! I'm ready to roll (or slide, since I'm a penguin).";
+        let currentGreeting = "Found our way! I'm ready to walk (or slide, since I'm a penguin).";
 
         if (pathname === '/login') {
-            currentGreeting = "Hi! I'm PINGO. Sign in so we can start our space adventure!";
+            currentGreeting = "Hi friend! I'm Pingo. Sign in so we can start our space journey!";
         } 
         else if (pathname && PAGE_INFO[pathname]) {
             currentGreeting = PAGE_INFO[pathname];
@@ -181,24 +219,24 @@ export default function CompanionBot() {
             const formattedName = lastPart.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
             
             if (pathname.includes('/branches/')) {
-                currentGreeting = `Whoa! The ${formattedName} sector is looking sharp. Let's see what's inside!`;
+                currentGreeting = `Whoa! The ${formattedName} area is looking sharp. Let's see what's inside!`;
             } else if (pathname.includes('/stories/')) {
-                currentGreeting = `Reading file: ${formattedName}. I hope it's not a scary story!`;
+                currentGreeting = `Time to read: ${formattedName}. I hope it's a good one!`;
             } else {
-                currentGreeting = `Landing in the ${formattedName} sector. Mind your step, Cadet!`;
+                currentGreeting = `Walking into the ${formattedName} area. It looks exciting!`;
             }
         } 
         else {
             const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
             if (!hasSeenWelcome) {
                 currentGreeting = displayName 
-                    ? `Hi ${displayName}! I'm PINGO. I'm your best friend and space guide. Let's explore!`
-                    : "Hiya Cadet! I'm PINGO, your friendly space guide. Let's explore!";
+                    ? `Hi ${displayName}! I'm Pingo, your new space buddy! I'll be your guide here. Ready for an adventure? Why don't you start by making your spaceship look cool? You can change its color in your Profile!`
+                    : "Hi there! I'm Pingo, your new space buddy! I'll be your guide here in the Ornate galaxy. Want to start by making your spaceship look cool? You can pick your favorite color in your Profile!";
                 localStorage.setItem('hasSeenWelcome', 'true');
             } else {
                 currentGreeting = displayName 
-                    ? `Welcome back, ${displayName}! I missed you (almost as much as I miss fish).`
-                    : "Welcome back! System ready for our next mission.";
+                    ? `Welcome back, ${displayName}! I've been keepin' the ship clean for ya. Want to check your space rank or maybe change the ship's color again in your Profile?`
+                    : "Welcome back, friend! Our spaceship is fueled up and ready! Want to change your ship's color or see what's new in the galaxy?";
             }
         }
 
@@ -241,7 +279,7 @@ export default function CompanionBot() {
     }, [showPanel]);
 
     useEffect(() => {
-        if (!isLoaded || showGreeting || showPanel) return;
+        if (!isLoaded || showGreeting || showPanel || !isMessagesEnabled) return;
         if (pathname !== '/' && pathname !== '/home') return;
 
         const timer = setTimeout(() => {
@@ -251,7 +289,7 @@ export default function CompanionBot() {
             setShowGreeting(true);
             setShowBoredPrompt(true);
             speakMessage(randomPrompt.question);
-        }, 30000);
+        }, 25000);
 
         return () => clearTimeout(timer);
     }, [isLoaded, pathname, showGreeting, showPanel]);
@@ -350,6 +388,8 @@ export default function CompanionBot() {
                                 botRef={botRef} 
                                 isVoiceEnabled={isVoiceEnabled}
                                 setIsVoiceEnabled={setIsVoiceEnabled}
+                                isMessagesEnabled={isMessagesEnabled}
+                                setIsMessagesEnabled={setIsMessagesEnabled}
                             />
                         )}
                     </AnimatePresence>
@@ -453,15 +493,27 @@ export default function CompanionBot() {
                                                 initial={{ opacity: 0, x: 0, y: 0, scale: 0 }}
                                                 animate={{ opacity: 1, x: xPos, y: yPos, scale: 1 }}
                                                 exit={{ opacity: 0, x: 0, y: 0, scale: 0 }}
-                                                transition={{ type: 'spring', damping: 20, stiffness: 200, delay: index * 0.04 }}
+                                                whileHover={{ 
+                                                    scale: 1.15, 
+                                                    backgroundColor: 'var(--color-neon)',
+                                                    color: '#000000',
+                                                    boxShadow: '0 0 25px var(--color-neon)',
+                                                }}
+                                                transition={{ 
+                                                    type: 'spring', 
+                                                    damping: 15, 
+                                                    stiffness: 300, 
+                                                    delay: index * 0.04,
+                                                    layout: { duration: 0.2 }
+                                                }}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setShowRadialMenu(false);
                                                     router.push(item.href);
                                                 }}
-                                                className="absolute w-10 h-10 sm:w-12 sm:h-12 lg:w-[68px] lg:h-[68px] -ml-5 -mt-5 sm:-ml-6 sm:-mt-6 lg:-ml-[34px] lg:-mt-[34px] rounded-full bg-black/90 border border-[var(--color-neon)]/50 flex flex-col items-center justify-center text-[var(--color-neon)] hover:bg-[var(--color-neon)] hover:text-black hover:scale-110 transition-all pointer-events-auto overflow-hidden"
+                                                className="absolute w-10 h-10 sm:w-12 sm:h-12 lg:w-[68px] lg:h-[68px] -ml-5 -mt-5 sm:-ml-6 sm:-mt-6 lg:-ml-[34px] lg:-mt-[34px] rounded-full bg-black/90 border border-[var(--color-neon)]/50 flex flex-col items-center justify-center text-[var(--color-neon)] transition-colors duration-300 pointer-events-auto overflow-hidden"
                                                 title={item.name}
-                                                style={{ boxShadow: '0 0 10px rgba(0,255,202,0.2)' }}
+                                                style={{ boxShadow: '0 0 10px rgba(0,255,202,0.1)' }}
                                             >
                                                 <item.icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 mb-0.5 lg:mb-1 shrink-0" />
                                                 <span className="text-[6px] sm:text-[7px] lg:text-[8px] font-black uppercase tracking-[0.05em] lg:tracking-[0.1em] opacity-90 leading-none text-center px-1 w-full truncate">{item.name}</span>
@@ -502,7 +554,7 @@ export default function CompanionBot() {
                                 handleYesClick={handleYesClick}
                                 isVoiceEnabled={isVoiceEnabled}
                                 setIsVoiceEnabled={setIsVoiceEnabled}
-                                onMinimize={performDock}
+                                onMinimize={hideGreetingOnly}
                             />
                         )}
                     </AnimatePresence>

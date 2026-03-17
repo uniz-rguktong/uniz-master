@@ -117,12 +117,11 @@ function Planet({ planet, orbitRadius, orbitSpeed, rotationSpeed }: {
                 </Html>
             </group>
 
-            {/* Glowing Orbit Path Ring */}
+            {/* Solid Orbit Paths (Maintain structure without dots) */}
             <mesh rotation={[-Math.PI / 2, 0, 0]}>
-                <ringGeometry args={[orbitRadius - 0.15, orbitRadius + 0.15, 128]} />
+                <ringGeometry args={[orbitRadius - 0.1, orbitRadius + 0.1, 128]} />
                 <meshBasicMaterial color={planet.color} transparent opacity={0.15} side={THREE.DoubleSide} />
             </mesh>
-            {/* Inner neon line for the orbit */}
             <mesh rotation={[-Math.PI / 2, 0, 0]}>
                 <ringGeometry args={[orbitRadius - 0.02, orbitRadius + 0.02, 128]} />
                 <meshBasicMaterial color={planet.color} transparent opacity={0.5} side={THREE.DoubleSide} />
@@ -208,6 +207,116 @@ function ShootingStars() {
     );
 }
 
+function RealisticBackgroundStars() {
+    const starTexture = useMemo(() => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            gradient.addColorStop(0.15, 'rgba(255, 255, 255, 0.9)');
+            gradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.4)');
+            gradient.addColorStop(0.6, 'rgba(255, 255, 255, 0.1)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 128, 128);
+        }
+        return new THREE.CanvasTexture(canvas);
+    }, []);
+
+    const { stars, clouds } = useMemo(() => {
+        const starCount = 4000; // Max fill
+        const cloudCount = 80;
+        const starData = [];
+        const cloudData = [];
+        const starPalette = ['#ffffff', '#e0f2fe', '#fef3c7', '#fee2e2', '#bae6fd', '#fde68a', '#c084fc', '#818cf8'];
+        const cloudPalette = ['#4f46e5', '#7c3aed', '#db2777', '#2563eb', '#0ea5e9', '#10b981', '#f59e0b'];
+
+        // Massive cloud spread all over
+        for (let i = 0; i < cloudCount; i++) {
+            const r = 600 + Math.random() * 1200;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
+            cloudData.push({
+                position: [
+                    r * Math.sin(phi) * Math.cos(theta),
+                    r * Math.sin(phi) * Math.sin(theta),
+                    r * Math.cos(phi)
+                ] as [number, number, number],
+                color: cloudPalette[Math.floor(Math.random() * cloudPalette.length)],
+                size: 200 + Math.random() * 800,
+                opacity: 0.01 + Math.random() * 0.02
+            });
+        }
+
+        for (let i = 0; i < starCount; i++) {
+            // Full random spherical distribution to fill all sides
+            const r = 180 + Math.random() * 1700;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
+            
+            const x = r * Math.sin(phi) * Math.cos(theta);
+            const y = r * Math.sin(phi) * Math.sin(theta);
+            const z = r * Math.cos(phi);
+            
+            const size = 0.5 + Math.random() * 5.5;
+            const opacity = 0.2 + Math.random() * 0.75;
+            
+            starData.push({
+                position: [x, y, z] as [number, number, number],
+                color: starPalette[Math.floor(Math.random() * starPalette.length)],
+                size, opacity, rotation: Math.random() * Math.PI
+            });
+        }
+        return { stars: starData, clouds: cloudData };
+    }, []);
+
+    return (
+        <group>
+            {clouds.map((cloud, i) => (
+                <Billboard key={`cloud-${i}`} position={cloud.position}>
+                    <mesh>
+                        <planeGeometry args={[cloud.size, cloud.size]} />
+                        <meshBasicMaterial
+                            map={starTexture}
+                            color={cloud.color}
+                            transparent
+                            opacity={cloud.opacity}
+                            blending={THREE.AdditiveBlending}
+                            depthWrite={false}
+                        />
+                    </mesh>
+                </Billboard>
+            ))}
+
+            {stars.map((star, i) => (
+                <Billboard key={`star-${i}`} position={star.position}>
+                    <mesh rotation={[0, 0, star.rotation]}>
+                        <planeGeometry args={[star.size, star.size]} />
+                        <meshBasicMaterial
+                            map={starTexture}
+                            color={star.color}
+                            transparent
+                            opacity={star.opacity}
+                            blending={THREE.AdditiveBlending}
+                            depthWrite={false}
+                        />
+                    </mesh>
+                </Billboard>
+            ))}
+            
+            <Billboard position={[0, -200, -1400]}>
+                <mesh><planeGeometry args={[1800, 1800]} /><meshBasicMaterial map={starTexture} color="#fef3c7" transparent opacity={0.03} blending={THREE.AdditiveBlending} depthWrite={false}/></mesh>
+            </Billboard>
+            <Billboard position={[1200, 600, 1000]}>
+                <mesh><planeGeometry args={[1000, 1000]} /><meshBasicMaterial map={starTexture} color="#4f46e5" transparent opacity={0.02} blending={THREE.AdditiveBlending} depthWrite={false}/></mesh>
+            </Billboard>
+        </group>
+    );
+}
+
 export default function SolarSystem3D() {
     const displayPlanets = useMemo(() => {
         return PLANETS.filter(p => p.category === 'branches');
@@ -226,9 +335,9 @@ export default function SolarSystem3D() {
             >
                 <Suspense fallback={null}>
                     <color attach="background" args={['#000']} />
-                    <Stars radius={300} depth={80} count={25000} factor={8} saturation={1} fade speed={2.5} />
-                    <Sparkles count={3000} scale={250} size={2.5} speed={0.6} opacity={0.7} color="#ffffff" />
-                    <Sparkles count={800} scale={120} size={6} speed={0.3} opacity={0.4} color="#fbbf24" />
+                    
+                    <RealisticBackgroundStars />
+                    
                     <ShootingStars />
                     <ambientLight intensity={2.5} />
                     <directionalLight position={[100, 100, 50]} intensity={5} color="#ffffff" />

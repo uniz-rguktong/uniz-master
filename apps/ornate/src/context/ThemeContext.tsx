@@ -3,8 +3,32 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 // The 5 accent colors matching ShipInterface
-export const ACCENT_COLORS = ['#39FF14', '#00F0FF', '#7000FF', '#FFFFFF', '#FF9900'];
-export const ACCENT_NAMES = ['Neon Green', 'Cyber Cyan', 'Deep Purple', 'Pure White', 'Solar Orange'];
+// The 10 accent colors for premium spaceship and UI customization
+export const ACCENT_COLORS = [
+    '#39FF14', // Neon Green
+    '#00F0FF', // Cyber Cyan
+    '#7000FF', // Deep Purple
+    '#FFFFFF', // Pure White
+    '#FF9900', // Solar Orange
+    '#FF3E6C', // Cosmic Crimson
+    '#D4AF37', // Rose Gold
+    '#9D00FF', // Royal Amethyst
+    '#00FFAB', // Emerald Glitch
+    '#E2E8F0', // Frost Silver
+];
+
+export const ACCENT_NAMES = [
+    'Neon Green', 
+    'Cyber Cyan', 
+    'Deep Purple', 
+    'Pure White', 
+    'Solar Orange',
+    'Cosmic Crimson',
+    'Rose Gold',
+    'Royal Amethyst',
+    'Emerald Glitch',
+    'Frost Silver'
+];
 
 const STORAGE_KEY = 'ornate-accent-index';
 
@@ -40,24 +64,33 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         document.documentElement.style.setProperty('--color-neon', color);
 
         // Also pre-compute a darker variant for --color-neon-dark (30% darker)
-        // Simple approach: just set a fixed mapping
         const darkMap: Record<string, string> = {
             '#39FF14': '#1F8A0B',
             '#00F0FF': '#007A85',
             '#7000FF': '#3A008A',
             '#FFFFFF': '#CCCCCC',
             '#FF9900': '#8A5200',
+            '#FF3E6C': '#A31F41',
+            '#D4AF37': '#8C701B',
+            '#9D00FF': '#5A0099',
+            '#00FFAB': '#009966',
+            '#E2E8F0': '#94A3B8',
         };
         const dark = darkMap[color] ?? '#1F8A0B';
         document.documentElement.style.setProperty('--color-neon-dark', dark);
 
-        // Pre-compute RGB format (e.g. "57, 255, 20") for Tailwind opacity combinations
+        // Pre-compute RGB format for Tailwind opacity combinations
         const rgbMap: Record<string, string> = {
             '#39FF14': '57, 255, 20',
             '#00F0FF': '0, 240, 255',
             '#7000FF': '112, 0, 255',
             '#FFFFFF': '255, 255, 255',
             '#FF9900': '255, 153, 0',
+            '#FF3E6C': '255, 62, 108',
+            '#D4AF37': '212, 175, 55',
+            '#9D00FF': '157, 0, 255',
+            '#00FFAB': '0, 255, 171',
+            '#E2E8F0': '226, 232, 240',
         };
         const rgb = rgbMap[color] ?? '57, 255, 20';
         document.documentElement.style.setProperty('--color-neon-rgb', rgb);

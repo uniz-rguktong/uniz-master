@@ -17,6 +17,7 @@ const ORNATE_STORY: StoryData = {
     pages: [
         {
             title: 'The Discovery of Neon Energy',
+            image: '/assets/ornate1.png',
             content: `"Greetings, Cadet. I am PINGO, your navigator in the ORNATE solar system."
 
 Long before explorers like you arrived, scientists discovered something unusual.
@@ -37,6 +38,7 @@ And it changed everything.`,
         },
         {
             title: 'The Birth of the ORNATE Solar System',
+            image: '/assets/ornate2.png',
             content: `To manage the Neon Core, a new solar system was created.
 
 Instead of one world, the solar system was designed as multiple planets orbiting around the core.
@@ -49,6 +51,7 @@ And every explorer who enters the solar system becomes a Cadet.`,
         },
         {
             title: 'The Engineering Planets',
+            image: '/assets/ornate3.png',
             content: `Several major planets orbit the Neon Core. Each one specializes in a different branch of engineering.
 
 Cyberion — Planet of Code
@@ -68,6 +71,7 @@ The network planet where signals travel across satellites, antennas, and communi
         },
         {
             title: 'The Creative Planets',
+            image: '/assets/ornate4.png',
             content: `But Neon Energy does not come only from engineering.
 
 Creativity produces powerful energy too. That is why several creative worlds exist.
@@ -90,6 +94,7 @@ HHO — The planet of compassion and support. Here, cadets help fellow explorers
         },
         {
             title: 'The Missions',
+            image: '/assets/ornate5.png',
             content: `Every planet hosts challenges known as missions.
 
 Missions test:
@@ -106,6 +111,7 @@ Hackathons, competitions, performances, sports battles, workshops — all of the
         },
         {
             title: 'The Explorer Cadets',
+            image: '/assets/ornate6.png',
             content: `Every student who enters the ORNATE solar system becomes a Cadet Explorer.
 
 Cadets travel between planets.
@@ -120,6 +126,7 @@ The stronger the cadets become, the stronger the solar system grows.`,
         },
         {
             title: 'The Planetary Scanner',
+            image: '/assets/ornate8.png',
             content: `To navigate this vast solar system, explorers use a planetary scanner.
 
 This scanner allows cadets to:
@@ -134,6 +141,7 @@ And I am the navigator guiding you through it.`,
         },
         {
             title: 'The Great Alignment',
+            image: '/assets/ornate7.png',
             content: `Most of the time, the planets operate independently.
 
 But once every cycle, something extraordinary happens.
@@ -146,6 +154,7 @@ This moment is known as the ORNATE Festival.`,
         },
         {
             title: 'The ORNATE Festival',
+            image: '/assets/ornate9.jpeg',
             content: `During the festival:
 — every planet activates new missions
 — cadets travel between worlds
@@ -159,6 +168,7 @@ ENERGY SURGES THROUGH THE NEON CORE.`,
         },
         {
             title: 'Your Role in the Solar System',
+            image: '/assets/ornate10.png',
             content: `And now, Cadet, you are here.
 
 Your ideas will create energy.

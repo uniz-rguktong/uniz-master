@@ -197,6 +197,8 @@ export async function awardEnergyToUser(
   note?: string
 ) {
   try {
+    // 1. Create the transaction first. 
+    // If a unique constraint ([userId, note]) exists, this will fail if it's a duplicate.
     await prisma.energyTransaction.create({
       data: {
         id: crypto.randomUUID(),
@@ -207,6 +209,7 @@ export async function awardEnergyToUser(
       }
     });
 
+    // 2. ONLY if the transaction creation succeeded, increment the profile energy.
     await prisma.cadetProfile.upsert({
       where: { userId },
       create: { id: crypto.randomUUID(), userId, totalEnergy: amount, badgeIds: [], updatedAt: new Date() },
@@ -216,7 +219,12 @@ export async function awardEnergyToUser(
     await invalidateRankCache(userId);
 
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
+    // If it's a unique constraint violation (P2002), we just ignore it for the transaction part.
+    if (error.code === 'P2002') {
+      return { success: true, reason: 'duplicate_ignored' };
+    }
+    
     console.error('[awardEnergyToUser]', error);
     return { success: false, error: 'Failed to award energy.' };
   }

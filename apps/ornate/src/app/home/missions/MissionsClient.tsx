@@ -20,6 +20,7 @@ import MissionDetailModal from './components/MissionDetailModal';
 import { DISPLAY, EVENT_META } from './components/missionsConfig';
 import { MissionsSectionHeader, TerminalDataNodes } from './components/MissionsVisuals';
 import MissionsTopBar from './components/MissionsTopBar';
+import MissionsEmptyState from '@/components/missions/MissionsEmptyState';
 
 export default function MissionsClient({
   missions: MISSIONS,
@@ -201,7 +202,11 @@ export default function MissionsClient({
               <span className="text-amber-400">My Missions</span>
               <span className="text-gray-700 ml-1">- {MY_MISSION_IDS.size} saved</span>
             </div>
-            <MissionCardsView missions={myMissions} allMissions={MISSIONS} viewMode={viewMode} onSelect={setSelectedMission} registeredIds={MY_MISSION_IDS} />
+            {myMissions.length > 0 ? (
+              <MissionCardsView missions={myMissions} allMissions={MISSIONS} viewMode={viewMode} onSelect={setSelectedMission} registeredIds={MY_MISSION_IDS} />
+            ) : (
+              <MissionsEmptyState type="saved" onReset={() => setMyMissionsActive(false)} />
+            )}
           </>
         ) : hasFilter ? (
           <>
@@ -214,13 +219,10 @@ export default function MissionsClient({
               ))}
               <span className="text-gray-700 ml-1">- {filteredMissions.length} result{filteredMissions.length !== 1 ? 's' : ''}</span>
             </div>
-            <MissionCardsView missions={filteredMissions} allMissions={MISSIONS} viewMode={viewMode} onSelect={setSelectedMission} registeredIds={MY_MISSION_IDS} />
-            {filteredMissions.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-20 opacity-50">
-                <Search className="w-12 h-12 text-white mb-4 opacity-50" />
-                <p className="text-lg font-bold tracking-[0.5em] text-white">NO DIRECTIVES FOUND</p>
-                <p className="text-[10px] text-white tracking-widest mt-2 uppercase">Adjust scanning parameters</p>
-              </div>
+            {filteredMissions.length > 0 ? (
+              <MissionCardsView missions={filteredMissions} allMissions={MISSIONS} viewMode={viewMode} onSelect={setSelectedMission} registeredIds={MY_MISSION_IDS} />
+            ) : (
+              <MissionsEmptyState type="search" onReset={clearFilters} />
             )}
           </>
         ) : (
@@ -229,18 +231,30 @@ export default function MissionsClient({
               <>
                 <section>
                   <MissionsSectionHeader icon={TrendingUp} label="Trending" count={trending.length} color="text-[#ff4500]" glow="shadow-[0_0_10px_rgba(255,69,0,0.3)]" />
-                  <AutoScrollRow missions={trending} speed={0.5} onCardClick={setSelectedMission} registeredIds={MY_MISSION_IDS} />
+                  {trending.length > 0 ? (
+                    <AutoScrollRow missions={trending} speed={0.5} onCardClick={setSelectedMission} registeredIds={MY_MISSION_IDS} />
+                  ) : (
+                    <MissionsEmptyState type="trending" />
+                  )}
                 </section>
                 <section>
                   <MissionsSectionHeader icon={Sparkles} label="New" count={newMissions.length} color="text-neon" glow="shadow-[0_0_10px_rgba(var(--color-neon-rgb,57,255,20),0.3)]" />
-                  <AutoScrollRow missions={newMissions} speed={0.4} onCardClick={setSelectedMission} registeredIds={MY_MISSION_IDS} />
+                  {newMissions.length > 0 ? (
+                    <AutoScrollRow missions={newMissions} speed={0.4} onCardClick={setSelectedMission} registeredIds={MY_MISSION_IDS} />
+                  ) : (
+                    <MissionsEmptyState type="new" />
+                  )}
                 </section>
               </>
             )}
 
             <section>
               <MissionsSectionHeader icon={LayoutGrid} label="All Missions" count={MISSIONS.length} color="text-gray-400" glow="" />
-              <MissionCardsView missions={MISSIONS} allMissions={MISSIONS} viewMode={viewMode} onSelect={setSelectedMission} registeredIds={MY_MISSION_IDS} />
+              {MISSIONS.length > 0 ? (
+                <MissionCardsView missions={MISSIONS} allMissions={MISSIONS} viewMode={viewMode} onSelect={setSelectedMission} registeredIds={MY_MISSION_IDS} />
+              ) : (
+                <MissionsEmptyState type="all" />
+              )}
             </section>
           </div>
         )}

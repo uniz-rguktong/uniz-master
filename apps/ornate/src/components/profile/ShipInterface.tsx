@@ -146,7 +146,9 @@ export default function ShipInterface() {
                                 />
                             ))}
                         </div>
-                        <p className="text-[10px] font-black tracking-[0.4em] uppercase" style={{ color: themeAccent }}>{['Neon Green', 'Cyber Cyan', 'Deep Purple', 'Pure White', 'Solar Orange'][accentIndex]}</p>
+                        <p className="text-[10px] font-black tracking-[0.4em] uppercase" style={{ color: themeAccent }}>
+                            {['Neon Green', 'Cyber Cyan', 'Deep Purple', 'Pure White', 'Solar Orange', 'Cosmic Crimson', 'Rose Gold', 'Royal Amethyst', 'Emerald Glitch', 'Frost Silver'][accentIndex]}
+                        </p>
                     </div>
 
                     {/* Background Themes */}

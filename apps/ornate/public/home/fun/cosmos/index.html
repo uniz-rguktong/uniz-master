@@ -515,7 +515,7 @@
         #planet-hud {
             position: absolute;
             top: 50%;
-            right: 60px;
+            left: 80px;
             transform: translateY(-50%);
             background: rgba(5, 10, 30, 0.85);
             border: 1px solid rgba(167, 139, 250, 0.3);
@@ -528,7 +528,59 @@
         }
 
         #planet-hud.visible {
-            display: block;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #planet-hud-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(167, 139, 250, 0.2);
+            border: 1px solid rgba(167, 139, 250, 0.4);
+            color: #a78bfa;
+            border-radius: 4px;
+            font-size: 10px;
+            padding: 4px 8px;
+            cursor: pointer;
+            display: none;
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 10;
+        }
+
+        #planet-show-trigger {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(10, 15, 30, 0.9);
+            border: 1px solid rgba(167, 139, 250, 0.7);
+            color: #a78bfa;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-family: 'Orbitron', monospace;
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            display: none;
+            z-index: 500;
+            box-shadow: 0 0 10px rgba(167, 139, 250, 0.2);
+            pointer-events: auto;
+        }
+
+
+        @media (max-width: 1024px) {
+            #planet-hud-toggle {
+                display: block;
+            }
+
+            #planet-hud.collapsed {
+                display: none !important;
+            }
+
+            #planet-hud.collapsed ~ #planet-show-trigger {
+                display: block;
+            }
         }
 
         .planet-hud-name {
@@ -560,6 +612,195 @@
             color: rgba(167, 139, 250, 0.8);
         }
 
+        /* Cosmic Alerts */
+        #gravity-alert {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            padding: 15px 35px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 5px;
+            border-radius: 4px;
+            z-index: 1000;
+            display: none;
+            pointer-events: none;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.4);
+            animation: pulse-danger 0.8s infinite alternate;
+            backdrop-filter: blur(5px);
+            text-align: center;
+        }
+
+        #gravity-alert::before {
+            content: '! WARNING !';
+            display: block;
+            font-size: 10px;
+            margin-bottom: 5px;
+            letter-spacing: 12px;
+        }
+
+        @keyframes pulse-danger {
+            from { opacity: 0.5; transform: translate(-50%, -50%) scale(0.98); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
+        }
+
+        #signal-alert {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4fc3f7;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px #4fc3f7;
+            z-index: 1001;
+            display: none;
+            pointer-events: none;
+            animation: glitch-simple 0.2s infinite;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-left: 2px solid #4fc3f7;
+        }
+
+        @keyframes glitch-simple {
+            0% { transform: translate(-50%, -50%) skew(0deg); opacity: 1; }
+            20% { transform: translate(-50%, -49%) skew(1deg); opacity: 0.8; }
+            40% { transform: translate(-51%, -50%) skew(-1deg); opacity: 1; }
+            60% { transform: translate(-50%, -51%) skew(0.5deg); opacity: 0.9; }
+            80% { transform: translate(-49%, -50%) skew(-0.5deg); opacity: 1; }
+        }
+
+        /* Blue-Shift Andromeda Effect */
+        #blue-shift-overlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0, 100, 255, 0.15) 100%);
+            box-shadow: inset 0 0 150px rgba(0, 100, 255, 0.2);
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        #blue-shift-overlay.active {
+            opacity: 1;
+        }
+
+        /* Pulsar Beacon */
+        #pulsar-beacon {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            box-shadow: 0 0 20px 5px #fff, 0 0 50px 15px rgba(0, 100, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+            display: none;
+        }
+
+        #pulsar-beam {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.8) 0%, transparent 100%);
+            transform-origin: left center;
+            opacity: 0.3;
+            animation: rotate-beam 4s linear infinite;
+        }
+
+        @keyframes rotate-beam {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Nebula Sprites (Parallax Layers) */
+        #nebula-container {
+            position: fixed;
+            inset: -500px; /* Oversize to allow parallax movement */
+            pointer-events: none;
+            z-index: 1;
+            display: none;
+            opacity: 0;
+            transition: opacity 3s ease;
+            overflow: hidden;
+        }
+
+        #nebula-container.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .nebula-cloud {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            mix-blend-mode: screen;
+            opacity: 0.4;
+            will-change: transform;
+        }
+
+        .nebula-blue { background: radial-gradient(circle, rgba(0, 150, 255, 0.6) 0%, transparent 70%); }
+        .nebula-magenta { background: radial-gradient(circle, rgba(255, 0, 150, 0.5) 0%, transparent 70%); }
+        .nebula-violet { background: radial-gradient(circle, rgba(150, 0, 255, 0.6) 0%, transparent 70%); }
+
+        /* Crystalline Asteroids */
+        #asteroid-field {
+            position: fixed;
+            inset: -200px;
+            pointer-events: none;
+            z-index: 2;
+            display: none;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        #asteroid-field.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .crystal-asteroid {
+            position: absolute;
+            background: #0d1117;
+            clip-path: polygon(25% 5%, 75% 0%, 100% 30%, 90% 75%, 50% 100%, 10% 85%, 0% 40%);
+            box-shadow: inset 0 0 15px rgba(0, 150, 255, 0.4);
+            filter: drop-shadow(0 0 8px rgba(0, 150, 255, 0.6));
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            will-change: transform;
+        }
+
+        /* Sparkle for crystals */
+        .crystal-asteroid::after {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 30%;
+            height: 30%;
+            background: #fff;
+            filter: blur(2px);
+            opacity: 0.6;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            animation: crystal-glint 3s infinite alternate;
+        }
+
+        @keyframes crystal-glint {
+            from { opacity: 0.2; transform: scale(0.8); }
+            to { opacity: 0.8; transform: scale(1.2); }
+        }
+
+
         .approach-pulse {
             display: inline-block;
             width: 6px;
@@ -585,46 +826,65 @@
             }
         }
 
-        /* Controls overlay (Keyboard Hints) */
+        /* Controls overlay (Keyboard Hints - Cockpit Display) */
         #controls-overlay {
             position: absolute;
-            bottom: 30px;
+            top: 25px;
             left: 40px;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 11px;
-            color: rgba(130, 200, 255, 0.8);
-            line-height: 2;
-            background: rgba(4, 14, 35, 0.65);
+            font-size: 10px;
+            color: rgba(130, 200, 255, 0.7);
+            background: linear-gradient(135deg, rgba(10, 15, 30, 0.8) 0%, rgba(5, 5, 15, 0.95) 100%);
             padding: 16px 24px;
-            border: 1px solid rgba(79, 195, 247, 0.4);
-            border-radius: 8px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(79, 195, 247, 0.15);
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            border-left: 4px solid #4fc3f7;
+            border-radius: 4px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(79, 195, 247, 0.05);
             pointer-events: none;
             letter-spacing: 1px;
+            line-height: 2.2;
         }
+
+        #controls-overlay::before {
+            content: 'NEURAL LINK STATUS: ONLINE';
+            position: absolute;
+            top: -20px;
+            left: 0;
+            font-size: 8px;
+            color: #4fc3f7;
+            letter-spacing: 2px;
+            opacity: 0.6;
+        }
+
 
         #controls-overlay span {
             color: #fff;
-            background: rgba(167, 139, 250, 0.4);
-            padding: 2px 6px;
-            border-radius: 4px;
+            background: linear-gradient(180deg, rgba(167, 139, 250, 0.4) 0%, rgba(139, 92, 246, 0.6) 100%);
+            padding: 2px 8px;
+            border-radius: 3px;
             border: 1px solid rgba(167, 139, 250, 0.6);
-            margin-right: 4px;
+            margin-right: 6px;
             font-weight: bold;
-            box-shadow: 0 0 8px rgba(167, 139, 250, 0.3);
+            box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
         }
 
-        /* White flash for wormhole exit */
-        #white-flash {
+
+        /* Visual overlays (ensuring they don't block interaction) */
+        #white-flash, #warp-overlay, #boost-flash {
             position: fixed;
             inset: 0;
-            pointer-events: none;
-            background: #fff;
+            pointer-events: none !important;
             opacity: 0;
             z-index: 999;
+        }
+
+        #white-flash {
+            background: #fff;
             transition: opacity 4s ease-out;
         }
+
 
         /* Notification toast */
         #notification {
@@ -649,24 +909,41 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* ── On-screen Thruster Control Pad ─────────────────────────────────── */
+        /* ── On-screen Thruster Control Pad (Left Side Redesign) ────────────── */
         #thruster-pad {
             position: fixed;
-            bottom: 30px;
+            bottom: 40px;
             right: 40px;
             display: none;
             flex-direction: column;
-            align-items: flex-end;
-            gap: 12px;
-            z-index: 150;
+            align-items: stretch;
+            gap: 10px;
+            z-index: 151;
             pointer-events: auto;
             user-select: none;
-            background: rgba(4, 14, 35, 0.65);
+            background: linear-gradient(180deg, rgba(15, 20, 35, 0.85) 0%, rgba(5, 5, 15, 0.95) 100%);
             padding: 20px;
             border-radius: 12px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(79, 195, 247, 0.4);
-            box-shadow: 0 0 25px rgba(79, 195, 247, 0.15), inset 0 0 15px rgba(79, 195, 247, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            border-bottom: 3px solid rgba(79, 195, 247, 0.5);
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.8),
+                inset 0 0 20px rgba(79, 195, 247, 0.05);
+            width: 280px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #thruster-pad::before {
+            content: 'PROPULSION CONTROL UNIT v2.0';
+            position: absolute;
+            top: -22px;
+            left: 0;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 8px;
+            color: #4fc3f7;
+            letter-spacing: 2px;
+            opacity: 0.6;
         }
 
         #hud.active #thruster-pad {
@@ -675,12 +952,18 @@
 
         /* Label above pad */
         .pad-label {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 3px;
-            color: rgba(130, 200, 255, 0.35);
-            margin-bottom: 2px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: #4fc3f7;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(79, 195, 247, 0.1);
+            padding-bottom: 8px;
         }
+
 
         /* Generic thruster button */
         .thr-btn {
@@ -688,107 +971,70 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(79, 195, 247, 0.25);
-            border-radius: 6px;
-            background: rgba(4, 14, 35, 0.75);
+            border: 1px solid rgba(79, 195, 247, 0.2);
+            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
             cursor: pointer;
-            transition: background 0.12s, border-color 0.12s, box-shadow 0.12s, transform 0.08s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             -webkit-tap-highlight-color: transparent;
             touch-action: none;
+            padding: 10px;
+        }
+
+        .thr-btn:hover {
+            border-color: rgba(79, 195, 247, 0.5);
+            background: rgba(79, 195, 247, 0.08);
+            box-shadow: 0 0 15px rgba(79, 195, 247, 0.1);
         }
 
         .thr-btn:active,
         .thr-btn.pressed {
-            transform: scale(0.92);
-        }
-
-        /* Forward thrust — largest, most prominent */
-        #btn-forward {
-            width: 80px;
-            height: 80px;
-            border-color: rgba(79, 195, 247, 0.5);
-            box-shadow: 0 0 12px rgba(79, 195, 247, 0.1);
-        }
-
-        #btn-forward.pressed,
-        #btn-forward:active {
-            background: rgba(6, 182, 212, 0.2);
+            transform: scale(0.95);
+            background: rgba(79, 195, 247, 0.2);
             border-color: #4fc3f7;
-            box-shadow: 0 0 28px rgba(79, 195, 247, 0.55), inset 0 0 20px rgba(79, 195, 247, 0.15);
+            box-shadow: 0 0 25px rgba(79, 195, 247, 0.4);
         }
 
-        /* Reverse / brake */
-        #btn-reverse {
-            width: 64px;
-            height: 56px;
-            border-color: rgba(244, 114, 182, 0.35);
+        /* Forward thrust — dominant */
+        #btn-forward {
+            height: 70px;
+            grid-column: span 3;
+            border-color: rgba(79, 195, 247, 0.4);
         }
 
-        #btn-reverse.pressed,
-        #btn-reverse:active {
-            background: rgba(244, 114, 182, 0.18);
-            border-color: #f472b6;
-            box-shadow: 0 0 22px rgba(244, 114, 182, 0.45);
+        /* Secondary Grid Layout */
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
         }
 
         /* Boost */
         #btn-boost {
-            width: 80px;
-            height: 44px;
+            height: 50px;
             border-color: rgba(167, 139, 250, 0.4);
-            background: rgba(10, 5, 30, 0.8);
         }
 
         #btn-boost.pressed,
         #btn-boost:active {
-            background: rgba(167, 139, 250, 0.22);
+            background: rgba(167, 139, 250, 0.25);
             border-color: #a78bfa;
-            box-shadow: 0 0 28px rgba(167, 139, 250, 0.55);
+            box-shadow: 0 0 30px rgba(167, 139, 250, 0.4);
         }
 
-        /* Yaw row */
-        .yaw-row {
-            display: flex;
-            gap: 6px;
-            align-items: center;
+        /* Reverse */
+        #btn-reverse {
+            height: 50px;
+            border-color: rgba(244, 114, 182, 0.4);
         }
 
-        .thr-btn.yaw {
-            width: 52px;
-            height: 52px;
-            border-color: rgba(79, 195, 247, 0.2);
+        #btn-reverse.pressed,
+        #btn-reverse:active {
+            background: rgba(244, 114, 182, 0.25);
+            border-color: #f472b6;
+            box-shadow: 0 0 30px rgba(244, 114, 182, 0.4);
         }
 
-        .thr-btn.yaw.pressed,
-        .thr-btn.yaw:active {
-            background: rgba(79, 195, 247, 0.15);
-            border-color: rgba(79, 195, 247, 0.7);
-            box-shadow: 0 0 18px rgba(79, 195, 247, 0.4);
-        }
-
-        /* Roll row */
-        .thr-btn.roll {
-            width: 48px;
-            height: 40px;
-            border-color: rgba(167, 139, 250, 0.2);
-            font-size: 16px;
-        }
-
-        .thr-btn.roll.pressed,
-        .thr-btn.roll:active {
-            background: rgba(167, 139, 250, 0.15);
-            border-color: rgba(167, 139, 250, 0.6);
-            box-shadow: 0 0 16px rgba(167, 139, 250, 0.4);
-        }
-
-        /* Icon/label inside button */
-        .thr-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            pointer-events: none;
-        }
 
         .thr-arrow {
             font-size: 22px;
@@ -1009,8 +1255,7 @@
         }
 
         /* --- MOBILE OPTIMIZATIONS --- */
-        @media (max-width: 1024px) and (max-height: 600px),
-        (max-width: 768px) {
+        @media (max-width: 1024px) {
             #controls-overlay {
                 display: none !important;
             }
@@ -1020,81 +1265,85 @@
                 display: none !important;
             }
 
+            /* Enable touch look-around interaction on canvas */
+            #canvas-container {
+                pointer-events: auto !important;
+                touch-action: none !important;
+                z-index: 1;
+            }
+
+            #hud {
+                z-index: 100;
+            }
+
             #thruster-pad {
-                bottom: 10px;
-                right: 15px;
-                padding: 10px;
-                gap: 6px;
-                background: rgba(4, 14, 35, 0.5);
-                border-width: 1px;
+                display: flex !important;
+                flex-direction: column;
+                z-index: 151;
+                background: linear-gradient(180deg, rgba(15, 20, 35, 0.95) 0%, rgba(5, 5, 10, 1) 100%) !important;
+                border: 2px solid rgba(79, 195, 247, 0.4) !important;
+                bottom: 20px !important;
+                right: 20px !important;
+                width: 300px !important;
+                max-width: 90vw !important;
+                padding: 15px !important;
+                gap: 10px !important;
+                pointer-events: auto !important;
+                touch-action: none !important;
+                user-select: none !important;
+                -webkit-user-select: none !important;
+            }
+
+            .thr-btn {
+                width: 60px !important;
+                height: 60px !important;
+                border-radius: 10px !important;
+                pointer-events: auto !important;
+                touch-action: none !important;
+                -webkit-tap-highlight-color: transparent !important;
             }
 
             #btn-forward {
-                width: 55px;
-                height: 55px;
-                border-radius: 12px;
-            }
-
-            #btn-reverse {
-                width: 45px;
-                height: 35px;
-            }
-
-            #btn-boost {
-                width: 55px;
-                height: 32px;
+                width: 100% !important;
+                height: 80px !important;
             }
 
             .thr-btn.yaw {
-                width: 40px;
-                height: 40px;
+                width: 70px !important;
+                height: 70px !important;
             }
 
             .thr-btn.roll {
-                width: 35px;
-                height: 28px;
+                width: 60px !important;
+                height: 50px !important;
             }
 
-            .thr-arrow {
-                font-size: 16px !important;
-                margin: 0 !important;
-            }
-
-            .thr-arrow.yaw-icon {
-                font-size: 14px !important;
-            }
-
-            .thr-arrow.roll-icon {
-                font-size: 12px !important;
-            }
-
-            .pad-sep {
-                margin: 2px 0 !important;
-                width: 100% !important;
-            }
-
-            .abort-btn,
-            #goto-btn {
-                height: 32px !important;
-                font-size: 10px !important;
-                padding: 4px !important;
-            }
-
-            .abort-btn .thr-arrow {
-                font-size: 12px !important;
-                margin-right: 4px !important;
-            }
-
-            /* Disable mouse/touch moving look-around effect on canvas */
-            #canvas-container {
-                pointer-events: none !important;
+            .btn-grid {
+                gap: 12px !important;
             }
         }
+
+
     </style>
     <script type="module" crossorigin src="/home/fun/cosmos/assets/index-U0qd6zCS.js"></script>
 </head>
 
 <body>
+    <div id="blue-shift-overlay"></div>
+    <div id="pulsar-beacon">
+        <div id="pulsar-beam"></div>
+    </div>
+
+    <!-- Parallax Nebula Field -->
+    <div id="nebula-container">
+        <!-- Generated by JS -->
+    </div>
+
+    <!-- Intergalactic Asteroid Field -->
+    <div id="asteroid-field">
+        <!-- Generated by JS -->
+    </div>
+
     <!-- Loading Screen -->
     <div id="loading-screen">
         <canvas class="loading-stars" id="loading-canvas"></canvas>
@@ -1195,11 +1444,18 @@
 
         <!-- Planet HUD -->
         <div id="planet-hud">
+            <div id="planet-hud-toggle">HIDE INFO</div>
             <div class="planet-hud-name" id="planet-hud-name">EARTH</div>
             <div class="planet-hud-dist"><span class="approach-pulse"></span> <span id="planet-hud-dist">0 AU</span>
             </div>
             <div class="planet-hud-info" id="planet-hud-info"></div>
         </div>
+
+        <button id="planet-show-trigger">SHOW INFO</button>
+
+        <!-- Dynamic Cosmic Alerts -->
+        <div id="gravity-alert">GRAVITY WELL DETECTED</div>
+        <div id="signal-alert">INCOMING SIGNAL... DECRYPTING...</div>
 
 
 
@@ -1209,70 +1465,71 @@
             <span>[A/D]</span> YAW (TURN) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span>[Q/E]</span> ROLL <br>
             <span>[MOUSE]</span> PITCH/YAW VIEW &nbsp; <span>[ESC]</span> FREE MOUSE
         </div>
-        <!-- ── On-screen Thruster Pad ─────────────────────────────────────── -->
+        <!-- ── On-screen Thruster Pad (Left Side Console) ─────────────────── -->
         <div id="thruster-pad">
-            <div class="pad-label">THRUSTERS</div>
-
-            <!-- BOOST -->
-            <button class="thr-btn" id="btn-boost" data-action="boost" title="BOOST [Shift]">
-                <div class="thr-icon">
-                    <span class="thr-arrow boost">⚡</span>
-                    <span class="thr-key">BOOST</span>
-                </div>
-            </button>
-
-            <div class="pad-sep"></div>
+            <div class="pad-label">FLIGHT COMMAND</div>
 
             <!-- FORWARD -->
             <button class="thr-btn" id="btn-forward" data-action="w" title="Forward Thrust [W]">
                 <div class="thr-icon">
                     <span class="thr-arrow">▲</span>
-                    <span class="thr-key">FWD</span>
+                    <span class="thr-key">FULL PROPULSION</span>
                 </div>
             </button>
 
-            <!-- YAW ROW -->
-            <div class="yaw-row">
-                <button class="thr-btn yaw" id="btn-yaw-left" data-action="a" title="Yaw Left [A]">
+            <!-- SECONDARY -->
+            <div class="btn-grid">
+                <button class="thr-btn" id="btn-boost" data-action="boost" title="NITRO [Shift+W]">
                     <div class="thr-icon">
-                        <span class="thr-arrow yaw-icon">◀</span>
-                        <span class="thr-key">YAW L</span>
+                        <span class="thr-arrow boost">⚡</span>
+                        <span class="thr-key">NITRO</span>
                     </div>
                 </button>
-
-                <!-- REVERSE -->
+                <div
+                    style="display: flex; align-items: center; justify-content: center; opacity: 0.2; font-size: 8px; font-family: 'Share Tech Mono'; color: #4fc3f7;">
+                    SYS</div>
                 <button class="thr-btn" id="btn-reverse" data-action="s" title="Reverse Thrust [S]">
                     <div class="thr-icon">
                         <span class="thr-arrow rev">▼</span>
-                        <span class="thr-key">REV</span>
-                    </div>
-                </button>
-
-                <button class="thr-btn yaw" id="btn-yaw-right" data-action="d" title="Yaw Right [D]">
-                    <div class="thr-icon">
-                        <span class="thr-arrow yaw-icon">▶</span>
-                        <span class="thr-key">YAW R</span>
+                        <span class="thr-key">BRAKE</span>
                     </div>
                 </button>
             </div>
 
-            <div class="pad-sep"></div>
 
-            <!-- ROLL ROW -->
-            <div class="yaw-row">
-                <button class="thr-btn roll" id="btn-roll-left" data-action="q" title="Roll Left [Q]">
+
+
+            <!-- STEERING -->
+            <div class="btn-grid">
+                <button class="thr-btn" id="btn-yaw-left" data-action="a" title="Yaw Left [A]">
                     <div class="thr-icon">
-                        <span class="thr-arrow roll-icon">↺</span>
+                        <span class="thr-arrow">◀</span>
+                        <span class="thr-key">YAW L</span>
+                    </div>
+                </button>
+                <button class="thr-btn" id="btn-roll-left" data-action="q" title="Roll Left [Q]">
+                    <div class="thr-icon">
+                        <span class="thr-arrow" style="font-size: 16px;">↺</span>
                         <span class="thr-key">ROLL L</span>
                     </div>
                 </button>
-                <button class="thr-btn roll" id="btn-roll-right" data-action="e" title="Roll Right [E]">
+                <button class="thr-btn" id="btn-yaw-right" data-action="d" title="Yaw Right [D]">
                     <div class="thr-icon">
-                        <span class="thr-arrow roll-icon">↻</span>
-                        <span class="thr-key">ROLL R</span>
+                        <span class="thr-arrow">▶</span>
+                        <span class="thr-key">YAW R</span>
                     </div>
                 </button>
+
+                <div style="grid-column: span 3; display: flex; gap: 8px;">
+                    <button class="thr-btn" id="btn-roll-right" data-action="e" title="Roll Right [E]" style="flex: 1;">
+                        <div class="thr-icon">
+                            <span class="thr-arrow" style="font-size: 16px;">↻</span>
+                            <span class="thr-key">ROLL RIGHT</span>
+                        </div>
+                    </button>
+                </div>
             </div>
+
 
             <div class="pad-sep" style="margin: 6px 0; width: 100%;"></div>
 
@@ -1301,6 +1558,317 @@
     </div>
 
     <div id="white-flash"></div>
+
+    <!-- Mobile Touch/Pointer Event Bridge -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('space-canvas');
+            const thrButtons = document.querySelectorAll('.thr-btn');
+            
+            // Helper for dispatching full event stack (Pointer + Mouse + Key)
+            function bridgeEvent(element, type, x, y, options = {}) {
+                const action = element.getAttribute('data-action');
+                const eventParams = {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window,
+                    clientX: x,
+                    clientY: y,
+                    screenX: x,
+                    screenY: y,
+                    button: 0,
+                    buttons: type === 'mouseup' ? 0 : 1,
+                    isPrimary: true,
+                    ...options
+                };
+
+                // 1. Dispatch Pointer Events
+                const pointerType = type === 'mousedown' ? 'pointerdown' : (type === 'mouseup' ? 'pointerup' : 'pointermove');
+                element.dispatchEvent(new PointerEvent(pointerType, {
+                    ...eventParams,
+                    pointerId: 1,
+                    pointerType: 'touch',
+                    width: 1,
+                    height: 1,
+                    pressure: 0.5,
+                }));
+
+                // 2. Dispatch Mouse Events
+                element.dispatchEvent(new MouseEvent(type, eventParams));
+
+                // 3. Dispatch Key Events (Crucial for physics engines)
+                if (action) {
+                    const keyType = type === 'mousedown' ? 'keydown' : (type === 'mouseup' ? 'keyup' : null);
+                    if (keyType) {
+                        let key = action;
+                        let code = 'Key' + action.toUpperCase();
+                        let keyCode = action.toUpperCase().charCodeAt(0);
+
+                        // Special mapping for common actions
+                        if (action === 'boost') {
+                            // NITRO: Trigger BOTH Shift and W for one-touch acceleration
+                            const keys = [
+                                { key: 'Shift', code: 'ShiftLeft', keyCode: 16 },
+                                { key: 'w', code: 'KeyW', keyCode: 87 }
+                            ];
+                            
+                            keys.forEach(k => {
+                                const ke = new KeyboardEvent(keyType, {
+                                    key: k.key,
+                                    code: k.code,
+                                    keyCode: k.keyCode,
+                                    which: k.keyCode,
+                                    bubbles: true,
+                                    cancelable: true,
+                                    shiftKey: true
+                                });
+                                window.dispatchEvent(ke);
+                                document.dispatchEvent(ke);
+                            });
+                            return; 
+                        }
+
+                        // Standard mapping for all other actions (W, S, A, D, Q, E, etc.)
+                        const keyboardOptions = {
+                            key: key,
+                            code: code,
+                            keyCode: keyCode,
+                            which: keyCode,
+                            bubbles: true,
+                            cancelable: true,
+                            shiftKey: false
+                        };
+
+                        const ke = new KeyboardEvent(keyType, keyboardOptions);
+                        window.dispatchEvent(ke);
+                        document.dispatchEvent(ke);
+                        element.dispatchEvent(ke);
+                    }
+                }
+            }
+
+
+            // 1. Bridge Button Touches
+            thrButtons.forEach(btn => {
+                btn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    btn.classList.add('pressed');
+                    const touch = e.touches[0];
+                    bridgeEvent(btn, 'mousedown', touch.clientX, touch.clientY);
+                }, { passive: false });
+
+                btn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    btn.classList.remove('pressed');
+                    const touch = e.changedTouches[0];
+                    bridgeEvent(btn, 'mouseup', touch.clientX, touch.clientY);
+                }, { passive: false });
+            });
+
+            // 2. Bridge Canvas Look-Around
+            let lastTouchX = 0;
+            let lastTouchY = 0;
+            let isTouchingCanvas = false;
+
+            document.addEventListener('touchstart', (e) => {
+                const target = e.target;
+                if (target.closest('#thruster-pad') || target.closest('.abort-btn') || target.closest('#goto-btn') || target.closest('#planet-show-trigger')) return;
+                
+                isTouchingCanvas = true;
+                const touch = e.touches[0];
+                lastTouchX = touch.clientX;
+                lastTouchY = touch.clientY;
+                
+                bridgeEvent(canvas, 'mousedown', touch.clientX, touch.clientY);
+            }, { passive: true });
+
+            document.addEventListener('touchmove', (e) => {
+                if (!isTouchingCanvas) return;
+                
+                const touch = e.touches[0];
+                const movementX = (touch.clientX - lastTouchX) * 2; // Sensitivity boost
+                const movementY = (touch.clientY - lastTouchY) * 2;
+                
+                bridgeEvent(canvas, 'mousemove', touch.clientX, touch.clientY, {
+                    movementX: movementX,
+                    movementY: movementY
+                });
+                
+                // Track for Cosmic Parallax (Nebula + Asteroids)
+                updateCosmicParallax(-movementX, -movementY);
+                
+                lastTouchX = touch.clientX;
+                lastTouchY = touch.clientY;
+            }, { passive: false });
+
+            document.addEventListener('touchend', (e) => {
+                if (!isTouchingCanvas) return;
+                isTouchingCanvas = false;
+                const touch = e.changedTouches[0];
+                bridgeEvent(canvas, 'mouseup', touch.clientX, touch.clientY);
+            }, { passive: true });
+
+
+            // 3. Planet HUD Toggle
+            const planetHud = document.getElementById('planet-hud');
+            const planetToggle = document.getElementById('planet-hud-toggle');
+            const planetShowTrigger = document.getElementById('planet-show-trigger');
+
+            if (planetToggle) {
+                planetToggle.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    planetHud.classList.add('collapsed');
+                });
+            }
+
+            if (planetShowTrigger) {
+                planetShowTrigger.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    planetHud.classList.remove('collapsed');
+                });
+            }
+
+            // 4. Cosmic Event Monitor (Lightweight Proximity Detection)
+            const hudNameElt = document.getElementById('planet-hud-name');
+            const hudDistElt = document.getElementById('planet-hud-dist');
+            const hudInfoElt = document.getElementById('planet-hud-info');
+            const gravAlertElt = document.getElementById('gravity-alert');
+            const sigAlertElt = document.getElementById('signal-alert');
+            const blueShiftOverlay = document.getElementById('blue-shift-overlay');
+            const pulsarBeacon = document.getElementById('pulsar-beacon');
+            const nebulaContainer = document.getElementById('nebula-container');
+            const asteroidField = document.getElementById('asteroid-field');
+
+            // 5. Initialize Nebula Clouds
+            const createNebulae = () => {
+                const colors = ['nebula-blue', 'nebula-magenta', 'nebula-violet'];
+                for (let i = 0; i < 15; i++) {
+                    const cloud = document.createElement('div');
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const size = 400 + Math.random() * 600;
+                    cloud.className = `nebula-cloud ${color}`;
+                    cloud.style.width = `${size}px`;
+                    cloud.style.height = `${size}px`;
+                    cloud.style.left = `${Math.random() * 100}%`;
+                    cloud.style.top = `${Math.random() * 100}%`;
+                    // Assign a "depth" factor for parallax
+                    cloud.dataset.depth = 0.05 + Math.random() * 0.15;
+                    nebulaContainer.appendChild(cloud);
+                }
+            };
+
+            const createAsteroids = () => {
+                for (let i = 0; i < 40; i++) {
+                    const ast = document.createElement('div');
+                    const size = 15 + Math.random() * 45;
+                    ast.className = 'crystal-asteroid';
+                    ast.style.width = `${size}px`;
+                    ast.style.height = `${size}px`;
+                    ast.style.left = `${Math.random() * 100}%`;
+                    ast.style.top = `${Math.random() * 100}%`;
+                    // Asteroids have much higher depth (closer to ship)
+                    ast.dataset.depth = 0.3 + Math.random() * 0.7;
+                    // Random initial rotation
+                    ast.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    asteroidField.appendChild(ast);
+                }
+            };
+
+            createNebulae();
+            createAsteroids();
+
+            // Parallax movement for cosmic layers
+            let moveX = 0;
+            let moveY = 0;
+
+            const updateCosmicParallax = (mx, my) => {
+                moveX += mx * 0.5;
+                moveY += my * 0.5;
+                
+                // Update Nebulae (Slow background)
+                const clouds = document.querySelectorAll('.nebula-cloud');
+                clouds.forEach(c => {
+                    const depth = parseFloat(c.dataset.depth);
+                    c.style.transform = `translate3d(${moveX * depth}px, ${moveY * depth}px, 0)`;
+                });
+
+                // Update Asteroids (Fast foreground)
+                const asteroids = document.querySelectorAll('.crystal-asteroid');
+                asteroids.forEach(a => {
+                    const depth = parseFloat(a.dataset.depth);
+                    // Add slight rotation over time based on movement
+                    const rot = (moveX + moveY) * 0.05;
+                    a.style.transform = `translate3d(${moveX * depth}px, ${moveY * depth}px, 0) rotate(${rot}deg)`;
+                });
+            };
+
+            const planetLore = {
+                'EARTH': '<strong>Atmosphere:</strong> Nitrogen-Oxygen <br> <strong>Habitability:</strong> Prime <br> <strong>Note:</strong> Origin world of the Neural Link project.',
+                'MARS': '<strong>Atmosphere:</strong> CO2 Thin <br> <strong>Habitability:</strong> Terraform in progress <br> <strong>Note:</strong> Watch for dust storms.',
+                'ANDROMEDA CORE': '<strong>Mass:</strong> 100M Suns <br> <strong>Radiation:</strong> EXTREME <br> <strong>Note:</strong> Event horizon is highly blue-shifted.',
+                'AETHELGARD': '<strong>Atmosphere:</strong> Neon-Xenon <br> <strong>Habitability:</strong> Bio-Luminescent Life <br> <strong>Note:</strong> Plants emit light in the 450nm range.',
+                'RELIC OUTPOST': '<strong>Type:</strong> Unknown Origin <br> <strong>Signature:</strong> Sub-space pulse <br> <strong>Note:</strong> Scans show 5M year old titanium shell.',
+                'BLUE GIANT': '<strong>Type:</strong> Class O Star <br> <strong>Temperature:</strong> 30,000K <br> <strong>Note:</strong> Imminent supernova threat detected.'
+            };
+
+            const checkCosmicProximity = () => {
+                const nameText = (hudNameElt.textContent || "").toUpperCase().trim();
+                const distText = hudDistElt.textContent || "";
+                const distValue = parseFloat(distText.replace(/[^0-9.]/g, '')) || 999;
+                
+                // 1. Theme and Beacon Control
+                if (nameText.includes('ANDROMEDA') || nameText.includes('M31') || nameText.includes('AETHELGARD') || nameText.includes('NEBULA')) {
+                    blueShiftOverlay.classList.add('active');
+                    pulsarBeacon.style.display = 'block';
+                    nebulaContainer.classList.add('active');
+                    
+                    // Show asteroid field only when significantly closer to an Andromeda body
+                    if (distValue < 25.0) {
+                        asteroidField.classList.add('active');
+                    } else {
+                        asteroidField.classList.remove('active');
+                    }
+                } else {
+                    blueShiftOverlay.classList.remove('active');
+                    pulsarBeacon.style.display = 'none';
+                    nebulaContainer.classList.remove('active');
+                    asteroidField.classList.remove('active');
+                }
+
+                // 2. Alert logic
+                if (nameText.includes('BLACK HOLE') || nameText.includes('CORE')) {
+                    gravAlertElt.style.display = (distValue < 5.0) ? 'block' : 'none';
+                } else {
+                    gravAlertElt.style.display = 'none';
+                }
+
+                if (nameText.includes('RELIC') || nameText.includes('OUTPOST') || nameText.includes('SIGNAL')) {
+                    sigAlertElt.style.display = (distValue < 15.0) ? 'block' : 'none';
+                } else {
+                    sigAlertElt.style.display = 'none';
+                }
+
+                // 3. Dynamic Lore Injection
+                if (planetLore[nameText]) {
+                    hudInfoElt.innerHTML = planetLore[nameText];
+                }
+            };
+
+            // Watch for HUD updates from the game engine
+            const cosmicObserver = new MutationObserver(checkCosmicProximity);
+            cosmicObserver.observe(hudNameElt, { childList: true, characterData: true, subtree: true });
+            cosmicObserver.observe(hudDistElt, { childList: true, characterData: true, subtree: true });
+            document.addEventListener('mousemove', (e) => {
+                // If the engine isn't using pointer lock, we can still use normal mousemove
+                updateCosmicParallax(-e.movementX, -e.movementY);
+            });
+        });
+    </script>
 </body>
+
 
 </html>

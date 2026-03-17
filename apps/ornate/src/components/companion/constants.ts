@@ -9,15 +9,15 @@ export const STORY_CARDS = [
     {
         id: 'ornate-story',
         title: 'The ORNATE Story',
-        subtitle: '10 Chapters · Narrated by PINGO',
+        subtitle: '13 Chapters · Old Space Legends',
         color: '#A3FF12',
         glow: 'rgba(163, 255, 18, 0.25)',
         borderGlow: 'rgba(163, 255, 18, 0.4)',
     },
     {
         id: 'my-story',
-        title: 'My Story',
-        subtitle: '5 Chapters · The Tale of PINGO',
+        title: 'Pingo\'s Story',
+        subtitle: '5 Chapters · My Own Space Tale',
         color: '#39FF14',
         glow: 'rgba(57, 255, 20, 0.25)',
         borderGlow: 'rgba(57, 255, 20, 0.4)',
@@ -25,7 +25,7 @@ export const STORY_CARDS = [
     {
         id: 'energy-guide',
         title: 'Energy Guide',
-        subtitle: 'Guide to Neon Core Energy',
+        subtitle: 'How the Space Lights Work',
         color: '#00E5FF',
         glow: 'rgba(0, 229, 255, 0.25)',
         borderGlow: 'rgba(0, 229, 255, 0.4)',
@@ -34,62 +34,57 @@ export const STORY_CARDS = [
 
 export const BOREDOM_PROMPTS: BoredomPrompt[] = [
     {
-        question: "Staring at the void? Let's stare at the beautiful Cosmos instead! (Warning: It's very shiny.)",
-        response: "Engaging warp drive... Off to the Cosmos!",
-        route: "/home/fun/cosmos"
-    },
-    {
-        question: "My flippers are tired of walking. Let's fly around the planets in 3D!",
-        response: "Initiating 3D flight sequence. Hold on to your belly!",
-        route: "/home/planet-view"
-    },
-    {
-        question: "Are you even doing anything? Let's check the Cadet Hub to see if you've actually done some work!",
-        response: "Accessing the ranking system... Let's see your progress!",
-        route: "/home/cadet-hub"
-    },
-    {
-        question: "Do you want points? Because that's how you get points! Go do some missions, Cadet!",
-        response: "Missions coming up! Time to get some high scores!",
-        route: "/home/missions"
-    },
-    {
-        question: "Bored? I have some top-secret stories about the galaxy. Want to hear them?",
-        response: "Unlocking ancient archives... Get comfy for a story!",
+        question: "Want to hear a cool story? I can tell you all about me or the old Ornate legends!",
+        response: "Great! Let's go to the story corner!",
         route: "/home/stories"
     },
     {
-        question: "Curious about who built this place? Let's go stalk the 'About Us' page together!",
-        response: "Loading developer profiles... Let's see who's behind all this!",
-        route: "/home/about"
+        question: "Is your spaceship looking a bit boring? Let's go to your Profile and pick a new color!",
+        response: "Time for a space paint job! To the Profile page!",
+        route: "/home/profile"
     },
     {
-        question: "I'm detecting 100% chance of snacks near the stalls. Want to go see?",
-        response: "Scanning for supplies... To the stalls we go!",
+        question: "Look at all those bright lights! Want to fly around the planets in the Cosmos?",
+        response: "Engaging rockets! Let's go see the stars!",
+        route: "/home/fun/cosmos"
+    },
+    {
+        question: "My flippers are tired! Want to see the planets in 3D instead?",
+        response: "Spinning around... Here come the planets!",
+        route: "/home/planet-view"
+    },
+    {
+        question: "I'm really hungry for space snacks! Should we go check the Stalls?",
+        response: "Scanning for fish and snacks... Let's go!",
         route: "/home/stalls"
     },
     {
-        question: "Cadet, there's so much to do! We can visit the Cosmos, check your rank at the Hub, or go to the Stalls for snacks. Want to explore?",
-        response: "I love your enthusiasm! Let's head to the Central Console to pick a spot!",
-        route: "/home"
+        question: "Do you want to win some space points? Let's check our Missions!",
+        response: "Let's be heroes! Opening the Mission list!",
+        route: "/home/missions"
+    },
+    {
+        question: "Want to see how you're doing? The Cadet Hub shows your space rank!",
+        response: "Let's see if you're the best cadet! To the Hub!",
+        route: "/home/cadet-hub"
     }
 ];
 
 export const PAGE_INFO: Record<string, string> = {
-    '/home': "Welcome home! This is where you start your galactic journey.",
-    '/home/cadet-hub': "This is the leaderboard. Don't let the others beat you!",
-    '/home/updates': "Check here for the latest news. Don't miss out!",
-    '/home/planet-view': "Look at the planets in 3D. So many colors!",
-    '/home/branches': "Choose your path! Which branch is your favorite?",
-    '/home/sponsors': "Meet the allies who made this mission possible!",
-    '/home/stalls': "Grab some gear and snacks at the stalls!",
-    '/home/profile': "This is you! You look great in that uniform.",
-    '/home/fun': "Need a break? Have some fun here!",
-    '/home/stories': "Read about the legends of Ornate. It's like bedtime stories, but cooler.",
-    '/home/missions': "Complete missions and score points! Go, go, go!",
-    '/home/roadmap': "Check the schedule! We have big plans ahead.",
-    '/home/gallery': "Memories from our space travels. Say cheese!",
-    '/home/fest': "It's party time! Join the festival hub.",
-    '/home/sports': "Ready to sweat? The arena is waiting!",
-    '/home/about': "Learn about the legends who created this universe.",
+    '/home': "Welcome to our space home! This is where we start every big adventure.",
+    '/home/cadet-hub': "This is the Hub! Check the board to see if you're the top cadet.",
+    '/home/updates': "Here's what's happening in space right now. Don't miss out!",
+    '/home/planet-view': "Whoa! Look at those big planets spinning around. So cool!",
+    '/home/branches': "Pick a group to join! Which part of space do you like most?",
+    '/home/sponsors': "Meet the friends who helped us build this big spaceship!",
+    '/home/stalls': "Need snacks or gear? The stalls have everything a cadet needs!",
+    '/home/profile': "This is your space suit and ship! You can change colors here.",
+    '/home/fun': "Time for a break! Let's play some space games.",
+    '/home/stories': "I love stories! Do you want to read about me or the galaxy?",
+    '/home/missions': "Ready for a challenge? Let's win some points together!",
+    '/home/roadmap': "This shows our big plan for the future. We're going far!",
+    '/home/gallery': "Look at all these space photos! We look great in these.",
+    '/home/fest': "It's party time! Let's join the big space festival.",
+    '/home/sports': "Ready to run and play? The space arena is wide open!",
+    '/home/about': "Meet the human creators who built this whole universe for us.",
 };

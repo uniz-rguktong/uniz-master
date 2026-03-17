@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ClipboardList, Search, Filter, X, Trophy, Medal, Swords, Activity, Wind, Zap, Target, ChevronDown, ChevronUp, Star } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Search, Filter, X, Trophy, Medal, Swords, Activity, Wind, Zap, Target, ChevronDown, ChevronUp, Star, Clock, Calendar } from 'lucide-react';
+import SportsEmptyState from '@/components/sports/SportsEmptyState';
 import Link from 'next/link';
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -324,12 +325,9 @@ export default function MatchResultsClient({ results: RESULTS }: { results: Resu
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     <AnimatePresence mode="popLayout">
                         {filtered.length === 0 ? (
-                            <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                                className="col-span-full h-56 flex flex-col items-center justify-center gap-4 text-gray-700">
-                                <Trophy className="w-16 h-16 opacity-10" />
-                                <p className="text-sm font-black tracking-[0.5em] uppercase">No records found</p>
-                                <button onClick={clearFilters} className="text-[10px] text-amber-400 font-black tracking-widest uppercase hover:underline">Reset Filters</button>
-                            </motion.div>
+                            <div className="col-span-full">
+                                <SportsEmptyState type="results" onReset={clearFilters} />
+                            </div>
                         ) : filtered.map((r, i) => <ResultCard key={r.id} result={r} index={i} />)}
                     </AnimatePresence>
                 </div>

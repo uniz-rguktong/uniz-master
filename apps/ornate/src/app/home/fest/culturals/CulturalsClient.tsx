@@ -13,6 +13,7 @@ const ScrollMorphHero = dynamic(() => import('@/components/ui/scroll-morph-hero'
 import CulturalsFooter from '@/components/culturals/CulturalsFooter';
 import { AlbumData, PromoVideoData } from '@/lib/data/gallery';
 import { SectionHeader, VideoCarousel, EventReelsSection, VideoModal } from '@/components/ui/VideoSections';
+import CulturalsEmptyState from '@/components/culturals/CulturalsEmptyState';
 
 // ─── Starfield canvas (Optimized & Memoized) ───────────────────────────────
 const StarField = memo(() => {
@@ -229,74 +230,78 @@ const HighlightsSection = memo(({ events }: { events: any[] }) => {
                 <p className="text-[9px] text-[var(--color-neon)]/40 tracking-[0.3em] font-bold mt-2 uppercase">Discover today's top performances</p>
             </motion.div>
 
-            <div className="relative group/scroll">
-                <style>{`
-                    .c-hscroll::-webkit-scrollbar { height: 2px; }
-                    .c-hscroll::-webkit-scrollbar-track { background: rgba(var(--color-neon-rgb, 57, 255, 20), 0.02); }
-                    .c-hscroll::-webkit-scrollbar-thumb { background: rgba(var(--color-neon-rgb, 57, 255, 20), 0.2); border-radius: 10px; }
-                    .mask-fade-edges { mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
-                `}</style>
-                <div
-                    ref={scrollRef}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                    onTouchStart={() => setIsHovered(true)}
-                    onTouchEnd={() => setIsHovered(false)}
-                    className="c-hscroll flex gap-6 overflow-x-auto pb-12 pt-4 px-4 mask-fade-edges scroll-smooth"
-                >
-                    {displayItems.map((item, i) => (
-                        <div
-                            key={i}
-                            className="flex-none w-[320px] group relative will-change-transform"
-                        >
+            {events.length === 0 ? (
+                <CulturalsEmptyState type="highlights" />
+            ) : (
+                <div className="relative group/scroll">
+                    <style>{`
+                        .c-hscroll::-webkit-scrollbar { height: 2px; }
+                        .c-hscroll::-webkit-scrollbar-track { background: rgba(var(--color-neon-rgb, 57, 255, 20), 0.02); }
+                        .c-hscroll::-webkit-scrollbar-thumb { background: rgba(var(--color-neon-rgb, 57, 255, 20), 0.2); border-radius: 10px; }
+                        .mask-fade-edges { mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
+                    `}</style>
+                    <div
+                        ref={scrollRef}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                        onTouchStart={() => setIsHovered(true)}
+                        onTouchEnd={() => setIsHovered(false)}
+                        className="c-hscroll flex gap-6 overflow-x-auto pb-12 pt-4 px-4 mask-fade-edges scroll-smooth"
+                    >
+                        {displayItems.map((item, i) => (
                             <div
-                                className="relative flex flex-col p-6 h-full overflow-hidden transition-all duration-500 group-hover:shadow-[0_0_40px_rgba(var(--color-neon-rgb, 57, 255, 20), 0.15)]"
-                                style={{
-                                    background: 'rgba(15, 15, 30, 0.7)',
-                                    border: '1.5px solid rgba(var(--color-neon-rgb, 57, 255, 20), 0.3)',
-                                    clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%)',
-                                    backdropFilter: 'blur(16px)'
-                                }}
+                                key={i}
+                                className="flex-none w-[320px] group relative will-change-transform"
                             >
-                                <div className="absolute top-0 right-0 w-12 h-[1px] bg-[var(--color-neon)]/30" />
-                                <div className="absolute top-0 right-0 w-[1px] h-12 bg-[var(--color-neon)]/30" />
+                                <div
+                                    className="relative flex flex-col p-6 h-full overflow-hidden transition-all duration-500 group-hover:shadow-[0_0_40px_rgba(var(--color-neon-rgb, 57, 255, 20), 0.15)]"
+                                    style={{
+                                        background: 'rgba(15, 15, 30, 0.7)',
+                                        border: '1.5px solid rgba(var(--color-neon-rgb, 57, 255, 20), 0.3)',
+                                        clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%)',
+                                        backdropFilter: 'blur(16px)'
+                                    }}
+                                >
+                                    <div className="absolute top-0 right-0 w-12 h-[1px] bg-[var(--color-neon)]/30" />
+                                    <div className="absolute top-0 right-0 w-[1px] h-12 bg-[var(--color-neon)]/30" />
 
-                                <div className="flex items-start justify-between mb-6">
-                                    <div>
-                                        <span className="block text-[8px] text-white/45 tracking-[0.3em] font-black uppercase mb-1">Time</span>
-                                        <span className="text-[11px] font-black text-[var(--color-neon)] tracking-[0.08em] uppercase">{item.time} HRS</span>
+                                    <div className="flex items-start justify-between mb-6">
+                                        <div>
+                                            <span className="block text-[8px] text-white/45 tracking-[0.3em] font-black uppercase mb-1">Time</span>
+                                            <span className="text-[11px] font-black text-[var(--color-neon)] tracking-[0.08em] uppercase">{item.time} HRS</span>
+                                        </div>
+                                        <div className="px-3 py-1 rounded-sm border border-[var(--color-neon)]/35 bg-[var(--color-neon)]/10 text-[8px] text-[#d9ff9a] font-black tracking-[0.2em] uppercase">
+                                            {item.tag || 'CULTURAL'}
+                                        </div>
                                     </div>
-                                    <div className="px-3 py-1 rounded-sm border border-[var(--color-neon)]/35 bg-[var(--color-neon)]/10 text-[8px] text-[#d9ff9a] font-black tracking-[0.2em] uppercase">
-                                        {item.tag || 'CULTURAL'}
+
+                                    <h3 className="text-lg font-black text-white tracking-wide mb-5 uppercase leading-tight font-orbitron line-clamp-2">{item.title}</h3>
+
+                                    <div className="flex items-center gap-2 mb-5 px-3 py-2 bg-white/[0.06] border border-white/12">
+                                        <div className="w-1 h-4 bg-[var(--color-neon)]" />
+                                        <div className="flex flex-col">
+                                            <span className="text-[7px] text-white/45 font-black tracking-[0.24em] uppercase">Venue</span>
+                                            <p className="text-[11px] text-white font-black tracking-[0.08em] uppercase">{item.loc}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-auto pt-4 border-t border-white/10">
+                                        <span className="block text-[8px] text-white/40 tracking-[0.24em] font-black uppercase mb-1">Description</span>
+                                        <p className="text-[15px] text-white/88 leading-relaxed font-rajdhani line-clamp-3">
+                                            {item.desc || 'Description will be updated soon.'}
+                                        </p>
                                     </div>
                                 </div>
-
-                                <h3 className="text-lg font-black text-white tracking-wide mb-5 uppercase leading-tight font-orbitron line-clamp-2">{item.title}</h3>
-
-                                <div className="flex items-center gap-2 mb-5 px-3 py-2 bg-white/[0.06] border border-white/12">
-                                    <div className="w-1 h-4 bg-[var(--color-neon)]" />
-                                    <div className="flex flex-col">
-                                        <span className="text-[7px] text-white/45 font-black tracking-[0.24em] uppercase">Venue</span>
-                                        <p className="text-[11px] text-white font-black tracking-[0.08em] uppercase">{item.loc}</p>
-                                    </div>
-                                </div>
-
-                                <div className="mt-auto pt-4 border-t border-white/10">
-                                    <span className="block text-[8px] text-white/40 tracking-[0.24em] font-black uppercase mb-1">Description</span>
-                                    <p className="text-[15px] text-white/88 leading-relaxed font-rajdhani line-clamp-3">
-                                        {item.desc || 'Description will be updated soon.'}
-                                    </p>
-                                </div>
+                                <div className="absolute inset-0 border border-[var(--color-neon)]/0 group-hover:border-[var(--color-neon)]/20 transition-all duration-500 pointer-events-none" style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%)' }} />
+                                <div className="absolute -inset-2 bg-[var(--color-neon)]/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
                             </div>
-                            <div className="absolute inset-0 border border-[var(--color-neon)]/0 group-hover:border-[var(--color-neon)]/20 transition-all duration-500 pointer-events-none" style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%)' }} />
-                            <div className="absolute -inset-2 bg-[var(--color-neon)]/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
 
-                <div className="absolute left-0 top-0 bottom-12 w-24 bg-gradient-to-r from-[#030308] to-transparent pointer-events-none z-10 opacity-80" />
-                <div className="absolute right-0 top-0 bottom-12 w-24 bg-gradient-to-l from-[#030308] to-transparent pointer-events-none z-10 opacity-80" />
-            </div>
+                    <div className="absolute left-0 top-0 bottom-12 w-24 bg-gradient-to-r from-[#030308] to-transparent pointer-events-none z-10 opacity-80" />
+                    <div className="absolute right-0 top-0 bottom-12 w-24 bg-gradient-to-l from-[#030308] to-transparent pointer-events-none z-10 opacity-80" />
+                </div>
+            )}
         </section>
     );
 });
@@ -622,27 +627,24 @@ const GallerySection = memo(({ images }: { images: string[] }) => {
             </motion.div>
 
             <div className="h-[600px] w-full relative">
-                <DomeGallery
-                    fit={0.8}
-                    minRadius={500}
-                    maxVerticalRotationDeg={15}
-                    segments={32}
-                    dragDampening={1.5}
-                    grayscale={false}
-                    overlayBlurColor="#030308"
-                    openedImageWidth="500px"
-                    openedImageHeight="500px"
-                    images={images.length > 0 ? images : [
-                        "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80",
-                        "https://images.unsplash.com/photo-1514525253344-991f70cd204d?w=800&q=80",
-                        "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80",
-                        "https://images.unsplash.com/photo-1459749411177-042180ce6742?w=800&q=80",
-                        "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80",
-                        "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&q=80",
-                        "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
-                        "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&q=80"
-                    ]}
-                />
+                {images.length === 0 ? (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <CulturalsEmptyState type="gallery" />
+                    </div>
+                ) : (
+                    <DomeGallery
+                        fit={0.8}
+                        minRadius={500}
+                        maxVerticalRotationDeg={15}
+                        segments={32}
+                        dragDampening={1.5}
+                        grayscale={false}
+                        overlayBlurColor="#030308"
+                        openedImageWidth="500px"
+                        openedImageHeight="500px"
+                        images={images}
+                    />
+                )}
             </div>
 
             {/* Glowing Scanlines overlay for the gallery */}
@@ -894,17 +896,19 @@ export default function CulturalsClient({
                 )}
             </AnimatePresence>
 
-            {promoHighlights.length > 0 && (
-                <section className="py-12 sm:py-24 px-4 sm:px-10 bg-[#030308] relative overflow-hidden z-10">
-                    <div className="max-w-7xl mx-auto relative z-10">
-                        <SectionHeader color="var(--color-neon)" label="Cinematic" title="FEATURED PROMOS" />
-                        <VideoCarousel videos={promoHighlights} color="var(--color-neon)" onPlay={handlePlay} cardBorderWidth={4} showSideAccents={true} />
-                        {promoHighlights.length > 0 && (
+            <section className="py-12 sm:py-24 px-4 sm:px-10 bg-[#030308] relative overflow-hidden z-10">
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <SectionHeader color="var(--color-neon)" label="Cinematic" title="FEATURED PROMOS" />
+                    {promoHighlights.length > 0 ? (
+                        <>
+                            <VideoCarousel videos={promoHighlights} color="var(--color-neon)" onPlay={handlePlay} cardBorderWidth={4} showSideAccents={true} />
                             <PromoStreamsCarousel videos={promoHighlights} color="var(--color-neon)" onPlay={handlePlay} />
-                        )}
-                    </div>
-                </section>
-            )}
+                        </>
+                    ) : (
+                        <CulturalsEmptyState type="promos" />
+                    )}
+                </div>
+            </section>
 
             {eventReels.length > 0 && (
                 <div className="bg-[#030308]">
@@ -1013,20 +1017,26 @@ const CulturalsGallerySection = memo(({ albums }: { albums: AlbumData[] }) => {
                 <p className="text-[8px] sm:text-[10px] text-gray-500 tracking-[0.2em] sm:tracking-[0.3em] uppercase mt-3 font-bold">Click a card to expand • View our gallery</p>
             </motion.div>
             <div className="w-full h-[500px]">
-                <CircularGallery
-                    bend={isMobile ? 0 : 3}
-                    textColor="#22d3ee"
-                    font="bold 30px Orbitron"
-                    borderRadius={0.05}
-                    scrollSpeed={isMobile ? 1.5 : 2}
-                    scrollEase={0.05}
-                    autoScrollSpeed={isMobile ? -0.1 : 0.15}
-                    items={galleryItems}
-                    onSelect={(item: any) => {
-                        setSelectedAlbum(item.album || null);
-                        setDomeOpen(true);
-                    }}
-                />
+                {albums.length === 0 ? (
+                    <div className="h-full flex items-center justify-center">
+                        <CulturalsEmptyState type="gallery" />
+                    </div>
+                ) : (
+                    <CircularGallery
+                        bend={isMobile ? 0 : 3}
+                        textColor="#22d3ee"
+                        font="bold 30px Orbitron"
+                        borderRadius={0.05}
+                        scrollSpeed={isMobile ? 1.5 : 2}
+                        scrollEase={0.05}
+                        autoScrollSpeed={isMobile ? -0.1 : 0.15}
+                        items={galleryItems}
+                        onSelect={(item: any) => {
+                            setSelectedAlbum(item.album || null);
+                            setDomeOpen(true);
+                        }}
+                    />
+                )}
             </div>
         </section>
     );

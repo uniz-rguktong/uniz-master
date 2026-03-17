@@ -9,6 +9,8 @@ import StallsFooter from '@/components/stalls/StallsFooter';
 import { SectionHeader, VideoCarousel, EventReelsSection, VideoModal } from '@/components/ui/VideoSections';
 import { StallPromoVideoData } from '@/lib/data/stalls';
 import SectorHeader from '@/components/layout/SectorHeader';
+import StallSkeleton from '@/components/stalls/StallSkeleton';
+import StallsEmptyState from '@/components/stalls/StallsEmptyState';
 
 const STALL_IMAGES: Record<string, string> = {
     food: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=80',
@@ -21,6 +23,10 @@ const StallCard = memo(({ stall, idx, isMounted }: { stall: any, idx: number, is
     const glow = stall.color;
     const imgSrc = STALL_IMAGES[stall.type] ?? STALL_IMAGES.food;
     const ratingFilled = Math.round(parseFloat(stall.rating));
+
+    if (!isMounted) {
+        return <StallSkeleton />;
+    }
 
     return (
         <Link href={`/home/stalls/${stall.id}`} className="block group">
@@ -304,10 +310,16 @@ export default function StallsClient({ stalls: STALLS, promoVideos = [] }: { sta
                 </p>
             </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mb-24 relative z-10">
-                    {STALLS.map((stall, idx) => (
-                        <StallCard key={stall.id} stall={stall} idx={idx} isMounted={mounted} />
-                    ))}
+                <div className="flex flex-col w-full mb-24 relative z-10">
+                    {STALLS.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {STALLS.map((stall, idx) => (
+                                <StallCard key={stall.id} stall={stall} idx={idx} isMounted={mounted} />
+                            ))}
+                        </div>
+                    ) : (
+                        <StallsEmptyState type="empty" />
+                    )}
                 </div>
 
             <AnimatePresence>

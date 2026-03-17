@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Users, Building2, MapPin, Calendar, Users2, ChevronRight, CreditCard, Unlock } from 'lucide-react';
 import { addAlpha } from '@/lib/utils';
+import MissionSkeleton from './MissionSkeleton';
 
 export type Mission = {
     id: string;
@@ -51,7 +52,7 @@ export default function MissionCard({ mission, themeColor, onClick, isRegistered
     const isCustom = !!themeColor;
 
     if (!isMounted) {
-        return <div className="h-[280px] w-full rounded-md bg-black/50 animate-pulse border border-white/5" />;
+        return <MissionSkeleton />;
     }
 
     return (

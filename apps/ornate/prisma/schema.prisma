@@ -642,6 +642,7 @@ model EnergyTransaction {
   @@index([createdAt])
   @@index([reason])
   @@index([userId])
+  @@unique([userId, note])
 }
 
 enum UserRole {

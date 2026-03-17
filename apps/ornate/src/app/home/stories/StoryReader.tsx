@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChevronRight, ChevronLeft, ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
 
 export interface StoryPage {
     title: string;
@@ -189,39 +190,42 @@ export default function StoryReader({ story }: StoryReaderProps) {
 
 
                         {/* Left Panel: Branding / Title */}
-                        <div className="relative w-full sm:w-[40%] h-auto sm:h-full flex flex-col justify-end sm:justify-between p-6 sm:p-16 border-b sm:border-b-0 sm:border-r border-white/5 shrink-0 bg-[#0A0C0A]/60 sm:bg-transparent">
+                        <div className="relative w-full sm:w-[55%] h-auto sm:h-full flex flex-col justify-end sm:justify-between p-6 sm:p-10 border-b sm:border-b-0 sm:border-r border-white/5 shrink-0 bg-[#0A0C0A]/60 sm:bg-transparent">
                             <div className="space-y-2 sm:space-y-6">
                                 <span className="text-[8px] sm:text-[10px] font-black tracking-[0.4em] text-white/20 uppercase block font-mono">
                                     ARCHIVE RECORD
                                 </span>
 
                                 <div className="space-y-0">
-                                    <h1 className="text-2xl sm:text-5xl font-black text-white leading-[1.1] uppercase">
+                                    <h1 className="text-3xl sm:text-4xl font-black text-white leading-[1.1] uppercase">
                                         {ch.title.split(' ')[0]}
                                     </h1>
-                                    <h2 className="text-2xl sm:text-5xl font-black leading-[1.1] uppercase" style={{ color: story.accentColor }}>
+                                    <h2 className="text-3xl sm:text-4xl font-black leading-[1.1] uppercase" style={{ color: story.accentColor }}>
                                         {ch.title.split(' ').slice(1).join(' ')}
                                     </h2>
                                 </div>
 
-                                {/* Decorative Page Marker with Dots as per screenshot */}
-                                <div className="hidden sm:flex items-center gap-4 pt-6">
-                                    <div className="h-1.5 w-16 rounded-full" style={{ background: story.accentColor }} />
-                                    <div className="flex gap-2">
-                                        {Array.from({ length: 3 }).map((_, i) => (
-                                            <div key={i} className="w-1.5 h-1.5 rounded-full bg-white/10" />
-                                        ))}
-                                    </div>
-                                </div>
+                                {ch.image && (
+                                    <motion.div 
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10 bg-black/40 group-hover/card:border-white/20 transition-colors shadow-2xl"
+                                    >
+                                        <Image 
+                                            src={ch.image} 
+                                            alt={ch.title} 
+                                            fill 
+                                            className="object-cover transition-transform duration-700 group-hover/card:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                    </motion.div>
+                                )}
+
+                                {/* Decorative indicators removed per user request */}
                             </div>
 
                             <div className="hidden sm:block space-y-2 opacity-30 font-mono">
-                                <span className="block text-[8px] font-bold tracking-[0.3em] text-white uppercase">
-                                    NODE-REF.{story.id.slice(0, 3).toUpperCase()}.0{(currentPage + 1)}
-                                </span>
-                                <span className="block text-[8px] font-bold tracking-[0.3em] text-white uppercase">
-                                    ENCRYPT_LEVEL.{(7 + currentPage % 3)}
-                                </span>
+                                {/* Removed HUD Labels per user request */}
                             </div>
                         </div>
 

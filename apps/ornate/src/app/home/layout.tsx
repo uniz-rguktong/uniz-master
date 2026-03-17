@@ -1,12 +1,12 @@
-import SidebarWrapper from '@/components/SidebarWrapper';
+import { HomeSidebar } from '@/components/home/HomeSidebar';
 import CompanionBotWrapper from '@/components/CompanionBotWrapper';
 
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
     return (
         <>
             {children}
-            {/* Mobile Smart Sidebar Menu (Global for all /home routes) */}
-            <SidebarWrapper />
+            {/* National Navigation Sidebar (Global for all /home routes) */}
+            <HomeSidebar />
             <CompanionBotWrapper />
         </>
     );

@@ -9,6 +9,9 @@ import { BRANCHES, CLUBS } from '@/lib/data/branch-constants';
 import GalleryFilterBar, { type FilterType } from './components/GalleryFilterBar';
 import GalleryAlbumGrid from './components/GalleryAlbumGrid';
 import GalleryAlbumViewer from './components/GalleryAlbumViewer';
+import GalleryEmptyState from '@/components/gallery/GalleryEmptyState';
+import { AlbumCardSkeleton } from '@/components/gallery/GallerySkeleton';
+import { useEffect } from 'react';
 
 export interface GalleryClientProps {
   categorizedAlbums: {
@@ -36,6 +39,11 @@ export default function GalleryClient({ categorizedAlbums, promoVideos }: Galler
   const [filterOpen, setFilterOpen] = useState(false);
   const [filterStep, setFilterStep] = useState<1 | 2>(1);
   const [viewingAlbum, setViewingAlbum] = useState<{ title: string; images: string[] } | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const allAlbums = categorizedAlbums.all;
   const hasActiveFilters = filter !== 'ALL' || selectedBranch !== null || selectedClub !== null;
@@ -155,14 +163,21 @@ export default function GalleryClient({ categorizedAlbums, promoVideos }: Galler
           <div className="h-0.5 w-32 bg-linear-to-r from-neon to-transparent mt-4 opacity-60" />
         </motion.div>
 
-        {albumCards.length === 0 ? (
-          <div className="py-20 text-center opacity-40">
-            <Search className="w-12 h-12 mx-auto mb-4 opacity-20" />
-            <p className="text-xl font-black tracking-widest uppercase">No Archives Found</p>
-            <p className="text-[10px] tracking-[0.3em] uppercase mt-2">Try adjusting your search parameters</p>
-          </div>
+        {allAlbums.length === 0 ? (
+          <GalleryEmptyState type="empty" />
+        ) : albumCards.length === 0 ? (
+          <GalleryEmptyState type="search" onReset={() => {
+            setSearchQuery('');
+            setFilter('ALL');
+            setSelectedBranch(null);
+            setSelectedClub(null);
+          }} />
         ) : (
-          <GalleryAlbumGrid albums={albumCards} onOpen={openAlbumViewer} />
+          <GalleryAlbumGrid 
+            albums={albumCards} 
+            onOpen={openAlbumViewer} 
+            isMounted={isMounted}
+          />
         )}
       </div>
     </main>

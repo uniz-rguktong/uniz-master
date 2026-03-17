@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import SectorHeader from '@/components/layout/SectorHeader';
 import { initPushNotifications } from '@/utils/pushNotifications';
+import UpdatesEmptyState from '@/components/updates/UpdatesEmptyState';
 
 // ─── Data Types ──────────────────────────────────────────────────────────────
 export type UpdateAnnouncement = {
@@ -430,17 +431,14 @@ export default function UpdatesClient({ announcements }: { announcements: Update
                                         <UpdateCard key={u.id} update={u} index={i} />
                                     ))
                                 ) : (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="py-32 text-center border border-dashed border-white/5 rounded-3xl"
-                                    >
-                                        <div className="inline-flex p-6 rounded-full bg-white/5 mb-6">
-                                            <Search className="w-10 h-10 text-white/10" />
-                                        </div>
-                                        <h3 className="text-xl font-bold uppercase tracking-[0.2em] text-white/40">No signals detected</h3>
-                                        <p className="text-[10px] uppercase font-bold tracking-[0.4em] text-white/20 mt-2">Adjust your frequency filters</p>
-                                    </motion.div>
+                                    <div className="py-20">
+                                        <UpdatesEmptyState 
+                                            onReset={() => {
+                                                setFilter('ALL');
+                                                setSearchQuery('');
+                                            }} 
+                                        />
+                                    </div>
                                 )}
                             </AnimatePresence>
                         </div>

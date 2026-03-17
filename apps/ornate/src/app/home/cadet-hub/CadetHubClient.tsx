@@ -406,7 +406,7 @@ export default function CadetHubClient({ neonStats, leaderboard, planets, myProf
                       const isActive = l.level === cadetLevel.level;
                       const isUnlocked = l.level <= cadetLevel.level;
                       return (
-                        <div key={l.name} className="flex flex-col items-center gap-1.5 flex-1">
+                        <div key={l.name} className="flex flex-col items-center gap-1.5 flex-1 px-0.5">
                           <div className="w-8 h-8 rounded-full flex items-center justify-center transition-all bg-[#0d0d15]"
                             style={{
                               border: `1.5px solid ${isActive ? col : isUnlocked ? `${col}40` : 'rgba(255,255,255,0.08)'}`,
@@ -417,7 +417,7 @@ export default function CadetHubClient({ neonStats, leaderboard, planets, myProf
                               : <Lock className="w-3 h-3 text-white/10" />
                             }
                           </div>
-                          <span className="text-[9px] font-black tracking-widest uppercase transition-colors" 
+                          <span className="text-[7px] sm:text-[9px] font-black tracking-wider sm:tracking-widest uppercase transition-colors text-center" 
                             style={{ color: isActive ? col : isUnlocked ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.2)' }}>
                             {l.name}
                           </span>
