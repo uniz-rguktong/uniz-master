@@ -21,18 +21,31 @@ type EventRegistrationEmailInput = {
 let sesClient: SESClient | null = null;
 function getSesClient() {
     if (!sesClient) {
+        // Support both prefixed and non-prefixed env vars for flexibility between environments
+        const region = process.env.ORNATE_AWS_REGION || process.env.AWS_REGION;
+        const accessKeyId = process.env.ORNATE_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
+        const secretAccessKey = process.env.ORNATE_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
+
+        if (!region || !accessKeyId || !secretAccessKey) {
+            console.error('[mail] Missing AWS credentials for SES:', {
+                region: !!region,
+                accessKeyId: !!accessKeyId,
+                secretAccessKey: !!secretAccessKey
+            });
+        }
+
         sesClient = new SESClient({
-            region: process.env.ORNATE_AWS_REGION!,
+            region: region!,
             credentials: {
-                accessKeyId: process.env.ORNATE_AWS_ACCESS_KEY_ID!,
-                secretAccessKey: process.env.ORNATE_AWS_SECRET_ACCESS_KEY!,
+                accessKeyId: accessKeyId!,
+                secretAccessKey: secretAccessKey!,
             },
         });
     }
     return sesClient;
 }
 
-const FROM_EMAIL = () => process.env.ORNATE_SES_FROM_EMAIL!;
+const FROM_EMAIL = () => process.env.ORNATE_SES_FROM_EMAIL || process.env.SES_FROM_EMAIL || 'no-reply-ems@rguktong.in';
 
 async function sendSesEmail(to: string, subject: string, html: string, text: string) {
     try {
