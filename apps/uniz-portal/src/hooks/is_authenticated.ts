@@ -122,7 +122,7 @@ export function useIsAuth() {
       if (
         decoded?.username &&
         storedUsername &&
-        decoded.username !== storedUsername
+        decoded.username.toLowerCase() !== storedUsername.toLowerCase()
       ) {
         return logoutAndRedirect("Identity mismatch");
       }

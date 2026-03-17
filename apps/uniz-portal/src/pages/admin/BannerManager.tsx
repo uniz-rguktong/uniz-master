@@ -13,6 +13,7 @@ import {
   ArrowLeft,
   Upload,
   EyeOff,
+  X,
 } from "lucide-react";
 
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -32,8 +33,6 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Button } from "../../components/Button";
-import { Input } from "../../components/Input";
 import { cn } from "../../utils/cn";
 
 type Banner = {
@@ -142,6 +141,7 @@ export default function BannerManager() {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const fetchBanners = async () => {
     try {
@@ -185,6 +185,7 @@ export default function BannerManager() {
         setTitle("");
         setImage(null);
         fetchBanners();
+        setShowAddModal(false);
         toast.success("Banner added successfully");
       }
     } catch (err) {
@@ -263,79 +264,125 @@ export default function BannerManager() {
               Create and manage homepage banners and announcements.
             </p>
           </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="h-12 px-8 bg-navy-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-lg shadow-navy-100/50"
+          >
+            <PlusCircle size={16} /> New Banner
+          </button>
         </div>
       </div>
 
-      {/* Add Banner Section */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 lg:p-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Dropzone */}
-          <div className="lg:w-1/3">
-            <div
-              {...getRootProps()}
-              className={cn(
-                "h-full min-h-[200px] border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center p-6 cursor-pointer transition-all bg-slate-50",
-                isDragActive
-                  ? "border-navy-100 bg-navy-50"
-                  : "border-slate-300 hover:border-slate-400 hover:bg-slate-100",
-                image && "border-emerald-500 bg-emerald-50",
-              )}
+      {/* Add Banner Modal */}
+      {showAddModal && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setShowAddModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-100 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowAddModal(false)}
+              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
             >
-              <input {...getInputProps()} />
-              {image ? (
-                <div className="text-emerald-700">
-                  <ImageIcon className="w-10 h-10 mx-auto mb-2" />
-                  <p className="font-medium text-sm truncate max-w-[200px]">
-                    {image.name}
-                  </p>
-                  <p className="text-xs opacity-70 mt-1">Click to change</p>
-                </div>
-              ) : (
-                <div className="text-slate-500">
-                  <Upload className="w-10 h-10 mx-auto mb-2 text-slate-400" />
-                  <p className="font-medium text-sm">Upload Image</p>
-                  <p className="text-xs opacity-70 mt-1">
-                    Drag & drop or click
+              <X size={20} />
+            </button>
+            <div className="p-8">
+              <div className="flex flex-col items-center text-center gap-4 mb-8">
+                <div>
+                  <h3 className="text-2xl font-bold text-slate-900 tracking-tight uppercase italic">
+                    Create New Banner
+                  </h3>
+                  <p className="text-[14px] font-medium text-slate-500 mt-1.5 leading-relaxed">
+                    Upload an image and add descriptive content for the homepage carousel.
                   </p>
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
 
-          {/* Form Fields */}
-          <div className="lg:w-2/3 space-y-5">
-            <Input
-              label="Banner Title"
-              value={title}
-              onchangeFunction={(e: any) => setTitle(e.target.value)}
-              placeholder="e.g. Important Announcement"
-            />
+              <div className="flex flex-col gap-6">
+                {/* Dropzone */}
+                <div className="w-full">
+                  <div
+                    {...getRootProps()}
+                    className={cn(
+                      "h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer transition-all bg-slate-50",
+                      isDragActive
+                        ? "border-navy-100 bg-navy-50"
+                        : "border-slate-300 hover:border-slate-400 hover:bg-slate-100",
+                      image && "border-emerald-500 bg-emerald-50",
+                    )}
+                  >
+                    <input {...getInputProps()} />
+                    {image ? (
+                      <div className="text-emerald-700">
+                        <ImageIcon className="w-6 h-6 mx-auto mb-1.5" />
+                        <p className="font-bold text-[10px] truncate max-w-[250px] uppercase">
+                          {image.name}
+                        </p>
+                        <p className="text-[9px] opacity-70 mt-0.5 font-black uppercase">Click to change</p>
+                      </div>
+                    ) : (
+                      <div className="text-slate-500">
+                        <Upload className="w-6 h-6 mx-auto mb-1.5 text-slate-400" />
+                        <p className="font-bold text-[10px] uppercase tracking-wider">Select Banner Image</p>
+                        <p className="text-[9px] opacity-60 mt-0.5 font-black uppercase">
+                          Drop or click
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-            <div className="space-y-1.5 ml-1">
-              <label className="text-sm font-medium text-slate-700">
-                Content / Description
-              </label>
-              <textarea
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="Enter the details..."
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:ring-2 focus:ring-navy-900 focus:bg-white outline-none transition-all resize-none h-24"
-              />
-            </div>
+                {/* Form Fields */}
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      Banner Title
+                    </label>
+                    <input
+                      type="text"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="e.g. Important Announcement"
+                      className="w-full h-14 px-6 bg-slate-50 border-2 border-transparent focus:border-navy-100 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all shadow-inner placeholder:text-slate-300"
+                    />
+                  </div>
 
-            <div className="pt-2 flex justify-end">
-              <Button
-                onclickFunction={addBanner}
-                value="Create Banner"
-                loading={loading}
-                className="bg-slate-900 hover:bg-black"
-              >
-                <PlusCircle className="w-4 h-4 mr-2" /> Create Banner
-              </Button>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                      Content / Description
+                    </label>
+                    <textarea
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                      placeholder="Enter the details..."
+                      className="w-full bg-slate-50 border-2 border-transparent focus:border-navy-100 focus:bg-white rounded-xl px-6 py-4 text-sm font-bold text-slate-900 outline-none transition-all resize-none h-28 shadow-inner placeholder:text-slate-300"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-10">
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="flex-1 py-3.5 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 font-black uppercase tracking-widest text-[10px] transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={addBanner}
+                  disabled={loading || !title || !image}
+                  className="flex-[2] py-3.5 rounded-xl bg-navy-900 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-lg shadow-navy-100 hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? "UPLOADING..." : "CREATE BANNER 🚀"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Banners Grid */}
       <div>
