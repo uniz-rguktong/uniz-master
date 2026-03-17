@@ -16,6 +16,7 @@ import {
   Layout,
   RefreshCcw,
   Edit3,
+  Check,
 } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
 import {
@@ -82,6 +83,7 @@ export default function UnifiedAcademicManager() {
     "CIVIL",
     "CHEM",
   ]);
+  const [allBranchesSelected, setAllBranchesSelected] = useState(true);
 
   // --- Master Subjects State ---
   const [allSubjects, setAllSubjects] = useState<any[]>([]);
@@ -355,9 +357,9 @@ export default function UnifiedAcademicManager() {
           </button>
           <button
             onClick={() => setShowNewSemModal(true)}
-            className="h-12 px-6 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-none"
+            className="h-12 px-8 bg-navy-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-lg shadow-navy-100/50"
           >
-            New Rollout
+            <Zap size={14} /> New Rollout
           </button>
         </div>
       </div>
@@ -601,14 +603,16 @@ export default function UnifiedAcademicManager() {
                           : "REGISTRATION_OPEN",
                       )
                     }
-                    className={`h-14 px-10 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all ${selectedSem.status === "REGISTRATION_OPEN"
-                      ? "bg-red-50/10 text-red-500 border border-red-500/30 hover:bg-red-500 hover:text-white"
-                      : "bg-emerald-600 text-white hover:bg-emerald-700"
+                    className={`h-14 px-10 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center gap-3 ${selectedSem.status === "REGISTRATION_OPEN"
+                      ? "bg-red-50/5 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white"
+                      : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-100"
                       }`}
                   >
-                    {selectedSem.status === "REGISTRATION_OPEN"
-                      ? "Suspend Enrollment"
-                      : "Launch Enrollment 🚀"}
+                    {selectedSem.status === "REGISTRATION_OPEN" ? (
+                      <>Stop Enrollment</>
+                    ) : (
+                      <>Launch Enrollment 🚀</>
+                    )}
                   </button>
                   <button
                     onClick={handleGlobalApprove}
@@ -837,76 +841,102 @@ export default function UnifiedAcademicManager() {
       </div>
 
       {showNewSemModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-          <div className="bg-white rounded-xl w-full max-w-xl p-10 animate-in zoom-in-95 duration-300">
-            <div className="flex items-center gap-4 mb-10">
-              <div className="p-5 bg-navy-50 text-navy-900 rounded-xl shadow-none">
-                <Zap size={32} className="fill-navy-900 opacity-20" />
-              </div>
-              <div>
-                <h2 className="text-3xl font-black italic tracking-tighter text-slate-900">
-                  Launch Academic Rollout
-                </h2>
-                <p className="text-slate-400 text-sm font-bold">
-                  Initialize a new semester registration event.
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-8">
-              <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                  Semester Label (Internal Display)
-                </label>
-                <input
-                  type="text"
-                  value={newSemName}
-                  onChange={(e) => setNewSemName(e.target.value)}
-                  className="w-full h-16 px-8 bg-slate-50 border-2 border-transparent focus:border-navy-100 focus:bg-white rounded-xl outline-none font-black text-slate-900 transition-all"
-                  placeholder="e.g. AY 2024-25 SEM-II"
-                />
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                  Applicable Branches
-                </label>
-                <div className="grid grid-cols-3 gap-3">
-                  {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
-                    <button
-                      key={b}
-                      onClick={() =>
-                        setSelectedBranches((prev) =>
-                          prev.includes(b)
-                            ? prev.filter((x) => x !== b)
-                            : [...prev, b],
-                        )
-                      }
-                      className={`h-14 rounded-xl font-black text-xs transition-all border ${selectedBranches.includes(b)
-                        ? "bg-slate-900 text-white border-slate-900 shadow-none"
-                        : "bg-slate-50 text-slate-400 border-slate-100 hover:border-slate-300"
-                        }`}
-                    >
-                      {b}
-                    </button>
-                  ))}
+        <div 
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setShowNewSemModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-100 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setShowNewSemModal(false)}
+              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
+            >
+              <X size={20} />
+            </button>
+            <div className="p-8">
+              <div className="flex flex-col items-center text-center gap-4 mb-8">
+                <div>
+                  <h3 className="text-2xl font-bold text-slate-900 tracking-tight uppercase italic">
+                    Academic Rollout
+                  </h3>
+                  <p className="text-[14px] font-medium text-slate-500 mt-1.5 leading-relaxed">
+                    Initialize a new semester registration event for the campus.
+                  </p>
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-6">
-                <button
-                  onClick={() => setShowNewSemModal(false)}
-                  className="h-16 flex-1 bg-slate-100 text-slate-500 rounded-xl font-black uppercase tracking-widest text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleInitSemester}
-                  disabled={loading}
-                  className="h-16 flex-[2] bg-navy-900 text-white rounded-xl font-black uppercase tracking-[0.2em] text-xs shadow-none hover:bg-navy-800 transition-all"
-                >
-                  {loading ? "Initializing Engine..." : "Launch Rollout 🎓"}
-                </button>
+              <div className="space-y-6">
+                <div className="space-y-2.5">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    Semester Name
+                  </label>
+                  <input
+                    type="text"
+                    value={newSemName}
+                    onChange={(e) => setNewSemName(e.target.value)}
+                    className="w-full h-14 px-6 bg-slate-50 border-2 border-transparent focus:border-navy-100 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all shadow-inner"
+                    placeholder="e.g. AY 2024-25 SEM-II"
+                  />
+                </div>
+
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between px-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      Applicable Branches
+                    </label>
+                    <div className="flex items-center gap-2 cursor-pointer group" onClick={() => {
+                      const next = !allBranchesSelected;
+                      setAllBranchesSelected(next);
+                      if (next) setSelectedBranches(["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"]);
+                    }}>
+                      <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${allBranchesSelected ? "bg-navy-900 border-navy-900" : "border-slate-300 group-hover:border-navy-500"}`}>
+                        {allBranchesSelected && <Check size={12} className="text-white" strokeWidth={4} />}
+                      </div>
+                      <span className="text-[11px] font-bold text-slate-600 uppercase tracking-tighter">All Branches</span>
+                    </div>
+                  </div>
+
+                  {!allBranchesSelected && (
+                    <div className="grid grid-cols-3 gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                      {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
+                        <button
+                          key={b}
+                          onClick={() =>
+                            setSelectedBranches((prev) =>
+                              prev.includes(b)
+                                ? prev.filter((x) => x !== b)
+                                : [...prev, b],
+                            )
+                          }
+                          className={`h-10 rounded-lg font-bold text-[10px] transition-all border ${selectedBranches.includes(b)
+                            ? "bg-navy-900 text-white border-navy-900 shadow-sm"
+                            : "bg-white text-slate-400 border-slate-200 hover:border-slate-400"
+                            }`}
+                        >
+                          {b}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-3 mt-10">
+                  <button
+                    onClick={() => setShowNewSemModal(false)}
+                    className="flex-1 py-3.5 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 font-black uppercase tracking-widest text-[10px] transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleInitSemester}
+                    disabled={loading || (selectedBranches.length === 0 && !allBranchesSelected)}
+                    className="flex-[2] py-3.5 rounded-xl bg-navy-900 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-lg shadow-navy-100 hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? "INITIALIZING..." : "LAUNCH ROLLOUT 🚀"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
