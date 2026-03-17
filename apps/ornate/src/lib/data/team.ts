@@ -14,6 +14,8 @@ export type TeamSection = {
     members: TeamMember[];
 };
 
+const R2_BASE_URL = "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/DevTeam";
+
 export const TEAM_DATA: TeamSection[] = [
     {
         id: 'ornate-2k26',
@@ -22,7 +24,7 @@ export const TEAM_DATA: TeamSection[] = [
         members: [
             { 
                 name: "A.V. LEELADHAR", 
-                image: "/assets/profile/leeladhar.webp", 
+                image: `${R2_BASE_URL}/Leeladhar.webp`, 
                 categories: ['UI/UX Designing', 'Frontend Engineering'],
                 isTeamLead: true,
                 securityDetails: ["Product Vision & Experience Strategy", "Solar Navigation UX", "Technical Guidance"],
@@ -30,49 +32,49 @@ export const TEAM_DATA: TeamSection[] = [
             },
             { 
                 name: "SK. MAYIF", 
-                image: "/assets/profile/mayif.webp", 
+                image: `${R2_BASE_URL}/msk.webp`, 
                 categories: ['Full Stack Development'],
                 securityDetails: ["Full Stack Architecture", "Real-time Systems", "Deployment"],
                 linkedin: "#"
             },
             { 
                 name: "M. ARAVIND", 
-                image: "/assets/profile/aravind.webp", 
+                image: `${R2_BASE_URL}/Aravind.webp`, 
                 categories: ['Backend & Database', 'Production'],
                 securityDetails: ["Database Optimization", "Server Management", "Asset Delivery"],
                 linkedin: "#"
             },
             { 
                 name: "S. RAJASEKHAR", 
-                image: "/assets/profile/rajasekhar.webp", 
+                image: `${R2_BASE_URL}/raj.webp`, 
                 categories: ['Full Stack Development'],
                 securityDetails: ["Cross-platform Integration", "Logical Styling", "Data Mapping"],
                 linkedin: "#"
             },
             { 
                 name: "N. PAVAN", 
-                image: "/assets/profile/pavan.webp", 
+                image: `${R2_BASE_URL}/pavan.webp`, 
                 categories: ['Testing & QA', 'Frontend Engineering'],
                 securityDetails: ["Quality Assurance", "UI Debugging", "Performance Scaling"],
                 linkedin: "#"
             },
             { 
                 name: "G. KAVYA", 
-                image: "/assets/profile/kavya.webp", 
+                image: `${R2_BASE_URL}/kavya.webp`, 
                 categories: ['UI/UX Designing'],
                 securityDetails: ["Visual Aesthetics", "Cosmos Design", "Wireframing"],
                 linkedin: "#"
             },
             { 
                 name: "G.V. SAI KUMAR", 
-                image: "/assets/profile/saikumar.webp", 
+                image: `${R2_BASE_URL}/saikumar.webp`, 
                 categories: ['Frontend Engineering'],
                 securityDetails: ["Responsive Layouts", "Animation Timing", "State Handling"],
                 linkedin: "#"
             },
             { 
                 name: "A. CHAITANYA", 
-                image: "/assets/profile/chaitanya.webp", 
+                image: `${R2_BASE_URL}/chaitanya.webp`, 
                 categories: ['Frontend Engineering'],
                 securityDetails: ["Interface Logic", "Component Design", "Client-side Tuning"],
                 linkedin: "#"
@@ -86,7 +88,7 @@ export const TEAM_DATA: TeamSection[] = [
         members: [
             { 
                 name: "A.V. LEELADHAR", 
-                image: "/assets/profile/leeladhar.webp", 
+                image: `${R2_BASE_URL}/Leeladhar.webp`, 
                 categories: ['UI/UX Designing', 'Frontend Engineering'],
                 isTeamLead: true,
                 securityDetails: ["System Oversight", "Admin UX Flow", "Global Architecture"],
@@ -94,70 +96,70 @@ export const TEAM_DATA: TeamSection[] = [
             },
             { 
                 name: "SK. MAYIF", 
-                image: "/assets/profile/mayif.webp", 
+                image: `${R2_BASE_URL}/msk.webp`, 
                 categories: ['Full Stack Development'],
                 securityDetails: ["Core API Design", "Admin Permissions", "Socket Layers"],
                 linkedin: "#"
             },
             { 
                 name: "M. ARAVIND", 
-                image: "/assets/profile/aravind.webp", 
+                image: `${R2_BASE_URL}/Aravind.webp`, 
                 categories: ['Backend & Database', 'Production'],
                 securityDetails: ["Data Persistence", "Batch Jobs", "Resource Scaling"],
                 linkedin: "#"
             },
             { 
                 name: "S. RAJASEKHAR", 
-                image: "/assets/profile/rajasekhar.webp", 
+                image: `${R2_BASE_URL}/raj.webp`, 
                 categories: ['Full Stack Development'],
                 securityDetails: ["System Logic", "Query Handling", "Module Sync"],
                 linkedin: "#"
             },
             { 
                 name: "N. PAVAN", 
-                image: "/assets/profile/pavan.webp", 
+                image: `${R2_BASE_URL}/pavan.webp`, 
                 categories: ['Testing & QA', 'Frontend Engineering'],
                 securityDetails: ["Boundary Testing", "Security Audits", "Integration Checks"],
                 linkedin: "#"
             },
             { 
                 name: "G. KAVYA", 
-                image: "/assets/profile/kavya.webp", 
+                image: `${R2_BASE_URL}/kavya.webp`, 
                 categories: ['UI/UX Designing'],
                 securityDetails: ["Consistency Checks", "Dashboard Aesthetics"],
                 linkedin: "#"
             },
             { 
                 name: "G.V. SAI KUMAR", 
-                image: "/assets/profile/saikumar.webp", 
+                image: `${R2_BASE_URL}/saikumar.webp`, 
                 categories: ['Frontend Engineering'],
                 securityDetails: ["Form Handling", "Validation Layers"],
                 linkedin: "#"
             },
             { 
                 name: "A. CHAITANYA", 
-                image: "/assets/profile/chaitanya.webp", 
+                image: `${R2_BASE_URL}/chaitanya.webp`, 
                 categories: ['Frontend Engineering'],
                 securityDetails: ["UI Elements", "Admin Navigation"],
                 linkedin: "#"
             },
             { 
                 name: "P.V. PADMA", 
-                image: "/assets/profile/padma.webp", 
+                image: `${R2_BASE_URL}/padma.webp`, 
                 categories: ['UI/UX Designing'],
                 securityDetails: ["User Persona Mapping", "Asset Refinement"],
                 linkedin: "#"
             },
             { 
                 name: "M. MOHAN", 
-                image: "/assets/profile/mohan.webp", 
+                image: `${R2_BASE_URL}/mohan.webp`, 
                 categories: ['Frontend Engineering'],
                 securityDetails: ["Component Logic", "Visual Polish"],
                 linkedin: "#"
             },
             { 
                 name: "K. UDAY SAI SRIKAR", 
-                image: "/assets/profile/uday.webp", 
+                image: `${R2_BASE_URL}/srikar.webp`, 
                 categories: ['Testing & QA'],
                 securityDetails: ["Edge Case Detection", "System Stress Tests"],
                 linkedin: "#"

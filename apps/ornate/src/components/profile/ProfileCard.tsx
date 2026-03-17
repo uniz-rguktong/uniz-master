@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
-    User, Shield, Camera, Gamepad2, Diamond, Heart, Users, Trophy, Target,
+    User, Shield, Camera, Gamepad2, Diamond, Trophy, Target,
     Edit2, Save, X, Loader2, Zap
 } from 'lucide-react';
 import ShipInterface from './ShipInterface';
@@ -99,8 +99,6 @@ export default function ProfileCard({ profile }: { profile?: any }) {
         { icon: <Gamepad2 size={18} />, value: stats.missions, label: 'MISSIONS', color: '#D6FF00', border: '#D6FF00' },
         { icon: <Trophy size={18} />, value: stats.achievements, label: 'ACHIEVEMENTS', color: '#fbbf24', border: '#fbbf24' },
         { icon: <Diamond size={18} />, value: badgeCount, label: 'BADGES', color: '#22d3ee', border: '#22d3ee' },
-        { icon: <Heart size={18} />, value: stats.followers, label: 'FOLLOWERS', color: '#f43f5e', border: '#f43f5e' },
-        { icon: <Users size={18} />, value: stats.following, label: 'FOLLOWING', color: '#34d399', border: '#34d399' },
         { icon: <Zap size={18} />, value: `${energy.toLocaleString()} NEU`, label: 'NEON ENERGY', color: levelColor, border: levelColor },
     ];
 
@@ -182,10 +180,10 @@ export default function ProfileCard({ profile }: { profile?: any }) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.4 }}
-                        className="flex items-center gap-4 mb-4"
+                        className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mb-4 px-4 text-center"
                     >
                         <span className="text-sm sm:text-base text-[#D6FF00] tracking-[0.4em] uppercase font-black drop-shadow-[0_0_10px_#D6FF0050]">{userData.idNumber}</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#D6FF00]/60" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#D6FF00]/60 hidden sm:block" />
                         <span className="text-sm sm:text-base text-white/80 tracking-[0.3em] uppercase font-bold">CLASS-A OPERATIVE</span>
                     </motion.div>
 
@@ -237,7 +235,7 @@ export default function ProfileCard({ profile }: { profile?: any }) {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
-                    className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-10"
+                    className="flex flex-wrap justify-center gap-3 mt-10 md:grid md:grid-cols-4 md:max-w-4xl md:mx-auto lg:flex lg:flex-nowrap lg:max-w-none"
                 >
                     {statItems.map((stat, i) => (
                         <motion.div

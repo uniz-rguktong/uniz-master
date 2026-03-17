@@ -17,9 +17,6 @@ const BRANCHES = [
     'Mechanical Engineering',
     'Civil Engineering',
     'Electrical Engineering',
-    'Chemical Engineering',
-    'Biotechnology',
-    'Information Technology',
     'Other',
 ];
 const YEARS = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
@@ -560,7 +557,7 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
                             <div className="space-y-3">
                                 <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-2 sm:gap-4 items-end">
                                     <Field label="Mission ID · Email" id="si-email"
-                                        type="email" placeholder="operative@domain.ext" autoFocus autoComplete="email" />
+                                        type="email" placeholder="cadet@rguktong.ac.in" autoFocus autoComplete="email" />
                                     <Field label="Access Code · Password" id="si-pw"
                                         type="password" placeholder="Enter access code" autoComplete="current-password" />
                                     <div className="mt-2 md:mt-0">

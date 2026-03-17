@@ -120,7 +120,7 @@ type CadetHubTab = 'overview' | 'missions' | 'badges' | 'leaderboard';
 
 const PLANET_NAMES: Record<string, string> = {
   'CSE': 'Cyberion', 'ECE': 'Volteris', 'EEE': 'Amperia', 'MECH': 'Thermox',
-  'CIVIL': 'Terravix', 'MME': 'Metalyx', 'Chemical': 'Chemora', 'Unknown': 'Nebula',
+  'CIVIL': 'Terravix', 'MME': 'Metalyx', 'Unknown': 'Nebula',
 };
 
 function getPlanetName(branch: string) {

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Share2, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -10,7 +10,6 @@ import ProfileCard from '@/components/profile/ProfileCard';
 import ProfileFooter from '@/components/profile/ProfileFooter';
 import SpaceshipNav from '@/components/ui/SpaceshipNav';
 import SectorHeader from '@/components/layout/SectorHeader';
-import ShareModal from '@/components/profile/ShareModal';
 import type { getMyProfile } from '@/lib/actions/profile';
 
 type ProfileData = Awaited<ReturnType<typeof getMyProfile>>;
@@ -92,7 +91,6 @@ export default function ProfileClient({ profile }: { profile: ProfileData }) {
     const mainRef = useRef<HTMLElement>(null);
     const { status } = useSession();
     const [mounted, setMounted] = useState(false);
-    const [isShareOpen, setIsShareOpen] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -144,13 +142,6 @@ export default function ProfileClient({ profile }: { profile: ProfileData }) {
                     hideProfile={true}
                     rightElement={
                         <div className="flex items-center gap-6">
-                            <button 
-                                onClick={() => setIsShareOpen(true)}
-                                className="text-white/60 hover:text-[#D6FF00] transition-colors transform hover:scale-110 active:scale-95"
-                                title="Share Profile"
-                            >
-                                <Share2 className="w-5 h-5" />
-                            </button>
                             {isAuthenticated && (
                                 <button
                                     onClick={() => signOut({ callbackUrl: '/home' })}
@@ -179,12 +170,6 @@ export default function ProfileClient({ profile }: { profile: ProfileData }) {
                     <ProfileFooter userName={profile?.name ?? undefined} />
                 </div>
 
-                <ShareModal 
-                    isOpen={isShareOpen}
-                    onClose={() => setIsShareOpen(false)}
-                    shareUrl={mounted ? window.location.href : ''}
-                    title={`Check out ${profile?.name || 'this'}'s Profile on ORNATE`}
-                />
             </main>
         </>
     );

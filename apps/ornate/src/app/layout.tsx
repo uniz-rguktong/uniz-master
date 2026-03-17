@@ -50,7 +50,7 @@ export const metadata: Metadata = {
       { url: '/assets/Ornate_LOGO.svg' },
       { url: '/assets/Ornate_LOGO.svg', sizes: '192x192', type: 'image/svg+xml' },
     ],
-    apple: { url: '/assets/Ornate_LOGO.svg', sizes: '180x180', type: 'image/png' },
+    apple: { url: '/assets/Ornate_LOGO.svg', sizes: '180x180', type: 'image/svg+xml' },
   },
 };
 
