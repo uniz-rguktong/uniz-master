@@ -116,4 +116,15 @@ export const authOptions: NextAuthOptions = {
         error: '/login',
     },
     debug: false,
+    cookies: {
+        sessionToken: {
+            name: `next-auth.session-token.ornate-core`,
+            options: {
+                httpOnly: true,
+                sameSite: "lax",
+                path: "/",
+                secure: process.env.NODE_ENV === "production",
+            },
+        },
+    },
 }

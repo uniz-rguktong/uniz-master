@@ -97,6 +97,17 @@ export const authOptions: NextAuthOptions = {
         error: "/login",
     },
     secret: process.env.NEXTAUTH_SECRET,
+    cookies: {
+        sessionToken: {
+            name: `next-auth.session-token.ornate`,
+            options: {
+                httpOnly: true,
+                sameSite: "lax",
+                path: "/",
+                secure: process.env.NODE_ENV === "production",
+            },
+        },
+    },
 };
 
 export async function getSession() {

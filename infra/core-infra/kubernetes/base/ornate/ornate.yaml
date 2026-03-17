@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ornate
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ornate
+  template:
+    metadata:
+      labels:
+        app: ornate
+    spec:
+      containers:
+        - name: ornate
+          image: docker.io/library/ornate:local
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: uniz-config
+            - configMapRef:
+                name: ornate-config # I should check what is in kustomize for config
+            - secretRef:
+                name: ornate-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ornate
+spec:
+  ports:
+    - port: 80
+      targetPort: 3000
+  selector:
+    app: ornate
