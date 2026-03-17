@@ -26,6 +26,7 @@ function getSesClient() {
         const accessKeyId = process.env.ORNATE_AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
         const secretAccessKey = process.env.ORNATE_AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
 
+
         if (!region || !accessKeyId || !secretAccessKey) {
             console.error('[mail] Missing AWS credentials for SES:', {
                 region: !!region,
