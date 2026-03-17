@@ -28,6 +28,7 @@ function isMobileDevice(): boolean {
 export default function InstallPWA(): React.ReactElement | null {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [standalone, setStandalone] = useState(false);
+  const [isIOSDevice, setIsIOSDevice] = useState(false);
   const [mobile, setMobile] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
   const [installing, setInstalling] = useState(false);
@@ -35,15 +36,17 @@ export default function InstallPWA(): React.ReactElement | null {
   useEffect(() => {
     const standaloneMode = isStandaloneMode();
     const mobileDevice = isMobileDevice();
+    const ios = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
 
     setStandalone(standaloneMode);
     setMobile(mobileDevice);
+    setIsIOSDevice(ios);
 
     if (!standaloneMode && mobileDevice) {
       const seen = window.sessionStorage.getItem(INSTALL_PROMPT_SESSION_KEY) === 'true';
       if (!seen) {
         // Delay slightly for better UX
-        const timer = setTimeout(() => setShowPrompt(true), 1500);
+        const timer = setTimeout(() => setShowPrompt(true), 2500);
         return () => clearTimeout(timer);
       }
     }
@@ -69,10 +72,12 @@ export default function InstallPWA(): React.ReactElement | null {
     };
   }, []);
 
-  const canShowPrompt = useMemo(
-    () => mobile && !standalone && showPrompt,
-    [mobile, standalone, showPrompt],
-  );
+  const canShowPrompt = useMemo(() => {
+    if (!mobile || standalone || !showPrompt) return false;
+    // On Android/Chrome, we only show if we have the prompt event
+    if (!isIOSDevice && !deferredPrompt) return false;
+    return true;
+  }, [mobile, standalone, showPrompt, isIOSDevice, deferredPrompt]);
 
   const dismiss = () => {
     window.sessionStorage.setItem(INSTALL_PROMPT_SESSION_KEY, 'true');
@@ -80,6 +85,12 @@ export default function InstallPWA(): React.ReactElement | null {
   };
 
   const install = async () => {
+    if (isIOSDevice) {
+      // iOS doesn't support programmatic installation
+      // We'll show an alert or just rely on the instructions in the UI
+      return;
+    }
+
     if (!deferredPrompt) {
       dismiss();
       return;
@@ -89,10 +100,13 @@ export default function InstallPWA(): React.ReactElement | null {
     try {
       await deferredPrompt.prompt();
       const result = await deferredPrompt.userChoice;
-      window.sessionStorage.setItem(INSTALL_PROMPT_SESSION_KEY, 'true');
+      console.log('[PWA] Install result:', result.outcome);
       if (result.outcome === 'accepted') {
         setStandalone(true);
+        window.sessionStorage.setItem(INSTALL_PROMPT_SESSION_KEY, 'true');
       }
+    } catch (err) {
+      console.error('[PWA] Installation failed:', err);
     } finally {
       setInstalling(false);
       setDeferredPrompt(null);
@@ -191,30 +205,35 @@ export default function InstallPWA(): React.ReactElement | null {
               </h3>
               
               <p className="text-sm text-white/60 leading-relaxed mb-8 max-w-[240px]">
-                Explorer detected. Install Ornate to begin the mission.
+                {isIOSDevice 
+                  ? "Tap the 'Share' icon below and select 'Add to Home Screen' to launch Ornate."
+                  : "Explorer detected. Install Ornate to begin the mission."
+                }
               </p>
 
               {/* Action Buttons */}
               <div className="flex flex-col w-full gap-3 mt-2">
-                <motion.button
-                  whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(34,211,238,0.3)" }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => { void install(); }}
-                  disabled={installing}
-                  className="relative group w-full overflow-hidden rounded-xl bg-[#22d3ee] px-6 py-3.5 text-xs font-black uppercase tracking-[0.2em] text-[#070b14] transition-all hover:bg-[#22d3ee]/90 disabled:opacity-50 cursor-pointer"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    {installing ? (
-                      <Activity className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Download className="w-4 h-4 group-hover:animate-bounce" />
-                    )}
-                    <span>{installing ? 'Syncing...' : 'Install Station'}</span>
-                  </div>
-                  
-                  {/* Button Reflection Effect */}
-                  <div className="absolute inset-0 -translate-x-full transition-transform duration-1000 group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-                </motion.button>
+                {!isIOSDevice && (
+                  <motion.button
+                    whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(34,211,238,0.3)" }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => { void install(); }}
+                    disabled={installing}
+                    className="relative group w-full overflow-hidden rounded-xl bg-[#22d3ee] px-6 py-3.5 text-xs font-black uppercase tracking-[0.2em] text-[#070b14] transition-all hover:bg-[#22d3ee]/90 disabled:opacity-50 cursor-pointer"
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      {installing ? (
+                        <Activity className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Download className="w-4 h-4 group-hover:animate-bounce" />
+                      )}
+                      <span>{installing ? 'Syncing...' : 'Install Station'}</span>
+                    </div>
+                    
+                    {/* Button Reflection Effect */}
+                    <div className="absolute inset-0 -translate-x-full transition-transform duration-1000 group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+                  </motion.button>
+                )}
 
                 <button
                   onClick={dismiss}
