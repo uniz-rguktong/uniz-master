@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Trophy, Sparkles, Share2, Zap, Activity, LayoutGrid, X, Target, Users, BrainCircuit, Mic, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import MissionsFooter from '@/components/missions/MissionsFooter';
 import SectorHeader from '@/components/layout/SectorHeader';
 
@@ -32,7 +33,7 @@ export default function FunPlanetPage() {
 
     const GAMES = {
         social: [
-            { name: "Ms/Mr RGUKT", players: "4.2k", score: "Ultra", image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1200&q=80", path: "/home/fun/ms-mr-rgukt" }
+            { name: "Ms/Mr RGUKT", players: "4.2k", score: "Ultra", image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1200&q=80", path: "#" }
         ]
     };
 
@@ -136,7 +137,10 @@ export default function FunPlanetPage() {
                         style={{ scrollbarWidth: 'none' }}
                     >
                     <div
-                        onClick={() => router.push('/home/fun/ms-mr-rgukt')}
+                        onClick={() => toast.info('System Update: This sector is currently under construction. Ms/Mr RGUKT is coming soon!', {
+                            description: 'Stay tuned for the official uplink.',
+                            icon: <BrainCircuit className="w-5 h-5 text-neon" />,
+                        })}
                         className="relative h-[28rem] w-full rounded-[2.5rem] overflow-hidden group cursor-pointer border border-[var(--color-neon)]/30 hover:border-[var(--color-neon)] transition-all duration-700 shadow-[0_0_50px_rgba(57,255,20,0.08)]"
                     >
                         {/* Main Banner Image */}
@@ -180,15 +184,15 @@ export default function FunPlanetPage() {
                         <div className="absolute bottom-0 left-0 p-10 w-full">
                             <div className="flex justify-between items-end">
                                 <div className="space-y-2">
-                                    <h3 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-white italic">MS/MR <span className="text-[var(--color-neon)]">RGUKT</span></h3>
-                                    <p className="text-[var(--color-neon)]/60 font-bold tracking-[0.2em] text-sm uppercase">Join the elite pageant terminal below</p>
+                                    <h3 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-white italic">MS/MR <span className="text-[var(--color-neon)] opacity-50">RGUKT</span></h3>
+                                    <p className="text-[var(--color-neon)]/40 font-bold tracking-[0.2em] text-sm uppercase italic">Transmission Incoming: Coming Soon</p>
                                     <div className="flex items-center gap-1 pt-1">
                                         {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-4 h-4 fill-[var(--color-neon)] text-[var(--color-neon)]" />)}
                                         <span className="text-[var(--color-neon)] text-xs font-black ml-1">5.0</span>
                                     </div>
                                 </div>
                                 <div className="flex flex-col items-end gap-4">
-                                    <button className="bg-[var(--color-neon)] text-black px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-white transition-all shadow-[0_10px_30px_rgba(57,255,20,0.4)]">Access Portal</button>
+                                    <button className="bg-white/10 text-white/40 px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs border border-white/10 cursor-not-allowed">Coming Soon</button>
                                 </div>
                             </div>
                         </div>

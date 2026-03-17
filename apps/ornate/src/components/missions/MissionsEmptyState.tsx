@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 interface MissionsEmptyStateProps {
-  type: 'search' | 'saved' | 'general' | 'trending' | 'new' | 'all';
+  type: 'search' | 'saved' | 'general' | 'new' | 'all';
   onReset?: () => void;
 }
 
@@ -13,7 +13,6 @@ export default function MissionsEmptyState({ type, onReset }: MissionsEmptyState
     search: "Whoops! I couldn't find anything for that. Maybe try another word?",
     saved: "Your list is empty! Want to go find some cool missions to save?",
     all: "The mission board is empty for now. I'm still checking around!",
-    trending: "Nothing's trending right now. You could be the first to start the trend!",
     new: "I'm still fetching the latest missions from HQ. Check back in a bit!",
     general: "Nothing here yet! Let's explore some other sectors for now."
   };

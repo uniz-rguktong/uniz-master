@@ -8,7 +8,6 @@ import {
   LayoutGrid,
   Search,
   Sparkles,
-  TrendingUp,
 } from 'lucide-react';
 import SectorHeader from '@/components/layout/SectorHeader';
 import MissionsFooter from '@/components/missions/MissionsFooter';
@@ -127,11 +126,9 @@ export default function MissionsClient({
   }, [MISSIONS, selectedEvent, selectedSub, selectedCat, searchQuery]);
 
   const myMissions = useMemo(() => MISSIONS.filter(m => MY_MISSION_IDS.has(m.id)), [MISSIONS, MY_MISSION_IDS]);
-  const trending = useMemo(() => [...MISSIONS].sort((a, b) => b.registered - a.registered).slice(0, 6), [MISSIONS]);
   const newMissions = useMemo(() => {
-    const trendingIds = new Set(trending.map(m => m.id));
-    return [...MISSIONS].reverse().filter(m => !trendingIds.has(m.id)).slice(0, 6);
-  }, [MISSIONS, trending]);
+    return [...MISSIONS].reverse().slice(0, 6);
+  }, [MISSIONS]);
 
   const hasActiveSearch = searchQuery.trim().length > 0;
   const hasFilter = selectedEvent !== 'ALL' || selectedSub !== 'ALL' || selectedCat !== 'ALL' || hasActiveSearch;
@@ -229,14 +226,6 @@ export default function MissionsClient({
           <div className="space-y-8 md:space-y-14 pb-20">
             {viewMode === 'grid' && (
               <>
-                <section>
-                  <MissionsSectionHeader icon={TrendingUp} label="Trending" count={trending.length} color="text-[#ff4500]" glow="shadow-[0_0_10px_rgba(255,69,0,0.3)]" />
-                  {trending.length > 0 ? (
-                    <AutoScrollRow missions={trending} speed={0.5} onCardClick={setSelectedMission} registeredIds={MY_MISSION_IDS} />
-                  ) : (
-                    <MissionsEmptyState type="trending" />
-                  )}
-                </section>
                 <section>
                   <MissionsSectionHeader icon={Sparkles} label="New" count={newMissions.length} color="text-neon" glow="shadow-[0_0_10px_rgba(var(--color-neon-rgb,57,255,20),0.3)]" />
                   {newMissions.length > 0 ? (
