@@ -19,7 +19,8 @@ function LoginClient() {
     const mode = searchParams.get('mode') as 'login' | 'register' | null;
 
     const handleAuthSuccess = () => {
-        router.push('/home');
+        const callbackUrl = searchParams.get('callbackUrl');
+        router.push(callbackUrl || '/home');
         router.refresh();
     };
 
