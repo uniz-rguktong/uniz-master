@@ -113,9 +113,7 @@ export default function Signin({ type }: SigninProps) {
               ? username.trim().toUpperCase()
               : username.trim(),
           password: password.trim(),
-          captchaToken: import.meta.env.DEV
-            ? "uniz_dev_bypass_token_2026"
-            : captchaToken,
+          captchaToken: captchaToken,
         }),
       });
 
@@ -228,7 +226,10 @@ export default function Signin({ type }: SigninProps) {
         email?: string;
       }>(FORGOT_PASS_ENDPOINT, {
         method: "POST",
-        body: JSON.stringify({ username: username.trim() }),
+        body: JSON.stringify({ 
+          username: username.trim(),
+          captchaToken: captchaToken,
+        }),
       });
 
       if (data && data.success) {
@@ -266,7 +267,10 @@ export default function Signin({ type }: SigninProps) {
         deliveryMethod?: "email";
       }>(REQUEST_OTP_EMAIL_ENDPOINT, {
         method: "POST",
-        body: JSON.stringify({ username: username.trim() }),
+        body: JSON.stringify({ 
+          username: username.trim(),
+          captchaToken: captchaToken,
+        }),
       });
 
       if (data && data.success) {
@@ -484,11 +488,33 @@ export default function Signin({ type }: SigninProps) {
                 placeholder="Enter your ID to receive OTP"
                 className="h-12"
               />
+              {import.meta.env.VITE_TURNSTILE_SITE_KEY ? (
+                <div className="flex justify-center py-2">
+                  <Turnstile
+                    ref={turnstileRef}
+                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                    onSuccess={(token) => setCaptchaToken(token)}
+                    onExpire={() => setCaptchaToken(null)}
+                    onError={() => setCaptchaToken(null)}
+                  />
+                </div>
+              ) : (
+                import.meta.env.DEV && (
+                  <div className="text-center py-2 text-[10px] text-amber-600 font-medium">
+                    ⚠️ Turnstile Disabled (No Site Key)
+                  </div>
+                )
+              )}
               <Button
-                className="w-full h-12 bg-navy-900 hover:bg-navy-800 text-white rounded-xl text-[15px] font-bold"
+                className="w-full h-12 bg-navy-900 hover:bg-navy-800 text-white rounded-xl text-[15px] font-bold disabled:opacity-50"
                 size="lg"
                 isLoading={isLoading}
                 onClick={requestOtp}
+                disabled={
+                  !!import.meta.env.VITE_TURNSTILE_SITE_KEY &&
+                  !import.meta.env.DEV &&
+                  !captchaToken
+                }
               >
                 Send OTP
               </Button>
@@ -530,12 +556,32 @@ export default function Signin({ type }: SigninProps) {
                   <div className="text-center">
                     <button
                       type="button"
-                      className="text-[11px] text-slate-500 hover:text-slate-900 font-bold uppercase tracking-widest underline transition-all"
+                      className="text-[11px] text-slate-500 hover:text-slate-900 font-bold uppercase tracking-widest underline transition-all disabled:opacity-50"
                       onClick={requestEmailOtp}
-                      disabled={isLoading}
+                      disabled={
+                        isLoading || 
+                        (!!import.meta.env.VITE_TURNSTILE_SITE_KEY && !import.meta.env.DEV && !captchaToken)
+                      }
                     >
                       Resend via Email
                     </button>
+                    {import.meta.env.VITE_TURNSTILE_SITE_KEY ? (
+                      <div className="flex justify-center py-2">
+                        <Turnstile
+                          ref={turnstileRef}
+                          siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                          onSuccess={(token) => setCaptchaToken(token)}
+                          onExpire={() => setCaptchaToken(null)}
+                          onError={() => setCaptchaToken(null)}
+                        />
+                      </div>
+                    ) : (
+                      import.meta.env.DEV && (
+                        <div className="text-center py-2 text-[10px] text-amber-600 font-medium">
+                          ⚠️ Turnstile Disabled
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               )}
