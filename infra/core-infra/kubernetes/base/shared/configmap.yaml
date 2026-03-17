@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: uniz-config
+data:
+  NODE_ENV: "production"
+  DOCKER_ENV: "true"
+  INTERNAL_SECRET: "uniz-core"
+  GATEWAY_URL: "https://api.uniz.rguktong.in/api/v1"
+  SMTP_HOST: "smtp.gmail.com"
+  SMTP_PORT: "465"
+  SMTP_SECURE: "true"
+  CLOUDINARY_CLOUD_NAME: "dgp5srab5"
+  CLOUDINARY_UPLOAD_PRESET: "uniz_upload"
+  # Service Mappings (K8s internal DNS)
+  AUTH_SERVICE_URL: "http://uniz-auth-service.default.svc.cluster.local:3001"
+  USER_SERVICE_URL: "http://uniz-user-service.default.svc.cluster.local:3002"
+  ACADEMICS_SERVICE_URL: "http://uniz-academics-service.default.svc.cluster.local:3004"
+  OUTPASS_SERVICE_URL: "http://uniz-outpass-service.default.svc.cluster.local:3003"
+  FILES_SERVICE_URL: "http://uniz-files-service.default.svc.cluster.local:3005"
+  MAIL_SERVICE_URL: "http://uniz-mail-service.default.svc.cluster.local:3006"
+  NOTIFICATION_SERVICE_URL: "http://uniz-notification-service.default.svc.cluster.local:3007"
+  CRON_SERVICE_URL: "http://uniz-cron-service.default.svc.cluster.local:3008"
+  CLIENT_URL: "https://uniz.rguktong.in,http://localhost:3000,http://localhost:5173"
+  NEXT_PUBLIC_ASSETS_URL: "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
+  # DB Connectivity (assuming pgbouncer service in k8s)
+  REDIS_URL: "redis://uniz-redis:6379"
+  EMAIL_USER: "noreply.uniz@gmail.com"
+  EMAIL_POOL: "noreply.uniz@gmail.com:pdke hcfz fltp qagc" # Format: "user1:pass1,user2:pass2"
+  VAPID_PUBLIC_KEY: "BBUDnL9QZfs1W_wmn1kCW7U81ISk0isqNro00JEIamFsQaMGqC3AO8nnK32jY94o3zCg0Thuz-Le1o3mH3Z8Thc"
+  VAPID_PRIVATE_KEY: "oWMk2dkJanNgjqhOAmcJ9cf4dLFaFQSmsvPyD1AlMzw"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ornate-core-config
+data:
+  NODE_ENV: "production"
+  NEXTAUTH_URL: "https://ornate-core.rguktong.in"
+  REDIS_URL: "redis://uniz-redis:6379"
+  R2_ACCOUNT_ID: "22c4923ed8c5f3e1575a2ef9bf3dc15b"
+  R2_ENDPOINT: "https://22c4923ed8c5f3e1575a2ef9bf3dc15b.r2.cloudflarestorage.com"
+  R2_BUCKET_NAME: "ornate-core-assets"
+  R2_PUBLIC_DOMAIN: "https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets"
+  AWS_REGION: "ap-south-1"
+  SES_FROM_EMAIL: "no-reply-ems@rguktong.in"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ornate-config
+data:
+  NODE_ENV: "production"
+  NEXTAUTH_URL: "https://ornate.rguktong.in"
