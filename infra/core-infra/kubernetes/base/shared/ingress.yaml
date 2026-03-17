@@ -68,7 +68,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: ornate-landing
+                name: ornate
                 port:
                   number: 80
     - host: landing-api.rguktong.in
