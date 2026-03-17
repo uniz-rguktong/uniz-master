@@ -96,6 +96,10 @@ deploy_logic() {
   if [ -f "infra/core-infra/kubernetes/base/shared/secrets.yaml.template" ]; then
     echo "[Infra] Generating secrets.yaml..."
     envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > infra/core-infra/kubernetes/base/shared/secrets.yaml
+    # Also generate for ornate branch flat layout (base/secrets.yaml)
+    if [ "$CURRENT_BRANCH" == "ornate" ] && [ -f "infra/core-infra/kubernetes/base/secrets.yaml" ]; then
+      envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > infra/core-infra/kubernetes/base/secrets.yaml
+    fi
   fi
 
   # Apply Infrastructure
