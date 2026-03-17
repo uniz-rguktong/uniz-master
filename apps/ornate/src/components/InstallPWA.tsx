@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Smartphone, Download, Sparkles, Terminal, Activity } from 'lucide-react';
+import { X, Smartphone, Download, Sparkles, Terminal, Activity, Share2 } from 'lucide-react';
 import Image from 'next/image';
+import { toast } from 'sonner';
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -42,15 +43,6 @@ export default function InstallPWA(): React.ReactElement | null {
     setMobile(mobileDevice);
     setIsIOSDevice(ios);
 
-    if (!standaloneMode && mobileDevice) {
-      const seen = window.sessionStorage.getItem(INSTALL_PROMPT_SESSION_KEY) === 'true';
-      if (!seen) {
-        // Delay slightly for better UX
-        const timer = setTimeout(() => setShowPrompt(true), 2500);
-        return () => clearTimeout(timer);
-      }
-    }
-
     const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
       setDeferredPrompt(event as BeforeInstallPromptEvent);
@@ -66,6 +58,18 @@ export default function InstallPWA(): React.ReactElement | null {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleInstalled);
 
+    if (!standaloneMode && mobileDevice) {
+      const seen = window.sessionStorage.getItem(INSTALL_PROMPT_SESSION_KEY) === 'true';
+      if (!seen) {
+        const timer = setTimeout(() => setShowPrompt(true), 2500);
+        return () => {
+          clearTimeout(timer);
+          window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+          window.removeEventListener('appinstalled', handleInstalled);
+        };
+      }
+    }
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleInstalled);
@@ -74,10 +78,8 @@ export default function InstallPWA(): React.ReactElement | null {
 
   const canShowPrompt = useMemo(() => {
     if (!mobile || standalone || !showPrompt) return false;
-    // On Android/Chrome, we only show if we have the prompt event
-    if (!isIOSDevice && !deferredPrompt) return false;
     return true;
-  }, [mobile, standalone, showPrompt, isIOSDevice, deferredPrompt]);
+  }, [mobile, standalone, showPrompt]);
 
   const dismiss = () => {
     window.sessionStorage.setItem(INSTALL_PROMPT_SESSION_KEY, 'true');
@@ -86,12 +88,15 @@ export default function InstallPWA(): React.ReactElement | null {
 
   const install = async () => {
     if (isIOSDevice) {
-      // iOS doesn't support programmatic installation
-      // We'll show an alert or just rely on the instructions in the UI
+      toast.info("Tap the 'Share' icon and select 'Add to Home Screen' to install.", {
+        icon: <Share2 className="w-4 h-4 text-neon" />,
+        duration: 5000
+      });
       return;
     }
 
     if (!deferredPrompt) {
+      toast.error("Install prompt not ready. Please try again or use browser menu.");
       dismiss();
       return;
     }
@@ -100,7 +105,6 @@ export default function InstallPWA(): React.ReactElement | null {
     try {
       await deferredPrompt.prompt();
       const result = await deferredPrompt.userChoice;
-      console.log('[PWA] Install result:', result.outcome);
       if (result.outcome === 'accepted') {
         setStandalone(true);
         window.sessionStorage.setItem(INSTALL_PROMPT_SESSION_KEY, 'true');
@@ -213,27 +217,29 @@ export default function InstallPWA(): React.ReactElement | null {
 
               {/* Action Buttons */}
               <div className="flex flex-col w-full gap-3 mt-2">
-                {!isIOSDevice && (
-                  <motion.button
-                    whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(34,211,238,0.3)" }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => { void install(); }}
-                    disabled={installing}
-                    className="relative group w-full overflow-hidden rounded-xl bg-[#22d3ee] px-6 py-3.5 text-xs font-black uppercase tracking-[0.2em] text-[#070b14] transition-all hover:bg-[#22d3ee]/90 disabled:opacity-50 cursor-pointer"
-                  >
-                    <div className="flex items-center justify-center gap-2">
-                      {installing ? (
-                        <Activity className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Download className="w-4 h-4 group-hover:animate-bounce" />
-                      )}
-                      <span>{installing ? 'Syncing...' : 'Install Station'}</span>
-                    </div>
-                    
-                    {/* Button Reflection Effect */}
-                    <div className="absolute inset-0 -translate-x-full transition-transform duration-1000 group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-                  </motion.button>
-                )}
+                <motion.button
+                  whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(34,211,238,0.3)" }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => { void install(); }}
+                  disabled={installing}
+                  className="relative group w-full overflow-hidden rounded-xl bg-[#22d3ee] px-6 py-3.5 text-xs font-black uppercase tracking-[0.2em] text-[#070b14] transition-all hover:bg-[#22d3ee]/90 disabled:opacity-50 cursor-pointer"
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    {installing ? (
+                      <Activity className="w-4 h-4 animate-spin" />
+                    ) : isIOSDevice ? (
+                      <Share2 className="w-4 h-4" />
+                    ) : (
+                      <Download className="w-4 h-4 group-hover:animate-bounce" />
+                    )}
+                    <span>
+                      {installing ? 'Syncing...' : isIOSDevice ? 'Install Instructions' : 'Install Station'}
+                    </span>
+                  </div>
+                  
+                  {/* Button Reflection Effect */}
+                  <div className="absolute inset-0 -translate-x-full transition-transform duration-1000 group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+                </motion.button>
 
                 <button
                   onClick={dismiss}
