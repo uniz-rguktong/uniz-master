@@ -34,9 +34,7 @@ export async function POST(req: NextRequest) {
         // Increment resend count with 1hr TTL
         await redis.set(countKey, String(count + 1), 'EX', 3600);
 
-        // ── DEV MODE: skip SES, print OTP to terminal ──
-        console.log(`\n[RESET OTP DEV] Email: ${emailLower} | OTP: ${otp}\n`);
-        // ── PROD: uncomment below once SES creds are valid ──
+        // Send OTP via AWS SES
         await sendOTPEmail(emailLower, otp);
 
         return NextResponse.json({ success: true, message: 'Verification signal transmitted.' });

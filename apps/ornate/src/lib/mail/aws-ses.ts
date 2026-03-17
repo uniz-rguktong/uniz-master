@@ -22,17 +22,17 @@ let sesClient: SESClient | null = null;
 function getSesClient() {
     if (!sesClient) {
         sesClient = new SESClient({
-            region: process.env.ORNATE_AWS_REGION!,
+            region: process.env.AWS_REGION!,
             credentials: {
-                accessKeyId: process.env.ORNATE_AWS_ACCESS_KEY_ID!,
-                secretAccessKey: process.env.ORNATE_AWS_SECRET_ACCESS_KEY!,
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
             },
         });
     }
     return sesClient;
 }
 
-const FROM_EMAIL = () => process.env.ORNATE_SES_FROM_EMAIL!;
+const FROM_EMAIL = () => process.env.SES_FROM_EMAIL!;
 
 async function sendSesEmail(to: string, subject: string, html: string, text: string) {
     try {

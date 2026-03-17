@@ -15,9 +15,6 @@ export async function POST(req: NextRequest) {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await redis.set(`otp:${emailLower}`, otp, 'EX', 600); // 10 minutes TTL
 
-        // ── DEV MODE: skip SES, print OTP to terminal ──────────────────
-        console.log(`\n[OTP DEV] Email: ${emailLower} | OTP: ${otp}\n`);
-        // ── PROD: uncomment below and remove console.log once SES creds are set ──
         await sendOTPEmail(emailLower, otp);
 
         return NextResponse.json({ success: true, message: 'Verification signal transmitted.' });
