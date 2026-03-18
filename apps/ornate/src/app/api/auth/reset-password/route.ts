@@ -16,7 +16,9 @@ export async function POST(req: NextRequest) {
 
         const emailLower = email.toLowerCase().trim();
 
-        // Verify that OTP was successfully verified before allowing reset
+        /* ─── TEMP: OTP BYPASS START ─── */
+        // Bypass verification session check due to email service issues
+        /*
         const verified = await redis.get(`reset-verified:${emailLower}`);
         if (!verified) {
             return NextResponse.json(
@@ -24,6 +26,8 @@ export async function POST(req: NextRequest) {
                 { status: 403 }
             );
         }
+        */
+        /* ─── TEMP: OTP BYPASS END ─── */
 
         // Find user
         const user = await prisma.user.findUnique({ where: { email: emailLower } });
