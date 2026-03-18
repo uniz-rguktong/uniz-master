@@ -84,8 +84,10 @@ deploy_logic() {
     done < /root/uniz-secrets.env
 
     # Ornate Variable Fallbacks (Ensure they are never empty for envsubst)
-    export ORNATE_NEXTAUTH_URL="${ORNATE_NEXTAUTH_URL:-$NEXTAUTH_URL}"
-    export ORNATE_NEXTAUTH_URL_CORE="${ORNATE_NEXTAUTH_URL_CORE:-$NEXTAUTH_URL}"
+    # Corrected: Fallback to specific app URLs to prevent cross-app URL leakage if secrets are missing.
+    export ORNATE_NEXTAUTH_URL="${ORNATE_NEXTAUTH_URL:-"https://ornate.rguktong.in"}"
+    export ORNATE_NEXTAUTH_URL_CORE="${ORNATE_NEXTAUTH_URL_CORE:-"https://ornate-core.rguktong.in"}"
+
     export ORNATE_NEXTAUTH_SECRET="${ORNATE_NEXTAUTH_SECRET:-$NEXTAUTH_SECRET}"
     export ORNATE_AWS_REGION="${ORNATE_AWS_REGION:-$AWS_REGION}"
     export ORNATE_AWS_ACCESS_KEY_ID="${ORNATE_AWS_ACCESS_KEY_ID:-$AWS_ACCESS_KEY_ID}"
