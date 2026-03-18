@@ -194,17 +194,21 @@ function validateCsrf(request: NextRequest): NextResponse | null {
 
     const origin = request.headers.get("origin");
     const referer = request.headers.get("referer");
-    const allowedOrigin = request.nextUrl.origin;
+    // In many K8s/Proxy setups, nextUrl.origin might not match the public facing domain.
+    // We trust both the internal origin AND the public ones.
+    const requestOrigin = request.nextUrl.origin;
 
     // Trusted Origins for Ornate Ecosystem
     const trustedOrigins = [
-        allowedOrigin,
-        "https://ornate.rguktong.in"
-    ];
+        requestOrigin,
+        "https://ornate.rguktong.in",
+        "https://ornate-core.rguktong.in"
+    ].map(o => o.toLowerCase());
 
     if (origin) {
-        if (!trustedOrigins.includes(origin)) {
-            logger.warn({ origin, allowedOrigin, pathname, method }, '[CSRF] Blocked cross-origin mutating request');
+        const normalizedOrigin = origin.toLowerCase();
+        if (!trustedOrigins.includes(normalizedOrigin)) {
+            logger.warn({ origin: normalizedOrigin, trustedOrigins, pathname, method }, '[CSRF] Blocked cross-origin mutating request');
             return NextResponse.json({ error: "Cross-origin requests are not allowed" }, { status: 403 });
         }
         return null;
@@ -212,9 +216,9 @@ function validateCsrf(request: NextRequest): NextResponse | null {
 
     if (referer) {
         try {
-            const refererOrigin = new URL(referer).origin;
+            const refererOrigin = new URL(referer).origin.toLowerCase();
             if (!trustedOrigins.includes(refererOrigin)) {
-                logger.warn({ referer, allowedOrigin, pathname, method }, '[CSRF] Blocked cross-origin referer mismatch');
+                logger.warn({ referer: refererOrigin, trustedOrigins, pathname, method }, '[CSRF] Blocked cross-origin referer mismatch');
                 return NextResponse.json({ error: "Cross-origin requests are not allowed" }, { status: 403 });
             }
             return null;
