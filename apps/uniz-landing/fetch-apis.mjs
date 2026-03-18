@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
-const BASE_URL = "https://college-scraped.vercel.app";
+const BASE_URL = "http://127.0.0.1:8000";
 
-const institutePages = [
+const INSTITUTE_PAGES = [
     "aboutrgukt",
     "campuslife",
     "edusys",
@@ -12,99 +12,96 @@ const institutePages = [
     "scst"
 ];
 
-const deptCodes = [
-    "CSE",
-    "CIVIL",
-    "ECE",
-    "EEE",
-    "ME",
-    "MATHEMATICS",
-    "PHYSICS",
-    "CHEMISTRY",
-    "IT",
-    "BIOLOGY",
-    "ENGLISH",
-    "LIB",
-    "MANAGEMENT",
-    "PED",
-    "TELUGU",
-    "YOGA"
+const DEPT_CODES = [
+    "CSE", "CIVIL", "ECE", "EEE", "ME",
+    "MATHEMATICS", "PHYSICS", "CHEMISTRY",
+    "IT", "BIOLOGY", "ENGLISH", "LIB",
+    "MANAGEMENT", "PED", "TELUGU", "YOGA"
 ];
 
-const academicsPages = [
-    "academic-calendar",
-    "academic-regulations",
-    "curriculum",
-    "examination-branch",
-    "library"
+const ACADEMIC_PAGES = [
+    "AcademicPrograms",
+    "AcademicCalender",
+    "AcademicRegulations",
+    "curicula"
 ];
+
+const NOTIFICATION_TYPES = ["news_updates", "tenders", "careers"];
 
 async function fetchJson(endpoint) {
     try {
-        console.log(`Fetching ${endpoint}...`);
+        console.log(`  → ${endpoint}`);
         const res = await fetch(`${BASE_URL}${endpoint}`, {
             headers: { accept: "application/json" }
         });
         if (!res.ok) {
-            console.warn(`Warn: Failed to fetch ${endpoint} - ${res.status}`);
+            console.warn(`  ✗ ${res.status} for ${endpoint}`);
             return null;
         }
         return await res.json();
     } catch (err) {
-        console.error(`Error fetching ${endpoint}:`, err);
+        console.error(`  ✗ Error: ${err.message}`);
         return null;
     }
 }
 
 async function main() {
+    console.log("🚀 Fetching all data from new API...\n");
+
     const data = {
         home: null,
-        notifications: {
-            news_updates: null,
-            tenders: null,
-            careers: null
-        },
+        notifications: {},
         institute: {},
         departments: {},
         academics: {}
     };
 
-    // Global
-    data.home = await fetchJson("/api/home");
-    data.notifications.news_updates = await fetchJson("/api/notifications?type=news_updates");
-    data.notifications.tenders = await fetchJson("/api/notifications?type=tenders");
-    data.notifications.careers = await fetchJson("/api/notifications?type=careers");
+    // 1. Home
+    console.log("🏠 Home");
+    data.home = await fetchJson("/api/home/");
 
-    // Institute
-    for (const page of institutePages) {
+    // 2. Notifications
+    console.log("\n🔔 Notifications");
+    for (const type of NOTIFICATION_TYPES) {
+        data.notifications[type] = await fetchJson(`/api/notifications/?type=${type}`);
+    }
+
+    // 3. Institute
+    console.log("\n🏛️  Institute");
+    for (const page of INSTITUTE_PAGES) {
         data.institute[page] = await fetchJson(`/api/institute/${page}`);
     }
 
-    // Departments
-    for (const dept of deptCodes) {
+    // 4. Departments
+    console.log("\n👨‍🏫 Departments");
+    for (const dept of DEPT_CODES) {
         data.departments[dept] = await fetchJson(`/api/departments/${dept}`);
     }
 
-    // Academics 
-    for (const page of academicsPages) {
-        const res = await fetchJson(`/api/academics/${page}`);
-        if (res !== null) {
-            data.academics[page] = res;
-        }
+    // 5. Academics
+    console.log("\n🎓 Academics");
+    for (const page of ACADEMIC_PAGES) {
+        data.academics[page] = await fetchJson(`/api/academics/${page}`);
     }
 
-    const tsContent = `// Automatically generated from scraping API
+    // Write output
+    const tsContent = `// Auto-generated from ${BASE_URL}/docs — ${new Date().toISOString()}
+// Do not edit manually. Re-run: node fetch-apis.mjs
 export const apiData = ${JSON.stringify(data, null, 2)} as const;
 `;
 
-    const outPath = path.join(process.cwd(), "src", "data", "apiData.ts");
+    const outDir = path.join(process.cwd(), "src", "data");
+    const outPath = path.join(outDir, "apiData.ts");
 
-    if (!fs.existsSync(path.dirname(outPath))) {
-        fs.mkdirSync(path.dirname(outPath), { recursive: true });
+    if (!fs.existsSync(outDir)) {
+        fs.mkdirSync(outDir, { recursive: true });
     }
 
     fs.writeFileSync(outPath, tsContent);
-    console.log(`Successfully wrote all API data to ${outPath}`);
+    console.log(`\n✅ Wrote all API data → ${outPath}`);
 }
 
-main();
+main().catch(err => {
+    console.error(`\n❌ Fatal: ${err.message}`);
+    process.exit(1);
+});
