@@ -196,8 +196,14 @@ function validateCsrf(request: NextRequest): NextResponse | null {
     const referer = request.headers.get("referer");
     const allowedOrigin = request.nextUrl.origin;
 
+    // Trusted Origins for Ornate Ecosystem
+    const trustedOrigins = [
+        allowedOrigin,
+        "https://ornate.rguktong.in"
+    ];
+
     if (origin) {
-        if (origin !== allowedOrigin) {
+        if (!trustedOrigins.includes(origin)) {
             logger.warn({ origin, allowedOrigin, pathname, method }, '[CSRF] Blocked cross-origin mutating request');
             return NextResponse.json({ error: "Cross-origin requests are not allowed" }, { status: 403 });
         }
@@ -207,7 +213,7 @@ function validateCsrf(request: NextRequest): NextResponse | null {
     if (referer) {
         try {
             const refererOrigin = new URL(referer).origin;
-            if (refererOrigin !== allowedOrigin) {
+            if (!trustedOrigins.includes(refererOrigin)) {
                 logger.warn({ referer, allowedOrigin, pathname, method }, '[CSRF] Blocked cross-origin referer mismatch');
                 return NextResponse.json({ error: "Cross-origin requests are not allowed" }, { status: 403 });
             }
