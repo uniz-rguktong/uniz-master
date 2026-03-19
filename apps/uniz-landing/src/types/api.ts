@@ -1,35 +1,52 @@
-import { apiData } from "../data/apiData";
+const BASE_URL = "http://127.0.0.1:8000";
 
+async function fetchJson<T>(endpoint: string): Promise<T | null> {
+    try {
+        const res = await fetch(`${BASE_URL}${endpoint}`, {
+            headers: { accept: "application/json" }
+        });
+        if (!res.ok) {
+            console.warn(`Warn: Failed to fetch ${endpoint} - ${res.status}`);
+            return null;
+        }
+        return await res.json();
+    } catch (err) {
+        console.error(`Error fetching ${endpoint}:`, err);
+        return null;
+    }
+}
+
+// ─── HOME ────────────────────────────────────────────────────────
 
 export interface Announcement {
-  text: string;
-  link: string;
+    text: string;
+    link: string | null;
 }
 
 export interface Stat {
-  label: string;
-  value: string;
+    label: string;
+    value: string;
 }
 
 export interface HomeData {
-  announcements: Announcement[];
-  stats: Stat[];
-  images: string[];
+    announcements: Announcement[];
+    stats: Stat[];
+    images: string[];
+    explore_campus?: any[];
 }
 
-/**
- * Returns static homepage data compiled from the API scraper.
- */
 export async function getHomeData(): Promise<HomeData> {
-  // Use static data compiled at build time
-  return apiData.home as unknown as HomeData;
+    const data = await fetchJson<HomeData>("/api/home/");
+    return data || { announcements: [], stats: [], images: [] };
 }
 
+// ─── NOTIFICATIONS ───────────────────────────────────────────────
 
 export type NotificationType = "news_updates" | "tenders" | "careers";
 
+/** Backend LinkItem-Output schema uses `label` (not `text`) */
 export interface NotificationLink {
-    text: string;
+    label: string;
     url: string | null;
 }
 
@@ -39,16 +56,14 @@ export interface Notification {
     links: NotificationLink[];
 }
 
-/**
- * Returns static notifications by type: news_updates | tenders | careers
- */
 export async function getNotifications(
     type: NotificationType = "news_updates"
 ): Promise<Notification[]> {
-    // Return statically compiled notifications
-    return apiData.notifications[type] as unknown as Notification[];
+    const data = await fetchJson<Notification[]>(`/api/notifications/?type=${type}`);
+    return data || [];
 }
 
+// ─── INSTITUTE ───────────────────────────────────────────────────
 
 export type InstitutePage =
     | "aboutrgukt"
@@ -63,21 +78,50 @@ export interface InstituteSection {
     content: string[];
 }
 
+export interface InstituteProfile {
+    name: string;
+    photo: string | null;
+    text: string[];
+}
+
 export interface InstituteData {
     page: string;
     sections: InstituteSection[];
-    profiles: unknown[];
+    profiles: InstituteProfile[];
 }
 
-/**
- * Returns static institute info from the compiled api data.
- */
 export async function getInstituteInfo(
     page: InstitutePage
-): Promise<InstituteData> {
-    return apiData.institute[page] as unknown as InstituteData;
+): Promise<InstituteData | null> {
+    return await fetchJson<InstituteData>(`/api/institute/${page}`);
 }
 
+// ─── ACADEMICS ───────────────────────────────────────────────────
+
+export type AcademicPageType =
+    | "AcademicPrograms"
+    | "AcademicCalender"
+    | "AcademicRegulations"
+    | "curicula";
+
+export interface AcademicLink {
+    label: string;
+    url: string | null;
+}
+
+export interface AcademicSection {
+    header: string;
+    links: AcademicLink[];
+}
+
+export async function getAcademicPage(
+    page: AcademicPageType
+): Promise<AcademicSection[]> {
+    const data = await fetchJson<AcademicSection[]>(`/api/academics/${page}`);
+    return data || [];
+}
+
+// ─── DEPARTMENTS ─────────────────────────────────────────────────
 
 export type DeptCode =
     | "CSE"
@@ -101,20 +145,16 @@ export interface FacultyMember {
     name: string;
     email: string;
     photo: string | null;
+    bio: Record<string, unknown>;
 }
 
 export interface DepartmentData {
-    dept: string;
+    dept: DeptCode;
     faculties: FacultyMember[];
 }
 
-/**
- * Returns static department faculty list from compiled API data.
- */
 export async function getDepartmentStaff(
-    deptCode: DeptCode,
-    _deep = false
-): Promise<DepartmentData> {
-    // Cast index slightly because typescript strings vs. literals
-    return apiData.departments[deptCode] as unknown as DepartmentData;
+    deptCode: DeptCode
+): Promise<DepartmentData | null> {
+    return await fetchJson<DepartmentData>(`/api/departments/${deptCode}`);
 }

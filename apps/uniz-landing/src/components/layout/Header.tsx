@@ -1,89 +1,98 @@
-import { Menu } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
-const NAV_LINKS = [
-    { label: "Academics", href: "#ecosystem" },
-    { label: "Research", href: "#ecosystem" },
-    { label: "Departments", href: "#departments" },
-    { label: "Campus Life", href: "#about" },
-    { label: "Admission", href: "https://www.admissions25.rgukt.in/" },
-    { label: "About", href: "#about" },
-    { label: "News & Events", href: "#notifications" },
-];
+import { ChevronDown, Search } from "lucide-react";
 
-const UTILITY_LINKS = [
-    { label: "Students", href: "https://uniz.rguktong.in" },
-    { label: "Faculty & Staff", href: "https://ornate-core.rguktong.in" },
-    { label: "Families", href: "#" },
-    { label: "Visitors", href: "#" },
-    { label: "Alumni", href: "#" },
-];
+export function Header() {
+  return (
+    <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 shadow-sm transition-all duration-300">
+      <div className="w-full px-4 lg:px-8 mx-auto flex h-[88px] items-center justify-between">
 
-export const Header = () => {
-    const [isScrolled, setIsScrolled] = useState(false);
+        {/* LOGO AREA */}
+        <Link to="/" className="flex items-center shrink-0 mr-auto z-10 ml-2 md:ml-6 lg:ml-10">
+          <img
+            src="/rgukt-logo.png"
+            alt="RGUKT Ongole Campus"
+            className="h-14 md:h-[64px] object-contain drop-shadow-none mix-blend-multiply"
+          />
+          <div className="hidden sm:flex flex-col justify-center gap-0.5 ml-2">
+            <span className="font-extrabold text-[#113255] tracking-tight leading-none text-xl md:text-2xl whitespace-nowrap">
+              RGUKT
+            </span>
+            <span className="text-[12px] md:text-[13px] font-bold text-[#800000] tracking-wider whitespace-nowrap uppercase">
+              Ongole Campus
+            </span>
+          </div>
+        </Link>
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 20);
-        };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+        {/* NAVIGATION LINKS */}
+        <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-[15.5px] font-medium text-slate-600 transition-all z-10">
+          <Link to="/" className="hover:text-[#800000] transition-colors whitespace-nowrap py-8">Home</Link>
 
-    return (
-        <header
-            className={`fixed top-0 left-0 right-0 z-[100] flex flex-col w-full transition-all duration-300 ${isScrolled ? "bg-black shadow-xl" : "bg-transparent"
-                }`}
-        >
-            {/* Layer 1 — Black utility bar */}
-            <div className={`w-full transition-all duration-300 flex justify-center ${isScrolled ? "bg-black py-1.5 shadow-md" : "bg-black/40 py-2.5"}`}>
-                <div className="w-full max-w-[1440px] px-6 md:px-12 flex justify-between items-center text-[11.5px] md:text-[13px] font-medium transition-all duration-300">
-                    <div className="hidden lg:flex tracking-wide font-serif text-[18px] md:text-[21px] font-medium hover:text-[#8C1515] text-white transition-colors cursor-pointer" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}>
-                        Rajiv Gandhi University of Knowledge Technologies
-                    </div>
-
-                    {/* Mobile text fallback */}
-                    <div className="lg:hidden tracking-wider font-serif text-[16px] font-medium cursor-pointer text-white">
-                        RGUKT Ongole
-                    </div>
-
-                    <div className="hidden lg:flex items-center gap-5">
-                        <span className="font-bold mr-1 text-white/80">Information for:</span>
-                        {UTILITY_LINKS.map((l) => (
-                            <a
-                                key={l.label}
-                                href={l.href}
-                                className="text-white hover:text-[#8C1515] hover:underline underline-offset-4 decoration-[#8C1515] transition-all duration-200 tracking-wide"
-                            >
-                                {l.label}
-                            </a>
-                        ))}
-                    </div>
-
-                    {/* Mobile Hamburger */}
-                    <div className="lg:hidden flex items-center cursor-pointer">
-                        <Menu size={22} className="text-white" />
-                    </div>
-                </div>
+          <div className="relative group cursor-pointer flex items-center gap-1 hover:text-[#800000] transition-colors py-8 h-full whitespace-nowrap">
+            <span className="flex items-center gap-1">
+              Institute <ChevronDown className="w-[14px] h-[14px] text-slate-400 group-hover:text-[#800000] transition-colors" />
+            </span>
+            <div className="absolute top-[80px] left-0 w-56 bg-white border border-slate-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-3 z-50 transform origin-top translate-y-2 group-hover:translate-y-0 text-slate-700 text-[14.5px]">
+              <Link to="/institute/aboutrgukt" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">About RGUKT</Link>
+              <Link to="/institute/campuslife" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Campus Life</Link>
+              <Link to="/institute/edusys" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Education System</Link>
+              <Link to="/institute/govcouncil" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Governing Council</Link>
+              <Link to="/institute/rtiinfo" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">RTI Information</Link>
+              <Link to="/institute/scst" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">SC/ST Cell</Link>
             </div>
+          </div>
 
-            {/* Layer 2 — Transparent main nav changing to glass on scroll */}
-            <div className={`w-full transition-all duration-300 border-t border-white/5 flex justify-center ${isScrolled ? "bg-black/90 backdrop-blur-md py-3 shadow-xl" : "py-6 bg-transparent"}`}>
-                <div className="w-full max-w-[1440px] px-6 md:px-12 flex justify-center lg:justify-end">
-                    <nav className="flex items-center gap-[38px] relative z-20">
-                        {NAV_LINKS.map((item) => (
-                            <a
-                                key={item.label}
-                                href={item.href}
-                                className="text-white text-[15.5px] font-bold hover:text-[#8C1515] transition-all tracking-tight font-sans uppercase"
-                                style={{ textShadow: isScrolled ? "none" : "0px 1px 4px rgba(0,0,0,0.8)" }}
-                            >
-                                {item.label}
-                            </a>
-                        ))}
-                    </nav>
-                </div>
+          <div className="relative group cursor-pointer flex items-center gap-1 hover:text-[#800000] transition-colors py-8 h-full whitespace-nowrap">
+            <span className="flex items-center gap-1">
+              Academics <ChevronDown className="w-[14px] h-[14px] text-slate-400 group-hover:text-[#800000] transition-colors" />
+            </span>
+            <div className="absolute top-[80px] left-0 w-56 bg-white border border-slate-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-3 z-50 transform origin-top translate-y-2 group-hover:translate-y-0 text-slate-700 text-[14.5px]">
+              <Link to="/academics/AcademicPrograms" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Academic Programs</Link>
+              <Link to="/academics/AcademicCalender" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Academic Calendar</Link>
+              <Link to="/academics/AcademicRegulations" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Academic Regulations</Link>
+              <Link to="/academics/curicula" className="block px-5 py-2 hover:bg-slate-50 hover:text-[#800000]">Curricula</Link>
             </div>
-        </header>
-    );
-};
+          </div>
+
+          <div className="relative group cursor-pointer flex items-center gap-1 hover:text-[#800000] transition-colors py-8 h-full whitespace-nowrap">
+            <span className="flex items-center gap-1">
+              Departments <ChevronDown className="w-[14px] h-[14px] text-slate-400 group-hover:text-[#800000] transition-colors" />
+            </span>
+            <div className="absolute top-[80px] left-1/2 -translate-x-1/2 w-[340px] bg-white border border-slate-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-4 z-50 transform origin-top translate-y-2 group-hover:translate-y-0 grid grid-cols-2 gap-x-2 gap-y-1 text-slate-700 text-[14px]">
+              {[
+                "CSE", "CIVIL", "ECE", "EEE", "ME",
+                "MATHEMATICS", "PHYSICS", "CHEMISTRY",
+                "IT", "BIOLOGY", "ENGLISH", "LIB",
+                "MANAGEMENT", "PED", "TELUGU", "YOGA"
+              ].map(dept => (
+                <Link key={dept} to={`/departments/${dept}`} className="block px-3 py-2 rounded-md hover:bg-slate-50 hover:text-[#800000] col-span-1">{dept} Dept.</Link>
+              ))}
+            </div>
+          </div>
+
+          <Link to="/notifications" className="hover:text-[#800000] transition-colors py-8 whitespace-nowrap">Notifications</Link>
+        </nav>
+
+        {/* RIGHT ACTION BUTTONS */}
+        <div className="flex items-center gap-3 md:gap-4 shrink-0 z-10 mr-2 md:mr-6 lg:mr-10 ml-auto">
+          <Link 
+            to="/admissions" 
+            className="hidden sm:inline-flex items-center justify-center h-9 min-w-[96px] px-4 rounded-full bg-[#800000] text-white text-sm font-semibold hover:bg-[#600000] shadow-sm hover:shadow-md transition-all duration-300"
+          >
+            Admissions
+          </Link>
+          <Link 
+            to="/visit" 
+            className="hidden md:inline-flex items-center justify-center h-9 min-w-[96px] px-4 rounded-full bg-[#800000] text-white text-sm font-semibold hover:bg-[#600000] shadow-sm hover:shadow-md transition-all duration-300"
+          >
+            Visit Us
+          </Link>
+          <button aria-label="Search" className="ml-1 w-10 h-10 rounded-full flex items-center justify-center text-slate-700 hover:bg-slate-100 hover:text-[#800000] transition-colors">
+            <Search className="w-5 h-5" />
+          </button>
+        </div>
+
+      </div>
+    </header>
+  );
+}

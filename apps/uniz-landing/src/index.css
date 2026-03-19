@@ -1,72 +1,296 @@
 @import url("https://fonts.cdnfonts.com/css/google-sans");
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
 @import "tailwindcss";
 
+/*
+ * Base reset placed in @layer base so it has lower cascade priority
+ * than Tailwind's @layer utilities. This means py-24, px-6, etc.
+ * will always override these defaults.
+ */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
 @theme {
-  --color-primary: #001f3f;
-  --color-accent: #800000;
-  --color-stanford-red: #8C1515;
-  --font-sans: "Google Sans", "Product Sans", sans-serif;
-  --font-serif: "PT Serif", serif;
+  --color-primary: #800000;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-ring: var(--ring);
+
+  --font-sans: "Google Sans", "Product Sans", -apple-system, system-ui, sans-serif;
+  --font-serif: "Source Serif 4", "PT Serif", Georgia, serif;
+}
+
+@theme inline {
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --animate-marquee: marquee 35s linear infinite;
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-50%);
+    }
+  }
 }
 
 :root {
   --background: #ffffff;
+  --foreground: #0f172a;
   --surface: #f8fafc;
   --text-main: #0f172a;
-  --text-muted: #64748b;
+  --text-muted: #475569;
+
+  --muted: #f4f4f4;
+  --muted-foreground: #585754;
+
   --border: #e2e8f0;
+  --input: #e2e8f0;
+
+  --primary-foreground: #ffffff;
+
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+
+  --ring: #800000;
+
+  --destructive-foreground: oklch(1 0 0);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.dark {
+  --destructive-foreground: oklch(1 0 0);
 }
 
 body {
-  font-family:
-    "Google Sans",
-    "Product Sans",
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: var(--font-sans);
   background-color: var(--background);
   color: var(--text-main);
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.container {
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: #fca5a5;
+  /* Red 300 */
+  color: #450a0a;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+/* IITH Custom Animations */
+.chart-container {
+  position: relative;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 300px;
+  max-height: 400px;
 }
 
-.glass {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+@media (min-width: 768px) {
+  .chart-container {
+    height: 350px;
+  }
 }
 
-/* Custom button hover effect */
-.btn-premium {
-  @apply relative overflow-hidden transition-all duration-300 active:scale-95;
+.carousel-container {
+  overflow: hidden;
 }
 
-.btn-premium::after {
-  content: "";
-  @apply absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300;
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
 }
 
-.btn-premium:hover::after {
-  @apply opacity-100;
+.carousel-slide {
+  min-width: 100%;
+  position: relative;
 }
 
-/* Marquee animation for announcements ticker */
-@keyframes marquee {
+.hero-carousel-slide img {
+  width: 100%;
+  height: 65vh;
+  max-height: 560px;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (min-width: 768px) {
+  .hero-carousel-slide img {
+    height: 75vh;
+    max-height: 680px;
+  }
+}
+
+/* ─── Enhanced Announcement Bar ─── */
+.announcement-bar {
+  background: linear-gradient(135deg, #fff5f5 0%, #fef2f2 25%, #ffffff 50%, #fef2f2 75%, #fff5f5 100%);
+  background-size: 200% 200%;
+  animation: announcement-bg-shift 8s ease infinite;
+}
+
+@keyframes announcement-bg-shift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Shimmer overlay */
+.announcement-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(128, 0, 0, 0.03) 25%,
+      rgba(128, 0, 0, 0.06) 50%,
+      rgba(128, 0, 0, 0.03) 75%,
+      transparent 100%);
+  background-size: 400% 100%;
+  animation: announcement-shimmer-move 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes announcement-shimmer-move {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Badge pulse dot */
+.announcement-pulse-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff4444;
+  box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.6);
+  animation: announcement-pulse 2s ease-in-out infinite;
+}
+
+.announcement-pulse-dot::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  animation: announcement-pulse-ring 2s ease-in-out infinite;
+}
+
+@keyframes announcement-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.6);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 68, 68, 0);
+  }
+}
+
+@keyframes announcement-pulse-ring {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+/* Badge hover */
+.announcement-badge {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.announcement-badge:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 20px -4px rgba(128, 0, 0, 0.4);
+}
+
+/* Dot separator for each announcement item */
+.announcement-dot-icon {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #800000, #d00000);
+  flex-shrink: 0;
+  box-shadow: 0 0 4px rgba(128, 0, 0, 0.35);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.announcement-item-enhanced:hover .announcement-dot-icon {
+  transform: scale(1.5);
+  box-shadow: 0 0 8px rgba(128, 0, 0, 0.5);
+}
+
+/* Edge fade masks */
+.announcement-edge-left {
+  background: linear-gradient(to right, #fef2f2 0%, #fef2f2 20%, transparent 100%);
+}
+
+.announcement-edge-right {
+  background: linear-gradient(to left, #fef2f2 0%, #fef2f2 20%, transparent 100%);
+}
+
+/* Scrolling animation */
+.announcement-track {
+  animation: scroll-announcements 10s linear infinite;
+}
+
+.announcement-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-announcements {
   0% {
     transform: translateX(0);
   }
@@ -76,48 +300,121 @@ body {
   }
 }
 
-.animate-marquee {
-  animation: marquee 35s linear infinite;
+/* Director image scroll animation */
+.director-photo {
+  transform: translateY(24px) scale(1.02);
+  transition: opacity 0.8s ease-out, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.animate-marquee:hover {
+.director-photo.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Track */
+.innovation-track {
+  display: flex;
+  width: max-content;
+  animation: scroll-innovations 15s linear infinite;
+}
+
+.innovation-track:hover {
   animation-play-state: paused;
 }
 
-
-/* ── Nav active indicator ───────────────────────────── */
-.nav-link {
-  position: relative;
-  flex-shrink: 0;
-  padding: 0.75rem 0;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #475569;
-  white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  transition: color 150ms, border-color 150ms, background-color 150ms;
+.innovation-group {
+  display: flex;
+  gap: 1.5rem;
 }
 
-.nav-link:hover {
-  color: #800000;
-  border-bottom-color: #800000;
-  background-color: #ffffff;
-}
-
-/* ── Stats bar divider ──────────────────────────────── */
-.stat-item+.stat-item {
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
-  padding-left: 1.5rem;
-}
-
-/* ── Hero text legibility shadow ─────────────────────── */
-.hero-text-shadow {
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6), 0 1px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* ── Reduced-motion overrides ────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  .animate-marquee {
-    animation: none;
+@keyframes scroll-innovations {
+  0% {
+    transform: translateX(0);
   }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Large card for detailed innovation */
+.innovation-card-lg {
+  min-width: 420px;
+  max-width: 420px;
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 10px 28px -16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.innovation-card-lg:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -22px rgba(0, 0, 0, 0.3);
+}
+
+.innovation-card-lg img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.innovation-card-lg h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.innovation-card-lg p {
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #475569;
+}
+
+/* YouTube vertical scroll */
+.youtube-viewport {
+  height: 600px;
+  overflow: hidden;
+}
+
+.youtube-track {
+  animation: scroll-youtube 20s linear infinite;
+}
+
+.youtube-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-youtube {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.youtube-card img {
+  flex-shrink: 0;
+}
+
+.aspect-square img {
+  transition: transform 0.4s ease;
+}
+
+.bg-white:hover .aspect-square img {
+  transform: scale(1.05);
+}
+
+.aspect-square {
+  position: relative;
+}
+
+.aspect-square::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.15));
 }

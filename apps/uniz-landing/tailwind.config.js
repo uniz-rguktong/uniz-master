@@ -4,8 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#001f3f",
-        accent: "#800000",
+        primary: "#800000", /* Maroon */
+        accent: "#4c0519",  /* Deep Rose/Dark Maroon */
+        navy: "#000035", // The core requested color #000035
       },
       fontFamily: {
         inter: ["Inter", "sans-serif"],
