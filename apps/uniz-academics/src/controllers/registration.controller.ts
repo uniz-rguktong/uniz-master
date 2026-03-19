@@ -624,7 +624,7 @@ export const registerSubjects = async (
 
     if (mandatoryMissing.length > 0) {
       return res.status(400).json({
-        error: `Missing mandatory subjects: ${mandatoryMissing.map((m) => m.subject.name).join(", ")}`,
+        error: `Missing mandatory subjects: ${mandatoryMissing.map((m: any) => m.subject.name).join(", ")}`,
         attribution: "SABER", // matching error structure
       });
     }
