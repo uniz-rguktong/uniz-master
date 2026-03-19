@@ -6,7 +6,7 @@ import helmet from "helmet";
 import compression from "compression";
 import authRoutes from "./routes/auth.routes";
 
-dotenv.config();
+dotenv.config({ override: true });
 
 const app = express();
 app.set("trust proxy", 1); // Trust first proxy (Vercel/Gateway)

@@ -509,7 +509,7 @@ const generateAttendancePdf = async (data: any): Promise<Buffer> => {
 };
 // --- END PDF UTILS ---
 
-dotenv.config();
+dotenv.config({ override: true });
 
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 const connection = new IORedis(REDIS_URL, { maxRetriesPerRequest: null });
