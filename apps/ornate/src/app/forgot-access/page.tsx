@@ -67,12 +67,7 @@ export default function ForgotAccessPage() {
             return;
         }
 
-        /* ─── TEMP: OTP BYPASS START ─── */
-        setStatus('Email verification bypassed.');
-        sessionStorage.setItem('reset_email', email.toLowerCase().trim());
-        setTimeout(() => router.push('/reset-access'), 800);
-        return;
-        /* ─── TEMP: OTP BYPASS END ─── */
+
 
         if (resendCount >= 5) {
             setError('Maximum resend attempts reached. Try again later.');

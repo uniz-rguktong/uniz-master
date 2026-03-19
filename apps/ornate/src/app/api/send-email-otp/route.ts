@@ -12,8 +12,17 @@ export async function POST(req: NextRequest) {
         if (!emailLower.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
             return NextResponse.json({ error: 'Enter a valid email address.' }, { status: 400 });
         }
+        const cooldownKey = `otp-cooldown:${emailLower}`;
+        const isOnCooldown = await redis.get(cooldownKey);
+        if (isOnCooldown) {
+            return NextResponse.json({ error: 'Verification signal already in transit. Wait 60s.' }, { status: 429 });
+        }
+
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         await redis.set(`otp:${emailLower}`, otp, 'EX', 600); // 10 minutes TTL
+        
+        // Anti-spam cooldown
+        await redis.set(cooldownKey, 'true', 'EX', 60);
 
         await sendOTPEmail(emailLower, otp);
 

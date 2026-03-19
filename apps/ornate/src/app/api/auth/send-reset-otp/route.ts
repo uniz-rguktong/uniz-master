@@ -17,12 +17,19 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Enter a valid email address.' }, { status: 400 });
         }
 
-        // Rate-limit resend attempts
+        // Rate-limit resend attempts (Max 5/hr)
         const countKey = `reset-otp-count:${emailLower}`;
         const countRaw = await redis.get(countKey);
         const count = countRaw ? parseInt(String(countRaw), 10) : 0;
         if (count >= MAX_RESEND) {
             return NextResponse.json({ error: 'Maximum resend attempts reached. Try again later.' }, { status: 429 });
+        }
+
+        // Cooldown: One reset OTP per 60 seconds
+        const cooldownKey = `reset-otp-cooldown:${emailLower}`;
+        const isOnCooldown = await redis.get(cooldownKey);
+        if (isOnCooldown) {
+            return NextResponse.json({ error: 'Reset instructions already in transit. Wait 60s.' }, { status: 429 });
         }
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -33,6 +40,9 @@ export async function POST(req: NextRequest) {
 
         // Increment resend count with 1hr TTL
         await redis.set(countKey, String(count + 1), 'EX', 3600);
+
+        // Anti-spam cooldown
+        await redis.set(cooldownKey, 'true', 'EX', 60);
 
         // Send OTP via AWS SES
         await sendOTPEmail(emailLower, otp);

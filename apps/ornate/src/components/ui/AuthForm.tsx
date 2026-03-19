@@ -289,12 +289,7 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
             return;
         }
 
-        /* ─── TEMP: OTP BYPASS START ─── */
-        // Bypass email verification due to email service issues
-        setEmailVerified(true);
-        setStatusText('Email validation bypassed.');
-        return;
-        /* ─── TEMP: OTP BYPASS END ─── */
+
 
         setError('');
         setOtpLoading(true);
