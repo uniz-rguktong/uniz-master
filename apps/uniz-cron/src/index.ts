@@ -79,10 +79,10 @@ export const runMaintenance = async () => {
 
     const studentIdsToClear = [
       ...new Set([
-        ...expiringPastOutpasses.map((r) => r.studentId),
-        ...expiringPastOutings.map((r) => r.studentId),
-        ...expiringApprovedOutpasses.map((r) => r.studentId),
-        ...expiringApprovedOutings.map((r) => r.studentId),
+        ...expiringPastOutpasses.map((r: any) => r.studentId),
+        ...expiringPastOutings.map((r: any) => r.studentId),
+        ...expiringApprovedOutpasses.map((r: any) => r.studentId),
+        ...expiringApprovedOutings.map((r: any) => r.studentId),
       ]),
     ];
 
@@ -185,7 +185,7 @@ export const runMaintenance = async () => {
         `Clearing pending status for ${studentIdsToClear.length} newly expired students...`,
       );
       await Promise.all(
-        studentIdsToClear.map((sid) => clearPendingStatus(sid)),
+        studentIdsToClear.map((sid: any) => clearPendingStatus(sid)),
       );
     }
 
