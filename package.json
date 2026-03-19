@@ -17,7 +17,7 @@
     "sync:all:host": "concurrently -n \"CORE,ACADEMICS,OUTPASS,FILES,NOTIFY,MAIL,CRON\" -c \"reset,green,cyan,white,yellow,magenta,red\" \"npm run sync:host\" \"cd apps/uniz-academics && npm run dev\" \"cd apps/uniz-outpass && npm run dev\" \"cd apps/uniz-files && npm run dev\" \"cd apps/uniz-notifications && npm run dev\" \"cd apps/uniz-mail && npm run dev\" \"cd apps/uniz-cron && npm run dev\"",
     "setup:local": "bash ./scripts/setup-local.sh",
     "sync": "bash ./scripts/sync-local.sh",
-    "seed:local": "ts-node scripts/seed-local.ts && cd apps/uniz-academics && ts-node prisma/safe_seed.ts",
+    "seed:local": "ts-node scripts/seed-local.ts && cd apps/uniz-academics && DATABASE_URL='postgresql://user:password@127.0.0.1:5432/uniz_db?sslmode=disable&schema=uniz_academics&connection_limit=10' ts-node prisma/safe_seed.ts",
     "prettify": "prettier --write .",
     "vault:get": "bash ./scripts/uniz-vault.sh get",
     "vault:set": "bash ./scripts/uniz-vault.sh set",
