@@ -83,8 +83,8 @@ export async function processNextBatch() {
 
   // Cache subjects once for all batches in this run
   const allSubjects = await prisma.subject.findMany();
-  const subjectMap = new Map(
-    allSubjects.map((s) => [s.code.trim().toUpperCase(), s]),
+  const subjectMap = new Map<string, any>(
+    allSubjects.map((s: any) => [s.code.trim().toUpperCase(), s]),
   );
 
   const getVal = (row: any, keys: string[]) => {
