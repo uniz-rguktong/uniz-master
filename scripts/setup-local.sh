@@ -152,6 +152,8 @@ for i in "${!SERVICES[@]}"; do
 done
 
 echo "📦 Finalizing global development tools..."
+# Unset DATABASE_URL so it doesn't override dotenv in child services (dev:all)
+unset DATABASE_URL
 npm install --no-save ts-node bcrypt @types/bcrypt pg @types/pg >/dev/null 2>&1
 
 echo ""
