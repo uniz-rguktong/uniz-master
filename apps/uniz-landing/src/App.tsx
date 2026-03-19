@@ -1,33 +1,31 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 
 // Layout
-import { Header } from "./components/layout/Header";
-import { Footer } from "./components/layout/Footer";
+import { RootLayout } from "./components/layout/RootLayout";
 
-// Sections
-import { HeroSection } from "./components/sections/HeroSection";
-import { NotificationsSection } from "./components/sections/NotificationsSection";
-import { AboutSection } from "./components/sections/AboutSection";
-import { DepartmentsSection } from "./components/sections/DepartmentsSection";
-import { EcosystemSection } from "./components/sections/EcosystemSection";
+// Pages
+import { HomePage } from "./pages/HomePage";
+import { InstitutePage } from "./pages/InstitutePage";
+import { AcademicsPage } from "./pages/AcademicsPage";
+import { DepartmentPage } from "./pages/DepartmentPage";
+import { NotificationsPage } from "./pages/NotificationsPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-white selection:bg-accent/10 selection:text-accent">
-
-      <Header />
-      <HeroSection />
-
-      <NotificationsSection />
-
-      <AboutSection />
-
-      <DepartmentsSection />
-
-      <EcosystemSection />
-
-      <Footer />
-
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<RootLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="institute/:pageName" element={<InstitutePage />} />
+          <Route path="academics/:pageName" element={<AcademicsPage />} />
+          <Route path="departments/:deptCode" element={<DepartmentPage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
+          
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
