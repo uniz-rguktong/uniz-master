@@ -277,7 +277,7 @@ export const uploadAttendance = async (
     const subjects = await prisma.subject.findMany({
       where: { code: { in: subjectCodes } },
     });
-    const subjectMap = new Map(subjects.map((s) => [s.code, s.id]));
+    const subjectMap = new Map(subjects.map((s: any) => [s.code, s.id]));
 
     // 2. Prepare Operations
     for (const row of data) {
@@ -397,7 +397,7 @@ export const uploadGrades = async (
     const subjects = await prisma.subject.findMany({
       where: { code: { in: subjectCodes } },
     });
-    const subjectMap = new Map(subjects.map((s) => [s.code, s.id]));
+    const subjectMap = new Map(subjects.map((s: any) => [s.code, s.id]));
 
     // 2. Prepare Operations
     for (const row of data) {
