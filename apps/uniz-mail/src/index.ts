@@ -4,7 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 import emailRoutes from "./routes/email.routes";
 
-dotenv.config();
+dotenv.config({ override: true });
 
 const app = express();
 const PORT = process.env.PORT || 3006;

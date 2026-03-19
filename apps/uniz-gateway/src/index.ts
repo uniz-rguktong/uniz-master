@@ -7,7 +7,7 @@ import Redis from "ioredis";
 import httpProxy from "http-proxy";
 import http from "http";
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ override: true });
 
 // Pre-configured Axios instance for internal communications with Keep-Alive
 const internalClient = axios.create({

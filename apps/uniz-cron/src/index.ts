@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import dotenv from "dotenv";
 import { runStorageCleanup } from "./utils/storage";
-dotenv.config();
+dotenv.config({ override: true });
 
 const prisma = new PrismaClient();
 

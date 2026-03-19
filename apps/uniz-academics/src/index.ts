@@ -5,7 +5,7 @@ import helmet from "helmet";
 import compression from "compression";
 import { redis } from "./utils/redis.util";
 
-dotenv.config();
+dotenv.config({ override: true });
 
 const app = express();
 const PORT = process.env.PORT || 3004;
