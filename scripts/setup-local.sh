@@ -142,7 +142,9 @@ for i in "${!SERVICES[@]}"; do
             rm -rf "$path/node_modules/@prisma/client"
             (cd "$path" && npm install --no-save @prisma/client@6 prisma@6 >/dev/null 2>&1)
             
-            export DATABASE_URL="$val"
+            # Strip surrounding quotes so Prisma parses it properly
+            unquoted_val=$(echo "$val" | sed -e 's/^"//' -e 's/"$//')
+            export DATABASE_URL="$unquoted_val"
             (cd "$path" && yes | npx prisma@6 generate >/dev/null 2>&1)
             (cd "$path" && yes | npx prisma@6 db push --accept-data-loss >/dev/null 2>&1)
         fi
