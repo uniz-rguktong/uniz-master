@@ -87,7 +87,7 @@ export const initSemester = async (
           if (subjects.length > 0) {
             await prisma.branchAllocation.createMany({
               data: subjects.map(
-                (s) =>
+                (s: any) =>
                   ({
                     branch: branchName,
                     subjectId: s.id,
@@ -620,7 +620,7 @@ export const registerSubjects = async (
     // Check mandatory subjects
     const mandatoryMissing = allocations
       .filter((a: any) => a.isMandatory)
-      .filter((a) => !subjectIds.includes(a.subjectId));
+      .filter((a: any) => !subjectIds.includes(a.subjectId));
 
     if (mandatoryMissing.length > 0) {
       return res.status(400).json({
@@ -825,7 +825,7 @@ export const exportAcademicData = async (
         include: { subject: true },
       });
 
-      data.forEach((r) => {
+      data.forEach((r: any) => {
         worksheet.addRow({
           studentId: r.studentId,
           batch: (r as any).batch || "",
@@ -972,7 +972,7 @@ export const getSemesterOverview = async (
       });
 
       const totalCredits = registrations.reduce(
-        (acc, r) => acc + r.subject.credits,
+        (acc: number, r: any) => acc + r.subject.credits,
         0,
       );
 
@@ -986,7 +986,7 @@ export const getSemesterOverview = async (
         semester: activeSem,
         role: "student",
         data: {
-          registrations: registrations.map((r) => ({
+          registrations: registrations.map((r: any) => ({
             id: r.id,
             subjectCode: r.subject.code,
             subjectName: r.subject.name,
@@ -1010,7 +1010,7 @@ export const getSemesterOverview = async (
 
       // Group by branch
       const branchSummary: Record<string, any> = {};
-      branchAllocations.forEach((alloc) => {
+      branchAllocations.forEach((alloc: any) => {
         if (!branchSummary[alloc.branch]) {
           branchSummary[alloc.branch] = {
             subjectCount: 0,
