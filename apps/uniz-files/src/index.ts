@@ -4,7 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 import fileRoutes from "./routes/file.routes";
 
-dotenv.config();
+dotenv.config({ override: true });
 
 const app = express();
 const PORT = process.env.PORT || 3005;
