@@ -1,5 +1,6 @@
 import { Client } from "pg";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 // Seeder logic using raw SQL
 const dbConfig = {
@@ -16,28 +17,34 @@ async function seed() {
   try {
     await client.connect();
     const hash = await bcrypt.hash("password123", 10);
+    
+    const getUuid = (str: string) => {
+      const h = crypto.createHash("md5").update(str).digest("hex");
+      return `${h.substring(0,8)}-${h.substring(8,12)}-4${h.substring(13,16)}-8${h.substring(17,20)}-${h.substring(20,32)}`;
+    };
 
     // --- CLEANUP (Fresh Start for Local Dev) ---
     console.log("- Cleaning up existing data...");
-    await client.query('TRUNCATE TABLE auth_v2."AuthCredential" CASCADE;');
-    await client.query('TRUNCATE TABLE user_v2."AdminProfile" CASCADE;');
-    await client.query('TRUNCATE TABLE user_v2."FacultyProfile" CASCADE;');
-    await client.query('TRUNCATE TABLE user_v2."StudentProfile" CASCADE;');
-    await client.query('TRUNCATE TABLE user_v2."Banner" CASCADE;');
-    await client.query('TRUNCATE TABLE user_v2."PublicNotification" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_auth."AuthCredential" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_user."AdminProfile" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_user."FacultyProfile" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_user."StudentProfile" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_user."Banner" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_user."PublicNotification" CASCADE;');
 
     const upsertUser = async (
-      id: string,
+      rawId: string,
       username: string,
       role: string,
       desc: string,
       profileType: "Admin" | "Faculty" | "Student",
       extra: any = {},
     ) => {
+      const id = getUuid(rawId);
       // 1. Auth Credential
       await client.query(
         `
-        INSERT INTO auth_v2."AuthCredential" (id, username, "passwordHash", role, "updatedAt")
+        INSERT INTO uniz_auth."AuthCredential" (id, username, "passwordHash", role, "updatedAt")
         VALUES ($1, $2, $3, $4, NOW())
         ON CONFLICT (id) DO UPDATE SET 
           username = EXCLUDED.username,
@@ -52,7 +59,7 @@ async function seed() {
       if (profileType === "Admin") {
         await client.query(
           `
-          INSERT INTO user_v2."AdminProfile" (id, username, email, name, role, "updatedAt")
+          INSERT INTO uniz_user."AdminProfile" (id, username, email, name, role, "updatedAt")
           VALUES ($1, $2, $3, $4, $5, NOW())
           ON CONFLICT (id) DO UPDATE SET 
             username = EXCLUDED.username,
@@ -72,7 +79,7 @@ async function seed() {
       } else if (profileType === "Faculty") {
         await client.query(
           `
-          INSERT INTO user_v2."FacultyProfile" (id, username, name, email, department, designation, role, "updatedAt")
+          INSERT INTO uniz_user."FacultyProfile" (id, username, name, email, department, designation, role, "updatedAt")
           VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
           ON CONFLICT (id) DO UPDATE SET 
             username = EXCLUDED.username,
@@ -96,7 +103,7 @@ async function seed() {
       } else if (profileType === "Student") {
         await client.query(
           `
-          INSERT INTO user_v2."StudentProfile" (id, username, name, email, branch, year, semester, "updatedAt")
+          INSERT INTO uniz_user."StudentProfile" (id, username, name, email, branch, year, semester, "updatedAt")
           VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
           ON CONFLICT (id) DO UPDATE SET 
             username = EXCLUDED.username,
@@ -199,14 +206,15 @@ async function seed() {
     // --- SEEDING CMS CONTENT ---
     console.log("- Seeding CMS Assets...");
     const upsertBanner = async (
-      id: string,
+      rawId: string,
       title: string,
       text: string,
       imageUrl: string,
     ) => {
+      const id = getUuid(rawId);
       await client.query(
         `
-        INSERT INTO user_v2."Banner" (id, title, text, "imageUrl", "isVisible", "createdAt", "updatedAt")
+        INSERT INTO uniz_user."Banner" (id, title, text, "imageUrl", "isVisible", "createdAt", "updatedAt")
         VALUES ($1, $2, $3, $4, true, NOW(), NOW())
         ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, "imageUrl" = EXCLUDED."imageUrl", "updatedAt" = NOW();
       `,
@@ -235,12 +243,12 @@ async function seed() {
 
     await client.query(
       `
-      INSERT INTO user_v2."PublicNotification" (id, title, content, link, "isVisible", "createdAt", "updatedAt")
+      INSERT INTO uniz_user."PublicNotification" (id, title, content, link, "isVisible", "createdAt", "updatedAt")
       VALUES ($1, $2, $3, $4, true, NOW(), NOW())
       ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, "updatedAt" = NOW();
     `,
       [
-        "notif-1",
+        getUuid("notif-1"),
         "Admission Cycle 2026",
         "2026 UG Admissions open.",
         "https://rguktong.ac.in/admissions",
