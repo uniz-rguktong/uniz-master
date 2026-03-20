@@ -20,7 +20,7 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.4.1",
+    "@prisma/client": "^6.19.2",
     "@types/multer": "^2.0.0",
     "axios": "^1.13.4",
     "cloudinary": "^2.9.0",
