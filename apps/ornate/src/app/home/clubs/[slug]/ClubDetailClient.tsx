@@ -16,7 +16,9 @@ import { SectionHeader, VideoCarousel, EventReelsSection, VideoModal } from '@/c
 
 import MissionCard, { Mission } from '@/components/missions/MissionCard';
 import { Awards } from '@/components/ui/award';
+import { SportsPromoCardsCarousel } from '@/components/sports/HighlightsSection';
 import type { BranchDetailData } from '@/lib/data/branch-detail';
+import type { PromoVideoData } from '@/lib/data/sports';
 
 const BRANCH_META_MAP: Record<string, { tagline: string; color: string; glow: string; category: string }> = {
     cse: { tagline: 'Planet of Code', color: '#ec4899', glow: 'rgba(236,72,153,0.5)', category: 'Branch' },
@@ -467,7 +469,7 @@ const SpaceshipSidebar = memo(({ color }: { color: string }) => {
 SpaceshipSidebar.displayName = 'SpaceshipSidebar';
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export default function ClubDetailClient({ data }: { data: BranchDetailData }) {
+export default function ClubDetailClient({ data, allPromoVideos = [] }: { data: BranchDetailData; allPromoVideos?: PromoVideoData[] }) {
     const slug = data.slug.toLowerCase();
     const meta = BRANCH_META_MAP[slug] || { tagline: 'Explore · Innovate · Excel', color: 'var(--color-neon)', glow: 'rgba(var(--color-neon-rgb, 57, 255, 20), 0.5)', category: 'Branch / Club' };
     const { color, glow, category, tagline } = meta;
@@ -571,14 +573,28 @@ export default function ClubDetailClient({ data }: { data: BranchDetailData }) {
                 </section>
 
                 {/* 2. VIDEOS (Holographic Carousel) */}
-                {promoVideos.length > 0 && (
-                    <section className="py-12 sm:py-24 px-4 sm:px-10 bg-[#030308] relative overflow-hidden z-10">
-                        <div className="max-w-7xl mx-auto relative z-10">
-                            <SectionHeader color={color} label="Cinematic" title="FEATURED PROMOS" />
+                <section className="py-12 sm:py-24 px-4 sm:px-10 bg-[#030308] relative overflow-hidden z-10">
+                    <div className="max-w-7xl mx-auto relative z-10">
+                        <SectionHeader color={color} label="Cinematic" title="FEATURED PROMOS" />
+                        
+                        {/* Club Specific Promos Priority */}
+                        {promoVideos.length > 0 ? (
                             <VideoCarousel videos={promoVideos} color={color} onPlay={handlePlay} />
+                        ) : (
+                            /* Fallback to Global Promos to ensure section is never empty */
+                            <VideoCarousel videos={allPromoVideos} color={color} onPlay={handlePlay} />
+                        )}
+
+                        {/* Always show the Mini Cards Promo Carousel for a rich look like sports page */}
+                        <div className="mt-16 sm:mt-24">
+                            <SportsPromoCardsCarousel
+                                videos={allPromoVideos}
+                                color={color}
+                                onPlay={handlePlay}
+                            />
                         </div>
-                    </section>
-                )}
+                    </div>
+                </section>
 
                 {/* 2.1 EVENT REELS */}
                 {eventReels.length > 0 && (

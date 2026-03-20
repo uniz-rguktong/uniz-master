@@ -18,7 +18,12 @@ export default async function UsersPage() {
 
     return (
         <Suspense fallback={<div className="p-8 text-center">Loading users...</div>}>
-            <UsersClient initialUsers={adminUsers} initialStudents={studentUsers} totalRegistrations={stats.totalRegistrations.count} />
+            <UsersClient 
+                initialUsers={adminUsers} 
+                initialStudents={studentUsers} 
+                totalRegistrations={stats.totalRegistrations.count} 
+                totalStudentsCount={stats.totalUsers.count}
+            />
         </Suspense>
     );
 }

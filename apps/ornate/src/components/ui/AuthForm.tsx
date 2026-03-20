@@ -584,16 +584,16 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
                                 {/* Mobile: each full-width stacked. Desktop: all in one row */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.4fr_1fr_1fr] gap-2 sm:gap-3">
                                     {/* Full Name — full width on mobile, 1 col desktop */}
-                                    <div className="sm:col-span-1 lg:col-span-1">
+                                    <div className="sm:col-span-1 lg:col-span-1 order-1">
                                         <Field label="Full Name" id="r-name" type="text" placeholder="Enter your Name" autoFocus forceUpper />
                                     </div>
                                     {/* ID Number */}
-                                    <div className="sm:col-span-1 lg:col-span-1">
+                                    <div className="sm:col-span-1 lg:col-span-1 order-2">
                                         <Field label="ID Number" id="r-id" type="text" placeholder="e.g. O2XXXX1" forceUpper />
                                     </div>
 
                                     {/* Email + Verify — full width on mobile */}
-                                    <div className="sm:col-span-2 lg:col-span-1 flex flex-col">
+                                    <div className="sm:col-span-2 lg:col-span-1 flex flex-col order-3">
                                         <label htmlFor="r-email" className={labelBase} style={{ color: LIME }}>
                                             {emailVerified ? (
                                                 <span className="flex items-center gap-1.5">
@@ -622,62 +622,63 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
                                         </div>
                                     </div>
 
+                                    {/* OTP verification - appears under email on mobile */}
+                                    {otpSent && !emailVerified && (
+                                        <div className="col-span-1 sm:col-span-2 lg:col-span-5 order-4 lg:order-6 border border-[#A3FF12]/15 px-4 py-3"
+                                            style={{ background: 'rgba(163,255,18,0.04)' }}>
+                                            {/* Mobile: label on top, boxes + button below */}
+                                            <p className="text-[9px] font-black tracking-[0.3em] uppercase font-mono mb-2 sm:hidden"
+                                                style={{ color: LIME }}>
+                                                EMAIL AUTH CODE
+                                            </p>
+                                            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                                                {/* Label — hidden on mobile (shown above), visible on sm+ */}
+                                                <span className="hidden sm:inline text-[9px] font-black tracking-[0.25em] uppercase font-mono flex-shrink-0"
+                                                    style={{ color: LIME }}>
+                                                    AUTH CODE
+                                                </span>
+                                                {/* 6 digit boxes */}
+                                                <div className="flex gap-1.5" onPaste={handleOtpPaste}>
+                                                    {otp.map((digit, i) => (
+                                                        <input
+                                                            key={i}
+                                                            ref={el => { otpInputRefs.current[i] = el; }}
+                                                            type="text"
+                                                            inputMode="numeric"
+                                                            maxLength={1}
+                                                            value={digit}
+                                                            onChange={e => handleOtpChange(i, e.target.value)}
+                                                            onKeyDown={e => handleOtpKeyDown(i, e)}
+                                                            className="w-9 h-10 sm:w-9 sm:h-9 bg-black/60 border border-[#A3FF12]/25 text-center text-base font-mono font-bold text-[#A3FF12] focus:border-[#A3FF12] focus:outline-none focus:shadow-[0_0_8px_rgba(163,255,18,0.2)] transition-all"
+                                                        />
+                                                    ))}
+                                                </div>
+                                                {/* AUTH button */}
+                                                <button type="button" onClick={handleVerifyOTP}
+                                                    disabled={otpLoading || otp.join('').length < 6}
+                                                    className="h-10 sm:h-9 px-5 text-[10px] font-black tracking-[0.25em] uppercase transition-all disabled:opacity-40"
+                                                    style={{ background: LIME, color: '#000' }}>
+                                                    {otpLoading ? '···' : 'AUTH'}
+                                                </button>
+                                                {/* Resend timer — pushed right on desktop */}
+                                                {resendTimer > 0 && (
+                                                    <span className="sm:ml-auto text-[9px] font-mono text-white/40 tracking-wider">
+                                                        RESEND IN {resendTimer}s
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {/* Branch + Year — side by side on all sizes */}
-                                    <div className="col-span-1">
+                                    <div className="col-span-1 order-5 lg:order-4">
                                         <SelectField label="Branch" id="r-branch" options={BRANCHES} placeholder="Select Branch" disabled={!emailVerified} />
                                     </div>
-                                    <div className="col-span-1">
+                                    <div className="col-span-1 order-6 lg:order-5">
                                         <SelectField label="Year" id="r-year" options={YEARS} placeholder="Select Year" disabled={!emailVerified} />
                                     </div>
                                 </div>
 
-                                {/* ── OTP — wraps to 2 rows on mobile, single strip on desktop ── */}
-                                {otpSent && !emailVerified && (
-                                    <div className="border border-[#A3FF12]/15 px-4 py-3"
-                                        style={{ background: 'rgba(163,255,18,0.04)' }}>
-                                        {/* Mobile: label on top, boxes + button below */}
-                                        <p className="text-[9px] font-black tracking-[0.3em] uppercase font-mono mb-2 sm:hidden"
-                                            style={{ color: LIME }}>
-                                            EMAIL AUTH CODE
-                                        </p>
-                                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                                            {/* Label — hidden on mobile (shown above), visible on sm+ */}
-                                            <span className="hidden sm:inline text-[9px] font-black tracking-[0.25em] uppercase font-mono flex-shrink-0"
-                                                style={{ color: LIME }}>
-                                                AUTH CODE
-                                            </span>
-                                            {/* 6 digit boxes */}
-                                            <div className="flex gap-1.5" onPaste={handleOtpPaste}>
-                                                {otp.map((digit, i) => (
-                                                    <input
-                                                        key={i}
-                                                        ref={el => { otpInputRefs.current[i] = el; }}
-                                                        type="text"
-                                                        inputMode="numeric"
-                                                        maxLength={1}
-                                                        value={digit}
-                                                        onChange={e => handleOtpChange(i, e.target.value)}
-                                                        onKeyDown={e => handleOtpKeyDown(i, e)}
-                                                        className="w-9 h-10 sm:w-9 sm:h-9 bg-black/60 border border-[#A3FF12]/25 text-center text-base font-mono font-bold text-[#A3FF12] focus:border-[#A3FF12] focus:outline-none focus:shadow-[0_0_8px_rgba(163,255,18,0.2)] transition-all"
-                                                    />
-                                                ))}
-                                            </div>
-                                            {/* AUTH button */}
-                                            <button type="button" onClick={handleVerifyOTP}
-                                                disabled={otpLoading || otp.join('').length < 6}
-                                                className="h-10 sm:h-9 px-5 text-[10px] font-black tracking-[0.25em] uppercase transition-all disabled:opacity-40"
-                                                style={{ background: LIME, color: '#000' }}>
-                                                {otpLoading ? '···' : 'AUTH'}
-                                            </button>
-                                            {/* Resend timer — pushed right on desktop */}
-                                            {resendTimer > 0 && (
-                                                <span className="sm:ml-auto text-[9px] font-mono text-white/40 tracking-wider">
-                                                    RESEND IN {resendTimer}s
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
 
                                 {/* Status / hint line */}
                                 {statusText && !error && (
@@ -705,7 +706,7 @@ export default function AuthForm({ onSuccess, initialMode = 'login' }: AuthFormP
                                         <Field label="Password" id="r-pw" type="password" placeholder="Min. 6 characters" disabled={!emailVerified} autoComplete="new-password" />
                                     </div>
                                     <div className="col-span-1">
-                                        <Field label="Confirm" id="r-cpw" type="password" placeholder="Re-enter password" disabled={!emailVerified} autoComplete="new-password" />
+                                        <Field label="Confirm Password" id="r-cpw" type="password" placeholder="Re-enter password" disabled={!emailVerified} autoComplete="new-password" />
                                     </div>
                                     <div className="col-span-2 lg:col-span-1 mt-1 lg:mt-0">
                                         <ShinyButton loading={isLoading} disabled={!emailVerified} label="Join the Crew" />

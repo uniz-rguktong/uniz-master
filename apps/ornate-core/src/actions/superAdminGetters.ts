@@ -30,6 +30,7 @@ export interface DashboardStat {
 export interface SuperAdminStats {
     totalEvents: DashboardStat;
     totalRegistrations: DashboardStat;
+    totalUsers: DashboardStat;
     pendingApprovals: DashboardStat;
     activeAnnouncements: DashboardStat;
 }
@@ -53,6 +54,7 @@ const _getCachedStats = unstable_cache(
             const [
                 totalEventCount,
                 totalRegistrationCount,
+                totalUserCount,
                 totalSportCount,
                 totalSportRegistrationCount,
                 pendingEventCount,
@@ -60,11 +62,13 @@ const _getCachedStats = unstable_cache(
                 activeAnnouncementsCount,
                 prevEvents,
                 prevRegistrations,
+                prevUserCount,
                 prevSports,
                 prevSportRegistrations
             ] = await prisma.$transaction([
                 prisma.event.count({ where: { NOT: { category: 'Sports' } } }),
                 prisma.registration.count({ where: { event: { NOT: { category: 'Sports' } } } }),
+                prisma.user.count(),
                 prisma.sport.count({ where: { isActive: true } }),
                 prisma.sportRegistration.count(),
                 prisma.event.count({ where: { status: EventStatus.DRAFT, NOT: { category: 'Sports' } } }),
@@ -72,6 +76,7 @@ const _getCachedStats = unstable_cache(
                 prisma.announcement.count({ where: { status: 'active' } }),
                 prisma.event.count({ where: { createdAt: { lt: lastWeek }, NOT: { category: 'Sports' } } }),
                 prisma.registration.count({ where: { createdAt: { lt: lastWeek }, event: { NOT: { category: 'Sports' } } } }),
+                prisma.user.count({ where: { createdAt: { lt: lastWeek } } }),
                 prisma.sport.count({ where: { isActive: true, createdAt: { lt: lastWeek } } }),
                 prisma.sportRegistration.count({ where: { createdAt: { lt: lastWeek } } })
             ]);
@@ -100,6 +105,14 @@ const _getCachedStats = unstable_cache(
                     trend: {
                         value: `${regDiff >= 0 ? '+' : ''}${regDiff}`,
                         isPositive: regDiff >= 0,
+                        comparisonText: "vs last week"
+                    }
+                },
+                totalUsers: {
+                    count: totalUserCount,
+                    trend: {
+                        value: `${(totalUserCount - prevUserCount) >= 0 ? '+' : ''}${totalUserCount - prevUserCount}`,
+                        isPositive: (totalUserCount - prevUserCount) >= 0,
                         comparisonText: "vs last week"
                     }
                 },
@@ -671,6 +684,7 @@ const _getCachedAdminUsers = unstable_cache(
 const EMPTY_STATS: SuperAdminStats = {
     totalEvents: { count: 0, trend: { value: '0', isPositive: true, comparisonText: 'waiting' } },
     totalRegistrations: { count: 0, trend: { value: '0', isPositive: true, comparisonText: 'waiting' } },
+    totalUsers: { count: 0, trend: { value: '0', isPositive: true, comparisonText: 'waiting' } },
     pendingApprovals: { count: 0, trend: { value: '0', isPositive: true, comparisonText: 'waiting' } },
     activeAnnouncements: { count: 0, trend: { value: '0', isPositive: true, comparisonText: 'waiting' } }
 };

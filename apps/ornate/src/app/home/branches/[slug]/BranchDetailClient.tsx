@@ -18,8 +18,9 @@ import { addAlpha } from '@/lib/utils';
 
 import MissionCard, { Mission } from '@/components/missions/MissionCard';
 import { Awards } from '@/components/ui/award';
+import { SportsPromoCardsCarousel } from '@/components/sports/HighlightsSection';
 import type { BranchDetailData } from '@/lib/data/branch-detail';
-import type { StandingRow } from '@/lib/data/sports';
+import type { StandingRow, PromoVideoData } from '@/lib/data/sports';
 
 const BRANCH_META_MAP: Record<string, { tagline: string; color: string; glow: string; category: string }> = {
     cse: { tagline: 'Planet of Code', color: '#ec4899', glow: 'rgba(236,72,153,0.5)', category: 'Branch' },
@@ -542,13 +543,15 @@ export default function BranchDetailClient({
     boysStandings = [],
     boysCategories = [],
     girlsStandings = [],
-    girlsCategories = []
+    girlsCategories = [],
+    allPromoVideos = []
 }: {
     data: BranchDetailData,
     boysStandings?: StandingRow[],
     boysCategories?: string[],
     girlsStandings?: StandingRow[],
-    girlsCategories?: string[]
+    girlsCategories?: string[],
+    allPromoVideos?: PromoVideoData[]
 }) {
     const slug = data.slug.toLowerCase();
     const meta = BRANCH_META_MAP[slug] || { tagline: 'Explore · Innovate · Excel', color: 'var(--color-neon)', glow: 'rgba(var(--color-neon-rgb, 57, 255, 20), 0.5)', category: 'Branch / Club' };
@@ -650,14 +653,36 @@ export default function BranchDetailClient({
                 </section>
 
                 {/* 2. VIDEOS (Holographic Carousel) */}
-                {data.videos && data.videos.filter(v => v.category?.toUpperCase() === 'PROMO').length > 0 && (
-                    <section className="py-12 sm:py-24 px-4 sm:px-10 bg-[#030308] relative overflow-hidden z-10">
-                        <div className="max-w-7xl mx-auto relative z-10">
-                            <SectionHeader color={color} label="Cinematic" title="FEATURED PROMOS" />
-                            <VideoCarousel videos={data.videos.filter(v => v.category?.toUpperCase() === 'PROMO')} color={color} onPlay={setPlayingVideo} />
+                <section className="py-12 sm:py-24 px-4 sm:px-10 bg-[#030308] relative overflow-hidden z-10">
+                    <div className="max-w-7xl mx-auto relative z-10">
+                        <SectionHeader color={color} label="Cinematic" title="FEATURED PROMOS" />
+                        
+                        {/* Branch/Club Specific Promos Priority */}
+                        {data.videos && data.videos.filter(v => v.category?.toUpperCase() === 'PROMO').length > 0 ? (
+                            <VideoCarousel 
+                                videos={data.videos.filter(v => v.category?.toUpperCase() === 'PROMO')} 
+                                color={color} 
+                                onPlay={setPlayingVideo} 
+                            />
+                        ) : (
+                            /* Fallback to Global Promos to ensure section is never empty */
+                            <VideoCarousel 
+                                videos={allPromoVideos} 
+                                color={color} 
+                                onPlay={setPlayingVideo} 
+                            />
+                        )}
+
+                        {/* Always show the Mini Cards Promo Carousel for a rich look like sports page */}
+                        <div className="mt-16 sm:mt-24">
+                            <SportsPromoCardsCarousel
+                                videos={allPromoVideos}
+                                color={color}
+                                onPlay={setPlayingVideo}
+                            />
                         </div>
-                    </section>
-                )}
+                    </div>
+                </section>
 
                 {/* 2.1 EVENT REELS */}
                 {data.videos && data.videos.filter(v => v.category?.toUpperCase() === 'VIDEO').length > 0 && (

@@ -1,17 +1,18 @@
 import { getBranchDetail } from '@/lib/data/branch-detail';
 import BranchDetailClient from './BranchDetailClient';
 import { notFound } from 'next/navigation';
-import { getSportsStandingsData, computeDynamicStandings } from '@/lib/data/sports';
+import { getSportsStandingsData, computeDynamicStandings, getPromoVideosData } from '@/lib/data/sports';
 
 export const revalidate = 60; // Cache and regenerate page every 60 seconds (ISR)
 
 export default async function BranchPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 
-    // Fetch Branch Detail and Sports Standings in parallel
-    const [data, sports] = await Promise.all([
+    // Fetch Branch Detail, Sports Standings, and Promo Videos in parallel
+    const [data, sports, allPromoVideos] = await Promise.all([
         getBranchDetail(slug),
-        getSportsStandingsData()
+        getSportsStandingsData(),
+        getPromoVideosData()
     ]);
 
     if (!data) {
@@ -28,6 +29,7 @@ export default async function BranchPage({ params }: { params: Promise<{ slug: s
             boysCategories={boysData.categories}
             girlsStandings={girlsData.standings}
             girlsCategories={girlsData.categories}
+            allPromoVideos={allPromoVideos}
         />
     );
 }

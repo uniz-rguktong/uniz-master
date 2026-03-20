@@ -20,7 +20,17 @@ import {
 
 
 
-export default function UsersClient({ initialUsers, initialStudents = [], totalRegistrations = 0 }: { initialUsers: any[]; initialStudents?: any[]; totalRegistrations?: number }) {
+export default function UsersClient({ 
+    initialUsers, 
+    initialStudents = [], 
+    totalRegistrations = 0,
+    totalStudentsCount = 0 
+}: { 
+    initialUsers: any[]; 
+    initialStudents?: any[]; 
+    totalRegistrations?: number;
+    totalStudentsCount?: number;
+}) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedUser, setSelectedUser] = useState<any>(null);
     const [editFormData, setEditFormData] = useState<any>({
@@ -152,7 +162,7 @@ export default function UsersClient({ initialUsers, initialStudents = [], totalR
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
                 <MetricCard
                     title="Total Registrations"
                     value={totalRegistrations.toLocaleString()}
@@ -160,6 +170,14 @@ export default function UsersClient({ initialUsers, initialStudents = [], totalR
                     iconBgColor="#EFF6FF"
                     iconColor="#3B82F6"
                     infoText="Total registrations across the website"
+                />
+                <MetricCard
+                    title="Registered Students"
+                    value={totalStudentsCount.toLocaleString()}
+                    icon={GraduationCap}
+                    iconBgColor="#FFF7ED"
+                    iconColor="#F97316"
+                    infoText="Total student accounts in the platform"
                 />
                 <MetricCard
                     title="Event Coordinators"

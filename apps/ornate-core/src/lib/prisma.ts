@@ -1,8 +1,8 @@
 import { PrismaClient } from './generated/client'
 import logger from '@/lib/logger'
 
-const DEFAULT_FIND_MANY_TAKE = 200
-const MAX_FIND_MANY_TAKE = 500
+const DEFAULT_FIND_MANY_TAKE = 10_000
+const MAX_FIND_MANY_TAKE = 50_000
 const DEFAULT_DEV_POOL_TIMEOUT_SECONDS = 60
 const DEFAULT_DEV_CONNECTION_LIMIT = 25
 const DEFAULT_TRANSACTION_MAX_WAIT_MS = 10_000
