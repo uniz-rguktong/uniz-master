@@ -562,7 +562,7 @@ const sendWebPush = async (
     });
 
     const results = await Promise.allSettled(
-      subscriptions.map(async (sub) => {
+      subscriptions.map(async (sub: any) => {
         try {
           await webpush.sendNotification(
             {
@@ -996,7 +996,7 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
     const results = await Promise.allSettled(
       targetUsers.flatMap((u) => {
         const userSubs = subscriptions.filter(
-          (s) => s.username.toUpperCase() === u.username.toUpperCase(),
+          (s: any) => s.username.toUpperCase() === u.username.toUpperCase(),
         );
         const personalizedBody =
           `Dear ${u.name || u.username},\n\n` +
@@ -1017,7 +1017,7 @@ app.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
           data: { type: "BROADCAST" },
         });
 
-        return userSubs.map(async (sub) => {
+        return userSubs.map(async (sub: any) => {
           try {
             await webpush.sendNotification(
               {
