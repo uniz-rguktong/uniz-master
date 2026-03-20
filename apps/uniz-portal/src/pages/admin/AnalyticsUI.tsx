@@ -61,6 +61,19 @@ export const KPICard = ({
   );
 };
 
+export const KPICardSkeleton = () => (
+  <div className="bg-transparent p-10 rounded-xl border border-slate-100 flex flex-col gap-4 animate-pulse">
+    <div className="flex items-start justify-between">
+      <div className="w-10 h-10 rounded-xl bg-slate-100" />
+      <div className="w-16 h-5 rounded-full bg-slate-50" />
+    </div>
+    <div className="space-y-3">
+      <div className="w-24 h-8 rounded-lg bg-slate-100" />
+      <div className="w-32 h-4 rounded-md bg-slate-50" />
+    </div>
+  </div>
+);
+
 /**
  * Premium Trend Chart - Area chart with smooth lines and gradients
  */
@@ -200,6 +213,44 @@ export const DonutChart = ({ title, subtitle, data = [] }: { title: string; subt
     </div>
   );
 };
+
+export const DonutChartSkeleton = () => (
+  <div className="bg-transparent p-10 rounded-xl border border-slate-100 flex flex-col h-full animate-pulse">
+    <div className="mb-6 space-y-2">
+      <div className="w-40 h-6 rounded-lg bg-slate-100" />
+      <div className="w-32 h-3 rounded-md bg-slate-50" />
+    </div>
+    <div className="flex-1 min-h-[250px] flex items-center justify-center relative">
+       <div className="w-44 h-44 rounded-full border-[20px] border-slate-50" />
+       <div className="absolute flex flex-col items-center gap-2">
+           <div className="w-10 h-3 rounded bg-slate-50" />
+           <div className="w-16 h-8 rounded bg-slate-100" />
+       </div>
+    </div>
+    <div className="mt-8 space-y-3">
+       <div className="h-8 w-full rounded-xl bg-slate-50" />
+       <div className="h-8 w-full rounded-xl bg-slate-50/50" />
+    </div>
+  </div>
+);
+
+export const AreaChartSkeleton = () => (
+  <div className="w-full bg-white rounded-xl border border-slate-100 p-10 animate-pulse">
+    <div className="flex justify-between items-start mb-10">
+      <div className="space-y-3">
+        <div className="w-32 h-4 rounded bg-slate-50" />
+        <div className="w-56 h-12 rounded bg-slate-100" />
+        <div className="w-64 h-4 rounded bg-slate-50" />
+      </div>
+      <div className="w-32 h-10 rounded-xl bg-slate-50" />
+    </div>
+    <div className="h-[250px] w-full bg-slate-50/50 rounded-xl border border-dashed border-slate-100 flex items-end px-4 py-4 gap-4">
+        {[...Array(12)].map((_, i) => (
+            <div key={i} className="flex-1 bg-slate-100 rounded-t-sm" style={{ height: `${Math.random() * 60 + 20}%`, opacity: 0.5 }} />
+        ))}
+    </div>
+  </div>
+);
 
 /**
  * Pulse Feed - Vertical activity timeline

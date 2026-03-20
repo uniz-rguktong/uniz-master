@@ -4,7 +4,6 @@ import {
   Upload,
   Loader2,
   CheckCircle2,
-  Filter,
   Download,
   ChevronDown,
 } from "lucide-react";
@@ -153,211 +152,199 @@ export default function StudentBulkSection() {
   };
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
+    <div className="p-6 space-y-8 pb-20 text-slate-900">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex flex-col gap-1.5">
-          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+          <h2 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
             Student Bulk Operations
           </h2>
-          <p className="text-slate-500 font-medium text-[15px]">
-            Bulk onboard students or extract batch records to Excel.
+          <p className="text-slate-500 font-medium text-[13px]">
+            Bulk onboard identities or extract global batch records.
           </p>
         </div>
 
-        <div className="flex bg-slate-100/80 p-1.5 rounded-xl border border-slate-200/60 backdrop-blur-sm shadow-none">
+        <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/60 backdrop-blur-sm">
           <button
             onClick={() => setActiveTab("upload")}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "upload" ? "bg-white text-navy-800 shadow-none border border-navy-100" : "text-slate-500 hover:text-navy-900"}`}
+            className={`flex items-center gap-2 px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-[9px] transition-all ${activeTab === "upload" ? "bg-white text-slate-900 shadow-sm border border-slate-200/50" : "text-slate-500 hover:text-slate-900"}`}
           >
-            <Upload size={14} /> Bulk Upload
+            <Upload size={13} /> Bulk Upload
           </button>
           <button
             onClick={() => setActiveTab("export")}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${activeTab === "export" ? "bg-white text-navy-800 shadow-none border border-navy-100" : "text-slate-500 hover:text-navy-900"}`}
+            className={`flex items-center gap-2 px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-[9px] transition-all ${activeTab === "export" ? "bg-white text-slate-900 shadow-sm border border-slate-200/50" : "text-slate-500 hover:text-slate-900"}`}
           >
-            <Download size={14} /> Batch Export
+            <Download size={13} /> Batch Export
           </button>
         </div>
       </div>
 
       {activeTab === "upload" ? (
-        <div className="max-w-4xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-4">
+        <div className="w-full space-y-6">
           <div className="flex justify-end pr-2">
             <button
               onClick={handleDownloadTemplate}
-              className="group flex items-center gap-2.5 px-4 py-2 bg-white text-slate-500 rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-navy-900 hover:border-navy-100 transition-all font-bold uppercase tracking-widest text-[9px] shadow-sm active:scale-95"
+              className="group flex items-center gap-2.5 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl border border-slate-200 hover:bg-white hover:text-slate-900 hover:border-slate-300 transition-all font-bold uppercase tracking-widest text-[9px] active:scale-95"
             >
-              <div className="p-1.5 bg-slate-50 rounded-lg group-hover:bg-navy-50 transition-colors">
-                <Download size={13} className="group-hover:scale-110 transition-transform" />
-              </div>
+              <Download size={13} className="text-slate-500" />
               Download Template
             </button>
           </div>
 
-          <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 shadow-none space-y-6 transition-all relative">
-            <FileUploader
-              onFileSelect={(f) => {
-                setFile(f);
-                setUploadSuccess(null);
-                setProgress(0);
-              }}
-              label="Choose Student Records"
-              description="Upload XLSX or CSV with mandatory fields (username, name, email)."
-              isUploading={loading || !!uploadId}
-              isSuccess={uploadSuccess === true}
-              isError={uploadSuccess === false}
-              progress={progress}
-            />
+          <div className="w-full space-y-6">
+            <div className="rounded-xl border border-slate-900 overflow-hidden bg-transparent p-6">
+              <FileUploader
+                onFileSelect={(f) => {
+                  setFile(f);
+                  setUploadSuccess(null);
+                  setProgress(0);
+                }}
+                label="Student Evidence"
+                description="Upload student data via XLSX/CSV protocols."
+                isUploading={loading || !!uploadId}
+                isSuccess={uploadSuccess === true}
+                isError={uploadSuccess === false}
+                progress={progress}
+              />
+            </div>
 
             <button
               onClick={handleUpload}
               disabled={!file || loading || !!uploadId}
-              className="w-full h-16 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[11px] shadow-none hover:bg-navy-800 hover:scale-[1.01] transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
+              className="w-full h-12 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] shadow-none hover:bg-slate-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
             >
               {loading ? (
-                <Loader2 className="animate-spin w-5 h-5" />
+                <Loader2 className="animate-spin w-4 h-4" />
               ) : uploadId ? (
                 <div className="flex items-center gap-3">
-                  <Loader2 className="animate-spin w-5 h-5" />
-                  <span>Processing Records... {progress}%</span>
+                  <Loader2 className="animate-spin w-4 h-4" />
+                  <span>Processing... {progress}%</span>
                 </div>
               ) : (
-                <CheckCircle2 size={20} />
+                <CheckCircle2 size={16} />
               )}
-              {!loading && !uploadId && "Initiate Bulk Provisioning"}
+              {!loading && !uploadId && "Start Uploading"}
             </button>
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-100 p-12 text-slate-900 animate-in slide-in-from-right-8 duration-700 shadow-none transition-all">
-          <div className="max-w-4xl mx-auto space-y-12">
-            <div className="flex items-center gap-6">
-              <div className="p-5 bg-navy-900 text-white rounded-xl shadow-none">
-                <Filter size={26} />
-              </div>
-              <div className="space-y-1.5">
-                <h3 className="text-3xl font-semibold tracking-tight leading-none">
-                  Filtering Engine
-                </h3>
-                <p className="text-slate-500 font-medium text-[17px]">
-                  Export selective student cohorts with specific data fields.
-                </p>
-              </div>
-            </div>
+        <div className="w-full space-y-10">
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
-                  Branch Focus
-                </label>
-                <div className="relative group">
-                  <select
-                    value={exportParams.branch}
-                    onChange={(e) =>
-                      setExportParams({
-                        ...exportParams,
-                        branch: e.target.value,
-                      })
-                    }
-                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
-                  >
-                    <option value="ALL">All Departments</option>
-                    {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
-                      (b) => (
-                        <option key={b}>{b}</option>
-                      ),
-                    )}
-                  </select>
-                  <ChevronDown
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                    size={16}
-                  />
-                </div>
-              </div>
-              <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
-                  Academic Year
-                </label>
-                <div className="relative group">
-                  <select
-                    value={exportParams.year}
-                    onChange={(e) =>
-                      setExportParams({ ...exportParams, year: e.target.value })
-                    }
-                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
-                  >
-                    <option value="ALL">All Years</option>
-                    {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
-                      <option key={y}>{y}</option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                    size={16}
-                  />
-                </div>
-              </div>
 
-              <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
-                  Batch Focus
-                </label>
-                <div className="relative group">
-                  <select
-                    value={exportParams.batch}
-                    onChange={(e) =>
-                      setExportParams({
-                        ...exportParams,
-                        batch: e.target.value,
-                      })
-                    }
-                    className="w-full h-14 pl-7 pr-12 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none font-bold text-slate-900 text-[13px] cursor-pointer transition-all shadow-none appearance-none uppercase tracking-widest"
-                  >
-                    <option value="ALL">All Batches</option>
-                    {availableBatches.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                    size={16}
-                  />
-                </div>
-              </div>
-              <div className="md:col-span-2 space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-2">
-                  Data Columns (Comma Separated)
-                </label>
-                <input
-                  type="text"
-                  value={exportParams.fields}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="space-y-2">
+              <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
+                Branch Focus
+              </label>
+              <div className="relative group">
+                <select
+                  value={exportParams.branch}
                   onChange={(e) =>
-                    setExportParams({ ...exportParams, fields: e.target.value })
+                    setExportParams({
+                      ...exportParams,
+                      branch: e.target.value,
+                    })
                   }
-                  className="w-full h-14 px-8 bg-slate-50/50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none font-bold text-slate-900 text-[13px] transition-all shadow-none tracking-wide"
+                  className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none font-black text-slate-900 text-[10px] cursor-pointer transition-all appearance-none uppercase tracking-widest shadow-none"
+                >
+                  <option value="ALL">All Departments</option>
+                  {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
+                    (b) => (
+                      <option key={b}>{b}</option>
+                    ),
+                  )}
+                </select>
+                <ChevronDown
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                  size={14}
                 />
               </div>
             </div>
 
-            <div className="pt-8 space-y-8">
-              <button
-                onClick={handleExport}
-                disabled={loading}
-                className="w-full h-16 flex items-center justify-center gap-3.5 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-navy-800 transition-all shadow-none active:scale-[0.98] disabled:opacity-50"
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin w-5 h-5" />
-                ) : (
-                  <Download size={20} />
-                )}
-                Generate Excel Report
-              </button>
-              <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] opacity-60">
-                Secure export protocol active • All access events timestamped
-              </p>
+            <div className="space-y-2">
+              <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
+                Academic Year
+              </label>
+              <div className="relative group">
+                <select
+                  value={exportParams.year}
+                  onChange={(e) =>
+                    setExportParams({ ...exportParams, year: e.target.value })
+                  }
+                  className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none font-black text-slate-900 text-[10px] cursor-pointer transition-all appearance-none uppercase tracking-widest shadow-none"
+                >
+                  <option value="ALL">All Levels</option>
+                  {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
+                    <option key={y}>{y}</option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                  size={14}
+                />
+              </div>
             </div>
+
+            <div className="space-y-2">
+              <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
+                Batch Target
+              </label>
+              <div className="relative group">
+                <select
+                  value={exportParams.batch}
+                  onChange={(e) =>
+                    setExportParams({
+                      ...exportParams,
+                      batch: e.target.value,
+                    })
+                  }
+                  className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none font-black text-slate-900 text-[10px] cursor-pointer transition-all appearance-none uppercase tracking-widest shadow-none"
+                >
+                  <option value="ALL">All Universal</option>
+                  {availableBatches.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                  size={14}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
+                Attribute Schema
+              </label>
+              <input
+                type="text"
+                value={exportParams.fields}
+                onChange={(e) =>
+                  setExportParams({ ...exportParams, fields: e.target.value })
+                }
+                className="w-full h-11 px-6 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none font-bold text-slate-900 text-[12px] transition-all tracking-tight shadow-none"
+              />
+            </div>
+          </div>
+
+          <div className="pt-2 space-y-6">
+            <button
+              onClick={handleExport}
+              disabled={loading}
+              className="w-full h-12 flex items-center justify-center gap-3 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-slate-800 transition-all active:scale-[0.98] disabled:opacity-50"
+            >
+              {loading ? (
+                <Loader2 className="animate-spin w-4 h-4" />
+              ) : (
+                <Download size={16} />
+              )}
+              Download the data
+            </button>
+            <p className="text-center text-slate-400 text-[9px] font-bold uppercase tracking-[0.4em] opacity-40">
+              Encrypted Data Streams active • Protocol 04-X
+            </p>
           </div>
         </div>
       )}
