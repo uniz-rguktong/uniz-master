@@ -38,7 +38,6 @@ import { Pagination } from "../../components/Pagination";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { InfoCard } from "./components/InfoCard";
 import AcademicRecord from "./components/AcademicRecord";
-import MySubjects from "./components/MySubjects";
 import SeatingArrangement from "./components/SeatingArrangement";
 import { Student } from "../../types";
 import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
@@ -692,9 +691,6 @@ export default function StudentProfilePage() {
             {[
               "personal",
               "academic",
-/*
-              "registration",
-*/
               "seating",
               "family",
               enableOutingsAndOutpasses ? "permissions" : "",
@@ -778,16 +774,6 @@ export default function StudentProfilePage() {
                 </div>
               </div>
             )}
-
-/*
-            {activeTab === "registration" && (
-              <MySubjects
-                studentId={user?.username}
-                branch={user?.branch}
-                year={user?.year}
-              />
-            )}
-*/
 
             {activeTab === "seating" && (
               <SeatingArrangement studentId={user?.username} />

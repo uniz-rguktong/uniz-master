@@ -157,7 +157,7 @@ export default function Attendance() {
         {/* Selection Criteria */}
         <div className="mb-8 md:bg-white p-6 md:rounded-xl md:border md:border-slate-100 md:shadow-sm bg-transparent transition-all duration-300 px-0 md:px-6">
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
             <div className="relative group">
               <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
                 Academic Year
