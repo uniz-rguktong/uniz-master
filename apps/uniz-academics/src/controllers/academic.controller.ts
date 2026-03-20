@@ -27,7 +27,6 @@ import { randomUUID } from "crypto";
 import { redis, notificationQueue } from "../utils/redis.util";
 import { processNextBatch } from "../services/upload.service";
 import { generateResultPdf, generateAttendancePdf } from "../utils/pdf.util";
-import { verifyTurnstileToken } from "../utils/turnstile.util";
 
 // GPA calculation and templates now use database-provided subject credits.
 // GRADE_MAP and mapGradeToPoint are now imported from helpers.util
@@ -353,19 +352,6 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
   const targetStudentId = (
     (req.query.studentId as string) || user.username
   ).toUpperCase();
-
-  // Cloudflare Turnstile Verification for students
-  if (user.role === "student") {
-    const captchaToken = req.query.captchaToken as string;
-    const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
-    if (!isHuman) {
-      return res.status(400).json({
-        success: false,
-        code: "AUTH_CAPTCHA_FAILED",
-        message: "Security verification failed. Please refresh the page and try again.",
-      });
-    }
-  }
 
   // Security check
   if (targetStudentId !== user.username && user.role === "student") {
@@ -761,19 +747,6 @@ export const getAttendance = async (
   const targetStudentId = (
     (req.query.studentId as string) || user.username
   ).toUpperCase();
-
-  // Cloudflare Turnstile Verification for students
-  if (user.role === "student") {
-    const captchaToken = req.query.captchaToken as string;
-    const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
-    if (!isHuman) {
-      return res.status(400).json({
-        success: false,
-        code: "AUTH_CAPTCHA_FAILED",
-        message: "Security verification failed. Please refresh the page and try again.",
-      });
-    }
-  }
 
   // Security check
   if (targetStudentId !== user.username && user.role === "student") {
@@ -2209,19 +2182,6 @@ export const downloadGrades = async (
     (req.query.studentId as string) || user.username
   ).toUpperCase();
 
-  // Cloudflare Turnstile Verification for students
-  if (user.role === "student") {
-    const captchaToken = req.query.captchaToken as string;
-    const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
-    if (!isHuman) {
-      return res.status(400).json({
-        success: false,
-        code: "AUTH_CAPTCHA_FAILED",
-        message: "Security verification failed. Please refresh the page and try again.",
-      });
-    }
-  }
-
   const semesterId = req.params.semesterId;
 
   // Security check
@@ -2329,19 +2289,6 @@ export const downloadAttendance = async (
   const targetStudentId = (
     (req.query.studentId as string) || user.username
   ).toUpperCase();
-
-  // Cloudflare Turnstile Verification for students
-  if (user.role === "student") {
-    const captchaToken = req.query.captchaToken as string;
-    const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
-    if (!isHuman) {
-      return res.status(400).json({
-        success: false,
-        code: "AUTH_CAPTCHA_FAILED",
-        message: "Security verification failed. Please refresh the page and try again.",
-      });
-    }
-  }
 
   const semesterId = req.params.semesterId;
 
