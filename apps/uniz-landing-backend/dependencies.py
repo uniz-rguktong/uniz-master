@@ -1,7 +1,8 @@
 from fastapi import Depends, HTTPException
 from starlette import status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jose import jwt, JWTError
+import jwt
+from jwt import PyJWTError as JWTError
 from typing import Annotated
 from config import settings
 

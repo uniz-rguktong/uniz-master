@@ -2,7 +2,8 @@ import os
 import urllib.parse
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jose import jwt, JWTError
+import jwt
+from jwt import PyJWTError as JWTError
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import text
 from typing import List, Dict, Any
