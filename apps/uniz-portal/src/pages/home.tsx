@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState, memo, lazy, Suspense } from "react";
+import { useEffect, useState, memo, lazy, Suspense, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useIsAuth } from "../hooks/is_authenticated";
 import {
   Activity,
@@ -10,6 +11,7 @@ import {
 import { PUBLIC_BANNERS } from "../api/endpoints";
 import { usePWAInstall } from "../hooks/usePWAInstall";
 import { HeroBlock } from "../components/ui/hero-block-shadcnui";
+
 
 // Lazy load heavy UI sections for better initial paint performance
 const FeaturedCarousel = lazy(() => import("../components/FeaturedCarousel"));
@@ -25,11 +27,34 @@ const SectionLoader = () => (
   </div>
 );
 
+const ScrollRevealer = ({ children }: { children: React.ReactNode }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.05, rootMargin: "200px" } 
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return <div ref={ref} className="min-h-[100px] w-full">{isVisible ? children : <SectionLoader />}</div>;
+};
+
 const Home = () => {
   useIsAuth();
   const navigate = useNavigate();
   const [banners, setBanners] = useState<any[]>([]);
   const { install, isInstalled } = usePWAInstall();
+
 
   const handleInstallClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -142,44 +167,54 @@ const Home = () => {
 
       <Suspense fallback={<SectionLoader />}>
         {/* FEATURED NOTIFICATIONS CAROUSEL */}
-        <FeaturedCarousel
-          items={banners.map((b, i) => ({
-            id: b.id || i,
-            imageUrl: b.imageUrl,
-            title: b.title,
-            tag: i % 2 === 0 ? "Featured" : "New Update",
-            hasHeart: true,
-          }))}
-        />
+        <ScrollRevealer>
+          <FeaturedCarousel
+            items={banners.map((b, i) => ({
+              id: b.id || i,
+              imageUrl: b.imageUrl,
+              title: b.title,
+              tag: i % 2 === 0 ? "Featured" : "New Update",
+              hasHeart: true,
+            }))}
+          />
+        </ScrollRevealer>
 
         {/* GETTING STARTED TIMELINE */}
-        <div className="px-[9px]">
-          <Timeline data={timelineData} />
-        </div>
+        <ScrollRevealer>
+          <div className="px-[9px]">
+            <Timeline data={timelineData} />
+          </div>
+        </ScrollRevealer>
 
         {/* DATABASE REST API COMPONENT INTEGRATION */}
-        <div className="w-full px-6 flex flex-col items-center pb-32 pt-32 md:pt-48">
-          <div className="mb-16 text-left w-full max-w-7xl px-4 md:px-8">
-            <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6">
-              Everything your campus needs,
-              <br className="hidden md:block" />
-              <span className="text-slate-400">managed seamlessly.</span>
-            </h2>
-            <p className="text-lg text-slate-500 font-medium leading-relaxed max-w-2xl">
-              Eliminate operational friction with smart syncing connecting
-              students, faculty and admin seamlessly.
-            </p>
+        <ScrollRevealer>
+          <div className="w-full px-6 flex flex-col items-center pb-32 pt-32 md:pt-48">
+            <div className="mb-16 text-left w-full max-w-7xl px-4 md:px-8">
+              <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6">
+                Everything your campus needs,
+                <br className="hidden md:block" />
+                <span className="text-slate-400">managed seamlessly.</span>
+              </h2>
+              <p className="text-lg text-slate-500 font-medium leading-relaxed max-w-2xl">
+                Eliminate operational friction with smart syncing connecting
+                students, faculty and admin seamlessly.
+              </p>
+            </div>
+            <DatabaseWithRestApi />
           </div>
-          <DatabaseWithRestApi />
-        </div>
+        </ScrollRevealer>
 
         {/* SYSTEM HEALTH AND ACTIVITY DASHBOARD */}
-        <Features />
+        <ScrollRevealer>
+          <Features />
+        </ScrollRevealer>
 
         {/* GLOBAL CONNECTIVITY FEATURE - FULL WIDTH */}
-        <div className="w-full bg-transparent mt-0 flex flex-col items-center">
-          <GlobeFeature />
-        </div>
+        <ScrollRevealer>
+          <div className="w-full bg-transparent mt-0 flex flex-col items-center pb-20">
+            <GlobeFeature />
+          </div>
+        </ScrollRevealer>
       </Suspense>
     </div>
   );

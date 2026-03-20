@@ -9,15 +9,19 @@ import UploadHealthAnalytics from "./UploadHealthAnalytics";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../../utils/cn";
 
+import { useRecoilState } from "recoil";
+import { systemUserAnalyticsAtom } from "../../../store/atoms";
+import { KPICardSkeleton, DonutChartSkeleton } from "../AnalyticsUI";
+
 export default function SystemUserAnalytics() {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [cachedData, setCachedData] = useRecoilState(systemUserAnalyticsAtom);
+  const [loading, setLoading] = useState(!cachedData.fetched);
   const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
+        if (!cachedData.fetched) setLoading(true);
         const token = localStorage.getItem("admin_token") || localStorage.getItem("faculty_token") || localStorage.getItem("student_token");
         const res = await fetch(ANALYTICS_SYSTEM_USERS, {
           headers: {
@@ -27,11 +31,14 @@ export default function SystemUserAnalytics() {
           }
         });
         const json = await res.json();
+        
+        let apiData = [];
         if (json?.success && Array.isArray(json?.data)) {
-          setData(json.data);
+          apiData = json.data;
         } else if (Array.isArray(json)) {
-          setData(json);
+          apiData = json;
         }
+        setCachedData({ fetched: true, data: apiData });
       } catch (err) {
         console.error("System users analytics failed:", err);
       } finally {
@@ -40,6 +47,8 @@ export default function SystemUserAnalytics() {
     };
     fetchData();
   }, []);
+
+  const data = cachedData.data;
 
   const roleData = useMemo(() => {
     const colors: Record<string, string> = {
@@ -67,7 +76,26 @@ export default function SystemUserAnalytics() {
   const totalUsersCount = useMemo(() => roleData.reduce((sum, d) => sum + d.value, 0), [roleData]);
   const activeSegment = useMemo(() => roleData.find(s => s.label === hoveredSegment), [roleData, hoveredSegment]);
 
-  if (loading) return null;
+  if (loading && !cachedData.fetched) {
+    return (
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-4 flex">
+            <DonutChartSkeleton />
+          </div>
+          <div className="lg:col-span-8 flex">
+             <div className="w-full bg-slate-50/50 rounded-xl animate-pulse min-h-[400px]" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const totalActive = data.reduce((acc, curr) => acc + (Number(curr.Active) || 0), 0);
   const totalDisabled = data.reduce((acc, curr) => acc + (Number(curr.Disabled) || 0), 0);

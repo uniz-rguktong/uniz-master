@@ -49,35 +49,27 @@ export default function StudentDashboard({ data, onSuspendToggle, onResetPasswor
     }));
 
     return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="space-y-6 pb-20 font-condensed"
-        >
+        <div className="space-y-6 pb-20 font-condensed">
             {/* Centered Profile Hero */}
-            <div className={`bg-white rounded-[2rem] border-2 ${student.is_suspended ? 'border-red-500/20' : 'border-emerald-500/20'} p-10 flex flex-col items-center text-center relative overflow-hidden shadow-none`}>
-                <div className="relative mb-8">
-                    <div className={`w-32 h-32 rounded-full flex items-center justify-center bg-slate-50 border-2 ${student.is_suspended ? 'border-red-500/50 bg-red-50/50' : 'border-emerald-500/50 bg-emerald-50/50'} shadow-xl overflow-hidden transition-all duration-500 ring-4 ring-white`}>
+            <div className={`bg-white rounded-[2rem] border border-slate-100 p-12 flex flex-col items-center text-center relative overflow-hidden shadow-none`}>
+                <div className="relative mb-10">
+                    <div className={cn(
+                        "w-20 h-20 rounded-full flex items-center justify-center border-4 border-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-hidden transition-all duration-500 ring-4",
+                        student.profile_url ? "bg-slate-50" : "bg-emerald-900",
+                        student.is_suspended ? "ring-rose-500" : "ring-emerald-400"
+                    )}>
                         {student.profile_url ? (
                             <img
                                 src={student.profile_url}
                                 alt={student.name}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover shadow-inner"
                             />
                         ) : (
-                            <span className={`text-4xl font-black ${student.is_suspended ? 'text-red-300' : 'text-emerald-300'} uppercase`}>
+                            <span className="text-5xl font-black text-white uppercase tracking-tighter">
                                 {(student.name || 'S')[0]}
                             </span>
                         )}
                     </div>
-
-                    {!student.is_suspended ? (
-                        <div className="absolute top-1 right-1 w-6 h-6 bg-emerald-500 rounded-full border-4 border-white shadow-md animate-pulse" title="Active Account" />
-                    ) : (
-                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 bg-red-600 text-white text-[8px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg border-2 border-white whitespace-nowrap">
-                            Suspended
-                        </div>
-                    )}
                 </div>
 
                 <div className="space-y-4 mb-10">
@@ -122,19 +114,19 @@ export default function StudentDashboard({ data, onSuspendToggle, onResetPasswor
                 </div>
 
                 {/* Structured Info Grid (No Cards) */}
-                <div className="w-full pt-10 border-t border-slate-50">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-10 gap-x-4">
-                        <HeroInfo label="OFFICIAL EMAIL" value={student.email} icon={<Mail size={16} />} />
-                        <HeroInfo label="ACADEMIC BRANCH" value={student.branch} icon={<Target size={16} />} />
-                        <HeroInfo label="BATCH" value={student.batch || "O21"} icon={<Zap size={16} />} />
-                        <HeroInfo label="ENROLLMENT" value={`${student.year} - ${student.section || 'N/A'}`} icon={<Calendar size={16} />} />
-                        <HeroInfo label="GENDER" value={student.gender || "Male"} icon={<User size={16} />} />
+                <div className="w-full pt-12 border-t border-slate-50">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-12 gap-x-6">
+                        <HeroInfo label="OFFICIAL EMAIL" value={student.email} icon={<Mail size={14} />} />
+                        <HeroInfo label="ACADEMIC BRANCH" value={student.branch} icon={<Target size={14} />} />
+                        <HeroInfo label="BATCH" value={student.batch || "O21"} icon={<Zap size={14} />} />
+                        <HeroInfo label="ENROLLMENT" value={`${student.year} - ${student.section || 'N/A'}`} icon={<Calendar size={14} />} />
+                        <HeroInfo label="GENDER" value={student.gender === 'M' ? 'Male' : student.gender === 'F' ? 'Female' : (student.gender || "N/A")} icon={<User size={14} />} />
 
-                        <HeroInfo label="EMERGENCY" value={student.phone_number || "N/A"} icon={<Phone size={16} />} />
-                        <HeroInfo label="BLOOD GROUP" value={student.blood_group || "N/A"} icon={<Heart size={16} />} />
-                        <HeroInfo label="BACKLOGS" value={student.total_backlogs || 0} icon={<Scale size={16} />} />
-                        <HeroInfo label="ACTIVITY" value={student.is_in_campus ? "IN CAMPUS" : "OUTSIDE"} icon={<History size={16} />} />
-                        <HeroInfo label="STANDING" value={student.is_suspended ? "RESTRICTED" : "GOOD"} icon={<Shield size={16} />} />
+                        <HeroInfo label="EMERGENCY" value={student.phone_number || "N/A"} icon={<Phone size={14} />} />
+                        <HeroInfo label="BLOOD GROUP" value={student.blood_group || "N/A"} icon={<Heart size={14} />} />
+                        <HeroInfo label="BACKLOGS" value={student.total_backlogs || 0} icon={<Scale size={14} />} />
+                        <HeroInfo label="ACTIVITY" value={student.is_in_campus ? "IN CAMPUS" : "OUTSIDE"} icon={<History size={14} />} />
+                        <HeroInfo label="STANDING" value={student.is_suspended ? "RESTRICTED" : "GOOD"} icon={<Shield size={14} />} />
                     </div>
                 </div>
             </div>
@@ -172,18 +164,18 @@ export default function StudentDashboard({ data, onSuspendToggle, onResetPasswor
                     <p className="text-base font-black text-slate-600 italic leading-relaxed max-w-2xl mx-auto">"{student.motivation}"</p>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 }
 
 function HeroInfo({ label, value, icon }: { label: string, value: string, icon: any }) {
     return (
-        <div className="flex flex-col items-center gap-1.5">
-            <div className="flex items-center justify-center gap-1.5 text-slate-400 mb-1">
+        <div className="flex flex-col items-center gap-2">
+            <div className="flex items-center justify-center gap-1.5 text-slate-400 mb-0.5 opacity-80">
                 {icon}
-                <span className="text-[9px] font-black uppercase tracking-widest">{label}</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{label}</span>
             </div>
-            <p className="text-sm font-black text-slate-800 tracking-tight leading-none text-center">{value}</p>
+            <p className="text-[14px] font-bold text-slate-900 tracking-tight leading-none text-center lowercase">{value}</p>
         </div>
     );
 }

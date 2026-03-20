@@ -4,11 +4,8 @@ import {
   Search,
   Loader2,
   ChevronRight,
-  MoreHorizontal,
-  Activity,
-  CheckCircle2,
+  ChevronDown,
   Shield,
-  ShieldAlert,
   KeyRound,
   Lock,
 } from "lucide-react";
@@ -259,7 +256,7 @@ export default function StudentDetails() {
   const handleOpenPerformance = async (std: any) => {
     setSelectedStudentName(std.name);
     setSelectedStudentId(std.username);
-    
+
     setLoading(true);
     const token = localStorage.getItem("admin_token");
     try {
@@ -286,206 +283,285 @@ export default function StudentDetails() {
 
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-slate-900 pb-20">
-      {/* Top Header / Search Bar Section */}
-      <div className="bg-white border-b border-slate-200/60 sticky top-0 z-30 px-6 py-4">
-        <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center gap-4">
-          <div className="flex items-center gap-3 min-w-[80px]">
-            <span className="text-sm font-bold text-slate-900">Overview</span>
-          </div>
+    <div className="p-6 space-y-6 pb-20 text-slate-900">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+            Student Intelligence
+          </h2>
+          <p className="text-slate-500 font-medium text-[13px]">
+            Manage individual identities or explore batch-wide cohorts.
+          </p>
+        </div>
 
-          <div className="flex-1 flex items-center gap-2 w-full">
-            <div className="relative flex-1 group">
+        <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/60 backdrop-blur-sm shadow-none">
+          <button
+            onClick={() => {
+              setSearchMode("id");
+              setSearchResults([]);
+              setSelectedStudentFullData(null);
+            }}
+            className={cn(
+              "flex items-center gap-2 px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-[9px] transition-all",
+              searchMode === "id"
+                ? "bg-white text-slate-900 shadow-none border border-slate-200/50"
+                : "text-slate-500 hover:text-slate-900"
+            )}
+          >
+            Individual Search
+          </button>
+          <button
+            onClick={() => {
+              setSearchMode("filter");
+              setSearchResults([]);
+              setSelectedStudentFullData(null);
+            }}
+            className={cn(
+              "flex items-center gap-2 px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-[9px] transition-all",
+              searchMode === "filter"
+                ? "bg-white text-slate-900 shadow-none border border-slate-200/50"
+                : "text-slate-500 hover:text-slate-900"
+            )}
+          >
+            Batch Explorer
+          </button>
+        </div>
+      </div>
+
+      <div className="w-full animate-in fade-in slide-in-from-top-4 duration-1000">
+        <div className="flex flex-col md:flex-row gap-4">
+          {searchMode === "id" ? (
+            <div className="flex-1 relative group">
               <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors"
                 size={16}
               />
               <input
                 type="text"
-                placeholder="Search by ID or Name..."
+                placeholder="Enter Student ID (e.g. O210001)..."
                 value={studentId}
                 onChange={(e) => setStudentId(e.target.value.toUpperCase())}
-                className="w-full h-9 pl-10 pr-4 bg-[#f3f4f6]/50 border border-slate-200 rounded-md text-[13px] font-medium outline-none focus:bg-white focus:ring-2 focus:ring-slate-900/5 focus:border-slate-400 transition-all placeholder:text-slate-400"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    searchMode === "id" ? fetchStudentById() : handleSearchByFilter(1);
-                  }
-                }}
-              />
-            </div>
-
-            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-md p-0.5">
-              <button
-                onClick={() => {
-                  setSearchMode("filter");
-                  setSearchResults([]);
-                  setSelectedStudentFullData(null);
-                }}
-                className={cn(
-                  "px-3 py-1 rounded-[4px] text-[10px] font-bold uppercase tracking-wider transition-all",
-                  searchMode === "filter" ? "bg-slate-100 text-slate-900 shadow-sm" : "text-slate-400 hover:text-slate-600"
-                )}
-              >
-                Filter
-              </button>
-              <button
-                onClick={() => {
-                  setSearchMode("id");
-                  setSearchResults([]);
-                  setSelectedStudentFullData(null);
-                }}
-                className={cn(
-                  "px-3 py-1 rounded-[4px] text-[10px] font-bold uppercase tracking-wider transition-all",
-                  searchMode === "id" ? "bg-slate-100 text-slate-900 shadow-sm" : "text-slate-400 hover:text-slate-600"
-                )}
-              >
-                Individual
-              </button>
-            </div>
-
-            <button
-              onClick={() => {
-                searchMode === "id" ? fetchStudentById() : handleSearchByFilter(1);
-              }}
-              className="ml-4 h-9 px-4 bg-slate-900 text-white rounded-md text-[13px] font-bold flex items-center gap-2 hover:bg-slate-800 transition-all active:scale-[0.98]"
-            >
-              {loading ? <Loader2 size={14} className="animate-spin" /> : <Search size={14} />}
-              <span>Search</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-[1400px] mx-auto px-6 mt-8">
-        <div className="space-y-6">
-          {loading ? (
-            <div className="space-y-4">
-              <h3 className="text-[12px] font-bold uppercase tracking-wider text-slate-900">Syncing Records...</h3>
-              <StudentTableSkeleton />
-            </div>
-          ) : selectedStudentFullData ? (
-            <div className="animate-in fade-in slide-in-from-bottom-5 duration-700">
-              <StudentDashboard
-                data={selectedStudentFullData}
-                onSuspendToggle={(username, status) => {
-                  handleToggleSuspension(username, status);
-                }}
-                onResetPassword={(username) => {
-                  handleGlobalResetPassword(username);
-                }}
-                isActionLoading={
-                  isActionLoading === selectedStudentFullData.username + "_suspend" ||
-                  isActionLoading === selectedStudentFullData.username + "_reset"
-                }
+                className="w-full h-11 pl-11 pr-4 bg-slate-100/50 border border-slate-200/60 rounded-xl font-bold text-slate-900 text-[13px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all placeholder:text-slate-400 tracking-wider shadow-none"
+                onKeyDown={(e) => e.key === "Enter" && fetchStudentById()}
               />
             </div>
           ) : (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[12px] font-bold uppercase tracking-wider text-slate-900">Student Explorer</h3>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <select
-                      value={branch}
-                      onChange={(e) => setBranch(e.target.value)}
-                      className="bg-transparent border-none text-[12px] font-bold text-slate-500 outline-none cursor-pointer hover:text-slate-900 transition-colors"
-                    >
-                      <option value="">All Branches</option>
-                      {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(b => (
-                        <option key={b}>{b}</option>
-                      ))}
-                    </select>
-                    <ChevronRight size={12} className="text-slate-300 rotate-90" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <select
-                      value={year}
-                      onChange={(e) => setYear(e.target.value)}
-                      className="bg-transparent border-none text-[12px] font-bold text-slate-500 outline-none cursor-pointer hover:text-slate-900 transition-colors"
-                    >
-                      <option value="">All Batches</option>
-                      {["E1", "E2", "E3", "E4", "P1", "P2"].map(y => (
-                        <option key={y}>{y}</option>
-                      ))}
-                    </select>
-                    <ChevronRight size={12} className="text-slate-300 rotate-90" />
-                  </div>
-                </div>
+            <div className="flex-1 flex gap-2">
+              <div className="flex-1 relative">
+                <select
+                  value={branch}
+                  onChange={(e) => setBranch(e.target.value)}
+                  className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
+                >
+                  <option value="">All Branches</option>
+                  {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(b => (
+                    <option key={b}>{b}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
               </div>
+              <div className="flex-1 relative">
+                <select
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                  className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
+                >
+                  <option value="">All Years</option>
+                  {["E1", "E2", "E3", "E4", "P1", "P2"].map(y => (
+                    <option key={y}>{y}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+              </div>
+            </div>
+          )}
 
-              {searchResults.length > 0 ? (
-                <div className="bg-white border border-slate-200 rounded-lg overflow-hidden divide-y divide-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-                  {searchResults.map((std) => (
-                    <div
-                      key={std.username}
-                      onClick={() => handleOpenPerformance(std)}
-                      className="p-6 hover:bg-[#fafafa] transition-all cursor-pointer group flex items-start justify-between"
-                    >
-                      <div className="flex items-start gap-5">
-                        <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-white text-[11px] font-black border-2 border-white shadow-sm overflow-hidden shrink-0">
-                          {std.profile_url ? <img src={std.profile_url} alt="" className="w-full h-full object-cover" /> : (std.name?.[0] || 'U')}
-                        </div>
+          <button
+            onClick={() => {
+              searchMode === "id" ? fetchStudentById() : handleSearchByFilter(1);
+            }}
+            disabled={loading}
+            className="px-8 h-11 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[9px] shadow-none hover:bg-slate-800 transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 active:scale-[0.98] min-w-[180px]"
+          >
+            {loading ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Search size={16} />
+            )}
+            {loading ? "Searching..." : "Search Student"}
+          </button>
+        </div>
+      </div>
 
-                        <div className="space-y-4">
-                          <div>
-                            <div className="flex items-center gap-3 mb-0.5">
-                              <h4 className="text-[15px] font-bold text-slate-900 leading-none group-hover:underline underline-offset-4 decoration-slate-300">{std.username}</h4>
-                              <span className="text-[13px] font-medium text-slate-400">{std.email}</span>
+      {/* Main Content Area */}
+      <div className="w-full mt-8">
+        {loading ? (
+          <div className="space-y-6">
+            <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] animate-pulse">
+              Pulling encrypted cloud records...
+            </p>
+            <StudentTableSkeleton />
+          </div>
+        ) : selectedStudentFullData ? (
+          <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <StudentDashboard
+              data={selectedStudentFullData}
+              onSuspendToggle={(username, status) => {
+                handleToggleSuspension(username, status);
+              }}
+              onResetPassword={(username) => {
+                handleGlobalResetPassword(username);
+              }}
+              isActionLoading={
+                isActionLoading === selectedStudentFullData.username + "_suspend" ||
+                isActionLoading === selectedStudentFullData.username + "_reset"
+              }
+            />
+          </div>
+        ) : searchResults.length > 0 ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between px-2">
+              <h3 className="text-[9px] font-bold uppercase tracking-[0.3em] text-slate-400">
+                Search Results • {pagination.total} Records Found
+              </h3>
+            </div>
+            <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-none">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-50 bg-slate-50/20">
+                      <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                        Student Identity
+                      </th>
+                      <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                        Academic Credentials
+                      </th>
+                      <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                        Account Status
+                      </th>
+                      <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                        Activity Pulse
+                      </th>
+                      <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20 text-right">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50/60">
+                    {searchResults.map((std) => (
+                      <tr
+                        key={std.username}
+                        onClick={() => handleOpenPerformance(std)}
+                        className="cursor-pointer"
+                      >
+                        <td className="px-10 py-5">
+                          <div className="flex items-center gap-4">
+                            <div className={cn(
+                              "w-11 h-11 rounded-full flex items-center justify-center text-white text-[12px] font-black border border-white shadow-sm overflow-hidden shrink-0 ring-2",
+                              std.profile_url ? "bg-slate-50" : "bg-emerald-900",
+                              std.is_suspended ? "ring-rose-500" : "ring-emerald-400"
+                            )}>
+                              {std.profile_url ? (
+                                <img src={std.profile_url} alt="" className="w-full h-full object-cover" />
+                              ) : (
+                                (std.name?.[0] || 'U').toUpperCase()
+                              )}
                             </div>
-                            <p className="text-[12px] font-semibold text-slate-500 flex items-center gap-2">
-                              <span className="inline-block w-3 h-3 bg-slate-100 rounded-[2px] border border-slate-200" />
-                              <span className="uppercase tracking-tighter">{std.name}</span>
-                            </p>
+                            <div className="flex flex-col">
+                              <p className="font-bold text-slate-900 tracking-tight leading-none mb-1 uppercase">
+                                {std.name}
+                              </p>
+                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest opacity-70">
+                                {std.email}
+                              </p>
+                            </div>
                           </div>
+                        </td>
 
-                          <div className="flex items-center gap-6">
-                            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#f3f4f6] border border-slate-200 rounded-full">
-                              <Activity size={10} className="text-slate-400" />
-                              <span className="text-[10px] font-bold uppercase tracking-tight text-slate-700">{std.branch}</span>
-                            </div>
+                        <td className="px-10 py-5">
+                          <div className="flex flex-col gap-1.5">
+                            <span className="text-[11px] font-black text-slate-700 uppercase tracking-tight">
+                              {std.username}
+                            </span>
                             <div className="flex items-center gap-2">
-                              <CheckCircle2 size={12} className={cn(std.is_suspended ? "text-slate-300" : "text-emerald-500")} />
-                              <span className="text-[11px] font-medium text-slate-500">
-                                {std.is_suspended ? "Restricted on " : "Active on "}
-                                <span className="font-bold text-slate-900 uppercase">main</span>
+                              <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[9px] font-bold uppercase tracking-widest border border-slate-200">
+                                {std.branch}
+                              </span>
+                              <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-bold uppercase tracking-widest border border-blue-100">
+                                {std.year || 'E1'}
                               </span>
                             </div>
                           </div>
-                        </div>
-                      </div>
+                        </td>
 
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-100 group-hover:bg-white group-hover:border-slate-200 transition-all">
-                          {std.is_suspended ? <ShieldAlert size={14} className="text-red-500" /> : <Shield size={14} className="text-emerald-500" />}
-                        </div>
-                        <button className="p-1 px-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400">
-                          <MoreHorizontal size={18} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-white border border-slate-200 rounded-lg p-32 text-center space-y-4 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-                  <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Search size={20} className="text-slate-300" />
-                  </div>
-                  <p className="text-[15px] font-bold text-slate-900 tracking-tight">Search for a student to begin</p>
-                  <p className="text-[12px] text-slate-400 font-medium italic">Records will appear in high-fidelity list view</p>
-                </div>
-              )}
+                        <td className="px-10 py-5">
+                          <div className={cn(
+                            "flex items-center gap-1.5 px-3 py-1 rounded-xl border w-fit",
+                            std.is_suspended
+                              ? "bg-rose-50 border-rose-100 text-rose-500"
+                              : "bg-emerald-50 border-emerald-100 text-emerald-500"
+                          )}>
+                            <div className={cn(
+                              "w-1 h-1 rounded-full",
+                              std.is_suspended ? "bg-rose-500" : "bg-emerald-500 animate-pulse"
+                            )} />
+                            <span className="text-[9px] font-bold uppercase tracking-widest">
+                              {std.is_suspended ? "Suspended" : "Active"}
+                            </span>
+                          </div>
+                        </td>
 
-              {searchResults.length > 0 && (
-                <Pagination
-                  currentPage={pagination.page}
-                  totalPages={pagination.totalPages}
-                  onPageChange={(p) => handleSearchByFilter(p)}
-                  className="mt-10"
-                />
-              )}
+                        <td className="px-10 py-5">
+                          <div className="flex flex-col">
+                            <p className="text-[11px] font-bold text-slate-600 uppercase tracking-tighter">
+                              {std.is_in_campus ? "IN CAMPUS" : "OUTSIDE"}
+                            </p>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                              Status Track
+                            </p>
+                          </div>
+                        </td>
+
+                        <td className="px-10 py-5">
+                          <div className="flex justify-end">
+                            <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 shadow-sm">
+                              <ChevronRight size={18} />
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          )}
-        </div>
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              onPageChange={(p) => handleSearchByFilter(p)}
+              className="mt-12"
+            />
+          </div>
+        ) : (
+          <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 max-w-2xl mx-auto py-20 text-center space-y-8">
+            <div className="relative inline-block">
+              <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto border-2 border-dashed border-slate-200">
+                <Search size={32} className="text-slate-300" />
+              </div>
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full border border-slate-100 flex items-center justify-center text-navy-900 shadow-sm">
+                <Shield size={14} />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="text-xl font-black text-slate-900 tracking-tight lowercase first-letter:uppercase">Ready for <span className="text-blue-600">analysis</span></h4>
+              <p className="text-slate-400 font-medium text-[15px] leading-relaxed">
+                Enter a student ID or use filters to fetch student records from the centralized university Database.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {performanceModalOpen && (
@@ -498,54 +574,50 @@ export default function StudentDetails() {
         />
       )}
 
-      {/* Reset Password Custom Popup */}
+      {/* Reset Password Modal */}
       {resetModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-100">
-            <div className="p-8">
-              <div className="flex flex-col items-center text-center gap-5">
-                <div className="w-16 h-16 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-xl shadow-slate-200">
-                  <KeyRound size={32} />
-                </div>
-                <div className="space-y-1.5">
-                  <h3 className="text-xl font-black text-slate-900 tracking-tight">
-                    Reset Password
-                  </h3>
-                  <p className="text-[13px] font-bold text-slate-400 uppercase tracking-tighter">
-                    Target: {resetTargetUser}
-                  </p>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-navy-900/60 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100 p-10">
+            <div className="flex flex-col items-center text-center gap-6">
+              <div className="w-20 h-20 rounded-3xl bg-navy-900 flex items-center justify-center text-white shadow-[0_20px_40px_rgba(15,23,42,0.2)]">
+                <KeyRound size={36} />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black text-slate-900 tracking-tight">
+                  Credentials Reset
+                </h3>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                  Target Identity: <span className="text-navy-900">{resetTargetUser}</span>
+                </p>
+              </div>
+
+              <div className="w-full space-y-3 pt-4">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 text-left block ml-4">
+                  Temporary Key
+                </label>
+                <div className="relative group">
+                  <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors" size={18} />
+                  <input
+                    type="text"
+                    value={resetPasswordValue}
+                    onChange={(e) => setResetPasswordValue(e.target.value)}
+                    className="w-full h-14 pl-14 pr-4 bg-slate-50 border border-slate-100 rounded-2xl text-[15px] font-bold text-slate-900 outline-none focus:bg-white focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all tracking-wider"
+                  />
                 </div>
               </div>
 
-              <div className="mt-8 space-y-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                    Temporary Password
-                  </label>
-                  <div className="relative group">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" size={16} />
-                    <input
-                      type="text"
-                      value={resetPasswordValue}
-                      onChange={(e) => setResetPasswordValue(e.target.value)}
-                      className="w-full h-11 pl-11 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:bg-white focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 transition-all"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-3 mt-10">
+              <div className="flex gap-4 w-full mt-6">
                 <button
                   onClick={() => setResetModalOpen(false)}
-                  className="flex-1 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-[12px] uppercase tracking-widest transition-all active:scale-95"
+                  className="flex-1 h-14 rounded-2xl bg-white border border-slate-100 text-slate-500 hover:bg-slate-50 font-bold text-[11px] uppercase tracking-widest transition-all active:scale-95 shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={confirmResetPassword}
-                  className="flex-1 py-3 rounded-xl bg-slate-900 text-white font-bold text-[12px] uppercase tracking-widest shadow-lg shadow-slate-200 transition-all hover:bg-slate-800 active:scale-95 flex items-center justify-center gap-2"
+                  className="flex-1 h-14 rounded-2xl bg-navy-900 text-white font-bold text-[11px] uppercase tracking-widest shadow-xl shadow-navy-200 transition-all hover:bg-navy-800 active:scale-95 flex items-center justify-center gap-2"
                 >
-                  Reset
+                  Apply Key
                 </button>
               </div>
             </div>

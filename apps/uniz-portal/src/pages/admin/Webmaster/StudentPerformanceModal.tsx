@@ -76,25 +76,41 @@ export default function StudentPerformanceModal({
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="relative w-full max-w-5xl max-h-[90vh] bg-white rounded-xl shadow-none overflow-hidden border border-slate-100 flex flex-col font-condensed"
+                    className="relative w-full max-w-5xl max-h-[90vh] bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-100 flex flex-col font-condensed"
                 >
-                    {/* Header */}
-                    <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-navy-900 flex items-center justify-center text-white shadow-none">
-                                <GraduationCap size={24} />
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-bold text-slate-900 leading-none mb-1">{studentName}</h3>
-                                <p className="text-slate-500 font-medium text-sm tracking-tight">Student ID: {studentId}</p>
+                    {/* Close Button */}
+                    <button
+                        onClick={onClose}
+                        className="absolute top-8 right-8 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
+                    >
+                        <X size={20} />
+                    </button>
+
+                    {/* Centralized Header */}
+                    <div className="p-10 pb-4 flex flex-col items-center text-center">
+                        <div className="relative mb-6">
+                            <div className="p-1 bg-white ring-4 ring-navy-50 rounded-full shadow-sm">
+                                <div className="w-24 h-24 rounded-full bg-slate-900 flex items-center justify-center text-white shadow-none border-2 border-white ring-1 ring-slate-100">
+                                    <GraduationCap size={40} />
+                                </div>
                             </div>
                         </div>
-                        <button
-                            onClick={onClose}
-                            className="w-10 h-10 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors"
-                        >
-                            <X size={20} />
-                        </button>
+
+                        <h3 className="text-3xl font-black text-slate-900 tracking-tight uppercase italic leading-none mb-3">
+                            {studentName}
+                        </h3>
+                        <p className="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">
+                            Student ID: <span className="text-slate-900">{studentId}</span>
+                        </p>
+
+                        <div className="flex items-center justify-center gap-6 mt-6">
+                            <span className="px-4 py-1.5 bg-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-600 border border-slate-200">
+                                Academic Year 2025-26
+                            </span>
+                            <span className="px-4 py-1.5 bg-emerald-50 rounded-full text-[10px] font-black uppercase tracking-widest text-emerald-600 border border-emerald-100">
+                                Profile Synchronized
+                            </span>
+                        </div>
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">

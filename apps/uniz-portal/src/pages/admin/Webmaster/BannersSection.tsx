@@ -12,8 +12,13 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
-import { BANNERS_BASE, UPDATE_BANNER_VISIBILITY } from "../../../api/endpoints";
+import { 
+  BANNERS_BASE, 
+  UPDATE_BANNER_VISIBILITY 
+} from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { useRecoilState } from "recoil";
+import { bannersAtom } from "../../../store/atoms";
 import { 
   AlertDialog, 
   AlertDialogContent,
@@ -26,8 +31,9 @@ const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
 export default function BannersSection() {
-  const [banners, setBanners] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [bannersState, setBannersState] = useRecoilState(bannersAtom);
+  const banners = bannersState.data;
+  const [loading, setLoading] = useState(!bannersState.fetched);
   const [showAddModal, setShowAddModal] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
@@ -57,7 +63,7 @@ export default function BannersSection() {
   };
 
   const fetchBanners = async () => {
-    setLoading(true);
+    if (!bannersState.fetched) setLoading(true);
     const token = getAuthToken();
     try {
       const res = await fetch(BANNERS_BASE, {
@@ -68,7 +74,10 @@ export default function BannersSection() {
       });
       const data = await res.json();
       if (data.success) {
-        setBanners(data.banners || []);
+        setBannersState({
+          fetched: true,
+          data: data.banners || []
+        });
       } else {
         toast.error(data.msg || "Failed to fetch banners");
       }
@@ -184,9 +193,10 @@ export default function BannersSection() {
       const data = await res.json();
       if (data.success) {
         toast.success("Banner deleted successfully");
-        setBanners((prev) =>
-          prev.filter((b) => (b.id || b._id || b.uuid) !== id),
-        );
+        setBannersState((prev) => ({
+          ...prev,
+          data: prev.data.filter((b) => (b.id || b._id || b.uuid) !== id)
+        }));
       } else {
         toast.error(data.msg || "Deletion failed");
       }
@@ -218,13 +228,14 @@ export default function BannersSection() {
             ? "Banner is now visible"
             : "Banner hidden successfully",
         );
-        setBanners((prev) =>
-          prev.map((b) =>
+        setBannersState((prev) => ({
+          ...prev,
+          data: prev.data.map((b) =>
             b.id === id || b._id === id || b.uuid === id
               ? { ...b, isVisible: newVisibility }
               : b,
-          ),
-        );
+          )
+        }));
       } else {
         toast.error(data.msg || "Failed to update visibility");
       }
@@ -259,18 +270,18 @@ export default function BannersSection() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white rounded-2xl border border-slate-100 overflow-hidden flex flex-col animate-pulse shadow-sm">
-              <div className="h-44 w-full bg-slate-100/50 border-b border-slate-100 relative overflow-hidden" />
-              <div className="p-7 space-y-5">
+            <div key={i} className="bg-white rounded-xl border border-slate-100 overflow-hidden flex flex-col animate-pulse shadow-none">
+              <div className="h-44 w-full bg-slate-50 border-b border-slate-100 relative overflow-hidden" />
+              <div className="p-6 space-y-5">
                 <div className="space-y-3">
-                  <div className="h-5 w-3/4 bg-slate-100 rounded-lg shadow-sm" />
-                  <div className="h-3 w-full bg-slate-50 rounded-md opacity-60" />
-                  <div className="h-3 w-5/6 bg-slate-50 rounded-md opacity-40" />
+                  <div className="h-5 w-3/4 bg-slate-100 rounded-lg" />
+                  <div className="h-3 w-full bg-slate-50 rounded-md" />
+                  <div className="h-3 w-5/6 bg-slate-50 rounded-md" />
                 </div>
-                <div className="pt-4 flex items-center gap-3">
-                  <div className="h-11 flex-1 bg-slate-50 rounded-xl border border-slate-100/50" />
-                  <div className="h-11 w-11 bg-slate-50 rounded-xl border border-slate-100/50" />
-                  <div className="h-11 w-11 bg-slate-50 rounded-xl border border-slate-100/50" />
+                <div className="pt-4 flex items-center gap-2">
+                  <div className="h-10 flex-1 bg-slate-50 rounded-full" />
+                  <div className="h-10 w-10 bg-slate-50 rounded-xl" />
+                  <div className="h-10 w-10 bg-slate-50 rounded-xl" />
                 </div>
               </div>
             </div>
