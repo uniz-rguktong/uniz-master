@@ -37,10 +37,12 @@ export default function UploadHealthAnalytics({ hideHeader = false }: { hideHead
     const fetchData = async () => {
       try {
         setLoading(true);
+        const token = localStorage.getItem("admin_token") || localStorage.getItem("faculty_token") || localStorage.getItem("student_token");
         const res = await fetch(ANALYTICS_UPLOAD_HEALTH, {
           headers: {
             "x-api-key": ANALYTICS_KEY,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
           }
         });
         if (!res.ok) throw new Error("Unauthorized or API down");
