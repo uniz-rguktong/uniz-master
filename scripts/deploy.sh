@@ -150,7 +150,7 @@ deploy_logic() {
         BUILD_ARGS=""
         if [[ "$DIR" == "uniz-portal" ]]; then
           BUILD_ARGS="--build-arg VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg VITE_API_URL=$VITE_API_URL --build-arg VITE_CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME --build-arg VITE_CLOUDINARY_UPLOAD_PRESET=$CLOUDINARY_UPLOAD_PRESET --build-arg VITE_ANALYTICS_URL=$VITE_ANALYTICS_URL --build-arg VITE_ANALYTICS_KEY=$VITE_ANALYTICS_API_KEY --build-arg VITE_SCRAPER_URL=$VITE_SCRAPER_URL"
-        elif [[ "$DIR" == "ornate" || "$DIR" == "ornate-core" ]]; then
+        elif [[ "$DIR" == "ornate" || "$DIR" == "ornate-core" ]]; then 
           # Ensure NEXTAUTH_URL is valid and not empty
           EFFECTIVE_AUTH_URL="${ORNATE_NEXTAUTH_URL:-$NEXTAUTH_URL}"
           [ -z "$EFFECTIVE_AUTH_URL" ] && EFFECTIVE_AUTH_URL="https://ornate.rguktong.in"
