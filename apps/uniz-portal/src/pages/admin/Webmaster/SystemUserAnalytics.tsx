@@ -18,10 +18,12 @@ export default function SystemUserAnalytics() {
     const fetchData = async () => {
       try {
         setLoading(true);
+        const token = localStorage.getItem("admin_token") || localStorage.getItem("faculty_token") || localStorage.getItem("student_token");
         const res = await fetch(ANALYTICS_SYSTEM_USERS, {
           headers: {
             "x-api-key": ANALYTICS_KEY,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
           }
         });
         const json = await res.json();
