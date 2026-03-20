@@ -12,31 +12,26 @@ import {
 import {
   TrendingUp,
   AlertCircle,
-  Loader2,
   ChevronDown,
 } from "lucide-react";
 import { cn } from "../../../utils/cn";
 import { ANALYTICS_UPLOAD_HEALTH, ANALYTICS_KEY } from "../../../api/endpoints";
 
-interface HealthMetric {
-  date: string;
-  type: string;
-  successCount: number;
-  failCount: number;
-  total: number;
-  success_rate_percent: number;
-}
+import { useRecoilState } from "recoil";
+import { uploadHealthAnalyticsAtom } from "../../../store/atoms";
+import { AreaChartSkeleton } from "../AnalyticsUI";
+
 
 export default function UploadHealthAnalytics({ hideHeader = false }: { hideHeader?: boolean }) {
-  const [data, setData] = useState<HealthMetric[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [cachedData, setCachedData] = useRecoilState(uploadHealthAnalyticsAtom);
+  const [loading, setLoading] = useState(!cachedData.fetched);
   const [error, setError] = useState<string | null>(null);
   const [range, setRange] = useState(7);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
+        if (!cachedData.fetched) setLoading(true);
         const token = localStorage.getItem("admin_token") || localStorage.getItem("faculty_token") || localStorage.getItem("student_token");
         const res = await fetch(ANALYTICS_UPLOAD_HEALTH, {
           headers: {
@@ -48,11 +43,13 @@ export default function UploadHealthAnalytics({ hideHeader = false }: { hideHead
         if (!res.ok) throw new Error("Unauthorized or API down");
         const json = await res.json();
 
+        let apiData = [];
         if (json?.success && Array.isArray(json?.data)) {
-          setData(json.data);
+          apiData = json.data;
         } else if (Array.isArray(json)) {
-          setData(json);
+          apiData = json;
         }
+        setCachedData({ fetched: true, data: apiData });
       } catch (err) {
         console.error("Analytics fetch failed:", err);
         setError("Failed to stream analytics.");
@@ -64,17 +61,11 @@ export default function UploadHealthAnalytics({ hideHeader = false }: { hideHead
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="w-full h-80 flex flex-col items-center justify-center gap-4 bg-slate-50/50 rounded-[2.5rem] border border-slate-100">
-        <div className="relative">
-          <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-          <div className="absolute inset-0 bg-blue-600/5 blur-xl rounded-full animate-pulse" />
-        </div>
-        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.3em]">Connecting to Intelligence Service...</p>
-      </div>
-    );
+  if (loading && !cachedData.fetched) {
+    return <AreaChartSkeleton />;
   }
+
+  const data = cachedData.data;
 
   const safeData = Array.isArray(data) 
     ? [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()) 
