@@ -112,7 +112,7 @@ export default function FunPlanetPage() {
                                 transition={{ delay: 0.5, duration: 0.8 }}
                                 className="w-full max-w-4xl"
                             >
-                                <Link href="/home/fun/cosmos" className="group block relative h-[450px] w-full rounded-[2.5rem] overflow-hidden border border-white/10 hover:border-[#FF00E5]/50 transition-all duration-700 shadow-2xl">
+                                <Link href="/home/fun/cosmos" className="group block relative h-[380px] sm:h-[450px] w-full rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden border border-white/10 hover:border-[#FF00E5]/50 transition-all duration-700 shadow-2xl">
                                     {/* Main Image Layer */}
                                     <Image
                                         src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1400&q=80"
@@ -122,63 +122,63 @@ export default function FunPlanetPage() {
                                     />
                                     
                                     {/* Overlays */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#050510] via-[#050510]/40 to-transparent" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#050510] via-[#050510]/60 to-transparent" />
                                     <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
 
                                     {/* Animated Grains/Particles for 'Cosmic' feel */}
                                     <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] pointer-events-none" />
 
                                     {/* Card Content Header */}
-                                    <div className="absolute top-8 left-8 flex items-center gap-4">
-                                        <div className="px-4 py-1.5 rounded-full bg-[#FF00E5]/20 backdrop-blur-md border border-[#FF00E5]/30">
-                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FF00E5]">Open World Adventure</span>
+                                    <div className="absolute top-4 left-4 sm:top-8 sm:left-8 flex flex-wrap items-center gap-3 sm:gap-4">
+                                        <div className="px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-[#FF00E5]/20 backdrop-blur-md border border-[#FF00E5]/30">
+                                            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] text-[#FF00E5]">Open World</span>
                                         </div>
-                                        <div className="flex items-center gap-2 text-white/60 text-[10px] font-bold uppercase tracking-widest">
-                                            <Activity className="w-3 h-3 text-[var(--color-neon)]" />
-                                            <span>2.4k Exploring Now</span>
+                                        <div className="flex items-center gap-1.5 sm:gap-2 text-white/60 text-[8px] sm:text-[10px] font-bold uppercase tracking-widest bg-black/40 backdrop-blur-sm px-2 py-1 rounded-md">
+                                            <Activity className="w-2.5 h-2.5 sm:w-3 h-3 text-[var(--color-neon)]" />
+                                            <span>2.4k Exploring</span>
                                         </div>
                                     </div>
 
                                     {/* Central Titles */}
-                                    <div className="absolute inset-x-0 bottom-0 p-10 flex flex-col items-center text-center">
+                                    <div className="absolute inset-x-0 bottom-0 p-5 sm:p-10 flex flex-col items-center text-center">
                                         <motion.div
                                             animate={{ opacity: [0.7, 1, 0.7] }}
                                             transition={{ duration: 3, repeat: Infinity }}
-                                            className="text-[var(--color-neon)] text-xs font-black tracking-[0.5em] uppercase mb-4"
+                                            className="text-[var(--color-neon)] text-[9px] sm:text-xs font-black tracking-[0.4em] sm:tracking-[0.5em] uppercase mb-2 sm:mb-4"
                                         >
                                             Mission: Explore the Void
                                         </motion.div>
-                                        <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-white mb-6 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-                                            The <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-[#FF00E5] to-[var(--color-neon)]">Cosmos</span>
+                                        <h2 className="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter text-white mb-4 sm:mb-6 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                                            The <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-[#FF00E5] to-[var(--color-neon)] text-glow">Cosmos</span>
                                         </h2>
                                         
-                                        <div className="flex items-center gap-6 mb-8 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                                        <div className="flex items-center gap-3 sm:gap-6 mb-6 sm:mb-8 transition-all duration-500 md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
                                             <div className="text-center">
-                                                <div className="text-white text-xl font-bold italic line-clamp-1 lowercase whitespace-nowrap">infinite</div>
-                                                <div className="text-gray-500 text-[9px] font-black uppercase tracking-widest">Scale</div>
+                                                <div className="text-white text-xs sm:text-xl font-bold italic line-clamp-1 lowercase whitespace-nowrap">infinite</div>
+                                                <div className="text-gray-500 text-[7px] sm:text-[9px] font-black uppercase tracking-widest">Scale</div>
                                             </div>
-                                            <div className="w-[1px] h-8 bg-white/10" />
+                                            <div className="w-[1px] h-6 sm:h-8 bg-white/10" />
                                             <div className="text-center">
-                                                <div className="text-white text-xl font-bold italic line-clamp-1 lowercase whitespace-nowrap">Unknown</div>
-                                                <div className="text-gray-500 text-[9px] font-black uppercase tracking-widest">Danger Level</div>
+                                                <div className="text-white text-xs sm:text-xl font-bold italic line-clamp-1 lowercase whitespace-nowrap">Unknown</div>
+                                                <div className="text-gray-500 text-[7px] sm:text-[9px] font-black uppercase tracking-widest">Danger</div>
                                             </div>
-                                             <div className="w-[1px] h-8 bg-white/10" />
+                                             <div className="w-[1px] h-6 sm:h-8 bg-white/10" />
                                             <div className="text-center">
-                                                <div className="text-white text-xl font-bold italic line-clamp-1 lowercase whitespace-nowrap">Mastery</div>
-                                                <div className="text-gray-500 text-[9px] font-black uppercase tracking-widest">Reward Type</div>
+                                                <div className="text-white text-xs sm:text-xl font-bold italic line-clamp-1 lowercase whitespace-nowrap">Mastery</div>
+                                                <div className="text-gray-500 text-[7px] sm:text-[9px] font-black uppercase tracking-widest">Reward</div>
                                             </div>
                                         </div>
 
-                                        <div className="relative inline-flex items-center justify-center px-10 py-4 font-black text-white uppercase tracking-widest bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl group-hover:bg-[#FF00E5] group-hover:border-[#FF00E5] group-hover:shadow-[0_0_30px_rgba(255,0,229,0.5)] transition-all duration-300">
-                                            <span className="relative z-10 flex items-center gap-3">
-                                                <Zap className="w-5 h-5 fill-current" />
-                                                ENTER THE UNIVERSE
+                                        <div className="relative inline-flex items-center justify-center px-6 py-3 sm:px-10 sm:py-4 font-black text-white uppercase tracking-widest bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl sm:rounded-2xl group-hover:bg-[#FF00E5] group-hover:border-[#FF00E5] group-hover:shadow-[0_0_30px_rgba(255,0,229,0.5)] transition-all duration-300">
+                                            <span className="relative z-10 flex items-center gap-2 sm:gap-3 text-[10px] sm:text-sm">
+                                                <Zap className="w-4 h-4 sm:w-5 h-5 fill-current" />
+                                                ENTER UNIVERSE
                                             </span>
                                         </div>
                                     </div>
                                     
                                     {/* Hover Corner Decoration */}
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#FF00E5]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                                    <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-bl from-[#FF00E5]/20 to-transparent shadow-inner opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                                 </Link>
                             </motion.div>
                         </div>
