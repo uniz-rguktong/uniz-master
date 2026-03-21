@@ -29,7 +29,6 @@ import {
   STUDENT_HISTORY,
   REQUEST_OUTING,
   REQUEST_OUTPASS,
-  GET_STUDENT_SEATING,
 } from "../../api/endpoints";
 import { motion, AnimatePresence } from "framer-motion";
 import RequestCard from "../../components/RequestCard";
@@ -38,10 +37,69 @@ import { Pagination } from "../../components/Pagination";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { InfoCard } from "./components/InfoCard";
 import AcademicRecord from "./components/AcademicRecord";
-import SeatingArrangement from "./components/SeatingArrangement";
+import SeatingArrangement, { fetchSeatingOnce } from "./components/SeatingArrangement";
 import { Student } from "../../types";
 import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
 import StudentAnalytics from "./components/StudentAnalytics";
+
+// ─────────────────────────────────────────────────────────────────
+// Profile Skeleton
+// ─────────────────────────────────────────────────────────────────
+function ProfileSkeleton() {
+  return (
+    <div className="font-sans text-slate-900 relative">
+      <BackgroundIconCloud />
+      <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2">
+
+        {/* Avatar + name skeleton */}
+        <div className="flex flex-col items-center justify-center mb-8 animate-pulse">
+          <div className="mt-4">
+            {/* Avatar ring */}
+            <div className="relative p-[4px] rounded-full mb-4 mx-auto w-fit" style={{ background: "#e2e8f0" }}>
+              <div className="bg-slate-100 p-[3px] rounded-full">
+                <div className="w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-slate-200 rounded-full" />
+              </div>
+            </div>
+            {/* Name */}
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-7 w-44 bg-slate-200 rounded-xl" />
+              <div className="h-4 w-56 bg-slate-100 rounded-lg" />
+              <div className="flex items-center gap-2 mt-1">
+                <div className="h-5 w-20 bg-slate-100 rounded" />
+                <div className="w-1 h-1 rounded-full bg-slate-200" />
+                <div className="h-5 w-24 bg-slate-100 rounded" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab bar skeleton */}
+        <div className="border-b border-slate-100 mb-6">
+          <div className="flex gap-8 animate-pulse">
+            {[72, 80, 64, 56].map((w, i) => (
+              <div key={i} className="pb-3">
+                <div className={`h-3 bg-slate-100 rounded-full`} style={{ width: w }} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Info cards skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-pulse">
+          {Array(5).fill(0).map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-4 h-4 bg-slate-100 rounded-full" />
+                <div className="h-2.5 w-20 bg-slate-100 rounded-full" />
+              </div>
+              <div className="h-5 w-28 bg-slate-200 rounded-lg" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export const enableOutingsAndOutpasses = false;
 
@@ -359,19 +417,10 @@ export default function StudentProfilePage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-      const fetchSeating = async () => {
-        try {
-          const data = await apiClient<any>(GET_STUDENT_SEATING);
-          if (data && data.seating) {
-            setSeating(data.seating);
-          }
-        } catch (err) {
-          console.error("Failed to fetch seating summary", err);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchSeating();
+      fetchSeatingOnce().then((result) => {
+        if (result) setSeating(result.seating);
+        setLoading(false);
+      });
     }, []);
 
     if (loading || seating.length === 0) return null;
@@ -426,12 +475,8 @@ export default function StudentProfilePage() {
     );
   };
 
-  if (!user && !isLoading)
-    return (
-      <div className="flex h-screen items-center justify-center text-slate-400 font-medium">
-        Loading Student Profile...
-      </div>
-    );
+  if (isLoading && !user)
+    return <ProfileSkeleton />;
 
   const personalFields = [
     {
@@ -776,7 +821,7 @@ export default function StudentProfilePage() {
             )}
 
             {activeTab === "seating" && (
-              <SeatingArrangement studentId={user?.username} />
+              <SeatingArrangement />
             )}
 
             {activeTab === "family" && (

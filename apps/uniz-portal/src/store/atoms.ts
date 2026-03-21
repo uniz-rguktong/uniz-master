@@ -11,7 +11,7 @@ export const studentAuthLoading = atom<boolean>({
 export const is_authenticated = atom({
   key: "is_authenticated",
   default: {
-    is_authnticated: false,
+    is_authenticated: false,
     type: "",
   },
 });
@@ -223,5 +223,24 @@ export const systemLogsAtom = atom({
   default: {
     fetched: false,
     data: [] as any[],
+  },
+});
+export const subjectsAtom = atom({
+  key: "subjectsAtom",
+  default: {
+    fetched: false,
+    data: [] as any[],
+    meta: { total: 0, totalPages: 0 }
+  },
+});
+
+export const deanOverviewAtom = atom({
+  key: "deanOverviewAtom",
+  default: {
+    fetched: false,
+    profile: null as any,
+    occupancy: null as any,
+    heatmap: [] as any[],
+    grievances: null as any,
   },
 });
