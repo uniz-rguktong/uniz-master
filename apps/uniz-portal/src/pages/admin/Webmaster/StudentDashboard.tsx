@@ -22,7 +22,7 @@ import {
     CartesianGrid,
     ResponsiveContainer,
 } from "recharts";
-import { motion } from "framer-motion";
+
 import { cn } from "../../../utils/cn";
 
 interface StudentDashboardProps {
@@ -87,8 +87,8 @@ export default function StudentDashboard({ data, onSuspendToggle, onResetPasswor
                             disabled={isActionLoading}
                             className={cn(
                                 "flex items-center gap-2 px-6 py-2.5 rounded-xl border font-bold uppercase tracking-widest text-[10px] transition-all group active:scale-95 shadow-sm",
-                                student.is_suspended 
-                                    ? "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white" 
+                                student.is_suspended
+                                    ? "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white"
                                     : "bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white"
                             )}
                         >
