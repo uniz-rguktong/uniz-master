@@ -21,6 +21,14 @@ export default function LoginScreen({
 }: LoginScreenProps) {
     return (
         <div className="w-full min-h-screen flex bg-white font-sans selection:bg-navy-100 selection:text-navy-900">
+
+            {/* Mobile-only: uniZ logo pinned to top center */}
+            <div className="md:hidden fixed top-0 left-0 w-full z-40 flex justify-center pt-5 pb-3 bg-white border-b border-slate-50">
+                <span className="unifrakturcook-bold text-4xl text-slate-900 tracking-tight leading-none">
+                    uniZ
+                </span>
+            </div>
+
             {/* Left side - Hero section */}
             <div className="hidden lg:flex flex-1 bg-navy-900 items-center justify-center p-12 relative overflow-hidden">
                 {/* Abstract background elements */}
@@ -60,14 +68,27 @@ export default function LoginScreen({
             {/* Right side - Login/Signup form */}
             <div className="flex-1 bg-white flex items-center justify-center p-8 sm:p-12 md:p-16 lg:p-20">
                 <div className="w-full max-w-md animate-in fade-in slide-in-from-right-8 duration-700">
-                    {/* Logo Section */}
-                    <div className="text-center mb-10">
+                    {/* Logo Section — hidden on mobile, visible on md+ */}
+                    <div className="hidden md:block text-center mb-10">
                         <div className="inline-flex items-center justify-center mb-6">
                             <span className="unifrakturcook-bold text-5xl text-slate-900 tracking-tight leading-none">
                                 uniZ
                             </span>
                         </div>
                         <h2 className="text-3xl font-black text-gray-900 mb-3 tracking-tight">
+                            {title || (isLogin ? 'Welcome Back' : 'Join Us Today')}
+                        </h2>
+                        <p className="text-slate-500 font-medium text-[15px]">
+                            {subtitle || (isLogin
+                                ? 'Continue your journey with the UNIZ portal'
+                                : 'Start your journey with the UNIZ portal'
+                            )}
+                        </p>
+                    </div>
+
+                    {/* Mobile-only: title + subtitle below the fixed top logo */}
+                    <div className="md:hidden text-center mb-8 pt-14">
+                        <h2 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">
                             {title || (isLogin ? 'Welcome Back' : 'Join Us Today')}
                         </h2>
                         <p className="text-slate-500 font-medium text-[15px]">

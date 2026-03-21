@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import {
   Upload,
   FileDown,
-  CheckCircle2,
   AlertCircle,
   Loader2,
   ChevronDown,
@@ -28,6 +27,8 @@ export default function UploadSection({ type }: { type: UploadType }) {
   const [loading, setLoading] = useState(false);
   const [uploadId, setUploadId] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
+  const [progress, setProgress] = useState<number>(0);
+  const [uploadSuccess, setUploadSuccess] = useState<boolean | null>(null);
 
   // Template Parameters
   const [branch, setBranch] = useState("CSE");
@@ -101,15 +102,15 @@ export default function UploadSection({ type }: { type: UploadType }) {
     if (!file) return;
 
     setLoading(true);
+    setProgress(0);
+    setUploadSuccess(null);
+    setResult(null);
     const endpoint = type === "attendance" ? UPLOAD_ATTENDANCE : UPLOAD_GRADES;
 
     try {
       const formData = new FormData();
       formData.append("file", file);
 
-      // Using raw fetch here because apiClient defaults to JSON content-type
-      // but we need to pass the token still. We can enhance apiClient or do it manually.
-      // Let's use apiClient with null headers to let browser set boundary
       const res = await apiClient<any>(endpoint, {
         method: "POST",
         headers: {},
@@ -121,12 +122,15 @@ export default function UploadSection({ type }: { type: UploadType }) {
           setUploadId(res.uploadId);
           toast.info("Upload started. Monitoring progress...");
         } else {
+          setUploadSuccess(true);
+          setProgress(100);
           setResult({ success: true, ...res });
           toast.success(
             `${type === "attendance" ? "Attendance" : "Grades"} uploaded successfully`,
           );
         }
       } else if (res) {
+        setUploadSuccess(false);
         setResult({ success: false, msg: res.msg || "Upload failed" });
       }
     } catch (error) {
@@ -146,7 +150,10 @@ export default function UploadSection({ type }: { type: UploadType }) {
             showToast: false,
           } as any);
           if (res && res.success && res.progress) {
-            // setProgress(res.progress); // Removed UI
+            if (res.progress.percent !== undefined) setProgress(res.progress.percent);
+            if (res.progress.total && res.progress.processed) {
+              setProgress(Math.round((res.progress.processed / res.progress.total) * 100));
+            }
             if (
               res.progress.status === "completed" ||
               res.progress.status === "done" ||
@@ -159,6 +166,8 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 res.progress.status === "completed" ||
                 res.progress.status === "done"
               ) {
+                setProgress(100);
+                setUploadSuccess(true);
                 setResult({
                   success: true,
                   processed: res.progress.processed,
@@ -166,6 +175,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 });
                 toast.success("Synchronization completed successfully");
               } else {
+                setUploadSuccess(false);
                 setResult({
                   success: false,
                   msg: res.progress.message || "Synchronization failed",
@@ -210,15 +220,17 @@ export default function UploadSection({ type }: { type: UploadType }) {
           </p>
         </div>
 
-        {type === "grades" && (
-          <button
-            onClick={downloadTemplate}
-            className="group flex items-center gap-2.5 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl border border-slate-200 hover:bg-white hover:text-slate-900 hover:border-slate-300 transition-all font-bold uppercase tracking-widest text-[9px] active:scale-95"
-          >
-            <FileDown size={13} className="text-slate-500 group-hover:scale-110 transition-transform" />
-            Download {type} Template
-          </button>
-        )}
+        <div className="flex items-center gap-4">
+          {type === "grades" && (
+            <button
+              onClick={downloadTemplate}
+              className="group flex items-center gap-2.5 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl border border-slate-200 hover:bg-white hover:text-slate-900 hover:border-slate-300 transition-all font-bold uppercase tracking-widest text-[9px] active:scale-95"
+            >
+              <FileDown size={13} className="text-slate-500 group-hover:scale-110 transition-transform" />
+              Download {type} Template
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="w-full">
@@ -400,9 +412,15 @@ export default function UploadSection({ type }: { type: UploadType }) {
             onFileSelect={(f) => {
               setFile(f);
               setResult(null);
+              setProgress(0);
+              setUploadSuccess(null);
             }}
             label={`Select ${type} Excel/CSV`}
             description={`Drag and drop the official ${type} record file.`}
+            isUploading={loading || !!uploadId}
+            isSuccess={uploadSuccess === true}
+            isError={uploadSuccess === false}
+            progress={progress}
           />
         </div>
 
@@ -421,50 +439,18 @@ export default function UploadSection({ type }: { type: UploadType }) {
           {uploadId ? "Synchronizing..." : `Process & Record ${type}`}
         </button>
 
-        {result && (
-          <div
-            className={`p-6 rounded-xl border shadow-none ${result.success
-              ? "bg-emerald-50/50 border-emerald-200 text-emerald-900"
-              : "bg-red-50/50 border-red-200 text-red-900"
-              }`}
-          >
+        {/* Only show error result — success is communicated via the progress bar */}
+        {result && !result.success && (
+          <div className="p-6 rounded-xl border shadow-none bg-red-50/50 border-red-200 text-red-900">
             <div className="flex items-center gap-3 mb-4">
-              <div
-                className={`p-2 rounded-lg ${result.success ? "bg-emerald-500 text-white shadow-none" : "bg-red-500 text-white shadow-none"}`}
-              >
-                {result.success ? (
-                  <CheckCircle2 size={18} />
-                ) : (
-                  <AlertCircle size={18} />
-                )}
+              <div className="p-2 rounded-lg bg-red-500 text-white shadow-none">
+                <AlertCircle size={18} />
               </div>
-              <h3
-                className={`text-lg font-semibold tracking-tight ${result.success ? "text-emerald-900" : "text-red-900"}`}
-              >
-                {result.success ? "Sync Successful" : "Sync Failed"}
+              <h3 className="text-lg font-semibold tracking-tight text-red-900">
+                Sync Failed
               </h3>
             </div>
-
-            <div className="space-y-3">
-              {result.success ? (
-                <>
-                  <p className="opacity-80 font-medium text-[13px]">
-                    Successfully processed {result.processed || 0} records
-                    into the central database.
-                  </p>
-                  <div className="p-4 bg-white/40 rounded-xl border border-emerald-200/40">
-                    <p className="text-[9px] uppercase font-bold text-emerald-600 tracking-widest mb-1 leading-none">
-                      Immediate Update
-                    </p>
-                    <p className="text-emerald-900 font-medium text-[13px]">
-                      Management portals and student dashboards will reflect updates.
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <p className="opacity-80 font-medium text-[13px]">{result.msg}</p>
-              )}
-            </div>
+            <p className="opacity-80 font-medium text-[13px]">{result.msg}</p>
           </div>
         )}
       </div>
