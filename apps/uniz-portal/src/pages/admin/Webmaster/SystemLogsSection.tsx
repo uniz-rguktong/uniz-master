@@ -14,6 +14,8 @@ import { toast } from "@/utils/toast-ref";
 import { useRecoilState } from "recoil";
 import { systemLogsAtom } from "../../../store/atoms";
 
+import { Skeleton } from "@/components/ui/Skeleton";
+
 export default function SystemLogsSection() {
   const [logsState, setLogsState] = useRecoilState(systemLogsAtom);
   const history = logsState.data;
@@ -190,35 +192,35 @@ export default function SystemLogsSection() {
                 Array(itemsPerPage)
                   .fill(0)
                   .map((_, i) => (
-                    <tr key={i} className="animate-pulse border-b border-slate-50/60">
+                    <tr key={i} className="border-b border-slate-50/60">
                       <td className="px-10 py-6">
                         <div className="flex items-center gap-4">
-                          <div className="w-11 h-11 rounded-full bg-slate-100 border-2 border-white ring-1 ring-slate-100" />
+                          <Skeleton className="w-11 h-11 rounded-full shrink-0" />
                           <div className="space-y-2.5">
-                            <div className="h-4 w-28 bg-slate-100 rounded" />
-                            <div className="h-2 w-16 bg-slate-50 rounded" />
+                            <Skeleton className="h-4 w-28" />
+                            <Skeleton className="h-2 w-16 opacity-50" />
                           </div>
                         </div>
                       </td>
                       <td className="px-10 py-6">
                         <div className="space-y-2">
-                          <div className="h-4 w-40 bg-slate-100 rounded" />
-                          <div className="h-3 w-20 bg-slate-50 rounded" />
+                          <Skeleton className="h-4 w-40" />
+                          <Skeleton className="h-3 w-20 opacity-50" />
                         </div>
                       </td>
                       <td className="px-10 py-6">
                         <div className="space-y-2">
-                          <div className="h-5 w-12 bg-slate-100 rounded-lg" />
-                          <div className="h-2 w-16 bg-slate-50 rounded" />
+                          <Skeleton className="h-5 w-12 rounded-lg" />
+                          <Skeleton className="h-2 w-16 opacity-50" />
                         </div>
                       </td>
                       <td className="px-10 py-6">
-                        <div className="h-7 w-20 bg-slate-50 rounded-xl" />
+                        <Skeleton className="h-7 w-20 rounded-xl" />
                       </td>
                       <td className="px-10 py-6">
                         <div className="space-y-2">
-                          <div className="h-4 w-24 bg-slate-100 rounded" />
-                          <div className="h-2 w-16 bg-slate-50 rounded" />
+                          <Skeleton className="h-4 w-24" />
+                          <Skeleton className="h-2 w-16 opacity-50" />
                         </div>
                       </td>
                     </tr>
