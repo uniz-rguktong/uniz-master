@@ -51,46 +51,6 @@ export const AnimatedTooltip = ({
                         onMouseEnter={() => setHoveredIndex(item.id)}
                         onMouseLeave={() => setHoveredIndex(null)}
                     >
-                        <AnimatePresence mode="popLayout">
-                            {hoveredIndex === item.id && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20, scale: 0.6 }}
-                                    animate={{
-                                        opacity: 1,
-                                        y: 0,
-                                        scale: 1,
-                                        transition: {
-                                            type: "spring",
-                                            stiffness: 260,
-                                            damping: 10,
-                                        },
-                                    }}
-                                    exit={{ opacity: 0, y: 20, scale: 0.6 }}
-                                    style={{
-                                        translateX: translateX,
-                                        rotate: rotate,
-                                        whiteSpace: "nowrap",
-                                    }}
-                                    className="absolute -top-16 left-1/2 -translate-x-1/2 flex text-xs flex-col items-center justify-center rounded-xl bg-slate-900/90 backdrop-blur-md text-white z-50 shadow-2xl px-4 py-2 border border-white/20"
-                                >
-                                    <div className="absolute inset-x-10 z-30 w-[20%] -bottom-px bg-gradient-to-r from-transparent via-sky-400 to-transparent h-[2px] blur-[1px]" />
-                                    <div className="absolute left-10 w-[40%] z-30 -bottom-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent h-px" />
-                                    <div className="font-bold text-white relative z-30 text-base flex items-center gap-1.5">
-                                        {item.name}
-                                        {item.id === 1 && (
-                                            <motion.div
-                                                animate={{ opacity: [0.5, 1, 0.5] }}
-                                                transition={{ duration: 1.5, repeat: Infinity }}
-                                                className="w-1.5 h-1.5 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]"
-                                            />
-                                        )}
-                                    </div>
-                                    <div className="text-slate-300 text-[9px] font-bold tracking-widest uppercase">
-                                        {item.designation}
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
                         <div className="relative group/avatar">
                             <motion.img
                                 onMouseMove={handleMouseMove}
