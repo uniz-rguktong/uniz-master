@@ -4,31 +4,42 @@ import "./index.css";
 import { Layout } from "./layout.tsx";
 import { RecoilRoot } from "recoil";
 import { BrowserRouter } from "react-router-dom";
-import { initializeGlobalInterceptor } from "./api/networkInterceptor.ts";
+// import { initializeGlobalInterceptor } from "./api/networkInterceptor.ts";
 
-initializeGlobalInterceptor();
+// initializeGlobalInterceptor();
 
-const _0x5f2e = [
-  "\x20\x25\x63\x20\x20\x5F\x5F\x5F\x5F\x20\x20\x5F\x5F\x5F\x5F\x20\x20\x5F\x5F\x5F\x5F\x20\x20\x5F\x5F\x5F\x5F\x20\x20\x20\x20\x5F\x5F\x5F\x5F\x20\x20\x5F\x20\x20\x20\x5F\x20\x20\x5F\x5F\x5F\x5F\x20\x20\x5F\x5F\x5F\x5F\x20\x20\x0A\x20\x2F\x20\x5F\x5F\x5F\x7C\x7C\x20\x20\x5F\x20\x5C\x7C\x20\x20\x5F\x20\x5C\x7C\x20\x20\x5F\x20\x5C\x20\x20\x2F\x20\x5F\x5F\x5F\x7C\x7C\x20\x7C\x20\x7C\x20\x7C\x7C\x20\x20\x5F\x20\x5C\x7C\x20\x20\x5F\x20\x5C\x20\x0A\x20\x5C\x5F\x5F\x5F\x20\x5C\x7C\x20\x7C\x5F\x29\x20\x7C\x20\x7C\x5F\x29\x20\x7C\x20\x7C\x5F\x29\x20\x7C\x7C\x20\x7C\x20\x20\x20\x20\x7C\x20\x7C\x5F\x20\x7C\x20\x7C\x7C\x20\x7C\x5F\x29\x20\x7C\x20\x7C\x5F\x29\x20\x7C\x0A\x20\x20\x5F\x5F\x5F\x20\x29\x20\x7C\x20\x20\x5F\x20\x3C\x7C\x20\x20\x5F\x20\x3C\x7C\x20\x20\x5F\x20\x3C\x20\x7C\x20\x7C\x5F\x5F\x5F\x20\x7C\x20\x20\x5F\x20\x20\x7C\x7C\x20\x20\x5F\x20\x3C\x7C\x20\x20\x5F\x20\x3C\x20\x0A\x20\x7C\x5F\x5F\x5F\x5F\x2F\x7C\x5F\x7C\x20\x5C\x5F\x5C\x7C\x5F\x7C\x20\x5C\x5F\x5C\x7C\x5F\x7C\x20\x5C\x5F\x5C\x20\x5C\x5F\x5F\x5F\x5F\x7C\x7C\x5F\x7C\x20\x7C\x5F\x7C\x7C\x5F\x7C\x20\x5C\x5F\x5C\x7C\x5F\x7C\x20\x5C\x5F\x5C\x0A\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20",
-  "color:\x20#0ea5e9;\x20font-weight:\x20bold;\x20font-family:\x20monospace;",
-  "log",
-];
-(function (_0x1a2b, _0x3c4d) {
-  const _0x5e2a = function (_0x4f3e: number) {
-    while (--_0x4f3e) {
-      _0x1a2b.push(_0x1a2b.shift()!);
-    }
-  };
-  _0x5e2a(++_0x3c4d);
-})(_0x5f2e, 0x1a3);
+// // Hardcoded Responsive Lead Signature 
+// (function() {
+//     const wideSignature = `
+//         ███████╗██████╗ ███████╗███████╗  ██████╗██╗  ██╗ █████╗ ██████╗  █████╗ ███╗   ██╗
+//         ██╔════╝██╔══██╗██╔════╝██╔════╝ ██╔════╝██║  ██║██╔══██╗██╔══██╗██╔══██╗████╗  ██║
+//         ███████╗██████╔╝█████╗  █████╗   ██║     ███████║███████║██████╔╝███████║██╔██╗ ██║
+//         ╚════██║██╔══██╗██╔══╝  ██╔══╝   ██║     ██╔══██║██╔══██║██╔══██╗██╔══██║██║╚██╗██║
+//         ███████║██║  ██║███████╗███████╗ ╚██████╗██║  ██║██║  ██║██║  ██║██║  ██║██║ ╚████║
+//         ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝
+//     `;
 
-const _0x12a3 = function (_0x2b3c: string) {
-  const _0xidx = parseInt(_0x2b3c, 16);
-  return _0x5f2e[_0xidx];
-};
+//     const compactSignature = `
+//          ██████╗██╗  ██╗ █████╗ ██████╗  █████╗ ███╗   ██╗
+//         ██╔════╝██║  ██║██╔══██╗██╔══██╗██╔══██╗████╗  ██║
+//         ██║     ███████║███████║██████╔╝███████║██╔██╗ ██║
+//         ██║     ██╔══██║██╔══██║██╔══██╗██╔══██║██║╚██╗██║
+//         ╚██████╗██║  ██║██║  ██║██║  ██║██║  ██║██║ ╚████║
+//          ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+//     `;
 
-const _0xfunc = _0x12a3("0x1") as keyof Console;
-(console[_0xfunc] as Function)(_0x12a3("0x2"), _0x12a3("0x0"));
+//     const logSignature = () => {
+//         const isWide = window.innerWidth > 900;
+//         if (isWide) {
+//             console.log(`%c${wideSignature}`, "color: #ffffff; font-weight: bold; font-family: monospace; line-height: 1.2;");
+//         } else {
+//             console.log(`%c${compactSignature}`, "color: #ffffff; font-weight: bold; font-family: monospace; line-height: 1.2;");
+//         }
+//     };
+
+//     logSignature();
+//     window.addEventListener('resize', logSignature);
+// })();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
