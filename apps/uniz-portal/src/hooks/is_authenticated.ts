@@ -55,9 +55,9 @@ export function useIsAuth() {
     ];
 
     const logoutAndRedirect = (reason: string) => {
-      const wasAuth = currentIsAuth.is_authnticated;
+      const wasAuth = currentIsAuth.is_authenticated;
       clearSession();
-      setAuthFn({ is_authnticated: false, type: "" });
+      setAuthFn({ is_authenticated: false, type: "" });
       if (wasAuth || !publicPaths.includes(location.pathname)) {
         toast.error(`Security Alert: ${reason}`);
         navigate("/");
@@ -105,8 +105,8 @@ export function useIsAuth() {
       }
 
       // Valid Admin
-      if (!currentIsAuth.is_authnticated) {
-        setAuthFn({ is_authnticated: true, type: "admin" });
+      if (!currentIsAuth.is_authenticated) {
+        setAuthFn({ is_authenticated: true, type: "admin" });
       }
 
       // Silently init push notifications once
@@ -137,8 +137,8 @@ export function useIsAuth() {
       }
 
       // Valid Student
-      if (!currentIsAuth.is_authnticated) {
-        setAuthFn({ is_authnticated: true, type: "student" });
+      if (!currentIsAuth.is_authenticated) {
+        setAuthFn({ is_authenticated: true, type: "student" });
       }
 
       // Silently init push notifications once

@@ -24,7 +24,7 @@ export function useLogout() {
     resetStudentDataCache();
 
     // 2. Global State Reset
-    setAuth({ is_authnticated: false, type: "" });
+    setAuth({ is_authenticated: false, type: "" });
     setAdmin(null);
     setStudent({
       _id: "",

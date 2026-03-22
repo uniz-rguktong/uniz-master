@@ -68,10 +68,10 @@ export const InstallPWA = () => {
   // 5. Show after login if not already standalone
   useEffect(() => {
     const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
-    if (auth.is_authnticated && !isStandalone && !isDismissed) {
+    if (auth.is_authenticated && !isStandalone && !isDismissed) {
       setTimeout(() => setIsVisible(true), 2000);
     }
-  }, [auth.is_authnticated, isStandalone]);
+  }, [auth.is_authenticated, isStandalone]);
 
   // 6. Auto-dismiss after 8 seconds of visibility
   useEffect(() => {
