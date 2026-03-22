@@ -134,7 +134,7 @@ export default function Resetpassword() {
         localStorage.removeItem("admin_token");
 
         setAuth({
-          is_authnticated: false,
+          is_authenticated: false,
           type: "",
         });
 
