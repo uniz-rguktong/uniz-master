@@ -23,7 +23,7 @@ export default function GlobeFeature() {
                     </p>
                     <div className="flex flex-col gap-6">
                         <div className="flex items-center gap-4">
-                            <span className="text-sm font-medium text-slate-500">developed by</span>
+                            <span className="text-sm font-medium text-slate-500">developed and maintained by</span>
                             <AnimatedTooltip items={people} />
                         </div>
 
