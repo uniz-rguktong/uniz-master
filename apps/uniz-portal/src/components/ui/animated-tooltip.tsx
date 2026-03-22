@@ -94,31 +94,29 @@ export const AnimatedTooltip = ({
                         <div className="relative group/avatar">
                             <motion.img
                                 onMouseMove={handleMouseMove}
-                                onMouseEnter={() => {
-                                    setHoveredIndex(item.id);
-                                }}
-                                onMouseLeave={() => {
-                                    setHoveredIndex(null);
-                                }}
+                                onMouseEnter={() => setHoveredIndex(item.id)}
+                                onMouseLeave={() => setHoveredIndex(null)}
                                 whileHover={{ 
-                                    scale: item.id === 1 ? 1.45 : 1.35, 
-                                    rotate: item.id === 1 ? 4 : (item.id % 2 === 0 ? 5 : -5),
-                                    zIndex: 60 
+                                    scale: 2.2, 
+                                    rotate: 0,
+                                    zIndex: 100,
+                                    y: -20
                                 }}
-                                transition={{ type: "spring", stiffness: 450, damping: 18 }}
+                                transition={{ 
+                                    type: "spring", 
+                                    stiffness: 350, 
+                                    damping: 20,
+                                    mass: 0.8
+                                }}
                                 src={item.image}
                                 alt={item.name}
                                 className={cn(
-                                    "object-cover !m-0 !p-0 object-top rounded-full h-10 w-10 border-2 relative transition-all duration-500 cursor-pointer shadow-sm",
+                                    "object-cover !m-0 !p-0 object-top rounded-full h-10 w-10 border-2 relative transition-all duration-300 cursor-pointer shadow-sm",
                                     hoveredIndex === item.id 
-                                        ? "border-sky-400 shadow-[0_0_30px_rgba(56,189,248,0.3)]" 
-                                        : "border-white z-20 grayscale-[0.35] hover:grayscale-0",
-                                    item.id === 1 && "ring-[3px] ring-sky-500/5 ring-offset-0"
+                                        ? "border-sky-400 shadow-2xl ring-4 ring-sky-400/20" 
+                                        : "border-white z-20 grayscale-0 hover:grayscale-0",
                                 )}
                             />
-                            {item.id === 1 && (
-                                <div className="absolute -inset-[2px] rounded-full opacity-0 group-hover/avatar:opacity-100 transition-all duration-1000 pointer-events-none ring-[1.5px] ring-sky-400/40 blur-[0.5px]" />
-                            )}
                         </div>
                     </div>
                 );
