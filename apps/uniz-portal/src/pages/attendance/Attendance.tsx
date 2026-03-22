@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRecoilValue } from "recoil";
 import { student, studentAuthLoading } from "../../store";
 import {
@@ -6,9 +6,11 @@ import {
   CalendarCheck,
   AlertCircle,
   Download,
+  CheckCircle2,
 } from "lucide-react";
 import { GET_ATTENDANCE, DOWNLOAD_ATTENDANCE } from "../../api/endpoints";
 import { apiClient, downloadFile } from "../../api/apiClient";
+import { writeAcademicCache, readAcademicCache, isCacheStale } from "../../utils/academicCache";
 
 interface AttendanceRecord {
   subject: string | { name: string;[key: string]: any };
@@ -56,12 +58,42 @@ export default function Attendance() {
   const [resultsFetched, setResultsFetched] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("g your attendance!");
+  const [fromCache, setFromCache] = useState(false);
+
+  // Guard: prevents concurrent duplicate API calls
+  const isFetchingRef = useRef(false);
+  // Stable primitive deps (avoids re-triggering on every Recoil poll tick)
+  const userUsername = user?.username;
+
+  // Ref for auto-scroll to results
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   // Get available semesters for the selected year
   const availableSemesters = semesterOptions
     .filter((opt) => opt.year === selectedYear)
     .map((opt) => opt.name)
     .sort();
+
+  // Load from cache when year/semester changes
+  useEffect(() => {
+    if (!userUsername) return;
+    const mappedSemester = selectedSemester.replace("Sem - ", "SEM-");
+    const cached = readAcademicCache<AttendanceResponse>("attendance", userUsername, selectedYear, mappedSemester, true);
+    if (cached) {
+      setAttendanceData(cached);
+      setResultsFetched(true);
+      setFromCache(true);
+      // Background refresh only if stale AND not already in-flight
+      if (isCacheStale("attendance", userUsername, selectedYear, mappedSemester) && !isFetchingRef.current) {
+        handleFetchAttendance(true);
+      }
+    } else {
+      setAttendanceData(null);
+      setResultsFetched(false);
+      setFromCache(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedYear, selectedSemester, userUsername]);
 
   // Handle dynamic loading message
   useEffect(() => {
@@ -76,8 +108,8 @@ export default function Attendance() {
   }, [isLoading]);
 
   // Fetch attendance data
-  const handleFetchAttendance = async () => {
-    if (!user?.username) {
+  const handleFetchAttendance = async (silent = false) => {
+    if (!userUsername) {
       setError("Please sign in to view attendance");
       return;
     }
@@ -87,19 +119,24 @@ export default function Attendance() {
       return;
     }
 
-    setIsLoading(true);
-    setError("");
-    setAttendanceData(null);
+    // Strict single-call guard: bail out if a request is already in-flight
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
+    if (!silent) {
+      setIsLoading(true);
+      setError("");
+      setAttendanceData(null);
+    }
 
     try {
       // Map "Sem - 1" -> "SEM-1" for API consistency
       const mappedSemester = selectedSemester.replace("Sem - ", "SEM-");
 
-      // Fetch attendance with mapped parameters: studentId, year, semester
       const data = await apiClient<AttendanceResponse>(GET_ATTENDANCE, {
         method: "GET",
         params: {
-          studentId: user.username,
+          studentId: userUsername,
           year: selectedYear,
           semester: mappedSemester,
         }
@@ -108,15 +145,25 @@ export default function Attendance() {
       if (data && data.success) {
         setAttendanceData(data);
         setResultsFetched(true);
+        setFromCache(false);
+        writeAcademicCache("attendance", userUsername!, selectedYear, mappedSemester, data);
+
+        // Auto-scroll only on manual fetches
+        if (!silent) {
+          setTimeout(() => {
+            resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 100);
+        }
       } else {
         setError(data?.msg || "Failed to fetch attendance");
         setAttendanceData(null);
       }
     } catch (err) {
-      setError("An error occurred while fetching attendance");
+      if (!silent) setError("An error occurred while fetching attendance");
       setAttendanceData(null);
     } finally {
-      setIsLoading(false);
+      isFetchingRef.current = false;
+      if (!silent) setIsLoading(false);
     }
   };
 
@@ -231,13 +278,17 @@ export default function Attendance() {
 
               <div className="md:w-56">
                 <button
-                  onClick={handleFetchAttendance}
+                  onClick={() => handleFetchAttendance(false)}
                   className="w-full h-[46px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm flex items-center justify-center disabled:opacity-50"
                   disabled={isLoading || !user?.username}
                 >
                   {isLoading ? (
                     <span className="flex items-center gap-1.5 text-sm uppercase tracking-widest">
                       Syncing...
+                    </span>
+                  ) : fromCache ? (
+                    <span className="flex items-center gap-1.5">
+                      <CheckCircle2 size={14} /> Refresh
                     </span>
                   ) : (
                     <span className="flex items-center gap-1.5">Get Attendance</span>
@@ -279,9 +330,9 @@ export default function Attendance() {
           attendanceData &&
           attendanceData.success &&
           !isLoading && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-500">
+            <div ref={resultsRef} className="-mx-4 md:mx-0 space-y-0 animate-in fade-in slide-in-from-bottom-8 duration-500 scroll-mt-4 bg-white md:bg-transparent md:space-y-4 rounded-none md:rounded-xl overflow-hidden">
               {/* Header */}
-              <div className="flex items-end justify-between border-b pb-4 border-slate-100">
+              <div className="flex items-end justify-between border-b pb-4 border-slate-100 px-4 md:px-0 pt-5 md:pt-0">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">
                     Matrix Snapshot
@@ -332,7 +383,7 @@ export default function Attendance() {
                   </p>
                 </div>
               ) : (
-                <div className="md:bg-white md:rounded-xl overflow-hidden md:border md:border-slate-100 md:shadow-sm mt-4 bg-transparent border-t border-slate-100">
+                <div className="md:bg-white md:rounded-xl overflow-hidden md:border md:border-slate-100 md:shadow-sm bg-transparent">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>

@@ -218,7 +218,7 @@ export default function StudentBulkSection() {
               ) : uploadId ? (
                 <div className="flex items-center gap-3">
                   <Loader2 className="animate-spin w-4 h-4" />
-                  <span>Processing... {progress}%</span>
+                  <span>Processing...</span>
                 </div>
               ) : (
                 <CheckCircle2 size={16} />

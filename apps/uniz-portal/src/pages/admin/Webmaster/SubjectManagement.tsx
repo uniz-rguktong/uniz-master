@@ -30,9 +30,14 @@ import {
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 
+import { useRecoilState } from "recoil";
+import { subjectsAtom } from "../../../store/atoms";
+import { Skeleton } from "@/components/ui/Skeleton";
+
 export default function SubjectManagement() {
-  const [subjects, setSubjects] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [subjectsState, setSubjectsState] = useRecoilState(subjectsAtom);
+  const [subjects, setSubjects] = useState<any[]>(subjectsState.data);
+  const [loading, setLoading] = useState(!subjectsState.fetched);
   const [showAddModal, setShowAddModal] = useState(false);
 
   // Pagination & Filtering State
@@ -41,7 +46,7 @@ export default function SubjectManagement() {
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("");
   const [semester, setSemester] = useState("");
-  const [meta, setMeta] = useState<any>({ total: 0, totalPages: 0 });
+  const [meta, setMeta] = useState<any>(subjectsState.meta || { total: 0, totalPages: 0 });
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingSubject, setEditingSubject] = useState<any>(null);
@@ -54,7 +59,7 @@ export default function SubjectManagement() {
   });
 
   const fetchSubjects = async () => {
-    setLoading(true);
+    if (!subjectsState.fetched || search || department || semester) setLoading(true);
     try {
       const res = await apiClient<any>(GET_SUBJECTS, {
         params: {
@@ -67,7 +72,17 @@ export default function SubjectManagement() {
       });
       if (res && res.success) {
         setSubjects(res.subjects);
-        setMeta(res.meta || { total: res.subjects.length, totalPages: 1 });
+        const newMeta = res.meta || { total: res.subjects.length, totalPages: Math.ceil(res.subjects.length / limit) };
+        setMeta(newMeta);
+        
+        // Only cache the first page with no filters for global state
+        if (page === 1 && !search && !department && !semester) {
+           setSubjectsState({
+             fetched: true,
+             data: res.subjects,
+             meta: newMeta
+           });
+        }
       }
     } catch (error) {
       toast.error("Failed to fetch subjects");
@@ -242,8 +257,32 @@ export default function SubjectManagement() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="animate-spin text-navy-900" size={32} />
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          {[...Array(12)].map((_, i) => (
+            <div key={i} className="bg-white border border-slate-100 rounded-xl p-5 space-y-4">
+              <div className="flex items-center gap-3">
+                <Skeleton className="w-10 h-10 rounded-lg" />
+                <div className="space-y-2">
+                  <Skeleton className="w-16 h-3 rounded" />
+                  <Skeleton className="w-32 h-4 rounded" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3 pt-3">
+                <div className="space-y-2">
+                  <Skeleton className="w-12 h-2 rounded" />
+                  <Skeleton className="w-20 h-3 rounded" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="w-12 h-2 rounded" />
+                  <Skeleton className="w-20 h-3 rounded" />
+                </div>
+              </div>
+              <div className="pt-2 space-y-2">
+                 <Skeleton className="w-24 h-2 rounded" />
+                 <Skeleton className="w-full h-1 rounded-full" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : subjects.length > 0 ? (
         <>

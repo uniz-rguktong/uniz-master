@@ -45,24 +45,29 @@ interface Profile {
   profile_url?: string;
 }
 
+import { useRecoilState } from "recoil";
+import { deanOverviewAtom } from "../../../store/atoms";
+import { Skeleton } from "@/components/ui/Skeleton";
+
 export default function DeanOverview({ username }: { username: string }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(true);
+  const [cachedData, setCachedData] = useRecoilState(deanOverviewAtom);
+  const [profile, setProfile] = useState<Profile | null>(cachedData.profile);
+  const [profileLoading, setProfileLoading] = useState(!cachedData.fetched);
   const [isUploading, setIsUploading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    contact: "",
-    designation: "",
-    department: "",
+    name: cachedData.profile?.name || "",
+    email: cachedData.profile?.email || "",
+    contact: cachedData.profile?.contact || "",
+    designation: cachedData.profile?.designation || "",
+    department: cachedData.profile?.department || "",
   });
-  const [occupancy, setOccupancy] = useState<any>(null);
-  const [heatmap, setHeatmap] = useState<any[]>([]);
-  const [grievances, setGrievances] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [occupancy, setOccupancy] = useState<any>(cachedData.occupancy);
+  const [heatmap, setHeatmap] = useState<any[]>(cachedData.heatmap);
+  const [grievances, setGrievances] = useState<any>(cachedData.grievances);
+  const [loading, setLoading] = useState(!cachedData.fetched);
   const [selectedBranch, setSelectedBranch] = useState<string>("CSE");
   const [hoveredOccupancy, setHoveredOccupancy] = useState<string | null>(null);
 
@@ -71,7 +76,7 @@ export default function DeanOverview({ username }: { username: string }) {
 
   const fetchProfile = async () => {
     try {
-      setProfileLoading(true);
+      if (!cachedData.fetched) setProfileLoading(true);
       const res = await fetch(`${BASE_URL}/profile/admin/me`, {
         headers: { Authorization: `Bearer ${token()}` },
       });
@@ -85,6 +90,7 @@ export default function DeanOverview({ username }: { username: string }) {
           designation: data.data.designation || "",
           department: data.data.department || "",
         });
+        setCachedData(prev => ({ ...prev, profile: data.data }));
       }
     } catch {
       toast.error("Failed to load profile");
@@ -158,7 +164,7 @@ export default function DeanOverview({ username }: { username: string }) {
     fetchProfile();
     const fetchData = async () => {
       try {
-        setLoading(true);
+        if (!cachedData.fetched) setLoading(true);
         const authHeaders = {
           "x-api-key": ANALYTICS_KEY,
           "Content-Type": "application/json"
@@ -178,6 +184,13 @@ export default function DeanOverview({ username }: { username: string }) {
         setOccupancy(occ);
         setHeatmap(Array.isArray(hmap) ? hmap : []);
         setGrievances(gv);
+        setCachedData({
+          fetched: true,
+          profile: profile || cachedData.profile,
+          occupancy: occ,
+          heatmap: Array.isArray(hmap) ? hmap : [],
+          grievances: gv
+        });
 
       } catch (err) {
         console.error("Dean analytics failed:", err);
@@ -192,23 +205,17 @@ export default function DeanOverview({ username }: { username: string }) {
   const initials = displayName[0]?.toUpperCase() || "D";
   const email = (profile?.email || `${username}@rguktong.ac.in`).toLowerCase();
 
-  // Process Heatmap Data: Group by branch and calculate average grade
-
-
-  // Unique branches for dropdown
   const uniqueBranches = useMemo(() => {
     const b = Array.from(new Set(heatmap.map(item => item.branch))).filter(Boolean);
     return b.length ? b.sort() : ["CSE", "ECE", "EEE", "MECH", "CIVIL"];
   }, [heatmap]);
 
-  // Filtered heatmap data for the selected branch
   const branchFilteredData = useMemo(() => {
     return heatmap
       .filter(item => item.branch === selectedBranch)
       .sort((a, b) => (Number(b.average_grade) || 0) - (Number(a.average_grade) || 0));
   }, [heatmap, selectedBranch]);
 
-  // Handle Grievance Data Fallback (since API is empty)
   const grievanceData = useMemo(() => {
     const hasData = grievances && (grievances.trend?.length || grievances.feed?.length);
     if (hasData) return grievances;
@@ -231,7 +238,6 @@ export default function DeanOverview({ username }: { username: string }) {
     };
   }, [grievances]);
 
-  // Handle Occupancy Data Fallback
   const occupancyStats = useMemo(() => {
     const inside = Number(occupancy?.["Inside Campus"]) || 0;
     const outside = Number(occupancy?.["Outside Campus"]) || 0;
@@ -243,7 +249,6 @@ export default function DeanOverview({ username }: { username: string }) {
     ];
 
     if (total === 0 && !occupancy) {
-      // Fallback or Initial Seed
       return {
         total: 3450,
         inside: 2800,
@@ -261,14 +266,22 @@ export default function DeanOverview({ username }: { username: string }) {
     };
   }, [occupancy]);
 
-  if (loading) {
+  if (loading && !cachedData.fetched) {
     return (
-      <div className="w-full h-[60vh] flex flex-col items-center justify-center gap-6">
-        <div className="relative">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-          <div className="absolute inset-0 bg-blue-600/10 blur-xl rounded-full animate-pulse" />
+      <div className="space-y-12 pb-20 px-10 pt-10 animate-in fade-in duration-1000">
+        <div className="flex flex-col items-center justify-center space-y-4 mb-8">
+           <Skeleton className="w-[130px] h-[130px] rounded-full" />
+           <Skeleton className="w-48 h-8 rounded-lg" />
+           <Skeleton className="w-64 h-4 rounded-md" />
         </div>
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Aggregating Campus Intelligence...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Skeleton className="h-44 rounded-[2rem]" />
+          <Skeleton className="h-44 rounded-[2rem]" />
+          <Skeleton className="h-44 rounded-[2rem]" />
+          <Skeleton className="h-44 rounded-[2rem]" />
+        </div>
+        <Skeleton className="h-[450px] w-full rounded-[2.5rem]" />
+        <Skeleton className="h-[400px] w-full rounded-[2.5rem]" />
       </div>
     );
   }
