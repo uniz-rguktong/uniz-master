@@ -86,7 +86,7 @@ export function FileUploader({
     const isImage = selectedFile?.type.startsWith("image/");
 
     return (
-        <div className="w-full space-y-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="w-full space-y-4 rounded-xl bg-transparent">
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
                     <h3 className="text-lg font-bold text-slate-900 tracking-tight">{label}</h3>

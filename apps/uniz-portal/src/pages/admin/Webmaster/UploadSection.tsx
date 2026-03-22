@@ -199,13 +199,13 @@ export default function UploadSection({ type }: { type: UploadType }) {
   };
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
-      <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-2">
+    <div className="p-6 space-y-8 pb-20 text-slate-900">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex flex-col gap-1.5">
-          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none capitalize">
+          <h2 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none capitalize">
             {type} Bulk Management
           </h2>
-          <p className="text-slate-500 font-medium text-[15px]">
+          <p className="text-slate-500 font-medium text-[13px]">
             Synchronize institutional {type} records with the core system.
           </p>
         </div>
@@ -213,29 +213,27 @@ export default function UploadSection({ type }: { type: UploadType }) {
         {type === "grades" && (
           <button
             onClick={downloadTemplate}
-            className="group flex items-center gap-2.5 px-4 py-2 bg-white text-slate-500 rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-navy-900 hover:border-navy-100 transition-all font-bold uppercase tracking-widest text-[9px] shadow-none active:scale-95 mb-1"
+            className="group flex items-center gap-2.5 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl border border-slate-200 hover:bg-white hover:text-slate-900 hover:border-slate-300 transition-all font-bold uppercase tracking-widest text-[9px] active:scale-95"
           >
-            <div className="p-1.5 bg-slate-50 rounded-lg group-hover:bg-navy-50 transition-colors">
-              <FileDown size={13} className="group-hover:scale-110 transition-transform" />
-            </div>
+            <FileDown size={13} className="text-slate-500 group-hover:scale-110 transition-transform" />
             Download {type} Template
           </button>
         )}
       </div>
 
-      <div className="bg-white p-7 rounded-2xl border border-slate-100 shadow-none animate-in slide-in-from-top-4 duration-500 space-y-8">
+      <div className="w-full">
         <div
-          className={`grid grid-cols-1 md:grid-cols-3 ${type === "grades" ? "lg:grid-cols-7" : "lg:grid-cols-6"} gap-4 items-end`}
+          className={`grid grid-cols-1 md:grid-cols-3 ${type === "grades" ? "lg:grid-cols-7" : "lg:grid-cols-6"} gap-6 items-end`}
         >
           <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+            <label className="text-[9px] font-bold uppercase tracking-widest text-slate-400 ml-1">
               Branch
             </label>
             <div className="relative group">
               <select
                 value={branch}
                 onChange={(e) => setBranch(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none transition-all font-black text-[10px] uppercase tracking-widest text-slate-900 cursor-pointer appearance-none shadow-none"
               >
                 <option value="ALL">ALL BRANCHES</option>
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
@@ -254,14 +252,14 @@ export default function UploadSection({ type }: { type: UploadType }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+            <label className="text-[9px] font-bold uppercase tracking-widest text-slate-400 ml-1">
               Year
             </label>
             <div className="relative group">
               <select
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none transition-all font-black text-[10px] uppercase tracking-widest text-slate-900 cursor-pointer appearance-none shadow-none"
               >
                 <option value="ALL">ALL YEARS</option>
                 {["E1", "E2", "E3", "E4"].map((y) => (
@@ -278,14 +276,14 @@ export default function UploadSection({ type }: { type: UploadType }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+            <label className="text-[9px] font-bold uppercase tracking-widest text-slate-400 ml-1">
               Semester
             </label>
             <div className="relative group">
               <select
                 value={semester}
                 onChange={(e) => setSemester(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none"
+                className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none transition-all font-black text-[10px] uppercase tracking-widest text-slate-900 cursor-pointer appearance-none shadow-none"
               >
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                   <option key={s} value={`SEM-${s}`}>
@@ -301,14 +299,14 @@ export default function UploadSection({ type }: { type: UploadType }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+            <label className="text-[9px] font-bold uppercase tracking-widest text-slate-400 ml-1">
               Batch
             </label>
             <div className="relative group">
               <select
                 value={batch}
                 onChange={(e) => setBatch(e.target.value)}
-                className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl font-bold text-[11px] uppercase tracking-widest text-slate-600 appearance-none outline-none focus:border-navy-100"
+                className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none transition-all font-black text-[10px] uppercase tracking-widest text-slate-900 cursor-pointer appearance-none shadow-none"
               >
                 <option value="ALL">ALL BATCHES</option>
                 {availableBatches.map((b) => (
@@ -327,10 +325,10 @@ export default function UploadSection({ type }: { type: UploadType }) {
           {type === "grades" && (
             <>
               <div className="space-y-2 lg:col-span-1">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
-                  Subject Code
+                <label className="text-[9px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+                  Subject
                   {subjectsLoading && (
-                    <span className="ml-2 text-navy-900 normal-case tracking-normal font-medium">
+                    <span className="ml-2 text-slate-900 normal-case tracking-normal font-medium">
                       loading...
                     </span>
                   )}
@@ -339,7 +337,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                   <select
                     value={subjectCode}
                     onChange={(e) => setSubjectCode(e.target.value)}
-                    className="w-full h-11 pl-5 pr-10 bg-slate-50 border border-slate-100 rounded-xl shadow-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-bold text-[11px] uppercase tracking-widest text-slate-600 cursor-pointer appearance-none disabled:opacity-50"
+                    className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none transition-all font-black text-[10px] uppercase tracking-widest text-slate-900 cursor-pointer appearance-none shadow-none disabled:opacity-50"
                     disabled={subjectsLoading}
                   >
                     <option value="">
@@ -360,26 +358,21 @@ export default function UploadSection({ type }: { type: UploadType }) {
                     size={14}
                   />
                 </div>
-                {subjectCode && (
-                  <p className="text-[10px] text-navy-900 font-semibold ml-2 mt-1">
-                    ✓ {subjects.find((s) => s.code === subjectCode)?.name}
-                  </p>
-                )}
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+                <label className="text-[9px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                   Scope
                 </label>
-                <div className="flex bg-slate-100/80 p-1 rounded-xl w-fit border border-slate-200/50 shadow-none">
+                <div className="flex bg-slate-100/80 p-1 rounded-xl w-fit border border-slate-200/50">
                   <button
                     onClick={() => setRemedialsOnly(false)}
-                    className={`px-6 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${!remedialsOnly ? "bg-white text-navy-800 shadow-none border border-slate-200/50" : "text-slate-500 hover:text-slate-700"}`}
+                    className={`px-6 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all ${!remedialsOnly ? "bg-white text-slate-900 border border-slate-200/50" : "text-slate-500 hover:text-slate-700"}`}
                   >
                     Regular
                   </button>
                   <button
                     onClick={() => setRemedialsOnly(true)}
-                    className={`px-6 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${remedialsOnly ? "bg-white text-navy-800 shadow-none border border-slate-200/50" : "text-slate-500 hover:text-slate-700"}`}
+                    className={`px-6 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all ${remedialsOnly ? "bg-white text-slate-900 border border-slate-200/50" : "text-slate-500 hover:text-slate-700"}`}
                   >
                     Remedial
                   </button>
@@ -392,17 +385,17 @@ export default function UploadSection({ type }: { type: UploadType }) {
             <div className="flex items-end lg:col-span-2">
               <button
                 onClick={downloadTemplate}
-                className="h-11 px-10 bg-slate-50 hover:bg-navy-50 border border-slate-100 hover:border-navy-100 rounded-xl shadow-none text-navy-800 font-bold uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2.5 active:scale-95 w-full whitespace-nowrap"
+                className="h-11 px-10 bg-slate-50 hover:bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 font-bold uppercase tracking-widest text-[9px] transition-all flex items-center justify-center gap-2.5 active:scale-95 w-full whitespace-nowrap"
               >
-                <FileDown size={14} /> Download {type} Template
+                <FileDown size={14} /> Download Template
               </button>
             </div>
           )}
         </div>
       </div>
 
-      <div className="space-y-8">
-        <div className="space-y-6">
+      <div className="space-y-6">
+        <div className="rounded-xl border border-slate-900 overflow-hidden bg-transparent p-6">
           <FileUploader
             onFileSelect={(f) => {
               setFile(f);
@@ -411,71 +404,69 @@ export default function UploadSection({ type }: { type: UploadType }) {
             label={`Select ${type} Excel/CSV`}
             description={`Drag and drop the official ${type} record file.`}
           />
-
-          <button
-            disabled={!file || loading || !!uploadId}
-            onClick={handleUpload}
-            className="w-full bg-navy-900 text-white py-5 rounded-xl font-semibold uppercase tracking-[0.2em] text-[11px] hover:bg-navy-800 transition-all shadow-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 active:scale-95"
-          >
-            {loading ? (
-              <Loader2 className="animate-spin w-5 h-5" />
-            ) : uploadId ? (
-              <Loader2 className="animate-spin w-5 h-5" />
-            ) : (
-              <Upload size={20} />
-            )}
-            {uploadId ? "Processing Records..." : `Process & Record ${type}`}
-          </button>
         </div>
 
-        <div className="space-y-6">
-          {result && (
-            <div
-              className={`p-8 rounded-xl border animate-in slide-in-from-top-4 duration-500 shadow-none ${result.success
-                ? "bg-emerald-50 border-emerald-100 text-emerald-900"
-                : "bg-red-50 border-red-100 text-red-900"
-                }`}
-            >
-              <div className="flex items-center gap-4 mb-6">
-                <div
-                  className={`p-3.5 rounded-xl ${result.success ? "bg-emerald-500 text-white shadow-none" : "bg-red-500 text-white shadow-none"}`}
-                >
-                  {result.success ? (
-                    <CheckCircle2 size={26} />
-                  ) : (
-                    <AlertCircle size={26} />
-                  )}
-                </div>
-                <h3
-                  className={`text-2xl font-semibold tracking-[-0.02em] ${result.success ? "text-emerald-900" : "text-red-900"}`}
-                >
-                  {result.success ? "Sync Successful" : "Sync Failed"}
-                </h3>
-              </div>
+        <button
+          disabled={!file || loading || !!uploadId}
+          onClick={handleUpload}
+          className="w-full bg-slate-900 text-white h-12 rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-slate-800 transition-all shadow-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 active:scale-95"
+        >
+          {loading ? (
+            <Loader2 className="animate-spin w-4 h-4" />
+          ) : uploadId ? (
+            <Loader2 className="animate-spin w-4 h-4" />
+          ) : (
+            <Upload size={16} />
+          )}
+          {uploadId ? "Synchronizing..." : `Process & Record ${type}`}
+        </button>
 
-              <div className="space-y-4">
+        {result && (
+          <div
+            className={`p-6 rounded-xl border shadow-none ${result.success
+              ? "bg-emerald-50/50 border-emerald-200 text-emerald-900"
+              : "bg-red-50/50 border-red-200 text-red-900"
+              }`}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div
+                className={`p-2 rounded-lg ${result.success ? "bg-emerald-500 text-white shadow-none" : "bg-red-500 text-white shadow-none"}`}
+              >
                 {result.success ? (
-                  <>
-                    <p className="opacity-80 font-medium">
-                      Successfully processed {result.processed || 0} records
-                      into the central database.
-                    </p>
-                    <div className="p-4 bg-white/50 rounded-xl border border-emerald-200/50 shadow-none">
-                      <p className="text-[10px] uppercase font-semibold text-emerald-600 tracking-widest mb-1.5 leading-none">
-                        Status
-                      </p>
-                      <p className="text-emerald-900 font-semibold text-[15px] leading-tight">
-                        All systems green. Institutional records updated.
-                      </p>
-                    </div>
-                  </>
+                  <CheckCircle2 size={18} />
                 ) : (
-                  <p className="opacity-80 font-medium">{result.msg}</p>
+                  <AlertCircle size={18} />
                 )}
               </div>
+              <h3
+                className={`text-lg font-semibold tracking-tight ${result.success ? "text-emerald-900" : "text-red-900"}`}
+              >
+                {result.success ? "Sync Successful" : "Sync Failed"}
+              </h3>
             </div>
-          )}
-        </div>
+
+            <div className="space-y-3">
+              {result.success ? (
+                <>
+                  <p className="opacity-80 font-medium text-[13px]">
+                    Successfully processed {result.processed || 0} records
+                    into the central database.
+                  </p>
+                  <div className="p-4 bg-white/40 rounded-xl border border-emerald-200/40">
+                    <p className="text-[9px] uppercase font-bold text-emerald-600 tracking-widest mb-1 leading-none">
+                      Immediate Update
+                    </p>
+                    <p className="text-emerald-900 font-medium text-[13px]">
+                      Management portals and student dashboards will reflect updates.
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <p className="opacity-80 font-medium text-[13px]">{result.msg}</p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
