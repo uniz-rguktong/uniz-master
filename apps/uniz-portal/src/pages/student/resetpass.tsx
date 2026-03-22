@@ -93,7 +93,7 @@ export default function Resetpassword() {
 
         // Log out for security
         localStorage.clear();
-        setAuth({ is_authnticated: false, type: "" });
+        setAuth({ is_authenticated: false, type: "" });
         navigateTo("/student/signin", { replace: true });
       }
     } finally {

@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, memo, lazy, Suspense, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useIsAuth } from "../hooks/is_authenticated";
 import {
   Activity,

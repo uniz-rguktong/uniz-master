@@ -54,7 +54,7 @@ export default function Signin({ type }: SigninProps) {
       localStorage.getItem("admin_token") ||
       localStorage.getItem("faculty_token");
 
-    if (authState.is_authnticated && hasToken) {
+    if (authState.is_authenticated && hasToken) {
       const redirectPath =
         authState.type === "student"
           ? "/student"
@@ -147,7 +147,7 @@ export default function Signin({ type }: SigninProps) {
         localStorage.removeItem("faculty_token");
         localStorage.setItem("student_token", token);
         localStorage.setItem("username", username.trim());
-        setAuth({ is_authnticated: true, type: "student" });
+        setAuth({ is_authenticated: true, type: "student" });
         toast.success(`Welcome back, ${username.trim()}!`);
         navigate("/student", { replace: true });
       } else if (
@@ -160,7 +160,7 @@ export default function Signin({ type }: SigninProps) {
         localStorage.setItem("faculty_token", token || "");
         localStorage.setItem("username", username.trim());
         localStorage.setItem("role", data.role || "teacher");
-        setAuth({ is_authnticated: true, type: "faculty" });
+        setAuth({ is_authenticated: true, type: "faculty" });
         toast.success(`Welcome Professor ${username.trim()}!`);
         navigate("/faculty", { replace: true });
       } else if (type === "admin" && (token || data.success)) {
@@ -170,7 +170,7 @@ export default function Signin({ type }: SigninProps) {
         localStorage.setItem("username", username.trim());
         localStorage.setItem("admin_role", (data as any).role || "admin");
 
-        setAuth({ is_authnticated: true, type: "admin" });
+        setAuth({ is_authenticated: true, type: "admin" });
         setAdmin(username.trim());
         toast.success("Welcome back, Admin!");
         setTimeout(() => navigate("/admin", { replace: true }), 100);
@@ -180,7 +180,7 @@ export default function Signin({ type }: SigninProps) {
         localStorage.setItem("faculty_token", token);
         localStorage.setItem("username", username.trim());
         localStorage.setItem("role", (data as any).role);
-        setAuth({ is_authnticated: true, type: "faculty" });
+        setAuth({ is_authenticated: true, type: "faculty" });
         toast.success(`Welcome Professor ${username.trim()}!`);
         navigate("/faculty", { replace: true });
       } else {
