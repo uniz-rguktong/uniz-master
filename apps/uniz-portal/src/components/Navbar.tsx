@@ -18,12 +18,12 @@ export default function Navbar() {
     localStorage.removeItem("student_token");
     localStorage.removeItem("username");
     localStorage.removeItem("admin_token");
-    setAuth({ is_authnticated: false, type: "" });
+    setAuth({ is_authenticated: false, type: "" });
     navigate("/");
   };
 
   const isAuthenticated =
-    (isAuth.is_authnticated &&
+    (isAuth.is_authenticated &&
       isAuth.type === "student" &&
       localStorage.getItem("student_token")) ||
     (localStorage.getItem("student_token") && user);
