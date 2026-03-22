@@ -10,6 +10,8 @@ import {
 import { PUSH_SUBSCRIBERS, PUSH_SEND } from "../../../api/endpoints";
 import { apiClient } from "../../../api/apiClient";
 import { toast } from "@/utils/toast-ref";
+import { useRecoilState } from "recoil";
+import { pushNotificationsAtom } from "../../../store/atoms";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -19,8 +21,9 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function PushNotificationSection() {
-  const [subscribers, setSubscribers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [pushState, setPushState] = useRecoilState(pushNotificationsAtom);
+  const subscribers = pushState.data;
+  const [loading, setLoading] = useState(!pushState.fetched);
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const [showSendModal, setShowSendModal] = useState(false);
@@ -39,7 +42,7 @@ export default function PushNotificationSection() {
   }, [page, searchQuery]);
 
   const fetchSubscribers = async () => {
-    setLoading(true);
+    if (!pushState.fetched) setLoading(true);
     try {
       const data = await apiClient<any>(PUSH_SUBSCRIBERS, {
         params: {
@@ -49,7 +52,10 @@ export default function PushNotificationSection() {
         },
       });
       if (data) {
-        setSubscribers(data.subscribers || []);
+        setPushState({
+          fetched: true,
+          data: data.subscribers || []
+        });
       }
     } catch (error) {
       console.error("Error fetching subscribers:", error);

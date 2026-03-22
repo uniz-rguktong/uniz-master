@@ -177,3 +177,51 @@ export const pwaInstallAtom = atom<any | null>({
   default: null,
   dangerouslyAllowMutability: true,
 });
+
+export const systemUserAnalyticsAtom = atom({
+  key: "systemUserAnalyticsAtom",
+  default: {
+    fetched: false,
+    data: [] as any[],
+  },
+});
+
+export const uploadHealthAnalyticsAtom = atom({
+  key: "uploadHealthAnalyticsAtom",
+  default: {
+    fetched: false,
+    data: [] as any[],
+  },
+});
+
+export const facultyAtom = atom({
+  key: "facultyAtom",
+  default: {
+    fetched: false,
+    data: [] as any[],
+  },
+});
+
+export const updatesAtom = atom({
+  key: "updatesAtom",
+  default: {
+    fetched: false,
+    data: [] as any[],
+  },
+});
+
+export const pushNotificationsAtom = atom({
+  key: "pushNotificationsAtom",
+  default: {
+    fetched: false,
+    data: [] as any[],
+  },
+});
+
+export const systemLogsAtom = atom({
+  key: "systemLogsAtom",
+  default: {
+    fetched: false,
+    data: [] as any[],
+  },
+});

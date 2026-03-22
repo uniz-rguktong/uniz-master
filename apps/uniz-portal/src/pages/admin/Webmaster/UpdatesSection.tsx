@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { UPDATES_BASE, GET_NOTIFICATIONS } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { useRecoilState } from "recoil";
+import { updatesAtom } from "../../../store/atoms";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -21,8 +23,9 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function UpdatesSection() {
-  const [updates, setUpdates] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [updatesState, setUpdatesState] = useRecoilState(updatesAtom);
+  const updates = updatesState.data;
+  const [loading, setLoading] = useState(!updatesState.fetched);
   const [showAddModal, setShowAddModal] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
@@ -50,7 +53,7 @@ export default function UpdatesSection() {
   };
 
   const fetchUpdates = async () => {
-    setLoading(true);
+    if (!updatesState.fetched) setLoading(true);
     const primaryUrl = "https://api.uniz.rguktong.in/api/v1/cms/notifications";
     const proxyUrl = GET_NOTIFICATIONS;
 
@@ -109,11 +112,17 @@ export default function UpdatesSection() {
         result.length,
         "items.",
       );
-      setUpdates(result);
-    } else {
-      console.warn("CMS_SYNC: All sync attempts failed.");
-      setUpdates([]);
-    }
+        setUpdatesState({
+          fetched: true,
+          data: result
+        });
+      } else {
+        console.warn("CMS_SYNC: All sync attempts failed.");
+        setUpdatesState({
+          fetched: true,
+          data: []
+        });
+      }
     setLoading(false);
   };
 

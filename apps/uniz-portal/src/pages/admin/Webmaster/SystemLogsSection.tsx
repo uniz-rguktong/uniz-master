@@ -11,10 +11,13 @@ import {
 } from "lucide-react";
 import { ADMIN_UPLOAD_HISTORY, TRIGGER_CRON } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { useRecoilState } from "recoil";
+import { systemLogsAtom } from "../../../store/atoms";
 
 export default function SystemLogsSection() {
-  const [history, setHistory] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [logsState, setLogsState] = useRecoilState(systemLogsAtom);
+  const history = logsState.data;
+  const [loading, setLoading] = useState(!logsState.fetched);
   const [isMaintenanceLoading, setIsMaintenanceLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("ALL");
@@ -26,7 +29,7 @@ export default function SystemLogsSection() {
   }, []);
 
   const fetchHistory = async () => {
-    setLoading(true);
+    if (!logsState.fetched) setLoading(true);
     const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(ADMIN_UPLOAD_HISTORY, {
@@ -34,7 +37,10 @@ export default function SystemLogsSection() {
       });
       const data = await res.json();
       if (data.success) {
-        setHistory(data.history || []);
+        setLogsState({
+          fetched: true,
+          data: data.history || []
+        });
       }
     } catch (error) {
       console.error("Failed to fetch history", error);
@@ -181,14 +187,40 @@ export default function SystemLogsSection() {
             </thead>
             <tbody className="divide-y divide-slate-50/60">
               {loading ? (
-                Array(6)
+                Array(itemsPerPage)
                   .fill(0)
                   .map((_, i) => (
-                    <tr key={i} className="animate-pulse">
-                      <td
-                        colSpan={5}
-                        className="px-10 py-8 bg-slate-50/20"
-                      ></td>
+                    <tr key={i} className="animate-pulse border-b border-slate-50/60">
+                      <td className="px-10 py-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-11 h-11 rounded-full bg-slate-100 border-2 border-white ring-1 ring-slate-100" />
+                          <div className="space-y-2.5">
+                            <div className="h-4 w-28 bg-slate-100 rounded" />
+                            <div className="h-2 w-16 bg-slate-50 rounded" />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="space-y-2">
+                          <div className="h-4 w-40 bg-slate-100 rounded" />
+                          <div className="h-3 w-20 bg-slate-50 rounded" />
+                        </div>
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="space-y-2">
+                          <div className="h-5 w-12 bg-slate-100 rounded-lg" />
+                          <div className="h-2 w-16 bg-slate-50 rounded" />
+                        </div>
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="h-7 w-20 bg-slate-50 rounded-xl" />
+                      </td>
+                      <td className="px-10 py-6">
+                        <div className="space-y-2">
+                          <div className="h-4 w-24 bg-slate-100 rounded" />
+                          <div className="h-2 w-16 bg-slate-50 rounded" />
+                        </div>
+                      </td>
                     </tr>
                   ))
               ) : paginatedHistory.length > 0 ? (
