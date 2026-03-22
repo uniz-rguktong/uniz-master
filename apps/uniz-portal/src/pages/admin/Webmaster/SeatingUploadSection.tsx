@@ -305,7 +305,7 @@ export default function SeatingUploadSection() {
                 <div className="flex items-center gap-3">
                   <Loader2 className="animate-spin w-4 h-4" />
                   <span>
-                    {uploadId ? `Synchronizing... ${progress}%` : "Processing..."}
+                    {uploadId ? "Synchronizing..." : "Processing..."}
                   </span>
                 </div>
               ) : (

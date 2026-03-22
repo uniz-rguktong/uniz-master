@@ -5,31 +5,49 @@ import { GET_STUDENT_SEATING } from "../../../api/endpoints";
 import { apiClient } from "../../../api/apiClient";
 import { motion } from "framer-motion";
 
-export default function SeatingArrangement({
-  studentId,
-}: {
-  studentId?: string;
-}) {
+// ─── Module-level singleton cache ───────────────────────────────────────────
+// Shared across SeatingArrangement AND SeatingSummaryWidget in student.tsx
+// so only ONE network request fires no matter how many components mount.
+type SeatingCache = { seating: any[]; semester: any } | null;
+let seatingCache: SeatingCache = null;
+let seatingPromise: Promise<SeatingCache> | null = null;
+
+export async function fetchSeatingOnce(): Promise<SeatingCache> {
+  if (seatingCache) return seatingCache;
+  if (seatingPromise) return seatingPromise;
+  seatingPromise = apiClient<any>(GET_STUDENT_SEATING)
+    .then((data) => {
+      if (data && data.seating) {
+        seatingCache = { seating: data.seating, semester: data.semester ?? null };
+      } else {
+        seatingCache = { seating: [], semester: null };
+      }
+      return seatingCache;
+    })
+    .catch(() => {
+      seatingCache = { seating: [], semester: null };
+      return seatingCache;
+    })
+    .finally(() => { seatingPromise = null; });
+  return seatingPromise;
+}
+// ────────────────────────────────────────────────────────────────────────────
+
+
+export default function SeatingArrangement() {
   const [seating, setSeating] = useState<any[]>([]);
   const [semester, setSemester] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSeating = async () => {
-      try {
-        const data = await apiClient<any>(GET_STUDENT_SEATING);
-        if (data && data.seating) {
-          setSeating(data.seating);
-          setSemester(data.semester);
-        }
-      } catch (err) {
-        console.error("Failed to fetch seating", err);
-      } finally {
-        setLoading(false);
+    fetchSeatingOnce().then((result) => {
+      if (result) {
+        setSeating(result.seating);
+        setSemester(result.semester);
       }
-    };
-    fetchSeating();
-  }, [studentId]);
+      setLoading(false);
+    });
+  }, []);
 
   if (loading) {
     return (

@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRecoilValue } from "recoil";
 import { toast } from "@/utils/toast-ref";
 import { apiClient, downloadFile } from "../../api/apiClient";
 import { student, studentAuthLoading } from "../../store";
+import { writeAcademicCache, readAcademicCache, isCacheStale } from "../../utils/academicCache";
 
 import {
   ChevronDown,
   GraduationCap,
   AlertCircle,
   Download,
+  PartyPopper,
 } from "lucide-react";
 import { GET_GRADES, DOWNLOAD_GRADES } from "../../api/endpoints";
 
@@ -28,14 +30,45 @@ export default function GradeHub() {
   const [selectedSemester, setSelectedSemester] = useState("Sem 1");
 
   // Update year when user data loads
+  // Only sync the initially-selected year once user data arrives — do NOT depend
+  // on the full `user` object or each 60-second Recoil poll would re-trigger
+  // the cascade of useEffects below.
+  const userYear = user?.year;
+  const userUsername = user?.username;
   useEffect(() => {
-    if (user?.year) setSelectedYear(user.year);
-  }, [user]);
+    if (userYear) setSelectedYear(userYear);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userUsername]); // only run when the USER changes, not every poll tick
   const [grades, setGrades] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [resultsFetched, setResultsFetched] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  // Ref for auto-scrolling to results table
+  const resultsRef = useRef<HTMLDivElement>(null);
+  // Guard: prevents concurrent duplicate API calls
+  const isFetchingRef = useRef(false);
+
+  // Load from cache whenever year/semester selection changes
+  useEffect(() => {
+    if (!userUsername) return;
+    const mappedSemester = selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
+    const cached = readAcademicCache<any>("grades", userUsername, selectedYear, mappedSemester, true);
+    if (cached) {
+      setGrades(cached);
+      setResultsFetched(true);
+      // Background refresh only if stale AND not already fetching
+      if (isCacheStale("grades", userUsername, selectedYear, mappedSemester) && !isFetchingRef.current) {
+        handleFetchResults(true);
+      }
+    } else {
+      setGrades(null);
+      setResultsFetched(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedYear, selectedSemester, userUsername]);
 
   const [loadingMessage, setLoadingMessage] = useState(
     "Pikachu is fetching your records!",
@@ -64,8 +97,8 @@ export default function GradeHub() {
   };
 
   // Handle Fetch Results button click
-  const handleFetchResults = async () => {
-    if (!user?.username) {
+  const handleFetchResults = async (silent = false) => {
+    if (!userUsername) {
       toast.error("Please sign in to view grades");
       return;
     }
@@ -75,9 +108,14 @@ export default function GradeHub() {
       return;
     }
 
-    setIsLoading(true);
-    setError("");
-    setGrades(null);
+    // Strict single-call guard: bail out if a request is already in-flight
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
+    if (!silent) {
+      setIsLoading(true);
+      setError("");
+    }
 
     // Map "Sem 1" -> "SEM-1" and "Sem 2" -> "SEM-2"
     const mappedSemester = selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
@@ -86,7 +124,7 @@ export default function GradeHub() {
       const data = await apiClient<any>(GET_GRADES, {
         method: "GET",
         params: {
-          studentId: user.username,
+          studentId: userUsername,
           semester: mappedSemester,
           year: selectedYear,
         },
@@ -101,8 +139,6 @@ export default function GradeHub() {
       }
 
       if (data.success && data.grades) {
-        // Try to locate the GPA data from the response.
-        // Handles "SEM-1" or "E1-SEM-1" dynamically depending on the backend structure.
         const gpaDataObj =
           data.gpa?.[mappedSemester] ||
           data.gpa?.[`${selectedYear}-${mappedSemester}`] ||
@@ -119,7 +155,6 @@ export default function GradeHub() {
           contribution: g.grade * g.subject.credits,
         }));
 
-        // Generate Visualization Data
         const gradeCounts: { [key: string]: number } = {};
         formattedGrades.forEach((g: any) => {
           gradeCounts[g.grade] = (gradeCounts[g.grade] || 0) + 1;
@@ -143,15 +178,26 @@ export default function GradeHub() {
           cgpa: data.cgpa,
           totalBacklogs: data.totalBacklogs || 0,
           calculation_details: formattedGrades,
-          visualization_data: {
-            pieChart,
-            barChart,
-          },
+          visualization_data: { pieChart, barChart },
           motivational_messages: data.motivation || null,
         };
 
         setGrades(transformedData);
         setResultsFetched(true);
+        writeAcademicCache("grades", userUsername!, selectedYear, mappedSemester, transformedData);
+
+        // Auto-scroll to results table (only for manual fetches)
+        if (!silent) {
+          setTimeout(() => {
+            resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 100);
+        }
+
+        // Party blast if GPA > 9.0 (only for manual/first-time fetches)
+        if (!silent && extractedGPA > 9.0) {
+          setShowConfetti(true);
+          setTimeout(() => setShowConfetti(false), 2500);
+        }
       } else {
         setError(data.msg || "No results found for this selection.");
         setGrades(null);
@@ -159,7 +205,8 @@ export default function GradeHub() {
     } catch (err: any) {
       console.error("Fetch grades error:", err);
     } finally {
-      setIsLoading(false);
+      isFetchingRef.current = false;
+      if (!silent) setIsLoading(false);
     }
   };
 
@@ -169,6 +216,53 @@ export default function GradeHub() {
 
   return (
     <div className="font-sans text-slate-900">
+
+      {/* Party Confetti Blast Overlay */}
+      {showConfetti && (
+        <div className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden">
+          {/* Animated confetti particles */}
+          {Array.from({ length: 60 }).map((_, i) => {
+            const colors = ["#fbbf24", "#34d399", "#60a5fa", "#f87171", "#a78bfa", "#fb923c", "#f472b6"];
+            const color = colors[i % colors.length];
+            const left = `${Math.random() * 100}%`;
+            const size = `${6 + Math.random() * 10}px`;
+            const delay = `${Math.random() * 0.6}s`;
+            const duration = `${1.2 + Math.random() * 1}s`;
+            const rotate = `${Math.random() * 720}deg`;
+            return (
+              <div
+                key={i}
+                style={{
+                  position: "absolute",
+                  top: "-20px",
+                  left,
+                  width: size,
+                  height: size,
+                  backgroundColor: color,
+                  borderRadius: i % 3 === 0 ? "50%" : "2px",
+                  animation: `confettiFall ${duration} ${delay} ease-in forwards`,
+                  transform: `rotate(${rotate})`,
+                }}
+              />
+            );
+          })}
+          {/* Centered celebration badge */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="bg-white/95 backdrop-blur-sm rounded-3xl px-10 py-8 shadow-2xl border border-yellow-100 flex flex-col items-center gap-3 animate-bounce">
+              <PartyPopper size={48} className="text-yellow-500" />
+              <p className="text-2xl font-black text-slate-900 tracking-tight">Outstanding GPA! 🎉</p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Above 9.0 — Exceptional Performance</p>
+            </div>
+          </div>
+          <style>{`
+            @keyframes confettiFall {
+              0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+              100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+            }
+          `}</style>
+        </div>
+      )}
+
       <div className="max-w-6xl mx-auto px-4 pb-10">
         {/* Header */}
         <div className="flex flex-col gap-1.5 mb-8">
@@ -249,9 +343,9 @@ export default function GradeHub() {
 
             <div className="flex flex-col md:flex-row gap-4 flex-1">
               
-              <div className="md:w-48">
+                <div className="md:w-48">
                 <button
-                  onClick={handleFetchResults}
+                  onClick={() => handleFetchResults(false)}
                   className="w-full h-[46px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm disabled:opacity-50"
                   disabled={isLoading || !user?.username}
                 >
@@ -292,9 +386,9 @@ export default function GradeHub() {
 
         {/* Results Section */}
         {resultsFetched && grades && grades.success && !isLoading && (
-          <div className="md:bg-white md:border md:border-slate-100 md:rounded-xl overflow-hidden md:shadow-sm bg-transparent">
+          <div ref={resultsRef} className="-mx-4 md:mx-0 md:bg-white md:border md:border-slate-100 md:rounded-xl overflow-hidden md:shadow-sm bg-transparent scroll-mt-4">
             {/* Results Header */}
-            <div className="md:bg-white border-b border-slate-50 md:px-6 py-5 flex justify-between items-center bg-transparent px-0">
+            <div className="md:bg-white border-b border-slate-100 md:px-6 px-4 py-5 flex justify-between items-center bg-transparent">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">
                   Transcript For
@@ -343,7 +437,7 @@ export default function GradeHub() {
               </div>
             ) : (
               <>
-                <div className="px-6 py-4 space-y-6">
+                <div className="px-4 md:px-6 py-4 space-y-6">
                   {/* Grades Section */}
                   <div>
                     <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -362,9 +456,6 @@ export default function GradeHub() {
                             </th>
                             <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[15%]">
                               Gr
-                            </th>
-                            <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[10%]">
-                              Pt
                             </th>
                             <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[15%]">
                               Pass Date
@@ -402,14 +493,9 @@ export default function GradeHub() {
                                     )}
                                   </div>
                                 </td>
-                                <td className="px-2 py-2.5 text-center font-bold text-slate-800 text-xs">
-                                  {item.points}
-                                </td>
                                 <td className="px-2 py-2.5 text-center text-slate-400 font-medium text-[10px]">
                                   {item.passDate
-                                    ? new Date(
-                                        item.passDate,
-                                      ).toLocaleDateString()
+                                    ? new Date(item.passDate).toLocaleDateString()
                                     : "-"}
                                 </td>
                               </tr>
