@@ -45,6 +45,7 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 const ROLES = [
   "teacher",
@@ -141,8 +142,8 @@ export default function FacultyManagement({
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   /* ─── Fetch ─── */
-  const fetchFaculty = async () => {
-    if (!facultyState.fetched) setLoading(true);
+  const fetchFaculty = async (forceLoading = false) => {
+    if (forceLoading || !facultyState.fetched) setLoading(true);
     try {
       const res = await fetch(SEARCH_FACULTY, {
         method: "POST",
@@ -500,7 +501,7 @@ export default function FacultyManagement({
               <Layers size={18} />
             </button>
             <button
-              onClick={fetchFaculty}
+              onClick={() => fetchFaculty(true)}
               className={`p-2 text-slate-500 hover:text-slate-900 transition-all ${loading ? "animate-spin" : ""}`}
             >
               <RefreshCw size={18} />
@@ -998,35 +999,35 @@ export default function FacultyManagement({
                 Array(limit)
                   .fill(0)
                   .map((_, i) => (
-                    <tr key={i} className="animate-pulse border-b border-slate-50/60">
-                      {mode === "bulk" && <td className="px-6 py-6"><div className="w-5 h-5 bg-slate-100 rounded" /></td>}
-                      <td className="px-6 py-6 font-condensed">
+                    <tr key={i} className="border-b border-slate-50/60">
+                      {mode === "bulk" && <td className="px-6 py-6"><Skeleton className="w-5 h-5 rounded-lg" /></td>}
+                      <td className="px-6 py-6">
                         <div className="flex items-center gap-4">
-                          <div className="w-11 h-11 rounded-full bg-slate-100 shrink-0 border-2 border-white ring-1 ring-slate-100" />
-                          <div className="space-y-2.5 w-full">
-                            <div className="h-4 bg-slate-100 rounded w-28" />
-                            <div className="h-2 w-48 bg-slate-50 rounded" />
+                          <Skeleton className="w-11 h-11 rounded-full shrink-0" />
+                          <div className="space-y-2 w-full">
+                            <Skeleton className="h-4 w-32" />
+                            <Skeleton className="h-2 w-48 opacity-50" />
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-6">
                         <div className="space-y-2">
-                          <div className="h-4 bg-slate-100 rounded w-24" />
-                          <div className="h-2 bg-slate-50 rounded w-16" />
+                          <Skeleton className="h-4 w-24" />
+                          <Skeleton className="h-2 w-16 opacity-50" />
                         </div>
                       </td>
                       <td className="px-6 py-6">
-                        <div className="h-7 bg-slate-50 rounded-lg w-20 border border-slate-100/50" />
+                        <Skeleton className="h-7 w-20 rounded-lg" />
                       </td>
                       <td className="px-6 py-6">
-                        <div className="h-7 bg-slate-50 rounded-full w-24 border border-slate-100/50" />
+                        <Skeleton className="h-7 w-24 rounded-full" />
                       </td>
                       {mode === "single" && (
                         <td className="px-6 py-6">
                           <div className="flex justify-end gap-3">
-                            <div className="w-10 h-10 bg-slate-50 rounded-full" />
-                            <div className="w-20 h-10 bg-slate-50 rounded-full" />
-                            <div className="w-20 h-10 bg-slate-50 rounded-full" />
+                            <Skeleton className="w-10 h-10 rounded-full" />
+                            <Skeleton className="w-20 h-10 rounded-full" />
+                            <Skeleton className="w-20 h-10 rounded-full" />
                           </div>
                         </td>
                       )}

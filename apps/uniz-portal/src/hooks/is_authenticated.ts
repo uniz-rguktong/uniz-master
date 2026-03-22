@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { is_authenticated } from "../store";
 import { useRecoilState } from "recoil";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -17,20 +17,29 @@ export function useIsAuth() {
   const navigateTo = useNavigate();
   const location = useLocation();
 
+  // Stable refs — avoid stale closure issues without adding these to useEffect deps
+  const isAuthRef = useRef(isAuth);
+  const setAuthRef = useRef(setAuth);
+  const navigateRef = useRef(navigateTo);
+  useEffect(() => { isAuthRef.current = isAuth; }, [isAuth]);
+  useEffect(() => { setAuthRef.current = setAuth; }, [setAuth]);
+  useEffect(() => { navigateRef.current = navigateTo; }, [navigateTo]);
+
   useEffect(() => {
     const getSafeToken = (key: string) => {
       const stored = localStorage.getItem(key);
       if (!stored) return null;
       try {
         const parsed = JSON.parse(stored);
-        // If it was a quoted string in storage, returning the parsed version is correct.
-        // If it was a raw string that happens to be valid JSON (rare for tokens), we might get here.
         return typeof parsed === "string" ? parsed : stored;
       } catch (e) {
-        // If it's not JSON, it's a raw string (which is what we want now)
         return stored;
       }
     };
+
+    const navigate = navigateRef.current;
+    const setAuthFn = setAuthRef.current;
+    const currentIsAuth = isAuthRef.current;
 
     const studentToken = getSafeToken("student_token");
     const adminToken = getSafeToken("admin_token");
@@ -46,12 +55,12 @@ export function useIsAuth() {
     ];
 
     const logoutAndRedirect = (reason: string) => {
-      const wasAuth = isAuth.is_authnticated;
+      const wasAuth = currentIsAuth.is_authnticated;
       clearSession();
-      setAuth({ is_authnticated: false, type: "" });
+      setAuthFn({ is_authnticated: false, type: "" });
       if (wasAuth || !publicPaths.includes(location.pathname)) {
         toast.error(`Security Alert: ${reason}`);
-        navigateTo("/");
+        navigate("/");
       }
     };
 
@@ -96,8 +105,8 @@ export function useIsAuth() {
       }
 
       // Valid Admin
-      if (!isAuth.is_authnticated) {
-        setAuth({ is_authnticated: true, type: "admin" });
+      if (!currentIsAuth.is_authnticated) {
+        setAuthFn({ is_authnticated: true, type: "admin" });
       }
 
       // Silently init push notifications once
@@ -107,7 +116,7 @@ export function useIsAuth() {
       }
 
       if (publicPaths.includes(location.pathname)) {
-        navigateTo("/admin");
+        navigate("/admin");
       }
     } else if (studentToken) {
       if (!isTokenValid(studentToken)) {
@@ -128,8 +137,8 @@ export function useIsAuth() {
       }
 
       // Valid Student
-      if (!isAuth.is_authnticated) {
-        setAuth({ is_authnticated: true, type: "student" });
+      if (!currentIsAuth.is_authnticated) {
+        setAuthFn({ is_authnticated: true, type: "student" });
       }
 
       // Silently init push notifications once
@@ -139,17 +148,19 @@ export function useIsAuth() {
       }
 
       if (publicPaths.includes(location.pathname)) {
-        navigateTo("/student");
+        navigate("/student");
       }
     } else {
       // No tokens
       if (!publicPaths.includes(location.pathname)) {
-        // Only redirect if we are not already on a public page
-        // And assuming protected routes need auth
-        navigateTo("/");
+        navigate("/");
       }
     }
-  }, [isAuth, navigateTo, setAuth, location.pathname]);
+  // Only re-run when the URL changes — NOT on every isAuth/setAuth change.
+  // Auth state changes (setAuth calls) are idempotent; re-running on every
+  // one of them from 15+ components causes an explosion of redundant checks.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   return isAuth;
 }

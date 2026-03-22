@@ -50,7 +50,7 @@ const DatabaseWithRestApi = ({
   return (
     <div
       className={cn(
-        "relative flex h-[500px] sm:h-[450px] w-full flex-col items-center",
+        "relative flex h-[380px] sm:h-[450px] w-full flex-col items-center",
         className,
       )}
     >
@@ -163,32 +163,32 @@ const DatabaseWithRestApi = ({
         <g stroke="currentColor" fill="none" strokeWidth="0.4">
           {/* Desktop Badges */}
           <g className="hidden sm:block">
-             {[
-               { x: 14, tx: 31, text: badgeTexts?.first },
-               { x: 60, tx: 77, text: badgeTexts?.second },
-               { x: 108, tx: 125, text: badgeTexts?.third },
-               { x: 150, tx: 167, text: badgeTexts?.fourth }
-             ].map((b, i) => (
-               <g key={i}>
-                 <rect fill="#ffffff" stroke="#e2e8f0" x={b.x} y="5" width="34" height="10" rx="5" />
-                 <text x={b.tx} y="11.5" fill="#0f172a" stroke="none" fontSize="4" fontWeight="600" textAnchor="middle">{b.text}</text>
-               </g>
-             ))}
+            {[
+              { x: 14, tx: 31, text: badgeTexts?.first },
+              { x: 60, tx: 77, text: badgeTexts?.second },
+              { x: 108, tx: 125, text: badgeTexts?.third },
+              { x: 150, tx: 167, text: badgeTexts?.fourth }
+            ].map((b, i) => (
+              <g key={i}>
+                <rect fill="#ffffff" stroke="#e2e8f0" x={b.x} y="5" width="34" height="10" rx="5" />
+                <text x={b.tx} y="11.5" fill="#0f172a" stroke="none" fontSize="4" fontWeight="600" textAnchor="middle">{b.text}</text>
+              </g>
+            ))}
           </g>
 
           {/* Mobile Badges - MOVED UP to y=1 */}
           <g className="block sm:hidden">
-             {[
-               { x: 14, tx: 31, text: badgeTexts?.first },
-               { x: 60, tx: 77, text: badgeTexts?.second },
-               { x: 108, tx: 125, text: badgeTexts?.third },
-               { x: 150, tx: 167, text: badgeTexts?.fourth }
-             ].map((b, i) => (
-               <g key={i}>
-                 <rect fill="#ffffff" stroke="#e2e8f0" x={b.x} y="1" width="34" height="10" rx="5" />
-                 <text x={b.tx} y="7.5" fill="#0f172a" stroke="none" fontSize="4" fontWeight="600" textAnchor="middle">{b.text}</text>
-               </g>
-             ))}
+            {[
+              { x: 11, tx: 31, text: badgeTexts?.first },
+              { x: 57, tx: 77, text: badgeTexts?.second },
+              { x: 104, tx: 124, text: badgeTexts?.third },
+              { x: 150, tx: 170, text: badgeTexts?.fourth }
+            ].map((b, i) => (
+              <g key={i}>
+                <rect fill="#ffffff" stroke="#e2e8f0" x={b.x} y="0" width="40" height="12" rx="6" />
+                <text x={b.tx} y="7.8" fill="#0f172a" stroke="none" fontSize="5.5" fontWeight="600" textAnchor="middle">{b.text}</text>
+              </g>
+            ))}
           </g>
         </g>
         <defs>
@@ -236,7 +236,7 @@ const DatabaseWithRestApi = ({
         {/* bottom shadow */}
         <div className="absolute -bottom-2 h-[100px] w-full max-w-[95%] rounded-[3rem] bg-navy-500/10 scale-95" />
         {/* box title */}
-        <div className="absolute -top-6 z-20 flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 shadow-sm sm:-top-4 sm:py-2">
+        <div className="absolute top-0 -translate-y-1/2 z-20 flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 shadow-sm sm:top-auto sm:translate-y-0 sm:-top-4 sm:py-2">
           <span className="text-[12px] font-bold text-slate-800">{title}</span>
         </div>
         {/* box outter circle */}
@@ -246,10 +246,10 @@ const DatabaseWithRestApi = ({
           </span>
         </div>
         {/* box content */}
-        <div className="relative z-10 flex h-[250px] w-full items-center justify-center overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
+        <div className="relative z-10 flex h-[160px] sm:h-[250px] w-full items-center justify-center overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
           {/* Floating Badges */}
           <motion.div
-            className="absolute top-10 left-4 sm:top-6 sm:left-12 z-20 h-9 rounded-full bg-slate-50 px-4 text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
+            className="absolute top-8 left-8 sm:top-6 sm:left-12 z-20 h-7 sm:h-9 rounded-full bg-slate-50 px-3 sm:px-4 text-[11px] sm:text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
             animate={{ y: [0, -6, 0] }}
             transition={{
               duration: 4,
@@ -263,7 +263,7 @@ const DatabaseWithRestApi = ({
           </motion.div>
 
           <motion.div
-            className="absolute bottom-20 left-4 sm:bottom-6 sm:left-32 z-20 h-9 rounded-full bg-slate-50 px-4 text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
+            className="absolute bottom-4 left-4 sm:bottom-6 sm:left-32 z-20 h-7 sm:h-9 rounded-full bg-slate-50 px-3 sm:px-4 text-[11px] sm:text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
             animate={{ y: [0, -8, 0] }}
             transition={{
               duration: 5,
@@ -277,7 +277,7 @@ const DatabaseWithRestApi = ({
           </motion.div>
 
           <motion.div
-            className="absolute top-12 right-4 sm:top-8 sm:right-32 z-20 h-9 rounded-full bg-slate-50 px-4 text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
+            className="absolute top-6 right-6 sm:top-8 sm:right-32 z-20 h-7 sm:h-9 rounded-full bg-slate-50 px-3 sm:px-4 text-[11px] sm:text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
             animate={{ y: [0, -5, 0] }}
             transition={{
               duration: 4.5,
@@ -291,7 +291,7 @@ const DatabaseWithRestApi = ({
           </motion.div>
 
           <motion.div
-            className="absolute bottom-20 right-4 sm:bottom-6 sm:right-12 z-20 h-9 rounded-full bg-slate-50 px-4 text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
+            className="absolute bottom-4 right-4 sm:bottom-6 sm:right-12 z-20 h-7 sm:h-9 rounded-full bg-slate-50 px-3 sm:px-4 text-[11px] sm:text-sm font-semibold text-slate-700 border border-slate-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-slate-100"
             animate={{ y: [0, -7, 0] }}
             transition={{
               duration: 3.5,

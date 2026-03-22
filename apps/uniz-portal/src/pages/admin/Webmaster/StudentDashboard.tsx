@@ -22,6 +22,8 @@ import {
     CartesianGrid,
     ResponsiveContainer,
 } from "recharts";
+import { BadgeCheck, Loader2 } from "lucide-react";
+import { BackgroundIconCloud } from "../../../components/illustrations/FloatingIllustrations";
 
 import { cn } from "../../../utils/cn";
 
@@ -49,68 +51,116 @@ export default function StudentDashboard({ data, onSuspendToggle, onResetPasswor
     }));
 
     return (
-        <div className="space-y-6 pb-20 font-condensed">
-            {/* Centered Profile Hero */}
-            <div className={`bg-white rounded-[2rem] border border-slate-100 p-12 flex flex-col items-center text-center relative overflow-hidden shadow-none`}>
-                <div className="relative mb-10">
-                    <div className={cn(
-                        "w-20 h-20 rounded-full flex items-center justify-center border-4 border-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-hidden transition-all duration-500 ring-4",
-                        student.profile_url ? "bg-slate-50" : "bg-emerald-900",
-                        student.is_suspended ? "ring-rose-500" : "ring-emerald-400"
-                    )}>
-                        {student.profile_url ? (
-                            <img
-                                src={student.profile_url}
-                                alt={student.name}
-                                className="w-full h-full object-cover shadow-inner"
-                            />
-                        ) : (
-                            <span className="text-5xl font-black text-white uppercase tracking-tighter">
-                                {(student.name || 'S')[0]}
-                            </span>
-                        )}
+        <div className="space-y-6 pb-20 font-sans">
+            {/* Redesigned Profile Hero (Matches Webmaster Overview) */}
+            <div className="bg-white rounded-[2rem] border border-slate-100 px-4 pt-10 pb-12 flex flex-col items-center justify-center relative overflow-hidden shadow-none animate-in fade-in duration-500">
+                {/* Absolute Decorative Icon Cloud */}
+                <BackgroundIconCloud />
+
+                {/* Avatar */}
+                <div className="relative mb-6">
+                    <div
+                        className="relative p-[4px] md:p-[5px] rounded-full"
+                        style={{
+                            background: student.is_suspended ? "#f43f5e" : "#2ebd59",
+                        }}
+                    >
+                        <div className="relative bg-slate-50 p-[3px] rounded-full">
+                            <div className={cn(
+                                "relative w-[110px] h-[110px] md:w-[130px] md:h-[130px] rounded-full flex justify-center items-center text-white text-[54px] font-medium overflow-hidden shadow-none transition-all duration-500",
+                                student.profile_url ? "bg-slate-50" : "bg-emerald-900"
+                            )}>
+                                {student.profile_url ? (
+                                    <img
+                                        src={student.profile_url}
+                                        alt={student.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <span className="uppercase tracking-tighter">
+                                        {(student.name || 'S')[0]}
+                                    </span>
+                                )}
+
+                                {isActionLoading && (
+                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                        <Loader2 className="w-9 h-9 animate-spin text-white/80" />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div className="space-y-4 mb-10">
-                    <div className="space-y-1">
-                        <h2 className="text-3xl font-black text-slate-900 tracking-tight lowercase first-letter:uppercase">
-                            {(student.name || '').split(' ')[0]} <span className="text-navy-900">{(student.name || '').split(' ').slice(1).join(' ')}</span>
+                {/* Name & Email */}
+                <div className="flex flex-col items-center justify-center gap-1 mb-6 mt-1 z-10">
+                    <div className="flex items-center justify-center gap-2">
+                        <h2 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em] text-[#1f2122] leading-none text-center uppercase">
+                            {student.name}
                         </h2>
-                        <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-[10px]">{student.username}</p>
                     </div>
+                    <p className="text-[#3c4043] font-medium text-[13px] tracking-tight text-center flex items-center justify-center gap-1.5">
+                        {student.email}
+                        {!student.is_suspended && (
+                            <BadgeCheck
+                                className="w-[15px] h-[15px] text-[#2ebd59]"
+                                fill="#2ebd59"
+                                fillOpacity={0.15}
+                                strokeWidth={2.5}
+                            />
+                        )}
+                    </p>
+                </div>
 
-                    {/* Compact Suspension & Reset Buttons */}
-                    <div className="flex justify-center gap-3">
-                        <button
-                            onClick={() => onSuspendToggle?.(student.username, student.is_suspended)}
-                            disabled={isActionLoading}
-                            className={cn(
-                                "flex items-center gap-2 px-6 py-2.5 rounded-xl border font-bold uppercase tracking-widest text-[10px] transition-all group active:scale-95 shadow-sm",
-                                student.is_suspended
-                                    ? "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white"
-                                    : "bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white"
-                            )}
-                        >
-                            {isActionLoading ? (
-                                <Zap className="animate-spin w-3.5 h-3.5" />
-                            ) : student.is_suspended ? (
-                                <Shield className="w-4 h-4" />
-                            ) : (
-                                <ShieldAlert className="w-4 h-4" />
-                            )}
-                            {student.is_suspended ? 'Restore Access' : 'Suspend Access'}
-                        </button>
+                {/* Info Tags */}
+                <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold mb-8 z-10">
+                    <span className="text-navy-900 uppercase tracking-widest px-2.5 py-1 bg-navy-50 border border-navy-100 rounded-xl">
+                        {student.username}
+                    </span>
+                    <span className="w-1 h-1 rounded-full bg-slate-300" />
+                    <span className="uppercase tracking-wide text-slate-600">
+                        {student.batch || "O21"}
+                    </span>
+                    <span className="w-1 h-1 rounded-full bg-slate-300" />
+                    <span className="uppercase tracking-wide text-slate-600">
+                        {student.branch}
+                    </span>
+                    <span className="w-1 h-1 rounded-full bg-slate-300" />
+                    <span className="uppercase tracking-wide text-slate-600">
+                        {student.year} YEAR
+                    </span>
+                </div>
 
-                        <button
-                            onClick={() => onResetPassword?.(student.username)}
-                            disabled={isActionLoading}
-                            className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-bold uppercase tracking-widest text-[10px] transition-all group active:scale-95 shadow-sm hover:bg-slate-900 hover:text-white hover:border-slate-900"
-                        >
-                            <KeyRound className="w-4 h-4" />
-                            Reset Password
-                        </button>
-                    </div>
+                {/* Action Buttons */}
+                <div className="flex justify-center gap-3 z-10">
+                    <button
+                        onClick={() => onSuspendToggle?.(student.username, student.is_suspended)}
+                        disabled={isActionLoading}
+                        className={cn(
+                            "flex items-center gap-2 px-6 py-2.5 rounded-xl border font-bold uppercase tracking-widest text-[10px] transition-all group active:scale-95 shadow-sm",
+                            student.is_suspended
+                                ? "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white"
+                                : "bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white"
+                        )}
+                    >
+                        {isActionLoading ? (
+                            <Zap className="animate-spin w-3.5 h-3.5" />
+                        ) : student.is_suspended ? (
+                            <Shield className="w-4 h-4" />
+                        ) : (
+                            <ShieldAlert className="w-4 h-4" />
+                        )}
+                        {student.is_suspended ? 'Restore Access' : 'Suspend Access'}
+                    </button>
+
+                    <button
+                        onClick={() => onResetPassword?.(student.username)}
+                        disabled={isActionLoading}
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-bold uppercase tracking-widest text-[10px] transition-all group active:scale-95 shadow-sm hover:bg-slate-900 hover:text-white hover:border-slate-900"
+                    >
+                        <KeyRound className="w-4 h-4" />
+                        Reset Password
+                    </button>
                 </div>
 
                 {/* Structured Info Grid (No Cards) */}
@@ -173,9 +223,9 @@ function HeroInfo({ label, value, icon }: { label: string, value: string, icon: 
         <div className="flex flex-col items-center gap-2">
             <div className="flex items-center justify-center gap-1.5 text-slate-400 mb-0.5 opacity-80">
                 {icon}
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{label}</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em]">{label}</span>
             </div>
-            <p className="text-[14px] font-bold text-slate-900 tracking-tight leading-none text-center lowercase">{value}</p>
+            <p className="text-[13px] font-bold text-slate-900 tracking-tight leading-none text-center">{value}</p>
         </div>
     );
 }
