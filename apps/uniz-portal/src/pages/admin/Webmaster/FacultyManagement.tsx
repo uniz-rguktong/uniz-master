@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Users,
-  Plus,
   Loader2,
   Mail,
   RefreshCw,
@@ -37,6 +36,8 @@ import {
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 import { FileUploader } from "../../../components/ui/FileUploader";
+import { useRecoilState } from "recoil";
+import { facultyAtom } from "../../../store/atoms";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -92,14 +93,18 @@ export default function FacultyManagement({
   const [mode, setMode] = useState<"single" | "bulk">("single");
 
   /* ─── Single-mode state ─── */
-  const [faculty, setFaculty] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [facultyState, setFacultyState] = useRecoilState(facultyAtom);
+  const faculty = facultyState.data;
+  const [loading, setLoading] = useState(!facultyState.fetched);
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [search, setSearch] = useState("");
-  const [meta, setMeta] = useState<any>({ total: 0, totalPages: 1 });
+  const [meta, setMeta] = useState<any>({ 
+    total: facultyState.fetched ? facultyState.data.length : 0, 
+    totalPages: 1 
+  });
   const [formData, setFormData] = useState({
     username: "",
     name: "",
@@ -137,7 +142,7 @@ export default function FacultyManagement({
 
   /* ─── Fetch ─── */
   const fetchFaculty = async () => {
-    setLoading(true);
+    if (!facultyState.fetched) setLoading(true);
     try {
       const res = await fetch(SEARCH_FACULTY, {
         method: "POST",
@@ -154,7 +159,10 @@ export default function FacultyManagement({
       });
       const data = await res.json();
       if (data.success) {
-        setFaculty(data.faculty);
+        setFacultyState({
+          fetched: true,
+          data: data.faculty || []
+        });
         setMeta(
           data.pagination || { total: data.faculty.length, totalPages: 1 },
         );
@@ -471,31 +479,29 @@ export default function FacultyManagement({
   };
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-6 text-slate-900">
+    <div className="p-6 space-y-8 pb-20 text-slate-900">
       {/* ─── Top bar ─── */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex flex-col gap-1.5">
-          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
-            Institutional Registry
+          <h2 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+            Faculty Management
           </h2>
-          <p className="text-slate-500 font-medium text-[15px]">
+          <p className="text-slate-500 font-medium text-[13px]">
             Strategic management of administrative and teaching assets.
           </p>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/50 backdrop-blur-sm shadow-none">
+          <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/60 backdrop-blur-sm">
             <button
               onClick={() => setMode(mode === "single" ? "bulk" : "single")}
-              title={mode === "single" ? "Switch to Bulk Mode" : "Switch to Individual Mode"}
-              className="p-2.5 text-slate-500 hover:text-navy-900 transition-all"
+              className={`p-2 transition-all rounded-lg ${mode === "bulk" ? "bg-white text-slate-900 border border-slate-200/50 shadow-sm" : "text-slate-500 hover:text-slate-900"}`}
             >
               <Layers size={18} />
             </button>
             <button
               onClick={fetchFaculty}
-              title="Refresh Registry"
-              className={`p-2.5 text-slate-500 hover:text-navy-900 transition-all ${loading ? "animate-spin" : ""}`}
+              className={`p-2 text-slate-500 hover:text-slate-900 transition-all ${loading ? "animate-spin" : ""}`}
             >
               <RefreshCw size={18} />
             </button>
@@ -503,22 +509,22 @@ export default function FacultyManagement({
 
           <div className="relative group">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors pointer-events-none"
-              size={16}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors pointer-events-none"
+              size={14}
             />
             <input
               type="text"
               placeholder="Search registry..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-11 pr-5 h-12 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all w-[240px] shadow-none placeholder:text-slate-400"
+              className="pl-11 pr-5 h-11 bg-slate-50 border border-slate-100 rounded-xl text-[13px] font-medium outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 transition-all w-[240px] shadow-none placeholder:text-slate-400"
             />
           </div>
 
           {mode === "single" && (
             <button
               onClick={openAdd}
-              className="h-12 px-6 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-black active:scale-95 transition-all flex items-center gap-2.5 shadow-none whitespace-nowrap"
+              className="h-11 px-6 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-black active:scale-95 transition-all flex items-center gap-2.5 shadow-none whitespace-nowrap"
             >
               <UserPlus size={16} /> Add Faculty
             </button>
@@ -530,7 +536,7 @@ export default function FacultyManagement({
       {mode === "bulk" && (
         <div className="space-y-6">
           {/* Sub-tabs */}
-          <div className="flex gap-2">
+          <div className="flex gap-2.5 bg-slate-100/80 p-1 rounded-xl w-fit border border-slate-200/60 backdrop-blur-sm">
             {(["add", "update", "delete"] as const).map((t) => (
               <button
                 key={t}
@@ -538,7 +544,7 @@ export default function FacultyManagement({
                   setBulkTab(t);
                   setBulkResult(null);
                 }}
-                className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${bulkTab === t ? (t === "delete" ? "bg-red-600 text-white" : "bg-slate-900 text-white") : "bg-white border border-slate-200 text-slate-500 hover:border-slate-400"}`}
+                className={`px-5 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${bulkTab === t ? (t === "delete" ? "bg-red-600 text-white" : "bg-white text-slate-900 border border-slate-200/50 shadow-sm") : "text-slate-500 hover:text-slate-900"}`}
               >
                 {t === "add"
                   ? "📥 Bulk Add"
@@ -551,64 +557,63 @@ export default function FacultyManagement({
 
           {/* ── Bulk Add ── */}
           {bulkTab === "add" && (
-            <div className="bg-white rounded-xl border border-slate-100 p-8 space-y-6">
+            <div className="w-full space-y-8">
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-xl font-bold text-slate-900 mb-1">
-                    Bulk Add Faculty
+                    Bulk Import
                   </h3>
-                  <p className="text-sm text-slate-400 font-medium">
-                    Paste CSV data or upload. Default password ={" "}
-                    <code className="bg-slate-100 px-2 py-0.5 rounded text-xs font-mono">
-                      username@uniz
-                    </code>
+                  <p className="text-[13px] text-slate-500 font-medium">
+                    Automated registry ingestion via protocol-aligned CSV.
                   </p>
                 </div>
                 <button
                   onClick={downloadTemplate}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-100 transition-all"
+                  className="flex items-center gap-2 px-4 py-2 bg-slate-100 border border-slate-200 rounded-xl text-[9px] font-bold uppercase tracking-widest text-slate-600 hover:bg-white hover:text-slate-900 transition-all"
                 >
-                  <Download size={14} /> Download Template
+                  <Download size={14} className="text-slate-500" /> Download Template
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <FileUploader
-                    onFileSelect={(file: File | null) => {
-                      if (file) {
-                        Papa.parse(file, {
-                          header: true,
-                          skipEmptyLines: true,
-                          complete: (results) => {
-                            if (results.data && results.data.length > 0) {
-                              const csv = Papa.unparse(results.data);
-                              setCsvText(csv);
-                              toast.success(`Successfully parsed ${results.data.length} rows`);
-                            }
-                          },
-                          error: (err) => {
-                            toast.error("Failed to parse file: " + err.message);
-                          },
-                        });
-                      } else {
-                        setCsvText("");
-                      }
-                    }}
-                    label="Upload CSV/Excel Asset"
-                    description="XLSX or CSV. Use the template for correct headers."
-                  />
+                  <div className="rounded-xl border border-slate-900 overflow-hidden bg-transparent p-6">
+                    <FileUploader
+                      onFileSelect={(file: File | null) => {
+                        if (file) {
+                          Papa.parse(file, {
+                            header: true,
+                            skipEmptyLines: true,
+                            complete: (results) => {
+                              if (results.data && results.data.length > 0) {
+                                const csv = Papa.unparse(results.data);
+                                setCsvText(csv);
+                                toast.success(`Successfully parsed ${results.data.length} rows`);
+                              }
+                            },
+                            error: (err) => {
+                              toast.error("Failed to parse file: " + err.message);
+                            },
+                          });
+                        } else {
+                          setCsvText("");
+                        }
+                      }}
+                      label="Registry Asset"
+                      description="CSV format. Default password = username@uniz"
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-4">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-2">
-                    Manual CSV Input (Preview)
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block ml-1">
+                    CSV Preview
                   </label>
                   <textarea
                     value={csvText}
                     onChange={(e) => setCsvText(e.target.value)}
                     rows={8}
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-xl font-mono text-xs outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all resize-none shadow-none"
+                    className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-xl font-mono text-[10px] outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 transition-all resize-none shadow-none"
                     placeholder={`username,name,email,department,designation,role\nktejokiran,K Tejo Kiran,ktejokiran@rguktong.ac.in,CSE,Lecturer,teacher`}
                   />
                 </div>
@@ -617,7 +622,7 @@ export default function FacultyManagement({
               <button
                 onClick={handleBulkAdd}
                 disabled={bulkLoading || !csvText.trim()}
-                className="w-full h-12 bg-navy-900 text-white rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-navy-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.99]"
+                className="w-full h-12 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-slate-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.99]"
               >
                 {bulkLoading ? (
                   <Loader2 className="animate-spin w-4 h-4" />
@@ -993,33 +998,35 @@ export default function FacultyManagement({
                 Array(limit)
                   .fill(0)
                   .map((_, i) => (
-                    <tr key={i} className="animate-pulse">
-                      {mode === "bulk" && <td className="px-4 py-6"><div className="w-5 h-5 bg-slate-100 rounded" /></td>}
-                      <td className="px-6 py-6">
+                    <tr key={i} className="animate-pulse border-b border-slate-50/60">
+                      {mode === "bulk" && <td className="px-6 py-6"><div className="w-5 h-5 bg-slate-100 rounded" /></td>}
+                      <td className="px-6 py-6 font-condensed">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-full bg-slate-100 shrink-0" />
-                          <div className="space-y-2 w-full">
-                            <div className="h-4 bg-slate-100 rounded w-24" />
-                            <div className="h-3 bg-slate-50 rounded w-40" />
+                          <div className="w-11 h-11 rounded-full bg-slate-100 shrink-0 border-2 border-white ring-1 ring-slate-100" />
+                          <div className="space-y-2.5 w-full">
+                            <div className="h-4 bg-slate-100 rounded w-28" />
+                            <div className="h-2 w-48 bg-slate-50 rounded" />
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-6">
                         <div className="space-y-2">
-                          <div className="h-4 bg-slate-100 rounded w-20" />
+                          <div className="h-4 bg-slate-100 rounded w-24" />
+                          <div className="h-2 bg-slate-50 rounded w-16" />
                         </div>
                       </td>
                       <td className="px-6 py-6">
-                        <div className="h-5 bg-slate-100 rounded-lg w-16" />
+                        <div className="h-7 bg-slate-50 rounded-lg w-20 border border-slate-100/50" />
                       </td>
                       <td className="px-6 py-6">
-                        <div className="h-6 bg-slate-100 rounded-full w-20" />
+                        <div className="h-7 bg-slate-50 rounded-full w-24 border border-slate-100/50" />
                       </td>
                       {mode === "single" && (
                         <td className="px-6 py-6">
-                          <div className="flex justify-end gap-2">
-                            <div className="w-8 h-8 bg-slate-100 rounded-full" />
-                            <div className="w-16 h-8 bg-slate-100 rounded-full" />
+                          <div className="flex justify-end gap-3">
+                            <div className="w-10 h-10 bg-slate-50 rounded-full" />
+                            <div className="w-20 h-10 bg-slate-50 rounded-full" />
+                            <div className="w-20 h-10 bg-slate-50 rounded-full" />
                           </div>
                         </td>
                       )}
@@ -1413,121 +1420,118 @@ export default function FacultyManagement({
       </AlertDialog>
       {/* ─── Bio View Modal ─── */}
       {showViewModal && selectedFaculty && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-2xl rounded-xl overflow-hidden shadow-none relative animate-in zoom-in-95 duration-300 border border-white/20">
-            {/* Modal Header/Profile Panel */}
-            <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-10 text-white relative">
-              <button
-                onClick={() => setShowViewModal(false)}
-                className="absolute top-8 right-8 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-all text-white/50 hover:text-white"
-              >
-                <X size={20} />
-              </button>
+        <div 
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xl animate-in fade-in duration-300 cursor-pointer"
+          onClick={() => setShowViewModal(false)}
+        >
+          <div 
+            className="bg-white w-full max-w-xl rounded-xl shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-300 border border-white/20 cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setShowViewModal(false)}
+              className="absolute top-8 right-8 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
+            >
+              <X size={20} />
+            </button>
 
-              <div className="flex items-center gap-6">
-                <div className="w-24 h-24 rounded-xl bg-white/10 border-4 border-white/10 overflow-hidden shadow-none shrink-0">
-                  {selectedFaculty.ProfileUrl ? (
-                    <img
-                      src={selectedFaculty.ProfileUrl}
-                      alt={selectedFaculty.Name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-3xl font-black bg-navy-900">
-                      {selectedFaculty.Name?.[0]}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-3xl font-black tracking-tight leading-none mb-2">
-                    {selectedFaculty.Name}
-                  </h3>
-                  <p className="text-blue-400 font-black uppercase tracking-widest text-[10px] flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-navy-500/20 rounded">
-                      {selectedFaculty.Designation || "Lecturer"}
-                    </span>
-                    <span className="text-slate-500">•</span>
-                    <span>{selectedFaculty.Department} Department</span>
-                  </p>
-                  <div className="flex items-center gap-4 mt-4 text-slate-400 text-xs">
-                    <div className="flex items-center gap-1.5">
-                      <Mail size={12} className="text-blue-400" />
-                      {selectedFaculty.Email}
-                    </div>
-                    {selectedFaculty.Contact && (
-                      <div className="flex items-center gap-1.5">
-                        <Plus size={12} className="text-emerald-400" />
-                        {selectedFaculty.Contact}
-                      </div>
-                    )}
-                    {selectedFaculty.CreatedAt && (
-                      <div className="flex items-center gap-1.5">
-                        <Calendar size={12} className="text-amber-400" />
-                        Joined{" "}
-                        {new Date(
-                          selectedFaculty.CreatedAt,
-                        ).toLocaleDateString()}
+            {/* Centralized Header */}
+            <div className="p-10 pb-4 flex flex-col items-center text-center">
+              <div className="relative mb-6 group">
+                <div className="p-1 bg-white ring-4 ring-navy-50 rounded-full shadow-sm">
+                  <div className="w-24 h-24 rounded-full bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden">
+                    {selectedFaculty.ProfileUrl ? (
+                      <img
+                        src={selectedFaculty.ProfileUrl}
+                        alt={selectedFaculty.Name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center text-slate-200">
+                        <Users size={32} />
+                        <span className="text-[8px] font-black uppercase tracking-tighter mt-1">
+                          No Photo
+                        </span>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
+
+              <h3 className="text-3xl font-black text-slate-900 tracking-tight uppercase italic leading-none mb-3">
+                {selectedFaculty.Name}
+              </h3>
+
+              <div className="flex flex-col items-center gap-2">
+                <p className="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">
+                  {selectedFaculty.Designation || "Faculty Member"}
+                </p>
+                <div className="flex items-center gap-3">
+                  <span className="px-3 py-1 bg-slate-100 rounded-full text-[9px] font-black uppercase tracking-widest text-slate-500 border border-slate-200">
+                    {selectedFaculty.Department} Department
+                  </span>
+                  <span className="px-3 py-1 bg-emerald-50 rounded-full text-[9px] font-black uppercase tracking-widest text-emerald-600 border border-emerald-100">
+                    {selectedFaculty.Role?.toUpperCase() || "FACULTY"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center gap-6 mt-6 text-slate-400">
+                <div className="flex items-center gap-2 text-[11px] font-medium">
+                  <Mail size={12} className="text-slate-400" />
+                  {selectedFaculty.Email}
+                </div>
+                {selectedFaculty.CreatedAt && (
+                  <div className="flex items-center gap-2 text-[11px] font-medium">
+                    <Calendar size={12} className="text-slate-400" />
+                    Joined {new Date(selectedFaculty.CreatedAt).toLocaleDateString()}
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Bio Content */}
-            <div className="p-10 max-h-[60vh] overflow-y-auto bg-slate-50/50">
-              <div className="space-y-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <BookOpen size={20} className="text-slate-400" />
-                  <h4 className="text-lg font-black text-slate-900 uppercase tracking-tight">
+            {/* Bio Content Area */}
+            <div className="px-10 py-6 max-h-[50vh] overflow-y-auto bg-slate-50/30">
+              <div className="space-y-6">
+                <div className="flex items-center gap-2.5 mb-2">
+                  <BookOpen size={16} className="text-slate-400" />
+                  <h4 className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-400">
                     Professional Biography
                   </h4>
                 </div>
 
-                {selectedFaculty.Bio &&
-                  Object.keys(selectedFaculty.Bio).length > 0 ? (
-                  <div className="grid grid-cols-1 gap-6">
-                    {Object.entries(selectedFaculty.Bio).map(
-                      ([key, val]: any) => {
-                        if (!val || (Array.isArray(val) && val.length === 0))
-                          return null;
-                        return (
-                          <div
-                            key={key}
-                            className="bg-white p-6 rounded-xl border border-slate-100 shadow-none"
-                          >
-                            <label className="text-[10px] font-black uppercase tracking-widest text-navy-900 block mb-3">
-                              {key.replace(/_/g, " ")}
-                            </label>
-                            {Array.isArray(val) ? (
-                              <ul className="space-y-2">
-                                {val.map((item: string, i: number) => (
-                                  <li
-                                    key={i}
-                                    className="text-sm text-slate-600 font-medium flex items-start gap-2 leading-relaxed"
-                                  >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-200 mt-2 shrink-0" />
-                                    {item}
-                                  </li>
-                                ))}
-                              </ul>
-                            ) : (
-                              <p className="text-sm text-slate-600 font-medium leading-relaxed">
-                                {val}
-                              </p>
-                            )}
-                          </div>
-                        );
-                      },
-                    )}
+                {selectedFaculty.Bio && Object.keys(selectedFaculty.Bio).length > 0 ? (
+                  <div className="grid grid-cols-1 gap-4">
+                    {Object.entries(selectedFaculty.Bio).map(([key, val]: any) => {
+                      if (!val || (Array.isArray(val) && val.length === 0)) return null;
+                      return (
+                        <div key={key} className="bg-white p-6 rounded-xl border border-slate-100/60 shadow-none hover:border-slate-300 transition-colors">
+                          <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 block mb-3">
+                            {key.replace(/_/g, " ")}
+                          </label>
+                          {Array.isArray(val) ? (
+                            <ul className="space-y-2.5">
+                              {val.map((item: string, i: number) => (
+                                <li key={i} className="text-[13px] text-slate-600 font-medium flex items-start gap-3 leading-relaxed">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-slate-200 mt-2 shrink-0 group-hover:bg-slate-900 transition-colors" />
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-[13px] text-slate-600 font-medium leading-relaxed">
+                              {val}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-12 bg-white rounded-xl border border-slate-100 border-dashed">
-                    <BookOpen
-                      size={40}
-                      className="mx-auto text-slate-200 mb-4"
-                    />
-                    <p className="text-slate-400 font-bold italic text-sm">
+                    <BookOpen size={32} className="mx-auto text-slate-100 mb-4" />
+                    <p className="text-slate-400 font-bold italic text-[12px]">
                       No biographical data available for this member.
                     </p>
                   </div>
@@ -1536,10 +1540,10 @@ export default function FacultyManagement({
             </div>
 
             {/* Modal Footer */}
-            <div className="p-8 bg-white border-t border-slate-100 flex justify-end gap-3">
+            <div className="p-10 bg-white border-t border-slate-50 flex justify-end gap-3">
               <button
                 onClick={() => setShowViewModal(false)}
-                className="px-8 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-none active:scale-95"
+                className="px-10 py-4 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-black transition-all active:scale-95 shadow-xl shadow-slate-100"
               >
                 Close Profile
               </button>
