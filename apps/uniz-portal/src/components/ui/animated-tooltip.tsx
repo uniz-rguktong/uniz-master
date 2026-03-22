@@ -23,7 +23,6 @@ export const AnimatedTooltip = ({
     className?: string;
 }) => {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-    const [isLeadPulsing, setIsLeadPulsing] = useState(true);
 
     const springConfig = { stiffness: 100, damping: 5 };
     const x = useMotionValue(0);
@@ -93,51 +92,32 @@ export const AnimatedTooltip = ({
                             )}
                         </AnimatePresence>
                         <div className="relative group/avatar">
-                            {item.id === 1 && (
-                                <motion.div
-                                    animate={isLeadPulsing ? {
-                                        scale: [1, 1.4, 1],
-                                        opacity: [0.3, 0.1, 0.3],
-                                    } : { scale: 1, opacity: 0 }}
-                                    transition={{
-                                        duration: 3,
-                                        repeat: Infinity,
-                                        ease: "easeInOut",
-                                    }}
-                                    className="absolute -inset-1 rounded-full bg-sky-500/30 blur-sm z-0"
-                                />
-                            )}
                             <motion.img
                                 onMouseMove={handleMouseMove}
                                 onMouseEnter={() => {
                                     setHoveredIndex(item.id);
-                                    if (item.id === 1) setIsLeadPulsing(false);
                                 }}
                                 onMouseLeave={() => {
                                     setHoveredIndex(null);
-                                    if (item.id === 1) setIsLeadPulsing(true);
                                 }}
                                 whileHover={{ 
-                                    scale: 1.35, 
-                                    rotate: item.id % 2 === 0 ? 5 : -5,
-                                    zIndex: 50 
+                                    scale: item.id === 1 ? 1.45 : 1.35, 
+                                    rotate: item.id === 1 ? 4 : (item.id % 2 === 0 ? 5 : -5),
+                                    zIndex: 60 
                                 }}
-                                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                                transition={{ type: "spring", stiffness: 450, damping: 18 }}
                                 src={item.image}
                                 alt={item.name}
                                 className={cn(
                                     "object-cover !m-0 !p-0 object-top rounded-full h-10 w-10 border-2 relative transition-all duration-500 cursor-pointer shadow-sm",
                                     hoveredIndex === item.id 
-                                        ? "border-sky-400 shadow-[0_0_20px_rgba(56,189,248,0.4)]" 
-                                        : "border-white z-20 hover:border-sky-200 grayscale-[0.3] hover:grayscale-0",
-                                    item.id === 1 && "ring-[3px] ring-sky-500/10 ring-offset-0"
+                                        ? "border-sky-400 shadow-[0_0_30px_rgba(56,189,248,0.3)]" 
+                                        : "border-white z-20 grayscale-[0.35] hover:grayscale-0",
+                                    item.id === 1 && "ring-[3px] ring-sky-500/5 ring-offset-0"
                                 )}
                             />
-                            {item.id === 1 && isLeadPulsing && (
-                                <div className="absolute -top-1 -right-1 z-30 flex h-3 w-3">
-                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                                  <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500 border border-white"></span>
-                                </div>
+                            {item.id === 1 && (
+                                <div className="absolute -inset-[2px] rounded-full opacity-0 group-hover/avatar:opacity-100 transition-all duration-1000 pointer-events-none ring-[1.5px] ring-sky-400/40 blur-[0.5px]" />
                             )}
                         </div>
                     </div>
