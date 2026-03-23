@@ -48,21 +48,12 @@ import {
 import { Skeleton } from "@/components/ui/Skeleton";
 
 const ROLES = [
-  "teacher",
-  "hod",
-  "dean",
   "webmaster",
-  "dsw",
+  "coe",
   "swo",
-  "warden",
-  "caretaker",
-  "security",
-  "director",
-  "librarian",
-  "warden_male",
-  "warden_female",
-  "caretaker_male",
-  "caretaker_female",
+  "dean",
+  "ao",
+  "OTHER",
 ];
 const DEPARTMENTS = [
   "CSE",
@@ -175,10 +166,15 @@ export default function FacultyManagement({
     }
   };
 
+  const isMounted = React.useRef(false);
+
   useEffect(() => {
     fetchFaculty();
-  }, [page]);
+    isMounted.current = true;
+  }, [page, deptRestrict]);
+
   useEffect(() => {
+    if (!isMounted.current) return;
     const timer = setTimeout(() => {
       if (page !== 1) setPage(1);
       else fetchFaculty();
@@ -1359,19 +1355,31 @@ export default function FacultyManagement({
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
                       System Privileges
                     </label>
-                    <select
-                      value={formData.role}
-                      onChange={(e) =>
-                        setFormData({ ...formData, role: e.target.value })
-                      }
-                      className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
-                    >
-                      {ROLES.map((r) => (
-                        <option key={r} value={r}>
-                          {r.toUpperCase()}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex flex-col gap-2">
+                      <select
+                        value={ROLES.includes(formData.role) ? formData.role : "OTHER"}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setFormData({ ...formData, role: val === "OTHER" ? "" : val });
+                        }}
+                        className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
+                      >
+                        {ROLES.map((r) => (
+                          <option key={r} value={r}>
+                            {r === "OTHER" ? "OTHER (CUSTOM)" : r.toUpperCase()}
+                          </option>
+                        ))}
+                      </select>
+                      {(formData.role === "" || !ROLES.includes(formData.role)) && (
+                        <input
+                          required
+                          value={formData.role}
+                          onChange={(e) => setFormData({ ...formData, role: e.target.value.toLowerCase() })}
+                          className="w-full h-10 px-4 bg-white border-2 border-slate-100 focus:border-navy-900 rounded-xl outline-none font-bold text-slate-900 transition-all text-xs"
+                          placeholder="Type custom role (e.g. registrar)"
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
 

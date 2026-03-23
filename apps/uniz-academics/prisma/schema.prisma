@@ -23,18 +23,21 @@ model Subject {
 }
 
 model Grade {
-  id         String   @id @default(uuid()) @db.Uuid
-  studentId  String
-  subjectId  String
-  semesterId String
-  grade      Float
-  batch      String? // e.g. "O21"
-  isRemedial Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  subject    Subject  @relation(fields: [subjectId], references: [id])
+  id            String   @id @default(uuid()) @db.Uuid
+  studentId     String
+  subjectId     String
+  semesterId    String
+  attemptNumber Int      @default(1)
+  grade         Float
+  batch         String? // e.g. "O21"
+  isRemedial    Boolean  @default(false)
+  passDate            DateTime?
+  subjectNameOverride String? // For electives (e.g. "Cloud Computing" instead of "Elective-VI")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  subject             Subject  @relation(fields: [subjectId], references: [id])
 
-  @@unique([studentId, subjectId, semesterId])
+  @@unique([studentId, subjectId, semesterId, attemptNumber])
   @@index([studentId])
   @@index([batch])
   @@index([semesterId])
@@ -48,6 +51,7 @@ model Attendance {
   totalClasses    Int
   attendedClasses Int
   batch           String? // e.g. "O21"
+  subjectNameOverride String? // For electives (e.g. "Cloud Computing" instead of "Elective-VI")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   subject         Subject  @relation(fields: [subjectId], references: [id])

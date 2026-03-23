@@ -31,6 +31,18 @@ async function seed() {
     await client.query('TRUNCATE TABLE uniz_user."StudentProfile" CASCADE;');
     await client.query('TRUNCATE TABLE uniz_user."Banner" CASCADE;');
     await client.query('TRUNCATE TABLE uniz_user."PublicNotification" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_user."Tender" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_user."UploadHistory" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_user."PushSubscription" CASCADE;');
+
+    // --- ACADEMICS CLEANUP ---
+    await client.query('TRUNCATE TABLE uniz_academics."Grade" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_academics."Attendance" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_academics."Subject" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_academics."AcademicSemester" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_academics."BranchAllocation" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_academics."Registration" CASCADE;');
+    await client.query('TRUNCATE TABLE uniz_academics."SeatingArrangement" CASCADE;');
 
     const upsertUser = async (
       rawId: string,
@@ -164,44 +176,11 @@ async function seed() {
       { email: "swo@rguktong.ac.in", name: "SWO Chief" },
     );
 
-    // --- SEEDING HODs (One per branch) ---
-    console.log("- Seeding Department Heads...");
-    const branches = ["CSE", "ECE", "ME", "CE", "EEE", "MME", "CHEM"];
-    for (const dept of branches) {
-      await upsertUser(
-        `hod-${dept.toLowerCase()}-id`,
-        `hod_${dept.toLowerCase()}`,
-        "hod",
-        `${dept} Head of Department`,
-        "Faculty",
-        { dept, designation: "Head of Department" },
-      );
-    }
+    // --- SEEDING HODs removed as per user request ---
+    console.log("- Skipping HOD/Faculty Seeding (Only Admin accounts are being kept)");
 
-    // --- SEEDING STUDENTS (O21 Batch - Mandatory IDs) ---
-    console.log("- Seeding O21 Sample Students...");
-    const o21Students = [
-      { id: "O210001", branch: "CSE", name: "CSE Senior" },
-      { id: "O210002", branch: "ECE", name: "ECE Senior" },
-      { id: "O210003", branch: "ME", name: "ME Senior" },
-      { id: "O210004", branch: "CE", name: "CE Senior" },
-      { id: "O210005", branch: "EEE", name: "EEE Senior" },
-      { id: "O210006", branch: "MME", name: "MME Senior" },
-      { id: "O210008", branch: "CSE", name: "Target Student (O210008)" },
-      { id: "O210009", branch: "CIVIL", name: "O21 Senior" },
-      { id: "O210010", branch: "CSE", name: "O21 Senior" },
-    ];
-
-    for (const student of o21Students) {
-      await upsertUser(
-        `${student.id}-id`,
-        student.id,
-        "student",
-        `${student.branch} student (O21)`,
-        "Student",
-        { branch: student.branch, name: student.name },
-      );
-    }
+    // --- SEEDING STUDENTS removed as per user request ---
+    console.log("- Skipping Student Seeding (Students should be added via bulk upload)");
 
     // --- SEEDING CMS CONTENT ---
     console.log("- Seeding CMS Assets...");

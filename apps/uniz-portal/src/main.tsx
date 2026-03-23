@@ -4,9 +4,9 @@ import "./index.css";
 import { Layout } from "./layout.tsx";
 import { RecoilRoot } from "recoil";
 import { BrowserRouter } from "react-router-dom";
-// import { initializeGlobalInterceptor } from "./api/networkInterceptor.ts";
+import { initializeGlobalInterceptor } from "./api/networkInterceptor.ts";
 
-// initializeGlobalInterceptor();
+initializeGlobalInterceptor();
 
 // // Hardcoded Responsive Lead Signature 
 // (function() {
@@ -54,8 +54,11 @@ if ("serviceWorker" in navigator) {
   });
 }
 
+import { PWAListener } from "./components/PWAListener.tsx";
+
 createRoot(document.getElementById("root")!).render(
   <RecoilRoot>
+    <PWAListener />
     <BrowserRouter>
       <Layout>
         <App />

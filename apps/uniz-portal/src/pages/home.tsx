@@ -7,7 +7,7 @@ import {
   Smartphone,
   Download,
 } from "lucide-react";
-import { PUBLIC_BANNERS } from "../api/endpoints";
+import { PUBLIC_BANNERS, BASE_URL } from "../api/endpoints";
 import { usePWAInstall } from "../hooks/usePWAInstall";
 import { HeroBlock } from "../components/ui/hero-block-shadcnui";
 
@@ -52,21 +52,17 @@ const Home = () => {
   useIsAuth();
   const navigate = useNavigate();
   const [banners, setBanners] = useState<any[]>([]);
-  const { install, isInstalled } = usePWAInstall();
-
+  const { install, isInstalled, isInstallable, isIOS } = usePWAInstall();
 
   const handleInstallClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     const result = await install();
     if (result === "ios") {
       window.alert(
-        "Installation Guide (iOS): \n\n1. Tap the 'Share' icon (square with arrow) at the bottom.\n2. Scroll down and select 'Add to Home Screen'.\n\nUniZ will now be ready on your home screen!",
+        "To install UniZ on iOS:\n\n1. Tap the Share icon (at bottom)\n2. Select 'Add to Home Screen'\n\nDirect native install is not supported by Apple yet.",
       );
-    } else if (result === "fallback") {
-      window.alert(
-        "Installation Guide: \n\n1. Open your browser menu (usually three dots or share list).\n2. Select 'Install App' or 'Add to Home Screen'.",
-      );
-    }
+    } 
+    // If native prompt happened (result is accepted/dismissed), we don't show any alerts.
   };
 
   const timelineData = [
@@ -84,7 +80,7 @@ const Home = () => {
             app stores.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 items-start">
-            {!isInstalled && (
+            {!isInstalled && (isInstallable || isIOS) && (
               <a
                 href="#"
                 onClick={handleInstallClick}
@@ -135,15 +131,31 @@ const Home = () => {
     },
   ];
 
+  const [notifications, setNotifications] = useState<any[]>([]);
+
   useEffect(() => {
     const myHeaders = new Headers();
     myHeaders.append("x-cms-api-key", "uniz-landing-v1-key");
 
+    // Fetch Banners
     fetch(PUBLIC_BANNERS, { method: "GET", headers: myHeaders })
       .then((res) => res.json())
       .then((result) => {
         if (result.success) {
           setBanners(result.banners || []);
+        }
+      })
+      .catch((error) => console.error(error));
+
+    // Fetch Notifications (Campus Broadcasts)
+    fetch(`${BASE_URL}/cms/notifications`, {
+      method: "GET",
+      headers: myHeaders,
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success && result.notifications?.updates) {
+          setNotifications(result.notifications.updates);
         }
       })
       .catch((error) => console.error(error));
@@ -162,6 +174,36 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-transparent flex flex-col font-sans selection:bg-navy-100 selection:text-navy-900">
+      {/* CAMPUS BROADCAST MARQUEE */}
+      {notifications.length > 0 && (
+        <div className="w-full bg-navy-900 py-2.5 overflow-hidden border-b border-navy-800/50">
+          <div className="marquee">
+            {notifications.map((n, idx) => (
+              <span key={idx} className="flex items-center mx-12">
+                <div className="w-2 h-2 rounded-full bg-apple-green shadow-[0_0_8px_rgba(76,217,100,0.6)] mr-3" />
+                <span className="text-white text-[13px] font-black uppercase tracking-widest whitespace-nowrap">
+                  {n.title}:{" "}
+                  <span className="text-slate-400 font-medium normal-case tracking-normal">
+                    {n.content}
+                  </span>
+                </span>
+              </span>
+            ))}
+            {/* DUPLICATE FOR INFINITE LOOP */}
+            {notifications.map((n, idx) => (
+              <span key={`dup-${idx}`} className="flex items-center mx-12">
+                <div className="w-2 h-2 rounded-full bg-apple-green shadow-[0_0_8px_rgba(76,217,100,0.6)] mr-3" />
+                <span className="text-white text-[13px] font-black uppercase tracking-widest whitespace-nowrap">
+                  {n.title}:{" "}
+                  <span className="text-slate-400 font-medium normal-case tracking-normal">
+                    {n.content}
+                  </span>
+                </span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
       <HeroBlock />
 
       <Suspense fallback={<SectionLoader />}>

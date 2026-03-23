@@ -117,13 +117,19 @@ export async function processNextStudentBatch() {
             ? Math.floor(Math.random() * 4 + 1).toString()
             : section;
 
-        let finalBatch = batchCol;
-        if (!finalBatch && id) {
-          const prefix = id.substring(0, 3);
-          if (/^[A-Z]\d{2}$/.test(prefix)) finalBatch = prefix;
-        }
-        if (!finalBatch) finalBatch = majorityBatch;
-        finalBatch = (finalBatch || "").toUpperCase();
+        const finalBatch = (batchCol || "").toUpperCase();
+
+        const roomno = getVal(["room no", "roomno", "room_no", "hostel_room"]);
+        const isInCampusRaw = getVal([
+          "is in campus",
+          "in campus",
+          "campus_status",
+          "presence",
+        ]).toUpperCase();
+        const is_in_campus =
+          isInCampusRaw === "YES" ||
+          isInCampusRaw === "TRUE" ||
+          isInCampusRaw === "PRESENT";
 
         try {
           await prisma.studentProfile.upsert({
@@ -135,10 +141,10 @@ export async function processNextStudentBatch() {
               branch,
               year: finalYear,
               section: finalSection,
-              batch: finalBatch,
-              phone,
               category,
               campus,
+              roomno: roomno || undefined,
+              isPresentInCampus: is_in_campus,
               updatedAt: new Date(),
             },
             create: {
@@ -153,6 +159,8 @@ export async function processNextStudentBatch() {
               phone,
               category,
               campus,
+              roomno: roomno || "N/A",
+              isPresentInCampus: is_in_campus,
             },
           });
           successCount++;
@@ -239,7 +247,8 @@ export async function processNextStudentBatch() {
       await prisma.uploadHistory.create({
         data: {
           type: "STUDENTS",
-          filename: fileUrl || "unknown.xlsx",
+          filename: job.filename || "unknown.xlsx",
+          fileUrl: fileUrl,
           totalRows: total,
           successCount,
           failCount,

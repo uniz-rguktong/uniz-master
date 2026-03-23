@@ -299,6 +299,16 @@
     }
   }
 
+  .marquee {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 35s linear infinite;
+  }
+
+  .marquee:hover {
+    animation-play-state: paused;
+  }
+
   @keyframes iconBounce {
     0%,
     100% {
