@@ -15,7 +15,6 @@ import {
   AlertCircle,
   X,
   Layers,
-  ScanLine,
   ChevronLeft,
   LayoutGrid,
   Lock,
