@@ -47,7 +47,29 @@ export function initializeGlobalInterceptor() {
       }
     }
 
-    return originalFetch(resource, config);
+    const response = await originalFetch(resource, config);
+
+    // Auth-Aware Eviction: Don't logout if the 401 comes from a login attempt
+    const isLoginAttempt = 
+      url.includes("/auth/login") || 
+      url.includes("/auth/signin") ||
+      url.includes("/auth/otp");
+
+    if (response.status === 401 && !isLoginAttempt) {
+      console.warn("[NetworkInterceptor] 401 Unauthorized detected. Clearing session...");
+      
+      // Destructive clear to ensure no state remains
+      localStorage.clear();
+
+      // Sudden redirect to login gateway
+      setTimeout(() => {
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
+      }, 500);
+    }
+
+    return response;
   };
 
   console.log("[NetworkInterceptor] Global fetch interceptor initialized.");

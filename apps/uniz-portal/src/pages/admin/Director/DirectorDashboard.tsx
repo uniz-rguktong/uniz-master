@@ -2,20 +2,17 @@
 import { useState, useRef, useEffect } from "react";
 import {
     Users,
-    CalendarCheck,
-    GraduationCap,
+
     LogOut,
     LayoutDashboard,
     Layout,
     Bell,
-    Activity,
+
     Smartphone,
-    ScanLine,
+
     Lock,
     Search,
-    UserCog,
-    BookOpen,
-    RefreshCcw,
+
 } from "lucide-react";
 import ProfilePopup from "../ProfilePopup";
 import SecuritySection from "../Webmaster/SecuritySection";
@@ -62,10 +59,9 @@ export default function DirectorDashboard() {
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
     const [profileName, setProfileName] = useState<string | null>(null);
     const [profileEmail, setProfileEmail] = useState<string | null>(null);
-    const avatarBtnRef = useRef<HTMLButtonElement>(null);
     const headerAvatarRef = useRef<HTMLButtonElement>(null);
     const [activeAnchor, setActiveAnchor] = useState<React.RefObject<HTMLElement>>(headerAvatarRef);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, _setSearchQuery] = useState("");
 
     const username = (localStorage.getItem("username") || "Director").replace(/"/g, "");
     const initial = (profileName || username)[0]?.toUpperCase() ?? "D";
@@ -102,8 +98,8 @@ export default function DirectorDashboard() {
             group: "Students",
             items: [
                 { id: "student", label: "Student Details", icon: Users },
-                { id: "student_bulk", label: "Student Bulk Ops", icon: Users },
-                { id: "status_update", label: "Status Update", icon: RefreshCcw },
+                // { id: "student_bulk", label: "Student Bulk Ops", icon: Users },
+                // { id: "status_update", label: "Status Update", icon: RefreshCcw },
             ]
         },
         {
@@ -112,9 +108,9 @@ export default function DirectorDashboard() {
 /*
                 { id: "academic_mgmt", label: "Sem Registration", icon: Layout },
 */
-                { id: "subjects", label: "Manage Subjects", icon: BookOpen },
-                { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
-                { id: "grades", label: "Grades Upload", icon: GraduationCap },
+                // { id: "subjects", label: "Manage Subjects", icon: BookOpen },
+                // { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
+                // { id: "grades", label: "Grades Upload", icon: GraduationCap },
             ]
         },
         {
@@ -123,18 +119,18 @@ export default function DirectorDashboard() {
                 { id: "banners", label: "Home Banners", icon: Layout },
                 { id: "updates", label: "Campus Updates", icon: Bell },
                 { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
-            ]
+            ],
         },
         {
             group: "Management",
             items: [
-                { id: "faculty_mgmt", label: "Staff Management", icon: Users },
-                { id: "exam_seating", label: "Exam Seating", icon: ScanLine },
-                { id: "roles", label: "Role Management", icon: UserCog },
-                { id: "system_logs", label: "System & Logs", icon: Activity },
+                // { id: "faculty_mgmt", label: "Faculty Management", icon: Users },
+                // { id: "exam_seating", label: "Exam Seating", icon: ScanLine },
+                // { id: "roles", label: "Role Management", icon: UserCog },
+                // { id: "system_logs", label: "System & Logs", icon: Activity },
                 { id: "security", label: "Security", icon: Lock },
-            ]
-        }
+            ],
+        },
     ];
 
     const { logout } = useLogout();
@@ -204,31 +200,16 @@ export default function DirectorDashboard() {
                     )}
                 </button>
 
-                {/* Sidebar Branding */}
-                <div className="px-4 pt-6 pb-2">
+                {/* Sidebar Branding - Hides when collapsed for sleek look */}
+                <div className={`px-4 pt-8 pb-4 transition-all duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
                     <div className="flex items-center justify-center">
-                        <h1 className={`unifrakturcook-bold ${isSidebarOpen ? "text-4xl" : "text-3xl"} text-slate-900 tracking-tight transition-all duration-300`}>
-                            {isSidebarOpen ? "uniZ" : "Z"}
+                        <h1 className="unifrakturcook-bold text-4xl text-slate-900 tracking-tight">
+                            uniZ
                         </h1>
                     </div>
                 </div>
 
-                {/* Search Style */}
-                <div className="px-5 py-4">
-                    <div className="relative group">
-                        <Search className={`absolute ${isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2"} top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600 transition-colors`} size={16} />
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder={isSidebarOpen ? "Search operations..." : ""}
-                            className={`w-full bg-slate-50 border border-slate-200/60 rounded-xl ${isSidebarOpen ? "pl-10 pr-8" : "px-0"} py-2 text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all font-medium`}
-                        />
-                        {isSidebarOpen && (
-                            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-slate-200/60 rounded text-[9px] font-bold text-slate-400 uppercase">/</div>
-                        )}
-                    </div>
-                </div>
+
 
                 {/* Navigation Section */}
                 <nav className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-2 overflow-y-auto space-y-6 custom-sidebar-scroll`}>
@@ -319,35 +300,7 @@ export default function DirectorDashboard() {
                     </div>
                 </nav>
 
-                {/* User Info Style */}
-                <div className="mt-auto border-t border-slate-200/60 p-3 pb-5">
-                    <div
-                        onClick={() => {
-                            setActiveAnchor(avatarBtnRef);
-                            setProfilePopupOpen(true);
-                        }}
-                        className={`flex items-center ${isSidebarOpen ? "justify-start px-2" : "justify-center"} py-1.5 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group`}
-                    >
-                        <div className="flex items-center gap-3 min-w-0">
-                            <button
-                                ref={avatarBtnRef}
-                                className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-slate-100 flex items-center justify-center shadow-sm ring-1 ring-slate-200/60 transition-transform group-hover:scale-105"
-                            >
-                                {profilePhoto ? (
-                                    <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
-                                ) : (
-                                    <span className="text-slate-600 font-bold text-[11px]">{initial}</span>
-                                )}
-                            </button>
-                            {isSidebarOpen && (
-                                <div className="min-w-0">
-                                    <p className="text-[13px] font-bold text-slate-900 truncate leading-tight">{profileName || username}</p>
-                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate mt-0.5">Director Portal</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+
             </aside>
 
             {/* Main Content */}

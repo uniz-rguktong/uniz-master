@@ -93,11 +93,18 @@ export function useIsAuth() {
         "warden_female",
         "caretaker_male",
         "caretaker_female",
+        "coe",
       ];
-      const storedRole = localStorage.getItem("admin_role");
+      const storedRole = localStorage.getItem("admin_role")?.replace(/"/g, "");
+      
+      // CRITICAL SECURITY CHECK: Prevent LocalStorage tampering (Privilege Escalation)
+      if (decoded?.role && storedRole && decoded.role !== storedRole) {
+        return logoutAndRedirect("Security Alert: Role mismatch detected (Identity Integrity)");
+      }
+
       const roleToVerify =
         decoded?.role ||
-        (storedRole ? storedRole.replace(/"/g, "") : "") ||
+        storedRole ||
         "admin";
 
       if (!validAdminRoles.includes(roleToVerify)) {

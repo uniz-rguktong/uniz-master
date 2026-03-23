@@ -41,8 +41,9 @@ const PrevArrow = (props: any) => {
 };
 
 export default function FeaturedCarousel({ items }: FeaturedCarouselProps) {
-    // Clone items if there are too few to ensure smooth infinite scrolling
-    const displayItems = items.length > 0 && items.length < 6
+    // Clone items ONLY if there are between 2 and 5 items to ensure smooth infinite scrolling for small sets.
+    // If only 1 item, cloning would look redundant; if 0, slider handles it.
+    const displayItems = items.length > 1 && items.length < 6
         ? [...items, ...items, ...items]
         : items;
 
