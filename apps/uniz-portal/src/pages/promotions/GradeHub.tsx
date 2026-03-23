@@ -168,6 +168,7 @@ export default function GradeHub() {
         });
         const hasRemedial = formattedGrades.some((g: any) => g.isRemedial || g.attemptNumber > 1);
         const remedialGrades = hasRemedial ? Array.from(latestGradesMap.values()) : [];
+        const gradeCounts: { [key: string]: number } = {};
         formattedGrades.forEach((g: any) => {
           gradeCounts[g.grade] = (gradeCounts[g.grade] || 0) + 1;
         });
