@@ -14,6 +14,7 @@ const Home = lazy(() => import("./pages/home"));
 const Signin = lazy(() => import("./pages/auth/CommonSignin"));
 const Admin = lazy(() => import("./pages/admin/index"));
 const Sidebar = lazy(() => import("./components/Sidebar"));
+const SEOLanding = lazy(() => import("./pages/seo-landing"));
 
 // Admin Components
 const AddStudents = lazy(() => import("./pages/admin/AddStudents"));
@@ -151,6 +152,12 @@ export default function App() {
               </MaintenanceGuard>
             }
           />
+          {/* SEO Marketing Pages */}
+          <Route path="/student-project-management" element={<PageTransition><SEOLanding /></PageTransition>} />
+          <Route path="/college-team-collaboration" element={<PageTransition><SEOLanding /></PageTransition>} />
+          <Route path="/academic-task-tracker" element={<PageTransition><SEOLanding /></PageTransition>} />
+          <Route path="/blog/*" element={<PageTransition><SEOLanding /></PageTransition>} />
+          
           {/* Institutional and Academic routes deleted */}
           <Route
             path="/login"
