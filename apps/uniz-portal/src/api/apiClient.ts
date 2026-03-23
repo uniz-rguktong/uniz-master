@@ -85,7 +85,7 @@ export async function apiClient<T = any>(
     const data: ApiResponse<T> = await response.json();
 
     if (!response.ok) {
-      handleHttpError(response.status, data, showToast);
+      handleHttpError(response.status, data, showToast, url);
       return null;
     }
 
@@ -136,7 +136,7 @@ export async function downloadFile(
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      handleHttpError(response.status, data, true);
+      handleHttpError(response.status, data, true, url);
       return;
     }
 
@@ -156,19 +156,33 @@ export async function downloadFile(
   }
 }
 
-function handleHttpError(status: number, data: any, showToast: boolean) {
+function handleHttpError(status: number, data: any, showToast: boolean, url = "") {
   if (!showToast) return;
 
   const code = data.code || data.error?.code;
   const message = data.message || data.msg || data.error?.message;
 
+  const isLoginPath = 
+    url.includes("/auth/login") || 
+    url.includes("/auth/signin") || 
+    url.includes("/auth/otp/verify");
+
   switch (status) {
     case 401:
-      if (code === ErrorCode.AUTH_INVALID_CREDENTIALS) {
+      if (isLoginPath) {
         toast.error("Incorrect username or password.");
       } else {
-        toast.error("Session expired. Please sign in again.");
-        // Optional: clear tokens and redirect to login
+        toast.error("Session expired or unauthorized. Logging out...");
+        
+        // Immediate Universal Logout Operation
+        localStorage.clear();
+
+        // Sudden Redirect to login
+        setTimeout(() => {
+          if (window.location.pathname !== "/login") {
+            window.location.href = "/login";
+          }
+        }, 800);
       }
       break;
     case 403:

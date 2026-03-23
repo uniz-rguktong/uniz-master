@@ -160,6 +160,24 @@ export async function processNextBatch() {
               "acad_batch",
               "academic_batch",
             ]);
+            const passDateRaw = getVal(row, [
+              "pass date",
+              "exam date",
+              "date",
+            ]);
+
+            const remedialCol = getVal(row, [
+              "is remedial",
+              "remedial",
+              "type", // "REMEDIAL" vs "REGULAR"
+            ]);
+
+            const subjectNameOverride = getVal(row, [
+              "subject name override",
+              "subject_name_override",
+              "custom name",
+              "specific_name",
+            ]);
 
             if (!studentId || !code) {
               console.warn(
@@ -170,8 +188,16 @@ export async function processNextBatch() {
             }
             const grade = mapGradeToPoint(rawGrade);
             console.log(
-              `[Worker] Processing: Student=${studentId}, Subject=${code}, RawGrade=[${rawGrade}], Mapped=${grade}`,
+              `[Worker] Processing: Student=${studentId}, Subject=${code}, RawGrade=[${rawGrade}], Mapped=${grade}, passDate=${passDateRaw}`,
             );
+
+            let passDate = null;
+            if (passDateRaw) {
+              const d = new Date(passDateRaw);
+              if (!isNaN(d.getTime())) {
+                passDate = d;
+              }
+            }
 
             const subject = subjectMap.get(code);
             if (!subject) throw new Error(`Subject [${code}] not found`);
@@ -187,41 +213,44 @@ export async function processNextBatch() {
 
             const existingGrade = await prisma.grade.findUnique({
               where: {
-                studentId_subjectId_semesterId: {
+                studentId_subjectId_semesterId_attemptNumber: {
                   studentId,
                   subjectId: subject.id,
                   semesterId: targetSemester,
+                  attemptNumber: 1, // Lookup regular attempt by default
                 },
               },
             });
 
-            // Determine if remedial (previous score was 0, now it's getting updated, typically to passing)
+            // Determine if remedial
             let isRemedial = existingGrade?.isRemedial || false;
-            // If previous was fail (0) & not remedial, and we are updating it now
-            if (existingGrade && existingGrade.grade === 0 && grade !== 0) {
+            
+            // Check if spreadsheet explicitly says it's regular or remedial
+            const rStr = String(remedialCol || "").toUpperCase();
+            if (rStr === "YES" || rStr === "TRUE" || rStr === "REMEDIAL" || rStr === "R") {
               isRemedial = true;
-            } else if (
-              existingGrade &&
-              existingGrade.grade === 0 &&
-              grade === 0
-            ) {
-              // Failed again in a remedial attempt -> still a remedial record, although it's up to policy. Let's strictly mark pass as remedial or keep it.
-              // We'll mark as remedial if it's being updated after a long enough time, but just marking pass attempts is safer.
-              isRemedial = existingGrade.isRemedial;
+            } else if (rStr === "NO" || rStr === "FALSE" || rStr === "REGULAR") {
+              isRemedial = false;
+            } else if (existingGrade && existingGrade.grade === 0 && grade !== 0) {
+              // Auto-detect: if previous was fail (0) & not remedial, and we are updating it now
+              isRemedial = true;
             }
 
             await prisma.grade.upsert({
               where: {
-                studentId_subjectId_semesterId: {
+                studentId_subjectId_semesterId_attemptNumber: {
                   studentId,
                   subjectId: subject.id,
                   semesterId: targetSemester,
+                  attemptNumber: 1,
                 },
               },
               update: {
                 grade,
                 batch: finalBatch,
                 isRemedial,
+                subjectNameOverride,
+                passDate: passDate || undefined,
                 updatedAt: new Date(),
               },
               create: {
@@ -231,6 +260,8 @@ export async function processNextBatch() {
                 grade,
                 batch: finalBatch,
                 isRemedial,
+                subjectNameOverride,
+                passDate,
               },
             });
             successCount++;
@@ -313,6 +344,13 @@ export async function processNextBatch() {
             }
             finalBatch = (finalBatch || "").toUpperCase();
 
+            const subjectNameOverride = getVal(row, [
+              "subject name override",
+              "subject_name_override",
+              "custom name",
+              "specific_name",
+            ]);
+
             await prisma.attendance.upsert({
               where: {
                 studentId_subjectId_semesterId: {
@@ -325,6 +363,7 @@ export async function processNextBatch() {
                 attendedClasses: attended,
                 totalClasses: totalClasses,
                 batch: finalBatch,
+                subjectNameOverride,
                 updatedAt: new Date(),
               },
               create: {
@@ -334,6 +373,7 @@ export async function processNextBatch() {
                 attendedClasses: attended,
                 totalClasses: totalClasses,
                 batch: finalBatch,
+                subjectNameOverride,
               },
             });
             successCount++;

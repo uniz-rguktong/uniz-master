@@ -403,6 +403,7 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
           semesterId: true,
           grade: true,
           isRemedial: true,
+          attemptNumber: true,
           updatedAt: true,
           subject: {
             select: {
@@ -413,7 +414,7 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
             },
           },
         },
-        orderBy: { semesterId: "desc" },
+        orderBy: [{ semesterId: "desc" }, { attemptNumber: "asc" }],
       }),
       prisma.attendance.findMany({
         where: {
@@ -489,9 +490,26 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
     const gpaForDialogue = latestSemId ? gpaResults[latestSemId].gpa : cgpa;
     const motivation = getGpaDialogue(gpaForDialogue);
 
+    // 3. Group by Attempt for UI Display
+    const attemptsGrouped: Record<string, any[]> = {};
+    grades.forEach((g: any) => {
+      const attemptLabel = g.attemptNumber === 1 
+        ? "REGULAR RESULTS" 
+        : `REMEDIAL RESULTS ${g.attemptNumber > 2 ? `- ${g.attemptNumber - 1}` : ""}`;
+      
+      if (!attemptsGrouped[attemptLabel]) attemptsGrouped[attemptLabel] = [];
+      attemptsGrouped[attemptLabel].push(g);
+    });
+
+    const attempts = Object.keys(attemptsGrouped).map((label) => ({
+      label,
+      grades: attemptsGrouped[label],
+    }));
+
     const responsePayload = {
       success: true,
       grades,
+      attempts, // New grouped structure
       gpa: gpaResults,
       cgpa,
       totalBacklogs: backlogCount,
@@ -543,18 +561,24 @@ export const addGrades = async (req: AuthenticatedRequest, res: Response) => {
           semesterId || subMap.get(g.subjectId) || "SEM-1";
         return prisma.grade.upsert({
           where: {
-            studentId_subjectId_semesterId: {
+            studentId_subjectId_semesterId_attemptNumber: {
               studentId,
               subjectId: g.subjectId,
               semesterId: canonicalSemester,
+              attemptNumber: 1, // AddGrades usually for Regular
             },
           },
-          update: { grade: g.grade, updatedAt: new Date() },
+          update: {
+            grade: g.grade,
+            subjectNameOverride: g.subjectNameOverride,
+            updatedAt: new Date()
+          },
           create: {
             studentId,
             subjectId: g.subjectId,
             semesterId: canonicalSemester,
             grade: g.grade,
+            subjectNameOverride: g.subjectNameOverride,
           },
         });
       }),
@@ -663,7 +687,12 @@ export const bulkUpdateGrades = async (
 
           return prisma.grade.update({
             where: { id: canonicalMatch.id },
-            data: { grade: pointValue, batch, updatedAt: new Date() },
+            data: {
+              grade: pointValue,
+              batch,
+              subjectNameOverride: u.subjectNameOverride,
+              updatedAt: new Date(),
+            },
           });
         } else if (existingGrades.length > 0) {
           // If no canonical record exists but "alternate" ones do (e.g. user previously manually added E2-SEM-1):
@@ -684,6 +713,7 @@ export const bulkUpdateGrades = async (
               semesterId: canonicalSemester,
               grade: pointValue,
               batch,
+              subjectNameOverride: u.subjectNameOverride,
               updatedAt: new Date(),
             },
           });
@@ -696,6 +726,7 @@ export const bulkUpdateGrades = async (
               semesterId: canonicalSemester,
               grade: pointValue,
               batch,
+              subjectNameOverride: u.subjectNameOverride,
             },
           });
         }
@@ -1640,8 +1671,11 @@ export const getGradesTemplate = async (
         "Student Name",
         "Subject Code",
         "Subject Name",
+        "Subject Name Override", // Added
         "Semester ID",
         "Grade (EX, A, B, C, D, E, R)",
+        "Pass Date", // Added
+        "Is Remedial", // Added
       ],
     ];
 
@@ -1734,7 +1768,17 @@ export const getGradesTemplate = async (
             ? `${String(year).toUpperCase()}-${rowSemId.toUpperCase()}`
             : rowSemId;
 
-        headers.push([s.username, s.name, sub.code, sub.name, finalSemId, ""]);
+        headers.push([
+          s.username,
+          s.name,
+          sub.code,
+          sub.name,
+          "", // Subject Name Override
+          finalSemId,
+          "", // Grade
+          "", // Pass Date
+          "", // Is Remedial
+        ]);
       });
     });
 
@@ -1814,10 +1858,7 @@ export const uploadGrades = async (req: any, res: Response) => {
       rows.push(rowData);
     });
 
-    const total = rows.length;
-
-    // 1. Upload to Cloudinary (BACKGROUND)
-    let fileUrl = null;
+    const total = rows.length;    // 1. Upload to Cloudinary (AWAIT for Audit consistency)
     const uploadToCloudinary = async (buffer: Buffer, filename: string) => {
       try {
         const FormData = require("form-data");
@@ -1839,10 +1880,10 @@ export const uploadGrades = async (req: any, res: Response) => {
       }
     };
 
-    // Fire and forget
-    uploadToCloudinary(req.file.buffer, req.file.originalname).then((url) => {
-      fileUrl = url;
-    });
+    const fileUrl = await uploadToCloudinary(
+      req.file.buffer,
+      req.file.originalname,
+    );
 
     // Create Job Payload
     const uploadId = randomUUID();
@@ -1929,9 +1970,11 @@ export const getAttendanceTemplate = async (
         "Student Name",
         "Subject Code",
         "Subject Name",
+        "Subject Name Override", // Added
         "Semester ID",
         "Total Classes Occurred",
         "Total Classes Attended",
+        "Batch", // Added
       ],
     ];
 
@@ -1995,9 +2038,11 @@ export const getAttendanceTemplate = async (
           s.name,
           sub.code,
           sub.name,
+          "", // Subject Name Override
           finalSemId,
-          "",
-          "",
+          "", // Total
+          "", // Attended
+          batch || "", // Batch
         ]);
       });
     });
@@ -2065,10 +2110,7 @@ export const uploadAttendance = async (req: any, res: Response) => {
       rows.push(rowData);
     });
 
-    const total = rows.length;
-
-    // 1. Upload to Cloudinary (BACKGROUND)
-    let fileUrl = null;
+    const total = rows.length;    // 1. Upload to Cloudinary (AWAIT for Audit consistency)
     const uploadToCloudinaryAtt = async (buffer: Buffer, filename: string) => {
       try {
         const FormData = require("form-data");
@@ -2090,11 +2132,9 @@ export const uploadAttendance = async (req: any, res: Response) => {
       }
     };
 
-    // Fire and forget
-    uploadToCloudinaryAtt(req.file.buffer, req.file.originalname).then(
-      (url) => {
-        fileUrl = url;
-      },
+    const fileUrl = await uploadToCloudinaryAtt(
+      req.file.buffer,
+      req.file.originalname,
     );
 
     // Create Job Payload
@@ -2102,7 +2142,7 @@ export const uploadAttendance = async (req: any, res: Response) => {
     const job = {
       jobId: uploadId,
       uploadId,
-      fileUrl, // Store CDN Link
+      fileUrl,
       type: "ATTENDANCE",
       rows,
       total,
@@ -2183,6 +2223,7 @@ export const downloadGrades = async (
   ).toUpperCase();
 
   const semesterId = req.params.semesterId;
+  const reportType = (req.query.reportType as string || "REGULAR").toUpperCase();
 
   // Security check
   if (targetStudentId !== user.username && user.role === "student") {
@@ -2190,7 +2231,7 @@ export const downloadGrades = async (
   }
 
   try {
-    const grades = await prisma.grade.findMany({
+    const allGrades = await prisma.grade.findMany({
       where: {
         studentId: { equals: targetStudentId, mode: "insensitive" },
         semesterId: { equals: semesterId, mode: "insensitive" },
@@ -2199,12 +2240,39 @@ export const downloadGrades = async (
       orderBy: { subject: { code: "asc" } },
     });
 
-    // if (!grades.length) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "No grades found for this semester.",
-    //   });
-    // }
+    // Grouping logic for the PDF
+    let filteredGrades = [];
+    if (reportType === "REGULAR") {
+      filteredGrades = allGrades.filter(g => g.attemptNumber === 1);
+    } else {
+      const latestGradesMap = new Map();
+      allGrades.forEach((g: any) => {
+        const existing = latestGradesMap.get(g.subjectId);
+        if (!existing || g.attemptNumber > existing.attemptNumber) {
+          latestGradesMap.set(g.subjectId, g);
+        }
+      });
+      filteredGrades = Array.from(latestGradesMap.values());
+    }
+
+    const attemptsGrouped: Record<string, any[]> = {};
+    const label = reportType === "REGULAR" ? "REGULAR RESULTS" : "REMEDIAL RESULTS";
+    attemptsGrouped[label] = filteredGrades;
+
+    const attempts = Object.keys(attemptsGrouped).map((label) => ({
+      label,
+      grades: attemptsGrouped[label].map((g: any) => ({
+        grade: g.grade,
+        isRemedial: g.isRemedial,
+        attemptNumber: g.attemptNumber,
+        passDate: g.passDate || g.updatedAt,
+        subject: {
+          code: g.subject.code,
+          name: g.subject.name,
+          credits: g.subject.credits,
+        },
+      })),
+    }));
 
     // Attempt to fetch profile details using GATEWAY_URL (optional)
     let profileName = targetStudentId;
@@ -2245,20 +2313,13 @@ export const downloadGrades = async (
       branch: branch,
       campus: campus,
       semesterId,
-      grades: grades.map((g:any) => ({
-        grade: g.grade,
-        isRemedial: g.isRemedial,
-        subject: {
-          code: g.subject.code,
-          name: g.subject.name,
-          credits: g.subject.credits,
-        },
-      })),
+      resultType: reportType as "REGULAR" | "REMEDIAL",
+      attempts,
     });
 
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="RESULTS_${targetStudentId}_${semesterId}.pdf"`,
+      `attachment; filename="${reportType}_RESULTS_${targetStudentId}_${semesterId}.pdf"`,
     );
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(

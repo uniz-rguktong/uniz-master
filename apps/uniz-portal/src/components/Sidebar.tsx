@@ -167,15 +167,7 @@ export default function Sidebar({ content }: MainContent) {
       activeColor: "text-emerald-600",
       hoverColor: "hover:text-emerald-600",
     },
-    {
-      id: "current-semester",
-      label: "Current Sem",
-      href: "/student/current-semester",
-      content: "currentSemester",
-      icon: Layers,
-      activeColor: "text-navy-900",
-      hoverColor: "hover:text-navy-900",
-    },
+
     {
       id: "attendance",
       label: "Attendance",
@@ -194,15 +186,7 @@ export default function Sidebar({ content }: MainContent) {
       activeColor: "text-slate-600",
       hoverColor: "hover:text-slate-600",
     },
-    {
-      id: "seating",
-      label: "Exam Seating",
-      href: "/student?tab=seating",
-      content: "seating",
-      icon: ScanLine,
-      activeColor: "text-rose-600",
-      hoverColor: "hover:text-rose-600",
-    },
+
     {
       id: "grievance",
       label: "Grievance",

@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef, useEffect } from "react";
 import {
-  Clock,
-  CalendarDays,
+
   LogOut,
   LayoutDashboard,
   MessageSquare,
@@ -25,10 +24,9 @@ export default function SWODashboard() {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
   const [profileEmail, setProfileEmail] = useState<string | null>(null);
-  const avatarBtnRef = useRef<HTMLButtonElement>(null);
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
   const [activeAnchor, setActiveAnchor] = useState<React.RefObject<HTMLElement>>(headerAvatarRef);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, _setSearchQuery] = useState("");
 
   const username = (localStorage.getItem("username") || "SWO").replace(/"/g, "");
   const initial = (profileName || username)[0]?.toUpperCase() ?? "S";
@@ -64,8 +62,8 @@ export default function SWODashboard() {
     {
       group: "Operations",
       items: [
-        { id: "outing", label: "Outing Requests", icon: Clock },
-        { id: "outpass", label: "Outpass Requests", icon: CalendarDays },
+        // { id: "outing", label: "Outing Requests", icon: Clock },
+        // { id: "outpass", label: "Outpass Requests", icon: CalendarDays },
       ]
     },
     {
@@ -117,29 +115,12 @@ export default function SWODashboard() {
           )}
         </button>
 
-        {/* Sidebar Branding */}
-        <div className="px-4 pt-6 pb-2">
+        {/* Sidebar Branding - Hides when collapsed for sleek look */}
+        <div className={`px-4 pt-8 pb-4 transition-all duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
           <div className="flex items-center justify-center">
-            <h1 className={`unifrakturcook-bold ${isSidebarOpen ? "text-4xl" : "text-3xl"} text-slate-900 tracking-tight transition-all duration-300`}>
-              {isSidebarOpen ? "uniZ" : "Z"}
+            <h1 className="unifrakturcook-bold text-4xl text-slate-900 tracking-tight">
+              uniZ
             </h1>
-          </div>
-        </div>
-
-        {/* Search Style */}
-        <div className="px-5 py-4">
-          <div className="relative group">
-            <Search className={`absolute ${isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2"} top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600 transition-colors`} size={16} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isSidebarOpen ? "Search operations..." : ""}
-              className={`w-full bg-slate-50 border border-slate-200/60 rounded-xl ${isSidebarOpen ? "pl-10 pr-8" : "px-0"} py-2 text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all font-medium`}
-            />
-            {isSidebarOpen && (
-              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-slate-200/60 rounded text-[9px] font-bold text-slate-400 uppercase">/</div>
-            )}
           </div>
         </div>
 
@@ -232,35 +213,7 @@ export default function SWODashboard() {
           </div>
         </nav>
 
-        {/* User Info Style (Back to minimal) */}
-        <div className="mt-auto border-t border-slate-200/60 p-3 pb-5">
-          <div
-            onClick={() => {
-              setActiveAnchor(avatarBtnRef);
-              setProfilePopupOpen(true);
-            }}
-            className={`flex items-center ${isSidebarOpen ? "justify-start px-2" : "justify-center"} py-1.5 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group`}
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <button
-                ref={avatarBtnRef}
-                className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-slate-100 flex items-center justify-center shadow-sm ring-1 ring-slate-200/60 transition-transform group-hover:scale-105"
-              >
-                {profilePhoto ? (
-                  <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
-                ) : (
-                  <span className="text-slate-600 font-bold text-[11px]">{initial}</span>
-                )}
-              </button>
-              {isSidebarOpen && (
-                <div className="min-w-0">
-                  <p className="text-[13px] font-bold text-slate-900 truncate leading-tight">{profileName || username}</p>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate mt-0.5">SWO Portal</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+
       </aside>
 
       {/* Main Content */}

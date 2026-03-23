@@ -2,7 +2,6 @@
 import { useState, useRef, useEffect } from "react";
 import {
   Users,
-  CalendarCheck,
   GraduationCap,
   LogOut,
   LayoutDashboard,
@@ -10,10 +9,11 @@ import {
   Bell,
   Activity,
   Smartphone,
-  ScanLine,
   Lock,
-  Search,
+  BookOpen,
 } from "lucide-react";
+import { motion } from "framer-motion";
+import CurriculumManager from "../Curriculum";
 import ProfilePopup from "../ProfilePopup";
 import SecuritySection from "./SecuritySection";
 import WebmasterOverview from "./WebmasterOverview";
@@ -30,7 +30,7 @@ import UpdatesSection from "./UpdatesSection";
 import PushNotificationSection from "./PushNotificationSection";
 import StudentBulkSection from "./StudentBulkSection";
 import SystemLogsSection from "./SystemLogsSection";
-import SeatingUploadSection from "./SeatingUploadSection";
+// import SeatingUploadSection from "./SeatingUploadSection";
 
 export default function WebmasterDashboard() {
   useIsAuth();
@@ -47,18 +47,19 @@ export default function WebmasterDashboard() {
     | "push_alerts"
     | "faculty_mgmt"
     | "system_logs"
-    | "exam_seating"
+    | "subjects"
     | "security"
+    | "grievances"
+    | "outpass"
+    | "outings"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
   const [profileEmail, setProfileEmail] = useState<string | null>(null);
-  const avatarBtnRef = useRef<HTMLButtonElement>(null);
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
   const [activeAnchor, setActiveAnchor] = useState<React.RefObject<HTMLElement>>(headerAvatarRef);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const username = (localStorage.getItem("username") || "Webmaster").replace(/"/g, "");
   const initial = (profileName || username)[0]?.toUpperCase() ?? "W";
@@ -84,6 +85,8 @@ export default function WebmasterDashboard() {
     }
   }, []);
 
+  const role = (localStorage.getItem("role") || "webmaster").toLowerCase().replace(/"/g, "");
+
   const navGroups = [
     {
       group: null,
@@ -95,17 +98,27 @@ export default function WebmasterDashboard() {
       group: "Students",
       items: [
         { id: "student", label: "Student Details", icon: Users },
-        { id: "student_bulk", label: "Student Bulk Ops", icon: Users },
+        // Restricted to Webmaster and COE
+        ...(role === "webmaster" || role === "coe" ? [{ id: "student_bulk", label: "Student Bulk Ops", icon: Users }] : []),
       ]
     },
+    ...(role === "swo" ? [
+      {
+        group: "Welfare",
+        items: [
+          { id: "grievances", label: "Grievances", icon: BookOpen },
+          { id: "outpass", label: "Outpass Logs", icon: GraduationCap },
+          { id: "outings", label: "Outing Protocol", icon: Activity },
+        ]
+      }
+    ] : []),
     {
       group: "Academic",
       items: [
-/*
-        { id: "academic_mgmt", label: "Sem Registration", icon: Layout },
-*/
-        { id: "attendance", label: "Attendance Upload", icon: CalendarCheck },
-        { id: "grades", label: "Grades Upload", icon: GraduationCap },
+        ...(role === "webmaster" || role === "coe" ? [{ id: "attendance", label: "Attendance Upload", icon: Layout }] : []),
+        ...(role === "webmaster" || role === "coe" ? [{ id: "grades", label: "Grades Upload", icon: GraduationCap }] : []),
+        // Restricted: Director/Dean/SWO don't manage subjects
+        ...(role === "webmaster" || role === "coe" ? [{ id: "subjects", label: "Manage Subjects", icon: BookOpen }] : []),
       ]
     },
     {
@@ -119,9 +132,8 @@ export default function WebmasterDashboard() {
     {
       group: "Management",
       items: [
-        { id: "faculty_mgmt", label: "Staff Management", icon: Users },
-        { id: "exam_seating", label: "Exam Seating", icon: ScanLine },
-        { id: "system_logs", label: "System & Logs", icon: Activity },
+        ...(role === "webmaster" || role === "coe" ? [{ id: "faculty_mgmt", label: "Faculty Management", icon: Users }] : []),
+        ...(role === "webmaster" || role === "coe" ? [{ id: "system_logs", label: "System & Logs", icon: Activity }] : []),
         { id: "security", label: "Security", icon: Lock },
       ]
     }
@@ -133,21 +145,37 @@ export default function WebmasterDashboard() {
     logout();
   };
 
+  const renderComingSoon = (title: string) => (
+    <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-slate-100 shadow-sm animate-in fade-in zoom-in duration-500">
+      <div className="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 border border-slate-50 shadow-sm relative overflow-hidden group">
+        <div className="absolute inset-0 bg-navy-900/5 group-hover:scale-110 transition-transform duration-500" />
+        <Activity className="w-8 h-8 text-slate-200 group-hover:text-navy-900 transition-colors" />
+      </div>
+      <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-none mb-4 italic uppercase">
+        {title} System Initialization
+      </h3>
+      <p className="text-slate-400 font-bold max-w-sm mx-auto leading-relaxed text-sm uppercase tracking-widest opacity-60">
+        Automated {title.toLowerCase()} workflows are currently in deployment.
+        <br />
+        Please coordinate via manual channels for urgent actions.
+      </p>
+      <div className="mt-8 flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full border border-slate-100">
+         <span className="w-2 h-2 rounded-full bg-navy-900 animate-pulse" />
+         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Mirroring Student Experience Platform</span>
+      </div>
+    </div>
+  );
+
   const renderContent = () => {
     switch (activeTab) {
       case "student":
         return <StudentDetails />;
       case "student_bulk":
         return <StudentBulkSection />;
-/*
-      case "academic_mgmt":
-        return <UnifiedAcademicManager />;
-*/
       case "attendance":
         return <UploadSection type="attendance" />;
       case "grades":
         return <UploadSection type="grades" />;
-
       case "banners":
         return <BannersSection />;
       case "updates":
@@ -158,10 +186,16 @@ export default function WebmasterDashboard() {
         return <FacultyManagement />;
       case "system_logs":
         return <SystemLogsSection />;
-      case "exam_seating":
-        return <SeatingUploadSection />;
+      case "subjects":
+        return <CurriculumManager />;
       case "security":
         return <SecuritySection username={username} />;
+      case "grievances":
+        return renderComingSoon("Grievance Redressal");
+      case "outpass":
+        return renderComingSoon("Outpass Records");
+      case "outings":
+        return renderComingSoon("Outing Logs");
 
       default:
         return (
@@ -190,76 +224,45 @@ export default function WebmasterDashboard() {
           )}
         </button>
 
-        {/* Sidebar Branding */}
-        <div className="px-4 pt-6 pb-2">
+        {/* Sidebar Branding - Hides when collapsed for sleek look */}
+        <div className={`px-4 pt-8 pb-4 transition-all duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
           <div className="flex items-center justify-center">
-            <h1 className={`unifrakturcook-bold ${isSidebarOpen ? "text-4xl" : "text-3xl"} text-slate-900 tracking-tight transition-all duration-300`}>
-              {isSidebarOpen ? "uniZ" : "Z"}
+            <h1 className="unifrakturcook-bold text-4xl text-slate-900 tracking-tight">
+              uniZ
             </h1>
           </div>
-        </div>
+        </div>        {/* Navigation Section - Sleek and Direct */}
+        <nav className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-4 overflow-y-auto space-y-7 custom-sidebar-scroll`}>
+          {navGroups.map((group, gIdx) => (
+            <div key={gIdx} className="space-y-2">
+              {group.group && isSidebarOpen && (
+                <h4 className="px-4 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1.5 opacity-80">{group.group}</h4>
+              )}
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
 
-        {/* Search Style */}
-        <div className="px-5 py-4">
-          <div className="relative group">
-            <Search className={`absolute ${isSidebarOpen ? "left-3" : "left-1/2 -translate-x-1/2"} top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600 transition-colors`} size={16} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isSidebarOpen ? "Search operations..." : ""}
-              className={`w-full bg-slate-50 border border-slate-200/60 rounded-xl ${isSidebarOpen ? "pl-10 pr-8" : "px-0"} py-2 text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all font-medium`}
-            />
-            {isSidebarOpen && (
-              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-slate-200/60 rounded text-[9px] font-bold text-slate-400 uppercase">/</div>
-            )}
-          </div>
-        </div>
-
-        {/* Navigation Section */}
-        <nav className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-2 overflow-y-auto space-y-6 custom-sidebar-scroll`}>
-          {(() => {
-            const filteredGroups = navGroups.map(group => ({
-              ...group,
-              items: group.items.filter(item =>
-                item.label.toLowerCase().includes(searchQuery.toLowerCase())
-              )
-            })).filter(group => group.items.length > 0);
-
-            if (filteredGroups.length === 0 && searchQuery) {
-              return (
-                <div className="flex flex-col items-center justify-center py-10 text-center">
-                  <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
-                    <Search size={20} className="text-slate-300" />
-                  </div>
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-4">No operations found</p>
-                </div>
-              );
-            }
-
-            return filteredGroups.map((group, gIdx) => (
-              <div key={gIdx} className="space-y-1.5">
-                {group.group && isSidebarOpen && (
-                  <h4 className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{group.group}</h4>
-                )}
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = activeTab === item.id;
-
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => setActiveTab(item.id as any)}
-                      title={!isSidebarOpen ? item.label : ""}
-                      className={`
-                        w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group relative
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id as any)}
+                    title={!isSidebarOpen ? item.label : ""}
+                    className={`
+                      w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-4" : "justify-center px-0"} py-3 rounded-xl text-left transition-all duration-200 group relative
                         ${isActive
-                          ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
+                          ? "bg-white text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] ring-1 ring-slate-200/50"
                           : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
                         }
                       `}
                     >
-                      <div className="flex items-center justify-center min-w-[22px]">
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeTabGlow"
+                          className="absolute inset-0 bg-navy-900/5 rounded-xl blur-[2px]"
+                          initial={false}
+                        />
+                      )}
+                      <div className="flex items-center justify-center min-w-[22px] relative z-10">
                         <Icon
                           size={20}
                           className={`shrink-0 transition-colors
@@ -269,27 +272,26 @@ export default function WebmasterDashboard() {
                             }`}
                         />
                       </div>
-                      {isSidebarOpen && (
-                        <span
-                          className={`text-[13.5px] whitespace-nowrap tracking-tight leading-none
-                            ${isActive ? "font-bold" : "font-semibold"}`}
-                        >
-                          {item.label}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            ));
-          })()}
+                    {isSidebarOpen && (
+                      <span
+                        className={`text-[13.5px] whitespace-nowrap tracking-tight leading-none
+                          ${isActive ? "font-bold" : "font-semibold"}`}
+                      >
+                        {item.label}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
 
-          {/* Special Logout Item (at the bottom of nav list) */}
-          <div className="pt-2">
+          {/* Special Logout Item */}
+          <div className="pt-4 border-t border-slate-100/50">
             <button
               onClick={handleLogout}
               className={`
-                w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group hover:bg-red-50 hover:text-red-500 text-slate-500
+                w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-4" : "justify-center px-0"} py-3 rounded-xl text-left transition-all duration-200 group hover:bg-red-50 hover:text-red-500 text-slate-500
               `}
               title={!isSidebarOpen ? "LOGOUT" : ""}
             >
@@ -305,35 +307,7 @@ export default function WebmasterDashboard() {
           </div>
         </nav>
 
-        {/* User Info Style (Back to minimal) */}
-        <div className="mt-auto border-t border-slate-200/60 p-3 pb-5">
-          <div
-            onClick={() => {
-              setActiveAnchor(avatarBtnRef);
-              setProfilePopupOpen(true);
-            }}
-            className={`flex items-center ${isSidebarOpen ? "justify-start px-2" : "justify-center"} py-1.5 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group`}
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <button
-                ref={avatarBtnRef}
-                className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-slate-100 flex items-center justify-center shadow-sm ring-1 ring-slate-200/60 transition-transform group-hover:scale-105"
-              >
-                {profilePhoto ? (
-                  <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
-                ) : (
-                  <span className="text-slate-600 font-bold text-[11px]">{initial}</span>
-                )}
-              </button>
-              {isSidebarOpen && (
-                <div className="min-w-0">
-                  <p className="text-[13px] font-bold text-slate-900 truncate leading-tight">{profileName || username}</p>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate mt-0.5">Webmaster</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+
       </aside>
 
       {/* Main Content */}

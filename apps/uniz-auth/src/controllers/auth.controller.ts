@@ -750,25 +750,22 @@ export const signup = async (req: Request, res: Response) => {
       const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
 
       const profilePromise =
-        role === "faculty" || role === "teacher"
+        role === "faculty" || role === "teacher" || role === "hod"
           ? axios.post(
-              `${userServiceUrl}/api/v1/users/faculty`,
+              `${userServiceUrl}/faculty/create`,
               {
                 username: user.username,
                 name: user.username,
-                email: email || `${user.username}@uniz.com`,
-                department: "CSE",
-                designation: "Lecture",
+                email: email || `${user.username}@rguktong.ac.in`,
+                department: "GENERAL",
+                designation: "Faculty",
               },
               { headers: { "x-internal-secret": SECRET } },
             )
           : role === "student"
-            ? axios.post(
-                `${userServiceUrl}/api/v1/users/students`,
+            ? axios.put(
+                `${userServiceUrl}/admin/student/${user.username}`,
                 {
-                  id: user.username,
-                  username: user.username,
-                  name: user.username,
                   email: email || `${user.username}@rguktong.ac.in`,
                 },
                 { headers: { "x-internal-secret": SECRET } },

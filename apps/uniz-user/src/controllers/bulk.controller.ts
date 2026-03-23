@@ -81,8 +81,10 @@ export const getStudentsTemplate = async (
       "Branch",
       "Year",
       "Section",
-      "Phone",
       "Batch",
+      "Room No", // Added
+      "Is In Campus", // Added (Status)
+      "Phone",
     ],
     [
       "O210000",
@@ -92,8 +94,10 @@ export const getStudentsTemplate = async (
       "CSE",
       "E1",
       "A",
-      "9876543210",
       "O21",
+      "C-101",
+      "YES",
+      "9876543210",
     ],
   ];
   return generateExcel(headers, "Student_Upload_Template", res);
@@ -207,8 +211,7 @@ export const uploadStudents = async (req: any, res: Response) => {
 
     const startTimeIn = Date.now();
 
-    // 1. Upload the raw buffer to Cloudinary for historical backup (BACKGROUND)
-    let cloudinaryUrl = null;
+    // 1. Upload the raw buffer to Cloudinary for historical backup (AWAIT for Audit consistency)
     const uploadToCloudinary = async (buffer: Buffer, filename: string) => {
       try {
         const FormData = require("form-data");
@@ -230,11 +233,10 @@ export const uploadStudents = async (req: any, res: Response) => {
       }
     };
 
-    // Fire and forget, we don't hold up the user for a backup
-    uploadToCloudinary(req.file.buffer, req.file.originalname).then((url) => {
-      cloudinaryUrl = url;
-      // Update job if needed, but for now we just let it be
-    });
+    const cloudinaryUrl = await uploadToCloudinary(
+      req.file.buffer,
+      req.file.originalname,
+    );
 
     // 2. PRE-SCAN: Identify Majority Batch
     const prefixes: Record<string, number> = {};
@@ -261,6 +263,7 @@ export const uploadStudents = async (req: any, res: Response) => {
       uploadId,
       username: user.username,
       fileUrl: cloudinaryUrl,
+      filename: req.file.originalname,
       rows,
       total,
       majorityBatch,
@@ -461,6 +464,7 @@ export const recordExternalUpload = async (req: any, res: Response) => {
     failCount,
     errors,
     uploadedBy,
+    fileUrl,
   } = req.body;
 
   // Basic API Key or internal check would be good here, but for now we trust inter-service or origin matches
@@ -473,6 +477,7 @@ export const recordExternalUpload = async (req: any, res: Response) => {
         successCount,
         failCount,
         errors,
+        fileUrl,
         uploadedBy: uploadedBy || "system",
         status:
           failCount === 0

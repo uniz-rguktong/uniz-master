@@ -114,6 +114,7 @@ model UploadHistory {
   id           String   @id @default(uuid()) @db.Uuid
   type         String // "STUDENTS" | "GRADES" | "ATTENDANCE" | "FACULTY"
   filename     String?
+  fileUrl      String? // Added: Link to Cloudinary backup
   totalRows    Int      @default(0)
   successCount Int      @default(0)
   failCount    Int      @default(0)
