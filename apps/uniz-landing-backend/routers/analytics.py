@@ -1,6 +1,6 @@
 import os
 import urllib.parse
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
 from jwt import PyJWTError as JWTError
@@ -75,8 +75,10 @@ async def fetch_records(query: str, params: dict = None) -> List[Dict[str, Any]]
 # -----------------------------------------------------------------------------
 
 @router.get("/student/{student_id}/attendance")
-@cache(expire=3600)
-async def get_student_attendance(student_id: str):
+async def get_student_attendance(student_id: str, response: Response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
     query = """
         SELECT 
             a."subjectId", s.name as subject_name, a."totalClasses", a."attendedClasses",
@@ -88,8 +90,10 @@ async def get_student_attendance(student_id: str):
     return await fetch_records(query, {"student_id": student_id})
 
 @router.get("/student/{student_id}/grades-trend")
-@cache(expire=86400)
-async def get_student_grades_trend(student_id: str):
+async def get_student_grades_trend(student_id: str, response: Response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
     query = """
         SELECT "semesterId", ROUND(AVG(grade)::numeric, 2) as sgpa
         FROM uniz_academics."Grade"

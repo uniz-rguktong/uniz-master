@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
@@ -31,26 +31,15 @@ async function main() {
   // 2. Seed Admin Credentials
   const adminUsers = [
     { username: "webmaster", role: "webmaster", pass: "webmaster@uniz" },
-    { username: "security", role: "security", pass: "security@uniz" },
+    { username: "coe", role: "coe", pass: "coe@uniz" },
     { username: "dean", role: "dean", pass: "dean@uniz" },
-    { username: "warden_male", role: "warden_male", pass: "warden_male@uniz" },
-    {
-      username: "warden_female",
-      role: "warden_female",
-      pass: "warden_female@uniz",
-    },
-    {
-      username: "caretaker_male",
-      role: "caretaker_male",
-      pass: "caretaker_male@uniz",
-    },
-    {
-      username: "caretaker_female",
-      role: "caretaker_female",
-      pass: "caretaker_female@uniz",
-    },
     { username: "swo", role: "swo", pass: "swo@uniz" },
     { username: "director", role: "director", pass: "director@uniz" },
+    { username: "security", role: "security", pass: "security@uniz" },
+    { username: "warden_male", role: "warden_male", pass: "warden_male@uniz" },
+    { username: "warden_female", role: "warden_female", pass: "warden_female@uniz" },
+    { username: "caretaker_male", role: "caretaker_male", pass: "caretaker_male@uniz" },
+    { username: "caretaker_female", role: "caretaker_female", pass: "caretaker_female@uniz" },
     { username: "librarian", role: "librarian", pass: "librarian@uniz" },
   ];
 
@@ -69,20 +58,21 @@ async function main() {
     });
   }
 
-  // 3. Seed Students
-  const defaultPass = await bcrypt.hash("password123", 10);
   const students = ["O210008", "O210329"];
+  const studentRole = "student";
 
   for (const studentId of students) {
+    const studentPass = `${studentId}@rguktong`;
+    const hash = await bcrypt.hash(studentPass, 10);
     const id = getDeterministicID(studentId);
     await prisma.authCredential.upsert({
       where: { username: studentId },
-      update: { passwordHash: defaultPass, role: "student" },
+      update: { passwordHash: hash, role: studentRole },
       create: {
         id,
         username: studentId,
-        passwordHash: defaultPass,
-        role: "student",
+        passwordHash: hash,
+        role: studentRole,
       },
     });
   }

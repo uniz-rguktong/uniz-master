@@ -343,27 +343,29 @@ export default function Attendance() {
                     {selectedSemester}
                   </h2>
                 </div>
-                <button
-                  onClick={async () => {
-                    const mappedSemester = selectedSemester.replace(
-                      "Sem - ",
-                      "SEM-",
-                    );
-                    const semId = `${selectedYear}-${mappedSemester}`;
-                    await downloadFile(
-                      DOWNLOAD_ATTENDANCE(semId),
-                      `Attendance_${user.username}_${semId}.pdf`,
-                      { 
-                        studentId: user.username,
-                      },
-                    );
-                  }}
-                  className="h-10 px-4 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-slate-100 disabled:opacity-50"
-                  disabled={false}
-                >
-                  <Download size={14} />
-                  Export PDF
-                </button>
+                {attendanceData.attendance && attendanceData.attendance.length > 0 && (
+                  <button
+                    onClick={async () => {
+                      const mappedSemester = selectedSemester.replace(
+                        "Sem - ",
+                        "SEM-",
+                      );
+                      const semId = `${selectedYear}-${mappedSemester}`;
+                      await downloadFile(
+                        DOWNLOAD_ATTENDANCE(semId),
+                        `Attendance_${user.username}_${semId}.pdf`,
+                        { 
+                          studentId: user.username,
+                        },
+                      );
+                    }}
+                    className="h-10 px-4 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-slate-100 disabled:opacity-50"
+                    disabled={false}
+                  >
+                    <Download size={14} />
+                    Export PDF
+                  </button>
+                )}
               </div>
 
               {/* Content */}

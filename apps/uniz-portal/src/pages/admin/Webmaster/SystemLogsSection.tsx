@@ -171,9 +171,6 @@ export default function SystemLogsSection() {
             <thead>
               <tr className="border-b border-slate-50">
                 <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
-                  Operator
-                </th>
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
                   Activity & Resource
                 </th>
                 <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
@@ -193,15 +190,7 @@ export default function SystemLogsSection() {
                   .fill(0)
                   .map((_, i) => (
                     <tr key={i} className="border-b border-slate-50/60">
-                      <td className="px-10 py-6">
-                        <div className="flex items-center gap-4">
-                          <Skeleton className="w-11 h-11 rounded-full shrink-0" />
-                          <div className="space-y-2.5">
-                            <Skeleton className="h-4 w-28" />
-                            <Skeleton className="h-2 w-16 opacity-50" />
-                          </div>
-                        </div>
-                      </td>
+
                       <td className="px-10 py-6">
                         <div className="space-y-2">
                           <Skeleton className="h-4 w-40" />
@@ -232,6 +221,7 @@ export default function SystemLogsSection() {
                       ? JSON.parse(log.errors)
                       : log.errors;
                   const downloadUrl =
+                    log.fileUrl ||
                     errorsJson?.fileUrl ||
                     (log.filename?.startsWith("http") ? log.filename : null);
                   const displayFilename =
@@ -245,21 +235,7 @@ export default function SystemLogsSection() {
                       key={log.id || idx}
                       className="hover:bg-slate-50/30 transition-all group"
                     >
-                      <td className="px-10 py-6">
-                        <div className="flex items-center gap-4">
-                          <div className="w-11 h-11 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm border-2 border-white ring-1 ring-slate-100 uppercase shadow-none">
-                            {log.uploadedBy?.[0] || "U"}
-                          </div>
-                          <div className="flex flex-col">
-                            <p className="font-semibold text-slate-900 tracking-tight leading-none mb-1">
-                              {log.uploadedBy || "System"}
-                            </p>
-                            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 leading-none">
-                              ID: {log.id?.slice(0, 8) || "AUDIT"}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
+
                       <td className="px-10 py-6">
                         <div className="flex flex-col gap-1.5">
                           <div className="flex items-center gap-2">

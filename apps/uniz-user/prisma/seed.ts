@@ -31,14 +31,16 @@ async function main() {
   // 2. Seed Admin Profiles
   const admins = [
     { username: "webmaster", role: "webmaster" },
-    { username: "security", role: "security" },
+    { username: "coe", role: "coe" },
+    { username: "ao", role: "ao" },
     { username: "dean", role: "dean" },
+    { username: "swo", role: "swo" },
+    { username: "director", role: "director" },
+    { username: "security", role: "security" },
     { username: "warden_male", role: "warden_male" },
     { username: "warden_female", role: "warden_female" },
     { username: "caretaker_male", role: "caretaker_male" },
     { username: "caretaker_female", role: "caretaker_female" },
-    { username: "director", role: "director" },
-    { username: "swo", role: "swo" },
     { username: "librarian", role: "librarian" },
   ];
 
@@ -50,7 +52,7 @@ async function main() {
       create: {
         id,
         username: admin.username,
-        email: `${admin.username}@uniz.com`,
+        email: `${admin.username}@uniz`,
         role: admin.role,
       },
     });

@@ -13,6 +13,7 @@ import {
   PartyPopper,
 } from "lucide-react";
 import { GET_GRADES, DOWNLOAD_GRADES } from "../../api/endpoints";
+import { cn } from "../../utils/cn";
 
 // Helper function to truncate long text
 
@@ -151,11 +152,22 @@ export default function GradeHub() {
           grade: pointToGrade(g.grade),
           points: g.grade,
           isRemedial: g.isRemedial,
+          attemptNumber: g.attemptNumber,
           passDate: g.updatedAt,
           contribution: g.grade * g.subject.credits,
         }));
 
-        const gradeCounts: { [key: string]: number } = {};
+        const regularGrades = formattedGrades.filter((g: any) => g.attemptNumber === 1);
+        
+        const latestGradesMap = new Map();
+        formattedGrades.forEach((g: any) => {
+          const existing = latestGradesMap.get(g.subject);
+          if (!existing || g.attemptNumber > existing.attemptNumber) {
+            latestGradesMap.set(g.subject, g);
+          }
+        });
+        const hasRemedial = formattedGrades.some((g: any) => g.isRemedial || g.attemptNumber > 1);
+        const remedialGrades = hasRemedial ? Array.from(latestGradesMap.values()) : [];
         formattedGrades.forEach((g: any) => {
           gradeCounts[g.grade] = (gradeCounts[g.grade] || 0) + 1;
         });
@@ -177,6 +189,8 @@ export default function GradeHub() {
           gpa: extractedGPA,
           cgpa: data.cgpa,
           totalBacklogs: data.totalBacklogs || 0,
+          regular: regularGrades,
+          remedial: remedialGrades,
           calculation_details: formattedGrades,
           visualization_data: { pieChart, barChart },
           motivational_messages: data.motivation || null,
@@ -398,144 +412,194 @@ export default function GradeHub() {
                   {grades.semester}
                 </h2>
               </div>
-              <button
-                onClick={async () => {
-                  const mappedSemester =
-                    selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
-                  const semId = `${selectedYear}-${mappedSemester}`;
-                  await downloadFile(
-                    DOWNLOAD_GRADES(semId),
-                    `Grades_${user.username}_${semId}.pdf`,
-                    { 
-                      studentId: user.username,
-                    },
-                  );
-                  // Reset captcha after download to ensure fresh token for next action
-                }}
-                className="h-10 px-4 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-slate-100 disabled:opacity-50"
-                disabled={false}
-              >
-                <Download size={14} />
-                Export PDF
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={async () => {
+                    const mappedSemester = selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
+                    const semId = `${selectedYear}-${mappedSemester}`;
+                    await downloadFile(
+                      DOWNLOAD_GRADES(semId),
+                      `Full_Grades_${user.username}_${semId}.pdf`,
+                      { studentId: user.username, reportType: 'REGULAR' }
+                    );
+                  }}
+                  className="h-10 px-4 bg-navy-900 hover:bg-navy-800 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm"
+                >
+                  <Download size={14} /> Output PDF
+                </button>
+              </div>
             </div>
 
             {/* Content */}
             {!grades.calculation_details ||
             grades.calculation_details.length === 0 ? (
-              <div className="p-12 text-center">
+              <div className="p-12 text-center bg-slate-50/30">
                 <AlertCircle
                   size={48}
                   className="mx-auto mb-4 text-slate-300"
                 />
                 <h3 className="text-xl font-bold mb-2">
-                  Results Not Available
+                  No Results Available
                 </h3>
-                <p className="text-slate-500">
-                  These details are not yet updated, please check back shortly.
+                <p className="text-slate-500 max-w-sm mx-auto">
+                  Calculated records for this semester are not yet finalized. Please check back later or contact your department.
                 </p>
               </div>
             ) : (
               <>
-                <div className="px-4 md:px-6 py-4 space-y-6">
-                  {/* Grades Section */}
-                  <div>
-                    <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                      <div className="w-1 h-3 bg-navy-900 rounded-full"></div>{" "}
-                      Detailed Grades
-                    </h3>
-                    <div className="md:rounded-xl md:border md:border-slate-200 md:bg-white bg-transparent">
-                      <table className="w-full text-sm table-fixed">
-                        <thead>
-                          <tr className="md:bg-navy-50/50 border-b border-slate-200 bg-transparent">
-                            <th className="px-2 py-3 text-left font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[55%]">
-                              Subjects
-                            </th>
-                            <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[15%]">
-                              Cr
-                            </th>
-                            <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[15%]">
-                              Gr
-                            </th>
-                            <th className="px-2 py-3 text-center font-bold text-[10px] uppercase tracking-widest text-slate-500 w-[15%]">
-                              Pass Date
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {grades.calculation_details?.map(
-                            (item: any, index: any) => (
-                              <tr
-                                key={index}
-                                className="border-b border-slate-100 hover:bg-slate-50 transition-colors last:border-0"
-                              >
-                                <td className="px-2 py-2.5 font-bold text-slate-800 text-xs leading-tight">
-                                  {item.subject}
+                <div className="px-4 md:px-6 py-6 space-y-12">
+                  {/* Regular Section */}
+                  {grades.regular?.length > 0 ? (
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                          <div className="w-1.5 h-4 rounded-full bg-navy-900"></div>
+                          REGULAR RESULTS
+                        </h3>
+                      </div>
+                      <div className="md:rounded-2xl md:bg-white bg-transparent border border-slate-100 overflow-hidden shadow-sm">
+                        <table className="w-full text-sm table-fixed">
+                          <thead>
+                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                              <th className="px-5 py-4 text-left font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[55%]">
+                                Subjects
+                              </th>
+                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[15%]">
+                                Credits
+                              </th>
+                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[15%]">
+                                Grade
+                              </th>
+                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[15%]">
+                                Status
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-50">
+                            {grades.regular.map((item: any, gIdx: number) => (
+                              <tr key={gIdx} className="hover:bg-slate-50/30 transition-colors">
+                                <td className="px-5 py-4">
+                                  <span className="font-bold text-slate-800 text-xs leading-tight">
+                                    {item.subject}
+                                  </span>
                                 </td>
-                                <td className="px-2 py-2.5 text-center text-slate-600 font-medium text-xs">
-                                  {item.credits}
+                                <td className="px-2 py-4 text-center text-slate-500 font-medium text-xs">
+                                  {Number(item.credits).toFixed(1)}
                                 </td>
-                                <td className="px-2 py-2.5 text-center">
-                                  <div className="flex flex-col items-center gap-0.5">
-                                    <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
-                                        item.grade === "Ex"
-                                          ? "bg-navy-900 text-white"
-                                          : "bg-slate-100 text-slate-800"
-                                      }`}
-                                    >
-                                      {item.grade}
-                                    </span>
-                                    {item.isRemedial && (
-                                      <span className="text-[8px] font-black text-orange-500 uppercase tracking-tighter">
-                                        Remedial
-                                      </span>
-                                    )}
-                                  </div>
+                                <td className="px-2 py-4 text-center">
+                                  <span className={cn(
+                                    "inline-block px-2.5 py-1 rounded-md font-bold text-[11px]",
+                                    item.grade === "Ex" || item.grade === "A"
+                                      ? "bg-navy-900 text-white"
+                                      : item.grade === "R"
+                                        ? "bg-red-50 text-red-600"
+                                        : "bg-slate-100 text-slate-800"
+                                  )}>
+                                    {item.grade}
+                                  </span>
                                 </td>
-                                <td className="px-2 py-2.5 text-center text-slate-400 font-medium text-[10px]">
-                                  {item.passDate
-                                    ? new Date(item.passDate).toLocaleDateString()
-                                    : "-"}
+                                <td className="px-2 py-4 text-center">
+                                  {item.grade === "R" ? (
+                                    <span className="text-[9px] font-black text-red-400 uppercase tracking-tighter">Failed</span>
+                                  ) : (
+                                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-tighter">Passed</span>
+                                  )}
                                 </td>
                               </tr>
-                            ),
-                          )}
-                          {!grades.calculation_details &&
-                            grades.grade_data &&
-                            Object.entries(grades.grade_data).map(
-                              ([subject, grade]: any, index) => (
-                                <tr
-                                  key={index}
-                                  className="border-b border-slate-100 hover:bg-slate-50 transition-colors last:border-0"
-                                >
-                                  <td className="px-2 py-2.5 font-bold text-slate-800 text-xs leading-tight">
-                                    {subject}
-                                  </td>
-                                  <td className="px-2 py-2.5 text-center text-slate-400 text-xs">
-                                    -
-                                  </td>
-                                  <td className="px-2 py-2.5 text-center">
-                                    <span
-                                      className={`inline-block w-8 h-6 leading-6 rounded font-bold text-xs ${
-                                        grade === "Ex"
-                                          ? "bg-navy-900 text-white"
-                                          : "bg-slate-100 text-slate-800"
-                                      }`}
-                                    >
-                                      {grade}
-                                    </span>
-                                  </td>
-                                  <td className="px-2 py-2.5 text-center text-slate-400 text-xs">
-                                    -
-                                  </td>
-                                </tr>
-                              ),
-                            )}
-                        </tbody>
-                      </table>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
+
+                  {/* Remedial Section */}
+                  {grades.remedial?.length > 0 ? (
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                          <div className="w-1.5 h-4 rounded-full bg-orange-500"></div>
+                          REMEDIAL RESULTS
+                        </h3>
+                        <button
+                          onClick={async () => {
+                            const mappedSemester = selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
+                            const semId = `${selectedYear}-${mappedSemester}`;
+                            await downloadFile(
+                              DOWNLOAD_GRADES(semId),
+                              `Remedial_Grades_${user.username}_${semId}.pdf`,
+                              { studentId: user.username, reportType: 'REMEDIAL' }
+                            );
+                          }}
+                          className="h-8 px-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm"
+                        >
+                          <Download size={14} /> Output Remedial PDF
+                        </button>
+                      </div>
+                      <div className="md:rounded-2xl md:bg-white bg-transparent border border-slate-100 overflow-hidden shadow-sm">
+                        <table className="w-full text-sm table-fixed">
+                          <thead>
+                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                              <th className="px-5 py-4 text-left font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[55%]">
+                                Subjects
+                              </th>
+                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[15%]">
+                                Credits
+                              </th>
+                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[15%]">
+                                Grade
+                              </th>
+                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[15%]">
+                                Status
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-50">
+                            {grades.remedial.map((item: any, gIdx: number) => (
+                              <tr key={gIdx} className="hover:bg-slate-50/30 transition-colors">
+                                <td className="px-5 py-4">
+                                  <div className="flex flex-col gap-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-bold text-slate-800 text-xs leading-tight">
+                                        {item.subject}
+                                      </span>
+                                      {item.attemptNumber > 1 && (
+                                        <span className="shrink-0 px-1.5 py-0.5 bg-amber-50 text-amber-600 rounded text-[8px] font-black uppercase tracking-tighter border border-amber-100/50">
+                                          Remedial
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="px-2 py-4 text-center text-slate-500 font-medium text-xs">
+                                  {Number(item.credits).toFixed(1)}
+                                </td>
+                                <td className="px-2 py-4 text-center">
+                                  <span className={cn(
+                                    "inline-block px-2.5 py-1 rounded-md font-bold text-[11px]",
+                                    item.grade === "Ex" || item.grade === "A"
+                                      ? "bg-navy-900 text-white"
+                                      : item.grade === "R"
+                                        ? "bg-red-50 text-red-600"
+                                        : "bg-slate-100 text-slate-800"
+                                  )}>
+                                    {item.grade}
+                                  </span>
+                                </td>
+                                <td className="px-2 py-4 text-center">
+                                  {item.grade === "R" ? (
+                                    <span className="text-[9px] font-black text-red-400 uppercase tracking-tighter">Failed</span>
+                                  ) : (
+                                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-tighter">Passed</span>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
 
                 {/* GPA Display - Centered below table */}

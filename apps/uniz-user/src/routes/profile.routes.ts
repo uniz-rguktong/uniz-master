@@ -194,7 +194,7 @@ const FacultyCreateSchema = z.object({
   email: z.string().email(),
   department: z.string(),
   designation: z.string(),
-  role: z.enum(["teacher", "hod"]).optional(),
+  role: z.string().optional(),
 });
 
 router.get("/student/me", authMiddleware, getStudentProfile);

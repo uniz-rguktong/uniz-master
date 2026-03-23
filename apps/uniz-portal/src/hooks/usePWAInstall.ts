@@ -19,22 +19,12 @@ export const usePWAInstall = () => {
     const ios = /iphone|ipad|ipod/.test(userAgent) && !(window as any).MSStream;
     setIsIOS(ios);
 
-    const handler = (e: any) => {
-      // Prevent the mini-infobar from appearing on mobile
-      e.preventDefault();
-      // Stash the event so it can be triggered later.
-      setDeferredPrompt(e);
+    if (deferredPrompt) {
       setIsInstallable(true);
-    };
-
-    if (!deferredPrompt) {
-      window.addEventListener("beforeinstallprompt", handler);
     } else {
-      setIsInstallable(true);
+      setIsInstallable(false);
     }
-
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, [deferredPrompt, setDeferredPrompt]);
+  }, [deferredPrompt]);
 
   const install = async () => {
     if (!deferredPrompt) {

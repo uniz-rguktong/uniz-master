@@ -1034,27 +1034,56 @@ export const updateFacultyProfile = async (
   }
 
   try {
-    // Find the record to update (case-insensitive search for safety during migration)
-    const existingFaculty = await prisma.facultyProfile.findFirst({
+    // Find the record to update (check faculty first, then admin)
+    let profileType: "FACULTY" | "ADMIN" = "FACULTY";
+    let existingProfile = await prisma.facultyProfile.findFirst({
       where: { username: { equals: req.params.username, mode: "insensitive" } },
     });
 
-    if (!existingFaculty) {
-      return res.status(404).json({ message: "Faculty profile not found" });
+    if (!existingProfile) {
+      existingProfile = (await prisma.adminProfile.findFirst({
+        where: {
+          username: { equals: req.params.username, mode: "insensitive" },
+        },
+      })) as any;
+      if (existingProfile) profileType = "ADMIN";
+    }
+
+    if (!existingProfile) {
+      return res.status(404).json({ message: "Staff profile not found" });
     }
 
     const targetUsername = (
-      updates.username || existingFaculty.username
+      updates.username || existingProfile.username
     ).toLowerCase();
 
-    const updated = await prisma.facultyProfile.update({
-      where: { id: existingFaculty.id },
-      data: {
-        ...updates,
-        ...(email && { email }),
-        username: targetUsername,
-      },
-    });
+    let updated;
+    if (profileType === "FACULTY") {
+      updated = await prisma.facultyProfile.update({
+        where: { id: existingProfile.id },
+        data: {
+          ...updates,
+          ...(email && { email }),
+          username: targetUsername,
+        },
+      });
+    } else {
+      updated = (await prisma.adminProfile.update({
+        where: { id: existingProfile.id },
+        data: {
+          ...updates,
+          ...(email && { email }),
+          username: targetUsername.toUpperCase(), // Admin usually uppercase
+        },
+      })) as any;
+      // Map to faculty-like structure for the response
+      updated = {
+        ...updated,
+        role: updated.role,
+        department: updated.department,
+        designation: updated.designation,
+      };
+    }
 
     // Sync with Auth Service (Upsert behavior)
     if (updates.role || email || updates.username || true) {
@@ -1125,17 +1154,31 @@ export const deleteFacultyProfile = async (
 
   try {
     // Try to find by exact case first, or insensitive if that fails
-    const target = await prisma.facultyProfile.findFirst({
+    let profileType: "FACULTY" | "ADMIN" = "FACULTY";
+    let target = await prisma.facultyProfile.findFirst({
       where: { username: { equals: username, mode: "insensitive" } },
     });
 
     if (!target) {
-      return res.status(404).json({ message: "Faculty profile not found" });
+      target = (await prisma.adminProfile.findFirst({
+        where: { username: { equals: username, mode: "insensitive" } },
+      })) as any;
+      if (target) profileType = "ADMIN";
     }
 
-    await prisma.facultyProfile.delete({
-      where: { id: target.id },
-    });
+    if (!target) {
+      return res.status(404).json({ message: "Staff profile not found" });
+    }
+
+    if (profileType === "FACULTY") {
+      await prisma.facultyProfile.delete({
+        where: { id: target.id },
+      });
+    } else {
+      await prisma.adminProfile.delete({
+        where: { id: target.id },
+      });
+    }
     return res.json({ success: true, message: "Faculty profile deleted" });
   } catch (e) {
     console.error("Delete Faculty Error:", e);

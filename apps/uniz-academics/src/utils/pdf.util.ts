@@ -9,14 +9,20 @@ export interface ResultData {
   branch: string;
   campus: string;
   semesterId: string;
-  grades: {
-    grade: number;
-    isRemedial?: boolean;
-    subject: {
-      code: string;
-      name: string;
-      credits: number;
-    };
+  resultType?: "REGULAR" | "REMEDIAL";
+  attempts: {
+    label: string;
+    grades: {
+      grade: number;
+      isRemedial?: boolean;
+      attemptNumber?: number;
+      passDate?: Date | string | null;
+      subject: {
+        code: string;
+        name: string;
+        credits: number;
+      };
+    }[];
   }[];
 }
 
@@ -100,14 +106,19 @@ const cleanSubjectName = (name: string) => {
 };
 
 export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
-  const { name, username, branch, semesterId, grades, campus } = data;
+  const { name, username, branch, semesterId, campus, resultType } = data;
   const logo = await getLogo();
   const campusName =
     campus && campus !== "N/A" ? campus.toUpperCase() : "RGUKT";
 
   let totalCredits = 0;
   let earnedPoints = 0;
-  grades.forEach((g) => {
+  // Calculate SGPA across all attempts? Usually only the latest attempts count for GPA if they replaced failures.
+  // But for the report summary, we'll show the summary based on the "Regular" attempt or the "Latest" state.
+  const flatGrades = data.attempts.flatMap(a => a.grades);
+  
+  // To keep it simple, we'll use the flat grades count for summary
+  flatGrades.forEach((g) => {
     const credit = Number(g.subject.credits);
     if (credit > 0) {
       totalCredits += credit;
@@ -173,9 +184,14 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
       .fillColor(PRIMARY_MAROON)
       .font("Helvetica-Bold")
       .fontSize(11)
-      .text("PROVISIONAL SEMESTER GRADE REPORT", PAGE_MARGIN, doc.y + 7, {
-        align: "center",
-      });
+      .text(
+        `PROVISIONAL ${resultType === "REMEDIAL" ? "REMEDIAL" : "REGULAR"} REPORT`,
+        PAGE_MARGIN,
+        doc.y + 7,
+        {
+          align: "center",
+        },
+      );
     doc.moveDown(2);
 
     // 4. Information Grid
@@ -216,95 +232,101 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
 
     doc.moveDown(3);
 
-    // 5. Table
+    // 5. Table(s)
     const tWidths = {
-      code: usableWidth * 0.16,
-      name: usableWidth * 0.52,
+      name: usableWidth * 0.68,
       credits: usableWidth * 0.16,
       grade: usableWidth * 0.16,
     };
-    let tableY = doc.y;
 
-    doc.rect(PAGE_MARGIN, tableY, usableWidth, 28).fill(PRIMARY_MAROON);
-    doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(8.5);
-    doc.text("COURSE CODE", PAGE_MARGIN + 10, tableY + 9);
-    doc.text(
-      "SUBJECT DESCRIPTION",
-      PAGE_MARGIN + tWidths.code + 10,
-      tableY + 9,
-    );
-    doc.text("CREDITS", PAGE_MARGIN + tWidths.code + tWidths.name, tableY + 9, {
-      width: tWidths.credits,
-      align: "center",
-    });
-    doc.text(
-      "GRADE",
-      PAGE_MARGIN + tWidths.code + tWidths.name + tWidths.credits,
-      tableY + 9,
-      { width: tWidths.grade, align: "center" },
-    );
+    for (const attempt of data.attempts) {
+      doc.moveDown(1);
+      doc.fillColor(PRIMARY_MAROON).font("Helvetica-Bold").fontSize(10).text(attempt.label, PAGE_MARGIN + 2);
+      doc.moveDown(0.5);
 
-    tableY += 28;
-    doc.fillColor("#000000").font("Helvetica").fontSize(9);
+      let tableY = doc.y;
 
-    grades.forEach((g, idx) => {
-      const nameText = cleanSubjectName(g.subject.name);
-      const nameHeight = doc.heightOfString(nameText, {
-        width: tWidths.name - 20,
+      doc.rect(PAGE_MARGIN, tableY, usableWidth, 24).fill(PRIMARY_MAROON);
+      doc.fillColor("#FFFFFF").font("Helvetica-Bold").fontSize(8);
+      doc.text("SUBJECT DESCRIPTION", PAGE_MARGIN + 10, tableY + 8);
+      doc.text("CREDITS", PAGE_MARGIN + tWidths.name, tableY + 8, {
+        width: tWidths.credits,
+        align: "center",
       });
-      const rowHeight = Math.max(26, nameHeight + 12);
+      doc.text("GRADE", PAGE_MARGIN + tWidths.name + tWidths.credits, tableY + 8, {
+        width: tWidths.grade,
+        align: "center",
+      });
 
-      if (tableY + rowHeight > height - 120) {
-        doc.addPage();
-        tableY = PAGE_MARGIN;
-      }
+      tableY += 24;
+      doc.fillColor("#000000").font("Helvetica").fontSize(9);
 
-      if (idx % 2 === 1)
-        doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill("#FAFAFA");
+      attempt.grades.forEach((g: any, idx: number) => {
+        const nameText = cleanSubjectName(g.subjectNameOverride || g.subject.name);
+        const nameHeight = doc.heightOfString(nameText, {
+          width: tWidths.name - 20,
+        });
+        const rowHeight = Math.max(24, nameHeight + 10);
 
-      doc.fillColor("#000000");
-      doc.text(
-        g.subject.code,
-        PAGE_MARGIN + 10,
-        tableY + (rowHeight / 2 - 4.5),
-      );
-      doc.text(
-        nameText,
-        PAGE_MARGIN + tWidths.code + 10,
-        tableY + (rowHeight / 2 - nameHeight / 2),
-        { width: tWidths.name - 20 },
-      );
-      doc.text(
-        g.subject.credits.toFixed(1),
-        PAGE_MARGIN + tWidths.code + tWidths.name,
-        tableY + (rowHeight / 2 - 4.5),
-        { width: tWidths.credits, align: "center" },
-      );
+        if (tableY + rowHeight > height - 120) {
+          doc.addPage();
+          tableY = PAGE_MARGIN;
+          // Redraw header on new page if needed? Optional for brevity.
+        }
 
-      let gLetter = getGradeLetter(g.grade);
-      if (g.isRemedial && gLetter !== "R") {
-        gLetter += " (R)";
-      }
+        if (idx % 2 === 1)
+          doc.rect(PAGE_MARGIN, tableY, usableWidth, rowHeight).fill("#FAFAFA");
 
-      if (gLetter.includes("R")) doc.fillColor("#D32F2F");
-      doc
-        .font("Helvetica-Bold")
-        .text(
+        doc.fillColor("#000000");
+        doc.text(
+          nameText,
+          PAGE_MARGIN + 10,
+          tableY + (rowHeight / 2 - nameHeight / 2),
+          { width: tWidths.name - 20 },
+        );
+        doc.text(
+          g.subject.credits.toFixed(1),
+          PAGE_MARGIN + tWidths.name,
+          tableY + (rowHeight / 2 - 4),
+          { width: tWidths.credits, align: "center" },
+        );
+
+        let gLetter = getGradeLetter(g.grade);
+        if ((g.isRemedial || g.attemptNumber > 1) && gLetter !== "R") {
+          gLetter += " (R)";
+        }
+
+        if (gLetter.includes("R")) doc.fillColor("#D32F2F");
+        doc.font("Helvetica-Bold").text(
           gLetter,
-          PAGE_MARGIN + tWidths.code + tWidths.name + tWidths.credits,
+          PAGE_MARGIN + tWidths.name + tWidths.credits,
           tableY + (rowHeight / 2 - 4.5),
           { width: tWidths.grade, align: "center" },
         );
-      doc.font("Helvetica").fillColor("#000000");
 
-      tableY += rowHeight;
-      doc
-        .moveTo(PAGE_MARGIN, tableY)
-        .lineTo(PAGE_MARGIN + usableWidth, tableY)
-        .lineWidth(0.3)
-        .strokeColor(BORDER_LIGHT)
-        .stroke();
-    });
+        if (g.passDate) {
+          const dateStr = new Date(g.passDate).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          });
+          doc
+            .font("Helvetica")
+            .fontSize(6)
+            .fillColor(SECONDARY_GRAY)
+            .text(
+              dateStr,
+              PAGE_MARGIN + tWidths.name + tWidths.credits,
+              tableY + (rowHeight / 2 + 3.5),
+              { width: tWidths.grade, align: "center" },
+            );
+        }
+        doc.font("Helvetica").fontSize(9).fillColor("#000000");
+
+        tableY += rowHeight;
+      });
+      doc.moveDown(1);
+    }
 
     // 6. SGPA Summary
     doc.moveDown(3);

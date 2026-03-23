@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   Loader2,
@@ -76,17 +77,81 @@ function StudentTableSkeleton() {
 
 export default function StudentDetails() {
   const [searchMode, setSearchMode] = useState<"id" | "filter" | "none">("id");
-  const [studentId, setStudentId] = useState("");
+  const [studentId, setStudentId] = useState("O210008");
   const [loading, setLoading] = useState(false);
 
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [selectedStudentFullData, setSelectedStudentFullData] = useState<any>(null);
+  const [selectedStudentFullData, setSelectedStudentFullData] =
+    useState<any>(null);
   const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
+
+  // Recommendations State
+  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Filter Search State
   const [branch, setBranch] = useState("CSE");
-  const [year, setYear] = useState("E2");
-  const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
+  const [year, setYear] = useState("E3");
+  const [pagination, setPagination] = useState({
+    page: 1,
+    totalPages: 1,
+    total: 0,
+  });
+
+  useEffect(() => {
+    if (searchMode === "id") {
+      fetchStudentById("O210008");
+    } else if (searchMode === "filter") {
+      handleSearchByFilter(1);
+    }
+  }, [searchMode]);
+
+  // Debounced Recommendations
+  useEffect(() => {
+    if (!studentId || studentId.length < 3) {
+      setRecommendations([]);
+      return;
+    }
+
+    setIsTyping(true);
+    const delayDebounceFn = setTimeout(async () => {
+      const token = localStorage.getItem("admin_token");
+      try {
+        const res = await fetch(SEARCH_STUDENTS, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: studentId, limit: 5 }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setRecommendations(data.students || []);
+        }
+      } catch (e) {
+      } finally {
+        setIsTyping(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [studentId]);
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setRecommendations([]);
+      }
+    };
+    window.addEventListener("mousedown", handleClick);
+    return () => window.removeEventListener("mousedown", handleClick);
+  }, []);
 
   const fetchStudentById = async (idToFetch?: string) => {
     const id = idToFetch || studentId.trim().toUpperCase();
@@ -281,7 +346,6 @@ export default function StudentDetails() {
     }
   };
 
-
   return (
     <div className="p-6 space-y-6 pb-20 text-slate-900">
       {/* Header Section */}
@@ -306,7 +370,7 @@ export default function StudentDetails() {
               "flex items-center gap-2 px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-[9px] transition-all",
               searchMode === "id"
                 ? "bg-white text-slate-900 shadow-none border border-slate-200/50"
-                : "text-slate-500 hover:text-slate-900"
+                : "text-slate-500 hover:text-slate-900",
             )}
           >
             Individual Search
@@ -321,7 +385,7 @@ export default function StudentDetails() {
               "flex items-center gap-2 px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-[9px] transition-all",
               searchMode === "filter"
                 ? "bg-white text-slate-900 shadow-none border border-slate-200/50"
-                : "text-slate-500 hover:text-slate-900"
+                : "text-slate-500 hover:text-slate-900",
             )}
           >
             Batch Explorer
@@ -332,7 +396,7 @@ export default function StudentDetails() {
       <div className="w-full animate-in fade-in slide-in-from-top-4 duration-1000">
         <div className="flex flex-col md:flex-row gap-4">
           {searchMode === "id" ? (
-            <div className="flex-1 relative group">
+            <div className="flex-1 relative group" ref={dropdownRef}>
               <Search
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors"
                 size={16}
@@ -342,9 +406,59 @@ export default function StudentDetails() {
                 placeholder="Enter Student ID (e.g. O210001)..."
                 value={studentId}
                 onChange={(e) => setStudentId(e.target.value.toUpperCase())}
-                className="w-full h-11 pl-11 pr-4 bg-slate-100/50 border border-slate-200/60 rounded-xl font-bold text-slate-900 text-[13px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all placeholder:text-slate-400 tracking-wider shadow-none"
+                className="w-full h-11 pl-11 pr-11 bg-slate-100/50 border border-slate-200/60 rounded-xl font-bold text-slate-900 text-[13px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all placeholder:text-slate-400 tracking-wider shadow-none"
                 onKeyDown={(e) => e.key === "Enter" && fetchStudentById()}
+                onFocus={() =>
+                  studentId.length >= 3 &&
+                  setRecommendations([...recommendations])
+                }
               />
+              {isTyping && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  <Loader2 size={12} className="animate-spin text-slate-400" />
+                </div>
+              )}
+
+              <AnimatePresence>
+                {recommendations.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.1)] overflow-hidden"
+                  >
+                    <div className="p-2 space-y-1">
+                      {recommendations.map((rec) => (
+                        <button
+                          key={rec.username}
+                          onClick={() => {
+                            setStudentId(rec.username);
+                            setRecommendations([]);
+                            fetchStudentById(rec.username);
+                          }}
+                          className="w-full flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl transition-all text-left group/result"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-navy-900 flex items-center justify-center text-[10px] font-black text-white shrink-0">
+                            {rec.name?.[0]?.toUpperCase() || "U"}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[12px] font-bold text-slate-900 truncate leading-tight">
+                              {rec.name}
+                            </p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                              {rec.username} • {rec.branch}
+                            </p>
+                          </div>
+                          <ChevronRight
+                            size={14}
+                            className="text-slate-300 group-hover/result:text-navy-900 group-hover/result:translate-x-1 transition-all"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ) : (
             <div className="flex-1 flex gap-2">
@@ -355,11 +469,16 @@ export default function StudentDetails() {
                   className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
                 >
                   <option value="">All Branches</option>
-                  {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(b => (
-                    <option key={b}>{b}</option>
-                  ))}
+                  {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
+                    (b) => (
+                      <option key={b}>{b}</option>
+                    ),
+                  )}
                 </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+                <ChevronDown
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                  size={14}
+                />
               </div>
               <div className="flex-1 relative">
                 <select
@@ -368,18 +487,23 @@ export default function StudentDetails() {
                   className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
                 >
                   <option value="">All Years</option>
-                  {["E1", "E2", "E3", "E4", "P1", "P2"].map(y => (
+                  {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
                     <option key={y}>{y}</option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+                <ChevronDown
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                  size={14}
+                />
               </div>
             </div>
           )}
 
           <button
             onClick={() => {
-              searchMode === "id" ? fetchStudentById() : handleSearchByFilter(1);
+              searchMode === "id"
+                ? fetchStudentById()
+                : handleSearchByFilter(1);
             }}
             disabled={loading}
             className="px-8 h-11 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[9px] shadow-none hover:bg-slate-800 transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 active:scale-[0.98] min-w-[180px]"
@@ -414,7 +538,8 @@ export default function StudentDetails() {
                 handleGlobalResetPassword(username);
               }}
               isActionLoading={
-                isActionLoading === selectedStudentFullData.username + "_suspend" ||
+                isActionLoading ===
+                  selectedStudentFullData.username + "_suspend" ||
                 isActionLoading === selectedStudentFullData.username + "_reset"
               }
             />
@@ -457,15 +582,25 @@ export default function StudentDetails() {
                       >
                         <td className="px-10 py-5">
                           <div className="flex items-center gap-4">
-                            <div className={cn(
-                              "w-11 h-11 rounded-full flex items-center justify-center text-white text-[12px] font-black border border-white shadow-sm overflow-hidden shrink-0 ring-2",
-                              std.profile_url ? "bg-slate-50" : "bg-emerald-900",
-                              std.is_suspended ? "ring-rose-500" : "ring-emerald-400"
-                            )}>
+                            <div
+                              className={cn(
+                                "w-11 h-11 rounded-full flex items-center justify-center text-white text-[12px] font-black border border-white shadow-sm overflow-hidden shrink-0 ring-2",
+                                std.profile_url
+                                  ? "bg-slate-50"
+                                  : "bg-emerald-900",
+                                std.is_suspended
+                                  ? "ring-rose-500"
+                                  : "ring-emerald-400",
+                              )}
+                            >
                               {std.profile_url ? (
-                                <img src={std.profile_url} alt="" className="w-full h-full object-cover" />
+                                <img
+                                  src={std.profile_url}
+                                  alt=""
+                                  className="w-full h-full object-cover"
+                                />
                               ) : (
-                                (std.name?.[0] || 'U').toUpperCase()
+                                (std.name?.[0] || "U").toUpperCase()
                               )}
                             </div>
                             <div className="flex flex-col">
@@ -489,23 +624,29 @@ export default function StudentDetails() {
                                 {std.branch}
                               </span>
                               <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-bold uppercase tracking-widest border border-blue-100">
-                                {std.year || 'E1'}
+                                {std.year || "E1"}
                               </span>
                             </div>
                           </div>
                         </td>
 
                         <td className="px-10 py-5">
-                          <div className={cn(
-                            "flex items-center gap-1.5 px-3 py-1 rounded-xl border w-fit",
-                            std.is_suspended
-                              ? "bg-rose-50 border-rose-100 text-rose-500"
-                              : "bg-emerald-50 border-emerald-100 text-emerald-500"
-                          )}>
-                            <div className={cn(
-                              "w-1 h-1 rounded-full",
-                              std.is_suspended ? "bg-rose-500" : "bg-emerald-500 animate-pulse"
-                            )} />
+                          <div
+                            className={cn(
+                              "flex items-center gap-1.5 px-3 py-1 rounded-xl border w-fit",
+                              std.is_suspended
+                                ? "bg-rose-50 border-rose-100 text-rose-500"
+                                : "bg-emerald-50 border-emerald-100 text-emerald-500",
+                            )}
+                          >
+                            <div
+                              className={cn(
+                                "w-1 h-1 rounded-full",
+                                std.is_suspended
+                                  ? "bg-rose-500"
+                                  : "bg-emerald-500 animate-pulse",
+                              )}
+                            />
                             <span className="text-[9px] font-bold uppercase tracking-widest">
                               {std.is_suspended ? "Suspended" : "Active"}
                             </span>
@@ -555,9 +696,12 @@ export default function StudentDetails() {
             </div>
 
             <div className="space-y-3">
-              <h4 className="text-xl font-black text-slate-900 tracking-tight lowercase first-letter:uppercase">Ready for <span className="text-blue-600">analysis</span></h4>
+              <h4 className="text-xl font-black text-slate-900 tracking-tight lowercase first-letter:uppercase">
+                Ready for <span className="text-blue-600">analysis</span>
+              </h4>
               <p className="text-slate-400 font-medium text-[15px] leading-relaxed">
-                Enter a student ID or use filters to fetch student records from the centralized university Database.
+                Enter a student ID or use filters to fetch student records from
+                the centralized university Database.
               </p>
             </div>
           </div>
@@ -587,7 +731,8 @@ export default function StudentDetails() {
                   Credentials Reset
                 </h3>
                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                  Target Identity: <span className="text-navy-900">{resetTargetUser}</span>
+                  Target Identity:{" "}
+                  <span className="text-navy-900">{resetTargetUser}</span>
                 </p>
               </div>
 
@@ -596,7 +741,10 @@ export default function StudentDetails() {
                   Temporary Key
                 </label>
                 <div className="relative group">
-                  <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors" size={18} />
+                  <Lock
+                    className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors"
+                    size={18}
+                  />
                   <input
                     type="text"
                     value={resetPasswordValue}

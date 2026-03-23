@@ -531,6 +531,14 @@ const subjectsData: any = {
 async function main() {
   console.log("Starting safe subject seeding...");
 
+  // --- CLEANUP ---
+  console.log("- Clearing existing academic records (Grades, Attendance, etc)...");
+  await prisma.grade.deleteMany({});
+  await prisma.attendance.deleteMany({});
+  await prisma.subject.deleteMany({});
+  // wait! deleteMany on Subject might fail if there are FKs, but we deleted Grades/Attendance first.
+  console.log("- Academic DB cleared.");
+
   const semMap: Record<string, string> = {
     "Sem - 1": "SEM-1",
     "Sem - 2": "SEM-2",

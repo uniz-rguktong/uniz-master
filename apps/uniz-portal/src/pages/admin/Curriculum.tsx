@@ -1,359 +1,451 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { BASE_URL } from "../../api/endpoints";
 import {
-  ArrowLeft,
+  Search,
   BookOpen,
-  Save,
-  RefreshCw,
   Plus,
+  Filter,
+  GraduationCap,
   Trash2,
-  CheckCircle,
-  AlertTriangle,
+  Edit,
+  X,
+  CreditCard,
+  Hash,
+  Loader2,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "../../components/Button";
-import { Input } from "../../components/Input";
-import { cn } from "../../utils/cn";
+import { toast } from "../../utils/toast-ref";
+import { motion, AnimatePresence } from "framer-motion";
 
-type Branch = "CSE" | "ECE" | "EEE" | "CIVIL" | "MECH";
-type CurriculumData = Record<
-  string,
-  Record<string, Record<Branch, { names: string[]; credits: number[] }>>
->;
+interface Subject {
+  id: string;
+  code: string;
+  name: string;
+  department: string;
+  semester: string;
+  credits: number;
+}
 
 export default function CurriculumManager() {
-  const navigate = useNavigate();
-  const [data, setData] = useState<CurriculumData>({});
-  const [year, setYear] = useState("E1");
-  const [sem, setSem] = useState("Sem - 1");
-  const [branch, setBranch] = useState<Branch>("CSE");
-  const [status, setStatus] = useState<{
-    msg: string;
-    type: "success" | "error" | "info";
-  } | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [deptFilter, setDeptFilter] = useState("ALL");
+  const [semFilter, setSemFilter] = useState("ALL");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    code: "",
+    name: "",
+    department: "CSE",
+    semester: "E1-SEM-1",
+    credits: 3
+  });
 
-  const fetchCurriculum = async () => {
+  const departments = ["CSE", "ECE", "EEE", "CIVIL", "MECH"];
+  const semesters = [
+    "E1-SEM-1", "E1-SEM-2", 
+    "E2-SEM-1", "E2-SEM-2", 
+    "E3-SEM-1", "E3-SEM-2", 
+    "E4-SEM-1", "E4-SEM-2"
+  ];
+
+  const fetchSubjects = async () => {
     setLoading(true);
-    setStatus(null);
     try {
-      const token = localStorage.getItem("admin_token");
-      const res = await fetch(`${BASE_URL}/admin/get-curriculum`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token
-            ? `Bearer ${(token || "").replace(/"/g, "")}`
-            : "",
-        },
+      const token = localStorage.getItem("admin_token")?.replace(/"/g, "");
+      const res = await fetch(`${BASE_URL}/academics/subjects?limit=12&page=${page}&search=${searchQuery}&department=${deptFilter}&semester=${semFilter}`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      const json = await res.json();
-      if (json.success) {
-        setData(json.subjectsData || {});
-        // setStatus({ msg: "Curriculum loaded successfully.", type: 'success' });
-      } else {
-        setStatus({
-          msg: json.msg || "Failed to fetch curriculum.",
-          type: "error",
-        });
+      const data = await res.json();
+      if (data.success) {
+        setSubjects(data.subjects);
+        setTotalPages(data.meta.totalPages || 1);
+        setTotalRecords(data.meta.total || 0);
       }
     } catch (err) {
       console.error(err);
-      setStatus({ msg: "Error fetching curriculum.", type: "error" });
+      toast.error("Failed to fetch subjects");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCurriculum();
-  }, []);
+    fetchSubjects();
+  }, [page, deptFilter, semFilter, searchQuery]); // Refetch on filter or page change
 
-  const updateCell = (i: number, field: "name" | "credits", value: string) => {
-    const updated = structuredClone(data);
-    if (!updated[year]) updated[year] = {};
-    if (!updated[year][sem]) {
-      updated[year][sem] = {
-        CSE: { names: [], credits: [] },
-        ECE: { names: [], credits: [] },
-        EEE: { names: [], credits: [] },
-        CIVIL: { names: [], credits: [] },
-        MECH: { names: [], credits: [] },
-      };
+  const filteredSubjects = useMemo(() => {
+    return subjects.filter(s => {
+      const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                           s.code.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesDept = deptFilter === "ALL" || s.department === deptFilter;
+      const matchesSem = semFilter === "ALL" || s.semester === semFilter;
+      return matchesSearch && matchesDept && matchesSem;
+    });
+  }, [subjects, searchQuery, deptFilter, semFilter]);
+
+  const handleOpenModal = (sub?: Subject) => {
+    if (sub) {
+      setEditingSubject(sub);
+      setFormData({
+        code: sub.code,
+        name: sub.name,
+        department: sub.department,
+        semester: sub.semester,
+        credits: sub.credits
+      });
+    } else {
+      setEditingSubject(null);
+      setFormData({
+        code: "",
+        name: "",
+        department: "CSE",
+        semester: "E1-SEM-1",
+        credits: 3
+      });
     }
-    if (!updated[year][sem][branch])
-      updated[year][sem][branch] = { names: [], credits: [] };
-
-    const current = updated[year][sem][branch];
-
-    if (field === "name") current.names[i] = value;
-    else current.credits[i] = Number(value);
-
-    setData(updated);
+    setIsModalOpen(true);
   };
 
-  const addRow = () => {
-    const updated = structuredClone(data);
-    // Ensure structure exists
-    if (!updated[year]) updated[year] = {};
-    if (!updated[year][sem]) {
-      updated[year][sem] = {
-        CSE: { names: [], credits: [] },
-        ECE: { names: [], credits: [] },
-        EEE: { names: [], credits: [] },
-        CIVIL: { names: [], credits: [] },
-        MECH: { names: [], credits: [] },
-      };
-    }
-    if (!updated[year][sem][branch])
-      updated[year][sem][branch] = { names: [], credits: [] };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("admin_token")?.replace(/"/g, "");
+    const method = editingSubject ? "PUT" : "POST";
+    const url = editingSubject 
+      ? `${BASE_URL}/academics/subjects/${editingSubject.id}` 
+      : `${BASE_URL}/academics/subjects/add`;
 
-    updated[year][sem][branch].names.push("");
-    updated[year][sem][branch].credits.push(0);
-    setData(updated);
-  };
-
-  const removeRow = (i: number) => {
-    const updated = structuredClone(data);
-    const current = updated[year][sem][branch];
-    if (!current) return;
-    current.names.splice(i, 1);
-    current.credits.splice(i, 1);
-    setData(updated);
-  };
-
-  const populate = async () => {
-    setLoading(true);
-    setStatus(null);
     try {
-      const token = localStorage.getItem("admin_token");
-      const res = await fetch(`${BASE_URL}/admin/populate-curriculum`, {
-        method: "POST",
-        headers: {
+      const res = await fetch(url, {
+        method,
+        headers: { 
           "Content-Type": "application/json",
-          Authorization: token
-            ? `Bearer ${(token || "").replace(/"/g, "")}`
-            : "",
+          Authorization: `Bearer ${token}` 
         },
-        body: JSON.stringify({ subjectsData: data }),
+        body: JSON.stringify(formData)
       });
-      const json = await res.json();
-      setStatus({
-        msg: json.msg || "Curriculum saved successfully.",
-        type: json.success ? "success" : "error",
-      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(editingSubject ? "Subject updated" : "Subject created");
+        setIsModalOpen(false);
+        fetchSubjects();
+      } else {
+        toast.error(data.message || "Operation failed");
+      }
     } catch (err) {
-      console.error(err);
-      setStatus({ msg: "Failed to populate curriculum", type: "error" });
-    } finally {
-      setLoading(false);
+      toast.error("Network error");
     }
   };
 
-  const current = data[year]?.[sem]?.[branch] || { names: [], credits: [] };
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this subject?")) return;
+    const token = localStorage.getItem("admin_token")?.replace(/"/g, "");
+    try {
+      const res = await fetch(`${BASE_URL}/academics/subjects/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Subject deleted");
+        fetchSubjects();
+      }
+    } catch (err) {
+      toast.error("Failed to delete");
+    }
+  };
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
-      {/* Header */}
-      <div className="flex flex-col gap-6">
-        <button
-          onClick={() => navigate("/admin")}
-          className="self-start inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+    <div className="animate-in fade-in duration-700">
+      {/* Header Area */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Academic Subjects</h1>
+          <p className="text-slate-500 text-sm font-medium">Manage the core institutional curriculum ({totalRecords} records)</p>
+        </div>
+        <button 
+          onClick={() => handleOpenModal()}
+          className="bg-navy-900 text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-navy-900/10"
         >
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
+          <Plus size={18} strokeWidth={3} />
+          NEW SUBJECT
         </button>
+      </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">
-              Curriculum Management
-            </h1>
-            <p className="text-slate-500 mt-1">
-              Configure academic subjects and credits.
-            </p>
+      {/* Filters Area */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col lg:flex-row gap-4 mb-8">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <input 
+            type="text" 
+            placeholder="Search by name or code..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all"
+          />
+        </div>
+        
+        <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl">
+            <Filter size={14} className="text-slate-400" />
+            <select 
+              className="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
+              value={deptFilter}
+              onChange={(e) => setDeptFilter(e.target.value)}
+            >
+              <option value="ALL">All Departments</option>
+              {departments.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
           </div>
-          <div className="flex gap-3">
-            <Button
-              variant="secondary"
-              onClick={fetchCurriculum}
-              size="sm"
-              loading={loading && !status}
+
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl">
+            <BookOpen size={14} className="text-slate-400" />
+            <select 
+              className="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
+              value={semFilter}
+              onChange={(e) => setSemFilter(e.target.value)}
             >
-              <RefreshCw
-                className={cn(
-                  "w-4 h-4 mr-2",
-                  loading && !status && "animate-spin",
-                )}
-              />{" "}
-              Refresh
-            </Button>
-            <Button
-              onClick={populate}
-              size="sm"
-              loading={loading}
-              className="bg-slate-900 hover:bg-black"
-            >
-              <Save className="w-4 h-4 mr-2" /> Save Changes
-            </Button>
+              <option value="ALL">All Semesters</option>
+              {semesters.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
           </div>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="space-y-2">
-          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-            Year
-          </label>
-          <div className="flex bg-slate-100 p-1 rounded-lg">
-            {["E1", "E2", "E3", "E4"].map((y) => (
-              <button
-                key={y}
-                onClick={() => setYear(y)}
-                className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${
-                  year === y
-                    ? "bg-white text-slate-900 shadow-sm"
-                    : "text-slate-500 hover:text-slate-700"
-                }`}
-              >
-                {y}
-              </button>
-            ))}
+      {/* Grid Area */}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <Loader2 className="animate-spin text-navy-900" size={40} />
+          <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Hydrating Curriculum...</p>
+        </div>
+      ) : filteredSubjects.length === 0 ? (
+        <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+          <GraduationCap size={64} className="mx-auto text-slate-200 mb-4" />
+          <h3 className="text-lg font-bold text-slate-900">No subjects found</h3>
+          <p className="text-slate-500 text-sm">Try adjusting your filters or search query.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
+          {filteredSubjects.map((sub) => (
+            <motion.div 
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              key={sub.id} 
+              className="group bg-white p-5 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:border-navy-900/10 transition-all relative overflow-hidden"
+            >
+              {/* Card Header */}
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-10 h-10 bg-slate-50 rounded-2xl flex items-center justify-center text-navy-900 group-hover:bg-navy-900 group-hover:text-white transition-colors duration-500">
+                  <GraduationCap size={20} />
+                </div>
+                <div className="flex gap-1">
+                  <button 
+                    onClick={() => handleOpenModal(sub)}
+                    className="p-2 text-slate-400 hover:text-navy-900 hover:bg-slate-50 rounded-xl transition-all"
+                  >
+                    <Edit size={16} />
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(sub.id)}
+                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Card Body */}
+              <div className="space-y-1 mb-5">
+                <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">{sub.code}</p>
+                <h3 className="text-[17px] font-bold text-slate-900 line-clamp-1 leading-tight">{sub.name}</h3>
+              </div>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                <span className="px-2.5 py-1 bg-navy-50 text-navy-900 text-[10px] font-black rounded-lg uppercase tracking-wider">{sub.department}</span>
+                <span className="px-2.5 py-1 bg-slate-50 text-slate-600 text-[10px] font-black rounded-lg uppercase tracking-wider">{sub.semester}</span>
+              </div>
+
+              {/* Progress Bar (Weight) */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <span>Academic Weight</span>
+                  <span>{((sub.credits / 4) * 100).toFixed(0)}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(sub.credits / 4) * 100}%` }}
+                    className="h-full bg-navy-900 rounded-full"
+                  />
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="mt-5 pt-4 border-t border-slate-50 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-slate-400">
+                  <BookOpen size={14} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">{sub.credits} CREDITS</span>
+                </div>
+                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {!loading && totalRecords > 0 && (
+        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-4 p-5 bg-white rounded-2xl border border-slate-100 shadow-sm">
+          <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            Showing <span className="text-slate-900">{subjects.length}</span> of {totalRecords} records
           </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-            Semester
-          </label>
-          <select
-            value={sem}
-            onChange={(e) => setSem(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-navy-900 focus:border-navy-100 block p-2.5"
-          >
-            <option value="Sem - 1">Semester 1</option>
-            <option value="Sem - 2">Semester 2</option>
-          </select>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-            Branch
-          </label>
-          <select
-            value={branch}
-            onChange={(e) => setBranch(e.target.value as Branch)}
-            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-navy-900 focus:border-navy-100 block p-2.5"
-          >
-            {["CSE", "ECE", "EEE", "CIVIL", "MECH"].map((b) => (
-              <option key={b} value={b}>
-                {b}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm min-h-[400px]">
-        <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-slate-500" />
-            <h3 className="font-semibold text-slate-900">
-              {year} - {sem} - {branch} Subjects
-            </h3>
-          </div>
-          {status && (
-            <div
-              className={cn(
-                "text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1.5",
-                status.type === "success"
-                  ? "bg-emerald-100 text-emerald-700"
-                  : status.type === "error"
-                    ? "bg-red-100 text-red-700"
-                    : "bg-navy-100 text-navy-800",
-              )}
-            >
-              {status.type === "success" ? (
-                <CheckCircle className="w-3.5 h-3.5" />
-              ) : status.type === "error" ? (
-                <AlertTriangle className="w-3.5 h-3.5" />
-              ) : null}
-              {status.msg}
-            </div>
-          )}
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-slate-500 font-semibold uppercase text-xs border-b border-slate-200">
-              <tr>
-                <th className="px-6 py-4 w-16 text-center">#</th>
-                <th className="px-6 py-4">Subject Name</th>
-                <th className="px-6 py-4 w-32">Credits</th>
-                <th className="px-6 py-4 w-24 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {current.names.map((n, i) => (
-                <tr
-                  key={i}
-                  className="hover:bg-slate-50/50 transition-colors group"
-                >
-                  <td className="px-6 py-3 text-center text-slate-400 font-mono text-xs">
-                    {i + 1}
-                  </td>
-                  <td className="px-6 py-3">
-                    <Input
-                      value={n}
-                      onchangeFunction={(e: any) =>
-                        updateCell(i, "name", e.target.value)
-                      }
-                      placeholder="Subject Name"
-                      className="bg-transparent border-transparent hover:border-slate-300 focus:bg-white transition-all h-9 text-sm"
-                    />
-                  </td>
-                  <td className="px-6 py-3">
-                    <Input
-                      type="number"
-                      value={current.credits[i]}
-                      onchangeFunction={(e: any) =>
-                        updateCell(i, "credits", e.target.value)
-                      }
-                      placeholder="0"
-                      className="bg-transparent border-transparent hover:border-slate-300 focus:bg-white transition-all h-9 text-sm w-20"
-                    />
-                  </td>
-                  <td className="px-6 py-3 text-right">
-                    <button
-                      onClick={() => removeRow(i)}
-                      className="text-slate-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {current.names.length === 0 && (
-            <div className="py-12 text-center text-slate-400">
-              <BookOpen className="w-10 h-10 mx-auto mb-2 opacity-20" />
-              <p>No subjects configured for this semester yet.</p>
-            </div>
-          )}
-
-          <div className="p-4 bg-slate-50 border-t border-slate-200">
             <button
-              onClick={addRow}
-              className="w-full py-2.5 border-2 border-dashed border-slate-300 rounded-lg text-slate-500 font-medium hover:border-navy-100 hover:text-navy-900 hover:bg-navy-50/50 transition-all flex items-center justify-center gap-2"
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-xl text-slate-400 hover:text-navy-900 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             >
-              <Plus className="w-4 h-4" /> Add Subject
+              <ChevronLeft size={20} />
+            </button>
+            <div className="px-4 text-xs font-black text-navy-900 uppercase tracking-widest">
+              Page {page} of {totalPages}
+            </div>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-xl text-slate-400 hover:text-navy-900 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronRight size={20} />
             </button>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Modal System */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            />
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg bg-white rounded-[32px] shadow-2xl overflow-hidden"
+            >
+              <div className="p-8">
+                <div className="flex justify-between items-center mb-8">
+                  <div>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+                      {editingSubject ? "Edit Subject" : "Create Subject"}
+                    </h2>
+                    <p className="text-slate-500 text-sm font-medium">Define metadata for the new curriculum node</p>
+                  </div>
+                  <button 
+                    onClick={() => setIsModalOpen(false)}
+                    className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-2xl text-slate-400 hover:text-slate-600 transition-all"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">Subject Code</label>
+                      <div className="relative">
+                        <Hash className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                        <input 
+                          required
+                          value={formData.code}
+                          onChange={(e) => setFormData({...formData, code: e.target.value.toUpperCase()})}
+                          placeholder="e.g. CSE-302"
+                          className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">Credits</label>
+                      <div className="relative">
+                        <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                        <input 
+                          type="number"
+                          step="0.5"
+                          min="0"
+                          max="4"
+                          required
+                          value={formData.credits}
+                          onChange={(e) => setFormData({...formData, credits: Number(e.target.value)})}
+                          className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">Display Name</label>
+                    <input 
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      placeholder="e.g. Advanced Operating Systems"
+                      className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">Department</label>
+                      <select 
+                        value={formData.department}
+                        onChange={(e) => setFormData({...formData, department: e.target.value})}
+                        className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all appearance-none"
+                      >
+                        {departments.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">Level (Semester)</label>
+                      <select 
+                        value={formData.semester}
+                        onChange={(e) => setFormData({...formData, semester: e.target.value})}
+                        className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all appearance-none"
+                      >
+                        {semesters.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit"
+                    className="w-full bg-navy-900 text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-800 transition-all active:scale-95 shadow-xl shadow-navy-900/20"
+                  >
+                    {editingSubject ? "Update Curriculum Node" : "Deploy Subject"}
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -10,6 +10,8 @@ export enum UserRole {
   WEBMASTER = "webmaster",
   DEAN = "dean",
   DIRECTOR = "director",
+  COE = "coe",
+  AO = "ao",
 
   // Student Welfare / Hostel Roles
   SWO = "swo",

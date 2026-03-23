@@ -42,7 +42,7 @@ export default function SecuritySection({ username }: { username: string }) {
         try {
             setLoading(true);
             const res = await fetch(ADMIN_RESET_PASS, {
-                method: "PUT",
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,

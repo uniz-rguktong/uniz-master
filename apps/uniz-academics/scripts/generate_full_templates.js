@@ -40,6 +40,7 @@ async function generate() {
         "Student Name",
         "Subject Code",
         "Subject Name",
+        "Subject Name Override", // New field added
         "Semester ID",
         "Grade (EX, A, B, C, D, E, R)",
       ],
@@ -50,6 +51,7 @@ async function generate() {
         "Student Name",
         "Subject Code",
         "Subject Name",
+        "Subject Name Override", // New field added
         "Semester ID",
         "Total Classes Occurred",
         "Total Classes Attended",
@@ -63,6 +65,7 @@ async function generate() {
           s.name,
           sub.code,
           sub.name,
+          "", // Override empty
           "SEM-1",
           "",
         ]);
@@ -71,6 +74,7 @@ async function generate() {
           s.name,
           sub.code,
           sub.name,
+          "", // Override empty
           "SEM-1",
           "",
           "",
