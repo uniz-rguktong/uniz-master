@@ -190,7 +190,10 @@ export default function CurriculumManager() {
             type="text" 
             placeholder="Search by name or code..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
             className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all"
           />
         </div>
@@ -201,7 +204,10 @@ export default function CurriculumManager() {
             <select 
               className="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
               value={deptFilter}
-              onChange={(e) => setDeptFilter(e.target.value)}
+              onChange={(e) => {
+                setDeptFilter(e.target.value);
+                setPage(1);
+              }}
             >
               <option value="ALL">All Departments</option>
               {departments.map(d => <option key={d} value={d}>{d}</option>)}
@@ -213,7 +219,10 @@ export default function CurriculumManager() {
             <select 
               className="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
               value={semFilter}
-              onChange={(e) => setSemFilter(e.target.value)}
+              onChange={(e) => {
+                setSemFilter(e.target.value);
+                setPage(1);
+              }}
             >
               <option value="ALL">All Semesters</option>
               {semesters.map(s => <option key={s} value={s}>{s}</option>)}
