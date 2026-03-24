@@ -1710,7 +1710,7 @@ export const getGradesTemplate = async (
       console.log(`[Academics] Found ${students.length} remedial students.`);
     } else {
       const profilesRes = await axios.post(
-        `${USER_SERVICE_URL}/profile/student/search`,
+        `${USER_SERVICE_URL}/student/search`,
         {
           branch:
             branch && String(branch).toUpperCase() !== "ALL"
@@ -1989,7 +1989,7 @@ export const getAttendanceTemplate = async (
     );
 
     const profilesRes = await axios.post(
-      `${USER_SERVICE_URL}/profile/student/search`,
+      `${USER_SERVICE_URL}/student/search`,
       {
         branch:
           branch && String(branch).toUpperCase() !== "ALL" ? branch : undefined,
