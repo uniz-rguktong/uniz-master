@@ -1741,7 +1741,9 @@ export const getGradesTemplate = async (
           branch && String(branch).toUpperCase() !== "ALL"
             ? (branch as string)
             : undefined,
-        semester: (semesterId as string) || undefined,
+        semester: semesterId
+          ? { contains: semesterId as string, mode: "insensitive" }
+          : undefined,
         code:
           year && String(year).toUpperCase() !== "ALL"
             ? { contains: year as string, mode: "insensitive" }
@@ -1786,9 +1788,12 @@ export const getGradesTemplate = async (
     console.log(`[Academics] Final Template Rows: ${headers.length - 1}`);
     return generateExcel(headers, `Grades_Template_${year}_${branch}`, res);
   } catch (e: any) {
-    return res.status(500).json({
-      message:
-        "An internal error occurred while generating the template. Please try again.",
+    console.error(`[Academics] Grades Template Error: ${e.message}`, e.response?.data || e);
+    const msg = e.response?.data?.message || e.message || "An internal error occurred while generating the template.";
+    return res.status(e.response?.status || 500).json({
+      success: false,
+      message: msg,
+      details: e.response?.data
     });
   }
 };
@@ -2013,7 +2018,9 @@ export const getAttendanceTemplate = async (
           branch && String(branch).toUpperCase() !== "ALL"
             ? (branch as string)
             : undefined,
-        semester: (semesterId as string) || undefined,
+        semester: semesterId
+          ? { contains: semesterId as string, mode: "insensitive" }
+          : undefined,
         code:
           year && String(year).toUpperCase() !== "ALL"
             ? { contains: year as string, mode: "insensitive" }
@@ -2050,10 +2057,12 @@ export const getAttendanceTemplate = async (
 
     return generateExcel(headers, `Attendance_Template_${year}_${branch}`, res);
   } catch (e: any) {
-    console.error("[Academics] Attendance Template Error:", e);
-    return res.status(500).json({
-      message:
-        "An internal error occurred while generating the template. Please try again.",
+    console.error(`[Academics] Attendance Template Error: ${e.message}`, e.response?.data || e);
+    const msg = e.response?.data?.message || e.message || "An internal error occurred while generating the template.";
+    return res.status(e.response?.status || 500).json({
+      success: false,
+      message: msg,
+      details: e.response?.data
     });
   }
 };
