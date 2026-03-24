@@ -520,6 +520,33 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
     // 4. Populate Cache (1s TTL to prevent burst load but allow real-time updates)
     if (!isFiltered) {
       await redis.setex(cacheKey, 1, JSON.stringify(responsePayload));
+
+      // NEW: SYNC TO USER SERVICE FOR INTELLIGENCE DASHBOARD
+      // Fire and forget to avoid blocking the response
+      const syncToUser = async () => {
+        try {
+          await axios.post(
+            `${USER_SERVICE_URL}/internal/sync-student-stats`,
+            {
+              studentId: targetStudentId,
+              cgpa: responsePayload.cgpa,
+              totalBacklogs: responsePayload.totalBacklogs,
+            },
+            {
+              headers: {
+                "x-internal-secret": process.env.INTERNAL_SECRET || "uniz-core",
+              },
+              timeout: 2000,
+            },
+          );
+        } catch (err: any) {
+          console.warn(
+            `[Academics] Failed to sync stats for ${targetStudentId}:`,
+            err.message,
+          );
+        }
+      };
+      syncToUser();
     }
 
     return res.json({

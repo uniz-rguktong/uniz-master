@@ -43,7 +43,12 @@ model StudentProfile {
   category             String?   @default("")
   campus               String?   @default("")
 
+  // Denormalized Academic Fields for High-Speed Analytics
+  cgpa                 Float     @default(0.0)
+  totalBacklogs        Int       @default(0)
+
   @@index([branch, year, batch])
+  @@index([cgpa, totalBacklogs])
 }
 
 model FacultyProfile {
