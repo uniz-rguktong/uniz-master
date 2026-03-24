@@ -86,6 +86,8 @@ const mapStudentProfile = (profile: any) => ({
   // New Fields
   category: profile.category,
   campus: profile.campus,
+  cgpa: profile.cgpa,
+  total_backlogs: profile.totalBacklogs,
 });
 
 const mapFacultyProfile = (profile: any) => ({
@@ -360,6 +362,9 @@ export const searchStudents = async (
     page = 1,
     limit = 10,
     isSuspended,
+    minCgpa,
+    maxCgpa,
+    hasRemedials, // "all" | "active" | "cleared"
   } = req.body;
 
   try {
@@ -385,13 +390,27 @@ export const searchStudents = async (
       where.year = { equals: year, mode: "insensitive" };
     }
     if (gender && String(gender).toUpperCase() !== "ALL") where.gender = gender;
-    if (isSuspended !== undefined)
+    if (isSuspended !== undefined && String(isSuspended).toUpperCase() !== "ALL") {
       where.isSuspended = isSuspended === true || isSuspended === "true";
-    if (req.body.isPresentInCampus !== undefined) {
-      where.isPresentInCampus = req.body.isPresentInCampus;
     }
-    if (req.body.isApplicationPending !== undefined) {
-      where.isApplicationPending = req.body.isApplicationPending;
+    if (req.body.isPresentInCampus !== undefined && String(req.body.isPresentInCampus).toUpperCase() !== "ALL") {
+      where.isPresentInCampus = req.body.isPresentInCampus === true || req.body.isPresentInCampus === "true";
+    }
+    if (req.body.isApplicationPending !== undefined && String(req.body.isApplicationPending).toUpperCase() !== "ALL") {
+      where.isApplicationPending = req.body.isApplicationPending === true || req.body.isApplicationPending === "true";
+    }
+
+    // Advanced Academic Intelligence Filters
+    if ((minCgpa !== undefined && minCgpa !== "") || (maxCgpa !== undefined && maxCgpa !== "")) {
+      where.cgpa = {};
+      if (minCgpa !== undefined && minCgpa !== "") where.cgpa.gte = Number(minCgpa);
+      if (maxCgpa !== undefined && maxCgpa !== "") where.cgpa.lte = Number(maxCgpa);
+    }
+
+    if (hasRemedials === "active" || hasRemedials === "true" || hasRemedials === true) {
+      where.totalBacklogs = { gt: 0 };
+    } else if (hasRemedials === "cleared" || hasRemedials === "false" || hasRemedials === false) {
+      where.totalBacklogs = { equals: 0 };
     }
 
     // Disable aggressive caching for searches
@@ -774,6 +793,35 @@ export const getBulkProfiles = async (req: Request, res: Response) => {
     });
   } catch (e) {
     return res.status(500).json({ message: "Bulk fetch failed" });
+  }
+};
+
+export const internalSyncStudentStats = async (req: Request, res: Response) => {
+  const secret = req.headers["x-internal-secret"];
+  const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+
+  if (secret !== INTERNAL_SECRET) {
+    return res.status(401).json({ message: "Internal secret mismatch" });
+  }
+
+  const { studentId, cgpa, totalBacklogs } = req.body;
+
+  try {
+    const updated = await (prisma.studentProfile as any).update({
+      where: { username: studentId.toUpperCase() },
+      data: {
+        cgpa: Number(cgpa),
+        totalBacklogs: Number(totalBacklogs),
+      },
+    });
+
+    // Invalidate profile cache
+    await redis.del(`profile:v2:${studentId.toUpperCase()}`);
+
+    return res.json({ success: true, student: mapStudentProfile(updated) });
+  } catch (e) {
+    console.error("Sync Stats Error:", e);
+    return res.status(500).json({ success: false, message: "Sync failed" });
   }
 };
 

@@ -20,6 +20,7 @@ import {
   SEARCH_STUDENTS,
   ADMIN_SUSPEND_STUDENT,
   ADMIN_GLOBAL_RESET_PASS,
+  GET_AVAILABLE_BATCHES,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 
@@ -76,7 +77,7 @@ function StudentTableSkeleton() {
 }
 
 export default function StudentDetails() {
-  const [searchMode, setSearchMode] = useState<"id" | "filter" | "none">("id");
+  const [searchMode, setSearchMode] = useState<"id" | "filter" | "intelligence">("id");
   const [studentId, setStudentId] = useState("O210008");
   const [loading, setLoading] = useState(false);
 
@@ -93,6 +94,16 @@ export default function StudentDetails() {
   // Filter Search State
   const [branch, setBranch] = useState("CSE");
   const [year, setYear] = useState("E3");
+  const [batch, setBatch] = useState("ALL");
+  const [intelligenceFilters, setIntelligenceFilters] = useState({
+    hasRemedials: "all", // "all" | "active" | "cleared"
+    minCgpa: "",
+    maxCgpa: "",
+    isPresentInCampus: "ALL",
+    isSuspended: "ALL",
+  });
+  const [availableBatches, setAvailableBatches] = useState<string[]>([]);
+
   const [pagination, setPagination] = useState({
     page: 1,
     totalPages: 1,
@@ -102,7 +113,7 @@ export default function StudentDetails() {
   useEffect(() => {
     if (searchMode === "id") {
       fetchStudentById("O210008");
-    } else if (searchMode === "filter") {
+    } else if (searchMode === "filter" || searchMode === "intelligence") {
       handleSearchByFilter(1);
     }
   }, [searchMode]);
@@ -153,6 +164,23 @@ export default function StudentDetails() {
     return () => window.removeEventListener("mousedown", handleClick);
   }, []);
 
+  useEffect(() => {
+    fetchBatches();
+  }, []);
+
+  const fetchBatches = async () => {
+    try {
+      const token = localStorage.getItem("admin_token");
+      const res = await fetch(GET_AVAILABLE_BATCHES, {
+        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAvailableBatches(data.batches || []);
+      }
+    } catch (e) {}
+  };
+
   const fetchStudentById = async (idToFetch?: string) => {
     const id = idToFetch || studentId.trim().toUpperCase();
     if (!id) return;
@@ -198,8 +226,10 @@ export default function StudentDetails() {
         body: JSON.stringify({
           branch,
           year,
+          batch,
+          ...(searchMode === "intelligence" ? intelligenceFilters : {}),
           page,
-          limit: 10,
+          limit: searchMode === "intelligence" ? 50 : 10,
         }),
       });
       const data = await res.json();
@@ -377,18 +407,18 @@ export default function StudentDetails() {
           </button>
           <button
             onClick={() => {
-              setSearchMode("filter");
+              setSearchMode("intelligence");
               setSearchResults([]);
               setSelectedStudentFullData(null);
             }}
             className={cn(
               "flex items-center gap-2 px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-[9px] transition-all",
-              searchMode === "filter"
+              searchMode === "intelligence"
                 ? "bg-white text-slate-900 shadow-none border border-slate-200/50"
                 : "text-slate-500 hover:text-slate-900",
             )}
           >
-            Batch Explorer
+            Intelligence Filter
           </button>
         </div>
       </div>
@@ -461,60 +491,173 @@ export default function StudentDetails() {
               </AnimatePresence>
             </div>
           ) : (
-            <div className="flex-1 flex gap-2">
-              <div className="flex-1 relative">
-                <select
-                  value={branch}
-                  onChange={(e) => setBranch(e.target.value)}
-                  className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
+            <div className="flex-1 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div className="relative">
+                  <select
+                    value={branch}
+                    onChange={(e) => setBranch(e.target.value)}
+                    className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
+                  >
+                    <option value="ALL">All Branches</option>
+                    {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
+                      (b) => (
+                        <option key={b}>{b}</option>
+                      ),
+                    )}
+                  </select>
+                  <ChevronDown
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    size={14}
+                  />
+                </div>
+                <div className="relative">
+                  <select
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
+                  >
+                    <option value="ALL">All Years</option>
+                    {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
+                      <option key={y}>{y}</option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    size={14}
+                  />
+                </div>
+                <div className="relative">
+                  <select
+                    value={batch}
+                    onChange={(e) => setBatch(e.target.value)}
+                    className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
+                  >
+                    <option value="ALL">All Batches</option>
+                    {availableBatches.map((b) => (
+                      <option key={b} value={b}>
+                        {b}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    size={14}
+                  />
+                </div>
+
+                {searchMode === "intelligence" && (
+                  <>
+                    <div className="relative">
+                      <select
+                        value={intelligenceFilters.hasRemedials}
+                        onChange={(e) =>
+                          setIntelligenceFilters({
+                            ...intelligenceFilters,
+                            hasRemedials: e.target.value,
+                          })
+                        }
+                        className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
+                      >
+                        <option value="all">Remedials: All</option>
+                        <option value="cleared">Cleared Subjects</option>
+                        <option value="active">Active Remedials</option>
+                      </select>
+                      <ChevronDown
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                        size={14}
+                      />
+                    </div>
+                    <div className="flex gap-2 min-w-[200px]">
+                      <input
+                        type="number"
+                        placeholder="MIN CGPA"
+                        step="0.01"
+                        value={intelligenceFilters.minCgpa}
+                        onChange={(e) =>
+                          setIntelligenceFilters({
+                            ...intelligenceFilters,
+                            minCgpa: e.target.value,
+                          })
+                        }
+                        className="w-1/2 h-11 px-4 bg-slate-100/50 border border-slate-200/60 rounded-xl font-bold text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 transition-all uppercase tracking-tighter"
+                      />
+                      <input
+                        type="number"
+                        placeholder="MAX CGPA"
+                        step="0.01"
+                        value={intelligenceFilters.maxCgpa}
+                        onChange={(e) =>
+                          setIntelligenceFilters({
+                            ...intelligenceFilters,
+                            maxCgpa: e.target.value,
+                          })
+                        }
+                        className="w-1/2 h-11 px-4 bg-slate-100/50 border border-slate-200/60 rounded-xl font-bold text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 transition-all uppercase tracking-tighter"
+                      />
+                    </div>
+                  </>
+                )}
+
+                <button
+                  onClick={() => handleSearchByFilter(1)}
+                  disabled={loading}
+                  className="px-6 h-11 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[9px] shadow-none hover:bg-slate-800 transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 active:scale-[0.98]"
                 >
-                  <option value="">All Branches</option>
-                  {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
-                    (b) => (
-                      <option key={b}>{b}</option>
-                    ),
+                  {loading ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Search size={16} />
                   )}
-                </select>
-                <ChevronDown
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                  size={14}
-                />
+                  Intelligence Map
+                </button>
               </div>
-              <div className="flex-1 relative">
-                <select
-                  value={year}
-                  onChange={(e) => setYear(e.target.value)}
-                  className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
-                >
-                  <option value="">All Years</option>
-                  {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
-                    <option key={y}>{y}</option>
-                  ))}
-                </select>
-                <ChevronDown
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                  size={14}
-                />
-              </div>
+
+              {searchMode === "intelligence" && (
+                <div className="flex gap-4 items-center px-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                      Presence
+                    </span>
+                    <select
+                      value={intelligenceFilters.isPresentInCampus}
+                      onChange={(e) =>
+                        setIntelligenceFilters({
+                          ...intelligenceFilters,
+                          isPresentInCampus: e.target.value,
+                        })
+                      }
+                      className="bg-transparent border-none text-[10px] font-black text-slate-900 uppercase tracking-widest focus:ring-0 cursor-pointer"
+                    >
+                      <option value="ALL">Any</option>
+                      <option value="true">In Campus</option>
+                      <option value="false">Outside</option>
+                    </select>
+                  </div>
+                  <div className="w-px h-3 bg-slate-200 mx-2" />
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                      Status
+                    </span>
+                    <select
+                      value={intelligenceFilters.isSuspended}
+                      onChange={(e) =>
+                        setIntelligenceFilters({
+                          ...intelligenceFilters,
+                          isSuspended: e.target.value,
+                        })
+                      }
+                      className="bg-transparent border-none text-[10px] font-black text-slate-900 uppercase tracking-widest focus:ring-0 cursor-pointer"
+                    >
+                      <option value="ALL">Any</option>
+                      <option value="false">Active Only</option>
+                      <option value="true">Suspended Only</option>
+                    </select>
+                  </div>
+                </div>
+              )}
             </div>
           )}
-
-          <button
-            onClick={() => {
-              searchMode === "id"
-                ? fetchStudentById()
-                : handleSearchByFilter(1);
-            }}
-            disabled={loading}
-            className="px-8 h-11 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[9px] shadow-none hover:bg-slate-800 transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 active:scale-[0.98] min-w-[180px]"
-          >
-            {loading ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <Search size={16} />
-            )}
-            {loading ? "Searching..." : "Search Student"}
-          </button>
         </div>
       </div>
 
@@ -545,52 +688,62 @@ export default function StudentDetails() {
             />
           </div>
         ) : searchResults.length > 0 ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between px-2">
-              <h3 className="text-[9px] font-bold uppercase tracking-[0.3em] text-slate-400">
-                Search Results • {pagination.total} Records Found
-              </h3>
-            </div>
-            <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-none">
+          <div className="space-y-8">
+            <div className="bg-white border-2 border-slate-50 rounded-[2.5rem] overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+                <table
+                  className={cn(
+                    "w-full text-left border-collapse",
+                    searchMode === "intelligence" && "table-fixed min-w-[1200px]",
+                  )}
+                >
                   <thead>
-                    <tr className="border-b border-slate-50 bg-slate-50/20">
-                      <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                    <tr className="border-b border-slate-50 bg-slate-50/30">
+                      <th
+                        className={cn(
+                          "px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400",
+                          searchMode === "intelligence" ? "w-[250px]" : "",
+                        )}
+                      >
                         Student Identity
                       </th>
-                      <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
-                        Academic Credentials
+                      <th className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
+                        Credentials
                       </th>
-                      <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
-                        Account Status
+                      {searchMode === "intelligence" && (
+                        <>
+                          <th className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 text-center">
+                            CGPA
+                          </th>
+                          <th className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 text-center">
+                            Backlogs
+                          </th>
+                        </>
+                      )}
+                      <th className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
+                        Status
                       </th>
-                      <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
-                        Activity Pulse
+                      <th className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
+                        Contact Pool
                       </th>
-                      <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20 text-right">
+                      <th className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 text-right">
                         Action
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-50/60">
+                  <tbody className="divide-y divide-slate-50/50">
                     {searchResults.map((std) => (
                       <tr
                         key={std.username}
                         onClick={() => handleOpenPerformance(std)}
-                        className="cursor-pointer"
+                        className="group hover:bg-slate-50/50 transition-all cursor-pointer"
                       >
-                        <td className="px-10 py-5">
+                        <td className="px-8 py-5">
                           <div className="flex items-center gap-4">
                             <div
                               className={cn(
-                                "w-11 h-11 rounded-full flex items-center justify-center text-white text-[12px] font-black border border-white shadow-sm overflow-hidden shrink-0 ring-2",
-                                std.profile_url
-                                  ? "bg-slate-50"
-                                  : "bg-emerald-900",
-                                std.is_suspended
-                                  ? "ring-rose-500"
-                                  : "ring-emerald-400",
+                                "w-11 h-11 rounded-full flex items-center justify-center text-white text-[12px] font-black border border-white shadow-sm overflow-hidden shrink-0",
+                                std.profile_url ? "bg-slate-50" : "bg-emerald-900",
                               )}
                             >
                               {std.profile_url ? (
@@ -603,37 +756,63 @@ export default function StudentDetails() {
                                 (std.name?.[0] || "U").toUpperCase()
                               )}
                             </div>
-                            <div className="flex flex-col">
-                              <p className="font-bold text-slate-900 tracking-tight leading-none mb-1 uppercase">
+                            <div className="flex flex-col min-w-0">
+                              <p className="font-bold text-slate-900 tracking-tight leading-none truncate uppercase">
                                 {std.name}
                               </p>
-                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest opacity-70">
-                                {std.email}
+                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 opacity-70 truncate">
+                                {std.username}
                               </p>
                             </div>
                           </div>
                         </td>
 
-                        <td className="px-10 py-5">
-                          <div className="flex flex-col gap-1.5">
-                            <span className="text-[11px] font-black text-slate-700 uppercase tracking-tight">
-                              {std.username}
+                        <td className="px-8 py-5">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2.5 py-1 bg-slate-100 text-slate-900 rounded-lg text-[10px] font-black uppercase tracking-widest border border-slate-200/50">
+                              {std.branch}
                             </span>
-                            <div className="flex items-center gap-2">
-                              <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[9px] font-bold uppercase tracking-widest border border-slate-200">
-                                {std.branch}
-                              </span>
-                              <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-bold uppercase tracking-widest border border-blue-100">
-                                {std.year || "E1"}
-                              </span>
-                            </div>
+                            <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg text-[10px] font-black uppercase tracking-widest border border-blue-100/50">
+                              {std.year || "E1"}
+                            </span>
                           </div>
                         </td>
 
-                        <td className="px-10 py-5">
+                        {searchMode === "intelligence" && (
+                          <>
+                            <td className="px-8 py-5 text-center">
+                              <span
+                                className={cn(
+                                  "text-[13px] font-black tracking-tighter",
+                                  (std.cgpa || 0) >= 8
+                                    ? "text-emerald-600"
+                                    : (std.cgpa || 0) >= 6
+                                      ? "text-blue-600"
+                                      : "text-slate-400",
+                                )}
+                              >
+                                {std.cgpa?.toFixed(2) || "0.00"}
+                              </span>
+                            </td>
+                            <td className="px-8 py-5 text-center">
+                              <span
+                                className={cn(
+                                  "px-2 py-0.5 rounded-full text-[10px] font-black",
+                                  (std.total_backlogs || 0) > 0
+                                    ? "bg-rose-50 text-rose-600 border border-rose-100"
+                                    : "bg-emerald-50 text-emerald-600 border border-emerald-100",
+                                )}
+                              >
+                                {std.total_backlogs || 0}
+                              </span>
+                            </td>
+                          </>
+                        )}
+
+                        <td className="px-8 py-5">
                           <div
                             className={cn(
-                              "flex items-center gap-1.5 px-3 py-1 rounded-xl border w-fit",
+                              "flex items-center gap-2 px-3 py-1 rounded-xl border w-fit font-bold uppercase tracking-widest text-[9px]",
                               std.is_suspended
                                 ? "bg-rose-50 border-rose-100 text-rose-500"
                                 : "bg-emerald-50 border-emerald-100 text-emerald-500",
@@ -647,27 +826,25 @@ export default function StudentDetails() {
                                   : "bg-emerald-500 animate-pulse",
                               )}
                             />
-                            <span className="text-[9px] font-bold uppercase tracking-widest">
-                              {std.is_suspended ? "Suspended" : "Active"}
-                            </span>
+                            {std.is_suspended ? "Restricted" : "Active"}
                           </div>
                         </td>
 
-                        <td className="px-10 py-5">
+                        <td className="px-8 py-5">
                           <div className="flex flex-col">
-                            <p className="text-[11px] font-bold text-slate-600 uppercase tracking-tighter">
-                              {std.is_in_campus ? "IN CAMPUS" : "OUTSIDE"}
+                            <p className="text-[11px] font-bold text-slate-900 tracking-tight">
+                              {std.email}
                             </p>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                              Status Track
+                            <p className="text-[10px] font-bold text-slate-400 lowercase opacity-60">
+                              {std.is_in_campus ? "In Campus" : "Outside"}
                             </p>
                           </div>
                         </td>
 
-                        <td className="px-10 py-5">
-                          <div className="flex justify-end">
-                            <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 shadow-sm">
-                              <ChevronRight size={18} />
+                        <td className="px-8 py-5">
+                          <div className="flex justify-end pr-2">
+                            <div className="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200/50 flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all shadow-sm">
+                              <ChevronRight size={14} />
                             </div>
                           </div>
                         </td>
@@ -681,7 +858,7 @@ export default function StudentDetails() {
               currentPage={pagination.page}
               totalPages={pagination.totalPages}
               onPageChange={(p) => handleSearchByFilter(p)}
-              className="mt-12"
+              className="mt-8"
             />
           </div>
         ) : (

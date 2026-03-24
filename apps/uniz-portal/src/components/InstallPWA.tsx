@@ -12,38 +12,17 @@ export const InstallPWA = () => {
   const auth = useRecoilValue(is_authenticated);
 
   useEffect(() => {
-    // 1. Standalone check
+    // Check standalone
     const isStandaloneMatch =
       window.matchMedia("(display-mode: standalone)").matches ||
       (window.navigator as any).standalone === true;
     setIsStandalone(isStandaloneMatch);
 
-    // 2. iOS detection
+    // iOS detection
     const ios =
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
     setIsIOS(ios);
-
-    // 3. Handle beforeinstallprompt (Android/Chrome)
-    const handleBeforeInstallPrompt = (e: any) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
-      if (!isStandaloneMatch && !isDismissed) {
-        setIsVisible(true);
-      }
-    };
-
-    if (!deferredPrompt) {
-      window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-    }
-
-    return () => {
-      window.removeEventListener(
-        "beforeinstallprompt",
-        handleBeforeInstallPrompt,
-      );
-    };
-  }, [deferredPrompt, setDeferredPrompt]);
+  }, []);
 
   // 4. Force visibility check for mobile
   useEffect(() => {
@@ -92,20 +71,27 @@ export const InstallPWA = () => {
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === "accepted") {
-        setDeferredPrompt(null);
-        setIsVisible(false);
+      try {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === "accepted") {
+          setDeferredPrompt(null);
+          (window as any).deferredPWAInstallPrompt = null;
+          setIsVisible(false);
+        }
+      } catch (err) {
+        console.error("[PWA] Installation prompt failed:", err);
       }
     } else if (isIOS) {
+      // For iOS, manual instructions are unavoidable but we make them as friendly as possible
       alert(
         "To install UniZ: Tap 'Share' in Safari and select 'Add to Home Screen'.",
       );
     } else {
-      alert(
-        "Open your browser menu and select 'Install App' or 'Add to Home Screen'.",
-      );
+      // If we don't have the prompt, and it's not iOS, don't show the alert instructions
+      // Instead, just hide the toast since we can't fulfill the direct install yet.
+      console.log("[PWA] Install clicked but no prompt available");
+      setIsVisible(false);
     }
   };
 
