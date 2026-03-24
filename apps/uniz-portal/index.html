@@ -20,6 +20,16 @@
 
   <title>uniZ - reimagining how students navigate</title>
 
+  <script>
+    window.deferredPWAInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      window.deferredPWAInstallPrompt = e;
+      console.log('[PWA] Early event capture successful');
+      window.dispatchEvent(new CustomEvent('pwa-prompt-ready', { detail: e }));
+    });
+  </script>
+
   <!-- Global JSON-LD Schema -->
   <script type="application/ld+json">
   {

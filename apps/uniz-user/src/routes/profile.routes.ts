@@ -20,6 +20,7 @@ import {
   bulkUpdateFaculty,
   bulkDeleteFaculty,
   getAvailableBatches,
+  internalSyncStudentStats,
 } from "../controllers/profile.controller";
 
 import multer from "multer";
@@ -213,6 +214,7 @@ router.get("/admin/upload-history", authMiddleware, getUploadHistory);
 router.post("/internal/upload-history", recordExternalUpload);
 router.post("/internal/bulk-profiles", getBulkProfiles);
 router.post("/internal/targeting", getTargetingData);
+router.post("/internal/sync-student-stats", internalSyncStudentStats);
 
 router.get("/admin/student/:username", authMiddleware, getStudentProfile);
 router.put(
