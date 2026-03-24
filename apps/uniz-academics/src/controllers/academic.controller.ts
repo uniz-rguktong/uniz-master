@@ -1764,7 +1764,17 @@ export const getGradesTemplate = async (
     );
 
     students.forEach((s: any) => {
-      activeSubjects.forEach((sub:any) => {
+      activeSubjects.forEach((sub: any) => {
+        // If "ALL" branches selected, only map subjects that match the student's branch
+        if (
+          String(branch).toUpperCase() === "ALL" &&
+          sub.department &&
+          s.branch &&
+          sub.department.toUpperCase() !== s.branch.toUpperCase()
+        ) {
+          return;
+        }
+
         const rowSemId = (semesterId as string) || sub.semester;
         const finalSemId =
           rowSemId && year && !rowSemId.includes(String(year).toUpperCase())
@@ -2033,7 +2043,18 @@ export const getAttendanceTemplate = async (
     );
 
     students.forEach((s: any) => {
-      subjects.forEach((sub:any) => {
+      subjects.forEach((sub: any) => {
+        // If "ALL" branches selected, only map subjects that match the student's branch
+        if (
+          branch &&
+          String(branch).toUpperCase() === "ALL" &&
+          sub.department &&
+          s.branch &&
+          sub.department.toUpperCase() !== s.branch.toUpperCase()
+        ) {
+          return;
+        }
+
         const rowSemId = (semesterId as string) || sub.semester;
         // Standardize to YEAR-SEM-ID if not already prefixed
         const finalSemId =
