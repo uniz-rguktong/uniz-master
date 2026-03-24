@@ -140,8 +140,10 @@ export default function UnifiedAcademicManager() {
 
   useEffect(() => {
     const fetchBatches = async () => {
-      const res = await apiClient<string[]>(GET_AVAILABLE_BATCHES);
-      if (res) setAvailableBatches(res);
+      const res = await apiClient<{ success: boolean; batches: string[] }>(
+        GET_AVAILABLE_BATCHES,
+      );
+      if (res && res.success) setAvailableBatches(res.batches);
     };
     fetchBatches();
   }, []);
