@@ -166,18 +166,30 @@ export default function FacultyManagement({
     }
   };
 
-  const isMounted = React.useRef(false);
+
+
+  const hasMounted = React.useRef(false);
 
   useEffect(() => {
-    fetchFaculty();
-    isMounted.current = true;
+    // Only fetch on mount if not already fetched
+    if (!facultyState.fetched || hasMounted.current) {
+      fetchFaculty();
+    }
+    hasMounted.current = true;
   }, [page, deptRestrict]);
 
   useEffect(() => {
-    if (!isMounted.current) return;
+    // Skip initial run to avoid double fetch on mount
+    if (!hasMounted.current) return;
+    
     const timer = setTimeout(() => {
-      if (page !== 1) setPage(1);
-      else fetchFaculty();
+      // If we are not on page 1, resetting page to 1 will trigger the [page] effect
+      // If we are already on page 1, we must call fetchFaculty directly
+      if (page !== 1) {
+        setPage(1);
+      } else {
+        fetchFaculty();
+      }
     }, 500);
     return () => clearTimeout(timer);
   }, [search]);

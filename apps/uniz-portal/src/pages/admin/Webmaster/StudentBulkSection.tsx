@@ -27,13 +27,47 @@ export default function StudentBulkSection() {
   const [progress, setProgress] = useState<number>(0);
 
   // Export State
+  const [availableBatches, setAvailableBatches] = useState<string[]>([]);
   const [exportParams, setExportParams] = useState({
     branch: "CSE",
     year: "E1",
-    fields: "username,name,email,branch,section",
     batch: "ALL",
   });
-  const [availableBatches, setAvailableBatches] = useState<string[]>([]);
+  const [selectedFields, setSelectedFields] = useState<string[]>([
+    "username",
+    "name",
+    "email",
+    "branch",
+    "section",
+  ]);
+
+  const FIELD_GROUPS = {
+    Core: [
+      "username",
+      "name",
+      "email",
+      "phone",
+      "gender",
+      "branch",
+      "year",
+      "semester",
+      "section",
+      "batch",
+      "roomno",
+    ],
+    Parents: [
+      "fatherName",
+      "motherName",
+      "fatherOccupation",
+      "motherOccupation",
+      "fatherEmail",
+      "motherEmail",
+      "fatherAddress",
+      "motherAddress",
+    ],
+    Identity: ["category", "campus", "bloodGroup", "dateOfBirth", "createdAt"],
+    Status: ["isPresentInCampus", "isApplicationPending", "isSuspended"],
+  };
 
   // Bulk Upload Function
   const handleUpload = async () => {
@@ -130,7 +164,7 @@ export default function StudentBulkSection() {
     const url = ADMIN_STUDENT_EXPORT(
       exportParams.branch === "ALL" ? undefined : exportParams.branch,
       exportParams.year === "ALL" ? undefined : exportParams.year,
-      exportParams.fields,
+      selectedFields.join(","),
       exportParams.batch === "ALL" ? undefined : exportParams.batch,
     );
     try {
@@ -285,7 +319,7 @@ export default function StudentBulkSection() {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-1">
               <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
                 Batch Target
               </label>
@@ -313,19 +347,87 @@ export default function StudentBulkSection() {
                 />
               </div>
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
-                Attribute Schema
+          {/* New Attribute Schema Checkbox Area */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between px-1">
+              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
+                Attribute Schema Selector
               </label>
-              <input
-                type="text"
-                value={exportParams.fields}
-                onChange={(e) =>
-                  setExportParams({ ...exportParams, fields: e.target.value })
-                }
-                className="w-full h-11 px-6 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none font-bold text-slate-900 text-[12px] transition-all tracking-tight shadow-none"
-              />
+              <div className="flex gap-4">
+                <button
+                  onClick={() =>
+                    setSelectedFields(Object.values(FIELD_GROUPS).flat())
+                  }
+                  className="text-[9px] font-bold text-navy-600 hover:text-navy-900 uppercase tracking-widest transition-colors"
+                >
+                  Select All
+                </button>
+                <button
+                  onClick={() => setSelectedFields(["username", "name"])}
+                  className="text-[9px] font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-colors"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-slate-50/50 p-6 rounded-[2rem] border border-slate-200/60">
+              {Object.entries(FIELD_GROUPS).map(([group, fields]) => (
+                <div key={group} className="space-y-3">
+                  <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] px-1 border-l-2 border-slate-200 ml-1">
+                    {group}
+                  </h4>
+                  <div className="flex flex-col gap-2">
+                    {fields.map((field) => (
+                      <label
+                        key={field}
+                        className={`flex items-center gap-3 p-3 rounded-2xl cursor-pointer transition-all border group ${
+                          selectedFields.includes(field)
+                            ? "bg-white border-navy-200 shadow-sm"
+                            : "bg-transparent border-transparent hover:bg-white/50"
+                        }`}
+                      >
+                        <div
+                          className={`w-4 h-4 rounded-md border-2 flex items-center justify-center transition-all ${
+                            selectedFields.includes(field)
+                              ? "bg-navy-900 border-navy-900"
+                              : "border-slate-300 bg-white group-hover:border-slate-400"
+                          }`}
+                        >
+                          {selectedFields.includes(field) && (
+                            <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                          )}
+                        </div>
+                        <input
+                          type="checkbox"
+                          className="hidden"
+                          checked={selectedFields.includes(field)}
+                          onChange={() => {
+                            if (selectedFields.includes(field)) {
+                              setSelectedFields(
+                                selectedFields.filter((f) => f !== field),
+                              );
+                            } else {
+                              setSelectedFields([...selectedFields, field]);
+                            }
+                          }}
+                        />
+                        <span
+                          className={`text-[11px] font-bold capitalize tracking-tight ${
+                            selectedFields.includes(field)
+                              ? "text-navy-900"
+                              : "text-slate-500"
+                          }`}
+                        >
+                          {field.replace(/([A-Z])/g, " $1").trim()}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 

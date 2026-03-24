@@ -20,6 +20,7 @@ const BRANCH_MAP: Record<string, string> = {
   "CHEMICAL ENGINEERING": "CHEM",
   "METALLURGICAL AND MATERIALS ENGINEERING": "MME",
   "METALLURGY AND MATERIALS ENGINEERING": "MME",
+  "ARTIFICAL INTELLIGENCE & ML": "AI&ML",
 };
 
 const mapBranch = (name: string) => {
@@ -365,12 +366,29 @@ export const exportStudentsSelective = async (
       "email",
       "gender",
       "phone",
-      "branch",
+      "fatherName",
+      "motherName",
+      "fatherOccupation",
+      "motherOccupation",
+      "fatherEmail",
+      "motherEmail",
+      "fatherAddress",
+      "motherAddress",
+      "bloodGroup",
+      "dateOfBirth",
+      "profileUrl",
       "year",
+      "semester",
+      "branch",
       "section",
       "batch",
       "roomno",
       "isPresentInCampus",
+      "isApplicationPending",
+      "isSuspended",
+      "category",
+      "campus",
+      "createdAt",
     ];
     let exportFields = fields
       ? String(fields)

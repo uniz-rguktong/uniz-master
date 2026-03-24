@@ -465,7 +465,6 @@ export default function Signin({ type }: SigninProps) {
                 type="submit"
                 disabled={
                   !!import.meta.env.VITE_TURNSTILE_SITE_KEY &&
-                  !import.meta.env.DEV &&
                   !captchaToken
                 }
               >
