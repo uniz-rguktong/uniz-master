@@ -583,6 +583,12 @@ export const CalcomHero = () => {
       window.alert(
         "To install UniZ on iOS:\n\n1. Tap the Share icon (at bottom)\n2. Select 'Add to Home Screen'\n\nDirect native install is not supported by Apple yet.",
       );
+    } else if (result === "fallback") {
+      window.alert(
+        "Direct installation is not supported by your current browser (like Safari), or the app is already installed. Try using Chrome or Edge, or manually install from your browser menu ('Add to Home Screen' or 'Install App').",
+      );
+    } else if (result === "error") {
+      window.alert("Installation failed. Please try installing manually from your browser menu.");
     }
   };
 
