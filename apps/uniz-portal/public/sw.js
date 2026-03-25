@@ -16,7 +16,15 @@ self.addEventListener("activate", (event) => {
 
 // ─── Fetch Event (Required for PWA Installability) ───────────────────────────
 self.addEventListener("fetch", (event) => {
-  // Pass-through handler. In the future, this can be used for offline caching.
+  // Pass-through handler with basic cache matching to satisfy Chrome 120+ strict PWA criteria
+  // Without event.respondWith, Chrome completely ignores the fetch handler and disables PWA installs.
+  if (event.request.method !== 'GET') return;
+  
+  event.respondWith(
+    fetch(event.request).catch(function() {
+      return caches.match(event.request);
+    })
+  );
 });
 
 // ─── Push Event ───────────────────────────────────────────────────────────────
