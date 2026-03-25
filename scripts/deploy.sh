@@ -228,11 +228,12 @@ if [ -f "/root/uniz-secrets.env" ]; then
   deploy_logic
 else
   # On Local Machine -> Trigger VPS
+  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
   git add .
   git commit -m "${1:-"chore: auto-deploy from $CURRENT_BRANCH"}" || true
   git push origin "$CURRENT_BRANCH"
 
-  echo "[SSH] Dispatching to VPS..."
+  echo "[SSH] Dispatching $CURRENT_BRANCH to VPS..."
   ssh -o StrictHostKeyChecking=no root@76.13.241.174 << EOF
     export WORK_DIR="/root/uniz-master-$CURRENT_BRANCH"
     if [ ! -d "\$WORK_DIR" ]; then
