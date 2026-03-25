@@ -6,8 +6,9 @@ import { PageTransition } from "./components/Transition";
 import Toaster from "@/components/ui/toast";
 import { toasterRef } from "@/utils/toast-ref";
 import { useIsAuth } from "./hooks/is_authenticated";
-import { Construction, FileQuestion, ArrowLeft } from "lucide-react";
+import { Construction, FileQuestion, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "./components/Button";
+import { motion } from "framer-motion";
 
 // Lazy imports
 const Home = lazy(() => import("./pages/home"));
@@ -51,30 +52,52 @@ export function Error() {
   useIsAuth();
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white text-center px-4">
-      <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mb-6 text-white">
-        <FileQuestion size={32} />
+    <div className="relative min-h-screen flex flex-col items-center justify-center bg-white text-center px-4 font-sans overflow-hidden selection:bg-zinc-100">
+      {/* ── High-End Mesh Gradient Backdrop ── */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <motion.div 
+          animate={{ x: [0, 50, 0], y: [0, -30, 0], scale: [1, 1.1, 1] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] rounded-full bg-gradient-to-br from-blue-50/40 via-blue-100/10 to-transparent blur-[120px] opacity-70" 
+        />
+        <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       </div>
-      <h1 className="text-4xl font-semibold text-black mb-2 uppercase tracking-[-0.02em]">
-        Page Not Found
-      </h1>
-      <p className="text-slate-500 max-w-md mb-8 font-medium italic opacity-80">
-        The requested resource is unavailable or has been relocated.
-      </p>
-      <div className="flex gap-4">
-        <Button
-          variant="outline"
-          onclickFunction={() => navigate(-1)}
-          className="rounded-none border-2 border-black font-bold uppercase"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" /> Go Back
-        </Button>
-        <Link to="/">
-          <Button className="rounded-none bg-black text-white px-8 font-bold uppercase">
-            Return to Home
-          </Button>
-        </Link>
-      </div>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative z-10 flex flex-col items-center max-w-lg mx-auto"
+      >
+        <div className="w-16 h-16 bg-zinc-950 rounded-2xl flex items-center justify-center mb-8 text-white shadow-xl shadow-zinc-200/50">
+          <FileQuestion size={28} strokeWidth={2.5} />
+        </div>
+        
+        <h1 className="text-5xl md:text-7xl font-black text-zinc-950 mb-3 tracking-tight leading-none">
+          404 <span className="text-zinc-300 font-light tracking-[-0.04em]">Error</span>
+        </h1>
+        
+        <p className="text-zinc-500 mb-10 font-medium text-[15px] leading-relaxed">
+          The requested resource is unavailable, has been relocated, or is simply a glitch in the matrix.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <button
+            onClick={() => navigate(-1)}
+            className="group relative h-12 px-8 bg-white border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 text-zinc-900 text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-sm"
+          >
+            <ArrowLeft className="w-4 h-4 text-zinc-400 group-hover:-translate-x-1 transition-transform" />
+            Go Back
+          </button>
+          <Link to="/" className="w-full sm:w-auto">
+            <button className="w-full sm:w-auto group relative h-12 px-8 bg-zinc-950 hover:bg-black text-white text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+              Return Home
+              <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </Link>
+        </div>
+      </motion.div>
     </div>
   );
 }
