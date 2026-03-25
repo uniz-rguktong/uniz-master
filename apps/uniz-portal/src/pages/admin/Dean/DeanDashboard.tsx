@@ -8,9 +8,7 @@ import {
   Lock,
   Bell,
   Smartphone,
-
   Layout,
-
 } from "lucide-react";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
@@ -418,7 +416,7 @@ export default function DeanDashboard() {
         <header className=" sticky top-0 z-40 px-10 py-5 flex items-center justify-end bg-white/40 backdrop-blur-md border-b border-white/20">
           {/* Right group: name+email → avatar → logout */}
           <div className="flex items-center gap-4">
-            {/* Name + email — left of avatar */}
+            {/* Name + email - left of avatar */}
             <div className="text-right">
               <p className="text-[15px] font-bold text-slate-900 leading-tight tracking-tight">
                 {profileName || username}
@@ -428,7 +426,7 @@ export default function DeanDashboard() {
               </p>
             </div>
 
-            {/* Circular profile photo — opens popup */}
+            {/* Circular profile photo - opens popup */}
             <button
               ref={headerAvatarRef}
               onClick={() => {

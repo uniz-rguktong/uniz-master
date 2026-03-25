@@ -363,7 +363,7 @@ export default function ProfilePopup({
                   <DetailRow
                     icon={<Phone size={14} className="text-slate-500" />}
                     label="Contact"
-                    value={formData.contact || "—"}
+                    value={formData.contact || "-"}
                     editable={isEditing}
                     onChange={(v) => setFormData({ ...formData, contact: v })}
                   />

@@ -41,6 +41,7 @@ export default function Signin({ type }: SigninProps) {
   const [resetToken, setResetToken] = useRecoilState(resetTokenState);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isTurnstileLoaded, setIsTurnstileLoaded] = useState(false);
   const [authState] = useRecoilState(is_authenticated);
   const setAdmin = useSetRecoilState<any>(adminUsername);
   const setAuth = useSetRecoilState(is_authenticated);
@@ -226,7 +227,7 @@ export default function Signin({ type }: SigninProps) {
         email?: string;
       }>(FORGOT_PASS_ENDPOINT, {
         method: "POST",
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           username: username.trim(),
           captchaToken: captchaToken,
         }),
@@ -267,7 +268,7 @@ export default function Signin({ type }: SigninProps) {
         deliveryMethod?: "email";
       }>(REQUEST_OTP_EMAIL_ENDPOINT, {
         method: "POST",
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           username: username.trim(),
           captchaToken: captchaToken,
         }),
@@ -431,13 +432,33 @@ export default function Signin({ type }: SigninProps) {
               />
 
               {import.meta.env.VITE_TURNSTILE_SITE_KEY ? (
-                <div className="flex justify-center py-2">
+                <div className="flex flex-col items-center py-2 relative min-h-[65px] justify-center">
+                  {!isTurnstileLoaded && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/50 rounded-xl border border-slate-100 animate-pulse z-10 pointer-events-none">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.3s]" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.15s]" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" />
+                      </div>
+                    </div>
+                  )}
                   <Turnstile
                     ref={turnstileRef}
                     siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-                    onSuccess={(token) => setCaptchaToken(token)}
-                    onExpire={() => setCaptchaToken(null)}
-                    onError={() => setCaptchaToken(null)}
+                    onSuccess={(token) => {
+                      setCaptchaToken(token);
+                      setIsTurnstileLoaded(true);
+                    }}
+                    onExpire={() => {
+                      setCaptchaToken(null);
+                      setIsTurnstileLoaded(false);
+                      turnstileRef.current?.reset();
+                    }}
+                    onError={() => {
+                      setCaptchaToken(null);
+                      setIsTurnstileLoaded(false);
+                    }}
+                    onLoad={() => setIsTurnstileLoaded(true)}
                   />
                 </div>
               ) : (
@@ -464,11 +485,18 @@ export default function Signin({ type }: SigninProps) {
                 isLoading={isLoading}
                 type="submit"
                 disabled={
-                  !!import.meta.env.VITE_TURNSTILE_SITE_KEY &&
-                  !captchaToken
+                  !!import.meta.env.VITE_TURNSTILE_SITE_KEY && !captchaToken
                 }
               >
                 Sign In
+                {!!import.meta.env.VITE_TURNSTILE_SITE_KEY &&
+                  !captchaToken &&
+                  username &&
+                  password && (
+                    <span className="absolute -bottom-6 left-0 w-full text-center text-[9px] font-black text-blue-500 uppercase tracking-widest animate-pulse">
+                      Awaiting Security Verification...
+                    </span>
+                  )}
               </Button>
             </div>
           )}
@@ -488,13 +516,36 @@ export default function Signin({ type }: SigninProps) {
                 className="h-12"
               />
               {import.meta.env.VITE_TURNSTILE_SITE_KEY ? (
-                <div className="flex justify-center py-2">
+                <div className="flex flex-col items-center py-2 relative min-h-[65px] justify-center">
+                  {!isTurnstileLoaded && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/50 rounded-xl border border-slate-100 animate-pulse z-10 pointer-events-none">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.3s]" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.15s]" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" />
+                      </div>
+                      <span className="text-[10px] font-black text-slate-400 mt-2 tracking-widest uppercase">
+                        Initializing Security
+                      </span>
+                    </div>
+                  )}
                   <Turnstile
                     ref={turnstileRef}
                     siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-                    onSuccess={(token) => setCaptchaToken(token)}
-                    onExpire={() => setCaptchaToken(null)}
-                    onError={() => setCaptchaToken(null)}
+                    onSuccess={(token) => {
+                      setCaptchaToken(token);
+                      setIsTurnstileLoaded(true);
+                    }}
+                    onExpire={() => {
+                      setCaptchaToken(null);
+                      setIsTurnstileLoaded(false);
+                      turnstileRef.current?.reset();
+                    }}
+                    onError={() => {
+                      setCaptchaToken(null);
+                      setIsTurnstileLoaded(false);
+                    }}
+                    onLoad={() => setIsTurnstileLoaded(true)}
                   />
                 </div>
               ) : (
@@ -558,20 +609,45 @@ export default function Signin({ type }: SigninProps) {
                       className="text-[11px] text-slate-500 hover:text-slate-900 font-bold uppercase tracking-widest underline transition-all disabled:opacity-50"
                       onClick={requestEmailOtp}
                       disabled={
-                        isLoading || 
-                        (!!import.meta.env.VITE_TURNSTILE_SITE_KEY && !import.meta.env.DEV && !captchaToken)
+                        isLoading ||
+                        (!!import.meta.env.VITE_TURNSTILE_SITE_KEY &&
+                          !import.meta.env.DEV &&
+                          !captchaToken)
                       }
                     >
                       Resend via Email
                     </button>
                     {import.meta.env.VITE_TURNSTILE_SITE_KEY ? (
-                      <div className="flex justify-center py-2">
+                      <div className="flex flex-col items-center py-2 relative min-h-[65px] justify-center">
+                        {!isTurnstileLoaded && (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/50 rounded-xl border border-slate-100 animate-pulse z-10 pointer-events-none">
+                            <div className="flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.3s]" />
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.15s]" />
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" />
+                            </div>
+                            <span className="text-[10px] font-black text-slate-400 mt-2 tracking-widest uppercase">
+                              Initializing Security
+                            </span>
+                          </div>
+                        )}
                         <Turnstile
                           ref={turnstileRef}
                           siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-                          onSuccess={(token) => setCaptchaToken(token)}
-                          onExpire={() => setCaptchaToken(null)}
-                          onError={() => setCaptchaToken(null)}
+                          onSuccess={(token) => {
+                            setCaptchaToken(token);
+                            setIsTurnstileLoaded(true);
+                          }}
+                          onExpire={() => {
+                            setCaptchaToken(null);
+                            setIsTurnstileLoaded(false);
+                            turnstileRef.current?.reset();
+                          }}
+                          onError={() => {
+                            setCaptchaToken(null);
+                            setIsTurnstileLoaded(false);
+                          }}
+                          onLoad={() => setIsTurnstileLoaded(true)}
                         />
                       </div>
                     ) : (
