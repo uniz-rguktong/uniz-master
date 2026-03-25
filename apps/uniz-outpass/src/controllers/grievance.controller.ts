@@ -153,3 +153,40 @@ export const getGrievances = async (
     });
   }
 };
+
+export const deleteGrievance = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const allowedRoles = ["swo", "director", "admin"];
+  if (!user || !allowedRoles.includes(user.role)) {
+    return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
+  }
+
+  const { id } = req.params;
+  try {
+    await prisma.grievance.delete({ where: { id } });
+    return res.json({ success: true, message: "Grievance deleted." });
+  } catch (e) {
+    return res.status(500).json({ code: ErrorCode.INTERNAL_SERVER_ERROR });
+  }
+};
+
+export const deleteAllGrievances = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const allowedRoles = ["swo", "director", "admin"];
+  if (!user || !allowedRoles.includes(user.role)) {
+    return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
+  }
+
+  try {
+    await prisma.grievance.deleteMany({});
+    return res.json({ success: true, message: "All grievances cleared." });
+  } catch (e) {
+    return res.status(500).json({ code: ErrorCode.INTERNAL_SERVER_ERROR });
+  }
+};
