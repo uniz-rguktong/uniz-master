@@ -5,7 +5,7 @@ import { STUDENT_INFO } from "../api/endpoints";
 import { apiClient } from "../api/apiClient";
 
 const CACHE_KEY = "uniz_student_cache";
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes — background refresh after this
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes - background refresh after this
 
 let lastFetchTime = 0;
 let fetchPromise: Promise<any> | null = null;
@@ -27,9 +27,12 @@ function readCache(): { data: any; timestamp: number } | null {
 /** Write to localStorage cache */
 function writeCache(data: any) {
   try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }));
+    localStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({ data, timestamp: Date.now() }),
+    );
   } catch {
-    // Storage quota — silently ignore
+    // Storage quota - silently ignore
   }
 }
 
@@ -37,7 +40,9 @@ function writeCache(data: any) {
 export function resetStudentDataCache() {
   lastFetchTime = 0;
   fetchPromise = null;
-  try { localStorage.removeItem(CACHE_KEY); } catch {}
+  try {
+    localStorage.removeItem(CACHE_KEY);
+  } catch {}
 }
 
 interface StudentData {
@@ -77,7 +82,7 @@ export function useStudentData() {
       // ── Instant cache rehydration ──────────────────────────────────────────
       const cached = readCache();
       if (cached && cached.data) {
-        // Push cached data immediately — UI renders without waiting for network
+        // Push cached data immediately - UI renders without waiting for network
         const setter = globalSetStudent ?? setStudent;
         setter(cached.data);
 
@@ -87,9 +92,9 @@ export function useStudentData() {
           loadingSetter(false);
           return;
         }
-        // Cache is stale — still show cached data but fetch in background
+        // Cache is stale - still show cached data but fetch in background
         const loadingSetter = globalSetAuthLoading ?? setAuthLoading;
-        loadingSetter(false); // Don't block UI — data already shown from cache
+        loadingSetter(false); // Don't block UI - data already shown from cache
       }
       // ── End instant cache rehydration ─────────────────────────────────────
 

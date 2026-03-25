@@ -26,9 +26,6 @@ export const InstallPWA = () => {
 
   // 4. Force visibility check for mobile
   useEffect(() => {
-    const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
-    if (isDismissed) return;
-
     const isMobile =
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent,
@@ -46,27 +43,25 @@ export const InstallPWA = () => {
 
   // 5. Show after login if not already standalone
   useEffect(() => {
-    const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
-    if (auth.is_authenticated && !isStandalone && !isDismissed) {
-      setTimeout(() => setIsVisible(true), 2000);
+    if (auth.is_authenticated && !isStandalone) {
+      const timer = setTimeout(() => setIsVisible(true), 1000);
+      return () => clearTimeout(timer);
     }
   }, [auth.is_authenticated, isStandalone]);
 
-  // 6. Auto-dismiss after 8 seconds of visibility
+  // 6. Auto-dismiss after 5 seconds of visibility
   useEffect(() => {
     let timer: any;
     if (isVisible) {
       timer = setTimeout(() => {
         setIsVisible(false);
-        localStorage.setItem("pwa_prompt_dismissed", "true");
-      }, 8000);
+      }, 5000);
     }
     return () => clearTimeout(timer);
   }, [isVisible]);
 
   const handleDismiss = () => {
     setIsVisible(false);
-    localStorage.setItem("pwa_prompt_dismissed", "true");
   };
 
   const handleInstallClick = async () => {
@@ -110,7 +105,7 @@ export const InstallPWA = () => {
           <motion.div
             initial={{ width: "100%" }}
             animate={{ width: "0%" }}
-            transition={{ duration: 8, ease: "linear" }}
+            transition={{ duration: 5, ease: "linear" }}
             className="absolute top-0 left-0 h-[2px] bg-navy-900/40"
           />
 

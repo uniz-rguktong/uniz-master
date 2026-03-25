@@ -4,7 +4,7 @@
  * Shared localStorage cache for academic data (grades & attendance).
  *
  * Cache key format: uniz_academic_{type}_{userId}_{year}_{semester}
- * TTL: 30 minutes — data is stale-while-revalidate after this.
+ * TTL: 30 minutes - data is stale-while-revalidate after this.
  * ─────────────────────────────────────────────────────────────────
  */
 
@@ -12,7 +12,12 @@ const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
 type CacheType = "grades" | "attendance";
 
-function buildKey(type: CacheType, userId: string, year: string, semester: string): string {
+function buildKey(
+  type: CacheType,
+  userId: string,
+  year: string,
+  semester: string,
+): string {
   return `uniz_academic_${type}_${userId}_${year}_${semester}`;
 }
 
@@ -31,9 +36,12 @@ export function writeAcademicCache<T>(
 ): void {
   try {
     const entry: CacheEntry<T> = { data, timestamp: Date.now() };
-    localStorage.setItem(buildKey(type, userId, year, semester), JSON.stringify(entry));
+    localStorage.setItem(
+      buildKey(type, userId, year, semester),
+      JSON.stringify(entry),
+    );
   } catch {
-    // Quota exceeded — silently skip
+    // Quota exceeded - silently skip
   }
 }
 
@@ -50,7 +58,7 @@ export function readAcademicCache<T>(
     if (!raw) return null;
     const entry: CacheEntry<T> = JSON.parse(raw);
     if (!allowStale && Date.now() - entry.timestamp > CACHE_TTL_MS) {
-      // Expired — remove it
+      // Expired - remove it
       localStorage.removeItem(buildKey(type, userId, year, semester));
       return null;
     }

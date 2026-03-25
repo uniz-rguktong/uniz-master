@@ -144,9 +144,7 @@ export default function App() {
                   <AuthRedirect />
                 ) : (
                   <PageTransition>
-                    <div className="flex justify-center">
-                      <Home />
-                    </div>
+                    <Home />
                   </PageTransition>
                 )}
               </MaintenanceGuard>

@@ -150,9 +150,12 @@ export default function UploadSection({ type }: { type: UploadType }) {
             showToast: false,
           } as any);
           if (res && res.success && res.progress) {
-            if (res.progress.percent !== undefined) setProgress(res.progress.percent);
+            if (res.progress.percent !== undefined)
+              setProgress(res.progress.percent);
             if (res.progress.total && res.progress.processed) {
-              setProgress(Math.round((res.progress.processed / res.progress.total) * 100));
+              setProgress(
+                Math.round((res.progress.processed / res.progress.total) * 100),
+              );
             }
             if (
               res.progress.status === "completed" ||
@@ -197,13 +200,13 @@ export default function UploadSection({ type }: { type: UploadType }) {
       type === "attendance"
         ? GET_ATTENDANCE_TEMPLATE(branch, year, semester, batch)
         : GET_GRADES_TEMPLATE(
-          branch,
-          year,
-          semester,
-          subjectCode,
-          remedialsOnly,
-          batch,
-        );
+            branch,
+            year,
+            semester,
+            subjectCode,
+            remedialsOnly,
+            batch,
+          );
     const fileName = `${type}_${branch}_${year}_${semester}_template.xlsx`;
     await downloadFile(url, fileName);
   };
@@ -226,7 +229,10 @@ export default function UploadSection({ type }: { type: UploadType }) {
               onClick={downloadTemplate}
               className="group flex items-center gap-2.5 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl border border-slate-200 hover:bg-white hover:text-slate-900 hover:border-slate-300 transition-all font-bold uppercase tracking-widest text-[9px] active:scale-95"
             >
-              <FileDown size={13} className="text-slate-500 group-hover:scale-110 transition-transform" />
+              <FileDown
+                size={13}
+                className="text-slate-500 group-hover:scale-110 transition-transform"
+              />
               Download {type} Template
             </button>
           )}
@@ -361,7 +367,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                     </option>
                     {subjects.map((s) => (
                       <option key={s.code} value={s.code}>
-                        {s.code} — {s.name}
+                        {s.code} - {s.name}
                       </option>
                     ))}
                   </select>
@@ -439,7 +445,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
           {uploadId ? "Synchronizing..." : `Process & Record ${type}`}
         </button>
 
-        {/* Only show error result — success is communicated via the progress bar */}
+        {/* Only show error result - success is communicated via the progress bar */}
         {result && !result.success && (
           <div className="p-6 rounded-xl border shadow-none bg-red-50/50 border-red-200 text-red-900">
             <div className="flex items-center gap-3 mb-4">

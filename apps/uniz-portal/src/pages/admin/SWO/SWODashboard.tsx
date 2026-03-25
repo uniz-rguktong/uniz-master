@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef, useEffect } from "react";
-import {
-
-  LogOut,
-  LayoutDashboard,
-  MessageSquare,
-  Search,
-} from "lucide-react";
+import { LogOut, LayoutDashboard, MessageSquare, Search } from "lucide-react";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import ProfilePopup from "../ProfilePopup";
@@ -25,10 +19,14 @@ export default function SWODashboard() {
   const [profileName, setProfileName] = useState<string | null>(null);
   const [profileEmail, setProfileEmail] = useState<string | null>(null);
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
-  const [activeAnchor, setActiveAnchor] = useState<React.RefObject<HTMLElement>>(headerAvatarRef);
+  const [activeAnchor, setActiveAnchor] =
+    useState<React.RefObject<HTMLElement>>(headerAvatarRef);
   const [searchQuery, _setSearchQuery] = useState("");
 
-  const username = (localStorage.getItem("username") || "SWO").replace(/"/g, "");
+  const username = (localStorage.getItem("username") || "SWO").replace(
+    /"/g,
+    "",
+  );
   const initial = (profileName || username)[0]?.toUpperCase() ?? "S";
 
   // Fetch profile on mount
@@ -47,7 +45,7 @@ export default function SWODashboard() {
               setProfileEmail(data.data.email ?? null);
             }
           })
-          .catch(() => { });
+          .catch(() => {});
       });
     }
   }, []);
@@ -55,23 +53,19 @@ export default function SWODashboard() {
   const navGroups = [
     {
       group: null,
-      items: [
-        { id: "dashboard", label: "Overview", icon: LayoutDashboard },
-      ]
+      items: [{ id: "dashboard", label: "Overview", icon: LayoutDashboard }],
     },
     {
       group: "Operations",
       items: [
         // { id: "outing", label: "Outing Requests", icon: Clock },
         // { id: "outpass", label: "Outpass Requests", icon: CalendarDays },
-      ]
+      ],
     },
     {
       group: "Feedback",
-      items: [
-        { id: "grievance", label: "Grievances", icon: MessageSquare },
-      ]
-    }
+      items: [{ id: "grievance", label: "Grievances", icon: MessageSquare }],
+    },
   ];
 
   const { logout } = useLogout();
@@ -109,14 +103,38 @@ export default function SWODashboard() {
           className="absolute -right-3.5 top-1/2 -translate-y-1/2 bg-white border border-slate-200 rounded-full p-1.5 shadow-md text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all z-50 hidden lg:block"
         >
           {isSidebarOpen ? (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m15 18-6-6 6-6" />
+            </svg>
           ) : (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
           )}
         </button>
 
         {/* Sidebar Branding - Hides when collapsed for sleek look */}
-        <div className={`px-4 pt-8 pb-4 transition-all duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
+        <div
+          className={`px-4 pt-8 pb-4 transition-all duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}
+        >
           <div className="flex items-center justify-center">
             <h1 className="unifrakturcook-bold text-4xl text-slate-900 tracking-tight">
               uniZ
@@ -125,14 +143,18 @@ export default function SWODashboard() {
         </div>
 
         {/* Navigation Section */}
-        <nav className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-2 overflow-y-auto space-y-6 custom-sidebar-scroll`}>
+        <nav
+          className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-2 overflow-y-auto space-y-6 custom-sidebar-scroll`}
+        >
           {(() => {
-            const filteredGroups = navGroups.map(group => ({
-              ...group,
-              items: group.items.filter(item =>
-                item.label.toLowerCase().includes(searchQuery.toLowerCase())
-              )
-            })).filter(group => group.items.length > 0);
+            const filteredGroups = navGroups
+              .map((group) => ({
+                ...group,
+                items: group.items.filter((item) =>
+                  item.label.toLowerCase().includes(searchQuery.toLowerCase()),
+                ),
+              }))
+              .filter((group) => group.items.length > 0);
 
             if (filteredGroups.length === 0 && searchQuery) {
               return (
@@ -140,7 +162,9 @@ export default function SWODashboard() {
                   <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
                     <Search size={20} className="text-slate-300" />
                   </div>
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-4">No operations found</p>
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-4">
+                    No operations found
+                  </p>
                 </div>
               );
             }
@@ -148,7 +172,9 @@ export default function SWODashboard() {
             return filteredGroups.map((group, gIdx) => (
               <div key={gIdx} className="space-y-1.5">
                 {group.group && isSidebarOpen && (
-                  <h4 className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{group.group}</h4>
+                  <h4 className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">
+                    {group.group}
+                  </h4>
                 )}
                 {group.items.map((item) => {
                   const Icon = item.icon;
@@ -161,9 +187,10 @@ export default function SWODashboard() {
                       title={!isSidebarOpen ? item.label : ""}
                       className={`
                         w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group relative
-                        ${isActive
-                          ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
-                          : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
+                        ${
+                          isActive
+                            ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
+                            : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
                         }
                       `}
                     >
@@ -171,9 +198,10 @@ export default function SWODashboard() {
                         <Icon
                           size={20}
                           className={`shrink-0 transition-colors
-                            ${isActive
-                              ? "text-navy-900"
-                              : "text-slate-400 group-hover:text-slate-600"
+                            ${
+                              isActive
+                                ? "text-navy-900"
+                                : "text-slate-400 group-hover:text-slate-600"
                             }`}
                         />
                       </div>
@@ -202,7 +230,10 @@ export default function SWODashboard() {
               title={!isSidebarOpen ? "LOGOUT" : ""}
             >
               <div className="flex items-center justify-center min-w-[22px]">
-                <LogOut size={20} className="text-slate-400 group-hover:text-red-500 transition-colors" />
+                <LogOut
+                  size={20}
+                  className="text-slate-400 group-hover:text-red-500 transition-colors"
+                />
               </div>
               {isSidebarOpen && (
                 <span className="text-[13.5px] font-semibold whitespace-nowrap tracking-tight leading-none">
@@ -212,8 +243,6 @@ export default function SWODashboard() {
             </button>
           </div>
         </nav>
-
-
       </aside>
 
       {/* Main Content */}
@@ -222,7 +251,7 @@ export default function SWODashboard() {
         <header className=" sticky top-0 z-40 px-10 py-5 flex items-center justify-end bg-white/40 backdrop-blur-md border-b border-white/20">
           {/* Right group: name+email → avatar → logout */}
           <div className="flex items-center gap-4">
-            {/* Name + email — left of avatar */}
+            {/* Name + email - left of avatar */}
             <div className="text-right">
               <p className="text-[15px] font-bold text-slate-900 leading-tight tracking-tight">
                 {profileName || username}
@@ -232,7 +261,7 @@ export default function SWODashboard() {
               </p>
             </div>
 
-            {/* Circular profile photo — opens popup */}
+            {/* Circular profile photo - opens popup */}
             <button
               ref={headerAvatarRef}
               onClick={() => {

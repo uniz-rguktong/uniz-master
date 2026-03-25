@@ -65,7 +65,7 @@ const Detail = ({ label, value }: { label: string; value?: any }) => (
     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 block group-hover:text-slate-500 transition-colors">
       {label}
     </label>
-    <p className="text-sm font-semibold text-slate-700">{value || "—"}</p>
+    <p className="text-sm font-semibold text-slate-700">{value || "-"}</p>
   </div>
 );
 

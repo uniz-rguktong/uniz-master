@@ -10,10 +10,14 @@ import {
 } from "lucide-react";
 import { GET_ATTENDANCE, DOWNLOAD_ATTENDANCE } from "../../api/endpoints";
 import { apiClient, downloadFile } from "../../api/apiClient";
-import { writeAcademicCache, readAcademicCache, isCacheStale } from "../../utils/academicCache";
+import {
+  writeAcademicCache,
+  readAcademicCache,
+  isCacheStale,
+} from "../../utils/academicCache";
 
 interface AttendanceRecord {
-  subject: string | { name: string;[key: string]: any };
+  subject: string | { name: string; [key: string]: any };
   totalClasses: number;
   attendedClasses: number;
   percentage: string | number;
@@ -78,13 +82,27 @@ export default function Attendance() {
   useEffect(() => {
     if (!userUsername) return;
     const mappedSemester = selectedSemester.replace("Sem - ", "SEM-");
-    const cached = readAcademicCache<AttendanceResponse>("attendance", userUsername, selectedYear, mappedSemester, true);
+    const cached = readAcademicCache<AttendanceResponse>(
+      "attendance",
+      userUsername,
+      selectedYear,
+      mappedSemester,
+      true,
+    );
     if (cached) {
       setAttendanceData(cached);
       setResultsFetched(true);
       setFromCache(true);
       // Background refresh only if stale AND not already in-flight
-      if (isCacheStale("attendance", userUsername, selectedYear, mappedSemester) && !isFetchingRef.current) {
+      if (
+        isCacheStale(
+          "attendance",
+          userUsername,
+          selectedYear,
+          mappedSemester,
+        ) &&
+        !isFetchingRef.current
+      ) {
         handleFetchAttendance(true);
       }
     } else {
@@ -92,7 +110,7 @@ export default function Attendance() {
       setResultsFetched(false);
       setFromCache(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYear, selectedSemester, userUsername]);
 
   // Handle dynamic loading message
@@ -139,19 +157,28 @@ export default function Attendance() {
           studentId: userUsername,
           year: selectedYear,
           semester: mappedSemester,
-        }
+        },
       });
 
       if (data && data.success) {
         setAttendanceData(data);
         setResultsFetched(true);
         setFromCache(false);
-        writeAcademicCache("attendance", userUsername!, selectedYear, mappedSemester, data);
+        writeAcademicCache(
+          "attendance",
+          userUsername!,
+          selectedYear,
+          mappedSemester,
+          data,
+        );
 
         // Auto-scroll only on manual fetches
         if (!silent) {
           setTimeout(() => {
-            resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            resultsRef.current?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
           }, 100);
         }
       } else {
@@ -203,7 +230,6 @@ export default function Attendance() {
         </div>
         {/* Selection Criteria */}
         <div className="mb-8 md:bg-white p-6 md:rounded-xl md:border md:border-slate-100 md:shadow-sm bg-transparent transition-all duration-300 px-0 md:px-6">
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
             <div className="relative group">
               <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
@@ -225,10 +251,11 @@ export default function Attendance() {
                   {years.map((year) => (
                     <div
                       key={year}
-                      className={`p-3 cursor-pointer text-sm font-semibold hover:bg-slate-50 transition-colors ${selectedYear === year
-                        ? "bg-navy-900 text-white"
-                        : "text-slate-600"
-                        }`}
+                      className={`p-3 cursor-pointer text-sm font-semibold hover:bg-slate-50 transition-colors ${
+                        selectedYear === year
+                          ? "bg-navy-900 text-white"
+                          : "text-slate-600"
+                      }`}
                       onClick={() => {
                         setSelectedYear(year);
                         setSelectedSemester(
@@ -275,7 +302,6 @@ export default function Attendance() {
             </div>
 
             <div className="flex flex-col md:flex-row gap-4 flex-1">
-
               <div className="md:w-56">
                 <button
                   onClick={() => handleFetchAttendance(false)}
@@ -291,7 +317,9 @@ export default function Attendance() {
                       <CheckCircle2 size={14} /> Refresh
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1.5">Get Attendance</span>
+                    <span className="flex items-center gap-1.5">
+                      Get Attendance
+                    </span>
                   )}
                 </button>
               </div>
@@ -330,7 +358,10 @@ export default function Attendance() {
           attendanceData &&
           attendanceData.success &&
           !isLoading && (
-            <div ref={resultsRef} className="-mx-4 md:mx-0 space-y-0 animate-in fade-in slide-in-from-bottom-8 duration-500 scroll-mt-4 bg-white md:bg-transparent md:space-y-4 rounded-none md:rounded-xl overflow-hidden">
+            <div
+              ref={resultsRef}
+              className="-mx-4 md:mx-0 space-y-0 animate-in fade-in slide-in-from-bottom-8 duration-500 scroll-mt-4 bg-white md:bg-transparent md:space-y-4 rounded-none md:rounded-xl overflow-hidden"
+            >
               {/* Header */}
               <div className="flex items-end justify-between border-b pb-4 border-slate-100 px-4 md:px-0 pt-5 md:pt-0">
                 <div>
@@ -343,35 +374,36 @@ export default function Attendance() {
                     {selectedSemester}
                   </h2>
                 </div>
-                {attendanceData.attendance && attendanceData.attendance.length > 0 && (
-                  <button
-                    onClick={async () => {
-                      const mappedSemester = selectedSemester.replace(
-                        "Sem - ",
-                        "SEM-",
-                      );
-                      const semId = `${selectedYear}-${mappedSemester}`;
-                      await downloadFile(
-                        DOWNLOAD_ATTENDANCE(semId),
-                        `Attendance_${user.username}_${semId}.pdf`,
-                        { 
-                          studentId: user.username,
-                        },
-                      );
-                    }}
-                    className="h-10 px-4 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-slate-100 disabled:opacity-50"
-                    disabled={false}
-                  >
-                    <Download size={14} />
-                    Export PDF
-                  </button>
-                )}
+                {attendanceData.attendance &&
+                  attendanceData.attendance.length > 0 && (
+                    <button
+                      onClick={async () => {
+                        const mappedSemester = selectedSemester.replace(
+                          "Sem - ",
+                          "SEM-",
+                        );
+                        const semId = `${selectedYear}-${mappedSemester}`;
+                        await downloadFile(
+                          DOWNLOAD_ATTENDANCE(semId),
+                          `Attendance_${user.username}_${semId}.pdf`,
+                          {
+                            studentId: user.username,
+                          },
+                        );
+                      }}
+                      className="h-10 px-4 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-slate-100 disabled:opacity-50"
+                      disabled={false}
+                    >
+                      <Download size={14} />
+                      Export PDF
+                    </button>
+                  )}
               </div>
 
               {/* Content */}
               {!attendanceData.attendance ||
-                !Array.isArray(attendanceData.attendance) ||
-                attendanceData.attendance.length === 0 ? (
+              !Array.isArray(attendanceData.attendance) ||
+              attendanceData.attendance.length === 0 ? (
                 <div className="bg-slate-50 rounded-xl p-8 text-center border border-slate-200">
                   <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm border border-slate-100">
                     <AlertCircle size={28} className="text-slate-400" />
@@ -425,15 +457,16 @@ export default function Attendance() {
                                 </td>
                                 <td className="px-4 py-2 text-center">
                                   <span
-                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${parseFloat(String(record.percentage)) >=
+                                    className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                      parseFloat(String(record.percentage)) >=
                                       75
-                                      ? "bg-navy-900 text-white"
-                                      : parseFloat(
-                                        String(record.percentage),
-                                      ) >= 65
-                                        ? "bg-slate-200 text-slate-700"
-                                        : "bg-slate-100 text-slate-400"
-                                      }`}
+                                        ? "bg-navy-900 text-white"
+                                        : parseFloat(
+                                              String(record.percentage),
+                                            ) >= 65
+                                          ? "bg-slate-200 text-slate-700"
+                                          : "bg-slate-100 text-slate-400"
+                                    }`}
                                   >
                                     {record.percentage}%
                                   </span>
@@ -478,7 +511,7 @@ export default function Attendance() {
             </div>
           )}
 
-        {/* Not Logged In State — only show AFTER /me has resolved */}
+        {/* Not Logged In State - only show AFTER /me has resolved */}
         {!authLoading && !user?.username && !isLoading && !resultsFetched && (
           <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-12 text-center">
             <div className="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-50">
@@ -497,7 +530,7 @@ export default function Attendance() {
           </div>
         )}
 
-        {/* Empty State — only show after /me resolved and user is known */}
+        {/* Empty State - only show after /me resolved and user is known */}
         {!authLoading &&
           user?.username &&
           !isLoading &&

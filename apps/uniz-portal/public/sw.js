@@ -40,7 +40,7 @@ self.addEventListener("push", function (event) {
     badge: "/assets/ongole_logo.png",
     image: data.image || undefined,
     vibrate: [200, 100, 200, 100, 200],
-    // 'tag' groups notifications — same tag replaces the old one instead of stacking
+    // 'tag' groups notifications - same tag replaces the old one instead of stacking
     // Using a dynamic tag or unique tag allows multiple notifications to show
     tag: data.tag || "uniz-notification",
     // 'renotify: true' means even if the tag matches, re-vibrate/sound the phone
@@ -65,7 +65,7 @@ self.addEventListener("push", function (event) {
     ],
   };
 
-  // waitUntil MUST be called synchronously — no await before this line
+  // waitUntil MUST be called synchronously - no await before this line
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
@@ -105,7 +105,7 @@ self.addEventListener("notificationclick", function (event) {
 // CRITICAL FOR MOBILE: On Android, browsers can invalidate push subscriptions
 // (e.g., after browser updates, clearing cache, or OS-level push service restarts).
 // This handler detects that and automatically re-subscribes in the background,
-// then syncs the new subscription to the backend — WITHOUT requiring the user
+// then syncs the new subscription to the backend - WITHOUT requiring the user
 // to open the app again.
 self.addEventListener("pushsubscriptionchange", function (event) {
   const vapidPublicKey =
