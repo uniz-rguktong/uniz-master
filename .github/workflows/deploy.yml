@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - ornate
   workflow_dispatch:
     inputs:
       commit_message:
