@@ -18,7 +18,10 @@ export async function fetchSeatingOnce(): Promise<SeatingCache> {
   seatingPromise = apiClient<any>(GET_STUDENT_SEATING)
     .then((data) => {
       if (data && data.seating) {
-        seatingCache = { seating: data.seating, semester: data.semester ?? null };
+        seatingCache = {
+          seating: data.seating,
+          semester: data.semester ?? null,
+        };
       } else {
         seatingCache = { seating: [], semester: null };
       }
@@ -28,11 +31,12 @@ export async function fetchSeatingOnce(): Promise<SeatingCache> {
       seatingCache = { seating: [], semester: null };
       return seatingCache;
     })
-    .finally(() => { seatingPromise = null; });
+    .finally(() => {
+      seatingPromise = null;
+    });
   return seatingPromise;
 }
 // ────────────────────────────────────────────────────────────────────────────
-
 
 export default function SeatingArrangement() {
   const [seating, setSeating] = useState<any[]>([]);
@@ -53,7 +57,6 @@ export default function SeatingArrangement() {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-slate-300">
         <div className="w-10 h-10 border-4 border-t-navy-900 border-slate-100 rounded-full animate-spin mb-4"></div>
-      
       </div>
     );
   }
@@ -113,7 +116,7 @@ export default function SeatingArrangement() {
                   </div>
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">
-                      {item.examName} — {item.subjectCode}
+                      {item.examName} - {item.subjectCode}
                     </p>
                     <h3 className="text-lg font-bold text-slate-900 leading-tight">
                       {item.subjectName}

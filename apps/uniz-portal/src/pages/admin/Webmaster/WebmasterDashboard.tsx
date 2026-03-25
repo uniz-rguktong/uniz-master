@@ -59,9 +59,13 @@ export default function WebmasterDashboard() {
   const [profileName, setProfileName] = useState<string | null>(null);
   const [profileEmail, setProfileEmail] = useState<string | null>(null);
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
-  const [activeAnchor, setActiveAnchor] = useState<React.RefObject<HTMLElement>>(headerAvatarRef);
+  const [activeAnchor, setActiveAnchor] =
+    useState<React.RefObject<HTMLElement>>(headerAvatarRef);
 
-  const username = (localStorage.getItem("username") || "Webmaster").replace(/"/g, "");
+  const username = (localStorage.getItem("username") || "Webmaster").replace(
+    /"/g,
+    "",
+  );
   const initial = (profileName || username)[0]?.toUpperCase() ?? "W";
 
   // Fetch profile on mount
@@ -80,46 +84,56 @@ export default function WebmasterDashboard() {
               setProfileEmail(data.data.email ?? null);
             }
           })
-          .catch(() => { });
+          .catch(() => {});
       });
     }
   }, []);
 
-  const role = (localStorage.getItem("role") || "webmaster").toLowerCase().replace(/"/g, "");
+  const role = (localStorage.getItem("role") || "webmaster")
+    .toLowerCase()
+    .replace(/"/g, "");
 
   const navGroups = [
     {
       group: null,
-      items: [
-        { id: "dashboard", label: "Overview", icon: LayoutDashboard },
-      ]
+      items: [{ id: "dashboard", label: "Overview", icon: LayoutDashboard }],
     },
     {
       group: "Students",
       items: [
         { id: "student", label: "Student Details", icon: Users },
         // Restricted to Webmaster and COE
-        ...(role === "webmaster" || role === "coe" ? [{ id: "student_bulk", label: "Student Bulk Ops", icon: Users }] : []),
-      ]
+        ...(role === "webmaster" || role === "coe"
+          ? [{ id: "student_bulk", label: "Student Bulk Ops", icon: Users }]
+          : []),
+      ],
     },
-    ...(role === "swo" ? [
-      {
-        group: "Welfare",
-        items: [
-          { id: "grievances", label: "Grievances", icon: BookOpen },
-          { id: "outpass", label: "Outpass Logs", icon: GraduationCap },
-          { id: "outings", label: "Outing Protocol", icon: Activity },
+    ...(role === "swo"
+      ? [
+          {
+            group: "Welfare",
+            items: [
+              { id: "grievances", label: "Grievances", icon: BookOpen },
+              { id: "outpass", label: "Outpass Logs", icon: GraduationCap },
+              { id: "outings", label: "Outing Protocol", icon: Activity },
+            ],
+          },
         ]
-      }
-    ] : []),
+      : []),
     {
       group: "Academic",
       items: [
-        ...(role === "webmaster" || role === "coe" ? [{ id: "attendance", label: "Attendance Upload", icon: Layout }] : []),
-        ...(role === "webmaster" || role === "coe" ? [{ id: "grades", label: "Grades Upload", icon: GraduationCap }] : []),
+        ...(role === "webmaster" || role === "coe"
+          ? [{ id: "attendance", label: "Attendance Upload", icon: Layout }]
+          : []),
+        ...(role === "webmaster" || role === "coe"
+          ? [{ id: "grades", label: "Grades Upload", icon: GraduationCap }]
+          : []),
         // Restricted: Director/Dean/SWO don't manage subjects
-        ...(role === "webmaster" || role === "coe" ? [{ id: "subjects", label: "Manage Subjects", icon: BookOpen }] : []),
-      ]
+        ...(role === "webmaster" || role === "coe"
+          ? [{ id: "subjects", label: "Manage Subjects", icon: BookOpen }]
+          : []),
+      ],
     },
     {
       group: "Campus",
@@ -127,16 +141,20 @@ export default function WebmasterDashboard() {
         { id: "banners", label: "Home Banners", icon: Layout },
         { id: "updates", label: "Campus Updates", icon: Bell },
         { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
-      ]
+      ],
     },
     {
       group: "Management",
       items: [
-        ...(role === "webmaster" || role === "coe" ? [{ id: "faculty_mgmt", label: "Faculty Management", icon: Users }] : []),
-        ...(role === "webmaster" || role === "coe" ? [{ id: "system_logs", label: "System & Logs", icon: Activity }] : []),
+        ...(role === "webmaster" || role === "coe"
+          ? [{ id: "faculty_mgmt", label: "Faculty Management", icon: Users }]
+          : []),
+        ...(role === "webmaster" || role === "coe"
+          ? [{ id: "system_logs", label: "System & Logs", icon: Activity }]
+          : []),
         { id: "security", label: "Security", icon: Lock },
-      ]
-    }
+      ],
+    },
   ];
 
   const { logout } = useLogout();
@@ -160,8 +178,10 @@ export default function WebmasterDashboard() {
         Please coordinate via manual channels for urgent actions.
       </p>
       <div className="mt-8 flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full border border-slate-100">
-         <span className="w-2 h-2 rounded-full bg-navy-900 animate-pulse" />
-         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Mirroring Student Experience Platform</span>
+        <span className="w-2 h-2 rounded-full bg-navy-900 animate-pulse" />
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+          Mirroring Student Experience Platform
+        </span>
       </div>
     </div>
   );
@@ -218,25 +238,53 @@ export default function WebmasterDashboard() {
           className="absolute -right-3.5 top-1/2 -translate-y-1/2 bg-white border border-slate-200 rounded-full p-1.5 shadow-md text-slate-400 hover:text-slate-600 hover:scale-110 active:scale-95 transition-all z-50 hidden lg:block"
         >
           {isSidebarOpen ? (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m15 18-6-6 6-6" />
+            </svg>
           ) : (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
           )}
         </button>
-
         {/* Sidebar Branding - Hides when collapsed for sleek look */}
-        <div className={`px-4 pt-8 pb-4 transition-all duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
+        <div
+          className={`px-4 pt-8 pb-4 transition-all duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}
+        >
           <div className="flex items-center justify-center">
             <h1 className="unifrakturcook-bold text-4xl text-slate-900 tracking-tight">
               uniZ
             </h1>
           </div>
-        </div>        {/* Navigation Section - Sleek and Direct */}
-        <nav className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-4 overflow-y-auto space-y-7 custom-sidebar-scroll`}>
+        </div>{" "}
+        {/* Navigation Section - Sleek and Direct */}
+        <nav
+          className={`flex-1 ${isSidebarOpen ? "px-4" : "px-3"} py-4 overflow-y-auto space-y-7 custom-sidebar-scroll`}
+        >
           {navGroups.map((group, gIdx) => (
             <div key={gIdx} className="space-y-2">
               {group.group && isSidebarOpen && (
-                <h4 className="px-4 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1.5 opacity-80">{group.group}</h4>
+                <h4 className="px-4 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1.5 opacity-80">
+                  {group.group}
+                </h4>
               )}
               {group.items.map((item) => {
                 const Icon = item.icon;
@@ -249,29 +297,31 @@ export default function WebmasterDashboard() {
                     title={!isSidebarOpen ? item.label : ""}
                     className={`
                       w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-4" : "justify-center px-0"} py-3 rounded-xl text-left transition-all duration-200 group relative
-                        ${isActive
-                          ? "bg-white text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] ring-1 ring-slate-200/50"
-                          : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
+                        ${
+                          isActive
+                            ? "bg-white text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] ring-1 ring-slate-200/50"
+                            : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
                         }
                       `}
-                    >
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeTabGlow"
-                          className="absolute inset-0 bg-navy-900/5 rounded-xl blur-[2px]"
-                          initial={false}
-                        />
-                      )}
-                      <div className="flex items-center justify-center min-w-[22px] relative z-10">
-                        <Icon
-                          size={20}
-                          className={`shrink-0 transition-colors
-                            ${isActive
-                              ? "text-navy-900"
-                              : "text-slate-400 group-hover:text-slate-600"
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeTabGlow"
+                        className="absolute inset-0 bg-navy-900/5 rounded-xl blur-[2px]"
+                        initial={false}
+                      />
+                    )}
+                    <div className="flex items-center justify-center min-w-[22px] relative z-10">
+                      <Icon
+                        size={20}
+                        className={`shrink-0 transition-colors
+                            ${
+                              isActive
+                                ? "text-navy-900"
+                                : "text-slate-400 group-hover:text-slate-600"
                             }`}
-                        />
-                      </div>
+                      />
+                    </div>
                     {isSidebarOpen && (
                       <span
                         className={`text-[13.5px] whitespace-nowrap tracking-tight leading-none
@@ -296,7 +346,10 @@ export default function WebmasterDashboard() {
               title={!isSidebarOpen ? "LOGOUT" : ""}
             >
               <div className="flex items-center justify-center min-w-[22px]">
-                <LogOut size={20} className="text-slate-400 group-hover:text-red-500 transition-colors" />
+                <LogOut
+                  size={20}
+                  className="text-slate-400 group-hover:text-red-500 transition-colors"
+                />
               </div>
               {isSidebarOpen && (
                 <span className="text-[13.5px] font-semibold whitespace-nowrap tracking-tight leading-none">
@@ -306,8 +359,6 @@ export default function WebmasterDashboard() {
             </button>
           </div>
         </nav>
-
-
       </aside>
 
       {/* Main Content */}
@@ -316,7 +367,7 @@ export default function WebmasterDashboard() {
         <header className=" sticky top-0 z-40 px-10 py-5 flex items-center justify-end bg-white/40 backdrop-blur-md border-b border-white/20">
           {/* Right group: name+email → avatar → logout */}
           <div className="flex items-center gap-4">
-            {/* Name + email — left of avatar */}
+            {/* Name + email - left of avatar */}
             <div className="text-right">
               <p className="text-[15px] font-bold text-slate-900 leading-tight tracking-tight">
                 {profileName || username}
@@ -326,7 +377,7 @@ export default function WebmasterDashboard() {
               </p>
             </div>
 
-            {/* Circular profile photo — opens popup */}
+            {/* Circular profile photo - opens popup */}
             <button
               ref={headerAvatarRef}
               onClick={() => {

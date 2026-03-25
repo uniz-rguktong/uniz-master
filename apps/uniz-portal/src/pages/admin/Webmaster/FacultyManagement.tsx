@@ -47,14 +47,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/Skeleton";
 
-const ROLES = [
-  "webmaster",
-  "coe",
-  "swo",
-  "dean",
-  "ao",
-  "OTHER",
-];
+const ROLES = ["webmaster", "coe", "swo", "dean", "ao", "OTHER"];
 const DEPARTMENTS = [
   "CSE",
   "ECE",
@@ -93,9 +86,9 @@ export default function FacultyManagement({
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [search, setSearch] = useState("");
-  const [meta, setMeta] = useState<any>({ 
-    total: facultyState.fetched ? facultyState.data.length : 0, 
-    totalPages: 1 
+  const [meta, setMeta] = useState<any>({
+    total: facultyState.fetched ? facultyState.data.length : 0,
+    totalPages: 1,
   });
   const [formData, setFormData] = useState({
     username: "",
@@ -153,7 +146,7 @@ export default function FacultyManagement({
       if (data.success) {
         setFacultyState({
           fetched: true,
-          data: data.faculty || []
+          data: data.faculty || [],
         });
         setMeta(
           data.pagination || { total: data.faculty.length, totalPages: 1 },
@@ -165,8 +158,6 @@ export default function FacultyManagement({
       setLoading(false);
     }
   };
-
-
 
   const hasMounted = React.useRef(false);
 
@@ -181,7 +172,7 @@ export default function FacultyManagement({
   useEffect(() => {
     // Skip initial run to avoid double fetch on mount
     if (!hasMounted.current) return;
-    
+
     const timer = setTimeout(() => {
       // If we are not on page 1, resetting page to 1 will trigger the [page] effect
       // If we are already on page 1, we must call fetchFaculty directly
@@ -580,7 +571,8 @@ export default function FacultyManagement({
                   onClick={downloadTemplate}
                   className="flex items-center gap-2 px-4 py-2 bg-slate-100 border border-slate-200 rounded-xl text-[9px] font-bold uppercase tracking-widest text-slate-600 hover:bg-white hover:text-slate-900 transition-all"
                 >
-                  <Download size={14} className="text-slate-500" /> Download Template
+                  <Download size={14} className="text-slate-500" /> Download
+                  Template
                 </button>
               </div>
 
@@ -597,11 +589,15 @@ export default function FacultyManagement({
                               if (results.data && results.data.length > 0) {
                                 const csv = Papa.unparse(results.data);
                                 setCsvText(csv);
-                                toast.success(`Successfully parsed ${results.data.length} rows`);
+                                toast.success(
+                                  `Successfully parsed ${results.data.length} rows`,
+                                );
                               }
                             },
                             error: (err) => {
-                              toast.error("Failed to parse file: " + err.message);
+                              toast.error(
+                                "Failed to parse file: " + err.message,
+                              );
                             },
                           });
                         } else {
@@ -676,7 +672,7 @@ export default function FacultyManagement({
                         }
                         className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 appearance-none cursor-pointer"
                       >
-                        <option value="">— No change —</option>
+                        <option value="">- No change -</option>
                         {ROLES.map((r) => (
                           <option key={r} value={r}>
                             {r}
@@ -704,7 +700,7 @@ export default function FacultyManagement({
                         }
                         className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 appearance-none cursor-pointer"
                       >
-                        <option value="">— No change —</option>
+                        <option value="">- No change -</option>
                         {DEPARTMENTS.map((d) => (
                           <option key={d} value={d}>
                             {d}
@@ -915,24 +911,24 @@ export default function FacultyManagement({
               {bulkResult.results?.filter(
                 (r: any) => r.status === "error" || r.reason,
               ).length > 0 && (
-                  <div className="max-h-36 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-1">
-                    {bulkResult.results
-                      .filter(
-                        (r: any) =>
-                          r.status !== "created" && r.status !== "updated",
-                      )
-                      .map((r: any, i: number) => (
-                        <p key={i} className="text-xs font-mono text-slate-600">
-                          <span
-                            className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
-                          >
-                            [{r.status}]
-                          </span>{" "}
-                          {r.username} {r.reason ? `— ${r.reason}` : ""}
-                        </p>
-                      ))}
-                  </div>
-                )}
+                <div className="max-h-36 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-1">
+                  {bulkResult.results
+                    .filter(
+                      (r: any) =>
+                        r.status !== "created" && r.status !== "updated",
+                    )
+                    .map((r: any, i: number) => (
+                      <p key={i} className="text-xs font-mono text-slate-600">
+                        <span
+                          className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
+                        >
+                          [{r.status}]
+                        </span>{" "}
+                        {r.username} {r.reason ? `- ${r.reason}` : ""}
+                      </p>
+                    ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -975,7 +971,7 @@ export default function FacultyManagement({
                       className="text-slate-400 hover:text-slate-700 transition-colors"
                     >
                       {selectedUsernames.size === faculty.length &&
-                        faculty.length > 0 ? (
+                      faculty.length > 0 ? (
                         <CheckSquare size={18} className="text-navy-900" />
                       ) : (
                         <Square size={18} />
@@ -1008,7 +1004,11 @@ export default function FacultyManagement({
                   .fill(0)
                   .map((_, i) => (
                     <tr key={i} className="border-b border-slate-50/60">
-                      {mode === "bulk" && <td className="px-6 py-6"><Skeleton className="w-5 h-5 rounded-lg" /></td>}
+                      {mode === "bulk" && (
+                        <td className="px-6 py-6">
+                          <Skeleton className="w-5 h-5 rounded-lg" />
+                        </td>
+                      )}
                       <td className="px-6 py-6">
                         <div className="flex items-center gap-4">
                           <Skeleton className="w-11 h-11 rounded-full shrink-0" />
@@ -1351,7 +1351,10 @@ export default function FacultyManagement({
                       <select
                         value={formData.department}
                         onChange={(e) =>
-                          setFormData({ ...formData, department: e.target.value })
+                          setFormData({
+                            ...formData,
+                            department: e.target.value,
+                          })
                         }
                         className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
                       >
@@ -1369,10 +1372,17 @@ export default function FacultyManagement({
                     </label>
                     <div className="flex flex-col gap-2">
                       <select
-                        value={ROLES.includes(formData.role) ? formData.role : "OTHER"}
+                        value={
+                          ROLES.includes(formData.role)
+                            ? formData.role
+                            : "OTHER"
+                        }
                         onChange={(e) => {
                           const val = e.target.value;
-                          setFormData({ ...formData, role: val === "OTHER" ? "" : val });
+                          setFormData({
+                            ...formData,
+                            role: val === "OTHER" ? "" : val,
+                          });
                         }}
                         className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
                       >
@@ -1382,11 +1392,17 @@ export default function FacultyManagement({
                           </option>
                         ))}
                       </select>
-                      {(formData.role === "" || !ROLES.includes(formData.role)) && (
+                      {(formData.role === "" ||
+                        !ROLES.includes(formData.role)) && (
                         <input
                           required
                           value={formData.role}
-                          onChange={(e) => setFormData({ ...formData, role: e.target.value.toLowerCase() })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              role: e.target.value.toLowerCase(),
+                            })
+                          }
                           className="w-full h-10 px-4 bg-white border-2 border-slate-100 focus:border-navy-900 rounded-xl outline-none font-bold text-slate-900 transition-all text-xs"
                           placeholder="Type custom role (e.g. registrar)"
                         />
@@ -1432,7 +1448,11 @@ export default function FacultyManagement({
                   ) : (
                     <UserPlus size={16} />
                   )}
-                  {isSubmitting ? "PROCESSING..." : editMode ? "UPDATE REGISTRY" : "ONBOARD FACULTY"}
+                  {isSubmitting
+                    ? "PROCESSING..."
+                    : editMode
+                      ? "UPDATE REGISTRY"
+                      : "ONBOARD FACULTY"}
                 </button>
               </div>
             </form>
@@ -1441,11 +1461,11 @@ export default function FacultyManagement({
       </AlertDialog>
       {/* ─── Bio View Modal ─── */}
       {showViewModal && selectedFaculty && (
-        <div 
+        <div
           className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xl animate-in fade-in duration-300 cursor-pointer"
           onClick={() => setShowViewModal(false)}
         >
-          <div 
+          <div
             className="bg-white w-full max-w-xl rounded-xl shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-300 border border-white/20 cursor-default"
             onClick={(e) => e.stopPropagation()}
           >
@@ -1506,7 +1526,8 @@ export default function FacultyManagement({
                 {selectedFaculty.CreatedAt && (
                   <div className="flex items-center gap-2 text-[11px] font-medium">
                     <Calendar size={12} className="text-slate-400" />
-                    Joined {new Date(selectedFaculty.CreatedAt).toLocaleDateString()}
+                    Joined{" "}
+                    {new Date(selectedFaculty.CreatedAt).toLocaleDateString()}
                   </div>
                 )}
               </div>
@@ -1522,36 +1543,49 @@ export default function FacultyManagement({
                   </h4>
                 </div>
 
-                {selectedFaculty.Bio && Object.keys(selectedFaculty.Bio).length > 0 ? (
+                {selectedFaculty.Bio &&
+                Object.keys(selectedFaculty.Bio).length > 0 ? (
                   <div className="grid grid-cols-1 gap-4">
-                    {Object.entries(selectedFaculty.Bio).map(([key, val]: any) => {
-                      if (!val || (Array.isArray(val) && val.length === 0)) return null;
-                      return (
-                        <div key={key} className="bg-white p-6 rounded-xl border border-slate-100/60 shadow-none hover:border-slate-300 transition-colors">
-                          <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 block mb-3">
-                            {key.replace(/_/g, " ")}
-                          </label>
-                          {Array.isArray(val) ? (
-                            <ul className="space-y-2.5">
-                              {val.map((item: string, i: number) => (
-                                <li key={i} className="text-[13px] text-slate-600 font-medium flex items-start gap-3 leading-relaxed">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-slate-200 mt-2 shrink-0 group-hover:bg-slate-900 transition-colors" />
-                                  {item}
-                                </li>
-                              ))}
-                            </ul>
-                          ) : (
-                            <p className="text-[13px] text-slate-600 font-medium leading-relaxed">
-                              {val}
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })}
+                    {Object.entries(selectedFaculty.Bio).map(
+                      ([key, val]: any) => {
+                        if (!val || (Array.isArray(val) && val.length === 0))
+                          return null;
+                        return (
+                          <div
+                            key={key}
+                            className="bg-white p-6 rounded-xl border border-slate-100/60 shadow-none hover:border-slate-300 transition-colors"
+                          >
+                            <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 block mb-3">
+                              {key.replace(/_/g, " ")}
+                            </label>
+                            {Array.isArray(val) ? (
+                              <ul className="space-y-2.5">
+                                {val.map((item: string, i: number) => (
+                                  <li
+                                    key={i}
+                                    className="text-[13px] text-slate-600 font-medium flex items-start gap-3 leading-relaxed"
+                                  >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-slate-200 mt-2 shrink-0 group-hover:bg-slate-900 transition-colors" />
+                                    {item}
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-[13px] text-slate-600 font-medium leading-relaxed">
+                                {val}
+                              </p>
+                            )}
+                          </div>
+                        );
+                      },
+                    )}
                   </div>
                 ) : (
                   <div className="text-center py-12 bg-white rounded-xl border border-slate-100 border-dashed">
-                    <BookOpen size={32} className="mx-auto text-slate-100 mb-4" />
+                    <BookOpen
+                      size={32}
+                      className="mx-auto text-slate-100 mb-4"
+                    />
                     <p className="text-slate-400 font-bold italic text-[12px]">
                       No biographical data available for this member.
                     </p>

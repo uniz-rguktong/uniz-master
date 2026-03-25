@@ -107,6 +107,7 @@ const cleanSubjectName = (name: string) => {
 
 export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
   const { name, username, branch, semesterId, campus, resultType } = data;
+  const isRegularReport = resultType === "REGULAR";
   const logo = await getLogo();
   const campusName =
     campus && campus !== "N/A" ? campus.toUpperCase() : "RGUKT";
@@ -292,7 +293,8 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
         );
 
         let gLetter = getGradeLetter(g.grade);
-        if ((g.isRemedial || g.attemptNumber > 1) && gLetter !== "R") {
+        // Only show (R) suffix on REMEDIAL reports, never on REGULAR
+        if (!isRegularReport && (g.isRemedial || g.attemptNumber > 1) && gLetter !== "R") {
           gLetter += " (R)";
         }
 
@@ -304,7 +306,8 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
           { width: tWidths.grade, align: "center" },
         );
 
-        if (g.passDate) {
+        // Only show pass date on REMEDIAL reports
+        if (!isRegularReport && g.passDate) {
           const dateStr = new Date(g.passDate).toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "2-digit",

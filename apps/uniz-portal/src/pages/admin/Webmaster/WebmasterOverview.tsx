@@ -214,7 +214,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
       <div className="flex items-center justify-center gap-2 mb-2 mt-1">
         <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em] text-[#1f2122] leading-none text-center uppercase">
           {loading ? (
-            <span className="animate-pulse text-slate-300">———</span>
+            <span className="animate-pulse text-slate-300">---</span>
           ) : (
             displayName
           )}
@@ -224,7 +224,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
       {/* Email + verified */}
       <p className="text-[#3c4043] font-medium text-[13px] tracking-tight text-center mb-4 flex items-center justify-center gap-1.5">
         {loading ? (
-          <span className="animate-pulse text-slate-300">————————</span>
+          <span className="animate-pulse text-slate-300">--------</span>
         ) : (
           <>
             {email}

@@ -37,7 +37,9 @@ import { Pagination } from "../../components/Pagination";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { InfoCard } from "./components/InfoCard";
 import AcademicRecord from "./components/AcademicRecord";
-import SeatingArrangement, { fetchSeatingOnce } from "./components/SeatingArrangement";
+import SeatingArrangement, {
+  fetchSeatingOnce,
+} from "./components/SeatingArrangement";
 import { Student } from "../../types";
 import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
 import StudentAnalytics from "./components/StudentAnalytics";
@@ -50,12 +52,14 @@ function ProfileSkeleton() {
     <div className="font-sans text-slate-900 relative">
       <BackgroundIconCloud />
       <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2">
-
         {/* Avatar + name skeleton */}
         <div className="flex flex-col items-center justify-center mb-8 animate-pulse">
           <div className="mt-4">
             {/* Avatar ring */}
-            <div className="relative p-[4px] rounded-full mb-4 mx-auto w-fit" style={{ background: "#e2e8f0" }}>
+            <div
+              className="relative p-[4px] rounded-full mb-4 mx-auto w-fit"
+              style={{ background: "#e2e8f0" }}
+            >
               <div className="bg-slate-100 p-[3px] rounded-full">
                 <div className="w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-slate-200 rounded-full" />
               </div>
@@ -78,7 +82,10 @@ function ProfileSkeleton() {
           <div className="flex gap-8 animate-pulse">
             {[72, 80, 64, 56].map((w, i) => (
               <div key={i} className="pb-3">
-                <div className={`h-3 bg-slate-100 rounded-full`} style={{ width: w }} />
+                <div
+                  className={`h-3 bg-slate-100 rounded-full`}
+                  style={{ width: w }}
+                />
               </div>
             ))}
           </div>
@@ -86,15 +93,20 @@ function ProfileSkeleton() {
 
         {/* Info cards skeleton */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-pulse">
-          {Array(5).fill(0).map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-4 h-4 bg-slate-100 rounded-full" />
-                <div className="h-2.5 w-20 bg-slate-100 rounded-full" />
+          {Array(5)
+            .fill(0)
+            .map((_, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-4 h-4 bg-slate-100 rounded-full" />
+                  <div className="h-2.5 w-20 bg-slate-100 rounded-full" />
+                </div>
+                <div className="h-5 w-28 bg-slate-200 rounded-lg" />
               </div>
-              <div className="h-5 w-28 bg-slate-200 rounded-lg" />
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>
@@ -267,7 +279,7 @@ export default function StudentProfilePage() {
       const data = await res.json();
 
       if (data.secure_url) {
-        // Only send profile_url — don't mix in personal fields
+        // Only send profile_url - don't mix in personal fields
         const updateRes = await apiClient<any>(UPDATE_DETAILS, {
           method: "PUT",
           body: JSON.stringify({ profile_url: data.secure_url }),
@@ -475,8 +487,7 @@ export default function StudentProfilePage() {
     );
   };
 
-  if (isLoading && !user)
-    return <ProfileSkeleton />;
+  if (isLoading && !user) return <ProfileSkeleton />;
 
   const personalFields = [
     {
@@ -601,12 +612,16 @@ export default function StudentProfilePage() {
                       className="w-full h-full object-cover"
                     />
                   ) : user?.name ? (
-                    <span className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none">{user?.name?.[0]?.toUpperCase() || "S"}</span>
+                    <span className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none">
+                      {user?.name?.[0]?.toUpperCase() || "S"}
+                    </span>
                   ) : (
-                    <span className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none">S</span>
+                    <span className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none">
+                      S
+                    </span>
                   )}
 
-                  {/* Dark blurry overlay — contained fully inside the circle */}
+                  {/* Dark blurry overlay - contained fully inside the circle */}
                   <AnimatePresence>
                     {isUploadingImage && (
                       <motion.div
@@ -718,7 +733,9 @@ export default function StudentProfilePage() {
                     disabled={isSubmitting}
                     className="flex-1 max-w-[140px] py-2.5 bg-navy-900 text-white rounded-xl font-bold text-xs shadow-md shadow-navy-100 flex items-center justify-center gap-2"
                   >
-                    {isSubmitting && <Loader2 className="w-3 h-3 animate-spin" />}
+                    {isSubmitting && (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    )}
                     Save Changes
                   </button>
                 </div>
@@ -745,10 +762,11 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                    className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${activeTab === tab
-                    ? "text-navy-900"
-                    : "text-slate-400 hover:text-slate-600"
-                    }`}
+                  className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${
+                    activeTab === tab
+                      ? "text-navy-900"
+                      : "text-slate-400 hover:text-slate-600"
+                  }`}
                 >
                   {tab}
                   {activeTab === tab && (
@@ -787,7 +805,9 @@ export default function StudentProfilePage() {
                   ))}
                 </div>
                 {/* Modern Analytics Section integrated into Personal view */}
-                {user?.username && <StudentAnalytics studentId={user.username} />}
+                {user?.username && (
+                  <StudentAnalytics studentId={user.username} />
+                )}
               </div>
             )}
 
@@ -820,9 +840,7 @@ export default function StudentProfilePage() {
               </div>
             )}
 
-            {activeTab === "seating" && (
-              <SeatingArrangement />
-            )}
+            {activeTab === "seating" && <SeatingArrangement />}
 
             {activeTab === "family" && (
               <div className="grid md:grid-cols-2 gap-6">
