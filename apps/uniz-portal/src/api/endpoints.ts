@@ -145,6 +145,8 @@ export const ACADEMICS_PROGRESS = (uploadId: string) =>
   `${BASE_URL}/academics/upload/progress?uploadId=${uploadId}`;
 
 export const GET_GRIEVANCES_LIST = `${BASE_URL}/requests/grievance/list`;
+export const DELETE_ALL_GRIEVANCES = `${BASE_URL}/requests/grievance/all`;
+export const DELETE_GRIEVANCE = (id: string) => `${BASE_URL}/requests/grievance/${id}`;
 
 export const BANNERS_BASE = `${BASE_URL}/cms/admin/banners`;
 export const UPDATE_BANNER_VISIBILITY = (id: string) =>
