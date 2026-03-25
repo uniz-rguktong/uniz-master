@@ -17,6 +17,13 @@ spec:
           image: docker.io/library/ornate:local
           ports:
             - containerPort: 3000
+          resources:
+            limits:
+              memory: "600Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "50m"
           envFrom:
             - configMapRef:
                 name: uniz-config
