@@ -19,7 +19,7 @@ export const usePWAInstall = () => {
     const ios = /iphone|ipad|ipod/.test(userAgent) && !(window as any).MSStream;
     setIsIOS(ios);
 
-    if (deferredPrompt) {
+    if (deferredPrompt || (window as any).deferredPWAInstallPrompt) {
       setIsInstallable(true);
     } else {
       setIsInstallable(false);
@@ -27,7 +27,9 @@ export const usePWAInstall = () => {
   }, [deferredPrompt]);
 
   const install = async () => {
-    if (!deferredPrompt) {
+    const promptEvent = (window as any).deferredPWAInstallPrompt || deferredPrompt;
+    
+    if (!promptEvent) {
       if (isIOS) {
         // iOS specific handling - normally we would show a custom UI guide
         // But the user wants it to be as direct as possible.
@@ -37,19 +39,26 @@ export const usePWAInstall = () => {
       return "fallback";
     }
 
-    // Show the install prompt
-    deferredPrompt.prompt();
-    // Wait for the user to respond to the prompt
-    const { outcome } = await deferredPrompt.userChoice;
+    try {
+      // Show the install prompt using the un-proxied window object if available
+      promptEvent.prompt();
+      // Wait for the user to respond to the prompt
+      const { outcome } = await promptEvent.userChoice;
 
-    if (outcome === "accepted") {
-      console.log("User accepted the install prompt");
-      setIsInstallable(false);
-      setDeferredPrompt(null);
-    } else {
-      console.log("User dismissed the install prompt");
+      if (outcome === "accepted") {
+        console.log("User accepted the install prompt");
+        setIsInstallable(false);
+        setDeferredPrompt(null);
+        (window as any).deferredPWAInstallPrompt = null;
+      } else {
+        console.log("User dismissed the install prompt");
+      }
+      return outcome;
+    } catch (err) {
+      console.error("[PWA] Installation prompt failed:", err);
+      // Fallback action if prompt throws (e.g. if event is stale)
+      return "error";
     }
-    return outcome;
   };
 
   return { isInstallable, isIOS, isInstalled, install };
