@@ -3,7 +3,11 @@ import { useRecoilValue } from "recoil";
 import { toast } from "@/utils/toast-ref";
 import { apiClient, downloadFile } from "../../api/apiClient";
 import { student, studentAuthLoading } from "../../store";
-import { writeAcademicCache, readAcademicCache, isCacheStale } from "../../utils/academicCache";
+import {
+  writeAcademicCache,
+  readAcademicCache,
+  isCacheStale,
+} from "../../utils/academicCache";
 
 import {
   ChevronDown,
@@ -31,14 +35,14 @@ export default function GradeHub() {
   const [selectedSemester, setSelectedSemester] = useState("Sem 1");
 
   // Update year when user data loads
-  // Only sync the initially-selected year once user data arrives — do NOT depend
+  // Only sync the initially-selected year once user data arrives - do NOT depend
   // on the full `user` object or each 60-second Recoil poll would re-trigger
   // the cascade of useEffects below.
   const userYear = user?.year;
   const userUsername = user?.username;
   useEffect(() => {
     if (userYear) setSelectedYear(userYear);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userUsername]); // only run when the USER changes, not every poll tick
   const [grades, setGrades] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -56,19 +60,28 @@ export default function GradeHub() {
   useEffect(() => {
     if (!userUsername) return;
     const mappedSemester = selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
-    const cached = readAcademicCache<any>("grades", userUsername, selectedYear, mappedSemester, true);
+    const cached = readAcademicCache<any>(
+      "grades",
+      userUsername,
+      selectedYear,
+      mappedSemester,
+      true,
+    );
     if (cached) {
       setGrades(cached);
       setResultsFetched(true);
       // Background refresh only if stale AND not already fetching
-      if (isCacheStale("grades", userUsername, selectedYear, mappedSemester) && !isFetchingRef.current) {
+      if (
+        isCacheStale("grades", userUsername, selectedYear, mappedSemester) &&
+        !isFetchingRef.current
+      ) {
         handleFetchResults(true);
       }
     } else {
       setGrades(null);
       setResultsFetched(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYear, selectedSemester, userUsername]);
 
   const [loadingMessage, setLoadingMessage] = useState(
@@ -157,8 +170,10 @@ export default function GradeHub() {
           contribution: g.grade * g.subject.credits,
         }));
 
-        const regularGrades = formattedGrades.filter((g: any) => g.attemptNumber === 1);
-        
+        const regularGrades = formattedGrades.filter(
+          (g: any) => g.attemptNumber === 1,
+        );
+
         const latestGradesMap = new Map();
         formattedGrades.forEach((g: any) => {
           const existing = latestGradesMap.get(g.subject);
@@ -166,8 +181,12 @@ export default function GradeHub() {
             latestGradesMap.set(g.subject, g);
           }
         });
-        const hasRemedial = formattedGrades.some((g: any) => g.isRemedial || g.attemptNumber > 1);
-        const remedialGrades = hasRemedial ? Array.from(latestGradesMap.values()) : [];
+        const hasRemedial = formattedGrades.some(
+          (g: any) => g.isRemedial || g.attemptNumber > 1,
+        );
+        const remedialGrades = hasRemedial
+          ? Array.from(latestGradesMap.values())
+          : [];
         const gradeCounts: { [key: string]: number } = {};
         formattedGrades.forEach((g: any) => {
           gradeCounts[g.grade] = (gradeCounts[g.grade] || 0) + 1;
@@ -199,12 +218,21 @@ export default function GradeHub() {
 
         setGrades(transformedData);
         setResultsFetched(true);
-        writeAcademicCache("grades", userUsername!, selectedYear, mappedSemester, transformedData);
+        writeAcademicCache(
+          "grades",
+          userUsername!,
+          selectedYear,
+          mappedSemester,
+          transformedData,
+        );
 
         // Auto-scroll to results table (only for manual fetches)
         if (!silent) {
           setTimeout(() => {
-            resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            resultsRef.current?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
           }, 100);
         }
 
@@ -231,13 +259,20 @@ export default function GradeHub() {
 
   return (
     <div className="font-sans text-slate-900">
-
       {/* Party Confetti Blast Overlay */}
       {showConfetti && (
         <div className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden">
           {/* Animated confetti particles */}
           {Array.from({ length: 60 }).map((_, i) => {
-            const colors = ["#fbbf24", "#34d399", "#60a5fa", "#f87171", "#a78bfa", "#fb923c", "#f472b6"];
+            const colors = [
+              "#fbbf24",
+              "#34d399",
+              "#60a5fa",
+              "#f87171",
+              "#a78bfa",
+              "#fb923c",
+              "#f472b6",
+            ];
             const color = colors[i % colors.length];
             const left = `${Math.random() * 100}%`;
             const size = `${6 + Math.random() * 10}px`;
@@ -265,8 +300,12 @@ export default function GradeHub() {
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="bg-white/95 backdrop-blur-sm rounded-3xl px-10 py-8 shadow-2xl border border-yellow-100 flex flex-col items-center gap-3 animate-bounce">
               <PartyPopper size={48} className="text-yellow-500" />
-              <p className="text-2xl font-black text-slate-900 tracking-tight">Outstanding GPA! 🎉</p>
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Above 9.0 — Exceptional Performance</p>
+              <p className="text-2xl font-black text-slate-900 tracking-tight">
+                Outstanding GPA! 🎉
+              </p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
+                Above 9.0 - Exceptional Performance
+              </p>
             </div>
           </div>
           <style>{`
@@ -357,8 +396,7 @@ export default function GradeHub() {
             </div>
 
             <div className="flex flex-col md:flex-row gap-4 flex-1">
-              
-                <div className="md:w-48">
+              <div className="md:w-48">
                 <button
                   onClick={() => handleFetchResults(false)}
                   className="w-full h-[46px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm disabled:opacity-50"
@@ -401,7 +439,10 @@ export default function GradeHub() {
 
         {/* Results Section */}
         {resultsFetched && grades && grades.success && !isLoading && (
-          <div ref={resultsRef} className="-mx-4 md:mx-0 md:bg-white md:border md:border-slate-100 md:rounded-xl overflow-hidden md:shadow-sm bg-transparent scroll-mt-4">
+          <div
+            ref={resultsRef}
+            className="-mx-4 md:mx-0 md:bg-white md:border md:border-slate-100 md:rounded-xl overflow-hidden md:shadow-sm bg-transparent scroll-mt-4"
+          >
             {/* Results Header */}
             <div className="md:bg-white border-b border-slate-100 md:px-6 px-4 py-5 flex justify-between items-center bg-transparent">
               <div>
@@ -416,12 +457,13 @@ export default function GradeHub() {
               <div className="flex gap-2">
                 <button
                   onClick={async () => {
-                    const mappedSemester = selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
+                    const mappedSemester =
+                      selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
                     const semId = `${selectedYear}-${mappedSemester}`;
                     await downloadFile(
                       DOWNLOAD_GRADES(semId),
                       `Full_Grades_${user.username}_${semId}.pdf`,
-                      { studentId: user.username, reportType: 'REGULAR' }
+                      { studentId: user.username, reportType: "REGULAR" },
                     );
                   }}
                   className="h-10 px-4 bg-navy-900 hover:bg-navy-800 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm"
@@ -439,11 +481,10 @@ export default function GradeHub() {
                   size={48}
                   className="mx-auto mb-4 text-slate-300"
                 />
-                <h3 className="text-xl font-bold mb-2">
-                  No Results Available
-                </h3>
+                <h3 className="text-xl font-bold mb-2">No Results Available</h3>
                 <p className="text-slate-500 max-w-sm mx-auto">
-                  Calculated records for this semester are not yet finalized. Please check back later or contact your department.
+                  Calculated records for this semester are not yet finalized.
+                  Please check back later or contact your department.
                 </p>
               </div>
             ) : (
@@ -478,7 +519,10 @@ export default function GradeHub() {
                           </thead>
                           <tbody className="divide-y divide-slate-50">
                             {grades.regular.map((item: any, gIdx: number) => (
-                              <tr key={gIdx} className="hover:bg-slate-50/30 transition-colors">
+                              <tr
+                                key={gIdx}
+                                className="hover:bg-slate-50/30 transition-colors"
+                              >
                                 <td className="px-5 py-4">
                                   <span className="font-bold text-slate-800 text-xs leading-tight">
                                     {item.subject}
@@ -488,22 +532,28 @@ export default function GradeHub() {
                                   {Number(item.credits).toFixed(1)}
                                 </td>
                                 <td className="px-2 py-4 text-center">
-                                  <span className={cn(
-                                    "inline-block px-2.5 py-1 rounded-md font-bold text-[11px]",
-                                    item.grade === "Ex" || item.grade === "A"
-                                      ? "bg-navy-900 text-white"
-                                      : item.grade === "R"
-                                        ? "bg-red-50 text-red-600"
-                                        : "bg-slate-100 text-slate-800"
-                                  )}>
+                                  <span
+                                    className={cn(
+                                      "inline-block px-2.5 py-1 rounded-md font-bold text-[11px]",
+                                      item.grade === "Ex" || item.grade === "A"
+                                        ? "bg-navy-900 text-white"
+                                        : item.grade === "R"
+                                          ? "bg-red-50 text-red-600"
+                                          : "bg-slate-100 text-slate-800",
+                                    )}
+                                  >
                                     {item.grade}
                                   </span>
                                 </td>
                                 <td className="px-2 py-4 text-center">
                                   {item.grade === "R" ? (
-                                    <span className="text-[9px] font-black text-red-400 uppercase tracking-tighter">Failed</span>
+                                    <span className="text-[9px] font-black text-red-400 uppercase tracking-tighter">
+                                      Failed
+                                    </span>
                                   ) : (
-                                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-tighter">Passed</span>
+                                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-tighter">
+                                      Passed
+                                    </span>
                                   )}
                                 </td>
                               </tr>
@@ -524,12 +574,16 @@ export default function GradeHub() {
                         </h3>
                         <button
                           onClick={async () => {
-                            const mappedSemester = selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
+                            const mappedSemester =
+                              selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
                             const semId = `${selectedYear}-${mappedSemester}`;
                             await downloadFile(
                               DOWNLOAD_GRADES(semId),
                               `Remedial_Grades_${user.username}_${semId}.pdf`,
-                              { studentId: user.username, reportType: 'REMEDIAL' }
+                              {
+                                studentId: user.username,
+                                reportType: "REMEDIAL",
+                              },
                             );
                           }}
                           className="h-8 px-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm"
@@ -557,7 +611,10 @@ export default function GradeHub() {
                           </thead>
                           <tbody className="divide-y divide-slate-50">
                             {grades.remedial.map((item: any, gIdx: number) => (
-                              <tr key={gIdx} className="hover:bg-slate-50/30 transition-colors">
+                              <tr
+                                key={gIdx}
+                                className="hover:bg-slate-50/30 transition-colors"
+                              >
                                 <td className="px-5 py-4">
                                   <div className="flex flex-col gap-1">
                                     <div className="flex items-center gap-2">
@@ -576,22 +633,28 @@ export default function GradeHub() {
                                   {Number(item.credits).toFixed(1)}
                                 </td>
                                 <td className="px-2 py-4 text-center">
-                                  <span className={cn(
-                                    "inline-block px-2.5 py-1 rounded-md font-bold text-[11px]",
-                                    item.grade === "Ex" || item.grade === "A"
-                                      ? "bg-navy-900 text-white"
-                                      : item.grade === "R"
-                                        ? "bg-red-50 text-red-600"
-                                        : "bg-slate-100 text-slate-800"
-                                  )}>
+                                  <span
+                                    className={cn(
+                                      "inline-block px-2.5 py-1 rounded-md font-bold text-[11px]",
+                                      item.grade === "Ex" || item.grade === "A"
+                                        ? "bg-navy-900 text-white"
+                                        : item.grade === "R"
+                                          ? "bg-red-50 text-red-600"
+                                          : "bg-slate-100 text-slate-800",
+                                    )}
+                                  >
                                     {item.grade}
                                   </span>
                                 </td>
                                 <td className="px-2 py-4 text-center">
                                   {item.grade === "R" ? (
-                                    <span className="text-[9px] font-black text-red-400 uppercase tracking-tighter">Failed</span>
+                                    <span className="text-[9px] font-black text-red-400 uppercase tracking-tighter">
+                                      Failed
+                                    </span>
                                   ) : (
-                                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-tighter">Passed</span>
+                                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-tighter">
+                                      Passed
+                                    </span>
                                   )}
                                 </td>
                               </tr>
@@ -664,7 +727,7 @@ export default function GradeHub() {
           </div>
         )}
 
-        {/* Not Logged In State — only show AFTER /me has resolved */}
+        {/* Not Logged In State - only show AFTER /me has resolved */}
         {!authLoading && !user?.username && !isLoading && !resultsFetched && (
           <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center">
             <div className="bg-white w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
@@ -681,7 +744,7 @@ export default function GradeHub() {
           </div>
         )}
 
-        {/* Empty State — only show after /me has resolved */}
+        {/* Empty State - only show after /me has resolved */}
         {!authLoading &&
           user?.username &&
           !isLoading &&

@@ -129,7 +129,7 @@ export function NotificationPanel() {
       .then(async (response) => {
         const contentType = response.headers.get("content-type") || "";
         if (!contentType.includes("application/json")) {
-          // Gateway returned HTML/text (404 or not running locally) — ignore silently
+          // Gateway returned HTML/text (404 or not running locally) - ignore silently
           return;
         }
         const result = await response.json();
@@ -180,7 +180,7 @@ export function NotificationPanel() {
         }
       })
       .catch(() => {
-        // Silently ignore — panel shows empty state (careers fallback is still shown)
+        // Silently ignore - panel shows empty state (careers fallback is still shown)
       });
   }, []);
 

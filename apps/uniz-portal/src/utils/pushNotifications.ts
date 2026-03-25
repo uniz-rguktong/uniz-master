@@ -105,7 +105,7 @@ export async function initPushNotifications(
         return;
       }
 
-      // Same SW but different user (e.g., on shared device) — just re-register
+      // Same SW but different user (e.g., on shared device) - just re-register
       // the new user's subscription without destroying the SW
       if (existingSub && lastSyncUser !== username) {
         console.log(

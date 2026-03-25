@@ -26,7 +26,10 @@ export default function CaretakerDashboard() {
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const username = (localStorage.getItem("username") || "Caretaker").replace(/"/g, "");
+  const username = (localStorage.getItem("username") || "Caretaker").replace(
+    /"/g,
+    "",
+  );
   const initial = (profileName || username)[0]?.toUpperCase() ?? "C";
 
   const rawRole = (localStorage.getItem("admin_role") || "caretaker").replace(
@@ -52,7 +55,7 @@ export default function CaretakerDashboard() {
               setProfileName(data.data.name ?? null);
             }
           })
-          .catch(() => { });
+          .catch(() => {});
       });
     }
   }, []);
@@ -283,9 +286,10 @@ export default function CaretakerDashboard() {
                       title={!isSidebarOpen ? item.label : ""}
                       className={`
                         w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group relative
-                        ${isActive
-                          ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
-                          : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
+                        ${
+                          isActive
+                            ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
+                            : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
                         }
                       `}
                     >
@@ -293,9 +297,10 @@ export default function CaretakerDashboard() {
                         <Icon
                           size={20}
                           className={`shrink-0 transition-colors
-                            ${isActive
-                              ? "text-navy-900"
-                              : "text-slate-400 group-hover:text-slate-600"
+                            ${
+                              isActive
+                                ? "text-navy-900"
+                                : "text-slate-400 group-hover:text-slate-600"
                             }`}
                         />
                       </div>
@@ -392,7 +397,7 @@ export default function CaretakerDashboard() {
               </p>
             </div>
 
-            {/* Circular profile photo — opens popup */}
+            {/* Circular profile photo - opens popup */}
             <button
               ref={headerAvatarRef}
               title="Profile"

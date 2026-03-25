@@ -7,7 +7,7 @@ import { toast } from "@/utils/toast-ref";
 import { initPushNotifications } from "../utils/pushNotifications";
 import { NOTIFICATION_SERVICE_URL } from "../api/endpoints";
 
-// Module-level singleton — shared across ALL useIsAuth instances in the app.
+// Module-level singleton - shared across ALL useIsAuth instances in the app.
 // useRef(false) would NOT work here because useIsAuth is called by 10+ components,
 // each getting their own separate ref. This ensures push fires exactly once per session.
 let pushInitialized = false;
@@ -17,13 +17,19 @@ export function useIsAuth() {
   const navigateTo = useNavigate();
   const location = useLocation();
 
-  // Stable refs — avoid stale closure issues without adding these to useEffect deps
+  // Stable refs - avoid stale closure issues without adding these to useEffect deps
   const isAuthRef = useRef(isAuth);
   const setAuthRef = useRef(setAuth);
   const navigateRef = useRef(navigateTo);
-  useEffect(() => { isAuthRef.current = isAuth; }, [isAuth]);
-  useEffect(() => { setAuthRef.current = setAuth; }, [setAuth]);
-  useEffect(() => { navigateRef.current = navigateTo; }, [navigateTo]);
+  useEffect(() => {
+    isAuthRef.current = isAuth;
+  }, [isAuth]);
+  useEffect(() => {
+    setAuthRef.current = setAuth;
+  }, [setAuth]);
+  useEffect(() => {
+    navigateRef.current = navigateTo;
+  }, [navigateTo]);
 
   useEffect(() => {
     const getSafeToken = (key: string) => {
@@ -96,16 +102,15 @@ export function useIsAuth() {
         "coe",
       ];
       const storedRole = localStorage.getItem("admin_role")?.replace(/"/g, "");
-      
+
       // CRITICAL SECURITY CHECK: Prevent LocalStorage tampering (Privilege Escalation)
       if (decoded?.role && storedRole && decoded.role !== storedRole) {
-        return logoutAndRedirect("Security Alert: Role mismatch detected (Identity Integrity)");
+        return logoutAndRedirect(
+          "Security Alert: Role mismatch detected (Identity Integrity)",
+        );
       }
 
-      const roleToVerify =
-        decoded?.role ||
-        storedRole ||
-        "admin";
+      const roleToVerify = decoded?.role || storedRole || "admin";
 
       if (!validAdminRoles.includes(roleToVerify)) {
         return logoutAndRedirect("Access violation: Invalid Role");
@@ -163,10 +168,10 @@ export function useIsAuth() {
         navigate("/");
       }
     }
-  // Only re-run when the URL changes — NOT on every isAuth/setAuth change.
-  // Auth state changes (setAuth calls) are idempotent; re-running on every
-  // one of them from 15+ components causes an explosion of redundant checks.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Only re-run when the URL changes - NOT on every isAuth/setAuth change.
+    // Auth state changes (setAuth calls) are idempotent; re-running on every
+    // one of them from 15+ components causes an explosion of redundant checks.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
   return isAuth;

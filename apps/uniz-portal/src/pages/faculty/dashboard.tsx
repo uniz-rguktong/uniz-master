@@ -174,8 +174,9 @@ export default function FacultyDashboard() {
     <div className="flex min-h-screen bg-[#F8FAFC]">
       {/* ── Sidebar ── */}
       <aside
-        className={`bg-white border-r border-neutral-100 transition-all duration-300 z-50 ${isSidebarOpen ? "w-72" : "w-20"
-          } hidden md:flex flex-col h-screen sticky top-0 shadow-sm`}
+        className={`bg-white border-r border-neutral-100 transition-all duration-300 z-50 ${
+          isSidebarOpen ? "w-72" : "w-20"
+        } hidden md:flex flex-col h-screen sticky top-0 shadow-sm`}
       >
         <div className="p-6 flex items-center gap-4 border-b border-neutral-50 shrink-0">
           <div className="w-12 h-12 bg-black rounded-[14px] flex items-center justify-center shrink-0 shadow-lg">
@@ -198,10 +199,11 @@ export default function FacultyDashboard() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as ActiveTab)}
-              className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-[20px] transition-all duration-200 group ${activeTab === item.id
+              className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-[20px] transition-all duration-200 group ${
+                activeTab === item.id
                   ? "bg-black text-white shadow-lg"
                   : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"
-                }`}
+              }`}
             >
               <item.icon
                 size={20}
@@ -750,17 +752,17 @@ function StudentsSection({
 
   const departments = isHOD
     ? [
-      "CSE",
-      "ECE",
-      "EEE",
-      "ME",
-      "CIVIL",
-      "CHEMISTRY",
-      "PHYSICS",
-      "MATHEMATICS",
-      "IT",
-      "ENGLISH",
-    ]
+        "CSE",
+        "ECE",
+        "EEE",
+        "ME",
+        "CIVIL",
+        "CHEMISTRY",
+        "PHYSICS",
+        "MATHEMATICS",
+        "IT",
+        "ENGLISH",
+      ]
     : [department];
 
   const fetchById = async () => {
@@ -837,7 +839,7 @@ function StudentsSection({
           </h2>
           <p className="text-neutral-500 text-sm mt-1">
             {isHOD
-              ? "HOD — all department access"
+              ? "HOD - all department access"
               : `View students in ${department}`}
           </p>
         </div>
@@ -960,10 +962,11 @@ function StudentsSection({
             <div
               key={std.username}
               onClick={() => fetchFullDetails(std.username)}
-              className={`group flex items-center justify-between p-4 px-6 bg-white border rounded-2xl cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 ${selectedStudent?.username === std.username
+              className={`group flex items-center justify-between p-4 px-6 bg-white border rounded-2xl cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 ${
+                selectedStudent?.username === std.username
                   ? "border-black ring-4 ring-black/5 shadow-xl"
                   : "border-neutral-100 hover:border-neutral-200"
-                }`}
+              }`}
             >
               <div className="flex items-center gap-4">
                 <div
@@ -1075,19 +1078,19 @@ function StudentsSection({
                     {[
                       ["Branch", selectedStudent.branch],
                       ["Year", selectedStudent.year],
-                      ["Section", selectedStudent.section || "—"],
+                      ["Section", selectedStudent.section || "-"],
                       [
                         "Gender",
                         selectedStudent.gender === "M"
                           ? "Male"
                           : selectedStudent.gender === "F"
                             ? "Female"
-                            : selectedStudent.gender || "—",
+                            : selectedStudent.gender || "-",
                       ],
-                      ["Email", selectedStudent.email || "—"],
-                      ["Phone", selectedStudent.phone_number || "—"],
-                      ["Room No.", selectedStudent.roomno || "—"],
-                      ["Blood Group", selectedStudent.blood_group || "—"],
+                      ["Email", selectedStudent.email || "-"],
+                      ["Phone", selectedStudent.phone_number || "-"],
+                      ["Room No.", selectedStudent.roomno || "-"],
+                      ["Blood Group", selectedStudent.blood_group || "-"],
                     ].map(([k, v]) => (
                       <div key={k} className="space-y-1">
                         <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">
@@ -1140,7 +1143,7 @@ function PasswordSection() {
     [newPassword],
   )();
 
-  /* Step 1 — verify current password via OTP request */
+  /* Step 1 - verify current password via OTP request */
   const requestOtp = async () => {
     if (!username) {
       toast.error("Username not found. Please re-login.");
@@ -1167,7 +1170,7 @@ function PasswordSection() {
     }
   };
 
-  /* Step 2 — verify OTP */
+  /* Step 2 - verify OTP */
   const verifyOtp = async () => {
     if (otp.trim().length !== 6) {
       toast.error("Enter a valid 6-digit OTP");
@@ -1195,7 +1198,7 @@ function PasswordSection() {
     }
   };
 
-  /* Step 3 — set new password */
+  /* Step 3 - set new password */
   const setNewPass = async () => {
     if (newPassword !== confirmPassword) {
       toast.error("Passwords do not match");
@@ -1333,7 +1336,7 @@ function PasswordSection() {
                   Send OTP to my Device
                 </button>
                 <p className="text-center text-neutral-400 text-xs font-medium">
-                  — or change with current password —
+                  - or change with current password -
                 </p>
                 <div className="space-y-3">
                   <input

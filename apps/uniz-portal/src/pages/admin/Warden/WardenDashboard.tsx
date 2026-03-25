@@ -51,7 +51,7 @@ export default function WardenDashboard() {
               setProfileName(data.data.name ?? null);
             }
           })
-          .catch(() => { });
+          .catch(() => {});
       });
     }
   }, []);
@@ -303,9 +303,10 @@ export default function WardenDashboard() {
                       title={!isSidebarOpen ? item.label : ""}
                       className={`
                         w-full flex items-center ${isSidebarOpen ? "space-x-3.5 px-3.5" : "justify-center px-0"} py-2.5 rounded-xl text-left transition-all duration-200 group relative
-                        ${isActive
-                          ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
-                          : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
+                        ${
+                          isActive
+                            ? "bg-slate-100 text-slate-900 shadow-sm shadow-black/5 ring-1 ring-slate-200/50"
+                            : "text-slate-500 hover:bg-slate-50/80 hover:text-slate-900"
                         }
                       `}
                     >
@@ -313,9 +314,10 @@ export default function WardenDashboard() {
                         <Icon
                           size={20}
                           className={`shrink-0 transition-colors
-                            ${isActive
-                              ? "text-navy-900"
-                              : "text-slate-400 group-hover:text-slate-600"
+                            ${
+                              isActive
+                                ? "text-navy-900"
+                                : "text-slate-400 group-hover:text-slate-600"
                             }`}
                         />
                       </div>
@@ -364,9 +366,15 @@ export default function WardenDashboard() {
                 className="w-8 h-8 rounded-xl overflow-hidden border-2 border-white shrink-0 bg-slate-100 flex items-center justify-center shadow-sm ring-1 ring-slate-200/60 transition-transform group-hover:scale-105"
               >
                 {profilePhoto ? (
-                  <img src={profilePhoto} className="w-full h-full object-cover" alt="" />
+                  <img
+                    src={profilePhoto}
+                    className="w-full h-full object-cover"
+                    alt=""
+                  />
                 ) : (
-                  <span className="text-slate-600 font-bold text-[11px]">{initial}</span>
+                  <span className="text-slate-600 font-bold text-[11px]">
+                    {initial}
+                  </span>
                 )}
               </button>
               {isSidebarOpen && (
@@ -413,7 +421,7 @@ export default function WardenDashboard() {
               </p>
             </div>
 
-            {/* Circular profile photo — opens popup */}
+            {/* Circular profile photo - opens popup */}
             <button
               ref={headerAvatarRef}
               title="Profile"
