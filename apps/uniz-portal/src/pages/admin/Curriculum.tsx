@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { BASE_URL } from "../../api/endpoints";
 import {
   Search,
@@ -63,14 +63,23 @@ export default function CurriculumManager() {
     setLoading(true);
     try {
       const token = localStorage.getItem("admin_token")?.replace(/"/g, "");
-      const res = await fetch(`${BASE_URL}/academics/subjects?limit=12&page=${page}&search=${searchQuery}&department=${deptFilter}&semester=${semFilter}`, {
+      
+      const params = new URLSearchParams({
+        limit: "12",
+        page: page.toString(),
+        search: searchQuery
+      });
+      if (deptFilter !== "ALL") params.append("department", deptFilter);
+      if (semFilter !== "ALL") params.append("semester", semFilter);
+
+      const res = await fetch(`${BASE_URL}/academics/subjects?${params.toString()}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
       if (data.success) {
-        setSubjects(data.subjects);
-        setTotalPages(data.meta.totalPages || 1);
-        setTotalRecords(data.meta.total || 0);
+        setSubjects(data.subjects || []);
+        setTotalPages(data.meta?.totalPages || 1);
+        setTotalRecords(data.meta?.total || 0);
       }
     } catch (err) {
       console.error(err);
@@ -82,17 +91,7 @@ export default function CurriculumManager() {
 
   useEffect(() => {
     fetchSubjects();
-  }, [page, deptFilter, semFilter, searchQuery]); // Refetch on filter or page change
-
-  const filteredSubjects = useMemo(() => {
-    return subjects.filter(s => {
-      const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                           s.code.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesDept = deptFilter === "ALL" || s.department === deptFilter;
-      const matchesSem = semFilter === "ALL" || s.semester === semFilter;
-      return matchesSearch && matchesDept && matchesSem;
-    });
-  }, [subjects, searchQuery, deptFilter, semFilter]);
+  }, [page, deptFilter, semFilter, searchQuery]);
 
   const handleOpenModal = (sub?: Subject) => {
     if (sub) {
@@ -237,7 +236,7 @@ export default function CurriculumManager() {
           <Loader2 className="animate-spin text-navy-900" size={40} />
           <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Hydrating Curriculum...</p>
         </div>
-      ) : filteredSubjects.length === 0 ? (
+      ) : subjects.length === 0 ? (
         <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
           <GraduationCap size={64} className="mx-auto text-slate-200 mb-4" />
           <h3 className="text-lg font-bold text-slate-900">No subjects found</h3>
@@ -245,7 +244,7 @@ export default function CurriculumManager() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
-          {filteredSubjects.map((sub) => (
+          {subjects.map((sub) => (
             <motion.div 
               layout
               initial={{ opacity: 0, y: 20 }}
