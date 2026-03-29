@@ -405,13 +405,15 @@ export default function Sidebar({ content }: MainContent) {
               {contentMap[content] || <Error />}
             </Suspense>
 
-            {/* Developer Credit Footer */}
-            <div className="mt-20 py-8 border-t border-slate-100/50 flex flex-col md:flex-row items-center justify-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                developed and maintained by
-              </span>
-              <div className="flex items-center">
-                <AnimatedTooltip items={developers} />
+            {/* Developer Credit Footer - Premium Floating Pill */}
+            <div className="mt-24 pb-12 flex justify-center md:justify-end animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-700">
+              <div className="bg-white/90 backdrop-blur-md border border-slate-200/50 px-4 py-1.5 rounded-full flex items-center gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-slate-300 transition-all duration-500 group cursor-default">
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.25em] pl-1 whitespace-nowrap">
+                  developed and maintained by
+                </span>
+                <div className="flex items-center scale-[0.65] origin-center -ml-4 -mr-5">
+                  <AnimatedTooltip items={developers} />
+                </div>
               </div>
             </div>
           </div>
