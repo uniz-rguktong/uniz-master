@@ -13,7 +13,11 @@ import {
   ShieldCheck,
   Trash2,
 } from "lucide-react";
-import { GET_GRIEVANCES_LIST, DELETE_GRIEVANCE, DELETE_ALL_GRIEVANCES } from "../../../api/endpoints";
+import {
+  GET_GRIEVANCES_LIST,
+  DELETE_GRIEVANCE,
+  DELETE_ALL_GRIEVANCES,
+} from "../../../api/endpoints";
 import { apiClient } from "../../../api/apiClient";
 
 interface Grievance {
@@ -58,7 +62,8 @@ export default function GrievanceList() {
   }, [fetchGrievances]);
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this grievance?")) return;
+    if (!window.confirm("Are you sure you want to delete this grievance?"))
+      return;
     try {
       await apiClient(DELETE_GRIEVANCE(id), { method: "DELETE" });
       toast.success("Grievance deleted");
@@ -69,7 +74,12 @@ export default function GrievanceList() {
   };
 
   const handleDeleteAll = async () => {
-    if (!window.confirm("Are you sure you want to wipe ALL grievances from the database? This cannot be undone.")) return;
+    if (
+      !window.confirm(
+        "Are you sure you want to wipe ALL grievances from the database? This cannot be undone.",
+      )
+    )
+      return;
     try {
       await apiClient(DELETE_ALL_GRIEVANCES, { method: "DELETE" });
       toast.success("All grievances cleared");
@@ -123,14 +133,14 @@ export default function GrievanceList() {
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
             Sync Records
           </button>
-          
+
           <button
             onClick={handleDeleteAll}
             disabled={grievances.length === 0}
             className="px-5 py-2.5 bg-red-50 border border-red-100 text-red-600 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-200 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Trash2 size={14} />
-            Wipe Database
+            Clear all
           </button>
         </div>
       </div>
@@ -312,9 +322,10 @@ export default function GrievanceList() {
                             className="group-hover/btn:translate-x-0.5 transition-transform"
                           />
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleDelete(g.id)}
-                          className="p-2.5 rounded-xl bg-white border border-red-100 text-red-400 hover:text-red-700 hover:border-red-300 hover:bg-red-50 hover:shadow-lg transition-all active:scale-95 group/del">
+                          className="p-2.5 rounded-xl bg-white border border-red-100 text-red-400 hover:text-red-700 hover:border-red-300 hover:bg-red-50 hover:shadow-lg transition-all active:scale-95 group/del"
+                        >
                           <Trash2
                             size={18}
                             className="group-hover/del:scale-110 transition-transform"
