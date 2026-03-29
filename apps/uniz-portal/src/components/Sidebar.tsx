@@ -23,11 +23,10 @@ import {
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
+import GlobeFeature from "./ui/globe-feature-section";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dock } from "./ui/dock-two";
 import { InteractiveMenu, InteractiveMenuItem } from "./ui/modern-mobile-menu";
-import { AnimatedTooltip } from "./ui/animated-tooltip";
-import { developers } from "../constants/developers";
 
 const Attendance = lazy(() => import("../pages/attendance/Attendance"));
 const OutpassOuting = lazy(() => import("../pages/student/outpass&outing"));
@@ -404,17 +403,9 @@ export default function Sidebar({ content }: MainContent) {
             <Suspense fallback={<ContentSkeleton />}>
               {contentMap[content] || <Error />}
             </Suspense>
-
-            {/* Developer Credit Footer - Premium Floating Pill */}
-            <div className="mt-24 pb-12 flex justify-center md:justify-end animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-700">
-              <div className="bg-white/90 backdrop-blur-md border border-slate-200/50 px-4 py-1.5 rounded-full flex items-center gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:border-slate-300 transition-all duration-500 group cursor-default">
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.25em] pl-1 whitespace-nowrap">
-                  developed and maintained by
-                </span>
-                <div className="flex items-center scale-[0.65] origin-center -ml-4 -mr-5">
-                  <AnimatedTooltip items={developers} />
-                </div>
-              </div>
+            
+            <div className="mt-[50vh] -mx-4 md:-mx-10 border-t border-slate-100 pt-32">
+               <GlobeFeature />
             </div>
           </div>
         </main>
