@@ -26,6 +26,8 @@ import { ConfirmModal } from "./ConfirmPopup";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dock } from "./ui/dock-two";
 import { InteractiveMenu, InteractiveMenuItem } from "./ui/modern-mobile-menu";
+import { AnimatedTooltip } from "./ui/animated-tooltip";
+import { developers } from "../constants/developers";
 
 const Attendance = lazy(() => import("../pages/attendance/Attendance"));
 const OutpassOuting = lazy(() => import("../pages/student/outpass&outing"));
@@ -402,6 +404,16 @@ export default function Sidebar({ content }: MainContent) {
             <Suspense fallback={<ContentSkeleton />}>
               {contentMap[content] || <Error />}
             </Suspense>
+
+            {/* Developer Credit Footer */}
+            <div className="mt-20 py-8 border-t border-slate-100/50 flex flex-col md:flex-row items-center justify-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                developed and maintained by
+              </span>
+              <div className="flex items-center">
+                <AnimatedTooltip items={developers} />
+              </div>
+            </div>
           </div>
         </main>
 

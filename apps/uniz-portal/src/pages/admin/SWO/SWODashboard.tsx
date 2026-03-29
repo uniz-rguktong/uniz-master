@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef, useEffect } from "react";
-import { LogOut, LayoutDashboard, MessageSquare, Search } from "lucide-react";
+import { LogOut, LayoutDashboard, MessageSquare, Search, Lock } from "lucide-react";
+import SecuritySection from "../Webmaster/SecuritySection";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import ProfilePopup from "../ProfilePopup";
@@ -11,7 +12,7 @@ import WebmasterOverview from "../Webmaster/WebmasterOverview";
 export default function SWODashboard() {
   useIsAuth();
   const [activeTab, setActiveTab] = useState<
-    "dashboard" | "outing" | "outpass" | "grievance"
+    "dashboard" | "outing" | "outpass" | "grievance" | "security"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
@@ -66,6 +67,10 @@ export default function SWODashboard() {
       group: "Feedback",
       items: [{ id: "grievance", label: "Grievances", icon: MessageSquare }],
     },
+    {
+      group: "Management",
+      items: [{ id: "security", label: "Security", icon: Lock }],
+    },
   ];
 
   const { logout } = useLogout();
@@ -82,6 +87,8 @@ export default function SWODashboard() {
         return <RequestManagement type="outpass" />;
       case "grievance":
         return <GrievanceList />;
+      case "security":
+        return <SecuritySection username={username} />;
       default:
         return (
           <div className="animate-in fade-in duration-500">
