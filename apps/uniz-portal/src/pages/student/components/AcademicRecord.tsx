@@ -1,5 +1,5 @@
 import { Grade, Attendance, Student } from "../../../types";
-import { Percent, Award } from "lucide-react";
+import { Percent, Award,  } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface AcademicRecordProps {
@@ -33,160 +33,97 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
   if (semesters.length === 0) return null;
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {semesters.map((sem) => (
-        <div key={sem} className="space-y-6">
-          <div className="flex items-center gap-3">
-            <div className="h-6 w-1.5 bg-navy-900 rounded-full"></div>
-            <h2 className="text-[17px] font-semibold tracking-tight text-slate-900">
-              {sem} Terminal Records
-            </h2>
+    <div className="space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+      {semesters.map((sem, idx) => (
+        <div key={sem} className="space-y-10 group/sem">
+          <div className="flex items-center justify-between">
+             <div className="flex items-center gap-4">
+                <div className="w-1.5 h-10 bg-navy-900 rounded-full" />
+                <div>
+                  <h2 className="text-3xl font-black tracking-tighter text-slate-900 leading-none">
+                    {sem}
+                  </h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-2">Terminal Records • Academic Unit {idx + 1}</p>
+                </div>
+             </div>
+             <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                Performance Score: <span className="text-navy-900">High Resolution</span>
+             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Grades Table */}
+          <div className="grid lg:grid-cols-2 gap-10">
+            {/* Grades Unit */}
             {gradesBySemester[sem] && (
-              <div className="bg-white border border-slate-200/60 rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-sm transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
-                <div className="bg-slate-50/50 px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="p-2 bg-navy-50 rounded-lg text-navy-900">
-                      <Award size={18} />
-                    </div>
-                    <h3 className="font-bold text-[11px] uppercase tracking-[0.1em] text-slate-500">
-                      Subject Performance
-                    </h3>
-                  </div>
-                  <div className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold tracking-tight">
-                    PASSED ALL
-                  </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 px-2">
+                   <div className="w-8 h-8 rounded-xl bg-navy-50 flex items-center justify-center text-navy-900">
+                      <Award size={16} />
+                   </div>
+                   <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Transcripts</h3>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm text-left border-collapse">
-                    <thead>
-                      <tr className="bg-slate-50/30 text-slate-400 border-b border-slate-100">
-                        <th className="px-6 py-4 font-bold text-[10px] uppercase tracking-wider w-[75%]">Subject</th>
-                        <th className="px-3 py-4 font-bold text-[10px] uppercase tracking-wider text-center w-[10%]">Cr</th>
-                        <th className="px-6 py-4 font-bold text-[10px] uppercase tracking-wider text-right w-[15%]">Grade</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
+                <div className="bg-white border border-slate-100 rounded-[32px] overflow-hidden shadow-sm hover:shadow-xl hover:shadow-slate-200/40 transition-all duration-700">
+                    <div className="divide-y divide-slate-50">
                       {gradesBySemester[sem].map((g: Grade) => (
-                        <tr
-                          key={g.id}
-                          className="hover:bg-slate-50/50 transition-all duration-200 group"
-                        >
-                          <td className="px-6 py-4">
-                            <div className="flex flex-col">
-                              <span className="font-bold text-[14px] text-slate-800 leading-tight group-hover:text-navy-900 transition-colors">
-                                {g.subject.name}
-                              </span>
-                              <span className="text-[10px] text-slate-400 font-medium mt-0.5">
-                                {g.subject.id}
-                              </span>
+                        <div key={g.id} className="p-6 md:p-8 flex items-center justify-between group hover:bg-slate-50/50 transition-colors">
+                            <div className="flex flex-col gap-1.5 min-w-0">
+                               <span className="text-base font-black text-slate-900 group-hover:text-navy-900 transition-colors tracking-tight leading-none">
+                                  {g.subject.name}
+                               </span>
+                               <div className="flex items-center gap-3">
+                                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-300 font-mono">{g.subject.id}</span>
+                                  <div className="w-1 h-1 rounded-full bg-slate-200" />
+                                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{g.subject.credits} Credits</span>
+                               </div>
                             </div>
-                          </td>
-                          <td className="px-3 py-4 text-center">
-                            <span className="text-[11px] font-bold text-slate-500 tabular-nums">
-                              {g.subject.credits}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <div className="flex flex-col items-end gap-1">
-                              <span
-                                className={`inline-flex items-center justify-center min-w-[28px] px-2 py-0.5 rounded font-black text-[11px] ${
-                                  g.grade === 0 
-                                    ? "bg-rose-50 text-rose-600 border border-rose-100/50" 
-                                    : g.grade >= 9 
-                                      ? "bg-navy-900 text-white"
-                                      : "bg-slate-100 text-slate-800"
-                                }`}
-                              >
-                                {g.grade === 0 ? "F" : g.grade}
-                              </span>
-                              {g.isRemedial && (
-                                <span className="text-[8px] font-black text-amber-600 uppercase tracking-tighter">
-                                  Remedial
-                                </span>
-                              )}
+                            <div className="flex items-center gap-6 shrink-0">
+                               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black ${g.grade === 0 ? "bg-rose-50 text-rose-500" : "bg-navy-900 text-white shadow-xl shadow-navy-100"}`}>
+                                  {g.grade === 0 ? "F" : g.grade}
+                               </div>
                             </div>
-                          </td>
-                        </tr>
+                        </div>
                       ))}
-                    </tbody>
-                  </table>
+                    </div>
                 </div>
               </div>
             )}
 
-            {/* Attendance List */}
+            {/* Attendance Unit */}
             {attendanceBySemester[sem] && (
-              <div className="bg-white border border-slate-200/60 rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-sm h-fit">
-                <div className="bg-slate-50/50 px-6 py-5 border-b border-slate-100">
-                  <div className="flex items-center gap-2.5">
-                    <div className="p-2 bg-amber-50 rounded-lg text-amber-600">
-                      <Percent size={18} />
-                    </div>
-                    <h3 className="font-bold text-[11px] uppercase tracking-[0.1em] text-slate-500">
-                      Attendance Matrix
-                    </h3>
-                  </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 px-2">
+                   <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500">
+                      <Percent size={16} />
+                   </div>
+                   <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Engagement Matrix</h3>
                 </div>
-                <div className="divide-y divide-slate-100">
-                  {attendanceBySemester[sem].map((att: Attendance) => {
-                    const percentage =
-                      att.totalClasses > 0
-                        ? (
-                            (att.attendedClasses / att.totalClasses) *
-                            100
-                          ).toFixed(1)
-                        : "0.0";
-                    const isLow = parseFloat(percentage) < 75;
-                    const isHigh = parseFloat(percentage) > 90;
-                    return (
-                      <div
-                        key={att.id}
-                        className="px-6 py-5 flex items-center justify-between hover:bg-slate-50/50 transition-all duration-200 group"
-                      >
-                        <div className="flex items-center gap-4 flex-1 min-w-0">
-                          <div
-                            className={`w-2 h-2 rounded-full ring-4 ${
-                              isLow 
-                                ? "bg-rose-500 ring-rose-500/10" 
-                                : isHigh 
-                                  ? "bg-emerald-500 ring-emerald-500/10" 
-                                  : "bg-amber-500 ring-amber-500/10"
-                            }`}
-                          ></div>
-                          <div className="flex flex-col min-w-0">
-                            <span className="font-bold text-[14px] text-slate-800 truncate group-hover:text-navy-900 transition-colors">
-                              {att.subject.name}
-                            </span>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                                {att.attendedClasses} of {att.totalClasses} Units
-                              </span>
-                            </div>
+                <div className="bg-white border border-slate-100 rounded-[32px] overflow-hidden shadow-sm hover:shadow-xl hover:shadow-slate-200/40 transition-all duration-700">
+                    <div className="divide-y divide-slate-100">
+                      {attendanceBySemester[sem].map((att: Attendance) => {
+                        const percentage = att.totalClasses > 0 ? ((att.attendedClasses / att.totalClasses) * 100).toFixed(1) : "0.0";
+                        const isLow = parseFloat(percentage) < 75;
+                        return (
+                          <div key={att.id} className="p-6 md:p-8 flex flex-col gap-5 hover:bg-slate-50/50 transition-colors">
+                              <div className="flex items-center justify-between gap-4">
+                                 <div className="flex flex-col gap-1.5 min-w-0">
+                                    <span className="text-base font-black text-slate-900 tracking-tight leading-none truncate">{att.subject.name}</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-300">{att.attendedClasses} / {att.totalClasses} Units</span>
+                                 </div>
+                                 <span className={`text-xl font-black tabular-nums tracking-tighter ${isLow ? "text-rose-500" : "text-navy-900"}`}>
+                                    {percentage}%
+                                 </span>
+                              </div>
+                              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                 <motion.div 
+                                   initial={{ width: 0 }}
+                                   whileInView={{ width: `${percentage}%` }}
+                                   transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+                                   className={`h-full rounded-full ${isLow ? "bg-rose-500" : "bg-navy-900"}`}
+                                 />
+                              </div>
                           </div>
-                        </div>
-                        <div className="flex flex-col items-end shrink-0 ml-4">
-                          <span
-                            className={`font-black text-[16px] tabular-nums block leading-none transition-transform group-hover:scale-110 ${
-                              isLow ? "text-rose-500" : isHigh ? "text-emerald-600" : "text-amber-600"
-                            }`}
-                          >
-                            {percentage}%
-                          </span>
-                          <div className="w-16 h-1 bg-slate-100 rounded-full mt-2 overflow-hidden">
-                            <motion.div 
-                              initial={{ width: 0 }}
-                              animate={{ width: `${percentage}%` }}
-                              className={`h-full rounded-full ${isLow ? "bg-rose-500" : isHigh ? "bg-emerald-500" : "bg-amber-500"}`}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                        );
+                      })}
+                    </div>
                 </div>
               </div>
             )}
