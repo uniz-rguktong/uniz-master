@@ -42,7 +42,6 @@ import SeatingArrangement, {
 } from "./components/SeatingArrangement";
 import { Student } from "../../types";
 import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
-import StudentAnalytics from "./components/StudentAnalytics";
 
 // ─────────────────────────────────────────────────────────────────
 // Profile Skeleton
@@ -806,7 +805,8 @@ export default function StudentProfilePage() {
                 </div>
                 {/* Modern Analytics Section integrated into Personal view */}
                 {user?.username && (
-                  <StudentAnalytics studentId={user.username} />
+                  /* <StudentAnalytics studentId={user.username} /> */
+                  null
                 )}
               </div>
             )}
