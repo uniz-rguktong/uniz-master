@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState, useMemo } from "react";
 import {
   ComposedChart,
@@ -11,8 +10,9 @@ import {
   Bar,
   Cell,
   ResponsiveContainer,
+  Area,
 } from "recharts";
-import { Card } from "@/components/ui/card";
+
 import {
   Select,
   SelectContent,
@@ -20,13 +20,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import {
   Zap,
   BookOpen,
   AlertCircle,
   TrendingUp,
-  TrendingDown,
+  Monitor,
+  Activity,
+  Award,
 } from "lucide-react";
 import {
   STUDENT_ATTENDANCE_ANALYTICS,
@@ -55,40 +56,40 @@ interface AnalyticsProps {
 const CustomTooltip = ({ active, payload, label, mode }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-xl border border-slate-100 bg-white/80 backdrop-blur-md p-3 shadow-xl min-w-[180px] text-slate-900 animate-in zoom-in duration-200">
-        <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2 pb-2 border-b border-slate-50">
-          {mode === "subject" ? "Subject Details" : label}
+      <div className="rounded-[20px] border border-white/40 bg-white/70 backdrop-blur-xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] min-w-[200px] text-slate-900 animate-in zoom-in-95 duration-200">
+        <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 pb-2 border-b border-slate-100/50">
+          {mode === "subject" ? "Intelligence Unit" : `${label} Overview`}
         </div>
 
         {mode === "subject" ? (
-          <div className="space-y-2">
-            <div className="text-[10px] font-bold leading-tight truncate">
+          <div className="space-y-3">
+            <div className="text-xs font-black leading-tight text-slate-900">
               {payload[0].payload.subject_name}
             </div>
-            <div className="flex justify-between items-center text-[10px]">
-              <span className="text-slate-400">Attendance</span>
-              <span className="font-bold text-amber-500">
+            <div className="flex justify-between items-center py-1">
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Attendance</span>
+              <span className={`text-xs font-black ${payload[0].value < 75 ? "text-rose-500" : "text-emerald-500"}`}>
                 {payload[0].value}%
               </span>
             </div>
           </div>
         ) : (
-          <div className="space-y-1.5">
+          <div className="space-y-3">
             {payload.map((entry: any, index: number) => (
               <div
                 key={index}
                 className="flex items-center justify-between gap-4"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <div
-                    className="w-1 h-1 rounded-full"
+                    className="w-1.5 h-1.5 rounded-full shadow-sm"
                     style={{ backgroundColor: entry.color }}
                   />
-                  <span className="text-[9px] font-medium text-slate-500">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
                     {entry.name}
                   </span>
                 </div>
-                <span className="text-[10px] font-bold tabular-nums">
+                <span className="text-xs font-black tabular-nums text-slate-900">
                   {entry.name?.includes("Attendance")
                     ? `${Number(entry.value).toFixed(1)}%`
                     : Number(entry.value).toFixed(2)}
@@ -110,19 +111,23 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
   const [view, setView] = useState<"semester" | "subject">("semester");
   const [timeHorizon, setTimeHorizon] = useState("overall");
   const [subjectFilter, setSubjectFilter] = useState("all");
-  const [hoverData, setHoverData] = useState<any>(null);
+  const [hoverData, _setHoverData] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const [attendanceRes, gradesRes] = await Promise.all([
-          apiClient<AttendanceData[]>(STUDENT_ATTENDANCE_ANALYTICS(studentId)),
-          apiClient<GradeTrendData[]>(STUDENT_GRADES_TREND_ANALYTICS(studentId))
+          apiClient<any>(STUDENT_ATTENDANCE_ANALYTICS(studentId)),
+          apiClient<any>(STUDENT_GRADES_TREND_ANALYTICS(studentId))
         ]);
         
-        if (attendanceRes) setAttendance(attendanceRes);
-        if (gradesRes) setGradesTrend(gradesRes);
+        // Robust data extraction
+        const attData = Array.isArray(attendanceRes) ? attendanceRes : attendanceRes?.attendance || [];
+        const grdData = Array.isArray(gradesRes) ? gradesRes : gradesRes?.grades || [];
+        
+        setAttendance(attData);
+        setGradesTrend(grdData);
       } catch (error) {
         console.error("Error fetching analytics:", error);
       } finally {
@@ -133,17 +138,19 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
   }, [studentId]);
 
   const filteredAttendance = useMemo(() => {
+    if (!Array.isArray(attendance)) return [];
     return attendance.filter((sub) => {
       if (subjectFilter === "theory")
-        return !sub.subject_name.toLowerCase().includes("lab");
+        return !sub.subject_name?.toLowerCase().includes("lab");
       if (subjectFilter === "lab")
-        return sub.subject_name.toLowerCase().includes("lab");
+        return sub.subject_name?.toLowerCase().includes("lab");
       if (subjectFilter === "low") return sub.attendance_percentage < 75;
       return true;
     });
   }, [attendance, subjectFilter]);
 
   const semesterData = useMemo(() => {
+    if (!Array.isArray(gradesTrend) || !Array.isArray(attendance)) return [];
     let data = [...gradesTrend];
     if (timeHorizon === "recent") data = data.slice(-2);
     if (timeHorizon === "year") data = data.slice(-4);
@@ -155,7 +162,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
       );
       const semAttItems = attendance.slice(idx * chunk, (idx + 1) * chunk);
       const avgAtt = semAttItems.length
-        ? semAttItems.reduce((a, b) => a + b.attendance_percentage, 0) /
+        ? semAttItems.reduce((a, b: any) => a + b.attendance_percentage, 0) /
           semAttItems.length
         : 85;
 
@@ -168,13 +175,13 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
   }, [gradesTrend, attendance, timeHorizon]);
 
   const finalCGPA = useMemo(() => {
-    if (!gradesTrend.length) return 0;
+    if (!gradesTrend || !Array.isArray(gradesTrend) || !gradesTrend.length) return 0;
     const sum = gradesTrend.reduce((acc, curr) => acc + curr.sgpa, 0);
     return sum / Math.max(gradesTrend.length, 1);
   }, [gradesTrend]);
 
   const trends = useMemo(() => {
-    if (semesterData.length < 2) return { att: 0, gpa: 0 };
+    if (!semesterData || semesterData.length < 2) return { att: 0, gpa: 0 };
     const last = semesterData[semesterData.length - 1];
     const prev = semesterData[semesterData.length - 2];
 
@@ -186,11 +193,11 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
 
   const globalStats = useMemo(() => {
     if (hoverData) return hoverData;
-    const avgAtt = attendance.length
-      ? attendance.reduce((a, b) => a + b.attendance_percentage, 0) /
+    const avgAtt = attendance && attendance.length
+      ? attendance.reduce((a, b:any) => a + b.attendance_percentage, 0) /
         attendance.length
       : 0;
-    const latestG = gradesTrend.length
+    const latestG = gradesTrend && gradesTrend.length
       ? gradesTrend[gradesTrend.length - 1].sgpa
       : 0;
     return { avgAtt, latestG, isLive: false };
@@ -198,105 +205,106 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
 
   const highestAttendance = useMemo(
     () =>
+      attendance && attendance.length > 0 ? 
       [...attendance].sort(
         (a, b) => b.attendance_percentage - a.attendance_percentage,
-      )[0],
+      )[0] : null,
     [attendance],
   );
 
   const lowestAttendance = useMemo(
     () =>
+      attendance && attendance.length > 0 ? 
       [...attendance].sort(
         (a, b) => a.attendance_percentage - b.attendance_percentage,
-      )[0],
+      )[0] : null,
     [attendance],
   );
 
   if (loading)
     return (
       <div className="w-full h-[400px] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-0.5 bg-slate-100 rounded-full overflow-hidden relative">
-            <motion.div
-              className="absolute inset-0 bg-navy-900"
-              initial={{ x: "-100%" }}
-              animate={{ x: "100%" }}
-              transition={{
-                repeat: Infinity,
-                duration: 1.5,
-                ease: "easeInOut",
-              }}
-            />
+        <div className="flex flex-col items-center gap-6">
+          <div className="relative">
+            <div className="w-20 h-20 rounded-full border border-slate-100 flex items-center justify-center">
+              <Activity className="w-8 h-8 text-navy-900 animate-pulse" />
+            </div>
+            <div className="absolute inset-0 border-t-2 border-navy-900 rounded-full animate-spin" />
           </div>
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
-            Syncing Intelligence
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-navy-900/40">
+            Piping Academic Intelligence
           </span>
         </div>
       </div>
     );
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-4 px-0 md:py-8 md:px-6">
-      <div className="space-y-4 md:space-y-8 px-3 md:px-0">
-        {/* VIEW SELECTOR */}
-        <div className="flex justify-center">
-          <div className="flex bg-slate-100/50 p-1 rounded-2xl w-fit">
-            <button
-              onClick={() => setView("semester")}
-              className={`px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all duration-300 ${
-                view === "semester"
-                  ? "bg-white text-navy-900 shadow-sm"
-                  : "text-slate-400 hover:text-slate-600"
-              }`}
-            >
-              Semesters
-            </button>
-            <button
-              onClick={() => setView("subject")}
-              className={`px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all duration-300 ${
-                view === "subject"
-                  ? "bg-white text-navy-900 shadow-sm"
-                  : "text-slate-400 hover:text-slate-600"
-              }`}
-            >
-              Subjects
-            </button>
-          </div>
-        </div>
-
-        <Card className="rounded-none sm:rounded-[2.5rem] border-x-0 sm:border border-slate-100 bg-white overflow-hidden w-full mx-auto shadow-[0_8px_40px_rgb(0,0,0,0.02)]">
-          <div className="p-4 md:p-10 space-y-4 md:space-y-10">
-            {/* HEADER */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <h2 className="text-2xl font-black text-slate-800 tracking-tight">
+    <div className="w-full max-w-7xl mx-auto py-8">
+      <div className="space-y-8">
+        
+        {/* DASHBOARD CARD */}
+        <div className="bg-white rounded-[40px] border border-slate-100/80 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.02)] overflow-hidden">
+          <div className="p-8 lg:p-12 space-y-12">
+            
+            {/* HEADER & CONTROLS */}
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2.5">
+                   <div className="w-2 h-2 rounded-full bg-navy-900 animate-pulse" />
+                   <span className="text-[10px] font-black uppercase tracking-[0.25em] text-navy-900/40">Real-time Visualizer</span>
+                </div>
+                <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
                   Academic Analytics
                 </h2>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
-                  Visualizing {view === "semester" ? "Semester Trends" : "Subject Attendance"}
-                </p>
+                <div className="flex items-center gap-3 pt-1">
+                   <span className="text-xs font-bold text-slate-400 capitalize">
+                      Visualizing <span className="text-slate-900">{view === "semester" ? "Semester Trends" : "Subject Proficiency"}</span>
+                   </span>
+                </div>
               </div>
-              <div className="flex items-center gap-4">
+
+              <div className="flex items-center gap-2 bg-slate-50/50 p-1.5 rounded-[20px] border border-slate-100">
+                <button
+                  onClick={() => setView("semester")}
+                  className={`px-6 py-2.5 rounded-[14px] text-[11px] font-black uppercase tracking-widest transition-all duration-500 ${
+                    view === "semester"
+                      ? "bg-white text-navy-900 shadow-xl shadow-slate-200"
+                      : "text-slate-400 hover:text-slate-900"
+                  }`}
+                >
+                  Semesters
+                </button>
+                <button
+                  onClick={() => setView("subject")}
+                  className={`px-6 py-2.5 rounded-[14px] text-[11px] font-black uppercase tracking-widest transition-all duration-500 ${
+                    view === "subject"
+                      ? "bg-white text-navy-900 shadow-xl shadow-slate-200"
+                      : "text-slate-400 hover:text-slate-900"
+                  }`}
+                >
+                  Subjects
+                </button>
+                <div className="w-px h-6 bg-slate-200 mx-2" />
                 <Select 
                   value={view === "semester" ? timeHorizon : subjectFilter} 
                   onValueChange={view === "semester" ? setTimeHorizon : setSubjectFilter}
                 >
-                  <SelectTrigger className="w-[140px] h-10 rounded-xl bg-slate-50 border-slate-100 text-[10px] font-bold uppercase tracking-widest text-slate-500 focus:ring-navy-900">
-                    <SelectValue placeholder={view === "semester" ? "All Time" : "All Subjects"} />
+                  <SelectTrigger className="w-[140px] h-10 rounded-[14px] bg-transparent border-none text-[10px] font-black uppercase tracking-widest text-slate-600 focus:ring-0">
+                    <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl border-slate-100 shadow-2xl">
+                  <SelectContent className="rounded-[20px] border-slate-100 shadow-2xl">
                     {view === "semester" ? (
                       <>
-                        <SelectItem value="overall" className="text-[10px] font-bold uppercase tracking-widest">Overall</SelectItem>
-                        <SelectItem value="year" className="text-[10px] font-bold uppercase tracking-widest">Past Year</SelectItem>
-                        <SelectItem value="recent" className="text-[10px] font-bold uppercase tracking-widest">Recent</SelectItem>
+                        <SelectItem value="overall" className="text-[10px] font-black tracking-widest uppercase">Overall</SelectItem>
+                        <SelectItem value="year" className="text-[10px] font-black tracking-widest uppercase">Past Year</SelectItem>
+                        <SelectItem value="recent" className="text-[10px] font-black tracking-widest uppercase">Recent</SelectItem>
                       </>
                     ) : (
                       <>
-                        <SelectItem value="all" className="text-[10px] font-bold uppercase tracking-widest">All Subjects</SelectItem>
-                        <SelectItem value="theory" className="text-[10px] font-bold uppercase tracking-widest">Theory Only</SelectItem>
-                        <SelectItem value="lab" className="text-[10px] font-bold uppercase tracking-widest">Labs Only</SelectItem>
-                        <SelectItem value="low" className="text-[10px] font-bold uppercase tracking-widest">Critically Low</SelectItem>
+                        <SelectItem value="all" className="text-[10px] font-black tracking-widest uppercase">All Classes</SelectItem>
+                        <SelectItem value="theory" className="text-[10px] font-black tracking-widest uppercase">Theory</SelectItem>
+                        <SelectItem value="lab" className="text-[10px] font-black tracking-widest uppercase">Labs</SelectItem>
+                        <SelectItem value="low" className="text-[10px] font-black tracking-widest uppercase">Low (75%)</SelectItem>
                       </>
                     )}
                   </SelectContent>
@@ -304,132 +312,124 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
               </div>
             </div>
 
-            {/* HERO METRICS ROW */}
-            <div className="grid grid-cols-2 lg:flex lg:flex-wrap items-end gap-x-4 gap-y-4 lg:gap-12 pb-4 border-b border-slate-50">
-              <div className="space-y-2">
-                <div className="flex items-center gap-1.5 text-slate-400">
-                  <div className="w-1 h-3 bg-amber-500 rounded-full" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">
-                    Presence
-                  </span>
+            {/* METRICS ROW */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16 pt-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-slate-400">
+                  <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500">
+                     <Monitor size={14} />
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Presence</span>
                 </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-xl md:text-3xl font-black text-slate-900 tracking-tight">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter text-nowrap">
                     {Number(globalStats?.avgAtt || 0).toFixed(1)}%
                   </span>
-                  {trends.att !== 0 && (
-                    <div
-                      className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold ${trends.att > 0 ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"}`}
-                    >
-                      {trends.att > 0 ? (
-                        <TrendingUp size={8} />
-                      ) : (
-                        <TrendingDown size={8} />
-                      )}
-                      {Math.abs(trends.att).toFixed(0)}%
-                    </div>
-                  )}
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-1.5 text-slate-400">
-                  <div className="w-1 h-3 bg-purple-500 rounded-full" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">
-                    SGPA
-                  </span>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-slate-400">
+                  <div className="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500">
+                     <Award size={14} />
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Latest SGPA</span>
                 </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-xl md:text-3xl font-black text-slate-900 tracking-tight">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter">
                     {Number(globalStats?.latestG || 0).toFixed(2)}
                   </span>
-                  {trends.gpa !== 0 && (
-                    <div
-                      className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold ${trends.gpa > 0 ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"}`}
-                    >
-                      {trends.gpa > 0 ? (
-                        <TrendingUp size={8} />
-                      ) : (
-                        <TrendingDown size={8} />
-                      )}
-                      {Math.abs(trends.gpa).toFixed(1)}%
-                    </div>
-                  )}
                 </div>
               </div>
 
-              <div className="space-y-2 col-span-2 lg:col-span-1">
-                <div className="flex items-center gap-1.5 text-slate-400">
-                  <div className="w-1 h-3 bg-blue-500 rounded-full" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">
-                    CGPA
-                  </span>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-slate-400">
+                  <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500">
+                     <Activity size={14} />
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Cumulative</span>
                 </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-xl md:text-3xl font-black text-slate-900 tracking-tight">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter underline decoration-blue-100 decoration-8 underline-offset-[-2px]">
                     {finalCGPA.toFixed(2)}
                   </span>
-                  <div className="px-2 py-0.5 text-[9px] font-black bg-blue-50 text-blue-600 rounded-lg uppercase tracking-wider">
-                    Cumulative
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-slate-400">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500">
+                     <TrendingUp size={14} />
                   </div>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Momentum</span>
+                </div>
+                <div className="flex items-center gap-2">
+                   <div className={`px-4 py-2 rounded-2xl text-[13px] font-black ${trends.gpa >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"}`}>
+                      {trends.gpa >= 0 ? "+" : ""}{trends.gpa.toFixed(1)}%
+                   </div>
                 </div>
               </div>
             </div>
 
-            {/* CHART AREA */}
-            <div className="h-[300px] md:h-[400px] w-full pt-4 relative">
+            {/* CHART VISUALIZER */}
+            <div className="h-[400px] w-full relative">
               <AnimatePresence mode="wait">
                 {view === "semester" ? (
                   <motion.div
-                    key="sem-chart"
+                    key="sem-chart-v4"
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.4, ease: [0.19, 1, 0.22, 1] }}
                     className="h-full w-full"
                   >
                     <ResponsiveContainer width="100%" height="100%">
-                      <ComposedChart
-                        data={semesterData}
-                        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                        onMouseMove={(e) => {
-                          const payload = e?.activePayload;
-                          if (payload && payload.length >= 2) {
-                            setHoverData({
-                              avgAtt: payload[0].value,
-                              latestG: payload[1].value,
-                              isLive: true,
-                            });
-                          }
-                        }}
-                        onMouseLeave={() => setHoverData(null)}
-                      >
+                      <ComposedChart data={semesterData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
                         <defs>
-                          <linearGradient id="colorAtt" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.15}/>
+                          <linearGradient id="fillAtt" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.1}/>
                             <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
                           </linearGradient>
+                          <linearGradient id="fillGrd" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#a855f7" stopOpacity={0.1}/>
+                            <stop offset="95%" stopColor="#a855f7" stopOpacity={0}/>
+                          </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#f1f5f9" />
+                        <CartesianGrid strokeDasharray="8 8" vertical={false} stroke="#f1f5f9" />
                         <XAxis
                           dataKey="period"
                           axisLine={false}
                           tickLine={false}
-                          tick={{ fill: "#64748b", fontSize: 11, fontWeight: 700 }}
-                          dy={12}
+                          tick={{ fill: "#94a3b8", fontSize: 10, fontWeight: 800 }}
+                          dy={15}
                         />
                         <YAxis yAxisId="left" hide domain={[0, 100]} />
                         <YAxis yAxisId="right" hide domain={[0, 10]} />
-                        <Tooltip content={<CustomTooltip mode="semester" />} cursor={{ stroke: "#e2e8f0", strokeWidth: 1 }} />
+                        <Tooltip content={<CustomTooltip mode="semester" />} cursor={{ stroke: "#f1f5f9", strokeWidth: 20, strokeOpacity: 0.5 }} />
+                        
+                        <Area
+                            yAxisId="left"
+                            type="monotone"
+                            dataKey="attendance"
+                            stroke="none"
+                            fill="url(#fillAtt)"
+                        />
                         <Line
                           yAxisId="left"
                           type="monotone"
                           dataKey="attendance"
                           stroke="#f59e0b"
                           strokeWidth={4}
-                          dot={{ r: 5, fill: "#f59e0b", strokeWidth: 3, stroke: "#fff" }}
-                          activeDot={{ r: 7, strokeWidth: 0 }}
+                          dot={{ r: 4, fill: "#fff", stroke: "#f59e0b", strokeWidth: 3 }}
+                          activeDot={{ r: 6, strokeWidth: 0, fill: "#f59e0b" }}
                           name="Attendance"
+                        />
+                        
+                        <Area
+                            yAxisId="right"
+                            type="monotone"
+                            dataKey="grades"
+                            stroke="none"
+                            fill="url(#fillGrd)"
                         />
                         <Line
                           yAxisId="right"
@@ -437,9 +437,8 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                           dataKey="grades"
                           stroke="#a855f7"
                           strokeWidth={4}
-                          strokeDasharray="8 6"
-                          dot={{ r: 5, fill: "#a855f7", strokeWidth: 3, stroke: "#fff" }}
-                          activeDot={{ r: 7, strokeWidth: 0 }}
+                          strokeDasharray="10 6"
+                          dot={{ r: 4, fill: "#fff", stroke: "#a855f7", strokeWidth: 3 }}
                           name="SGPA"
                         />
                       </ComposedChart>
@@ -447,26 +446,22 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                   </motion.div>
                 ) : (
                   <motion.div
-                    key="subject-chart"
+                    key="subject-chart-v4"
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.4, ease: [0.19, 1, 0.22, 1] }}
                     className="h-full w-full"
                   >
-                    <div className="w-full overflow-x-auto pb-4 custom-scrollbar">
-                      <style>{`
-                        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
-                        .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; border-radius: 10px; }
-                        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-                        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
-                      `}</style>
-                      <div style={{ minWidth: `${Math.max(filteredAttendance.length * 100, 1000)}px`, height: "350px" }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                          <ComposedChart
-                            data={filteredAttendance}
-                            margin={{ left: 20, top: 40, right: 20, bottom: 100 }}
-                          >
+                     <div className="w-full h-full overflow-x-auto custom-scrollbar">
+                         <style>{`
+                            .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+                            .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; border-radius: 10px; }
+                            .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+                            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+                         `}</style>
+                        <div style={{ minWidth: `${Math.max(filteredAttendance.length * 100, 1000)}px`, height: "100%" }}>
+                        <ResponsiveContainer width="100%" height="90%">
+                          <ComposedChart data={filteredAttendance} margin={{ left: 0, top: 40, right: 0, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                             <XAxis
                               dataKey="subject_name"
@@ -477,118 +472,81 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                                 const { x, y, payload } = props;
                                 return (
                                   <g transform={`translate(${x},${y})`}>
-                                    <text
-                                      x={0}
-                                      y={0}
-                                      dy={14}
-                                      textAnchor="end"
-                                      fill="#64748b"
-                                      transform="rotate(-35)"
-                                      className="text-[10px] font-bold tracking-tight"
-                                    >
-                                      {payload.value}
+                                    <text x={0} y={0} dy={16} textAnchor="end" fill="#94a3b8" transform="rotate(-30)" className="text-[10px] font-black uppercase tracking-tighter">
+                                      {payload.value?.length > 20 ? payload.value.substring(0, 18) + '..' : payload.value}
                                     </text>
                                   </g>
                                 );
                               }}
                             />
-                            <YAxis
-                              axisLine={false}
-                              tickLine={false}
-                              tick={{ fill: "#94a3b8", fontSize: 10, fontWeight: 700 }}
-                              domain={[0, 100]}
-                              dx={-10}
-                            />
-                            <Tooltip
-                              content={<CustomTooltip mode="subject" />}
-                              cursor={{ fill: "#f1f5f9", opacity: 0.4 }}
-                            />
-                            <Bar
-                              dataKey="attendance_percentage"
-                              radius={[8, 8, 0, 0]}
-                              barSize={40}
-                            >
+                            <YAxis hide domain={[0, 100]} />
+                            <Tooltip content={<CustomTooltip mode="subject" />} cursor={{ fill: "#f8fafc" }} />
+                            <Bar dataKey="attendance_percentage" radius={[12, 12, 0, 0]} barSize={44}>
                               {filteredAttendance.map((entry, index) => (
-                                <Cell
-                                  key={`cell-${index}`}
-                                  fill={
-                                    entry.attendance_percentage < 75
-                                      ? "#f43f5e"
-                                      : entry.attendance_percentage > 90
-                                        ? "#10b981"
-                                        : "#f59e0b"
-                                  }
-                                  fillOpacity={0.9}
-                                />
+                                <Cell key={`cell-${index}`} fill={entry.attendance_percentage < 75 ? "#f43f5e" : "#0f172a"} fillOpacity={entry.attendance_percentage < 75 ? 0.9 : 0.8} />
                               ))}
                             </Bar>
                           </ComposedChart>
                         </ResponsiveContainer>
-                      </div>
-                    </div>
+                        </div>
+                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
           </div>
-        </Card>
+        </div>
 
-        {/* BOTTOM INSIGHTS ROW */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-8 w-full mx-auto px-4 sm:px-0">
-          <div className="bg-white p-6 rounded-[2rem] border border-slate-100 flex items-center gap-4 group transition-all hover:bg-slate-50">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
-              <Zap size={20} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                Highest Presence
-              </p>
-              <p className="text-[13px] font-black text-slate-900 truncate">
-                {highestAttendance?.subject_name}
-              </p>
-            </div>
-            <div className="text-[15px] font-black text-emerald-600">
-              {highestAttendance?.attendance_percentage}%
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-[2rem] border border-slate-100 flex items-center gap-4 group transition-all hover:bg-slate-50">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500 group-hover:scale-110 transition-transform">
-              <AlertCircle size={20} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                Critical Risk
-              </p>
-              <p className="text-[13px] font-black text-slate-900 truncate">
-                {lowestAttendance?.subject_name}
-              </p>
-            </div>
-            <div className="text-[15px] font-black text-rose-600">
-              {lowestAttendance?.attendance_percentage}%
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-[2rem] border border-slate-100 flex items-center gap-4 group transition-all hover:bg-slate-50">
-            <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
-              <BookOpen size={20} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                Catalog
-              </p>
-              <p className="text-[13px] font-black text-slate-900">
-                Tracked Subjects
-              </p>
-            </div>
-            <div className="text-[15px] font-black text-purple-600">
-              {attendance.length}
-            </div>
-          </div>
+        {/* BOTTOM INSIGHTS */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+           <InsightCard 
+             title="Highest Presence" 
+             subject={highestAttendance?.subject_name} 
+             value={`${highestAttendance?.attendance_percentage || 0}%`}
+             icon={<Zap size={18} />}
+             color="emerald"
+           />
+           <InsightCard 
+             title="Critical Risk" 
+             subject={lowestAttendance?.subject_name} 
+             value={`${lowestAttendance?.attendance_percentage || 0}%`}
+             icon={<AlertCircle size={18} />}
+             color="rose"
+           />
+           <InsightCard 
+             title="Curriculum Info" 
+             subject="Total Active Subjects" 
+             value={attendance.length.toString()}
+             icon={<BookOpen size={18} />}
+             color="blue"
+           />
         </div>
       </div>
     </div>
   );
+};
+
+const InsightCard = ({ title, subject, value, icon, color }: any) => {
+    const colorClasses: any = {
+        emerald: "bg-emerald-50 text-emerald-500",
+        rose: "bg-rose-50 text-rose-500",
+        blue: "bg-blue-50 text-blue-500"
+    };
+    
+    return (
+        <div className="bg-white p-8 rounded-[40px] border border-slate-100/80 shadow-sm flex items-center justify-between group hover:bg-slate-50 transition-all duration-500">
+            <div className="flex items-center gap-5">
+                <div className={`w-14 h-14 rounded-[22px] flex items-center justify-center ${colorClasses[color]} group-hover:scale-110 transition-transform duration-500`}>
+                    {icon}
+                </div>
+                <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{title}</p>
+                    <p className="text-sm font-black text-slate-900 leading-none truncate max-w-[150px]">{subject || "No Data"}</p>
+                </div>
+            </div>
+            <div className="text-xl font-black text-slate-900">{value}</div>
+        </div>
+    );
 };
 
 export default StudentAnalytics;

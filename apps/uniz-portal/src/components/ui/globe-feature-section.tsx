@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 import { AnimatedTooltip } from "./animated-tooltip";
 import { developers as people } from "@/constants/developers";
+import { Github } from "lucide-react";
 
 
 export default function GlobeFeature() {
@@ -21,12 +22,20 @@ export default function GlobeFeature() {
                     <p className="text-lg text-slate-500 font-medium leading-relaxed mb-8 max-w-lg">
                         Empowering the RGUKT community through open-source collaboration. Join us in building a smarter, unified digital ecosystem for students and faculty.
                     </p>
-                    <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-8">
                         <div className="flex items-center gap-4">
-                            <span className="text-sm font-medium text-slate-500">developed and maintained by</span>
+                            <span className="text-[10px] font-black  tracking-[0.25em] text-slate-400">developed and maintained by</span>
                             <AnimatedTooltip items={people} />
                         </div>
-
+                        <a 
+                          href="https://github.com/uniz-rguktong"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group flex items-center justify-center gap-4 px-12 py-3.5 bg-[#1a1a1a] hover:bg-[#222] text-white rounded-full text-[15px] font-medium transition-all duration-300 border border-white/10 shadow-lg active:scale-[0.98] w-full max-w-[340px]"
+                        >
+                           <Github size={20} className="text-white fill-white" />
+                           <span>Explore on GitHub</span>
+                        </a>
                     </div>
                 </div>
                 <div className="relative h-[250px] w-full max-w-xl flex items-center justify-center -mr-20">

@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { Footer } from "./components/Footer";
+import GlobeFeature from "./components/ui/globe-feature-section";
 import { useWebSocket } from "./hooks/useWebSocket";
 import { useLocation } from "react-router-dom";
 
@@ -35,7 +35,7 @@ export function Layout({ children }: LayoutProps) {
       <main className={`flex-grow flex flex-col ${isHomePage ? "" : "max-w-[1600px] w-full mx-auto p-4 sm:p-6 md:p-10"} animate-in fade-in duration-500`}>
         <div className="flex-grow h-full w-full">{children}</div>
       </main>
-      <Footer />
+      {!isHomePage && <GlobeFeature />}
     </div>
   );
 }
