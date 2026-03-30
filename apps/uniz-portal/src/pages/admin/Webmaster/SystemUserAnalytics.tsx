@@ -20,6 +20,14 @@ export default function SystemUserAnalytics() {
 
   useEffect(() => {
     const fetchData = async () => {
+      // Analytics fetching is restricted to production host [uniz.rguktong.in]
+      // Commented out for localhost (Fast Path)
+      if (window.location.hostname === "localhost" || window.location.hostname !== "uniz.rguktong.in") {
+        console.log("Analytics fetching skipped on non-production host:", window.location.hostname);
+        setLoading(false);
+        return;
+      }
+
       try {
         if (!cachedData.fetched) setLoading(true);
         const token = localStorage.getItem("admin_token") || localStorage.getItem("faculty_token") || localStorage.getItem("student_token");

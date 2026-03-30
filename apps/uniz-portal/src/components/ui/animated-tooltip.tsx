@@ -39,16 +39,15 @@ export const AnimatedTooltip = ({
             onMouseEnter={() => setHoveredIndex(item.id)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
-            <div className="relative group/avatar">
+            <div className="relative group/avatar flex flex-col items-center">
               <motion.img
                 onMouseMove={handleMouseMove}
                 onMouseEnter={() => setHoveredIndex(item.id)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 whileHover={{
-                  scale: 2.2,
+                  scale: 1.1,
                   rotate: 0,
                   zIndex: 100,
-                  y: -20,
                 }}
                 transition={{
                   type: "spring",
@@ -59,19 +58,27 @@ export const AnimatedTooltip = ({
                 src={item.image}
                 alt={item.name}
                 className={cn(
-                  "object-cover !m-0 !p-0 object-top rounded-full border-2 relative transition-all duration-300 cursor-pointer shadow-sm",
+                  "object-cover !m-0 !p-0 object-top rounded-full border-2 relative transition-all duration-300 cursor-pointer shadow-sm h-14 w-14",
                   index === 0
-                    ? "h-14 w-14 border-blue-500 scale-105 z-30 bottom-0.5"
+                    ? "border-blue-500 z-30"
                     : index === 1
-                      ? "h-12 w-12 border-white z-20"
+                      ? "border-white z-20"
                       : index === 2
-                        ? "h-10 w-10 border-white z-10 top-1"
-                        : "h-9 w-9 border-white z-0 top-1",
+                        ? "border-white z-10"
+                        : "border-white z-0",
                   hoveredIndex === item.id
                     ? "border-sky-400 shadow-2xl ring-4 ring-sky-400/20"
                     : "",
                 )}
               />
+              <span className={cn(
+                "absolute top-full mt-2 text-[10px] font-bold text-slate-500 whitespace-nowrap transition-all duration-200 pointer-events-none uppercase tracking-wider",
+                hoveredIndex === item.id 
+                  ? "opacity-100 translate-y-0" 
+                  : "opacity-0 translate-y-1"
+              )}>
+                {item.name}
+              </span>
             </div>
           </div>
         );

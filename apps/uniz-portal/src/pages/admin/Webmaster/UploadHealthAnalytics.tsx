@@ -30,6 +30,13 @@ export default function UploadHealthAnalytics({ hideHeader = false }: { hideHead
 
   useEffect(() => {
     const fetchData = async () => {
+      // Skip for localhost to prevent 401 errors from prod API
+      if (window.location.hostname === "localhost" || window.location.hostname !== "uniz.rguktong.in") {
+        console.log("Upload health analytics fetching skipped on non-production host:", window.location.hostname);
+        setLoading(false);
+        return;
+      }
+
       try {
         if (!cachedData.fetched) setLoading(true);
         const token = localStorage.getItem("admin_token") || localStorage.getItem("faculty_token") || localStorage.getItem("student_token");
