@@ -14,7 +14,6 @@ import {
   LogOut,
   AlertCircle,
   X,
-  Layers,
   ChevronLeft,
   LayoutGrid,
   Lock,
@@ -244,15 +243,15 @@ export default function Sidebar({ content }: MainContent) {
     {
       label: "Explore",
       icon: LayoutGrid,
-      isActive: ["gradehub", "attendance", "grievance"].includes(
+      isActive: ["gradehub", "attendance"].includes(
         content
       ),
     },
     {
-      label: "Current Sem",
-      icon: Layers,
-      onClick: () => navigate("/student/current-semester"),
-      isActive: content === "currentSemester",
+      label: "Grievance",
+      icon: AlertCircle,
+      onClick: () => navigate("/student/grievance"),
+      isActive: content === "grievance",
     },
     {
       label: "Help",
@@ -274,12 +273,6 @@ export default function Sidebar({ content }: MainContent) {
       icon: CalendarCheck,
       onClick: () => navigate("/student/attendance"),
       isActive: content === "attendance",
-    },
-    {
-      label: "Grievance",
-      icon: AlertCircle,
-      onClick: () => navigate("/student/grievance"),
-      isActive: content === "grievance",
     },
   ];
 

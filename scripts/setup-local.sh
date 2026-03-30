@@ -52,14 +52,21 @@ fi
 
 # 2. Infra Startup
 echo "🏗️ Starting Core Infrastructure (Postgres & Redis)..."
+# Create core infra .env if it doesn't exist
 touch infra/core-infra/.env
+
+# Export defaults for docker-compose to suppress warnings
+export POSTGRES_USER=${POSTGRES_USER:-user}
+export POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+export POSTGRES_DB=${POSTGRES_DB:-uniz_db}
+
 $COMPOSE_CMD -f infra/core-infra/docker-compose.yml up -d uniz-redis uniz-postgres
 
 # --- CRITICAL: Wait for Postgres to be ready ---
 echo "⏳ Waiting for Postgres to accept connections..."
 MAX_RETRIES=30
 RETRY_COUNT=0
-until docker exec uniz-postgres pg_isready -U user -d uniz_db >/dev/null 2>&1 || [ $RETRY_COUNT -eq $MAX_RETRIES ]; do
+until docker exec uniz-postgres pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} >/dev/null 2>&1 || [ $RETRY_COUNT -eq $MAX_RETRIES ]; do
   printf "."
   sleep 1
   ((RETRY_COUNT++))
@@ -88,6 +95,12 @@ robust_sed() {
 
 echo "🧬 Syncing Environment & Healing Dependencies..."
 
+# A. Ensure secrets.env exists
+if [ ! -f "secrets.env" ]; then
+    echo "⚠️ secrets.env missing! Initializing from secrets.env.example..."
+    cp secrets.env.example secrets.env
+fi
+
 # Update root Prisma for seeder stability
 npm install --no-save prisma@6 @prisma/client@6 >/dev/null 2>&1
 
@@ -98,7 +111,7 @@ for i in "${!SERVICES[@]}"; do
     if [ -d "$path" ]; then
         echo "  -> Processing $path..."
         
-        # A. Update Secrets with Newline Safety
+        # B. Update Secrets with Newline Safety
         if [ -f "secrets.env" ]; then
             cp secrets.env "$path/.env"
             # Ensure file ends with newline to prevent smashing
