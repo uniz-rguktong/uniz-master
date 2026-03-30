@@ -752,7 +752,7 @@ export default function StudentProfilePage() {
             {[
               "personal",
               "academic",
-              "seating",
+              /* "seating", */
               "family",
               enableOutingsAndOutpasses ? "permissions" : "",
             ]
