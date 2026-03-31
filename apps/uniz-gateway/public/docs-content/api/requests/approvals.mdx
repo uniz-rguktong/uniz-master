@@ -1,0 +1,304 @@
+---
+title: "Approvals"
+description: "Approve or reject outpass and outing requests, manage security check-in and check-out, and retrieve a summary of students currently outside campus."
+---
+
+Requests flow through a sequential approval chain. Each role can only act at the level assigned to them. Approving a request moves it to the next level; rejecting it ends the chain.
+
+<Info>
+  All endpoints on this page require `Authorization: Bearer <token>` in the request header.
+</Info>
+
+## Approval chain
+
+<Steps>
+  <Step title="Caretaker">
+    First to review. Confirms the student's family is informed. Approving moves the request to the warden.
+  </Step>
+  <Step title="Warden">
+    Second review. Checks the student's academic schedule and disciplinary record. Approving moves the request to the SWO.
+  </Step>
+  <Step title="SWO (Student Welfare Officer)">
+    Third review. Approving forwards the request to the dean or director.
+  </Step>
+  <Step title="Dean / Director">
+    Final authority. Their approval sets `isApproved: true` and allows the student to exit campus.
+  </Step>
+</Steps>
+
+Once the dean or director approves, security can use the [check-out](#check-out-a-student) endpoint to record the student leaving, and the [check-in](#check-in-a-student) endpoint when they return.
+
+---
+
+## Approve a request
+
+`POST /requests/:id/approve`
+
+Advances the request to the next approval level. The action taken depends on the caller's role:
+
+| Caller role | Effect |
+|-------------|--------|
+| `caretaker_male` / `caretaker_female` | Moves request from `caretaker` → `warden` level. |
+| `warden_male` / `warden_female` | Moves request from `warden` → `swo` level. |
+| `swo` | Moves request from `swo` → `dean`/`director` level. |
+| `dean` / `director` | Sets `isApproved: true`. Final approval granted. |
+
+`POST /requests/:id/forward` is an alias for this endpoint.
+
+**Auth required:** Yes (caretaker, warden, swo, dean, director)
+
+### Path parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the outpass or outing request.
+</ParamField>
+
+### Request body
+
+<ParamField body="comment" type="string">
+  Optional note from the approver. Shown to the student and subsequent approvers.
+</ParamField>
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` when the approval was recorded.
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="properties" defaultOpen>
+    <ResponseField name="id" type="string">
+      Request identifier.
+    </ResponseField>
+    <ResponseField name="currentLevel" type="string">
+      Updated approval level after this action.
+    </ResponseField>
+    <ResponseField name="isApproved" type="boolean">
+      `true` if the dean or director has now given final approval.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/requests/req-789/approve \
+  --header 'Authorization: Bearer <token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "comment": "Parent verified via call."
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "req-789",
+    "currentLevel": "warden",
+    "isApproved": false
+  }
+}
+```
+
+### Error responses
+
+| Status | Meaning |
+|--------|---------|
+| `403 Forbidden` | Your role is not permitted to approve at this request's current level. |
+| `404 Not Found` | No request found with the given `id`. |
+
+---
+
+## Reject a request
+
+`POST /requests/:id/reject`
+
+Rejects the request at the current level and ends the approval chain. The student's request will show `status: "rejected"` in their [request history](/api/requests/outpass#get-request-history).
+
+**Auth required:** Yes (caretaker, warden, swo, dean, director)
+
+### Path parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the request to reject.
+</ParamField>
+
+### Request body
+
+<ParamField body="comment" type="string" required>
+  The reason for rejection. Shown to the student.
+</ParamField>
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` when the rejection was recorded.
+</ResponseField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/requests/req-789/reject \
+  --header 'Authorization: Bearer <token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "comment": "Invalid reason provided."
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true
+}
+```
+
+---
+
+## Check out a student
+
+`POST /requests/:id/checkout`
+
+Records that a student has physically left campus. Call this after the request is fully approved and the security guard verifies the student at the gate.
+
+**Auth required:** Yes (security)
+
+### Path parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the approved outpass or outing request.
+</ParamField>
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` when the checkout was recorded.
+</ResponseField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/requests/req-789/checkout \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true
+}
+```
+
+---
+
+## Check in a student
+
+`POST /requests/:id/checkin`
+
+Records that a student has returned to campus. Call this when the student arrives back at the gate after an approved outpass or outing.
+
+**Auth required:** Yes (security)
+
+### Path parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the request associated with this student's exit.
+</ParamField>
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` when the check-in was recorded.
+</ResponseField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/requests/req-789/checkin \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true
+}
+```
+
+---
+
+## Get security summary
+
+`GET /requests/security/summary`
+
+Returns a summary of students currently outside campus — those who have checked out but not yet checked back in. Use this for a gate-level overview or end-of-day report.
+
+**Auth required:** Yes (security, director, admin)
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="summary" type="object" required>
+  <Expandable title="properties" defaultOpen>
+    <ResponseField name="totalOut" type="number">
+      Total number of students currently outside campus.
+    </ResponseField>
+    <ResponseField name="students" type="array">
+      Array of students currently outside.
+      <Expandable title="student object properties">
+        <ResponseField name="studentId" type="string">
+          Student roll number.
+        </ResponseField>
+        <ResponseField name="name" type="string">
+          Student full name.
+        </ResponseField>
+        <ResponseField name="checkedOutAt" type="string">
+          ISO 8601 timestamp of when the student exited.
+        </ResponseField>
+        <ResponseField name="expectedReturn" type="string">
+          ISO 8601 timestamp of the approved return time.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example
+
+```bash
+curl --request GET \
+  --url https://api.uniz.rguktong.in/api/v1/requests/security/summary \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "summary": {
+    "totalOut": 2,
+    "students": [
+      {
+        "studentId": "O210008",
+        "name": "DESU SABER",
+        "checkedOutAt": "2026-02-10T17:05:00Z",
+        "expectedReturn": "2026-02-10T20:00:00Z"
+      }
+    ]
+  }
+}
+```

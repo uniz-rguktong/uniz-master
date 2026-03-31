@@ -1,0 +1,194 @@
+---
+title: "OTP Verification"
+description: "Request and verify one-time passwords to obtain a reset token for password recovery."
+---
+
+OTP verification is the first step of the password reset flow. The full flow is:
+
+<Steps>
+  <Step title="Request an OTP">
+    Call `POST /auth/otp/request` (push notification) or `POST /auth/otp/request-email` (email) with the account username.
+  </Step>
+  <Step title="Receive the code">
+    The user receives a 6-digit code via the chosen channel.
+  </Step>
+  <Step title="Verify the OTP">
+    Call `POST /auth/otp/verify` with the username and the 6-digit code. On success you receive a `resetToken`.
+  </Step>
+  <Step title="Reset the password">
+    Pass the `resetToken` to `POST /auth/password/reset` along with the new password. See the [Password](/api/auth/password) page for details.
+  </Step>
+</Steps>
+
+<Warning>
+  OTP endpoints are rate-limited. Each account is subject to an hourly limit that applies across both channels, a separate per-request limit for push notifications, and a separate per-request limit for email. Exceeding any limit returns `429 Too Many Requests`.
+</Warning>
+
+---
+
+## Request OTP via push notification
+
+`POST /auth/otp/request`
+
+Sends a 6-digit OTP to the device registered for push notifications on the account.
+
+**Auth required:** No
+
+**Rate limits:** hourly limit (shared with email channel) + per-push limit
+
+### Request body
+
+<ParamField body="username" type="string" required>
+  The student roll number or admin username that needs to reset their password.
+</ParamField>
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` when the OTP was dispatched successfully.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable confirmation that the OTP was sent.
+</ResponseField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/auth/otp/request \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "username": "O210008"
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "message": "OTP sent via push notification"
+}
+```
+
+### Error responses
+
+| Status | Meaning |
+|--------|---------|
+| `404 Not Found` | No account found for the given username. |
+| `429 Too Many Requests` | Hourly or per-push rate limit exceeded. |
+
+---
+
+## Request OTP via email
+
+`POST /auth/otp/request-email`
+
+Sends a 6-digit OTP to the email address registered on the account.
+
+**Auth required:** No
+
+**Rate limits:** hourly limit (shared with push channel) + per-email limit
+
+### Request body
+
+<ParamField body="username" type="string" required>
+  The student roll number or admin username that needs to reset their password.
+</ParamField>
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` when the OTP email was queued successfully.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable confirmation that the OTP was sent.
+</ResponseField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/auth/otp/request-email \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "username": "O210008"
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "message": "OTP sent to registered email"
+}
+```
+
+### Error responses
+
+| Status | Meaning |
+|--------|---------|
+| `404 Not Found` | No account found for the given username. |
+| `429 Too Many Requests` | Hourly or per-email rate limit exceeded. |
+
+---
+
+## Verify OTP
+
+`POST /auth/otp/verify`
+
+Validates the 6-digit code and, if correct, returns a short-lived `resetToken`. You must pass this token to `POST /auth/password/reset` to complete the password reset.
+
+**Auth required:** No
+
+### Request body
+
+<ParamField body="username" type="string" required>
+  The username that the OTP was issued for.
+</ParamField>
+
+<ParamField body="otp" type="string" required>
+  The 6-digit one-time password received via push or email. Must be exactly 6 characters.
+</ParamField>
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` when the OTP was accepted.
+</ResponseField>
+
+<ResponseField name="resetToken" type="string" required>
+  A short-lived token authorising a single password reset. Pass this to `POST /auth/password/reset`.
+</ResponseField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/auth/otp/verify \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "username": "O210008",
+    "otp": "482910"
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "resetToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### Error responses
+
+| Status | Meaning |
+|--------|---------|
+| `400 Bad Request` | OTP is invalid or has expired. |
+| `404 Not Found` | No account found for the given username. |
+| `429 Too Many Requests` | Rate limit exceeded. |
