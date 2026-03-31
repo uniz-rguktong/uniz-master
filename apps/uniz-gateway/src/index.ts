@@ -205,10 +205,11 @@ app.get("/docs", (req, res) => {
       search: 'auto',
       placeholder: 'Search documentation...',
       noData: 'No matches',
-      version: '1.3'
+      version: '1.4'
     }
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-yml-front-matter/dist/docsify-yml-front-matter.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
 </body>
