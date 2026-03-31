@@ -163,7 +163,7 @@ const serviceMap: Record<string, string> = {
 };
 
 // 4. Documentation Engine (UniZ Elegant Docs)
-app.use("/docs-content", express.static(path.join(__dirname, "../public/docs-content")));
+app.use("/docs-content", express.static(path.join(process.cwd(), "public/docs-content")));
 
 app.get("/docs", (req, res) => {
   res.send(`
@@ -192,7 +192,8 @@ app.get("/docs", (req, res) => {
   <div id="app">Loading UniZ Documentation...</div>
   <script>
     window.$docsify = {
-      name: 'UniZ',
+      el: '#app',
+      name: 'UniZ Manual',
       repo: 'https://github.com/uniz-rguktong/uniz-master',
       basePath: '/docs-content/',
       loadSidebar: true,
@@ -203,9 +204,8 @@ app.get("/docs", (req, res) => {
       executeScript: true,
       search: 'auto',
       placeholder: 'Search documentation...',
-      noData: 'No results found',
-      // Since it's MDX, we need simple cleaning
-      formatUpdated: '{MM}/{DD} {HH}:{mm}',
+      noData: 'No matches',
+      version: '1.3'
     }
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
@@ -244,6 +244,18 @@ app.get("/api/v1/system/health", async (req: express.Request, res: express.Respo
 
   healthCache.set(cacheKey, { data, expiry: now + 2000 }); // Cache for 2 seconds
   res.status(allOk ? 200 : 503).json(data);
+});
+
+// DEBUG: Verify Docs Path
+app.get("/api/v1/system/docs-debug", (req, res) => {
+  const p = path.join(__dirname, "../public/docs-content");
+  const fs = require('fs');
+  try {
+    const files = fs.existsSync(p) ? fs.readdirSync(p) : "PATH_NOT_FOUND";
+    res.json({ resolved_path: p, files });
+  } catch (e: any) {
+    res.json({ error: e.message, path: p });
+  }
 });
 
 // 5. Warp-Speed Proxy Engine
