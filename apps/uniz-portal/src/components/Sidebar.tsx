@@ -44,19 +44,19 @@ export { enableOutingsAndOutpasses } from "../pages/student/student";
 
 interface MainContent {
   content:
-  | "outpass"
-  | "outing"
-  | "gradehub"
-  | "resetpassword"
-  | "dashboard"
-  | "requestOuting"
-  | "requestOutpass"
-  | "attendance"
-  | "grievance"
-  | "currentSemester"
-  | "seating"
-  | "help"
-  | "error";
+    | "outpass"
+    | "outing"
+    | "gradehub"
+    | "resetpassword"
+    | "dashboard"
+    | "requestOuting"
+    | "requestOutpass"
+    | "attendance"
+    | "grievance"
+    | "currentSemester"
+    | "seating"
+    | "help"
+    | "error";
 }
 
 const ContentSkeleton = () => (
@@ -137,25 +137,25 @@ export default function Sidebar({ content }: MainContent) {
     },
     ...(enableOutingsAndOutpasses
       ? [
-        {
-          id: "outing",
-          label: "Outing Requests",
-          href: "/student/outing",
-          content: "outing",
-          icon: Clock,
-          activeColor: "text-amber-500",
-          hoverColor: "hover:text-amber-500",
-        },
-        {
-          id: "outpass",
-          label: "Outpass Requests",
-          href: "/student/outpass",
-          content: "outpass",
-          icon: CalendarDays,
-          activeColor: "text-orange-500",
-          hoverColor: "hover:text-orange-500",
-        },
-      ]
+          {
+            id: "outing",
+            label: "Outing Requests",
+            href: "/student/outing",
+            content: "outing",
+            icon: Clock,
+            activeColor: "text-amber-500",
+            hoverColor: "hover:text-amber-500",
+          },
+          {
+            id: "outpass",
+            label: "Outpass Requests",
+            href: "/student/outpass",
+            content: "outpass",
+            icon: CalendarDays,
+            activeColor: "text-orange-500",
+            hoverColor: "hover:text-orange-500",
+          },
+        ]
       : []),
     {
       id: "gradehub",
@@ -243,9 +243,7 @@ export default function Sidebar({ content }: MainContent) {
     {
       label: "Explore",
       icon: LayoutGrid,
-      isActive: ["gradehub", "attendance"].includes(
-        content
-      ),
+      isActive: ["gradehub", "attendance"].includes(content),
     },
     {
       label: "Grievance",
@@ -325,10 +323,17 @@ export default function Sidebar({ content }: MainContent) {
         </div>
 
         {/* Main Content Area */}
-        <main ref={mainRef} className="flex-1 md:overflow-y-auto md:max-h-screen">
+        <main
+          ref={mainRef}
+          className="flex-1 md:overflow-y-auto md:max-h-screen"
+        >
           {/* Mobile Header */}
-          <header className={`md:hidden sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16 transition-all duration-300 ${isScrolled ? "bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm" : "bg-transparent border-transparent"}`}>
-            <h1 className={`unifrakturcook-bold text-3xl tracking-tighter transition-colors duration-300 ${isScrolled ? "text-slate-900" : "text-slate-800"}`}>
+          <header
+            className={`md:hidden sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16 transition-all duration-300 ${isScrolled ? "bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm" : "bg-transparent border-transparent"}`}
+          >
+            <h1
+              className={`unifrakturcook-bold text-3xl tracking-tighter transition-colors duration-300 ${isScrolled ? "text-slate-900" : "text-slate-800"}`}
+            >
               uniZ
             </h1>
             <button
@@ -340,7 +345,9 @@ export default function Sidebar({ content }: MainContent) {
           </header>
 
           {/* Re-designed Desktop Header (Pharmacy App Style) */}
-          <header className={`sticky top-0 z-40 p-4 px-8 md:pl-36 justify-between items-center hidden md:flex transition-all duration-300 ${isScrolled ? "bg-white/60 backdrop-blur-md border-b border-white/20 shadow-sm" : "bg-transparent border-transparent shadow-none"}`}>
+          <header
+            className={`sticky top-0 z-40 p-4 px-8 md:pl-36 justify-between items-center hidden md:flex transition-all duration-300 ${isScrolled ? "bg-white/60 backdrop-blur-md border-b border-white/20 shadow-sm" : "bg-transparent border-transparent shadow-none"}`}
+          >
             {/* Left: App Branding */}
             <div className="flex items-center gap-4">
               <h1 className="unifrakturcook-bold text-3xl text-slate-800 tracking-tight">
@@ -389,16 +396,15 @@ export default function Sidebar({ content }: MainContent) {
                   className="flex items-center gap-1 text-slate-500 font-bold text-[10px] uppercase tracking-widest py-2"
                 >
                   <ChevronLeft size={20} strokeWidth={3} />
-
                 </button>
               </div>
             )}
             <Suspense fallback={<ContentSkeleton />}>
               {contentMap[content] || <Error />}
             </Suspense>
-            
+
             <div className="mt-[50vh] -mx-4 md:-mx-10 border-t border-slate-100 pt-32">
-               <GlobeFeature />
+              <GlobeFeature />
             </div>
           </div>
         </main>
@@ -412,9 +418,9 @@ export default function Sidebar({ content }: MainContent) {
 
         {/* Modern Mobile Bottom Navigation - Sticky Animated Bar */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
-          <InteractiveMenu 
-            primaryItems={primaryMobileItems} 
-            moreItems={moreMobileItems} 
+          <InteractiveMenu
+            primaryItems={primaryMobileItems}
+            moreItems={moreMobileItems}
           />
         </div>
       </div>

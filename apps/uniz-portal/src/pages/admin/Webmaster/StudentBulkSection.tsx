@@ -101,7 +101,10 @@ export default function StudentBulkSection() {
 
   const handleDownloadTemplate = async () => {
     try {
-      await downloadFile(ADMIN_STUDENT_TEMPLATE, "Student_Upload_Template.xlsx");
+      await downloadFile(
+        ADMIN_STUDENT_TEMPLATE,
+        "Student_Upload_Template.xlsx",
+      );
       toast.success("Template downloaded");
     } catch (error) {
       toast.error("Failed to download template");
@@ -263,8 +266,6 @@ export default function StudentBulkSection() {
         </div>
       ) : (
         <div className="w-full space-y-10">
-
-
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="space-y-2">
               <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">

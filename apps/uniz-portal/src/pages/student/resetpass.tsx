@@ -8,7 +8,6 @@ import { toast } from "@/utils/toast-ref";
 import { CHANGE_PASS_ENDPOINT } from "../../api/endpoints";
 import { apiClient } from "../../api/apiClient";
 
-
 export default function Resetpassword() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
@@ -119,8 +118,7 @@ export default function Resetpassword() {
             {/* Form Section */}
             {/* Form Section */}
             <div className="md:w-2/3 py-6 px-0 md:p-8 md:px-10">
-              <div className="md:mb-8 mb-4">
-              </div>
+              <div className="md:mb-8 mb-4"></div>
 
               <div className="space-y-4 md:space-y-6">
                 {/* Current Password */}

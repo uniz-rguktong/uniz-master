@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef, useEffect } from "react";
-import { LogOut, LayoutDashboard, MessageSquare, Search, Lock } from "lucide-react";
+import {
+  LogOut,
+  LayoutDashboard,
+  MessageSquare,
+  Search,
+  Lock,
+} from "lucide-react";
 import SecuritySection from "../Webmaster/SecuritySection";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";

@@ -17,10 +17,10 @@ async function seed() {
   try {
     await client.connect();
     const hash = await bcrypt.hash("password123", 10);
-    
+
     const getUuid = (str: string) => {
       const h = crypto.createHash("md5").update(str).digest("hex");
-      return `${h.substring(0,8)}-${h.substring(8,12)}-4${h.substring(13,16)}-8${h.substring(17,20)}-${h.substring(20,32)}`;
+      return `${h.substring(0, 8)}-${h.substring(8, 12)}-4${h.substring(13, 16)}-8${h.substring(17, 20)}-${h.substring(20, 32)}`;
     };
 
     // --- CLEANUP (Fresh Start for Local Dev) ---
@@ -30,7 +30,9 @@ async function seed() {
     await client.query('TRUNCATE TABLE uniz_user."FacultyProfile" CASCADE;');
     await client.query('TRUNCATE TABLE uniz_user."StudentProfile" CASCADE;');
     await client.query('TRUNCATE TABLE uniz_user."Banner" CASCADE;');
-    await client.query('TRUNCATE TABLE uniz_user."PublicNotification" CASCADE;');
+    await client.query(
+      'TRUNCATE TABLE uniz_user."PublicNotification" CASCADE;',
+    );
     await client.query('TRUNCATE TABLE uniz_user."Tender" CASCADE;');
     await client.query('TRUNCATE TABLE uniz_user."UploadHistory" CASCADE;');
     await client.query('TRUNCATE TABLE uniz_user."PushSubscription" CASCADE;');
@@ -39,10 +41,16 @@ async function seed() {
     await client.query('TRUNCATE TABLE uniz_academics."Grade" CASCADE;');
     await client.query('TRUNCATE TABLE uniz_academics."Attendance" CASCADE;');
     await client.query('TRUNCATE TABLE uniz_academics."Subject" CASCADE;');
-    await client.query('TRUNCATE TABLE uniz_academics."AcademicSemester" CASCADE;');
-    await client.query('TRUNCATE TABLE uniz_academics."BranchAllocation" CASCADE;');
+    await client.query(
+      'TRUNCATE TABLE uniz_academics."AcademicSemester" CASCADE;',
+    );
+    await client.query(
+      'TRUNCATE TABLE uniz_academics."BranchAllocation" CASCADE;',
+    );
     await client.query('TRUNCATE TABLE uniz_academics."Registration" CASCADE;');
-    await client.query('TRUNCATE TABLE uniz_academics."SeatingArrangement" CASCADE;');
+    await client.query(
+      'TRUNCATE TABLE uniz_academics."SeatingArrangement" CASCADE;',
+    );
 
     const upsertUser = async (
       rawId: string,
@@ -177,10 +185,14 @@ async function seed() {
     );
 
     // --- SEEDING HODs removed as per user request ---
-    console.log("- Skipping HOD/Faculty Seeding (Only Admin accounts are being kept)");
+    console.log(
+      "- Skipping HOD/Faculty Seeding (Only Admin accounts are being kept)",
+    );
 
     // --- SEEDING STUDENTS removed as per user request ---
-    console.log("- Skipping Student Seeding (Students should be added via bulk upload)");
+    console.log(
+      "- Skipping Student Seeding (Students should be added via bulk upload)",
+    );
 
     // --- SEEDING CMS CONTENT ---
     console.log("- Seeding CMS Assets...");

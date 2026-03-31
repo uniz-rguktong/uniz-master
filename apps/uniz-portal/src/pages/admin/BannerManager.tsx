@@ -296,7 +296,8 @@ export default function BannerManager() {
                     Create New Banner
                   </h3>
                   <p className="text-[14px] font-medium text-slate-500 mt-1.5 leading-relaxed">
-                    Upload an image and add descriptive content for the homepage carousel.
+                    Upload an image and add descriptive content for the homepage
+                    carousel.
                   </p>
                 </div>
               </div>
@@ -321,12 +322,16 @@ export default function BannerManager() {
                         <p className="font-bold text-[10px] truncate max-w-[250px] uppercase">
                           {image.name}
                         </p>
-                        <p className="text-[9px] opacity-70 mt-0.5 font-black uppercase">Click to change</p>
+                        <p className="text-[9px] opacity-70 mt-0.5 font-black uppercase">
+                          Click to change
+                        </p>
                       </div>
                     ) : (
                       <div className="text-slate-500">
                         <Upload className="w-6 h-6 mx-auto mb-1.5 text-slate-400" />
-                        <p className="font-bold text-[10px] uppercase tracking-wider">Select Banner Image</p>
+                        <p className="font-bold text-[10px] uppercase tracking-wider">
+                          Select Banner Image
+                        </p>
                         <p className="text-[9px] opacity-60 mt-0.5 font-black uppercase">
                           Drop or click
                         </p>

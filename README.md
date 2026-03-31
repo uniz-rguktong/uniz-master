@@ -99,5 +99,3 @@ UniZ uses a "Shielded Vault" pattern to isolate Local and Production environment
 - **Local Development**: Managed via `secrets.env` in the root. The `npm run setup:local` command automatically propagates this to all microservice sub-directories. This file is git-ignored.
 - **Production (VPS)**: Sourced from `/root/uniz-secrets.env` on the VPS host. The `deploy.sh` script reads these values over SSH and injects them directly into Kubernetes Secrets.
 - **Airgap**: Production credentials **never** touch the Git history or your local machine's environment. Changes to production ENV must be made directly on the VPS master file.
-
-

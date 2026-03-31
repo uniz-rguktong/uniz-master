@@ -1,5 +1,14 @@
 import { Link } from "react-router-dom";
-import { Facebook, Twitter, Linkedin, Instagram, Youtube, ArrowUp, MapPin, ChevronRight } from "lucide-react";
+import {
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+  Youtube,
+  ArrowUp,
+  MapPin,
+  ChevronRight,
+} from "lucide-react";
 
 export function Footer() {
   const scrollToTop = () => {
@@ -15,7 +24,7 @@ export function Footer() {
         { name: "Regulations", path: "/academics/AcademicRegulations" },
         { name: "Curricula", path: "/academics/curicula" },
         { name: "Office of Academics", path: "/institute/aboutrgukt" },
-      ]
+      ],
     },
     {
       title: "Departments",
@@ -25,7 +34,7 @@ export function Footer() {
         { name: "Civil Engineering", path: "/departments/CIVIL" },
         { name: "Mechanical Engg", path: "/departments/ME" },
         { name: "Mathematics & Physics", path: "/departments/MATHEMATICS" },
-      ]
+      ],
     },
     {
       title: "Institute Life",
@@ -35,7 +44,7 @@ export function Footer() {
         { name: "SC/ST Cell", path: "/institute/scst" },
         { name: "Library & Computing", path: "#" },
         { name: "Hostel Management", path: "#" },
-      ]
+      ],
     },
     {
       title: "Updates",
@@ -44,8 +53,8 @@ export function Footer() {
         { name: "Careers", path: "/notifications" },
         { name: "Tender Invitations", path: "/notifications" },
         { name: "Events & Symposiums", path: "#" },
-      ]
-    }
+      ],
+    },
   ];
 
   return (
@@ -55,42 +64,62 @@ export function Footer() {
         <div className="container mx-auto max-w-7xl px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-[#800000]/10 rounded-2xl border border-[#800000]/20">
-              <img src="/rgukt-logo.png" alt="Logo" className="w-10 h-10 object-contain brightness-110 grayscale-0" />
+              <img
+                src="/rgukt-logo.png"
+                alt="Logo"
+                className="w-10 h-10 object-contain brightness-110 grayscale-0"
+              />
             </div>
             <div>
-              <h3 className="text-xl font-bold tracking-tight">Rajiv Gandhi University of Knowledge Technologies</h3>
-              <p className="text-slate-400 text-sm font-medium italic">Catering to the Educational Needs of Gifted Rural Youth</p>
+              <h3 className="text-xl font-bold tracking-tight">
+                Rajiv Gandhi University of Knowledge Technologies
+              </h3>
+              <p className="text-slate-400 text-sm font-medium italic">
+                Catering to the Educational Needs of Gifted Rural Youth
+              </p>
             </div>
           </div>
-          <div className="flex gap-4">
-          </div>
+          <div className="flex gap-4"></div>
         </div>
       </div>
 
       <div className="container mx-auto max-w-7xl px-4 pt-16 pb-8">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-8 mb-12">
-
           {/* Logo & Info */}
           <div className="col-span-2 md:col-span-3 lg:col-span-2 flex flex-col gap-6">
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-black italic tracking-tighter text-white">UNI<span className="text-[#800000]">Z</span></span>
-              <span className="text-xs font-bold uppercase tracking-widest text-slate-500 border-l border-slate-700 pl-2">Ongole Campus</span>
+              <span className="text-2xl font-black italic tracking-tighter text-white">
+                UNI<span className="text-[#800000]">Z</span>
+              </span>
+              <span className="text-xs font-bold uppercase tracking-widest text-slate-500 border-l border-slate-700 pl-2">
+                Ongole Campus
+              </span>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
-              Pioneering technical excellence and academic innovation at RGUKT Ongole.
+              Pioneering technical excellence and academic innovation at RGUKT
+              Ongole.
             </p>
             <div className="flex flex-col gap-4">
               <div className="flex items-start gap-3 text-slate-400 group">
                 <MapPin className="w-5 h-5 text-[#800000] shrink-0 mt-0.5" />
-                <span className="text-sm group-hover:text-white transition-colors leading-snug">RGUKT Ongole Campus, <br />Prakasam District, AP - 523225</span>
+                <span className="text-sm group-hover:text-white transition-colors leading-snug">
+                  RGUKT Ongole Campus, <br />
+                  Prakasam District, AP - 523225
+                </span>
               </div>
             </div>
             <div className="flex gap-4 pt-2">
-              {[Facebook, Twitter, Linkedin, Instagram, Youtube].map((Icon, i) => (
-                <a key={i} href="#" className="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-lg text-slate-400 hover:text-white hover:bg-[#800000] hover:border-[#800000] transition-all duration-300">
-                  <Icon className="w-5 h-5" />
-                </a>
-              ))}
+              {[Facebook, Twitter, Linkedin, Instagram, Youtube].map(
+                (Icon, i) => (
+                  <a
+                    key={i}
+                    href="#"
+                    className="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-lg text-slate-400 hover:text-white hover:bg-[#800000] hover:border-[#800000] transition-all duration-300"
+                  >
+                    <Icon className="w-5 h-5" />
+                  </a>
+                ),
+              )}
             </div>
           </div>
 
@@ -115,20 +144,23 @@ export function Footer() {
               </div>
             </div>
           ))}
-
         </div>
-
-
 
         {/* BOTTOM COPYRIGHT ROW */}
         <div className="border-t border-slate-800/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-[11px] font-medium uppercase tracking-[0.1em] text-slate-500">
-          <p>© {new Date().getFullYear()} Rajiv Gandhi University of Knowledge Technologies. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} Rajiv Gandhi University of Knowledge
+            Technologies. All rights reserved.
+          </p>
           <div className="flex items-center gap-8">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Contact Support</a>
+            <a href="#" className="hover:text-white transition-colors">
+              Privacy Policy
+            </a>
+            <a href="#" className="hover:text-white transition-colors">
+              Contact Support
+            </a>
           </div>
         </div>
-
       </div>
 
       {/* FLOATING SCROLL TO TOP */}

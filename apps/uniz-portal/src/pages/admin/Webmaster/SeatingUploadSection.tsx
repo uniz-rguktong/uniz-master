@@ -164,7 +164,8 @@ export default function SeatingUploadSection() {
             Exam Seating Management
           </h2>
           <p className="text-slate-500 font-medium text-[13px]">
-            Upload seating arrangements for students based on their exam schedule.
+            Upload seating arrangements for students based on their exam
+            schedule.
           </p>
         </div>
 
@@ -172,7 +173,10 @@ export default function SeatingUploadSection() {
           onClick={downloadTemplate}
           className="group flex items-center gap-2.5 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl border border-slate-200 hover:bg-white hover:text-slate-900 hover:border-slate-300 transition-all font-bold uppercase tracking-widest text-[9px] active:scale-95"
         >
-          <FileDown size={13} className="text-slate-500 group-hover:scale-110 transition-transform" />
+          <FileDown
+            size={13}
+            className="text-slate-500 group-hover:scale-110 transition-transform"
+          />
           Download Template
         </button>
       </div>
@@ -280,49 +284,48 @@ export default function SeatingUploadSection() {
         </div>
 
         <div className="w-full space-y-6">
-            <div className="rounded-xl border border-slate-900 overflow-hidden bg-transparent p-6">
-              <FileUploader
-                onFileSelect={(f) => {
-                  setFile(f);
-                  setResult(null);
-                  setProgress(0);
-                }}
-                label="Seating Layout"
-                description="Upload student-seat mapping protocols."
-                isUploading={loading || !!uploadId}
-                isSuccess={result?.success === true}
-                isError={result?.success === false}
-                progress={progress}
-              />
-            </div>
+          <div className="rounded-xl border border-slate-900 overflow-hidden bg-transparent p-6">
+            <FileUploader
+              onFileSelect={(f) => {
+                setFile(f);
+                setResult(null);
+                setProgress(0);
+              }}
+              label="Seating Layout"
+              description="Upload student-seat mapping protocols."
+              isUploading={loading || !!uploadId}
+              isSuccess={result?.success === true}
+              isError={result?.success === false}
+              progress={progress}
+            />
+          </div>
 
-            <button
-              disabled={!file || loading || !!uploadId || !semesterId}
-              onClick={handleUpload}
-              className="w-full h-12 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] shadow-none hover:bg-slate-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
-            >
-              {loading || uploadId ? (
-                <div className="flex items-center gap-3">
-                  <Loader2 className="animate-spin w-4 h-4" />
-                  <span>
-                    {uploadId ? "Synchronizing..." : "Processing..."}
-                  </span>
-                </div>
-              ) : (
-                <>
-                  <Upload size={16} />
-                  <span>Finalize Seating Layout</span>
-                </>
-              )}
-            </button>
+          <button
+            disabled={!file || loading || !!uploadId || !semesterId}
+            onClick={handleUpload}
+            className="w-full h-12 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] shadow-none hover:bg-slate-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
+          >
+            {loading || uploadId ? (
+              <div className="flex items-center gap-3">
+                <Loader2 className="animate-spin w-4 h-4" />
+                <span>{uploadId ? "Synchronizing..." : "Processing..."}</span>
+              </div>
+            ) : (
+              <>
+                <Upload size={16} />
+                <span>Finalize Seating Layout</span>
+              </>
+            )}
+          </button>
         </div>
 
         {result && (
           <div
-            className={`p-6 rounded-xl border shadow-none ${result.success
-              ? "bg-emerald-50/50 border-emerald-200"
-              : "bg-red-50/50 border-red-200"
-              }`}
+            className={`p-6 rounded-xl border shadow-none ${
+              result.success
+                ? "bg-emerald-50/50 border-emerald-200"
+                : "bg-red-50/50 border-red-200"
+            }`}
           >
             <div className="flex items-center gap-3 mb-4">
               <div
@@ -357,7 +360,9 @@ export default function SeatingUploadSection() {
                   </div>
                 </>
               ) : (
-                <p className="text-red-800 font-medium text-[13px]">{result.msg}</p>
+                <p className="text-red-800 font-medium text-[13px]">
+                  {result.msg}
+                </p>
               )}
             </div>
           </div>

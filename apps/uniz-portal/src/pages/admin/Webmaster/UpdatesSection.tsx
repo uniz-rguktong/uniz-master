@@ -112,17 +112,17 @@ export default function UpdatesSection() {
         result.length,
         "items.",
       );
-        setUpdatesState({
-          fetched: true,
-          data: result
-        });
-      } else {
-        console.warn("CMS_SYNC: All sync attempts failed.");
-        setUpdatesState({
-          fetched: true,
-          data: []
-        });
-      }
+      setUpdatesState({
+        fetched: true,
+        data: result,
+      });
+    } else {
+      console.warn("CMS_SYNC: All sync attempts failed.");
+      setUpdatesState({
+        fetched: true,
+        data: [],
+      });
+    }
     setLoading(false);
   };
 
@@ -262,7 +262,10 @@ export default function UpdatesSection() {
                 Array(7)
                   .fill(0)
                   .map((_, i) => (
-                    <tr key={i} className="animate-pulse border-b border-slate-50 last:border-0 hover:bg-transparent">
+                    <tr
+                      key={i}
+                      className="animate-pulse border-b border-slate-50 last:border-0 hover:bg-transparent"
+                    >
                       <td className="px-10 py-6">
                         <div className="flex items-center gap-4">
                           <div className="w-11 h-11 rounded-xl bg-slate-100 border-2 border-white ring-1 ring-slate-100 shadow-sm" />
@@ -357,13 +360,13 @@ export default function UpdatesSection() {
                         <p className="text-sm font-semibold tracking-tight text-slate-700">
                           {update.createdAt
                             ? new Date(update.createdAt).toLocaleDateString(
-                              "en-GB",
-                              {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                              },
-                            )
+                                "en-GB",
+                                {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                },
+                              )
                             : "Today"}
                         </p>
                         <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
@@ -413,7 +416,6 @@ export default function UpdatesSection() {
             </tbody>
           </table>
         </div>
-
       </div>
 
       <AlertDialog

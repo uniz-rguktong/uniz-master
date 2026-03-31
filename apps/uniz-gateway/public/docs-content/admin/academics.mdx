@@ -16,12 +16,12 @@ GET https://api.uniz.rguktong.in/api/v1/academics/grades/batch?branch=CSE&year=E
 Authorization: Bearer <TOKEN>
 ```
 
-| Query parameter | Example | Description |
-|---|---|---|
-| `branch` | `CSE` | Filter by branch (CSE, ECE, EEE, etc.) |
-| `year` | `E2` | Filter by year (E1–E4) |
-| `semesterId` | `SEM-1` | Semester identifier |
-| `failedOnly` | `true` / `false` | Return only failed grade records when `true` |
+| Query parameter | Example          | Description                                  |
+| --------------- | ---------------- | -------------------------------------------- |
+| `branch`        | `CSE`            | Filter by branch (CSE, ECE, EEE, etc.)       |
+| `year`          | `E2`             | Filter by year (E1–E4)                       |
+| `semesterId`    | `SEM-1`          | Semester identifier                          |
+| `failedOnly`    | `true` / `false` | Return only failed grade records when `true` |
 
 **Response:**
 
@@ -88,7 +88,9 @@ Content-Type: application/json
 The `grade` field accepts either a letter grade string (`"EX"`, `"A"`, `"B"`, etc.) or a numeric grade point value.
 
 <Tip>
-Use `GET /academics/grades/batch` first to retrieve the correct `subjectId` values before constructing a bulk-update payload. Incorrect subject IDs will be silently skipped.
+  Use `GET /academics/grades/batch` first to retrieve the correct `subjectId`
+  values before constructing a bulk-update payload. Incorrect subject IDs will
+  be silently skipped.
 </Tip>
 
 ## Uploading grades via Excel
@@ -105,6 +107,7 @@ For large-scale grade entry, download a pre-filled template, fill in grades, and
     ```
 
     Save the returned `.xlsx` file to your computer.
+
   </Step>
   <Step title="Fill in the grades">
     Open the template in Excel or Google Sheets. Fill in the `grade` column for each student. Do not modify the student ID column or the sheet structure.
@@ -119,6 +122,7 @@ For large-scale grade entry, download a pre-filled template, fill in grades, and
     ```
 
     The response includes a success count, failure count, and a list of any errors.
+
   </Step>
   <Step title="Monitor upload progress">
     Poll the upload progress endpoint to track the background job.
@@ -141,6 +145,7 @@ For large-scale grade entry, download a pre-filled template, fill in grades, and
     ```
 
     When `status` returns `"completed"`, the upload is finished.
+
   </Step>
 </Steps>
 
@@ -153,7 +158,9 @@ For attendance data, staff with the appropriate role can access attendance recor
 ## Publishing results by email
 
 <Warning>
-This action is restricted to the **director** role only. It triggers a background bulk-email job that sends report cards to all students for the specified semester. Confirm the grades are finalized before publishing.
+  This action is restricted to the **director** role only. It triggers a
+  background bulk-email job that sends report cards to all students for the
+  specified semester. Confirm the grades are finalized before publishing.
 </Warning>
 
 **Endpoint:** `POST /academics/grades/publish-email`
@@ -204,6 +211,7 @@ Use the Add Students feature to onboard a new batch or add records for a new sem
     ```
 
     The downloaded `.xlsx` file contains the required column headers for the import. Do not modify the headers.
+
   </Step>
   <Step title="Fill in the spreadsheet">
     Add one row per student. Do not change the column headers.
@@ -213,6 +221,7 @@ Use the Add Students feature to onboard a new batch or add records for a new sem
     | `Username` | `O210008` | University roll number |
     | `FullName` | `DESU SABER` | Full name in uppercase |
     | `Email` | `o210008@rguktong.ac.in` | Institutional email |
+
   </Step>
   <Step title="Upload the spreadsheet">
     ```bash
@@ -222,6 +231,7 @@ Use the Add Students feature to onboard a new batch or add records for a new sem
     ```
 
     Send the file as `multipart/form-data` with the field name `file`. A successful upload returns a `jobId` you can use with the progress endpoint to track background processing.
+
   </Step>
 </Steps>
 
@@ -230,7 +240,8 @@ Use the Add Students feature to onboard a new batch or add records for a new sem
 Webmasters create and manage homepage banners visible to all students in the UniZ portal. Banners support a title, description text, and an image.
 
 <Note>
-Only the **webmaster** role can create and publish banners. The director and dean can view banners but cannot modify them.
+  Only the **webmaster** role can create and publish banners. The director and
+  dean can view banners but cannot modify them.
 </Note>
 
 ### Creating a banner

@@ -588,7 +588,9 @@ export const CalcomHero = () => {
         "Direct installation is not supported by your current browser (like Safari), or the app is already installed. Try using Chrome or Edge, or manually install from your browser menu ('Add to Home Screen' or 'Install App').",
       );
     } else if (result === "error") {
-      window.alert("Installation failed. Please try installing manually from your browser menu.");
+      window.alert(
+        "Installation failed. Please try installing manually from your browser menu.",
+      );
     }
   };
 

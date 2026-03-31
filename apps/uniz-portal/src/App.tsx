@@ -6,7 +6,12 @@ import { PageTransition } from "./components/Transition";
 import Toaster from "@/components/ui/toast";
 import { toasterRef } from "@/utils/toast-ref";
 import { useIsAuth } from "./hooks/is_authenticated";
-import { Construction, FileQuestion, ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  Construction,
+  FileQuestion,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 import { Button } from "./components/Button";
 import { motion } from "framer-motion";
 
@@ -55,10 +60,10 @@ export function Error() {
     <div className="relative min-h-screen flex flex-col items-center justify-center bg-white text-center px-4 font-sans overflow-hidden selection:bg-zinc-100">
       {/* ── High-End Mesh Gradient Backdrop ── */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <motion.div 
+        <motion.div
           animate={{ x: [0, 50, 0], y: [0, -30, 0], scale: [1, 1.1, 1] }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] rounded-full bg-gradient-to-br from-blue-50/40 via-blue-100/10 to-transparent blur-[120px] opacity-70" 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] rounded-full bg-gradient-to-br from-blue-50/40 via-blue-100/10 to-transparent blur-[120px] opacity-70"
         />
         <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       </div>
@@ -72,13 +77,17 @@ export function Error() {
         <div className="w-16 h-16 bg-zinc-950 rounded-2xl flex items-center justify-center mb-8 text-white shadow-xl shadow-zinc-200/50">
           <FileQuestion size={28} strokeWidth={2.5} />
         </div>
-        
+
         <h1 className="text-5xl md:text-7xl font-black text-zinc-950 mb-3 tracking-tight leading-none">
-          404 <span className="text-zinc-300 font-light tracking-[-0.04em]">Error</span>
+          404{" "}
+          <span className="text-zinc-300 font-light tracking-[-0.04em]">
+            Error
+          </span>
         </h1>
-        
+
         <p className="text-zinc-500 mb-10 font-medium text-[15px] leading-relaxed">
-          The requested resource is unavailable, has been relocated, or is simply a glitch in the matrix.
+          The requested resource is unavailable, has been relocated, or is
+          simply a glitch in the matrix.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -174,11 +183,39 @@ export default function App() {
             }
           />
           {/* SEO Marketing Pages */}
-          <Route path="/student-project-management" element={<PageTransition><SEOLanding /></PageTransition>} />
-          <Route path="/college-team-collaboration" element={<PageTransition><SEOLanding /></PageTransition>} />
-          <Route path="/academic-task-tracker" element={<PageTransition><SEOLanding /></PageTransition>} />
-          <Route path="/blog/*" element={<PageTransition><SEOLanding /></PageTransition>} />
-          
+          <Route
+            path="/student-project-management"
+            element={
+              <PageTransition>
+                <SEOLanding />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/college-team-collaboration"
+            element={
+              <PageTransition>
+                <SEOLanding />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/academic-task-tracker"
+            element={
+              <PageTransition>
+                <SEOLanding />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/blog/*"
+            element={
+              <PageTransition>
+                <SEOLanding />
+              </PageTransition>
+            }
+          />
+
           {/* Institutional and Academic routes deleted */}
           <Route
             path="/login"

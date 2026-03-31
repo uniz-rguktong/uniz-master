@@ -1,64 +1,84 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      href="https://res.cloudinary.com/diipfzmyj/image/upload/v1773551873/91566992797-modified-removebg-preview-modified_t0cqyr.png"
+    />
+    <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="theme-color" content="#1a1a1a" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <meta name="robots" content="index, follow" />
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon"
-    href="https://res.cloudinary.com/diipfzmyj/image/upload/v1773551873/91566992797-modified-removebg-preview-modified_t0cqyr.png" />
-  <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#1a1a1a" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <meta name="robots" content="index, follow" />
-  
-  <!-- Preload fonts -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Great+Vibes&family=Outfit:wght@400;700;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Great+Vibes&family=Outfit:wght@400;700;900&display=swap" /></noscript>
+    <!-- Preload fonts -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Great+Vibes&family=Outfit:wght@400;700;900&display=swap"
+      as="style"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Great+Vibes&family=Outfit:wght@400;700;900&display=swap"
+    /></noscript>
 
-  <title>uniZ - reimagining how students navigate</title>
+    <title>uniZ - reimagining how students navigate</title>
 
-  <script>
-    window.deferredPWAInstallPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      window.deferredPWAInstallPrompt = e;
-      console.log('[PWA] Early event capture successful');
-      window.dispatchEvent(new CustomEvent('pwa-prompt-ready', { detail: e }));
-    });
-  </script>
+    <script>
+      window.deferredPWAInstallPrompt = null;
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        window.deferredPWAInstallPrompt = e;
+        console.log("[PWA] Early event capture successful");
+        window.dispatchEvent(
+          new CustomEvent("pwa-prompt-ready", { detail: e }),
+        );
+      });
+    </script>
 
-  <!-- Global JSON-LD Schema -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
+    <!-- Global JSON-LD Schema -->
+    <script type="application/ld+json">
       {
-        "@type": "SoftwareApplication",
-        "name": "UniZ",
-        "applicationCategory": "ProductivityApplication",
-        "operatingSystem": "Web",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        }
-      },
-      {
-        "@type": "Organization",
-        "name": "RGUKT Ongole Tech Platform",
-        "url": "https://rguktong.in"
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "UniZ",
+            "applicationCategory": "ProductivityApplication",
+            "operatingSystem": "Web",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            }
+          },
+          {
+            "@type": "Organization",
+            "name": "RGUKT Ongole Tech Platform",
+            "url": "https://rguktong.in"
+          }
+        ]
       }
-    ]
-  }
-  </script>
-</head>
+    </script>
+  </head>
 
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
-</body>
-
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

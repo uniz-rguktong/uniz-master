@@ -7,17 +7,17 @@ Every user in UniZ is assigned a role when their account is created. Your role d
 
 ## Role overview
 
-| Role | Who it's for | Primary function |
-|------|-------------|-----------------|
-| `student` | Enrolled RGUKT students | Academics, outpass requests, profile management |
-| `caretaker_male` / `caretaker_female` | Hostel caretakers | First-level outpass approval |
-| `warden_male` / `warden_female` | Hostel wardens | Second-level outpass approval |
-| `swo` | Student Welfare Officer | Approval chain for student requests |
-| `dean` | Dean of the institution | Final outpass authority, batch grade review |
-| `director` | Director of the institution | Super authority, student status override |
-| `security` | Security staff at gates | Gate check-in/check-out, approved outpass verification |
-| `faculty` | Teaching staff | Grade and attendance uploads, student record access |
-| `webmaster` | Platform administrator | Banner management, announcements, system health |
+| Role                                  | Who it's for                | Primary function                                       |
+| ------------------------------------- | --------------------------- | ------------------------------------------------------ |
+| `student`                             | Enrolled RGUKT students     | Academics, outpass requests, profile management        |
+| `caretaker_male` / `caretaker_female` | Hostel caretakers           | First-level outpass approval                           |
+| `warden_male` / `warden_female`       | Hostel wardens              | Second-level outpass approval                          |
+| `swo`                                 | Student Welfare Officer     | Approval chain for student requests                    |
+| `dean`                                | Dean of the institution     | Final outpass authority, batch grade review            |
+| `director`                            | Director of the institution | Super authority, student status override               |
+| `security`                            | Security staff at gates     | Gate check-in/check-out, approved outpass verification |
+| `faculty`                             | Teaching staff              | Grade and attendance uploads, student record access    |
+| `webmaster`                           | Platform administrator      | Banner management, announcements, system health        |
 
 ---
 
@@ -39,6 +39,7 @@ Every user in UniZ is assigned a role when their account is created. Your role d
     - View other students' data
     - Approve any request
     - Access admin or faculty dashboards
+
   </Card>
 
   <Card title="Caretaker" icon="house" href="/admin/approvals">
@@ -53,6 +54,7 @@ Every user in UniZ is assigned a role when their account is created. Your role d
     **You cannot:**
     - Give final approval for outpasses — caretaker approval is the first step only
     - View or act on requests for the other gender group
+
   </Card>
 
   <Card title="Warden" icon="shield-check" href="/admin/approvals">
@@ -66,6 +68,7 @@ Every user in UniZ is assigned a role when their account is created. Your role d
 
     **You cannot:**
     - See requests that have not yet been approved by the caretaker
+
   </Card>
 
   <Card title="SWO" icon="user-check" href="/admin/approvals">
@@ -77,6 +80,7 @@ Every user in UniZ is assigned a role when their account is created. Your role d
     - Act as an intermediary step in the full approval chain
 
     The SWO sits between the warden and the final authority (dean/director) in the approval workflow.
+
   </Card>
 
   <Card title="Dean" icon="building-columns" href="/admin/approvals">
@@ -91,6 +95,7 @@ Every user in UniZ is assigned a role when their account is created. Your role d
     - Override student campus status if needed
 
     Dean approval is binding — no further approval is required after a dean approves a request.
+
   </Card>
 
   <Card title="Director" icon="star" href="/admin/approvals">
@@ -104,6 +109,7 @@ Every user in UniZ is assigned a role when their account is created. Your role d
     - Trigger result publication emails to students
 
     The director has full override capability across the platform with no access restrictions.
+
   </Card>
 
   <Card title="Security" icon="shield" href="/admin/security">
@@ -119,6 +125,7 @@ Every user in UniZ is assigned a role when their account is created. Your role d
     **You cannot:**
     - Approve or reject outpass requests (you only act after final approval is granted)
     - Access academic records
+
   </Card>
 
   <Card title="Faculty" icon="chalkboard-teacher" href="/faculty/grades">
@@ -134,19 +141,22 @@ Every user in UniZ is assigned a role when their account is created. Your role d
     **You cannot:**
     - Approve outpass requests
     - Access student mobility or outpass data
+
   </Card>
 </CardGroup>
 
 <Card title="Webmaster" icon="wrench" href="/admin/overview">
   Assigned to the platform administrator responsible for content and system health.
 
-  **You can:**
-  - Create campus announcements and banners (title, body text, image)
-  - Publish or unpublish banners — published banners appear to all logged-in users
-  - Manage technical configurations
-  - Monitor real-time system health across all UniZ services
+**You can:**
 
-  The webmaster role is the only role that can control what announcements the entire user base sees.
+- Create campus announcements and banners (title, body text, image)
+- Publish or unpublish banners — published banners appear to all logged-in users
+- Manage technical configurations
+- Monitor real-time system health across all UniZ services
+
+The webmaster role is the only role that can control what announcements the entire user base sees.
+
 </Card>
 
 ---
@@ -162,5 +172,6 @@ Student submits → Caretaker → Warden → SWO → Dean / Director (final appr
 At any stage, the approver can reject the request with a comment. If rejected, the request does not advance further. A dean or director can grant final approval at any point in the chain — their approval immediately marks the outpass as approved regardless of which stage it is currently at.
 
 <Info>
-  Outing requests (short-duration exits, typically a few hours) follow a shorter approval path and are handled separately from multi-day outpass requests.
+  Outing requests (short-duration exits, typically a few hours) follow a shorter
+  approval path and are handled separately from multi-day outpass requests.
 </Info>

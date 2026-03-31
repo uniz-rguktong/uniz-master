@@ -160,11 +160,7 @@ export async function processNextBatch() {
               "acad_batch",
               "academic_batch",
             ]);
-            const passDateRaw = getVal(row, [
-              "pass date",
-              "exam date",
-              "date",
-            ]);
+            const passDateRaw = getVal(row, ["pass date", "exam date", "date"]);
 
             const remedialCol = getVal(row, [
               "is remedial",
@@ -224,14 +220,27 @@ export async function processNextBatch() {
 
             // Determine if remedial
             let isRemedial = existingGrade?.isRemedial || false;
-            
+
             // Check if spreadsheet explicitly says it's regular or remedial
             const rStr = String(remedialCol || "").toUpperCase();
-            if (rStr === "YES" || rStr === "TRUE" || rStr === "REMEDIAL" || rStr === "R") {
+            if (
+              rStr === "YES" ||
+              rStr === "TRUE" ||
+              rStr === "REMEDIAL" ||
+              rStr === "R"
+            ) {
               isRemedial = true;
-            } else if (rStr === "NO" || rStr === "FALSE" || rStr === "REGULAR") {
+            } else if (
+              rStr === "NO" ||
+              rStr === "FALSE" ||
+              rStr === "REGULAR"
+            ) {
               isRemedial = false;
-            } else if (existingGrade && existingGrade.grade === 0 && grade !== 0) {
+            } else if (
+              existingGrade &&
+              existingGrade.grade === 0 &&
+              grade !== 0
+            ) {
               // Auto-detect: if previous was fail (0) & not remedial, and we are updating it now
               isRemedial = true;
             }

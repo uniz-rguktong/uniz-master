@@ -22,7 +22,7 @@ export default function App() {
           <Route path="academics/:pageName" element={<AcademicsPage />} />
           <Route path="departments/:deptCode" element={<DepartmentPage />} />
           <Route path="notifications" element={<NotificationsPage />} />
-          
+
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

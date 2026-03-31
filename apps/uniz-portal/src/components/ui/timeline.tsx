@@ -43,13 +43,12 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
           <div className="flex-1 h-px bg-zinc-200/50 max-w-[120px]" />
         </div>
         <h2 className="text-4xl md:text-6xl font-black mb-6 text-zinc-950 tracking-[-0.04em] leading-[1.05]">
-          With us, campus{" "}
-          <br className="hidden md:block" />
+          With us, campus <br className="hidden md:block" />
           <span className="text-zinc-400 font-light">mastery is easy.</span>
         </h2>
         <p className="text-zinc-500 font-medium text-[16px] md:text-[18px] max-w-xl leading-relaxed">
-          Effortless setup, real-time visibility, and proactive alerts — designed
-          for students who want to master their university journey.
+          Effortless setup, real-time visibility, and proactive alerts —
+          designed for students who want to master their university journey.
         </p>
       </div>
 

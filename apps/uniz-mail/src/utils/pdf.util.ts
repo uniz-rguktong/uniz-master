@@ -54,12 +54,12 @@ const fetchLogo = async () => {
   }
 
   try {
-    const response = await axios.get(logoUrl, { 
+    const response = await axios.get(logoUrl, {
       responseType: "arraybuffer",
       timeout: 10000,
       headers: {
-        'User-Agent': 'UniZ-Core-Engine/1.0 (Enterprise PDF Generator)'
-      }
+        "User-Agent": "UniZ-Core-Engine/1.0 (Enterprise PDF Generator)",
+      },
     });
     logoBuffer = Buffer.from(response.data);
     if (!fs.existsSync(CACHE_DIR)) {

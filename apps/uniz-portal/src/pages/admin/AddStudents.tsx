@@ -116,7 +116,7 @@ export default function AddStudents() {
       await downloadFile(
         `${BASE_URL}/admin/students/template`,
         `${year}_${sem}_${branch}_students_template.xlsx`,
-        { year, semester: sem, branch }
+        { year, semester: sem, branch },
       );
     } catch {
       setError("Error downloading template");

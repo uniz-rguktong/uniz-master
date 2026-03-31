@@ -40,11 +40,11 @@ interface Semester {
   id: string;
   name: string;
   status:
-  | "DRAFT"
-  | "DEAN_REVIEW"
-  | "APPROVED"
-  | "REGISTRATION_OPEN"
-  | "REGISTRATION_CLOSED";
+    | "DRAFT"
+    | "DEAN_REVIEW"
+    | "APPROVED"
+    | "REGISTRATION_OPEN"
+    | "REGISTRATION_CLOSED";
   _count?: { registrations: number };
   createdAt: string;
 }
@@ -388,9 +388,10 @@ export default function UnifiedAcademicManager() {
               onClick={() => setActiveTab(tabId)}
               className={`
                 flex items-center gap-3 px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all
-                ${activeTab === tabId
-                  ? "bg-white text-navy-900 border border-slate-100"
-                  : "text-slate-400 hover:text-slate-900 hover:bg-white/80"
+                ${
+                  activeTab === tabId
+                    ? "bg-white text-navy-900 border border-slate-100"
+                    : "text-slate-400 hover:text-slate-900 hover:bg-white/80"
                 }
                 ${tabId === "rollout" && !selectedSem ? "opacity-30 cursor-not-allowed" : ""}
               `}
@@ -423,10 +424,11 @@ export default function UnifiedAcademicManager() {
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span
-                      className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${sem.status === "REGISTRATION_OPEN"
-                        ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                        : "bg-slate-50 text-slate-400 border-slate-100"
-                        }`}
+                      className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${
+                        sem.status === "REGISTRATION_OPEN"
+                          ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                          : "bg-slate-50 text-slate-400 border-slate-100"
+                      }`}
                     >
                       {sem.status.replace("_", " ")}
                     </span>
@@ -605,10 +607,11 @@ export default function UnifiedAcademicManager() {
                           : "REGISTRATION_OPEN",
                       )
                     }
-                    className={`h-14 px-10 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center gap-3 ${selectedSem.status === "REGISTRATION_OPEN"
-                      ? "bg-red-50/5 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white"
-                      : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-100"
-                      }`}
+                    className={`h-14 px-10 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center gap-3 ${
+                      selectedSem.status === "REGISTRATION_OPEN"
+                        ? "bg-red-50/5 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white"
+                        : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-100"
+                    }`}
                   >
                     {selectedSem.status === "REGISTRATION_OPEN" ? (
                       <>Stop Enrollment</>
@@ -633,10 +636,11 @@ export default function UnifiedAcademicManager() {
                   <button
                     key={v}
                     onClick={() => setRolloutView(v)}
-                    className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${rolloutView === v
-                      ? "text-navy-900"
-                      : "text-slate-400 hover:text-slate-600"
-                      }`}
+                    className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${
+                      rolloutView === v
+                        ? "text-navy-900"
+                        : "text-slate-400 hover:text-slate-600"
+                    }`}
                   >
                     {v}
                     {rolloutView === v && (
@@ -828,30 +832,30 @@ export default function UnifiedAcademicManager() {
                 rolloutAllocations.length === 0) ||
                 (rolloutView === "registrations" &&
                   rolloutRegistrations.length === 0)) && (
-                  <div className="p-32 text-center">
-                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
-                      <X size={40} />
-                    </div>
-                    <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
-                      Zero activity detected for these parameters.
-                    </p>
+                <div className="p-32 text-center">
+                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                    <X size={40} />
                   </div>
-                )}
+                  <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
+                    Zero activity detected for these parameters.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}
       </div>
 
       {showNewSemModal && (
-        <div 
+        <div
           className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200"
           onClick={() => setShowNewSemModal(false)}
         >
-          <div 
+          <div
             className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-100 relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <button 
+            <button
               onClick={() => setShowNewSemModal(false)}
               className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
             >
@@ -888,38 +892,62 @@ export default function UnifiedAcademicManager() {
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                       Applicable Branches
                     </label>
-                    <div className="flex items-center gap-2 cursor-pointer group" onClick={() => {
-                      const next = !allBranchesSelected;
-                      setAllBranchesSelected(next);
-                      if (next) setSelectedBranches(["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"]);
-                    }}>
-                      <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${allBranchesSelected ? "bg-navy-900 border-navy-900" : "border-slate-300 group-hover:border-navy-500"}`}>
-                        {allBranchesSelected && <Check size={12} className="text-white" strokeWidth={4} />}
+                    <div
+                      className="flex items-center gap-2 cursor-pointer group"
+                      onClick={() => {
+                        const next = !allBranchesSelected;
+                        setAllBranchesSelected(next);
+                        if (next)
+                          setSelectedBranches([
+                            "CSE",
+                            "ECE",
+                            "EEE",
+                            "MECH",
+                            "CIVIL",
+                            "CHEM",
+                          ]);
+                      }}
+                    >
+                      <div
+                        className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${allBranchesSelected ? "bg-navy-900 border-navy-900" : "border-slate-300 group-hover:border-navy-500"}`}
+                      >
+                        {allBranchesSelected && (
+                          <Check
+                            size={12}
+                            className="text-white"
+                            strokeWidth={4}
+                          />
+                        )}
                       </div>
-                      <span className="text-[11px] font-bold text-slate-600 uppercase tracking-tighter">All Branches</span>
+                      <span className="text-[11px] font-bold text-slate-600 uppercase tracking-tighter">
+                        All Branches
+                      </span>
                     </div>
                   </div>
 
                   {!allBranchesSelected && (
                     <div className="grid grid-cols-3 gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                      {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
-                        <button
-                          key={b}
-                          onClick={() =>
-                            setSelectedBranches((prev) =>
-                              prev.includes(b)
-                                ? prev.filter((x) => x !== b)
-                                : [...prev, b],
-                            )
-                          }
-                          className={`h-10 rounded-lg font-bold text-[10px] transition-all border ${selectedBranches.includes(b)
-                            ? "bg-navy-900 text-white border-navy-900 shadow-sm"
-                            : "bg-white text-slate-400 border-slate-200 hover:border-slate-400"
+                      {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map(
+                        (b) => (
+                          <button
+                            key={b}
+                            onClick={() =>
+                              setSelectedBranches((prev) =>
+                                prev.includes(b)
+                                  ? prev.filter((x) => x !== b)
+                                  : [...prev, b],
+                              )
+                            }
+                            className={`h-10 rounded-lg font-bold text-[10px] transition-all border ${
+                              selectedBranches.includes(b)
+                                ? "bg-navy-900 text-white border-navy-900 shadow-sm"
+                                : "bg-white text-slate-400 border-slate-200 hover:border-slate-400"
                             }`}
-                        >
-                          {b}
-                        </button>
-                      ))}
+                          >
+                            {b}
+                          </button>
+                        ),
+                      )}
                     </div>
                   )}
                 </div>
@@ -933,7 +961,10 @@ export default function UnifiedAcademicManager() {
                   </button>
                   <button
                     onClick={handleInitSemester}
-                    disabled={loading || (selectedBranches.length === 0 && !allBranchesSelected)}
+                    disabled={
+                      loading ||
+                      (selectedBranches.length === 0 && !allBranchesSelected)
+                    }
                     className="flex-[2] py-3.5 rounded-xl bg-navy-900 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-lg shadow-navy-100 hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? "INITIALIZING..." : "LAUNCH ROLLOUT 🚀"}

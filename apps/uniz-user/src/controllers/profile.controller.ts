@@ -390,26 +390,52 @@ export const searchStudents = async (
       where.year = { equals: year, mode: "insensitive" };
     }
     if (gender && String(gender).toUpperCase() !== "ALL") where.gender = gender;
-    if (isSuspended !== undefined && String(isSuspended).toUpperCase() !== "ALL") {
+    if (
+      isSuspended !== undefined &&
+      String(isSuspended).toUpperCase() !== "ALL"
+    ) {
       where.isSuspended = isSuspended === true || isSuspended === "true";
     }
-    if (req.body.isPresentInCampus !== undefined && String(req.body.isPresentInCampus).toUpperCase() !== "ALL") {
-      where.isPresentInCampus = req.body.isPresentInCampus === true || req.body.isPresentInCampus === "true";
+    if (
+      req.body.isPresentInCampus !== undefined &&
+      String(req.body.isPresentInCampus).toUpperCase() !== "ALL"
+    ) {
+      where.isPresentInCampus =
+        req.body.isPresentInCampus === true ||
+        req.body.isPresentInCampus === "true";
     }
-    if (req.body.isApplicationPending !== undefined && String(req.body.isApplicationPending).toUpperCase() !== "ALL") {
-      where.isApplicationPending = req.body.isApplicationPending === true || req.body.isApplicationPending === "true";
+    if (
+      req.body.isApplicationPending !== undefined &&
+      String(req.body.isApplicationPending).toUpperCase() !== "ALL"
+    ) {
+      where.isApplicationPending =
+        req.body.isApplicationPending === true ||
+        req.body.isApplicationPending === "true";
     }
 
     // Advanced Academic Intelligence Filters
-    if ((minCgpa !== undefined && minCgpa !== "") || (maxCgpa !== undefined && maxCgpa !== "")) {
+    if (
+      (minCgpa !== undefined && minCgpa !== "") ||
+      (maxCgpa !== undefined && maxCgpa !== "")
+    ) {
       where.cgpa = {};
-      if (minCgpa !== undefined && minCgpa !== "") where.cgpa.gte = Number(minCgpa);
-      if (maxCgpa !== undefined && maxCgpa !== "") where.cgpa.lte = Number(maxCgpa);
+      if (minCgpa !== undefined && minCgpa !== "")
+        where.cgpa.gte = Number(minCgpa);
+      if (maxCgpa !== undefined && maxCgpa !== "")
+        where.cgpa.lte = Number(maxCgpa);
     }
 
-    if (hasRemedials === "active" || hasRemedials === "true" || hasRemedials === true) {
+    if (
+      hasRemedials === "active" ||
+      hasRemedials === "true" ||
+      hasRemedials === true
+    ) {
       where.totalBacklogs = { gt: 0 };
-    } else if (hasRemedials === "cleared" || hasRemedials === "false" || hasRemedials === false) {
+    } else if (
+      hasRemedials === "cleared" ||
+      hasRemedials === "false" ||
+      hasRemedials === false
+    ) {
       where.totalBacklogs = { equals: 0 };
     }
 

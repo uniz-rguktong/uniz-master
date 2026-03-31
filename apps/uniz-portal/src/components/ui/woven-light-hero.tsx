@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import * as THREE from 'three';
-import gsap from 'gsap';
-import { useNavigate } from 'react-router-dom';
+import { useRef, useEffect } from "react";
+import { motion } from "framer-motion";
+import * as THREE from "three";
+import gsap from "gsap";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Zap, ArrowDown } from "lucide-react";
 
@@ -16,43 +16,47 @@ export const WovenLightHero = () => {
 
   useEffect(() => {
     // Load elegant serif and sans fonts
-    const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;700;900&family=Great+Vibes&display=swap';
-    link.rel = 'stylesheet';
+    const link = document.createElement("link");
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;700;900&family=Great+Vibes&display=swap";
+    link.rel = "stylesheet";
     document.head.appendChild(link);
 
     // Signature Drawing Animation - Precise and Slow
     if (signaturePathRef.current) {
       const length = signaturePathRef.current.getTotalLength();
-      gsap.fromTo(signaturePathRef.current,
+      gsap.fromTo(
+        signaturePathRef.current,
         { strokeDasharray: length, strokeDashoffset: length },
         {
           strokeDashoffset: 0,
-          duration: 7, 
-          ease: "expo.inOut", 
-          delay: 0.5
-        }
+          duration: 7,
+          ease: "expo.inOut",
+          delay: 0.5,
+        },
       );
     }
 
     return () => {
-        document.head.removeChild(link);
-    }
+      document.head.removeChild(link);
+    };
   }, []);
 
   return (
-    <div ref={containerRef} className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-white">
+    <div
+      ref={containerRef}
+      className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-white"
+    >
       {/* Interactive Woven Canvas Background */}
       <WovenCanvas />
-      
+
       <div className="relative z-10 text-center px-4 max-w-5xl pointer-events-none">
-        
         {/* Modern Label */}
         <motion.div
-           initial={{ opacity: 0, y: -10 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ delay: 0.2, duration: 1.5 }}
-           className="mb-12 inline-flex items-center gap-2 border-b border-slate-100 pb-1"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 1.5 }}
+          className="mb-12 inline-flex items-center gap-2 border-b border-slate-100 pb-1"
         >
           <div className="w-1 h-1 rounded-full bg-blue-500" />
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">
@@ -62,9 +66,18 @@ export const WovenLightHero = () => {
 
         {/* The Signature - Delicate and Centered */}
         <div className="mb-8 flex items-center justify-center scale-[1.2] md:scale-[1.6]">
-          <svg viewBox="0 0 1400 400" className="w-[90vw] md:w-[900px] h-auto overflow-visible select-none pointer-events-none">
+          <svg
+            viewBox="0 0 1400 400"
+            className="w-[90vw] md:w-[900px] h-auto overflow-visible select-none pointer-events-none"
+          >
             <defs>
-              <linearGradient id="signature-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <linearGradient
+                id="signature-grad"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+              >
                 <stop offset="0%" stopColor="#0F172A" />
                 <stop offset="100%" stopColor="#1E293B" />
               </linearGradient>
@@ -101,20 +114,21 @@ export const WovenLightHero = () => {
 
         {/* Typography Reveal */}
         <motion.div
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ delay: 4, duration: 2, ease: "easeOut" }}
-           className="flex flex-col items-center pointer-events-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 4, duration: 2, ease: "easeOut" }}
+          className="flex flex-col items-center pointer-events-auto"
         >
-          <h1 
+          <h1
             className="text-4xl md:text-7xl font-bold text-[#0F172A] tracking-[-0.04em] leading-[1.1] mb-6"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            Reimagining <span className="text-blue-600/90 italic">Mobility.</span>
+            Reimagining{" "}
+            <span className="text-blue-600/90 italic">Mobility.</span>
           </h1>
-          
+
           <p className="mx-auto mb-12 max-w-lg text-sm md:text-base text-slate-500 font-medium leading-relaxed tracking-tight">
-            An interactive tapestry of university governance, 
+            An interactive tapestry of university governance,
             <br />
             crafted with precision and digital transparency.
           </p>
@@ -153,13 +167,18 @@ const WovenCanvas = () => {
     if (!mountRef.current) return;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000,
+    );
     camera.position.z = 5;
-    
-    const renderer = new THREE.WebGLRenderer({ 
-        antialias: true, 
-        alpha: true,
-        powerPreference: "high-performance" 
+
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance",
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -172,7 +191,7 @@ const WovenCanvas = () => {
     // Using a more complex knot for the "Woven" look
     const knotGeometry = new THREE.TorusKnotGeometry(2.2, 0.5, 400, 100);
     const particleCount = knotGeometry.attributes.position.count;
-    
+
     const positions = new Float32Array(particleCount * 3);
     const initialPositions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
@@ -197,18 +216,18 @@ const WovenCanvas = () => {
       const s = 0.4;
       const l = 0.7;
       color.setHSL(h, s, l);
-      
+
       colors[i * 3] = color.r;
       colors[i * 3 + 1] = color.g;
       colors[i * 3 + 2] = color.b;
-      
+
       sizes[i] = Math.random() * 2 + 1;
     }
 
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    geometry.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
 
     // Custom shader for more delicate points if needed, but PointsMaterial is okay if scaled right
     const material = new THREE.PointsMaterial({
@@ -217,7 +236,7 @@ const WovenCanvas = () => {
       transparent: true,
       opacity: 0.4,
       blending: THREE.NormalBlending,
-      sizeAttenuation: true
+      sizeAttenuation: true,
     });
 
     const points = new THREE.Points(geometry, material);
@@ -227,13 +246,13 @@ const WovenCanvas = () => {
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove);
 
     let animationId: number;
     const animate = () => {
       animationId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
-      
+
       // Mouse interaction
       const mouseVector = new THREE.Vector3(mouse.x * 5, mouse.y * 5, 0);
 
@@ -248,15 +267,21 @@ const WovenCanvas = () => {
         const waveX = Math.sin(elapsedTime * 0.5 + y) * 0.05;
         const waveY = Math.cos(elapsedTime * 0.5 + x) * 0.05;
 
-        const currentPos = new THREE.Vector3(pos[idx], pos[idx + 1], pos[idx + 2]);
+        const currentPos = new THREE.Vector3(
+          pos[idx],
+          pos[idx + 1],
+          pos[idx + 2],
+        );
         const targetPos = new THREE.Vector3(x + waveX, y + waveY, z);
-        
+
         // Mouse avoidance
         const distToMouse = currentPos.distanceTo(mouseVector);
         if (distToMouse < 1.2) {
-            const dir = new THREE.Vector3().subVectors(currentPos, mouseVector).normalize();
-            const push = (1.2 - distToMouse) * 0.05;
-            targetPos.add(dir.multiplyScalar(push));
+          const dir = new THREE.Vector3()
+            .subVectors(currentPos, mouseVector)
+            .normalize();
+          const push = (1.2 - distToMouse) * 0.05;
+          targetPos.add(dir.multiplyScalar(push));
         }
 
         pos[idx] += (targetPos.x - pos[idx]) * 0.1;
@@ -277,12 +302,12 @@ const WovenCanvas = () => {
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("resize", handleResize);
       mountRef.current?.removeChild(renderer.domElement);
     };
   }, []);

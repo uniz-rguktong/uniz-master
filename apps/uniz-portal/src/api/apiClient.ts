@@ -78,7 +78,11 @@ export async function apiClient<T = any>(
 
     const contentType = response.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
-      handleHttpError(response.status, { message: "Unexpected response format (Expected JSON)" }, showToast);
+      handleHttpError(
+        response.status,
+        { message: "Unexpected response format (Expected JSON)" },
+        showToast,
+      );
       return null;
     }
 
@@ -156,15 +160,20 @@ export async function downloadFile(
   }
 }
 
-function handleHttpError(status: number, data: any, showToast: boolean, url = "") {
+function handleHttpError(
+  status: number,
+  data: any,
+  showToast: boolean,
+  url = "",
+) {
   if (!showToast) return;
 
   const code = data.code || data.error?.code;
   const message = data.message || data.msg || data.error?.message;
 
-  const isLoginPath = 
-    url.includes("/auth/login") || 
-    url.includes("/auth/signin") || 
+  const isLoginPath =
+    url.includes("/auth/login") ||
+    url.includes("/auth/signin") ||
     url.includes("/auth/otp/verify");
 
   switch (status) {
@@ -173,7 +182,7 @@ function handleHttpError(status: number, data: any, showToast: boolean, url = ""
         toast.error("Incorrect username or password.");
       } else {
         toast.error("Session expired or unauthorized. Logging out...");
-        
+
         // Immediate Universal Logout Operation
         localStorage.clear();
 
@@ -210,8 +219,13 @@ function handleHttpError(status: number, data: any, showToast: boolean, url = ""
     case 400:
       if (code === ErrorCode.VALIDATION_ERROR) {
         toast.error(message || "Please check the information you provided.");
-      } else if (code === ErrorCode.AUTH_CAPTCHA_FAILED || data.code === "AUTH_CAPTCHA_FAILED") {
-        toast.error(message || "Security verification failed. Please try again.");
+      } else if (
+        code === ErrorCode.AUTH_CAPTCHA_FAILED ||
+        data.code === "AUTH_CAPTCHA_FAILED"
+      ) {
+        toast.error(
+          message || "Security verification failed. Please try again.",
+        );
       } else {
         toast.error(message || "Bad request. Please check your input.");
       }

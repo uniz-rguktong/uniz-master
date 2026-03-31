@@ -16,17 +16,19 @@ Student submits → Caretaker → Warden → SWO → Dean / Director (final)
 Outing requests (short duration, same day) follow a lighter path with less overhead. Check your institution's configuration for the exact levels required for outings.
 
 <Note>
-The `currentLevel` field on each request tells you exactly which role needs to act next. You only see requests assigned to your level — caretakers see `currentLevel: "caretaker"`, wardens see `"warden"`, and so on.
+  The `currentLevel` field on each request tells you exactly which role needs to
+  act next. You only see requests assigned to your level — caretakers see
+  `currentLevel: "caretaker"`, wardens see `"warden"`, and so on.
 </Note>
 
 ### What each role does
 
-| Role | Level | Effect of approval |
-|---|---|---|
-| Caretaker | `caretaker` | Moves request to `warden` level |
-| Warden | `warden` | Moves request to `swo` level |
-| SWO | `swo` | Moves request to dean / director level |
-| Dean / Director | Final | Sets `isApproved: true`; student is notified and security can verify the pass |
+| Role            | Level       | Effect of approval                                                            |
+| --------------- | ----------- | ----------------------------------------------------------------------------- |
+| Caretaker       | `caretaker` | Moves request to `warden` level                                               |
+| Warden          | `warden`    | Moves request to `swo` level                                                  |
+| SWO             | `swo`       | Moves request to dean / director level                                        |
+| Dean / Director | Final       | Sets `isApproved: true`; student is notified and security can verify the pass |
 
 ## Viewing pending requests
 
@@ -100,7 +102,9 @@ Content-Type: application/json
 ```
 
 <Tip>
-The comment field is optional for approvals. Use it to leave a note for the next approver in the chain, especially if you verified information out-of-band (a phone call, parent visit, etc.).
+  The comment field is optional for approvals. Use it to leave a note for the
+  next approver in the chain, especially if you verified information out-of-band
+  (a phone call, parent visit, etc.).
 </Tip>
 
 After approval, the request automatically advances to the next level. The student is not notified until the final approver (dean or director) grants approval.
@@ -117,7 +121,9 @@ Authorization: Bearer <TOKEN>
 ```
 
 <Note>
-Forward is an alias for approve on the backend. It has the same effect — the request moves to the next `currentLevel`. The distinction is presentational in the UI.
+  Forward is an alias for approve on the backend. It has the same effect — the
+  request moves to the next `currentLevel`. The distinction is presentational in
+  the UI.
 </Note>
 
 ## Rejecting a request
@@ -148,7 +154,9 @@ Content-Type: application/json
 ```
 
 <Warning>
-The `comment` field is required when rejecting. A rejection without a reason will fail validation. Always provide a clear, specific reason so the student understands and can appeal if necessary.
+  The `comment` field is required when rejecting. A rejection without a reason
+  will fail validation. Always provide a clear, specific reason so the student
+  understands and can appeal if necessary.
 </Warning>
 
 ## After final approval

@@ -12,16 +12,19 @@ The UniZ portal is your central hub for academics, leave requests, and your stud
     Navigate to the UniZ student portal URL provided by your institution.
   </Step>
   <Step title="Enter your credentials">
-    - **Username** — your roll number (e.g., `O210008`)
-    - **Password** — your current password
+    - **Username** — your roll number (e.g., `O210008`) - **Password** — your
+    current password
   </Step>
   <Step title="Tap Sign In">
-    On success, you are redirected to your profile dashboard. The portal stores your session securely in the browser — you do not need to enter your credentials again until you log out or your session expires.
+    On success, you are redirected to your profile dashboard. The portal stores
+    your session securely in the browser — you do not need to enter your
+    credentials again until you log out or your session expires.
   </Step>
 </Steps>
 
 <Note>
-Your username is always your roll number in uppercase (e.g., `O210008`). It never changes.
+  Your username is always your roll number in uppercase (e.g., `O210008`). It
+  never changes.
 </Note>
 
 ### How authentication works
@@ -75,6 +78,7 @@ Use this flow if you've forgotten your password. You'll need access to the email
     POST /auth/otp/request
     { "username": "O210008" }
     ```
+
   </Step>
   <Step title="Enter the OTP">
     Check your inbox and enter the 6-digit code in the verification field.
@@ -86,6 +90,7 @@ Use this flow if you've forgotten your password. You'll need access to the email
       "otp": "123456"
     }
     ```
+
   </Step>
   <Step title="Set a new password">
     Enter and confirm your new password. The reset requires a valid OTP and the same username.
@@ -98,11 +103,13 @@ Use this flow if you've forgotten your password. You'll need access to the email
       "newPassword": "newSecurePassword123"
     }
     ```
+
   </Step>
 </Steps>
 
 <Warning>
-OTP requests are rate-limited. If you request too many OTPs in a short period, you'll be temporarily blocked. Wait a few minutes before trying again.
+  OTP requests are rate-limited. If you request too many OTPs in a short period,
+  you'll be temporarily blocked. Wait a few minutes before trying again.
 </Warning>
 
 ---
@@ -118,7 +125,8 @@ A strong password must meet all three criteria:
 - Contains at least one special character (e.g., `!@#$%`)
 
 <Warning>
-After a successful password change, all active sessions are immediately logged out for security. You'll need to sign in again with your new password.
+  After a successful password change, all active sessions are immediately logged
+  out for security. You'll need to sign in again with your new password.
 </Warning>
 
 The portal evaluates your new password in real time and shows a strength indicator (Weak / Moderate / Strong). Weak and Moderate passwords are rejected.
@@ -136,10 +144,13 @@ UniZ is a Progressive Web App (PWA). You can install it on your phone or desktop
         Navigate to the UniZ portal URL.
       </Step>
       <Step title="Tap the install prompt">
-        Chrome shows an **Add to Home Screen** banner at the bottom, or you can tap the three-dot menu and select **Install app** / **Add to Home Screen**.
+        Chrome shows an **Add to Home Screen** banner at the bottom, or you can
+        tap the three-dot menu and select **Install app** / **Add to Home
+        Screen**.
       </Step>
       <Step title="Confirm">
-        Tap **Install**. The app icon appears on your home screen and opens in standalone mode.
+        Tap **Install**. The app icon appears on your home screen and opens in
+        standalone mode.
       </Step>
     </Steps>
   </Tab>
@@ -149,10 +160,12 @@ UniZ is a Progressive Web App (PWA). You can install it on your phone or desktop
         PWA installation on iOS only works in Safari.
       </Step>
       <Step title="Tap the Share button">
-        Tap the share icon at the bottom of the screen (the box with an arrow pointing up).
+        Tap the share icon at the bottom of the screen (the box with an arrow
+        pointing up).
       </Step>
       <Step title="Select Add to Home Screen">
-        Scroll down in the share sheet and tap **Add to Home Screen**, then tap **Add**.
+        Scroll down in the share sheet and tap **Add to Home Screen**, then tap
+        **Add**.
       </Step>
     </Steps>
   </Tab>
@@ -162,7 +175,8 @@ UniZ is a Progressive Web App (PWA). You can install it on your phone or desktop
         Navigate to the UniZ portal URL in Chrome or Edge.
       </Step>
       <Step title="Click the install icon">
-        Look for an install icon in the address bar (a monitor with a download arrow), or open the browser menu and select **Install UniZ**.
+        Look for an install icon in the address bar (a monitor with a download
+        arrow), or open the browser menu and select **Install UniZ**.
       </Step>
       <Step title="Confirm">
         Click **Install**. The app opens in its own window.
@@ -172,7 +186,8 @@ UniZ is a Progressive Web App (PWA). You can install it on your phone or desktop
 </Tabs>
 
 <Tip>
-Installing the PWA gives you a faster experience and keeps your session active between visits without navigating to the URL each time.
+  Installing the PWA gives you a faster experience and keeps your session active
+  between visits without navigating to the URL each time.
 </Tip>
 
 ---
@@ -181,15 +196,20 @@ Installing the PWA gives you a faster experience and keeps your session active b
 
 <CardGroup cols={2}>
   <Card title="Invalid credentials">
-    Double-check that your roll number is entered in the correct format (e.g., `O210008` — capital letter O, not zero). Passwords are case-sensitive.
+    Double-check that your roll number is entered in the correct format (e.g.,
+    `O210008` — capital letter O, not zero). Passwords are case-sensitive.
   </Card>
   <Card title="Account suspended">
-    If your account has been suspended by the administration, you'll see a suspension message on sign-in. Contact your warden or SWO to resolve this.
+    If your account has been suspended by the administration, you'll see a
+    suspension message on sign-in. Contact your warden or SWO to resolve this.
   </Card>
   <Card title="OTP not received">
-    Check your spam folder. If the email still hasn't arrived after a few minutes, confirm your registered email with your hostel admin and try requesting the OTP again.
+    Check your spam folder. If the email still hasn't arrived after a few
+    minutes, confirm your registered email with your hostel admin and try
+    requesting the OTP again.
   </Card>
   <Card title="Session expired">
-    JWT tokens expire after a set period. If you're redirected to the login page unexpectedly, simply sign in again.
+    JWT tokens expire after a set period. If you're redirected to the login page
+    unexpectedly, simply sign in again.
   </Card>
 </CardGroup>

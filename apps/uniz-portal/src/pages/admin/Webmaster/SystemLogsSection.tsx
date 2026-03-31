@@ -41,7 +41,7 @@ export default function SystemLogsSection() {
       if (data.success) {
         setLogsState({
           fetched: true,
-          data: data.history || []
+          data: data.history || [],
         });
       }
     } catch (error) {
@@ -190,7 +190,6 @@ export default function SystemLogsSection() {
                   .fill(0)
                   .map((_, i) => (
                     <tr key={i} className="border-b border-slate-50/60">
-
                       <td className="px-10 py-6">
                         <div className="space-y-2">
                           <Skeleton className="h-4 w-40" />
@@ -235,7 +234,6 @@ export default function SystemLogsSection() {
                       key={log.id || idx}
                       className="hover:bg-slate-50/30 transition-all group"
                     >
-
                       <td className="px-10 py-6">
                         <div className="flex flex-col gap-1.5">
                           <div className="flex items-center gap-2">

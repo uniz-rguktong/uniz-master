@@ -35,7 +35,8 @@ Returns the profile of the authenticated admin user.
       Admin email address.
     </ResponseField>
     <ResponseField name="role" type="string">
-      System role (e.g. `"director"`, `"dean"`, `"warden_male"`, `"security"`, `"webmaster"`).
+      System role (e.g. `"director"`, `"dean"`, `"warden_male"`, `"security"`,
+      `"webmaster"`).
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -185,7 +186,9 @@ Imports students in bulk from an Excel file. The request must be sent as `multip
 ### Request body
 
 <ParamField body="file" type="file" required>
-  The Excel file (`.xlsx`) containing student data. Use the [template](#download-student-import-template) to ensure correct column formatting.
+  The Excel file (`.xlsx`) containing student data. Use the
+  [template](#download-student-import-template) to ensure correct column
+  formatting.
 </ParamField>
 
 ### Response
@@ -195,7 +198,8 @@ Imports students in bulk from an Excel file. The request must be sent as `multip
 </ResponseField>
 
 <ResponseField name="jobId" type="string">
-  Identifier for the background processing job. Use this with the [upload progress](#check-upload-progress) endpoint to track completion.
+  Identifier for the background processing job. Use this with the [upload
+  progress](#check-upload-progress) endpoint to track completion.
 </ResponseField>
 
 ### Example
@@ -313,7 +317,8 @@ Returns all banners, both published and unpublished. Cached for performance.
 **Auth required:** Yes (any authenticated role)
 
 <Note>
-  This endpoint returns all banners. Student-facing clients should filter by `isPublished: true` before displaying banners to students.
+  This endpoint returns all banners. Student-facing clients should filter by
+  `isPublished: true` before displaying banners to students.
 </Note>
 
 ### Response

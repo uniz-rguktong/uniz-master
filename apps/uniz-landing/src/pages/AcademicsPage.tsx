@@ -29,7 +29,7 @@ export function AcademicsPage() {
       curicula: "Curricula",
     };
     if (mappings[path.toLowerCase()]) return mappings[path.toLowerCase()];
-    return path.replace(/([A-Z])/g, ' $1').trim();
+    return path.replace(/([A-Z])/g, " $1").trim();
   };
 
   const displayName = getDisplayName(pageName);
@@ -39,7 +39,9 @@ export function AcademicsPage() {
       <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#000035] border-t-transparent"></div>
-          <p className="text-slate-600 font-semibold uppercase tracking-widest text-sm animate-pulse">Loading {displayName}...</p>
+          <p className="text-slate-600 font-semibold uppercase tracking-widest text-sm animate-pulse">
+            Loading {displayName}...
+          </p>
         </div>
       </div>
     );
@@ -52,20 +54,29 @@ export function AcademicsPage() {
           {displayName || "Academics"}
         </h1>
         {data.length === 0 ? (
-          <p className="text-slate-500 text-lg">No content available for this page at the moment.</p>
+          <p className="text-slate-500 text-lg">
+            No content available for this page at the moment.
+          </p>
         ) : (
           <div className="space-y-8">
             {data.map((section, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 hover:shadow-md transition-shadow">
-                <h2 className="text-2xl font-semibold text-slate-800 mb-6">{section.header}</h2>
+              <div
+                key={index}
+                className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 hover:shadow-md transition-shadow"
+              >
+                <h2 className="text-2xl font-semibold text-slate-800 mb-6">
+                  {section.header}
+                </h2>
                 {section.links && section.links.length > 0 ? (
                   <ul className="space-y-4">
                     {section.links.map((link, idx) => (
                       <li key={idx} className="flex items-start">
-                        <span className="text-[#000035] mr-3 mt-1 text-lg">●</span>
-                        <a 
-                          href={link.url || "#"} 
-                          target="_blank" 
+                        <span className="text-[#000035] mr-3 mt-1 text-lg">
+                          ●
+                        </span>
+                        <a
+                          href={link.url || "#"}
+                          target="_blank"
                           rel="noreferrer"
                           className="text-[#000035] hover:text-[#000035] hover:underline text-lg font-medium transition-colors break-all"
                         >
@@ -75,7 +86,9 @@ export function AcademicsPage() {
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-slate-500 italic">No links available in this section.</p>
+                  <p className="text-slate-500 italic">
+                    No links available in this section.
+                  </p>
                 )}
               </div>
             ))}

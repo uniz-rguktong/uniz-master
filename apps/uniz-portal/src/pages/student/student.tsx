@@ -804,10 +804,9 @@ export default function StudentProfilePage() {
                   ))}
                 </div>
                 {/* Modern Analytics Section integrated into Personal view */}
-                {user?.username && (
+                {user?.username &&
                   /* <StudentAnalytics studentId={user.username} /> */
-                  null
-                )}
+                  null}
               </div>
             )}
 

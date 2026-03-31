@@ -69,7 +69,6 @@ export default function GradesSection() {
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-
   // Fetch subjects for template
   useEffect(() => {
     if (subTab !== "bulk") return;
@@ -218,7 +217,6 @@ export default function GradesSection() {
       fetchBatchGrades(page);
     }
   }, [page, subTab]);
-
 
   return (
     <div className="p-6 space-y-8 pb-20 text-slate-900">
@@ -454,8 +452,8 @@ export default function GradesSection() {
                   <div className="p-5 bg-slate-900 rounded-xl text-emerald-400 font-mono text-[9px] leading-relaxed">
                     <p className="opacity-40"># Protocol Configuration:</p>
                     <p>
-                      <span className="text-blue-400">Validate</span>{" "}
-                      (integrity = true)
+                      <span className="text-blue-400">Validate</span> (integrity
+                      = true)
                     </p>
                     <p>
                       <span className="text-blue-400">Map</span> (headers {"=>"}{" "}
@@ -907,10 +905,11 @@ export default function GradesSection() {
                                     <button
                                       key={p}
                                       onClick={() => setPage(p)}
-                                      className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${page === p
-                                        ? "bg-navy-900 text-white border-navy-100"
-                                        : "bg-white text-slate-400 border-slate-100 hover:border-navy-100 hover:text-navy-900"
-                                        }`}
+                                      className={`w-10 h-10 rounded-xl font-black text-xs border transition-all ${
+                                        page === p
+                                          ? "bg-navy-900 text-white border-navy-100"
+                                          : "bg-white text-slate-400 border-slate-100 hover:border-navy-100 hover:text-navy-900"
+                                      }`}
                                     >
                                       {p}
                                     </button>
@@ -949,7 +948,6 @@ export default function GradesSection() {
                 })()}
             </div>
           )}
-
         </div>
       )}
     </div>

@@ -230,7 +230,7 @@ export const subjectsAtom = atom({
   default: {
     fetched: false,
     data: [] as any[],
-    meta: { total: 0, totalPages: 0 }
+    meta: { total: 0, totalPages: 0 },
   },
 });
 

@@ -54,25 +54,27 @@ const allowedOrigins = process.env.CLIENT_URL
   : ["http://localhost:5173", "http://localhost:3000"];
 
 // 2. Optimized CORS
-app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-  const origin = req.headers.origin;
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader(
-      "Access-Control-Allow-Methods",
-      "GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD",
-    );
-    res.setHeader(
-      "Access-Control-Allow-Headers",
-      "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-cms-api-key, x-api-key, uid, role",
-    );
-    res.setHeader("Access-Control-Max-Age", "86400");
-  }
+app.use(
+  (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const origin = req.headers.origin;
+    if (origin && allowedOrigins.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD",
+      );
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-cms-api-key, x-api-key, uid, role",
+      );
+      res.setHeader("Access-Control-Max-Age", "86400");
+    }
 
-  if (req.method === "OPTIONS") return res.status(204).end();
-  next();
-});
+    if (req.method === "OPTIONS") return res.status(204).end();
+    next();
+  },
+);
 
 // 3. Smart Cache Middleware
 const cacheMiddleware = async (
@@ -163,7 +165,10 @@ const serviceMap: Record<string, string> = {
 };
 
 // 4. Documentation Engine (UniZ Elegant Docs)
-app.use("/docs-content", express.static(path.join(process.cwd(), "public/docs-content")));
+app.use(
+  "/docs-content",
+  express.static(path.join(process.cwd(), "public/docs-content")),
+);
 
 app.get("/docs", (req, res) => {
   res.send(`
@@ -220,37 +225,42 @@ app.get("/docs", (req, res) => {
 // 4. Standard Health Endpoints with Precision Timing & 2s Cache
 const healthCache = new Map<string, { data: any; expiry: number }>();
 
-app.get("/api/v1/system/health", async (req: express.Request, res: express.Response) => {
-  const cacheKey = "system_health_aggregate";
-  const now = performance.now();
+app.get(
+  "/api/v1/system/health",
+  async (req: express.Request, res: express.Response) => {
+    const cacheKey = "system_health_aggregate";
+    const now = performance.now();
 
-  if (healthCache.has(cacheKey) && healthCache.get(cacheKey)!.expiry > now) {
-    return res.json({ ...healthCache.get(cacheKey)!.data, cached: true });
-  }
-
-  const resultPromises = Object.entries(serviceMap).map(async ([name, url]) => {
-    try {
-      const start = performance.now();
-      await internalClient.get(`${url.replace(/\/$/, "")}/health`);
-      const latency = (performance.now() - start).toFixed(2);
-      return { name, status: "healthy", latency: `${latency}ms` };
-    } catch (e: any) {
-      return { name, status: "unhealthy", error: e.message };
+    if (healthCache.has(cacheKey) && healthCache.get(cacheKey)!.expiry > now) {
+      return res.json({ ...healthCache.get(cacheKey)!.data, cached: true });
     }
-  });
 
-  const results = await Promise.all(resultPromises);
-  const allOk = results.every((r) => r.status === "healthy");
-  const data = { status: allOk ? "ok" : "degraded", services: results };
+    const resultPromises = Object.entries(serviceMap).map(
+      async ([name, url]) => {
+        try {
+          const start = performance.now();
+          await internalClient.get(`${url.replace(/\/$/, "")}/health`);
+          const latency = (performance.now() - start).toFixed(2);
+          return { name, status: "healthy", latency: `${latency}ms` };
+        } catch (e: any) {
+          return { name, status: "unhealthy", error: e.message };
+        }
+      },
+    );
 
-  healthCache.set(cacheKey, { data, expiry: now + 2000 }); // Cache for 2 seconds
-  res.status(allOk ? 200 : 503).json(data);
-});
+    const results = await Promise.all(resultPromises);
+    const allOk = results.every((r) => r.status === "healthy");
+    const data = { status: allOk ? "ok" : "degraded", services: results };
+
+    healthCache.set(cacheKey, { data, expiry: now + 2000 }); // Cache for 2 seconds
+    res.status(allOk ? 200 : 503).json(data);
+  },
+);
 
 // DEBUG: Verify Docs Path
 app.get("/api/v1/system/docs-debug", (req, res) => {
   const p = path.join(__dirname, "../public/docs-content");
-  const fs = require('fs');
+  const fs = require("fs");
   try {
     const files = fs.existsSync(p) ? fs.readdirSync(p) : "PATH_NOT_FOUND";
     res.json({ resolved_path: p, files });
@@ -269,25 +279,31 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
   const path = req.url.split("/").slice(4).join("/");
   req.url = `/${path}`;
 
-    // Bypass Warp Engine for binary files or download routes to prevent corruption
-    const isBinaryRequest =
-      req.url.includes("/download/") ||
-      req.url.endsWith(".pdf") ||
-      req.url.endsWith(".xlsx") ||
-      req.url.endsWith(".zip");
+  // Bypass Warp Engine for binary files or download routes to prevent corruption
+  const isBinaryRequest =
+    req.url.includes("/download/") ||
+    req.url.endsWith(".pdf") ||
+    req.url.endsWith(".xlsx") ||
+    req.url.endsWith(".zip");
 
-    // Bypass Warp Engine for sensitive personal data to prevent accidental leaks
-    const isSensitive = req.url.includes("/me") || req.url.includes("/profile") || req.url.includes("/student/me") || req.url.includes("/grades") || req.url.includes("/attendance");
+  // Bypass Warp Engine for sensitive personal data to prevent accidental leaks
+  const isSensitive =
+    req.url.includes("/me") ||
+    req.url.includes("/profile") ||
+    req.url.includes("/student/me") ||
+    req.url.includes("/grades") ||
+    req.url.includes("/attendance");
 
-    if (
-      req.method === "GET" &&
-      req.headers["cache-control"] !== "no-cache" &&
-      !isBinaryRequest &&
-      !isSensitive
-    ) {
-      // Generate unique key based on URL and User Context (Auth Token / User-Agent)
-      const userKey = req.headers["authorization"] || req.headers["uid"] || "guest";
-      const cacheKey = `p3:${service}:${Buffer.from(req.url).toString("base64").substring(0, 16)}:${Buffer.from(userKey).toString("base64").substring(0, 8)}`;
+  if (
+    req.method === "GET" &&
+    req.headers["cache-control"] !== "no-cache" &&
+    !isBinaryRequest &&
+    !isSensitive
+  ) {
+    // Generate unique key based on URL and User Context (Auth Token / User-Agent)
+    const userKey =
+      req.headers["authorization"] || req.headers["uid"] || "guest";
+    const cacheKey = `p3:${service}:${Buffer.from(req.url).toString("base64").substring(0, 16)}:${Buffer.from(userKey).toString("base64").substring(0, 8)}`;
 
     try {
       const cached = await redis.get(cacheKey);
@@ -297,7 +313,9 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
         res.setHeader("X-Response-Time", "sub-1ms");
 
         // Restore all headers from cache
-        Object.entries(headers).forEach(([k, v]) => res.setHeader(k, v as string));
+        Object.entries(headers).forEach(([k, v]) =>
+          res.setHeader(k, v as string),
+        );
         return res.status(status).send(Buffer.from(data, "base64"));
       }
 
@@ -325,7 +343,7 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
               status: response.status,
             }),
           )
-          .catch(() => { });
+          .catch(() => {});
       }
 
       // Restore headers from upstream

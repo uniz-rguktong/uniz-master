@@ -9,7 +9,8 @@
 
 @layer base {
   :root {
-    --font-sans: "Google Sans", "Outfit", "Inter", system-ui, -apple-system, sans-serif;
+    --font-sans:
+      "Google Sans", "Outfit", "Inter", system-ui, -apple-system, sans-serif;
   }
 
   body {
@@ -451,5 +452,3 @@
   --chart-4: #818cf8;
   --chart-5: #f472b6;
 }
-
-

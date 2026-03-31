@@ -68,14 +68,15 @@ export default function Admin() {
   useAdminname();
   const navigate = useNavigate();
   const username = localStorage.getItem("username") || "Admin";
-  
+
   // CRITICAL: Determine role from verified JWT, fallback only to localStorage
   const adminToken = localStorage.getItem("admin_token");
   const decoded = adminToken ? parseJwt(adminToken) : null;
-  const role = (decoded?.role || localStorage.getItem("admin_role") || "admin").replace(
-    /"/g,
-    "",
-  );
+  const role = (
+    decoded?.role ||
+    localStorage.getItem("admin_role") ||
+    "admin"
+  ).replace(/"/g, "");
 
   if (role === "webmaster" || role === "coe") {
     return <WebmasterDashboard />;
@@ -111,7 +112,8 @@ export default function Admin() {
     logout();
   };
 
-  const isDirector = role === "director" || role === "webmaster" || role === "coe";
+  const isDirector =
+    role === "director" || role === "webmaster" || role === "coe";
   const isDean = role === "dean" || isDirector;
   const isHOD = role === "hod" || isDean;
   const isDSW = role === "dsw" || role === "swo" || isDean;
@@ -151,7 +153,6 @@ export default function Admin() {
       title: "Academic Management",
       show: isDean || isHOD,
       items: [
-
         {
           onClick: () => navigate("/admin/addgrades"),
           title: "Academic Records",
@@ -178,39 +179,39 @@ export default function Admin() {
       items: [
         ...(isDean
           ? [
-            {
-              onClick: () => navigate("/admin/addfaculty"),
-              title: "Faculty",
-              subtitle: "Manage Staff",
-              Icon: UserPlus,
-            },
-            {
-              onClick: () => navigate("/admin/addstudents"),
-              title: "Students",
-              subtitle: "Import CSV",
-              Icon: UserPlus,
-            },
-          ]
+              {
+                onClick: () => navigate("/admin/addfaculty"),
+                title: "Faculty",
+                subtitle: "Manage Staff",
+                Icon: UserPlus,
+              },
+              {
+                onClick: () => navigate("/admin/addstudents"),
+                title: "Students",
+                subtitle: "Import CSV",
+                Icon: UserPlus,
+              },
+            ]
           : []),
         ...(isDirector
           ? [
-            {
-              onClick: () => navigate("/admin/roles"),
-              title: "Roles",
-              subtitle: "Permissions",
-              Icon: UserCog,
-            },
-          ]
+              {
+                onClick: () => navigate("/admin/roles"),
+                title: "Roles",
+                subtitle: "Permissions",
+                Icon: UserCog,
+              },
+            ]
           : []),
         ...(isSecurity
           ? [
-            {
-              onClick: () => navigate("/admin/searchstudents"),
-              title: "Search",
-              subtitle: "Find Students",
-              Icon: Search,
-            },
-          ]
+              {
+                onClick: () => navigate("/admin/searchstudents"),
+                title: "Search",
+                subtitle: "Find Students",
+                Icon: Search,
+              },
+            ]
           : []),
       ],
     },
@@ -226,13 +227,13 @@ export default function Admin() {
         },
         ...(isDean
           ? [
-            {
-              onClick: () => navigate("/admin/banners"),
-              title: "Banners",
-              subtitle: "Site Visuals",
-              Icon: ImageIcon,
-            },
-          ]
+              {
+                onClick: () => navigate("/admin/banners"),
+                title: "Banners",
+                subtitle: "Site Visuals",
+                Icon: ImageIcon,
+              },
+            ]
           : []),
       ],
     },

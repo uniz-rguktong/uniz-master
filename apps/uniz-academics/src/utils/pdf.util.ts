@@ -47,15 +47,17 @@ const CACHE_PATH = path.join(CACHE_DIR, "university_logo.jpg");
 let cachedLogo: Buffer | null = null;
 const getLogo = async (): Promise<Buffer | null> => {
   if (cachedLogo) return cachedLogo;
-  const logoUrl = process.env.INSTITUTION_LOGO_URL || "https://res.cloudinary.com/dy2fjgt46/image/upload/v1771604895/rguktongole_logo_kbpaui.jpg";
+  const logoUrl =
+    process.env.INSTITUTION_LOGO_URL ||
+    "https://res.cloudinary.com/dy2fjgt46/image/upload/v1771604895/rguktongole_logo_kbpaui.jpg";
 
   try {
     const response = await axios.get(logoUrl, {
       responseType: "arraybuffer",
       timeout: 10000,
       headers: {
-        'User-Agent': 'UniZ-Core-Engine/1.0 (Enterprise PDF Generator)'
-      }
+        "User-Agent": "UniZ-Core-Engine/1.0 (Enterprise PDF Generator)",
+      },
     });
     cachedLogo = Buffer.from(response.data);
     console.log("[PDF] Logo fetched successfully, size:", cachedLogo.length);
@@ -116,8 +118,8 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
   let earnedPoints = 0;
   // Calculate SGPA across all attempts? Usually only the latest attempts count for GPA if they replaced failures.
   // But for the report summary, we'll show the summary based on the "Regular" attempt or the "Latest" state.
-  const flatGrades = data.attempts.flatMap(a => a.grades);
-  
+  const flatGrades = data.attempts.flatMap((a) => a.grades);
+
   // To keep it simple, we'll use the flat grades count for summary
   flatGrades.forEach((g) => {
     const credit = Number(g.subject.credits);
@@ -242,7 +244,11 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
 
     for (const attempt of data.attempts) {
       doc.moveDown(1);
-      doc.fillColor(PRIMARY_MAROON).font("Helvetica-Bold").fontSize(10).text(attempt.label, PAGE_MARGIN + 2);
+      doc
+        .fillColor(PRIMARY_MAROON)
+        .font("Helvetica-Bold")
+        .fontSize(10)
+        .text(attempt.label, PAGE_MARGIN + 2);
       doc.moveDown(0.5);
 
       let tableY = doc.y;
@@ -254,16 +260,23 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
         width: tWidths.credits,
         align: "center",
       });
-      doc.text("GRADE", PAGE_MARGIN + tWidths.name + tWidths.credits, tableY + 8, {
-        width: tWidths.grade,
-        align: "center",
-      });
+      doc.text(
+        "GRADE",
+        PAGE_MARGIN + tWidths.name + tWidths.credits,
+        tableY + 8,
+        {
+          width: tWidths.grade,
+          align: "center",
+        },
+      );
 
       tableY += 24;
       doc.fillColor("#000000").font("Helvetica").fontSize(9);
 
       attempt.grades.forEach((g: any, idx: number) => {
-        const nameText = cleanSubjectName(g.subjectNameOverride || g.subject.name);
+        const nameText = cleanSubjectName(
+          g.subjectNameOverride || g.subject.name,
+        );
         const nameHeight = doc.heightOfString(nameText, {
           width: tWidths.name - 20,
         });
@@ -294,17 +307,23 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
 
         let gLetter = getGradeLetter(g.grade);
         // Only show (R) suffix on REMEDIAL reports, never on REGULAR
-        if (!isRegularReport && (g.isRemedial || g.attemptNumber > 1) && gLetter !== "R") {
+        if (
+          !isRegularReport &&
+          (g.isRemedial || g.attemptNumber > 1) &&
+          gLetter !== "R"
+        ) {
           gLetter += " (R)";
         }
 
         if (gLetter.includes("R")) doc.fillColor("#D32F2F");
-        doc.font("Helvetica-Bold").text(
-          gLetter,
-          PAGE_MARGIN + tWidths.name + tWidths.credits,
-          tableY + (rowHeight / 2 - 4.5),
-          { width: tWidths.grade, align: "center" },
-        );
+        doc
+          .font("Helvetica-Bold")
+          .text(
+            gLetter,
+            PAGE_MARGIN + tWidths.name + tWidths.credits,
+            tableY + (rowHeight / 2 - 4.5),
+            { width: tWidths.grade, align: "center" },
+          );
 
         // Only show pass date on REMEDIAL reports
         if (!isRegularReport && g.passDate) {

@@ -34,6 +34,7 @@ The recommended workflow for submitting a batch's attendance is to download the 
     | `subjectCode` | `E3-SEM-1-CSE-1` | Subject code as registered in UniZ |
 
     The response is an `.xlsx` file download. Save it before filling it in.
+
   </Step>
 
   <Step title="Fill in attendance for each student">
@@ -67,6 +68,7 @@ The recommended workflow for submitting a batch's attendance is to download the 
       rather than entering zeros. Entering `0/50` will register as 0%
       attendance and will be visible to the student.
     </Tip>
+
   </Step>
 
   <Step title="Upload the filled template">
@@ -106,6 +108,7 @@ The recommended workflow for submitting a batch's attendance is to download the 
       not included in the new file. Only rows present in the uploaded sheet
       are processed.
     </Note>
+
   </Step>
 
   <Step title="Monitor upload progress">
@@ -132,6 +135,7 @@ The recommended workflow for submitting a batch's attendance is to download the 
 
     Poll every few seconds until `status` is `"completed"` and `percent`
     reaches `100`.
+
   </Step>
 </Steps>
 
@@ -253,8 +257,9 @@ records can cause confusion.
   `GET /academics/attendance/download/:semesterId` and sharing it through your
   department's standard communication channels.
 
-  The endpoint is retained for audit compliance and may be removed in a future
-  release.
+The endpoint is retained for audit compliance and may be removed in a future
+release.
+
 </Warning>
 
 If you need to trigger an email summary for audit or legacy purposes:
@@ -293,6 +298,7 @@ Content-Type: application/json
     - **Student ID** — pre-filled, do not edit
     - **attendedClasses** — whole number
     - **totalClasses** — whole number, must be ≥ attendedClasses
+
   </Card>
   <Card title="Accepted file formats" icon="file">
     The upload endpoint accepts:
@@ -302,5 +308,6 @@ Content-Type: application/json
     - `.csv`
 
     Maximum file size: **50 MB**
+
   </Card>
 </CardGroup>

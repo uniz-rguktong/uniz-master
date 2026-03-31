@@ -37,9 +37,21 @@ async function main() {
     { username: "director", role: "director", pass: "director@uniz" },
     { username: "security", role: "security", pass: "security@uniz" },
     { username: "warden_male", role: "warden_male", pass: "warden_male@uniz" },
-    { username: "warden_female", role: "warden_female", pass: "warden_female@uniz" },
-    { username: "caretaker_male", role: "caretaker_male", pass: "caretaker_male@uniz" },
-    { username: "caretaker_female", role: "caretaker_female", pass: "caretaker_female@uniz" },
+    {
+      username: "warden_female",
+      role: "warden_female",
+      pass: "warden_female@uniz",
+    },
+    {
+      username: "caretaker_male",
+      role: "caretaker_male",
+      pass: "caretaker_male@uniz",
+    },
+    {
+      username: "caretaker_female",
+      role: "caretaker_female",
+      pass: "caretaker_female@uniz",
+    },
     { username: "librarian", role: "librarian", pass: "librarian@uniz" },
   ];
 
