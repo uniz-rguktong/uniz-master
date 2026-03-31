@@ -1,7 +1,7 @@
-"use client" 
+"use client";
 
 import { motion } from "framer-motion";
- 
+
 export const BlurredStagger = ({
   text = "we love hextaui.com ❤️",
   className = "",
@@ -10,7 +10,7 @@ export const BlurredStagger = ({
   className?: string;
 }) => {
   const headingText = text;
- 
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -20,7 +20,7 @@ export const BlurredStagger = ({
       },
     },
   };
- 
+
   const letterAnimation = {
     hidden: {
       opacity: 0,
@@ -33,7 +33,7 @@ export const BlurredStagger = ({
       y: 0,
     },
   };
- 
+
   return (
     <motion.span
       variants={container}

@@ -43,7 +43,8 @@ export function Media({
                         {item.title}
                       </h3>
                       <p className="mt-1 text-sm text-gray-600 line-clamp-2 font-medium">
-                        {item.date ? `${item.date} - ` : ""}Discover recent insights and announcements.
+                        {item.date ? `${item.date} - ` : ""}Discover recent
+                        insights and announcements.
                       </p>
                     </div>
                   </a>

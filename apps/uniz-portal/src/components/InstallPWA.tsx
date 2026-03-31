@@ -65,7 +65,8 @@ export const InstallPWA = () => {
   };
 
   const handleInstallClick = async () => {
-    const promptEvent = (window as any).deferredPWAInstallPrompt || deferredPrompt;
+    const promptEvent =
+      (window as any).deferredPWAInstallPrompt || deferredPrompt;
     if (promptEvent) {
       try {
         promptEvent.prompt();

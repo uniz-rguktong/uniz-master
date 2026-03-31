@@ -12,15 +12,12 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
-import { 
-  BANNERS_BASE, 
-  UPDATE_BANNER_VISIBILITY 
-} from "../../../api/endpoints";
+import { BANNERS_BASE, UPDATE_BANNER_VISIBILITY } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 import { useRecoilState } from "recoil";
 import { bannersAtom } from "../../../store/atoms";
-import { 
-  AlertDialog, 
+import {
+  AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -76,7 +73,7 @@ export default function BannersSection() {
       if (data.success) {
         setBannersState({
           fetched: true,
-          data: data.banners || []
+          data: data.banners || [],
         });
       } else {
         toast.error(data.msg || "Failed to fetch banners");
@@ -108,7 +105,7 @@ export default function BannersSection() {
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
       const data = await res.json();
       if (data.secure_url) {
@@ -195,7 +192,7 @@ export default function BannersSection() {
         toast.success("Banner deleted successfully");
         setBannersState((prev) => ({
           ...prev,
-          data: prev.data.filter((b) => (b.id || b._id || b.uuid) !== id)
+          data: prev.data.filter((b) => (b.id || b._id || b.uuid) !== id),
         }));
       } else {
         toast.error(data.msg || "Deletion failed");
@@ -234,7 +231,7 @@ export default function BannersSection() {
             b.id === id || b._id === id || b.uuid === id
               ? { ...b, isVisible: newVisibility }
               : b,
-          )
+          ),
         }));
       } else {
         toast.error(data.msg || "Failed to update visibility");
@@ -270,7 +267,10 @@ export default function BannersSection() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white rounded-xl border border-slate-100 overflow-hidden flex flex-col animate-pulse shadow-none">
+            <div
+              key={i}
+              className="bg-white rounded-xl border border-slate-100 overflow-hidden flex flex-col animate-pulse shadow-none"
+            >
               <div className="h-44 w-full bg-slate-50 border-b border-slate-100 relative overflow-hidden" />
               <div className="p-6 space-y-5">
                 <div className="space-y-3">
@@ -336,10 +336,11 @@ export default function BannersSection() {
                     <button
                       onClick={() => toggleVisibilityAction(banner)}
                       disabled={actionLoading === bannerId}
-                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-bold uppercase tracking-widest text-[9px] transition-all border ${banner.isVisible
-                        ? "bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white"
-                        : "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white"
-                        } active:scale-95 disabled:opacity-50`}
+                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-bold uppercase tracking-widest text-[9px] transition-all border ${
+                        banner.isVisible
+                          ? "bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white"
+                          : "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white"
+                      } active:scale-95 disabled:opacity-50`}
                     >
                       {actionLoading === bannerId ? (
                         <Loader2 size={13} className="animate-spin" />
@@ -392,13 +393,18 @@ export default function BannersSection() {
         </div>
       )}
 
-      <AlertDialog 
-        open={showAddModal} 
+      <AlertDialog
+        open={showAddModal}
         onOpenChange={(open: boolean) => {
           if (!open) {
             setShowAddModal(false);
             setEditingBanner(null);
-            setNewBanner({ title: "", text: "", imageUrl: "", isVisible: true });
+            setNewBanner({
+              title: "",
+              text: "",
+              imageUrl: "",
+              isVisible: true,
+            });
           }
         }}
       >
@@ -410,7 +416,12 @@ export default function BannersSection() {
               onClick={() => {
                 setShowAddModal(false);
                 setEditingBanner(null);
-                setNewBanner({ title: "", text: "", imageUrl: "", isVisible: true });
+                setNewBanner({
+                  title: "",
+                  text: "",
+                  imageUrl: "",
+                  isVisible: true,
+                });
               }}
               className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
             >
@@ -492,7 +503,7 @@ export default function BannersSection() {
                       accept="image/*"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <input
                       required
@@ -520,7 +531,9 @@ export default function BannersSection() {
                       }
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                       <p className="text-[10px] font-bold text-white uppercase tracking-widest">Current Selection</p>
+                      <p className="text-[10px] font-bold text-white uppercase tracking-widest">
+                        Current Selection
+                      </p>
                     </div>
                   </div>
                 )}
@@ -533,7 +546,12 @@ export default function BannersSection() {
                   onClick={() => {
                     setShowAddModal(false);
                     setEditingBanner(null);
-                    setNewBanner({ title: "", text: "", imageUrl: "", isVisible: true });
+                    setNewBanner({
+                      title: "",
+                      text: "",
+                      imageUrl: "",
+                      isVisible: true,
+                    });
                   }}
                   className="flex-1 py-3.5 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 font-black uppercase tracking-widest text-[10px] transition-all"
                 >
@@ -544,7 +562,8 @@ export default function BannersSection() {
                   disabled={!!actionLoading}
                   className="flex-[2] py-3.5 rounded-xl bg-navy-900 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-lg shadow-navy-100 hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {actionLoading === "creating" || actionLoading === "updating" ? (
+                  {actionLoading === "creating" ||
+                  actionLoading === "updating" ? (
                     <Loader2 className="animate-spin w-4 h-4" />
                   ) : editingBanner ? (
                     <CheckCircle2 size={16} />

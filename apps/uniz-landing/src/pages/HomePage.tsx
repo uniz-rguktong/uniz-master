@@ -31,7 +31,7 @@ export function HomePage() {
         setNotificationsData({
           news_updates: news,
           tenders: tenders,
-          careers: careers
+          careers: careers,
         });
       } catch (error) {
         console.error("Error loading home page data:", error);
@@ -47,7 +47,9 @@ export function HomePage() {
       <div className="flex h-screen w-full items-center justify-center bg-white cursor-wait">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
-          <p className="text-slate-600 font-semibold uppercase tracking-widest text-sm animate-pulse">Loading Campus Data...</p>
+          <p className="text-slate-600 font-semibold uppercase tracking-widest text-sm animate-pulse">
+            Loading Campus Data...
+          </p>
         </div>
       </div>
     );
@@ -77,7 +79,7 @@ export function HomePage() {
       !img.includes("rguktlogo") &&
       !img.includes("ap-logo") &&
       !img.includes("cutercounter") &&
-      (img.endsWith(".jpg") || img.endsWith(".jpeg") || img.endsWith(".png"))
+      (img.endsWith(".jpg") || img.endsWith(".jpeg") || img.endsWith(".png")),
   );
 
   // Helper: take N images from the pool starting at an offset, cycling if needed
@@ -103,13 +105,12 @@ export function HomePage() {
   const galleryImages = getPoolSlice(0, 16);
 
   // Provide a fixed high quality image for the Director from the API
-  const directorImage = allImages.find(img => img.toLowerCase().includes("gupta")) || "https://rguktong.ac.in/images/gupta%20sir.jpeg";
-
-
+  const directorImage =
+    allImages.find((img) => img.toLowerCase().includes("gupta")) ||
+    "https://rguktong.ac.in/images/gupta%20sir.jpeg";
 
   return (
     <div className="w-full bg-white">
-
       {/* 1. Hero & Announcements */}
       <div>
         <HeroAndTitle
@@ -163,29 +164,18 @@ export function HomePage() {
 
       {/* 6. Statistics */}
       <div className="clear-both">
-        <Stats
-          stats={homeData.stats || []}
-        />
+        <Stats stats={homeData.stats || []} />
       </div>
-
-
 
       {/* 8. Director's Message */}
       <div className="clear-both">
-        <DirectorMessage
-          directorImage={directorImage}
-        />
+        <DirectorMessage directorImage={directorImage} />
       </div>
-
-
 
       {/* 10. Photo Gallery */}
       <div className="clear-both">
-        <Gallery
-          images={galleryImages}
-        />
+        <Gallery images={galleryImages} />
       </div>
-
     </div>
   );
 }

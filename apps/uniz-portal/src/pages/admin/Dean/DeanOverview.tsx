@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo, useRef } from "react";
 import {
   Users,
@@ -21,10 +20,7 @@ import {
   ANALYTICS_KEY,
   BASE_URL,
 } from "../../../api/endpoints";
-import {
-  KPICard,
-  SubjectHeatmap
-} from "../AnalyticsUI";
+import { KPICard, SubjectHeatmap } from "../AnalyticsUI";
 import { DonutChart as DonutUI } from "@/components/ui/donut-chart";
 import { Card } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
@@ -90,7 +86,7 @@ export default function DeanOverview({ username }: { username: string }) {
           designation: data.data.designation || "",
           department: data.data.department || "",
         });
-        setCachedData(prev => ({ ...prev, profile: data.data }));
+        setCachedData((prev) => ({ ...prev, profile: data.data }));
       }
     } catch {
       toast.error("Failed to load profile");
@@ -167,18 +163,18 @@ export default function DeanOverview({ username }: { username: string }) {
         if (!cachedData.fetched) setLoading(true);
         const authHeaders = {
           "x-api-key": ANALYTICS_KEY,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         };
         const [occRes, hMapRes, gvRes] = await Promise.all([
           fetch(ANALYTICS_CAMPUS_OCCUPANCY, { headers: authHeaders }),
           fetch(ANALYTICS_ACADEMIC_HEATMAP, { headers: authHeaders }),
-          fetch(ANALYTICS_GRIEVANCE_TRENDS, { headers: authHeaders })
+          fetch(ANALYTICS_GRIEVANCE_TRENDS, { headers: authHeaders }),
         ]);
 
         const [occ, hmap, gv] = await Promise.all([
           occRes.json().catch(() => ({})),
-          hMapRes.json().catch(() => ([])),
-          gvRes.json().catch(() => ({}))
+          hMapRes.json().catch(() => []),
+          gvRes.json().catch(() => ({})),
         ]);
 
         setOccupancy(occ);
@@ -189,9 +185,8 @@ export default function DeanOverview({ username }: { username: string }) {
           profile: profile || cachedData.profile,
           occupancy: occ,
           heatmap: Array.isArray(hmap) ? hmap : [],
-          grievances: gv
+          grievances: gv,
         });
-
       } catch (err) {
         console.error("Dean analytics failed:", err);
       } finally {
@@ -206,18 +201,24 @@ export default function DeanOverview({ username }: { username: string }) {
   const email = (profile?.email || `${username}@rguktong.ac.in`).toLowerCase();
 
   const uniqueBranches = useMemo(() => {
-    const b = Array.from(new Set(heatmap.map(item => item.branch))).filter(Boolean);
+    const b = Array.from(new Set(heatmap.map((item) => item.branch))).filter(
+      Boolean,
+    );
     return b.length ? b.sort() : ["CSE", "ECE", "EEE", "MECH", "CIVIL"];
   }, [heatmap]);
 
   const branchFilteredData = useMemo(() => {
     return heatmap
-      .filter(item => item.branch === selectedBranch)
-      .sort((a, b) => (Number(b.average_grade) || 0) - (Number(a.average_grade) || 0));
+      .filter((item) => item.branch === selectedBranch)
+      .sort(
+        (a, b) =>
+          (Number(b.average_grade) || 0) - (Number(a.average_grade) || 0),
+      );
   }, [heatmap, selectedBranch]);
 
   const grievanceData = useMemo(() => {
-    const hasData = grievances && (grievances.trend?.length || grievances.feed?.length);
+    const hasData =
+      grievances && (grievances.trend?.length || grievances.feed?.length);
     if (hasData) return grievances;
 
     return {
@@ -230,11 +231,31 @@ export default function DeanOverview({ username }: { username: string }) {
         { name: "Mar", count: 18 },
       ],
       feed: [
-        { time: "2 Hours Ago", message: "Water Supply Resolved", detail: "Hostel Block A-1 Primary Tank Repaired", status: "success" },
-        { time: "1 Day Ago", message: "Internet Downtime Reported", detail: "Fiber cut detected near academic block", status: "warning" },
-        { time: "2 Days Ago", message: "MESS Complaint Logged", detail: "Quality audit initiated for Dining Hall 2", status: "error" },
-        { time: "3 Days Ago", message: "Library Extension Approved", detail: "24/7 access granted for E3 Students", status: "success" },
-      ]
+        {
+          time: "2 Hours Ago",
+          message: "Water Supply Resolved",
+          detail: "Hostel Block A-1 Primary Tank Repaired",
+          status: "success",
+        },
+        {
+          time: "1 Day Ago",
+          message: "Internet Downtime Reported",
+          detail: "Fiber cut detected near academic block",
+          status: "warning",
+        },
+        {
+          time: "2 Days Ago",
+          message: "MESS Complaint Logged",
+          detail: "Quality audit initiated for Dining Hall 2",
+          status: "error",
+        },
+        {
+          time: "3 Days Ago",
+          message: "Library Extension Approved",
+          detail: "24/7 access granted for E3 Students",
+          status: "success",
+        },
+      ],
     };
   }, [grievances]);
 
@@ -244,8 +265,12 @@ export default function DeanOverview({ username }: { username: string }) {
     const total = inside + outside;
 
     const data = [
-      { value: inside, color: "hsl(142.1 76.2% 36.3%)", label: "Inside Campus" },
-      { value: outside, color: "hsl(214.7 95% 40%)", label: "Outside Campus" }
+      {
+        value: inside,
+        color: "hsl(142.1 76.2% 36.3%)",
+        label: "Inside Campus",
+      },
+      { value: outside, color: "hsl(214.7 95% 40%)", label: "Outside Campus" },
     ];
 
     if (total === 0 && !occupancy) {
@@ -253,16 +278,20 @@ export default function DeanOverview({ username }: { username: string }) {
         total: 3450,
         inside: 2800,
         data: [
-          { value: 2800, color: "hsl(142.1 76.2% 36.3%)", label: "Inside Campus" },
-          { value: 650, color: "hsl(214.7 95% 40%)", label: "Outside Campus" }
-        ]
+          {
+            value: 2800,
+            color: "hsl(142.1 76.2% 36.3%)",
+            label: "Inside Campus",
+          },
+          { value: 650, color: "hsl(214.7 95% 40%)", label: "Outside Campus" },
+        ],
       };
     }
 
     return {
       total,
       inside,
-      data
+      data,
     };
   }, [occupancy]);
 
@@ -270,9 +299,9 @@ export default function DeanOverview({ username }: { username: string }) {
     return (
       <div className="space-y-12 pb-20 px-10 pt-10 animate-in fade-in duration-1000">
         <div className="flex flex-col items-center justify-center space-y-4 mb-8">
-           <Skeleton className="w-[130px] h-[130px] rounded-full" />
-           <Skeleton className="w-48 h-8 rounded-lg" />
-           <Skeleton className="w-64 h-4 rounded-md" />
+          <Skeleton className="w-[130px] h-[130px] rounded-full" />
+          <Skeleton className="w-48 h-8 rounded-lg" />
+          <Skeleton className="w-64 h-4 rounded-md" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Skeleton className="h-44 rounded-[2rem]" />
@@ -354,7 +383,11 @@ export default function DeanOverview({ username }: { username: string }) {
         <p className="text-slate-500 font-medium text-[13px] flex items-center justify-center gap-1.5 mb-4">
           {email}
           {!profileLoading && (
-            <BadgeCheck className="w-[15px] h-[15px] text-[#2ebd59]" fill="#2ebd59" fillOpacity={0.15} />
+            <BadgeCheck
+              className="w-[15px] h-[15px] text-[#2ebd59]"
+              fill="#2ebd59"
+              fillOpacity={0.15}
+            />
           )}
         </p>
 
@@ -365,15 +398,17 @@ export default function DeanOverview({ username }: { username: string }) {
               {username}
             </span>
             <span className="w-1 h-1 rounded-full bg-slate-200" />
-            <span className="uppercase tracking-wide text-slate-400">Dean Portal</span>
+            <span className="uppercase tracking-wide text-slate-400">
+              Dean Portal
+            </span>
           </div>
         )}
 
         {/* Edit Button */}
         {!isEditing && !profileLoading && (
           <button
-             onClick={() => setIsEditing(true)}
-             className="px-6 py-2 rounded-xl border border-slate-200 text-slate-500 font-bold uppercase tracking-widest text-[10px] hover:bg-slate-50 transition-all active:scale-95"
+            onClick={() => setIsEditing(true)}
+            className="px-6 py-2 rounded-xl border border-slate-200 text-slate-500 font-bold uppercase tracking-widest text-[10px] hover:bg-slate-50 transition-all active:scale-95"
           >
             Edit Profile
           </button>
@@ -394,16 +429,23 @@ export default function DeanOverview({ username }: { username: string }) {
                 { key: "designation", label: "Designation", icon: Briefcase },
                 { key: "department", label: "Department", icon: Building },
               ].map(({ key, label, icon: Icon }) => (
-                <div key={key} className="flex items-center gap-4 px-4 py-3.5 bg-slate-50 rounded-2xl border border-slate-100 focus-within:border-navy-100 transition-all">
+                <div
+                  key={key}
+                  className="flex items-center gap-4 px-4 py-3.5 bg-slate-50 rounded-2xl border border-slate-100 focus-within:border-navy-100 transition-all"
+                >
                   <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center shrink-0">
                     <Icon size={16} className="text-slate-400" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
+                      {label}
+                    </p>
                     <input
                       type="text"
                       value={(formData as any)[key]}
-                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, [key]: e.target.value })
+                      }
                       className="text-[13px] font-bold text-slate-900 bg-transparent outline-none w-full"
                     />
                   </div>
@@ -416,14 +458,18 @@ export default function DeanOverview({ username }: { username: string }) {
                   disabled={isSaving}
                   className="flex-1 py-3.5 rounded-2xl bg-navy-900 text-white text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-black transition-all disabled:opacity-50"
                 >
-                  {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                  {isSaving ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Check size={16} />
+                  )}
                   Save Changes
                 </button>
                 <button
                   onClick={() => setIsEditing(false)}
                   className="px-8 py-3.5 rounded-2xl border border-slate-200 text-slate-400 text-[11px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all"
                 >
-                   Cancel
+                  Cancel
                 </button>
               </div>
             </motion.div>
@@ -433,17 +479,41 @@ export default function DeanOverview({ username }: { username: string }) {
 
       {/* KPI Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-10">
-        <KPICard title="Total Residents" value={occupancyStats.total.toLocaleString()} icon={Users} badge="+2.4%" />
-        <KPICard title="Present in Campus" value={occupancyStats.inside.toLocaleString()} icon={Home} badge={`${((occupancyStats.inside / occupancyStats.total) * 100 || 0).toFixed(0)}% Cap`} />
-        <KPICard title="Resolution Rate" value={`${grievanceData.resolutionRate || 0}%`} icon={CheckCircle2} badge="Target Hit" />
-        <KPICard title="Pending Actions" value={grievanceData.pendingCount || 0} icon={AlertCircle} badge="Urgent" />
+        <KPICard
+          title="Total Residents"
+          value={occupancyStats.total.toLocaleString()}
+          icon={Users}
+          badge="+2.4%"
+        />
+        <KPICard
+          title="Present in Campus"
+          value={occupancyStats.inside.toLocaleString()}
+          icon={Home}
+          badge={`${((occupancyStats.inside / occupancyStats.total) * 100 || 0).toFixed(0)}% Cap`}
+        />
+        <KPICard
+          title="Resolution Rate"
+          value={`${grievanceData.resolutionRate || 0}%`}
+          icon={CheckCircle2}
+          badge="Target Hit"
+        />
+        <KPICard
+          title="Pending Actions"
+          value={grievanceData.pendingCount || 0}
+          icon={AlertCircle}
+          badge="Urgent"
+        />
       </div>
 
       {/* Campus Occupancy Analytics */}
       <Card className="p-10 mx-10 flex flex-col items-center justify-center space-y-10 bg-transparent border-slate-100 shadow-sm rounded-[2rem] hover:shadow-lg transition-all duration-500">
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Campus Occupancy Intelligence</h2>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Real-time resident distribution</p>
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+            Campus Occupancy Intelligence
+          </h2>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">
+            Real-time resident distribution
+          </p>
         </div>
 
         <div className="flex flex-col lg:flex-row items-center justify-center gap-16 w-full">
@@ -468,12 +538,22 @@ export default function DeanOverview({ username }: { username: string }) {
                     </p>
                     <p className="text-5xl font-black text-slate-900 tracking-tighter">
                       {hoveredOccupancy
-                        ? occupancyStats.data.find(d => d.label === hoveredOccupancy)?.value
+                        ? occupancyStats.data.find(
+                            (d) => d.label === hoveredOccupancy,
+                          )?.value
                         : occupancyStats.total}
                     </p>
                     {hoveredOccupancy && (
                       <p className="text-sm font-black text-blue-600 mt-2">
-                        [{((occupancyStats.data.find(d => d.label === hoveredOccupancy)?.value || 0) / occupancyStats.total * 100).toFixed(0)}%]
+                        [
+                        {(
+                          ((occupancyStats.data.find(
+                            (d) => d.label === hoveredOccupancy,
+                          )?.value || 0) /
+                            occupancyStats.total) *
+                          100
+                        ).toFixed(0)}
+                        %]
                       </p>
                     )}
                   </motion.div>
@@ -492,7 +572,7 @@ export default function DeanOverview({ username }: { username: string }) {
                   "flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 cursor-pointer",
                   hoveredOccupancy === segment.label
                     ? "bg-slate-900 border-slate-900 shadow-xl -translate-x-2"
-                    : "bg-white border-slate-100 hover:border-slate-200"
+                    : "bg-white border-slate-100 hover:border-slate-200",
                 )}
               >
                 <div className="flex items-center gap-4">
@@ -500,24 +580,36 @@ export default function DeanOverview({ username }: { username: string }) {
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: segment.color }}
                   />
-                  <span className={cn(
-                    "text-xs font-black uppercase tracking-widest",
-                    hoveredOccupancy === segment.label ? "text-white" : "text-slate-600"
-                  )}>
+                  <span
+                    className={cn(
+                      "text-xs font-black uppercase tracking-widest",
+                      hoveredOccupancy === segment.label
+                        ? "text-white"
+                        : "text-slate-600",
+                    )}
+                  >
                     {segment.label}
                   </span>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className={cn(
-                    "text-sm font-black",
-                    hoveredOccupancy === segment.label ? "text-white" : "text-slate-900"
-                  )}>
+                  <span
+                    className={cn(
+                      "text-sm font-black",
+                      hoveredOccupancy === segment.label
+                        ? "text-white"
+                        : "text-slate-900",
+                    )}
+                  >
                     {segment.value.toLocaleString()}
                   </span>
-                  <span className={cn(
-                    "text-[9px] font-bold opacity-60",
-                    hoveredOccupancy === segment.label ? "text-blue-400" : "text-slate-400"
-                  )}>
+                  <span
+                    className={cn(
+                      "text-[9px] font-bold opacity-60",
+                      hoveredOccupancy === segment.label
+                        ? "text-blue-400"
+                        : "text-slate-400",
+                    )}
+                  >
                     {((segment.value / occupancyStats.total) * 100).toFixed(1)}%
                   </span>
                 </div>

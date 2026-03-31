@@ -228,7 +228,8 @@ Permanently removes a faculty member's account.
 **Auth required:** Yes (admin, director)
 
 <Warning>
-  This action is irreversible. The faculty member will lose access to the system immediately.
+  This action is irreversible. The faculty member will lose access to the system
+  immediately.
 </Warning>
 
 ### Path parameters
@@ -402,8 +403,8 @@ curl --request POST \
 
 ### Error responses
 
-| Status | Meaning |
-|--------|---------|
-| `400 Bad Request` | One or more entries are missing required fields. |
-| `403 Forbidden` | Your role does not have permission to create faculty accounts. |
-| `404 Not Found` | Faculty member not found. |
+| Status            | Meaning                                                        |
+| ----------------- | -------------------------------------------------------------- |
+| `400 Bad Request` | One or more entries are missing required fields.               |
+| `403 Forbidden`   | Your role does not have permission to create faculty accounts. |
+| `404 Not Found`   | Faculty member not found.                                      |
