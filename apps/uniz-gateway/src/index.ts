@@ -198,6 +198,7 @@ app.get("/docs", (req, res) => {
       loadSidebar: true,
       subMaxLevel: 2,
       homepage: 'introduction.mdx',
+      ext: '.mdx',
       auto2top: true,
       executeScript: true,
       search: 'auto',
