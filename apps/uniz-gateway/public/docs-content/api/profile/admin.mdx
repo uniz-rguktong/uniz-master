@@ -1,0 +1,534 @@
+---
+title: "Admin Profile"
+description: "Manage admin profiles, bulk import and export student data, handle banners and announcements, and monitor system health."
+---
+
+<Info>
+  All endpoints on this page require `Authorization: Bearer <token>` in the request header unless noted otherwise.
+</Info>
+
+---
+
+## Get your admin profile
+
+`GET /admin/me`
+
+Returns the profile of the authenticated admin user.
+
+**Auth required:** Yes (any admin role)
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="admin" type="object" required>
+  <Expandable title="properties" defaultOpen>
+    <ResponseField name="username" type="string">
+      Admin username.
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Full name.
+    </ResponseField>
+    <ResponseField name="email" type="string">
+      Admin email address.
+    </ResponseField>
+    <ResponseField name="role" type="string">
+      System role (e.g. `"director"`, `"dean"`, `"warden_male"`, `"security"`, `"webmaster"`).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example
+
+```bash
+curl --request GET \
+  --url https://api.uniz.rguktong.in/api/v1/admin/me \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "admin": {
+    "username": "director",
+    "name": "Director Name",
+    "email": "director@rguktong.ac.in",
+    "role": "director"
+  }
+}
+```
+
+---
+
+## Update your admin profile
+
+`PUT /admin/me/update`
+
+Updates the authenticated admin's own profile. All fields are optional.
+
+**Auth required:** Yes (any admin role)
+
+### Request body
+
+<ParamField body="name" type="string">
+  Full name.
+</ParamField>
+
+<ParamField body="email" type="string">
+  Email address.
+</ParamField>
+
+### Example
+
+```bash
+curl --request PUT \
+  --url https://api.uniz.rguktong.in/api/v1/admin/me/update \
+  --header 'Authorization: Bearer <token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "email": "new.director@rguktong.ac.in"
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true
+}
+```
+
+---
+
+## List available batches
+
+`GET /admin/batches`
+
+Returns all available student batches (combinations of branch and year) in the system. Use this to populate dropdowns when uploading grades or filtering students.
+
+**Auth required:** Yes (admin, director, dean)
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="batches" type="array" required>
+  Array of batch objects.
+  <Expandable title="batch object properties" defaultOpen>
+    <ResponseField name="branch" type="string">
+      Branch name (e.g. `"CSE"`).
+    </ResponseField>
+    <ResponseField name="year" type="string">
+      Academic year (e.g. `"E1"`, `"E2"`, `"E3"`, `"E4"`).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example
+
+```bash
+curl --request GET \
+  --url https://api.uniz.rguktong.in/api/v1/admin/batches \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "batches": [
+    { "branch": "CSE", "year": "E1" },
+    { "branch": "CSE", "year": "E2" },
+    { "branch": "ECE", "year": "E1" }
+  ]
+}
+```
+
+---
+
+## Download student import template
+
+`GET /admin/student/template`
+
+Downloads an Excel template pre-populated with the expected column structure for bulk student imports.
+
+**Auth required:** Yes (admin, director)
+
+### Example
+
+```bash
+curl --request GET \
+  --url https://api.uniz.rguktong.in/api/v1/admin/student/template \
+  --header 'Authorization: Bearer <token>' \
+  --output students_template.xlsx
+```
+
+The response is an Excel file (`.xlsx`). Open it, fill in student data, and upload it using the [bulk upload](#bulk-upload-students) endpoint.
+
+---
+
+## Bulk upload students
+
+`POST /admin/student/upload`
+
+Imports students in bulk from an Excel file. The request must be sent as `multipart/form-data`.
+
+**Auth required:** Yes (admin, director)
+
+### Request body
+
+<ParamField body="file" type="file" required>
+  The Excel file (`.xlsx`) containing student data. Use the [template](#download-student-import-template) to ensure correct column formatting.
+</ParamField>
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` when the file was accepted and processing has started.
+</ResponseField>
+
+<ResponseField name="jobId" type="string">
+  Identifier for the background processing job. Use this with the [upload progress](#check-upload-progress) endpoint to track completion.
+</ResponseField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/admin/student/upload \
+  --header 'Authorization: Bearer <token>' \
+  --form 'file=@students.xlsx'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "jobId": "job-abc123"
+}
+```
+
+---
+
+## Check upload progress
+
+`GET /admin/student/upload/progress`
+
+Returns the status of an ongoing or completed student bulk upload job.
+
+**Auth required:** Yes (admin, director)
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="progress" type="object" required>
+  <Expandable title="properties" defaultOpen>
+    <ResponseField name="status" type="string">
+      Current status of the job: `"queued"`, `"processing"`, or `"completed"`.
+    </ResponseField>
+    <ResponseField name="percent" type="number">
+      Percentage of records processed (0–100).
+    </ResponseField>
+    <ResponseField name="processed" type="number">
+      Number of student records processed so far.
+    </ResponseField>
+    <ResponseField name="total" type="number">
+      Total number of student records in the file.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example
+
+```bash
+curl --request GET \
+  --url https://api.uniz.rguktong.in/api/v1/admin/student/upload/progress \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "progress": {
+    "status": "processing",
+    "percent": 45,
+    "processed": 150,
+    "total": 330
+  }
+}
+```
+
+---
+
+## Export student data
+
+`GET /admin/student/export`
+
+Exports student records as a downloadable file. Use query parameters to filter the export to a specific branch, year, or other criteria.
+
+**Auth required:** Yes (admin, director, dean)
+
+### Query parameters
+
+<ParamField query="branch" type="string">
+  Filter by branch (e.g. `CSE`).
+</ParamField>
+
+<ParamField query="year" type="string">
+  Filter by academic year (e.g. `E2`).
+</ParamField>
+
+### Example
+
+```bash
+curl --request GET \
+  --url 'https://api.uniz.rguktong.in/api/v1/admin/student/export?branch=CSE&year=E2' \
+  --header 'Authorization: Bearer <token>' \
+  --output students_cse_e2.xlsx
+```
+
+The response is an Excel file containing the filtered student records.
+
+---
+
+## List all banners
+
+`GET /profile/admin/banners`
+
+Returns all banners, both published and unpublished. Cached for performance.
+
+**Auth required:** Yes (any authenticated role)
+
+<Note>
+  This endpoint returns all banners. Student-facing clients should filter by `isPublished: true` before displaying banners to students.
+</Note>
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="banners" type="array" required>
+  Array of banner objects.
+  <Expandable title="banner object properties" defaultOpen>
+    <ResponseField name="id" type="string">
+      Unique banner identifier.
+    </ResponseField>
+    <ResponseField name="title" type="string">
+      Banner headline.
+    </ResponseField>
+    <ResponseField name="text" type="string">
+      Banner body text.
+    </ResponseField>
+    <ResponseField name="imageUrl" type="string">
+      URL of the banner image.
+    </ResponseField>
+    <ResponseField name="isPublished" type="boolean">
+      `true` if the banner is visible to all users.
+    </ResponseField>
+    <ResponseField name="createdAt" type="string">
+      ISO 8601 timestamp of when the banner was created.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example
+
+```bash
+curl --request GET \
+  --url https://api.uniz.rguktong.in/api/v1/profile/admin/banners \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "banners": [
+    {
+      "id": "ban-123",
+      "title": "Result Day Announcement",
+      "text": "Results will be out at 5 PM.",
+      "imageUrl": "https://example.com/banners/result-day.jpg",
+      "isPublished": true,
+      "createdAt": "2026-01-30T10:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+## Create a banner
+
+`POST /profile/admin/banners`
+
+Creates a new banner. Newly created banners are unpublished by default. Use the [publish endpoint](#publish-or-unpublish-a-banner) to make a banner visible to all users.
+
+**Auth required:** Yes (webmaster)
+
+### Request body
+
+<ParamField body="title" type="string" required>
+  Banner headline (e.g. `"Holiday Notice"`).
+</ParamField>
+
+<ParamField body="text" type="string" required>
+  Banner body text.
+</ParamField>
+
+<ParamField body="imageUrl" type="string">
+  URL of an image to display with the banner.
+</ParamField>
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` when the banner was created.
+</ResponseField>
+
+<ResponseField name="banner" type="object">
+  <Expandable title="properties" defaultOpen>
+    <ResponseField name="id" type="string">
+      Unique identifier of the new banner.
+    </ResponseField>
+    <ResponseField name="isPublished" type="boolean">
+      Always `false` on creation. Publish separately.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/profile/admin/banners \
+  --header 'Authorization: Bearer <token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "title": "Holiday Notice",
+    "text": "College is closed tomorrow for a public holiday.",
+    "imageUrl": "https://example.com/banners/holiday.jpg"
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "banner": {
+    "id": "ban-456",
+    "isPublished": false
+  }
+}
+```
+
+---
+
+## Publish or unpublish a banner
+
+`POST /profile/admin/banners/:id/publish`
+
+Toggles the published state of a banner. Set `publish: true` to make it visible to all users, or `publish: false` to hide it.
+
+**Auth required:** Yes (webmaster)
+
+### Path parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the banner.
+</ParamField>
+
+### Request body
+
+<ParamField body="publish" type="boolean" required>
+  `true` to publish the banner, `false` to unpublish it.
+</ParamField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/profile/admin/banners/ban-456/publish \
+  --header 'Authorization: Bearer <token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "publish": true
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true
+}
+```
+
+---
+
+## System health check
+
+`GET /system/health`
+
+Returns the real-time health status and latency of all services in the UniZ platform. Use this to diagnose service degradation or verify that the platform is fully operational.
+
+**Auth required:** No
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+  `true` when the health check completed.
+</ResponseField>
+
+<ResponseField name="services" type="array" required>
+  Array of service status objects.
+  <Expandable title="service object properties" defaultOpen>
+    <ResponseField name="name" type="string">
+      Human-readable service name (e.g. `"Auth Service"`, `"Mail Service"`).
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Current status: `"UP"` or `"DOWN"`.
+    </ResponseField>
+    <ResponseField name="latency" type="string">
+      Response time measured during the health probe (e.g. `"120ms"`).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Example
+
+```bash
+curl --request GET \
+  --url https://api.uniz.rguktong.in/api/v1/system/health
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "services": [
+    { "name": "Auth Service", "status": "UP", "latency": "120ms" },
+    { "name": "Mail Service", "status": "UP", "latency": "45ms" },
+    { "name": "Outpass Service", "status": "UP", "latency": "88ms" },
+    { "name": "User Service", "status": "UP", "latency": "60ms" }
+  ]
+}
+```

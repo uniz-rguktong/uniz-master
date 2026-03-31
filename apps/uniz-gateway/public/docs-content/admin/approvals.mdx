@@ -1,0 +1,166 @@
+---
+title: "Approvals"
+description: "How caretakers, wardens, SWO, and directors review and act on student outpass and outing requests in UniZ."
+---
+
+Student outpass requests move through a fixed multi-level approval chain before the student is cleared to leave campus. Each admin role is responsible for a specific level in this chain.
+
+## Approval chain
+
+Outpass requests (multi-day home leave) go through the following sequence:
+
+```
+Student submits → Caretaker → Warden → SWO → Dean / Director (final)
+```
+
+Outing requests (short duration, same day) follow a lighter path with less overhead. Check your institution's configuration for the exact levels required for outings.
+
+<Note>
+The `currentLevel` field on each request tells you exactly which role needs to act next. You only see requests assigned to your level — caretakers see `currentLevel: "caretaker"`, wardens see `"warden"`, and so on.
+</Note>
+
+### What each role does
+
+| Role | Level | Effect of approval |
+|---|---|---|
+| Caretaker | `caretaker` | Moves request to `warden` level |
+| Warden | `warden` | Moves request to `swo` level |
+| SWO | `swo` | Moves request to dean / director level |
+| Dean / Director | Final | Sets `isApproved: true`; student is notified and security can verify the pass |
+
+## Viewing pending requests
+
+Fetch all pending outpass requests. The API returns all records — your frontend filters them to show only those matching your role's `currentLevel`.
+
+**Endpoint:** `GET /requests/outpass/all`
+
+```bash
+GET https://api.uniz.rguktong.in/api/v1/requests/outpass/all
+Authorization: Bearer <TOKEN>
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "outpasses": [
+    {
+      "id": "req-123",
+      "studentId": "O210008",
+      "studentGender": "M",
+      "reason": "Home visit due to family function",
+      "currentLevel": "caretaker",
+      "requested_time": "2026-02-10T10:00:00Z",
+      "fromDay": "2026-02-12T09:00:00Z",
+      "toDay": "2026-02-15T18:00:00Z",
+      "isApproved": false,
+      "isRejected": false
+    }
+  ]
+}
+```
+
+To view pending outing requests, use the equivalent endpoint:
+
+```bash
+GET https://api.uniz.rguktong.in/api/v1/requests/outing/all
+Authorization: Bearer <TOKEN>
+```
+
+### Searching and filtering
+
+The approvals UI lets you search by student ID, email, or reason text. Use the search bar at the top of the approvals view to narrow down the queue when you have a large number of pending requests.
+
+## Approving a request
+
+Send a `POST` to `/:id/approve` with the request ID. You may include an optional comment.
+
+**Endpoint:** `POST /requests/:id/approve`
+
+```bash
+POST https://api.uniz.rguktong.in/api/v1/requests/req-123/approve
+Authorization: Bearer <TOKEN>
+Content-Type: application/json
+```
+
+```json
+{
+  "comment": "Parent verified via call. Approved."
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "msg": "Request approved and forwarded to next level."
+}
+```
+
+<Tip>
+The comment field is optional for approvals. Use it to leave a note for the next approver in the chain, especially if you verified information out-of-band (a phone call, parent visit, etc.).
+</Tip>
+
+After approval, the request automatically advances to the next level. The student is not notified until the final approver (dean or director) grants approval.
+
+## Forwarding a request
+
+You can also forward a request directly to the next level without approving it — use this when you want to pass a request up the chain for review without taking an approval action yourself.
+
+**Endpoint:** `POST /requests/:id/forward`
+
+```bash
+POST https://api.uniz.rguktong.in/api/v1/requests/req-123/forward
+Authorization: Bearer <TOKEN>
+```
+
+<Note>
+Forward is an alias for approve on the backend. It has the same effect — the request moves to the next `currentLevel`. The distinction is presentational in the UI.
+</Note>
+
+## Rejecting a request
+
+To reject a request, provide a mandatory reason in the `comment` field. The student is notified immediately when a request is rejected at any level.
+
+**Endpoint:** `POST /requests/:id/reject`
+
+```bash
+POST https://api.uniz.rguktong.in/api/v1/requests/req-123/reject
+Authorization: Bearer <TOKEN>
+Content-Type: application/json
+```
+
+```json
+{
+  "comment": "Exam period — no leaves permitted this week."
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "msg": "Request rejected."
+}
+```
+
+<Warning>
+The `comment` field is required when rejecting. A rejection without a reason will fail validation. Always provide a clear, specific reason so the student understands and can appeal if necessary.
+</Warning>
+
+## After final approval
+
+When a dean or director approves a request, the following happens automatically:
+
+1. The request status changes to `isApproved: true`.
+2. The student receives a notification that their outpass has been granted.
+3. The request becomes visible to security staff at the gate, who can see it when the student presents their pass for check-out.
+
+Security uses the approved outpass to verify the student's identity and entitlement before allowing them to leave campus. See the [Security Portal](/admin/security) guide for details.
+
+## Expired requests
+
+Requests that have passed their `fromDay` / `fromTime` without being fully approved are marked as expired. Expired requests appear greyed-out in the UI and cannot be actioned. No further action is needed on expired items.

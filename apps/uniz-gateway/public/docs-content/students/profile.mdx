@@ -1,0 +1,170 @@
+---
+title: "Profile"
+description: "View and update your personal details, manage your profile photo, and check your request history."
+---
+
+Your profile page is the central view of your student record in UniZ. It shows your personal details, academic information, family details, and your outpass/outing history.
+
+---
+
+## Profile information
+
+Your profile is divided into tabs:
+
+<CardGroup cols={2}>
+  <Card title="Personal">
+    Full name, gender, blood group, phone number, and date of birth.
+  </Card>
+  <Card title="Academic">
+    Student ID (roll number), year, branch, section, and room number.
+  </Card>
+  <Card title="Family">
+    Father's and mother's name, occupation, email, and phone number.
+  </Card>
+  <Card title="Permissions">
+    Outpass and outing request history, and the option to submit new requests.
+  </Card>
+</CardGroup>
+
+**API response example — your profile:**
+
+```json
+{
+  "success": true,
+  "student": {
+    "_id": "550e8400-e29b-41d4-a716-446655440000",
+    "username": "O210008",
+    "name": "DESU SABER",
+    "year": "3",
+    "branch": "CSE",
+    "profile_url": "https://...",
+    "has_pending_requests": false,
+    "is_in_campus": true
+  }
+}
+```
+
+---
+
+## Update your details
+
+You can update the following fields from the Personal and Family tabs:
+
+- Phone number
+- Address
+- Blood group
+- Date of birth
+- Gender
+- Father's name and occupation
+- Mother's name and occupation
+- Father's phone number
+- Mother's phone number
+
+<Steps>
+  <Step title="Tap the edit icon">
+    On the profile header, tap the pencil icon next to your name, or use the **Edit** button (desktop: top-right corner).
+  </Step>
+  <Step title="Modify the fields you want to change">
+    Only changed fields are sent to the server — unchanged fields are left as-is.
+  </Step>
+  <Step title="Tap Save">
+    On desktop, tap **Save** in the top-right corner. On mobile, tap **Save Changes** at the bottom of the editing panel.
+  </Step>
+</Steps>
+
+The update endpoint only accepts the fields you change:
+
+```json
+PUT /profile/student/update
+{
+  "phone": "9876543210",
+  "address": "New Address, Ongole"
+}
+```
+
+<Note>
+Academic fields — your roll number, year, branch, section, and room number — are managed by the administration and cannot be edited from the portal.
+</Note>
+
+---
+
+## Profile photo
+
+You can upload or replace your profile photo directly from the profile page.
+
+<Steps>
+  <Step title="Tap the camera icon">
+    Tap the small camera button at the bottom-right of your profile picture.
+  </Step>
+  <Step title="Select a photo">
+    Choose an image from your device. Accepted formats are standard image types (JPEG, PNG, etc.).
+  </Step>
+  <Step title="Wait for upload">
+    The photo is uploaded to cloud storage and your profile URL is updated automatically. You'll see a loading spinner while it uploads.
+  </Step>
+</Steps>
+
+<Tip>
+Use a clear, recent photo — it may be used for identification purposes in campus records.
+</Tip>
+
+---
+
+## Campus presence status
+
+The `is_in_campus` field on your profile reflects whether you are currently recorded as present on campus.
+
+| Value | Meaning |
+|-------|---------|
+| `true` | You are currently on campus |
+| `false` | You have checked out and are outside campus |
+
+This status is updated by security at the gate:
+
+- When you leave on an approved outpass or outing, security marks you as **out** (`is_in_campus: false`).
+- When you return, security marks you as **in** (`is_in_campus: true`).
+
+You cannot change this status yourself. If there's a discrepancy, contact the security office or your warden.
+
+---
+
+## Request history
+
+Your outpass and outing history is available in the **Permissions** tab. It shows a paginated list of all past requests with:
+
+- Request type (outpass or outing)
+- Date and duration
+- Reason you submitted
+- Final status (Pending, Approved, Rejected, or Expired)
+
+**API response example:**
+
+```json
+{
+  "success": true,
+  "history": [
+    {
+      "_id": "req-123",
+      "type": "outpass",
+      "status": "pending",
+      "reason": "Home visit",
+      "requested_time": "2026-02-10T10:00:00Z"
+    }
+  ],
+  "pagination": { "page": 1, "total": 5 }
+}
+```
+
+Results are paginated at 5 per page. Use the pagination controls at the bottom to navigate older records.
+
+---
+
+## Grievances and support
+
+If you have a complaint or need help with something not covered in the portal, use the **Help & Support** section accessible from the main navigation.
+
+Submit a brief description of your issue. It will be routed to the appropriate administrative staff.
+
+<Info>
+For urgent matters — such as a rejected leave request you believe is incorrect, or a discrepancy in your academic record — contact your caretaker, warden, or academic section directly rather than waiting for a grievance response.
+</Info>

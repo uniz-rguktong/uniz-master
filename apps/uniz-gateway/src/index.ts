@@ -163,7 +163,7 @@ const serviceMap: Record<string, string> = {
 };
 
 // 4. Documentation Engine (UniZ Elegant Docs)
-app.use("/docs-content", express.static(path.join(__dirname, "../../../docs/uniz_docs_temp")));
+app.use("/docs-content", express.static(path.join(__dirname, "../public/docs-content")));
 
 app.get("/docs", (req, res) => {
   res.send(`

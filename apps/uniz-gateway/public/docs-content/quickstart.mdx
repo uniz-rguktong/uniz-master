@@ -1,0 +1,134 @@
+---
+title: "Quick Start"
+description: "Get up and running with UniZ — install the app, log in with your university credentials, and reach your dashboard in minutes."
+---
+
+This guide walks you through accessing UniZ, installing it on your device, and logging in for the first time. The whole process takes under five minutes.
+
+<Steps>
+  <Step title="Open the UniZ portal">
+    Navigate to the UniZ portal in any modern browser on your phone, tablet, or computer:
+
+    ```
+    https://uniz.rguktong.in
+    ```
+
+    You will see the UniZ home page with live campus announcements and a getting-started timeline.
+  </Step>
+
+  <Step title="Install as a PWA (recommended)">
+    UniZ is a Progressive Web App. Installing it gives you a faster, app-like experience without going through an app store.
+
+    <Tabs>
+      <Tab title="Android">
+        1. Open `https://uniz.rguktong.in` in Chrome.
+        2. Tap the **Install** button shown in the browser banner, or tap the three-dot menu and select **Add to Home Screen**.
+        3. Confirm the installation prompt.
+
+        UniZ now appears on your home screen and opens in full-screen mode.
+      </Tab>
+      <Tab title="iOS (iPhone / iPad)">
+        1. Open `https://uniz.rguktong.in` in Safari.
+        2. Tap the **Share** icon at the bottom of the screen.
+        3. Scroll down and tap **Add to Home Screen**.
+        4. Tap **Add** to confirm.
+
+        <Note>
+          iOS requires Safari for PWA installation. Chrome and other browsers on iOS do not support "Add to Home Screen" for PWAs.
+        </Note>
+      </Tab>
+      <Tab title="Desktop (Windows / macOS / Linux)">
+        1. Open `https://uniz.rguktong.in` in Chrome or Edge.
+        2. Look for the install icon in the browser's address bar (a screen with a download arrow), or open the browser menu and select **Install UniZ**.
+        3. Click **Install** to confirm.
+
+        UniZ opens as a standalone desktop app.
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Log in">
+    UniZ uses a single login endpoint for all roles. Where you log in depends on whether you are a student or a staff member.
+
+    <Tabs>
+      <Tab title="Students">
+        1. From the portal home page, click **Get started** or navigate to the student sign-in page.
+        2. Enter your university-issued student ID (for example, `O210008`) and your password.
+        3. Click **Sign In**.
+
+        **What you see after logging in:**
+        - Your profile with name, branch, year, and campus status
+        - Your grades and subject-wise attendance
+        - Outpass and outing request forms
+        - Your request history
+
+        ```json
+        {
+          "username": "O210008",
+          "password": "your_password"
+        }
+        ```
+
+        <Tip>
+          Your username is your RGUKT student roll number. If you have never logged in before, contact your administrator to get your initial credentials.
+        </Tip>
+      </Tab>
+      <Tab title="Faculty & Staff">
+        1. From the portal home page, type `admin` on your keyboard to reveal the admin sign-in page, or navigate directly to the admin portal.
+        2. Enter your assigned username (for example, `dean_cse`, `warden_male`, `security_admin`) and your password.
+        3. Click **Sign In**.
+
+        **What you see after logging in:**
+        - A dashboard tailored to your role
+        - Pending outpass or outing requests (wardens, caretakers, SWO, dean, director)
+        - Grade and attendance upload tools (faculty)
+        - Gate check-in/check-out controls (security)
+        - Banner and announcement management (webmaster)
+
+        ```json
+        {
+          "username": "director",
+          "password": "your_password"
+        }
+        ```
+
+        <Note>
+          All admin and faculty roles use the same login endpoint. The platform automatically loads the correct dashboard based on the role assigned to your account.
+        </Note>
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Take your first action">
+    Once you are logged in, here is what to do first for each role:
+
+    | Role | First action |
+    |------|-------------|
+    | Student | Check your grades and attendance under the **Academics** section |
+    | Caretaker / Warden | Open the **Requests** dashboard to see pending outpass approvals |
+    | Faculty | Go to **Grades** and download the upload template for your batch |
+    | Security | Open the **Gate** dashboard to see currently approved outpasses |
+    | Dean / Director | Use **Search** to look up any student profile |
+    | Webmaster | Go to **Banners** and create or publish a campus announcement |
+  </Step>
+</Steps>
+
+## Forgot your password?
+
+If you cannot log in, you can reset your password using your registered email address.
+
+<Steps>
+  <Step title="Request an OTP">
+    On the sign-in page, click **Forgot password** and enter your username. UniZ sends a one-time password to your registered email.
+  </Step>
+  <Step title="Verify the OTP">
+    Enter the six-digit OTP from your email on the verification screen.
+  </Step>
+  <Step title="Set a new password">
+    Enter and confirm your new password. You are then redirected to the sign-in page.
+  </Step>
+</Steps>
+
+<Warning>
+  OTPs expire after a short window. If you do not receive an email within a few minutes, check your spam folder or contact your system administrator.
+</Warning>

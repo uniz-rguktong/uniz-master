@@ -1,0 +1,96 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "luma",
+  "name": "UniZ",
+  "favicon": "https://media.brand.dev/288cc7c4-5cef-4376-950b-bdf0083eedae.png",
+  "colors": {
+    "primary": "#94cb04",
+    "light": "#545454",
+    "dark": "#94cb04"
+  },
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/uniz-rguktong/uniz-master"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "roles"
+            ]
+          },
+          {
+            "group": "Student Guide",
+            "pages": [
+              "students/login",
+              "students/academics",
+              "students/outpass",
+              "students/profile"
+            ]
+          },
+          {
+            "group": "Admin Guide",
+            "pages": [
+              "admin/overview",
+              "admin/approvals",
+              "admin/academics",
+              "admin/security"
+            ]
+          },
+          {
+            "group": "Faculty Guide",
+            "pages": [
+              "faculty/grades",
+              "faculty/attendance"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Authentication",
+            "pages": [
+              "api/auth/login",
+              "api/auth/otp",
+              "api/auth/password"
+            ]
+          },
+          {
+            "group": "Academics",
+            "pages": [
+              "api/academics/grades",
+              "api/academics/attendance",
+              "api/academics/subjects"
+            ]
+          },
+          {
+            "group": "Outpass & Outing",
+            "pages": [
+              "api/requests/outpass",
+              "api/requests/outing",
+              "api/requests/approvals"
+            ]
+          },
+          {
+            "group": "Profiles",
+            "pages": [
+              "api/profile/student",
+              "api/profile/faculty",
+              "api/profile/admin"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
