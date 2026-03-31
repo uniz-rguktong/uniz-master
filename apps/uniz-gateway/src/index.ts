@@ -162,6 +162,59 @@ const serviceMap: Record<string, string> = {
     "http://uniz-outpass-service.default.svc.cluster.local:3003",
 };
 
+// 4. Documentation Engine (UniZ Elegant Docs)
+app.use("/docs-content", express.static(path.join(__dirname, "../../../docs/uniz_docs_temp")));
+
+app.get("/docs", (req, res) => {
+  res.send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UniZ | Technical Documentation</title>
+  <link rel="icon" href="https://uniz.rguktong.in/favicon.ico">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <style>
+    :root {
+      --theme-color: #003366;
+    }
+    .sidebar { background-color: #f8fafc; border-right: 1px solid #e2e8f0; }
+    .content { padding-top: 40px; }
+    section.cover { background: linear-gradient(to bottom right, #003366, #001a33) !important; }
+    .markdown-section h1 { color: #003366; font-weight: 700; }
+    .markdown-section h2 { color: #334155; border-bottom: none; }
+    .app-name-link img { width: 80px; }
+  </style>
+</head>
+<body>
+  <div id="app">Loading UniZ Documentation...</div>
+  <script>
+    window.$docsify = {
+      name: 'UniZ',
+      repo: 'https://github.com/uniz-rguktong/uniz-master',
+      basePath: '/docs-content/',
+      loadSidebar: true,
+      subMaxLevel: 2,
+      homepage: 'introduction.mdx',
+      auto2top: true,
+      executeScript: true,
+      search: 'auto',
+      placeholder: 'Search documentation...',
+      noData: 'No results found',
+      // Since it's MDX, we need simple cleaning
+      formatUpdated: '{MM}/{DD} {HH}:{mm}',
+    }
+  </script>
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+</body>
+</html>
+  `);
+});
+
 // 4. Standard Health Endpoints with Precision Timing & 2s Cache
 const healthCache = new Map<string, { data: any; expiry: number }>();
 
