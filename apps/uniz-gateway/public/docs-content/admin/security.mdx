@@ -1,0 +1,232 @@
+---
+title: "Security Portal"
+description: "How security staff use the UniZ Security Portal to verify students at the campus gate, log entry and exit, and monitor who is currently outside."
+---
+
+The Security Portal gives security staff at the campus gate a dedicated interface for verifying approved passes, logging student entry and exit, and tracking who is currently outside campus.
+
+<Info>
+Log in with the `security_admin` username. The Security Portal is role-restricted — other admin roles cannot access the gate control functions.
+</Info>
+
+## Dashboard overview
+
+When you log in, the Security Portal dashboard shows four real-time metrics:
+
+- **Students outside** — total number of students currently not in campus
+- **Today's check-ins** — students who have returned to campus today
+- **Today's check-outs** — students who have left campus today
+- **Sync status** — whether the terminal is connected to the central server
+
+These counters update automatically. The portal polls the summary endpoint every five minutes when the tab is active, and every 30 seconds as a fallback.
+
+### Security summary endpoint
+
+**Endpoint:** `GET /requests/security/summary`
+
+```bash
+GET https://api.uniz.rguktong.in/api/v1/requests/security/summary
+Authorization: Bearer <TOKEN>
+```
+
+```json
+{
+  "success": true,
+  "summary": {
+    "totalOutside": 14,
+    "todayCheckins": 8,
+    "todayCheckouts": 22
+  }
+}
+```
+
+## Viewing approved passes
+
+### Approved outpasses
+
+Fetch all outpass records to verify a student's approved long-duration leave.
+
+**Endpoint:** `GET /requests/outpass/all`
+
+```bash
+GET https://api.uniz.rguktong.in/api/v1/requests/outpass/all
+Authorization: Bearer <TOKEN>
+```
+
+```json
+{
+  "success": true,
+  "outpasses": [
+    {
+      "id": "req-123",
+      "studentId": "O210008",
+      "studentGender": "M",
+      "reason": "Home visit",
+      "isApproved": true,
+      "fromDay": "2026-02-12T09:00:00Z",
+      "toDay": "2026-02-15T18:00:00Z",
+      "currentLevel": "approved"
+    }
+  ]
+}
+```
+
+Only show passes where `isApproved: true` to the gate officer. Pending or rejected passes are not valid for exit.
+
+### Approved outings
+
+Fetch approved short-duration outing requests.
+
+**Endpoint:** `GET /requests/outing/all`
+
+```bash
+GET https://api.uniz.rguktong.in/api/v1/requests/outing/all
+Authorization: Bearer <TOKEN>
+```
+
+## Gate check-out process
+
+Use this procedure when a student presents their approved pass at the gate to leave campus.
+
+<Steps>
+  <Step title="Search for the student">
+    Enter the student's university ID in the scan field on the Security Portal dashboard. You can type the ID manually or scan the student's ID card.
+
+    ```bash
+    POST https://api.uniz.rguktong.in/api/v1/profile/student/search
+    Authorization: Bearer <TOKEN>
+    Content-Type: application/json
+    ```
+
+    ```json
+    {
+      "username": "O210008",
+      "limit": 5
+    }
+    ```
+
+    The response returns matching student records with name, branch, and year.
+  </Step>
+  <Step title="Verify the approved pass">
+    Confirm that the student has an approved outpass or outing by checking `isApproved: true` on their request record. Cross-check the `fromDay`/`toDay` (outpass) or `fromTime`/`toTime` (outing) against the current date and time.
+  </Step>
+  <Step title="Log the exit">
+    Call the check-out endpoint with the student's username as the request ID. This marks the student as outside campus in the system.
+
+    **Endpoint:** `POST /requests/:id/checkout`
+
+    ```bash
+    POST https://api.uniz.rguktong.in/api/v1/requests/O210008/checkout
+    Authorization: Bearer <TOKEN>
+    ```
+
+    ```json
+    {
+      "success": true,
+      "msg": "Checked-Out"
+    }
+    ```
+
+    The student's `is_in_campus` status changes to `false` in the system.
+  </Step>
+</Steps>
+
+## Gate check-in process
+
+When a student returns to campus, log their entry to update their presence status.
+
+<Steps>
+  <Step title="Search for the returning student">
+    Enter the student's university ID in the scan field.
+  </Step>
+  <Step title="Log the entry">
+    Call the check-in endpoint to mark the student as back on campus.
+
+    **Endpoint:** `POST /requests/:id/checkin`
+
+    ```bash
+    POST https://api.uniz.rguktong.in/api/v1/requests/O210008/checkin
+    Authorization: Bearer <TOKEN>
+    ```
+
+    ```json
+    {
+      "success": true,
+      "msg": "Checked-In"
+    }
+    ```
+
+    The student's `is_in_campus` status changes to `true`.
+  </Step>
+</Steps>
+
+## Manually updating student presence status
+
+If you need to correct a student's campus status outside of the normal check-in/check-out flow — for example, if a system error left the status incorrect — use the presence status endpoint directly.
+
+**Endpoint:** `PUT /profile/student/status`
+
+```bash
+PUT https://api.uniz.rguktong.in/api/v1/profile/student/status
+Authorization: Bearer <TOKEN>
+Content-Type: application/json
+```
+
+Set `isPresent` to `false` when the student is leaving, and `true` when they have returned.
+
+```json
+{
+  "username": "O210008",
+  "isPresent": false
+}
+```
+
+<Warning>
+Manually updating presence status bypasses the outpass verification check. Only use this endpoint to correct data errors, not as a substitute for the standard check-in/check-out flow.
+</Warning>
+
+## Viewing all students currently outside campus
+
+Generate a list of all students who have not yet returned to campus. This is useful for end-of-day reconciliation and for identifying overdue returns.
+
+**Endpoint:** `POST /profile/student/search`
+
+```bash
+POST https://api.uniz.rguktong.in/api/v1/profile/student/search
+Authorization: Bearer <TOKEN>
+Content-Type: application/json
+```
+
+```json
+{
+  "isPresentInCampus": false,
+  "limit": 50
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "students": [
+    {
+      "username": "O210008",
+      "name": "DESU SABER",
+      "branch": "CSE",
+      "is_in_campus": false
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "totalPages": 1,
+    "total": 14
+  }
+}
+```
+
+Increase the `limit` value if you need to fetch more than 50 records in a single request.
+
+## Activity logs
+
+The Security Portal includes an **Activity Logs** tab that shows recent entry and exit events recorded at the gate. Use it to review a history of check-in and check-out actions for audit or dispute resolution.
