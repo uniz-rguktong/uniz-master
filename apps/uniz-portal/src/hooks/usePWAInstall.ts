@@ -10,8 +10,9 @@ export const usePWAInstall = () => {
 
   useEffect(() => {
     // Check if already installed
-    const standaloneMatch = window.matchMedia("(display-mode: standalone)").matches || 
-                           (window.navigator as any).standalone === true;
+    const standaloneMatch =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true;
     setIsInstalled(standaloneMatch);
 
     // Check if iOS
@@ -27,8 +28,9 @@ export const usePWAInstall = () => {
   }, [deferredPrompt]);
 
   const install = async () => {
-    const promptEvent = (window as any).deferredPWAInstallPrompt || deferredPrompt;
-    
+    const promptEvent =
+      (window as any).deferredPWAInstallPrompt || deferredPrompt;
+
     if (!promptEvent) {
       if (isIOS) {
         // iOS specific handling - normally we would show a custom UI guide

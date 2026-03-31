@@ -7,7 +7,8 @@ export function Stats({ stats }: { stats: readonly any[] }) {
     const statsContainer = containerRef.current;
     if (!statsContainer) return;
 
-    const counters = statsContainer.querySelectorAll<HTMLElement>("[data-target]");
+    const counters =
+      statsContainer.querySelectorAll<HTMLElement>("[data-target]");
     const speed = 200;
 
     const animateCounter = (counter: HTMLElement) => {
@@ -36,7 +37,7 @@ export function Stats({ stats }: { stats: readonly any[] }) {
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
 
     observer.observe(statsContainer);
@@ -58,7 +59,8 @@ export function Stats({ stats }: { stats: readonly any[] }) {
             Our Academic <span className="text-[#800000]">Footprint</span>
           </h2>
           <p className="mt-6 max-w-2xl mx-auto text-lg text-slate-600 font-medium">
-            Discover the scale of our academic excellence and student success through these core institutional metrics.
+            Discover the scale of our academic excellence and student success
+            through these core institutional metrics.
           </p>
         </div>
 
@@ -73,7 +75,7 @@ export function Stats({ stats }: { stats: readonly any[] }) {
             className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 relative z-10"
           >
             {stats.map((stat, idx) => {
-              const num = parseInt(stat.value.replace(/,/g, ''), 10) || 0;
+              const num = parseInt(stat.value.replace(/,/g, ""), 10) || 0;
               return (
                 <div
                   key={idx}
@@ -92,7 +94,9 @@ export function Stats({ stats }: { stats: readonly any[] }) {
                     >
                       0
                     </h3>
-                    <span className="text-rose-500 font-bold ml-0.5 text-lg">+</span>
+                    <span className="text-rose-500 font-bold ml-0.5 text-lg">
+                      +
+                    </span>
                   </div>
                 </div>
               );

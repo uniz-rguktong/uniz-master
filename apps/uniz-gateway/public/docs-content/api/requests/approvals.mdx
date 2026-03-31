@@ -13,16 +13,19 @@ Requests flow through a sequential approval chain. Each role can only act at the
 
 <Steps>
   <Step title="Caretaker">
-    First to review. Confirms the student's family is informed. Approving moves the request to the warden.
+    First to review. Confirms the student's family is informed. Approving moves
+    the request to the warden.
   </Step>
   <Step title="Warden">
-    Second review. Checks the student's academic schedule and disciplinary record. Approving moves the request to the SWO.
+    Second review. Checks the student's academic schedule and disciplinary
+    record. Approving moves the request to the SWO.
   </Step>
   <Step title="SWO (Student Welfare Officer)">
     Third review. Approving forwards the request to the dean or director.
   </Step>
   <Step title="Dean / Director">
-    Final authority. Their approval sets `isApproved: true` and allows the student to exit campus.
+    Final authority. Their approval sets `isApproved: true` and allows the
+    student to exit campus.
   </Step>
 </Steps>
 
@@ -36,12 +39,12 @@ Once the dean or director approves, security can use the [check-out](#check-out-
 
 Advances the request to the next approval level. The action taken depends on the caller's role:
 
-| Caller role | Effect |
-|-------------|--------|
-| `caretaker_male` / `caretaker_female` | Moves request from `caretaker` → `warden` level. |
-| `warden_male` / `warden_female` | Moves request from `warden` → `swo` level. |
-| `swo` | Moves request from `swo` → `dean`/`director` level. |
-| `dean` / `director` | Sets `isApproved: true`. Final approval granted. |
+| Caller role                           | Effect                                              |
+| ------------------------------------- | --------------------------------------------------- |
+| `caretaker_male` / `caretaker_female` | Moves request from `caretaker` → `warden` level.    |
+| `warden_male` / `warden_female`       | Moves request from `warden` → `swo` level.          |
+| `swo`                                 | Moves request from `swo` → `dean`/`director` level. |
+| `dean` / `director`                   | Sets `isApproved: true`. Final approval granted.    |
 
 `POST /requests/:id/forward` is an alias for this endpoint.
 
@@ -56,7 +59,8 @@ Advances the request to the next approval level. The action taken depends on the
 ### Request body
 
 <ParamField body="comment" type="string">
-  Optional note from the approver. Shown to the student and subsequent approvers.
+  Optional note from the approver. Shown to the student and subsequent
+  approvers.
 </ParamField>
 
 ### Response
@@ -106,10 +110,10 @@ curl --request POST \
 
 ### Error responses
 
-| Status | Meaning |
-|--------|---------|
+| Status          | Meaning                                                                |
+| --------------- | ---------------------------------------------------------------------- |
 | `403 Forbidden` | Your role is not permitted to approve at this request's current level. |
-| `404 Not Found` | No request found with the given `id`. |
+| `404 Not Found` | No request found with the given `id`.                                  |
 
 ---
 

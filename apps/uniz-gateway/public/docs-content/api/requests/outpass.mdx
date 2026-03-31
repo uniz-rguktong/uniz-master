@@ -10,7 +10,8 @@ An outpass is a multi-day leave request. After you submit one, it moves through 
 </Info>
 
 <Warning>
-  Submission endpoints are rate-limited. If you exceed the limit you will receive a `429 Too Many Requests` response. Wait before retrying.
+  Submission endpoints are rate-limited. If you exceed the limit you will
+  receive a `429 Too Many Requests` response. Wait before retrying.
 </Warning>
 
 ---
@@ -30,15 +31,18 @@ Creates a new outpass request for the authenticated student. The request enters 
 </ParamField>
 
 <ParamField body="fromDay" type="string" required>
-  Start of the leave period as an ISO 8601 datetime string (e.g. `2026-02-10T09:00:00Z`).
+  Start of the leave period as an ISO 8601 datetime string (e.g.
+  `2026-02-10T09:00:00Z`).
 </ParamField>
 
 <ParamField body="toDay" type="string" required>
-  End of the leave period as an ISO 8601 datetime string (e.g. `2026-02-15T18:00:00Z`).
+  End of the leave period as an ISO 8601 datetime string (e.g.
+  `2026-02-15T18:00:00Z`).
 </ParamField>
 
 <ParamField body="studentGender" type="string">
-  The student's gender: `"M"` or `"F"`. Optional — the server derives this from the student's profile when omitted.
+  The student's gender: `"M"` or `"F"`. Optional — the server derives this from
+  the student's profile when omitted.
 </ParamField>
 
 ### Response
@@ -53,7 +57,8 @@ Creates a new outpass request for the authenticated student. The request enters 
       Unique identifier for the outpass request.
     </ResponseField>
     <ResponseField name="currentLevel" type="string" required>
-      The approval level the request is waiting at. See [approval levels](#approval-levels) below.
+      The approval level the request is waiting at. See [approval
+      levels](#approval-levels) below.
     </ResponseField>
     <ResponseField name="isApproved" type="boolean" required>
       `true` only when the dean or director has given final approval.
@@ -68,14 +73,14 @@ Creates a new outpass request for the authenticated student. The request enters 
 
 The `currentLevel` field tells you which role must act next:
 
-| Value | Meaning |
-|-------|---------|
-| `caretaker` | Awaiting first-level approval from the caretaker. |
-| `warden` | Caretaker approved; awaiting warden review. |
-| `swo` | Warden approved; awaiting Student Welfare Officer review. |
-| `dean` / `director` | SWO approved; awaiting final approval. |
-| `approved` | Dean or director granted final approval. |
-| `rejected` | Rejected at some level in the chain. |
+| Value               | Meaning                                                   |
+| ------------------- | --------------------------------------------------------- |
+| `caretaker`         | Awaiting first-level approval from the caretaker.         |
+| `warden`            | Caretaker approved; awaiting warden review.               |
+| `swo`               | Warden approved; awaiting Student Welfare Officer review. |
+| `dean` / `director` | SWO approved; awaiting final approval.                    |
+| `approved`          | Dean or director granted final approval.                  |
+| `rejected`          | Rejected at some level in the chain.                      |
 
 ### Example
 
@@ -108,11 +113,11 @@ curl --request POST \
 
 ### Error responses
 
-| Status | Meaning |
-|--------|---------|
-| `400 Bad Request` | Missing or invalid request body fields. |
-| `401 Unauthorized` | Missing or invalid token. |
-| `429 Too Many Requests` | Submission rate limit exceeded. |
+| Status                  | Meaning                                 |
+| ----------------------- | --------------------------------------- |
+| `400 Bad Request`       | Missing or invalid request body fields. |
+| `401 Unauthorized`      | Missing or invalid token.               |
+| `429 Too Many Requests` | Submission rate limit exceeded.         |
 
 ---
 
@@ -125,7 +130,10 @@ Returns all outpass requests in the system. Intended for caretakers, wardens, an
 **Auth required:** Yes (caretaker, warden, dean, director, admin)
 
 <Note>
-  The response includes all requests regardless of `currentLevel`. Your client should filter by `currentLevel` to show only the requests relevant to the current user's role (e.g. a caretaker sees only `currentLevel: "caretaker"` entries).
+  The response includes all requests regardless of `currentLevel`. Your client
+  should filter by `currentLevel` to show only the requests relevant to the
+  current user's role (e.g. a caretaker sees only `currentLevel: "caretaker"`
+  entries).
 </Note>
 
 ### Response

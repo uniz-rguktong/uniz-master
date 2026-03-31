@@ -39,7 +39,7 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [hoveredSegment, setHoveredSegment] =
       React.useState<DonutChartSegment | null>(null);
@@ -47,7 +47,7 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
     const internalTotalValue = React.useMemo(
       () =>
         propTotalValue || data.reduce((sum, segment) => sum + segment.value, 0),
-      [data, propTotalValue]
+      [data, propTotalValue],
     );
 
     const radius = size / 2 - strokeWidth / 2;
@@ -86,7 +86,7 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
             stroke="hsl(var(--border) / 0.5)" // Use theme variable for bg
             strokeWidth={strokeWidth}
           />
-          
+
           {/* Data Segments */}
           <AnimatePresence>
             {data.map((segment, index) => {
@@ -96,12 +96,13 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
                 internalTotalValue === 0
                   ? 0
                   : (segment.value / internalTotalValue) * 100;
-              
+
               const strokeDasharray = `${(percentage / 100) * circumference} ${circumference}`;
-              const strokeDashoffset = (cumulativePercentage / 100) * circumference;
-              
+              const strokeDashoffset =
+                (cumulativePercentage / 100) * circumference;
+
               const isActive = hoveredSegment?.label === segment.label;
-              
+
               cumulativePercentage += percentage;
 
               return (
@@ -117,12 +118,15 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
                   strokeDashoffset={-strokeDashoffset} // Negative offset to draw correctly
                   strokeLinecap="round" // Makes rounded edges
                   initial={{ opacity: 0, strokeDashoffset: circumference }}
-                  animate={{ 
-                    opacity: 1, 
+                  animate={{
+                    opacity: 1,
                     strokeDashoffset: -strokeDashoffset,
                   }}
                   transition={{
-                    opacity: { duration: 0.3, delay: index * animationDelayPerSegment },
+                    opacity: {
+                      duration: 0.3,
+                      delay: index * animationDelayPerSegment,
+                    },
                     strokeDashoffset: {
                       duration: animationDuration,
                       delay: index * animationDelayPerSegment,
@@ -131,13 +135,13 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
                   }}
                   className={cn(
                     "origin-center transition-transform duration-200",
-                    highlightOnHover && "cursor-pointer"
+                    highlightOnHover && "cursor-pointer",
                   )}
                   style={{
                     filter: isActive
                       ? `drop-shadow(0px 0px 6px ${segment.color}) brightness(1.1)`
-                      : 'none',
-                    transform: isActive ? 'scale(1.03)' : 'scale(1)',
+                      : "none",
+                    transform: isActive ? "scale(1.03)" : "scale(1)",
                     transition: "filter 0.2s ease-out, transform 0.2s ease-out",
                   }}
                   onMouseEnter={() => setHoveredSegment(segment)}
@@ -161,7 +165,7 @@ const DonutChart = React.forwardRef<HTMLDivElement, DonutChartProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 DonutChart.displayName = "DonutChart";

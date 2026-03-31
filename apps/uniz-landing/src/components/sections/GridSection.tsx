@@ -29,7 +29,9 @@ export function GridSection({
     <section id={id} className={`py-24 ${bgColor}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">{title}</h2>
+          <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+            {title}
+          </h2>
           {subtitle && (
             <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
               {subtitle}
@@ -51,13 +53,17 @@ export function GridSection({
               </div>
               <div className="p-6 flex-1 flex flex-col">
                 {item.date && (
-                  <p className="text-sm font-medium text-indigo-600">{item.date}</p>
+                  <p className="text-sm font-medium text-indigo-600">
+                    {item.date}
+                  </p>
                 )}
                 <h3 className="mt-2 text-xl font-semibold text-slate-800 line-clamp-3">
                   {item.title}
                 </h3>
                 {item.desc && (
-                  <p className="mt-2 text-base text-gray-600 line-clamp-4">{item.desc}</p>
+                  <p className="mt-2 text-base text-gray-600 line-clamp-4">
+                    {item.desc}
+                  </p>
                 )}
                 {!hideReadMore && (
                   <div className="mt-auto pt-4">

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-
 interface Announcement {
   text: string;
   link?: string | null;
@@ -63,7 +62,9 @@ export function HeroAndTitle({
           </div>
           <button
             onClick={() =>
-              setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+              setCurrentIndex((prev) =>
+                prev === 0 ? images.length - 1 : prev - 1,
+              )
             }
             className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white/50 hover:bg-white text-slate-800 p-3 rounded-full shadow-md transition"
           >
@@ -73,11 +74,18 @@ export function HeroAndTitle({
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M15 19l-7-7 7-7"
+              ></path>
             </svg>
           </button>
           <button
-            onClick={() => setCurrentIndex((prev) => (prev + 1) % images.length)}
+            onClick={() =>
+              setCurrentIndex((prev) => (prev + 1) % images.length)
+            }
             className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white/50 hover:bg-white text-slate-800 p-3 rounded-full shadow-md transition"
           >
             <svg
@@ -86,13 +94,21 @@ export function HeroAndTitle({
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 5l7 7-7 7"
+              ></path>
             </svg>
           </button>
         </div>
       </section>
 
-      <section id="announcements" className="announcement-bar relative overflow-hidden border-b border-[#800000]/10">
+      <section
+        id="announcements"
+        className="announcement-bar relative overflow-hidden border-b border-[#800000]/10"
+      >
         {/* Animated background shimmer */}
         <div className="announcement-shimmer"></div>
         <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3">

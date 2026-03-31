@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient({
-  datasourceUrl: process.env.NOTIFICATION_DATABASE_URL || process.env.DATABASE_URL,
+  datasourceUrl:
+    process.env.NOTIFICATION_DATABASE_URL || process.env.DATABASE_URL,
 });
 async function run() {
   const total = await prisma.studentProfile.count();

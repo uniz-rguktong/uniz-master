@@ -145,13 +145,14 @@ export default function MySubjects({
 
               <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-50">
                 <div className="text-[8px] font-black uppercase tracking-widest text-slate-400">
-                  {subject.subject?.department} • {subject.subject?.credits} Credits
+                  {subject.subject?.department} • {subject.subject?.credits}{" "}
+                  Credits
                 </div>
                 {subject.faculty && (
                   <div className="flex items-center gap-1.5 text-slate-400">
                     <User size={10} />
                     <span className="text-[9px] font-bold uppercase tracking-wider truncate max-w-[80px]">
-                      {subject.faculty?.name?.split(' ')[0] || "Staff"}
+                      {subject.faculty?.name?.split(" ")[0] || "Staff"}
                     </span>
                   </div>
                 )}

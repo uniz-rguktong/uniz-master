@@ -196,24 +196,24 @@ export default function SemesterRegistration() {
                 <div className="flex flex-wrap items-center gap-4">
                   {(sem.status === "DEAN_REVIEW" ||
                     sem.status === "UPCOMING") && (
-                      <button
-                        onClick={() =>
-                          handleStatusUpdate(sem.id, "REGISTRATION_OPEN")
-                        }
-                        className="px-6 py-3 bg-navy-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-navy-800 transition-all shadow-none"
-                      >
-                        <Play size={14} fill="currentColor" /> Open Registration
-                      </button>
-                    )}
+                    <button
+                      onClick={() =>
+                        handleStatusUpdate(sem.id, "REGISTRATION_OPEN")
+                      }
+                      className="px-6 py-3 bg-navy-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-navy-800 transition-all shadow-none"
+                    >
+                      <Play size={14} fill="currentColor" /> Open Registration
+                    </button>
+                  )}
                   {(sem.status === "REGISTRATION" ||
                     sem.status === "REGISTRATION_OPEN") && (
-                      <button
-                        onClick={() => handleStatusUpdate(sem.id, "ONGOING")}
-                        className="px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-none"
-                      >
-                        <RotateCcw size={14} /> Start Classes
-                      </button>
-                    )}
+                    <button
+                      onClick={() => handleStatusUpdate(sem.id, "ONGOING")}
+                      className="px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-none"
+                    >
+                      <RotateCcw size={14} /> Start Classes
+                    </button>
+                  )}
                   {sem.status === "ONGOING" && (
                     <button
                       onClick={() => handleStatusUpdate(sem.id, "COMPLETED")}
@@ -346,10 +346,11 @@ export default function SemesterRegistration() {
                                 : [...prev, branch],
                             )
                           }
-                          className={`px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${selectedBranches.includes(branch)
+                          className={`px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${
+                            selectedBranches.includes(branch)
                               ? "bg-navy-900 text-white shadow-none scale-105"
                               : "bg-slate-50 text-slate-400 border border-slate-100 hover:border-navy-100"
-                            }`}
+                          }`}
                         >
                           {branch}
                         </button>

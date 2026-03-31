@@ -19,7 +19,9 @@ export function SEO({ title, description, canonical, schema }: SEOProps) {
 
     // 2. Meta Description
     if (description) {
-      let metaDesc: HTMLMetaElement | null = document.querySelector("meta[name='description']");
+      let metaDesc: HTMLMetaElement | null = document.querySelector(
+        "meta[name='description']",
+      );
       if (!metaDesc) {
         metaDesc = document.createElement("meta");
         metaDesc.name = "description";
@@ -31,8 +33,10 @@ export function SEO({ title, description, canonical, schema }: SEOProps) {
     // 3. Canonical Link
     const defaultCanonical = `https://uniz.rguktong.in${pathname}`;
     const canonicalUrl = canonical || defaultCanonical;
-    
-    let linkCanonical: HTMLLinkElement | null = document.querySelector("link[rel='canonical']");
+
+    let linkCanonical: HTMLLinkElement | null = document.querySelector(
+      "link[rel='canonical']",
+    );
     if (!linkCanonical) {
       linkCanonical = document.createElement("link");
       linkCanonical.rel = "canonical";
@@ -44,17 +48,22 @@ export function SEO({ title, description, canonical, schema }: SEOProps) {
     const breadcrumbSchema = {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
-      "itemListElement": pathname.split('/').filter(Boolean).map((part, index, arr) => ({
-        "@type": "ListItem",
-        "position": index + 1,
-        "name": part.charAt(0).toUpperCase() + part.slice(1).replace(/-/g, ' '),
-        "item": `https://uniz.rguktong.in/${arr.slice(0, index + 1).join('/')}`
-      }))
+      itemListElement: pathname
+        .split("/")
+        .filter(Boolean)
+        .map((part, index, arr) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: part.charAt(0).toUpperCase() + part.slice(1).replace(/-/g, " "),
+          item: `https://uniz.rguktong.in/${arr.slice(0, index + 1).join("/")}`,
+        })),
     };
 
     const finalSchema = schema || breadcrumbSchema;
 
-    let scriptSchema: HTMLScriptElement | null = document.querySelector("#dynamic-schema-route");
+    let scriptSchema: HTMLScriptElement | null = document.querySelector(
+      "#dynamic-schema-route",
+    );
     if (!scriptSchema) {
       scriptSchema = document.createElement("script");
       scriptSchema.id = "dynamic-schema-route";

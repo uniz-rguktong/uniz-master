@@ -29,11 +29,11 @@ interface Semester {
   id: string;
   name: string;
   status:
-  | "DRAFT"
-  | "DEAN_REVIEW"
-  | "APPROVED"
-  | "REGISTRATION_OPEN"
-  | "REGISTRATION_CLOSED";
+    | "DRAFT"
+    | "DEAN_REVIEW"
+    | "APPROVED"
+    | "REGISTRATION_OPEN"
+    | "REGISTRATION_CLOSED";
   _count?: { registrations: number };
   createdAt: string;
 }
@@ -366,12 +366,13 @@ export default function SemesterRegistrationSection({
                     <Clock size={28} />
                   </div>
                   <span
-                    className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${sem.status === "REGISTRATION_OPEN"
-                      ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                      : sem.status === "DEAN_REVIEW"
-                        ? "bg-amber-50 text-amber-600 border-amber-100"
-                        : "bg-slate-50 text-slate-400 border-slate-100"
-                      }`}
+                    className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                      sem.status === "REGISTRATION_OPEN"
+                        ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                        : sem.status === "DEAN_REVIEW"
+                          ? "bg-amber-50 text-amber-600 border-amber-100"
+                          : "bg-slate-50 text-slate-400 border-slate-100"
+                    }`}
                   >
                     {sem.status.replace("_", " ")}
                   </span>
@@ -498,19 +499,19 @@ export default function SemesterRegistrationSection({
                 {(role === "webmaster" ||
                   role === "dean" ||
                   role === "hod") && (
-                    <button
-                      onClick={approveAllocation}
-                      disabled={loading}
-                      className={`flex items-center gap-3 px-8 py-4 ${role === "dean" ? "bg-slate-900" : "bg-navy-900 shadow-none"} text-white rounded-xl font-extrabold text-sm hover:opacity-90 transition-all shadow-none`}
-                    >
-                      <ShieldCheck size={18} />
-                      {role === "dean"
-                        ? "Approve Rollout"
-                        : role === "hod"
-                          ? "Confirm Registration"
-                          : "Global Override"}
-                    </button>
-                  )}
+                  <button
+                    onClick={approveAllocation}
+                    disabled={loading}
+                    className={`flex items-center gap-3 px-8 py-4 ${role === "dean" ? "bg-slate-900" : "bg-navy-900 shadow-none"} text-white rounded-xl font-extrabold text-sm hover:opacity-90 transition-all shadow-none`}
+                  >
+                    <ShieldCheck size={18} />
+                    {role === "dean"
+                      ? "Approve Rollout"
+                      : role === "hod"
+                        ? "Confirm Registration"
+                        : "Global Override"}
+                  </button>
+                )}
               </div>
             </div>
 
@@ -681,8 +682,8 @@ export default function SemesterRegistrationSection({
                       onClick={() =>
                         selectedBranches.includes(b)
                           ? setSelectedBranches(
-                            selectedBranches.filter((x) => x !== b),
-                          )
+                              selectedBranches.filter((x) => x !== b),
+                            )
                           : setSelectedBranches([...selectedBranches, b])
                       }
                       className={`py-3 rounded-xl font-bold text-xs border transition-all ${selectedBranches.includes(b) ? "bg-navy-900 text-white shadow-none" : "bg-slate-50 text-slate-400 border-slate-100"}`}

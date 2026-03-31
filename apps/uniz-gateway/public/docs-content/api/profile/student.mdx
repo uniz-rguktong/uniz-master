@@ -221,7 +221,8 @@ Searches students with optional filters. Returns paginated results. Administrato
 ### Request body
 
 <ParamField body="username" type="string">
-  Partial roll number to search by (e.g. `"O21"` matches all roll numbers starting with `O21`).
+  Partial roll number to search by (e.g. `"O21"` matches all roll numbers
+  starting with `O21`).
 </ParamField>
 
 <ParamField body="branch" type="string">
@@ -233,7 +234,8 @@ Searches students with optional filters. Returns paginated results. Administrato
 </ParamField>
 
 <ParamField body="isPresentInCampus" type="boolean">
-  Filter by campus presence. Set to `false` to find all students currently outside.
+  Filter by campus presence. Set to `false` to find all students currently
+  outside.
 </ParamField>
 
 <ParamField body="page" type="number">
@@ -241,7 +243,8 @@ Searches students with optional filters. Returns paginated results. Administrato
 </ParamField>
 
 <ParamField body="limit" type="number">
-  Number of results per page. Defaults to `10`. Use a higher value (e.g. `50`) to fetch larger batches.
+  Number of results per page. Defaults to `10`. Use a higher value (e.g. `50`)
+  to fetch larger batches.
 </ParamField>
 
 ### Response
@@ -366,7 +369,7 @@ curl --request GET \
 
 ### Error responses
 
-| Status | Meaning |
-|--------|---------|
+| Status          | Meaning                                                       |
+| --------------- | ------------------------------------------------------------- |
 | `403 Forbidden` | Your role does not permit access to other students' profiles. |
-| `404 Not Found` | No student found with the given roll number. |
+| `404 Not Found` | No student found with the given roll number.                  |

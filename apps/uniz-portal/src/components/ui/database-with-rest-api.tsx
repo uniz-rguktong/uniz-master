@@ -167,11 +167,29 @@ const DatabaseWithRestApi = ({
               { x: 14, tx: 31, text: badgeTexts?.first },
               { x: 60, tx: 77, text: badgeTexts?.second },
               { x: 108, tx: 125, text: badgeTexts?.third },
-              { x: 150, tx: 167, text: badgeTexts?.fourth }
+              { x: 150, tx: 167, text: badgeTexts?.fourth },
             ].map((b, i) => (
               <g key={i}>
-                <rect fill="#ffffff" stroke="#e2e8f0" x={b.x} y="5" width="34" height="10" rx="5" />
-                <text x={b.tx} y="11.5" fill="#0f172a" stroke="none" fontSize="4" fontWeight="600" textAnchor="middle">{b.text}</text>
+                <rect
+                  fill="#ffffff"
+                  stroke="#e2e8f0"
+                  x={b.x}
+                  y="5"
+                  width="34"
+                  height="10"
+                  rx="5"
+                />
+                <text
+                  x={b.tx}
+                  y="11.5"
+                  fill="#0f172a"
+                  stroke="none"
+                  fontSize="4"
+                  fontWeight="600"
+                  textAnchor="middle"
+                >
+                  {b.text}
+                </text>
               </g>
             ))}
           </g>
@@ -182,11 +200,29 @@ const DatabaseWithRestApi = ({
               { x: 11, tx: 31, text: badgeTexts?.first },
               { x: 57, tx: 77, text: badgeTexts?.second },
               { x: 104, tx: 124, text: badgeTexts?.third },
-              { x: 150, tx: 170, text: badgeTexts?.fourth }
+              { x: 150, tx: 170, text: badgeTexts?.fourth },
             ].map((b, i) => (
               <g key={i}>
-                <rect fill="#ffffff" stroke="#e2e8f0" x={b.x} y="0" width="40" height="12" rx="6" />
-                <text x={b.tx} y="7.8" fill="#0f172a" stroke="none" fontSize="5.5" fontWeight="600" textAnchor="middle">{b.text}</text>
+                <rect
+                  fill="#ffffff"
+                  stroke="#e2e8f0"
+                  x={b.x}
+                  y="0"
+                  width="40"
+                  height="12"
+                  rx="6"
+                />
+                <text
+                  x={b.tx}
+                  y="7.8"
+                  fill="#0f172a"
+                  stroke="none"
+                  fontSize="5.5"
+                  fontWeight="600"
+                  textAnchor="middle"
+                >
+                  {b.text}
+                </text>
               </g>
             ))}
           </g>

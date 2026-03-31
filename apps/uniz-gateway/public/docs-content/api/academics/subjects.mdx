@@ -491,10 +491,10 @@ curl --request POST \
 
 ### Error responses
 
-| Status | Meaning |
-|--------|---------|
+| Status            | Meaning                                                                   |
+| ----------------- | ------------------------------------------------------------------------- |
 | `400 Bad Request` | One or more subject IDs are invalid or the registration window is closed. |
-| `409 Conflict` | Student is already registered for one or more of the provided subjects. |
+| `409 Conflict`    | Student is already registered for one or more of the provided subjects.   |
 
 ---
 
@@ -509,7 +509,8 @@ Returns the subjects a student is currently registered for in the active semeste
 ### Path parameters
 
 <ParamField path="studentId" type="string" required>
-  Student roll number (e.g. `O210008`). Students may only query their own record; admin roles may query any student.
+  Student roll number (e.g. `O210008`). Students may only query their own
+  record; admin roles may query any student.
 </ParamField>
 
 ### Example

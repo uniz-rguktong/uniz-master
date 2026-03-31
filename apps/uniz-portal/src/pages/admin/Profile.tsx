@@ -17,10 +17,14 @@ import { toast } from "@/utils/toast-ref";
 import { BASE_URL } from "../../api/endpoints";
 
 const VITE_CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-const VITE_CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const VITE_CLOUDINARY_UPLOAD_PRESET = import.meta.env
+  .VITE_CLOUDINARY_UPLOAD_PRESET;
 
 export default function AdminProfile() {
-  const username = (localStorage.getItem("username") || "Webmaster").replace(/"/g, "");
+  const username = (localStorage.getItem("username") || "Webmaster").replace(
+    /"/g,
+    "",
+  );
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -224,10 +228,11 @@ export default function AdminProfile() {
                       if (isEditing) handleUpdateProfile();
                       else setIsEditing(true);
                     }}
-                    className={`px-6 py-2.5 rounded-full font-bold text-[10px] uppercase tracking-widest border transition-all ${isEditing
-                      ? "bg-navy-900 text-white border-navy-100 shadow-lg shadow-navy-100 hover:bg-navy-800"
-                      : "bg-white text-slate-900 border-slate-200 hover:border-slate-300"
-                      }`}
+                    className={`px-6 py-2.5 rounded-full font-bold text-[10px] uppercase tracking-widest border transition-all ${
+                      isEditing
+                        ? "bg-navy-900 text-white border-navy-100 shadow-lg shadow-navy-100 hover:bg-navy-800"
+                        : "bg-white text-slate-900 border-slate-200 hover:border-slate-300"
+                    }`}
                   >
                     {isEditing ? "Save Changes" : "Edit Details"}
                   </button>

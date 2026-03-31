@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from "react";
 import { Users, Shield, UserCheck, UserX } from "lucide-react";
 import { ANALYTICS_SYSTEM_USERS, ANALYTICS_KEY } from "../../../api/endpoints";
@@ -22,24 +21,33 @@ export default function SystemUserAnalytics() {
     const fetchData = async () => {
       // Analytics fetching is restricted to production host [uniz.rguktong.in]
       // Commented out for localhost (Fast Path)
-      if (window.location.hostname === "localhost" || window.location.hostname !== "uniz.rguktong.in") {
-        console.log("Analytics fetching skipped on non-production host:", window.location.hostname);
+      if (
+        window.location.hostname === "localhost" ||
+        window.location.hostname !== "uniz.rguktong.in"
+      ) {
+        console.log(
+          "Analytics fetching skipped on non-production host:",
+          window.location.hostname,
+        );
         setLoading(false);
         return;
       }
 
       try {
         if (!cachedData.fetched) setLoading(true);
-        const token = localStorage.getItem("admin_token") || localStorage.getItem("faculty_token") || localStorage.getItem("student_token");
+        const token =
+          localStorage.getItem("admin_token") ||
+          localStorage.getItem("faculty_token") ||
+          localStorage.getItem("student_token");
         const res = await fetch(ANALYTICS_SYSTEM_USERS, {
           headers: {
             "x-api-key": ANALYTICS_KEY,
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
         const json = await res.json();
-        
+
         let apiData = [];
         if (json?.success && Array.isArray(json?.data)) {
           apiData = json.data;
@@ -65,24 +73,35 @@ export default function SystemUserAnalytics() {
       HOD: "hsl(47.9 95.8% 53.1%)",
       WEBMASTER: "hsl(262.1 83.3% 57.8%)",
       ADMIN: "hsl(262.1 83.3% 57.8%)",
-      STAFF: "hsl(262.1 83.3% 57.8%)"
+      STAFF: "hsl(262.1 83.3% 57.8%)",
     };
 
     // Group by role name and aggregate values
     const grouped = data.reduce((acc: Record<string, any>, curr) => {
       const role = (curr.role || "unknown").toUpperCase();
       if (!acc[role]) {
-        acc[role] = { label: role, value: 0, color: colors[role] || "hsl(0 0% 63.9%)" };
+        acc[role] = {
+          label: role,
+          value: 0,
+          color: colors[role] || "hsl(0 0% 63.9%)",
+        };
       }
-      acc[role].value += (Number(curr.Active) || 0) + (Number(curr.Disabled) || 0);
+      acc[role].value +=
+        (Number(curr.Active) || 0) + (Number(curr.Disabled) || 0);
       return acc;
     }, {});
 
     return Object.values(grouped).sort((a: any, b: any) => b.value - a.value);
   }, [data]);
 
-  const totalUsersCount = useMemo(() => roleData.reduce((sum, d) => sum + d.value, 0), [roleData]);
-  const activeSegment = useMemo(() => roleData.find(s => s.label === hoveredSegment), [roleData, hoveredSegment]);
+  const totalUsersCount = useMemo(
+    () => roleData.reduce((sum, d) => sum + d.value, 0),
+    [roleData],
+  );
+  const activeSegment = useMemo(
+    () => roleData.find((s) => s.label === hoveredSegment),
+    [roleData, hoveredSegment],
+  );
 
   if (loading && !cachedData.fetched) {
     return (
@@ -98,24 +117,40 @@ export default function SystemUserAnalytics() {
             <DonutChartSkeleton />
           </div>
           <div className="lg:col-span-8 flex">
-             <div className="w-full bg-slate-50/50 rounded-xl animate-pulse min-h-[400px]" />
+            <div className="w-full bg-slate-50/50 rounded-xl animate-pulse min-h-[400px]" />
           </div>
         </div>
       </div>
     );
   }
 
-  const totalActive = data.reduce((acc, curr) => acc + (Number(curr.Active) || 0), 0);
-  const totalDisabled = data.reduce((acc, curr) => acc + (Number(curr.Disabled) || 0), 0);
+  const totalActive = data.reduce(
+    (acc, curr) => acc + (Number(curr.Active) || 0),
+    0,
+  );
+  const totalDisabled = data.reduce(
+    (acc, curr) => acc + (Number(curr.Disabled) || 0),
+    0,
+  );
   const totalUsers = totalActive + totalDisabled;
 
   const staffTotal = data
-    .filter(item => ["webmaster", "dean", "hod", "admin", "staff"].includes(item.role?.toLowerCase()))
-    .reduce((acc, curr) => acc + (Number(curr.Active) || 0) + (Number(curr.Disabled) || 0), 0);
+    .filter((item) =>
+      ["webmaster", "dean", "hod", "admin", "staff"].includes(
+        item.role?.toLowerCase(),
+      ),
+    )
+    .reduce(
+      (acc, curr) =>
+        acc + (Number(curr.Active) || 0) + (Number(curr.Disabled) || 0),
+      0,
+    );
 
   const displayValue = activeSegment?.value ?? totalUsersCount;
   const displayLabel = activeSegment?.label ?? "Total Identities";
-  const displayPercentage = activeSegment ? (activeSegment.value / totalUsersCount) * 100 : 100;
+  const displayPercentage = activeSegment
+    ? (activeSegment.value / totalUsersCount) * 100
+    : 100;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
@@ -214,7 +249,9 @@ export default function SystemUserAnalytics() {
                   transition={{ delay: 0.5 + index * 0.1 }}
                   className={cn(
                     "flex items-center justify-between p-2 rounded-xl transition-all duration-300 group cursor-pointer",
-                    hoveredSegment === segment.label ? "bg-slate-50 translate-x-1" : "hover:bg-slate-50/50"
+                    hoveredSegment === segment.label
+                      ? "bg-slate-50 translate-x-1"
+                      : "hover:bg-slate-50/50",
                   )}
                   onMouseEnter={() => setHoveredSegment(segment.label)}
                   onMouseLeave={() => setHoveredSegment(null)}

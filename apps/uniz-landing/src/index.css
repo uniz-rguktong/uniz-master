@@ -30,7 +30,8 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-ring: var(--ring);
 
-  --font-sans: "Google Sans", "Product Sans", -apple-system, system-ui, sans-serif;
+  --font-sans:
+    "Google Sans", "Product Sans", -apple-system, system-ui, sans-serif;
   --font-serif: "Source Serif 4", "PT Serif", Georgia, serif;
 }
 
@@ -158,13 +159,19 @@ html {
 
 /* ─── Enhanced Announcement Bar ─── */
 .announcement-bar {
-  background: linear-gradient(135deg, #fff5f5 0%, #fef2f2 25%, #ffffff 50%, #fef2f2 75%, #fff5f5 100%);
+  background: linear-gradient(
+    135deg,
+    #fff5f5 0%,
+    #fef2f2 25%,
+    #ffffff 50%,
+    #fef2f2 75%,
+    #fff5f5 100%
+  );
   background-size: 200% 200%;
   animation: announcement-bg-shift 8s ease infinite;
 }
 
 @keyframes announcement-bg-shift {
-
   0%,
   100% {
     background-position: 0% 50%;
@@ -179,12 +186,14 @@ html {
 .announcement-shimmer {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(128, 0, 0, 0.03) 25%,
-      rgba(128, 0, 0, 0.06) 50%,
-      rgba(128, 0, 0, 0.03) 75%,
-      transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(128, 0, 0, 0.03) 25%,
+    rgba(128, 0, 0, 0.06) 50%,
+    rgba(128, 0, 0, 0.03) 75%,
+    transparent 100%
+  );
   background-size: 400% 100%;
   animation: announcement-shimmer-move 6s linear infinite;
   pointer-events: none;
@@ -212,7 +221,7 @@ html {
 }
 
 .announcement-pulse-dot::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: -2px;
   border-radius: 50%;
@@ -221,7 +230,6 @@ html {
 }
 
 @keyframes announcement-pulse {
-
   0%,
   100% {
     box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.6);
@@ -233,7 +241,6 @@ html {
 }
 
 @keyframes announcement-pulse-ring {
-
   0%,
   100% {
     opacity: 1;
@@ -248,7 +255,9 @@ html {
 
 /* Badge hover */
 .announcement-badge {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .announcement-badge:hover {
@@ -264,7 +273,9 @@ html {
   background: linear-gradient(135deg, #800000, #d00000);
   flex-shrink: 0;
   box-shadow: 0 0 4px rgba(128, 0, 0, 0.35);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .announcement-item-enhanced:hover .announcement-dot-icon {
@@ -274,11 +285,21 @@ html {
 
 /* Edge fade masks */
 .announcement-edge-left {
-  background: linear-gradient(to right, #fef2f2 0%, #fef2f2 20%, transparent 100%);
+  background: linear-gradient(
+    to right,
+    #fef2f2 0%,
+    #fef2f2 20%,
+    transparent 100%
+  );
 }
 
 .announcement-edge-right {
-  background: linear-gradient(to left, #fef2f2 0%, #fef2f2 20%, transparent 100%);
+  background: linear-gradient(
+    to left,
+    #fef2f2 0%,
+    #fef2f2 20%,
+    transparent 100%
+  );
 }
 
 /* Scrolling animation */
@@ -303,7 +324,9 @@ html {
 /* Director image scroll animation */
 .director-photo {
   transform: translateY(24px) scale(1.02);
-  transition: opacity 0.8s ease-out, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .director-photo.is-visible {
@@ -345,7 +368,9 @@ html {
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 10px 28px -16px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .innovation-card-lg:hover {

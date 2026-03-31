@@ -21,8 +21,10 @@ export function SectionHeader({
     <div
       className={cn(
         "flex flex-col gap-4 max-w-3xl",
-        align === "center" ? "mx-auto text-center items-center" : "text-left items-start",
-        className
+        align === "center"
+          ? "mx-auto text-center items-center"
+          : "text-left items-start",
+        className,
       )}
       {...props}
     >
@@ -35,9 +37,7 @@ export function SectionHeader({
         {heading}
       </h2>
       {subtitle && (
-        <p className="text-lg text-slate-600 font-medium">
-          {subtitle}
-        </p>
+        <p className="text-lg text-slate-600 font-medium">{subtitle}</p>
       )}
     </div>
   );

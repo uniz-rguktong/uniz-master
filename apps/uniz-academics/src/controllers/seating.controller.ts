@@ -89,7 +89,9 @@ export const getSeatingTemplate = async (
       { header: "Seat Number", key: "seatNumber", width: 15 },
     ];
 
-    const profileMap = new Map(studentProfiles.map((p: any) => [p.username, p]));
+    const profileMap = new Map(
+      studentProfiles.map((p: any) => [p.username, p]),
+    );
 
     registrations.forEach((reg: any) => {
       const profile = profileMap.get(reg.studentId);
@@ -188,7 +190,9 @@ export const uploadSeating = async (
       where: { code: { in: subjectCodes } },
       select: { id: true, code: true },
     });
-    const subMap = new Map<string, string>(subjects.map((s: any) => [s.code, s.id]));
+    const subMap = new Map<string, string>(
+      subjects.map((s: any) => [s.code, s.id]),
+    );
 
     let count = 0;
     for (const row of rows) {

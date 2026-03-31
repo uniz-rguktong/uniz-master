@@ -6,24 +6,29 @@ import { cn } from "../../utils/cn";
 const faqs = [
   {
     question: "How do I check my semester results?",
-    answer: "You can view your results by clicking on the 'Explore' button in the bottom dock and selecting 'Results'. All your subject grades and SGPA/CGPA will be listed there."
+    answer:
+      "You can view your results by clicking on the 'Explore' button in the bottom dock and selecting 'Results'. All your subject grades and SGPA/CGPA will be listed there.",
   },
   {
     question: "How can I update my profile details?",
-    answer: "Go to the 'Home' section. If you see an 'Edit' button, you can click it to update your phone number and email. For critical details like ID number, please contact the administration."
+    answer:
+      "Go to the 'Home' section. If you see an 'Edit' button, you can click it to update your phone number and email. For critical details like ID number, please contact the administration.",
   },
   {
     question: "What should I do if my attendance is incorrect?",
-    answer: "Go to the 'Grievance' section (under Explore menu) and submit a request with the category 'Attendance'. Our academic team will review your records."
+    answer:
+      "Go to the 'Grievance' section (under Explore menu) and submit a request with the category 'Attendance'. Our academic team will review your records.",
   },
   {
     question: "How do I reset my portal password?",
-    answer: "For security, you can change your password anytime through the 'Security' section in the bottom dock. Use a strong password with at least 8 characters."
+    answer:
+      "For security, you can change your password anytime through the 'Security' section in the bottom dock. Use a strong password with at least 8 characters.",
   },
   {
     question: "Is the student portal available as an app?",
-    answer: "Yes! You can install UniZ as a PWA by clicking 'Install App' in your browser menu on Android or 'Add to Home Screen' on iOS."
-  }
+    answer:
+      "Yes! You can install UniZ as a PWA by clicking 'Install App' in your browser menu on Android or 'Add to Home Screen' on iOS.",
+  },
 ];
 
 const HelpSupport = () => {
@@ -47,9 +52,9 @@ const HelpSupport = () => {
           onClick={() => setActiveTab("faq")}
           className={cn(
             "px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300",
-            activeTab === "faq" 
-              ? "bg-white text-navy-900 shadow-sm" 
-              : "text-slate-400 hover:text-slate-600"
+            activeTab === "faq"
+              ? "bg-white text-navy-900 shadow-sm"
+              : "text-slate-400 hover:text-slate-600",
           )}
         >
           FAQS
@@ -58,9 +63,9 @@ const HelpSupport = () => {
           onClick={() => setActiveTab("contact")}
           className={cn(
             "px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300",
-            activeTab === "contact" 
-              ? "bg-white text-navy-900 shadow-sm" 
-              : "text-slate-400 hover:text-slate-600"
+            activeTab === "contact"
+              ? "bg-white text-navy-900 shadow-sm"
+              : "text-slate-400 hover:text-slate-600",
           )}
         >
           CONTACT US
@@ -77,7 +82,7 @@ const HelpSupport = () => {
             className="space-y-3"
           >
             {faqs.map((faq, index) => (
-              <div 
+              <div
                 key={index}
                 className="bg-white border border-black rounded-xl overflow-hidden transition-all"
               >
@@ -88,11 +93,11 @@ const HelpSupport = () => {
                   <span className="font-bold text-slate-900 tracking-tight text-[13px]">
                     {faq.question}
                   </span>
-                  <ChevronDown 
+                  <ChevronDown
                     className={cn(
                       "w-4 h-4 text-black transition-transform duration-300",
-                      openFaq === index && "rotate-180"
-                    )} 
+                      openFaq === index && "rotate-180",
+                    )}
                   />
                 </button>
                 <motion.div

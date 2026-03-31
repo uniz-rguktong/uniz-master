@@ -9,7 +9,8 @@ UniZ handles two types of campus exit permissions:
 - **Outing** — short-duration leave on the same day. Used for trips that start and end on the same day (e.g., going to town for a few hours).
 
 <Note>
-You can only have one pending request at a time. You cannot submit a new outpass or outing while a previous request is still awaiting approval.
+  You can only have one pending request at a time. You cannot submit a new
+  outpass or outing while a previous request is still awaiting approval.
 </Note>
 
 ---
@@ -53,6 +54,7 @@ Use an outpass for any leave that involves an overnight stay outside campus.
       }
     }
     ```
+
   </Step>
 </Steps>
 
@@ -83,6 +85,7 @@ Use an outing for same-day, short-duration trips that don't require an overnight
       "toTime": "2026-02-10T20:00:00Z"
     }
     ```
+
   </Step>
 </Steps>
 
@@ -96,16 +99,18 @@ Both outpass and outing requests go through a multi-level approval chain before 
 You submit → Caretaker → Warden → SWO / Dean / Director (final approval)
 ```
 
-| Level | Role | Action |
-|-------|------|--------|
-| 1 | Caretaker | Reviews and forwards to warden |
-| 2 | Warden | Reviews academic schedule and forwards to SWO |
-| 3 | SWO / Dean / Director | Grants final approval |
+| Level | Role                  | Action                                        |
+| ----- | --------------------- | --------------------------------------------- |
+| 1     | Caretaker             | Reviews and forwards to warden                |
+| 2     | Warden                | Reviews academic schedule and forwards to SWO |
+| 3     | SWO / Dean / Director | Grants final approval                         |
 
 The `currentLevel` field in your request shows which level is currently reviewing it. Each approver may add a comment.
 
 <Info>
-Caretakers are gender-specific — male caretakers review male students' requests, and female caretakers review female students' requests. The system routes your request automatically based on your profile.
+  Caretakers are gender-specific — male caretakers review male students'
+  requests, and female caretakers review female students' requests. The system
+  routes your request automatically based on your profile.
 </Info>
 
 ---
@@ -121,12 +126,12 @@ Open the **Permissions** tab on your profile to see your full request history. E
 
 ### Request statuses
 
-| Status | Meaning |
-|--------|---------|
-| **Pending** | Still moving through the approval chain |
-| **Approved** | Fully approved — you may leave campus |
-| **Rejected** | Declined by one of the approvers |
-| **Expired** | The request was not acted on before its departure date |
+| Status       | Meaning                                                |
+| ------------ | ------------------------------------------------------ |
+| **Pending**  | Still moving through the approval chain                |
+| **Approved** | Fully approved — you may leave campus                  |
+| **Rejected** | Declined by one of the approvers                       |
+| **Expired**  | The request was not acted on before its departure date |
 
 ---
 
@@ -139,7 +144,8 @@ Once your request reaches `isApproved: true`:
 - When you return, security marks you back in and your status returns to `true`.
 
 <Warning>
-Do not attempt to leave campus before your request is fully approved. Security verifies each student against the system — unapproved exits are recorded.
+  Do not attempt to leave campus before your request is fully approved. Security
+  verifies each student against the system — unapproved exits are recorded.
 </Warning>
 
 ---

@@ -46,7 +46,9 @@ export default function SubjectManagement() {
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("");
   const [semester, setSemester] = useState("");
-  const [meta, setMeta] = useState<any>(subjectsState.meta || { total: 0, totalPages: 0 });
+  const [meta, setMeta] = useState<any>(
+    subjectsState.meta || { total: 0, totalPages: 0 },
+  );
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingSubject, setEditingSubject] = useState<any>(null);
@@ -59,7 +61,8 @@ export default function SubjectManagement() {
   });
 
   const fetchSubjects = async () => {
-    if (!subjectsState.fetched || search || department || semester) setLoading(true);
+    if (!subjectsState.fetched || search || department || semester)
+      setLoading(true);
     try {
       const res = await apiClient<any>(GET_SUBJECTS, {
         params: {
@@ -72,16 +75,19 @@ export default function SubjectManagement() {
       });
       if (res && res.success) {
         setSubjects(res.subjects);
-        const newMeta = res.meta || { total: res.subjects.length, totalPages: Math.ceil(res.subjects.length / limit) };
+        const newMeta = res.meta || {
+          total: res.subjects.length,
+          totalPages: Math.ceil(res.subjects.length / limit),
+        };
         setMeta(newMeta);
-        
+
         // Only cache the first page with no filters for global state
         if (page === 1 && !search && !department && !semester) {
-           setSubjectsState({
-             fetched: true,
-             data: res.subjects,
-             meta: newMeta
-           });
+          setSubjectsState({
+            fetched: true,
+            data: res.subjects,
+            meta: newMeta,
+          });
         }
       }
     } catch (error) {
@@ -259,7 +265,10 @@ export default function SubjectManagement() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           {[...Array(12)].map((_, i) => (
-            <div key={i} className="bg-white border border-slate-100 rounded-xl p-5 space-y-4">
+            <div
+              key={i}
+              className="bg-white border border-slate-100 rounded-xl p-5 space-y-4"
+            >
               <div className="flex items-center gap-3">
                 <Skeleton className="w-10 h-10 rounded-lg" />
                 <div className="space-y-2">
@@ -278,8 +287,8 @@ export default function SubjectManagement() {
                 </div>
               </div>
               <div className="pt-2 space-y-2">
-                 <Skeleton className="w-24 h-2 rounded" />
-                 <Skeleton className="w-full h-1 rounded-full" />
+                <Skeleton className="w-24 h-2 rounded" />
+                <Skeleton className="w-full h-1 rounded-full" />
               </div>
             </div>
           ))}
@@ -298,7 +307,7 @@ export default function SubjectManagement() {
                   </div>
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2">
-                       <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
                         {sub.code}
                       </span>
                     </div>
@@ -356,9 +365,9 @@ export default function SubjectManagement() {
                           key={i}
                           className={cn(
                             "flex-1 h-1 rounded-full transition-all duration-500",
-                            i < Number(sub.credits) 
-                              ? "bg-navy-900" 
-                              : "bg-slate-100"
+                            i < Number(sub.credits)
+                              ? "bg-navy-900"
+                              : "bg-slate-100",
                           )}
                         ></div>
                       ))}
@@ -391,10 +400,11 @@ export default function SubjectManagement() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl font-bold text-[11px] border transition-all ${page === p
-                          ? "bg-navy-900 text-white border-navy-900"
-                          : "bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:text-slate-600"
-                          }`}
+                        className={`w-10 h-10 rounded-xl font-bold text-[11px] border transition-all ${
+                          page === p
+                            ? "bg-navy-900 text-white border-navy-900"
+                            : "bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:text-slate-600"
+                        }`}
                       >
                         {p}
                       </button>
@@ -455,8 +465,8 @@ export default function SubjectManagement() {
               {editingSubject ? "Update Curriculum" : "New Subject Portal"}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] leading-tight">
-              {editingSubject 
-                ? "Modify the existing academic subject parameters" 
+              {editingSubject
+                ? "Modify the existing academic subject parameters"
                 : "Initialize a new course into the institutional registry"}
             </AlertDialogDescription>
           </AlertDialogHeader>

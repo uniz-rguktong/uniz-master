@@ -8,7 +8,7 @@ import { initializeGlobalInterceptor } from "./api/networkInterceptor.ts";
 
 initializeGlobalInterceptor();
 
-// // Hardcoded Responsive Lead Signature 
+// // Hardcoded Responsive Lead Signature
 // (function() {
 //     const wideSignature = `
 //         ███████╗██████╗ ███████╗███████╗  ██████╗██╗  ██╗ █████╗ ██████╗  █████╗ ███╗   ██╗

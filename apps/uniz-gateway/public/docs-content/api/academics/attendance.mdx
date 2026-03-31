@@ -110,7 +110,8 @@ Records attendance for a student in a subject for a given session.
 </ParamField>
 
 <ParamField body="date" type="string">
-  ISO 8601 date of the class session (e.g. `2026-03-15`). Defaults to today if omitted.
+  ISO 8601 date of the class session (e.g. `2026-03-15`). Defaults to today if
+  omitted.
 </ParamField>
 
 ### Example
@@ -192,7 +193,8 @@ Uploads a completed Excel template to import attendance records in bulk.
 ### Request body
 
 <ParamField body="file" type="file" required>
-  The completed Excel file (`.xlsx`) previously downloaded from the template endpoint.
+  The completed Excel file (`.xlsx`) previously downloaded from the template
+  endpoint.
 </ParamField>
 
 ### Example
@@ -215,7 +217,8 @@ curl --request POST \
 ```
 
 <Tip>
-  Poll `GET /academics/attendance/upload/progress` with the returned `jobId` to track processing status.
+  Poll `GET /academics/attendance/upload/progress` with the returned `jobId` to
+  track processing status.
 </Tip>
 
 ---
@@ -303,7 +306,10 @@ Returns a binary Excel file.
 `POST /academics/attendance/publish-email`
 
 <Warning>
-  This endpoint is deprecated. Use the download endpoint (`GET /academics/attendance/download/:semesterId`) to export attendance reports. This endpoint is retained for audit compliance and may be removed in a future version.
+  This endpoint is deprecated. Use the download endpoint (`GET
+  /academics/attendance/download/:semesterId`) to export attendance reports.
+  This endpoint is retained for audit compliance and may be removed in a future
+  version.
 </Warning>
 
 Triggers a background job to email attendance reports to students for a given semester.

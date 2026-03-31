@@ -2,7 +2,7 @@ import { ANALYTICS_KEY } from "./endpoints";
 
 /**
  * Global Network Interceptor
- * Automatically injects the x-api-key into all fetch requests 
+ * Automatically injects the x-api-key into all fetch requests
  * that target UniZ services or analytics.
  */
 export function initializeGlobalInterceptor() {
@@ -16,13 +16,18 @@ export function initializeGlobalInterceptor() {
     config.headers = config.headers || {};
 
     // Normalize URL for check
-    const url = typeof resource === "string" ? resource : resource instanceof URL ? resource.href : resource.url;
+    const url =
+      typeof resource === "string"
+        ? resource
+        : resource instanceof URL
+          ? resource.href
+          : resource.url;
 
     // If it's a UniZ request (api or analytics), inject the key
     // We check for "analytics" or "/api/v1" or common domains
-    const isUnizRequest = 
-      url.includes("/api/v1") || 
-      url.includes("analytics") || 
+    const isUnizRequest =
+      url.includes("/api/v1") ||
+      url.includes("analytics") ||
       url.includes(".rguktong.in") ||
       url.includes("vercel.app"); // Analytics fallback
 
@@ -33,14 +38,16 @@ export function initializeGlobalInterceptor() {
         }
       } else if (Array.isArray(config.headers)) {
         // Handle array of arrays [[key, value]]
-        const hasKey = config.headers.some(([key]) => key.toLowerCase() === "x-api-key");
+        const hasKey = config.headers.some(
+          ([key]) => key.toLowerCase() === "x-api-key",
+        );
         if (!hasKey) {
           (config.headers as string[][]).push(["x-api-key", ANALYTICS_KEY]);
         }
       } else {
         // Handle record object
         const headersRecord = config.headers as Record<string, string>;
-        const keys = Object.keys(headersRecord).map(k => k.toLowerCase());
+        const keys = Object.keys(headersRecord).map((k) => k.toLowerCase());
         if (!keys.includes("x-api-key")) {
           headersRecord["x-api-key"] = ANALYTICS_KEY;
         }
@@ -50,14 +57,16 @@ export function initializeGlobalInterceptor() {
     const response = await originalFetch(resource, config);
 
     // Auth-Aware Eviction: Don't logout if the 401 comes from a login attempt
-    const isLoginAttempt = 
-      url.includes("/auth/login") || 
+    const isLoginAttempt =
+      url.includes("/auth/login") ||
       url.includes("/auth/signin") ||
       url.includes("/auth/otp");
 
     if (response.status === 401 && !isLoginAttempt) {
-      console.warn("[NetworkInterceptor] 401 Unauthorized detected. Clearing session...");
-      
+      console.warn(
+        "[NetworkInterceptor] 401 Unauthorized detected. Clearing session...",
+      );
+
       // Destructive clear to ensure no state remains
       localStorage.clear();
 

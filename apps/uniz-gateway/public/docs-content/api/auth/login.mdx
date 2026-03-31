@@ -6,7 +6,8 @@ description: "Authenticate students and administrators to obtain a JWT token for
 All login endpoints are **unauthenticated**. On success, you receive a `token` that must be sent as `Authorization: Bearer <token>` on every subsequent request.
 
 <Warning>
-  Login endpoints are rate-limited per IP. Repeated failed attempts will result in a `429 Too Many Requests` response.
+  Login endpoints are rate-limited per IP. Repeated failed attempts will result
+  in a `429 Too Many Requests` response.
 </Warning>
 
 ---
@@ -36,11 +37,14 @@ Authenticates any user — student or admin — and returns a JWT with the calle
 </ResponseField>
 
 <ResponseField name="token" type="string" required>
-  Signed JWT. Pass this value in the `Authorization: Bearer` header for all authenticated requests.
+  Signed JWT. Pass this value in the `Authorization: Bearer` header for all
+  authenticated requests.
 </ResponseField>
 
 <ResponseField name="role" type="string" required>
-  The role assigned to this account. Possible values: `student`, `director`, `dean`, `warden_male`, `warden_female`, `caretaker_male`, `caretaker_female`, `security`, `webmaster`.
+  The role assigned to this account. Possible values: `student`, `director`,
+  `dean`, `warden_male`, `warden_female`, `caretaker_male`, `caretaker_female`,
+  `security`, `webmaster`.
 </ResponseField>
 
 <ResponseField name="username" type="string" required>
@@ -83,10 +87,10 @@ curl --request POST \
 
 ### Error responses
 
-| Status | Meaning |
-|--------|---------|
-| `401 Unauthorized` | Incorrect password. |
-| `403 Forbidden` | Account is suspended. |
+| Status                  | Meaning                          |
+| ----------------------- | -------------------------------- |
+| `401 Unauthorized`      | Incorrect password.              |
+| `403 Forbidden`         | Account is suspended.            |
 | `429 Too Many Requests` | Rate limit exceeded for this IP. |
 
 ---
@@ -134,11 +138,11 @@ curl --request POST \
 
 ### Error responses
 
-| Status | Meaning |
-|--------|---------|
-| `401 Unauthorized` | Incorrect password. |
-| `403 Forbidden` | Account is suspended, or the account belongs to a non-student role. |
-| `429 Too Many Requests` | Rate limit exceeded for this IP. |
+| Status                  | Meaning                                                             |
+| ----------------------- | ------------------------------------------------------------------- |
+| `401 Unauthorized`      | Incorrect password.                                                 |
+| `403 Forbidden`         | Account is suspended, or the account belongs to a non-student role. |
+| `429 Too Many Requests` | Rate limit exceeded for this IP.                                    |
 
 ---
 
@@ -153,7 +157,8 @@ Authenticates administrative accounts only. Rejects student credentials.
 ### Request body
 
 <ParamField body="username" type="string" required>
-  Admin username (e.g. `director`, `dean_cse`, `warden_male`, `caretaker_female`, `security_admin`).
+  Admin username (e.g. `director`, `dean_cse`, `warden_male`,
+  `caretaker_female`, `security_admin`).
 </ParamField>
 
 <ParamField body="password" type="string" required>
@@ -185,11 +190,11 @@ curl --request POST \
 
 ### Error responses
 
-| Status | Meaning |
-|--------|---------|
-| `401 Unauthorized` | Incorrect password. |
-| `403 Forbidden` | Account is suspended, or the account belongs to a student role. |
-| `429 Too Many Requests` | Rate limit exceeded for this IP. |
+| Status                  | Meaning                                                         |
+| ----------------------- | --------------------------------------------------------------- |
+| `401 Unauthorized`      | Incorrect password.                                             |
+| `403 Forbidden`         | Account is suspended, or the account belongs to a student role. |
+| `429 Too Many Requests` | Rate limit exceeded for this IP.                                |
 
 ---
 

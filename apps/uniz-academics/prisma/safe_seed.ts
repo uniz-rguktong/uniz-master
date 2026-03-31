@@ -532,7 +532,9 @@ async function main() {
   console.log("Starting safe subject seeding...");
 
   // --- CLEANUP ---
-  console.log("- Clearing existing academic records (Grades, Attendance, etc)...");
+  console.log(
+    "- Clearing existing academic records (Grades, Attendance, etc)...",
+  );
   await prisma.grade.deleteMany({});
   await prisma.attendance.deleteMany({});
   await prisma.subject.deleteMany({});
@@ -562,7 +564,7 @@ async function main() {
             const code = `${branchKey}-${yearKey}-${normalizedSem}-${idxStr}`;
 
             allSubjects.push({
-              id: code,   // Subject.id has no @default, use code as stable ID
+              id: code, // Subject.id has no @default, use code as stable ID
               code,
               name,
               credits: credits[index], // Now supports precise Float values (e.g. 1.5, 2.5)

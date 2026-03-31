@@ -30,7 +30,7 @@ jobs:
           INTERNAL_SECRET: ${{ secrets.INTERNAL_SECRET }}
           INTERNAL_BOT_SECRET: ${{ secrets.INTERNAL_BOT_SECRET }}
           REDIS_URL: ${{ secrets.REDIS_URL }}
-          
+
           # email / comms
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -38,17 +38,17 @@ jobs:
           SES_FROM_EMAIL: ${{ secrets.SES_FROM_EMAIL }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-          
+
           # storage / media
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
           CLOUDINARY_UPLOAD_PRESET: ${{ secrets.CLOUDINARY_UPLOAD_PRESET }}
           VITE_CLOUDINARY_CLOUD_NAME: ${{ secrets.VITE_CLOUDINARY_CLOUD_NAME }}
           VITE_CLOUDINARY_UPLOAD_PRESET: ${{ secrets.VITE_CLOUDINARY_UPLOAD_PRESET }}
-          
+
           # push
           VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
-          
+
           # database
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -60,7 +60,7 @@ jobs:
           MAIL_DATABASE_URL: ${{ secrets.MAIL_DATABASE_URL }}
           NOTIFICATION_DATABASE_URL: ${{ secrets.NOTIFICATION_DATABASE_URL }}
           CRON_DATABASE_URL: ${{ secrets.CRON_DATABASE_URL }}
-          
+
           # portal specific
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_MAINTENANCE_MODE: ${{ secrets.VITE_MAINTENANCE_MODE }}
@@ -70,14 +70,14 @@ jobs:
           INSTITUTION_LOGO_URL: ${{ secrets.INSTITUTION_LOGO_URL }}
           VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
           TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
-          
+
           # analytics db
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASS: ${{ secrets.DB_PASS }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_NAME: ${{ secrets.DB_NAME }}
-          
+
           # landing backend
           LANDING_POSTGRES_USER: ${{ secrets.LANDING_POSTGRES_USER }}
           LANDING_POSTGRES_PASSWORD: ${{ secrets.LANDING_POSTGRES_PASSWORD }}
@@ -87,7 +87,7 @@ jobs:
           LANDING_JWT_SECURITY_KEY: ${{ secrets.LANDING_JWT_SECURITY_KEY }}
           LANDING_JWT_ALGORITHM: ${{ secrets.LANDING_JWT_ALGORITHM }}
           DUMMY_TOKEN: ${{ secrets.DUMMY_TOKEN }}
-          
+
           # --- ORNATE SECRETS ---
           ORNATE_DATABASE_URL: ${{ secrets.ORNATE_DATABASE_URL }}
           ORNATE_DIRECT_URL: ${{ secrets.ORNATE_DIRECT_URL }}
@@ -100,7 +100,7 @@ jobs:
           ORNATE_LANDING_NEXTAUTH_URL: ${{ secrets.ORNATE_LANDING_NEXTAUTH_URL }}
           ORNATE_LANDING_EMAIL_USER: ${{ secrets.ORNATE_LANDING_EMAIL_USER }}
           ORNATE_LANDING_EMAIL_PASS: ${{ secrets.ORNATE_LANDING_EMAIL_PASS }}
-          
+
           # ornate storage
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
@@ -114,12 +114,12 @@ jobs:
           ORNATE_R2_ACCESS_KEY_ID: ${{ secrets.ORNATE_R2_ACCESS_KEY_ID }}
           ORNATE_R2_SECRET_ACCESS_KEY: ${{ secrets.ORNATE_R2_SECRET_ACCESS_KEY }}
           ORNATE_R2_PUBLIC_DOMAIN: ${{ secrets.ORNATE_R2_PUBLIC_DOMAIN }}
-          
-          # upstash 
+
+          # upstash
           UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
           UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
           NEXT_PUBLIC_ASSETS_URL: ${{ secrets.NEXT_PUBLIC_ASSETS_URL }}
-          
+
           # ornate comms
           ORNATE_AWS_REGION: ${{ secrets.ORNATE_AWS_REGION }}
           ORNATE_AWS_ACCESS_KEY_ID: ${{ secrets.ORNATE_AWS_ACCESS_KEY_ID }}
@@ -140,13 +140,13 @@ jobs:
           script: |
             export DEPLOY_CONTEXT="GITHUB_ACTIONS"
             export WORK_DIR="/root/uniz-master-$GITHUB_REF_NAME"
-            
+
             # Setup isolated branch directory
             if [ ! -d "$WORK_DIR" ]; then
               echo "[Setup] Creating isolated directory for $GITHUB_REF_NAME..."
               git clone https://github.com/uniz-rguktong/uniz-master.git "$WORK_DIR"
             fi
-            
+
             cd "$WORK_DIR"
 
             echo "[Security] Regenerating secrets.env from GitHub Secrets..."
