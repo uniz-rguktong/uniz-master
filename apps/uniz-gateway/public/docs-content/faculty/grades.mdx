@@ -1,0 +1,292 @@
+---
+title: "Grades"
+description: "Upload, manage, and publish student grades for your subjects on UniZ."
+---
+
+Use this guide to upload grades for your assigned subjects, correct individual records, and download grade reports. Grade results are visible to students only after the Director triggers a publish.
+
+<Info>
+  You log in to UniZ with the same endpoint used by admins. Your `role` in the
+  login response determines your access level.
+</Info>
+
+## Upload grades via Excel template
+
+The recommended workflow for submitting an entire batch's grades is to download the pre-filled Excel template, fill in grades, and upload the completed file.
+
+<Steps>
+  <Step title="Download the Excel template">
+    Send a `GET` request to `/academics/grades/template` with query parameters
+    for the batch you are grading. The template comes pre-filled with all
+    student IDs for that batch, so you do not need to enter them manually.
+
+    ```bash
+    GET https://api.uniz.rguktong.in/api/v1/academics/grades/template?branch=CSE&year=E3&semester=SEM-1&subjectCode=E3-SEM-1-CSE-1
+    Authorization: Bearer <your-token>
+    ```
+
+    | Parameter     | Example             | Description                          |
+    | ------------- | ------------------- | ------------------------------------ |
+    | `branch`      | `CSE`               | Department code                      |
+    | `year`        | `E3`                | Batch year (E1–E4, P1–P2)            |
+    | `semester`    | `SEM-1`             | Semester identifier                  |
+    | `subjectCode` | `E3-SEM-1-CSE-1`    | Subject code as registered in UniZ   |
+
+    The response is an `.xlsx` file download. Save it locally before filling it in.
+
+    <Tip>
+      In the UniZ portal, you can download the template directly from the
+      **Add Grades** page without writing the request manually.
+    </Tip>
+  </Step>
+
+  <Step title="Fill in grades for each student">
+    Open the downloaded template. Each row corresponds to one student. Fill in
+    the **Grade** column using the accepted grade values:
+
+    | Value  | Meaning        |
+    | ------ | -------------- |
+    | `EX`   | Excellent       |
+    | `A`    | Grade A         |
+    | `B`    | Grade B         |
+    | `C`    | Grade C         |
+    | `D`    | Grade D         |
+    | `F`    | Fail            |
+    | `9.5`  | Numeric points  |
+
+    Do not modify the student ID column or add or remove rows. Leave the grade
+    cell blank only if a student was absent for evaluation — do not use `N/A`
+    or similar placeholders.
+
+    <Warning>
+      The file size limit for uploads is **50 MB**. Standard grade sheets are
+      well within this limit, but avoid embedding images or charts in the
+      spreadsheet.
+    </Warning>
+  </Step>
+
+  <Step title="Upload the filled template">
+    Post the completed file to `/academics/grades/upload` as a multipart form.
+
+    ```bash
+    POST https://api.uniz.rguktong.in/api/v1/academics/grades/upload
+    Authorization: Bearer <your-token>
+    Content-Type: multipart/form-data
+
+    file=<your-filled-template.xlsx>
+    ```
+
+    **Success response:**
+
+    ```json
+    {
+      "success": true,
+      "processed": 62,
+      "successCount": 60,
+      "failCount": 2,
+      "errors": [
+        "Row 14: Invalid grade value 'NA' for student O210045",
+        "Row 31: Student ID O219999 not found in this batch"
+      ]
+    }
+    ```
+
+    Upload is processed as a background batch job. The `successCount` and
+    `failCount` fields give you an immediate summary. Review any entries listed
+    in `errors` and correct them before re-uploading.
+
+    <Note>
+      Uploading a file does not overwrite previously uploaded grades for students
+      not included in the new file. Only rows present in the uploaded sheet are
+      processed.
+    </Note>
+  </Step>
+
+  <Step title="Monitor upload progress">
+    For large batches, poll the progress endpoint until the job completes.
+
+    ```bash
+    GET https://api.uniz.rguktong.in/api/v1/academics/grades/upload/progress
+    Authorization: Bearer <your-token>
+    ```
+
+    **Response:**
+
+    ```json
+    {
+      "success": true,
+      "progress": {
+        "status": "processing",
+        "percent": 45,
+        "processed": 150,
+        "total": 330
+      }
+    }
+    ```
+
+    Poll every few seconds until `status` is `"completed"` and `percent` reaches
+    `100`. You can also check this from the **Add Grades** page in the portal.
+  </Step>
+</Steps>
+
+---
+
+## Add grades manually for individual students
+
+To record or correct a grade for a single student without re-uploading a full
+sheet, use the add grades endpoint directly.
+
+```bash
+POST https://api.uniz.rguktong.in/api/v1/academics/grades/add
+Authorization: Bearer <your-token>
+Content-Type: application/json
+```
+
+**Request body:**
+
+```json
+{
+  "studentId": "O210008",
+  "subjectCode": "E3-SEM-1-CSE-1",
+  "semesterId": "SEM-1",
+  "grade": "A"
+}
+```
+
+**Success response:**
+
+```json
+{
+  "success": true,
+  "message": "Grade added successfully"
+}
+```
+
+Use this for late submissions, re-evaluations, or corrections after the main
+upload has been processed.
+
+---
+
+## Bulk update grades via JSON
+
+When you need to correct multiple grades without uploading a new Excel file —
+for example, after a re-evaluation — send a JSON array of updates to the bulk
+update endpoint.
+
+```bash
+PUT https://api.uniz.rguktong.in/api/v1/academics/grades/bulk-update
+Authorization: Bearer <your-token>
+Content-Type: application/json
+```
+
+**Request body:**
+
+```json
+{
+  "updates": [
+    {
+      "studentId": "O210008",
+      "subjectId": "uuid-of-subject",
+      "semesterId": "SEM-1",
+      "grade": "EX"
+    },
+    {
+      "studentId": "O210045",
+      "subjectId": "uuid-of-subject",
+      "semesterId": "SEM-1",
+      "grade": 9.5
+    }
+  ]
+}
+```
+
+The `grade` field accepts either a letter grade string (`"EX"`, `"A"`, `"F"`,
+etc.) or a numeric points value like `9.5`.
+
+<Tip>
+  Use the batch grades endpoint (`GET /academics/grades/batch`) to retrieve
+  subject IDs before performing bulk updates. Query params: `branch`, `year`,
+  `semesterId`, and optionally `failedOnly=true` to focus on failed records.
+</Tip>
+
+---
+
+## Download a grade report
+
+To download a consolidated grade report for a semester, use the download
+endpoint with the semester ID.
+
+```bash
+GET https://api.uniz.rguktong.in/api/v1/academics/grades/download/:semesterId
+Authorization: Bearer <your-token>
+```
+
+**Example:**
+
+```bash
+GET https://api.uniz.rguktong.in/api/v1/academics/grades/download/SEM-1
+Authorization: Bearer <your-token>
+```
+
+The response is a downloadable report file for that semester. Use this to
+verify grades before requesting publication, or to keep a local record.
+
+---
+
+## Publishing results to students
+
+<Warning>
+  **Only the Director can publish results.** After you upload grades, students
+  cannot see them until the Director triggers the publish action. You do not
+  need to take any further steps — notify your department's administration that
+  grades are ready for review and publication.
+</Warning>
+
+When the Director publishes results for a semester, UniZ triggers a background
+job that sends report card emails to all students for that semester.
+
+You can monitor the publish progress at:
+
+```bash
+GET https://api.uniz.rguktong.in/api/v1/academics/grades/publish/progress
+Authorization: Bearer <your-token>
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "progress": {
+    "status": "processing",
+    "percent": 72,
+    "processed": 240,
+    "total": 330
+  }
+}
+```
+
+---
+
+## Grade format reference
+
+<CardGroup cols={2}>
+  <Card title="Letter grades" icon="list">
+    `EX` — Excellent
+
+    `A` — Grade A
+
+    `B` — Grade B
+
+    `C` — Grade C
+
+    `D` — Grade D
+
+    `F` — Fail
+  </Card>
+  <Card title="Numeric points" icon="hash">
+    You can also submit grades as numeric point values (e.g., `9.5`, `7.0`).
+    The system accepts both letter and numeric formats in the template and via
+    the API.
+  </Card>
+</CardGroup>
