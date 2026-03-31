@@ -28,11 +28,15 @@ export function Layout({ children }: LayoutProps) {
   const isHomePage = location.pathname === "/";
 
   return (
-    <div className={`min-h-screen flex flex-col ${isHomePage ? "bg-white" : "bg-premium-gradient"} text-slate-900 selection:bg-navy-100 selection:text-navy-900`}>
+    <div
+      className={`min-h-screen flex flex-col ${isHomePage ? "bg-white" : "bg-premium-gradient"} text-slate-900 selection:bg-navy-100 selection:text-navy-900`}
+    >
       <Suspense fallback={<LoadingAnim />}>
         <Navbar />
       </Suspense>
-      <main className={`flex-grow flex flex-col ${isHomePage ? "" : "max-w-[1600px] w-full mx-auto p-4 sm:p-6 md:p-10"} animate-in fade-in duration-500`}>
+      <main
+        className={`flex-grow flex flex-col ${isHomePage ? "" : "max-w-[1600px] w-full mx-auto p-4 sm:p-6 md:p-10"} animate-in fade-in duration-500`}
+      >
         <div className="flex-grow h-full w-full">{children}</div>
       </main>
       {!isHomePage && <GlobeFeature />}

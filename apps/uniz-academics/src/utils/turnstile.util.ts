@@ -2,7 +2,7 @@ import axios from "axios";
 
 /**
  * Verifies a Cloudflare Turnstile token.
- * 
+ *
  * @param token The turnstile token from the client
  * @param clientIp The IP address of the client (optional but recommended)
  * @returns boolean indicating if the token is valid

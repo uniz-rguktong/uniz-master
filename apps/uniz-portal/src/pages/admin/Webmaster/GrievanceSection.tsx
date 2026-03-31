@@ -262,10 +262,11 @@ export default function GrievanceSection() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-xl font-black text-xs transition-all ${page === p
-                          ? "bg-navy-900 text-white shadow-none"
-                          : "text-slate-400 hover:bg-white hover:text-navy-900"
-                          }`}
+                        className={`w-10 h-10 rounded-xl font-black text-xs transition-all ${
+                          page === p
+                            ? "bg-navy-900 text-white shadow-none"
+                            : "text-slate-400 hover:bg-white hover:text-navy-900"
+                        }`}
                       >
                         {p}
                       </button>

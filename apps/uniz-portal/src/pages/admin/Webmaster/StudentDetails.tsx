@@ -77,7 +77,9 @@ function StudentTableSkeleton() {
 }
 
 export default function StudentDetails() {
-  const [searchMode, setSearchMode] = useState<"id" | "filter" | "intelligence">("id");
+  const [searchMode, setSearchMode] = useState<
+    "id" | "filter" | "intelligence"
+  >("id");
   const [studentId, setStudentId] = useState("O210008");
   const [loading, setLoading] = useState(false);
 
@@ -694,7 +696,8 @@ export default function StudentDetails() {
                 <table
                   className={cn(
                     "w-full text-left border-collapse",
-                    searchMode === "intelligence" && "table-fixed min-w-[1200px]",
+                    searchMode === "intelligence" &&
+                      "table-fixed min-w-[1200px]",
                   )}
                 >
                   <thead>
@@ -743,7 +746,9 @@ export default function StudentDetails() {
                             <div
                               className={cn(
                                 "w-11 h-11 rounded-full flex items-center justify-center text-white text-[12px] font-black border border-white shadow-sm overflow-hidden shrink-0",
-                                std.profile_url ? "bg-slate-50" : "bg-emerald-900",
+                                std.profile_url
+                                  ? "bg-slate-50"
+                                  : "bg-emerald-900",
                               )}
                             >
                               {std.profile_url ? (

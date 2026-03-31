@@ -25,7 +25,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
   useEffect(() => {
-    const active = primaryItems.findIndex(item => item.isActive);
+    const active = primaryItems.findIndex((item) => item.isActive);
     if (active !== -1) setActiveIndex(active);
   }, [primaryItems]);
 
@@ -69,7 +69,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                     stiffness: 450,
                     damping: 28,
                     mass: 0.8,
-                    delay: index * 0.03
+                    delay: index * 0.03,
                   }}
                   onClick={() => {
                     item.onClick?.();
@@ -138,19 +138,19 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                   whileTap={{ scale: 0.95 }}
                   animate={{
                     rotate: isMoreOpen ? 90 : 0,
-                    scale: isMoreOpen ? 1.1 : 1
+                    scale: isMoreOpen ? 1.1 : 1,
                   }}
                   transition={{
                     type: "spring",
                     stiffness: 300,
-                    damping: 20
+                    damping: 20,
                   }}
                   onClick={toggleMore}
                   className={cn(
                     "flex items-center justify-center w-16 h-16 rounded-full shadow-2xl transition-colors duration-500 border-4 border-white",
                     isMoreOpen
                       ? "bg-navy-900 text-white"
-                      : "bg-[#0B2A47] text-white"
+                      : "bg-[#0B2A47] text-white",
                   )}
                 >
                   {middleItem ? (
@@ -158,7 +158,9 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                       const Icon = middleItem.icon;
                       return <Icon size={28} strokeWidth={2.5} />;
                     })()
-                  ) : <Plus size={28} />}
+                  ) : (
+                    <Plus size={28} />
+                  )}
                 </motion.button>
               </div>
             </div>
@@ -201,20 +203,35 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
   );
 };
 
-const NavItem = ({ item, isActive, onClick }: { item: InteractiveMenuItem; isActive: boolean; onClick: () => void }) => {
+const NavItem = ({
+  item,
+  isActive,
+  onClick,
+}: {
+  item: InteractiveMenuItem;
+  isActive: boolean;
+  onClick: () => void;
+}) => {
   const Icon = item.icon;
   return (
-    <button onClick={onClick} className="flex flex-col items-center gap-1.5 transition-all active:scale-95">
-      <div className={cn(
-        "flex items-center justify-center transition-all duration-300",
-        isActive ? "text-navy-900" : "text-slate-400"
-      )}>
+    <button
+      onClick={onClick}
+      className="flex flex-col items-center gap-1.5 transition-all active:scale-95"
+    >
+      <div
+        className={cn(
+          "flex items-center justify-center transition-all duration-300",
+          isActive ? "text-navy-900" : "text-slate-400",
+        )}
+      >
         <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
       </div>
-      <span className={cn(
-        "text-[10px] font-bold tracking-tight transition-colors duration-300",
-        isActive ? "text-navy-900" : "text-slate-400 font-medium"
-      )}>
+      <span
+        className={cn(
+          "text-[10px] font-bold tracking-tight transition-colors duration-300",
+          isActive ? "text-navy-900" : "text-slate-400 font-medium",
+        )}
+      >
         {item.label}
       </span>
     </button>
@@ -222,4 +239,3 @@ const NavItem = ({ item, isActive, onClick }: { item: InteractiveMenuItem; isAct
 };
 
 export { InteractiveMenu };
-

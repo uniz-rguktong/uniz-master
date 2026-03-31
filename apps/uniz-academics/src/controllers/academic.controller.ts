@@ -238,7 +238,7 @@ export const getBatchGrades = async (
       orderBy: { studentId: "asc" },
     });
 
-    const studentIds = studentIdsOnPageResult.map((s:any) => s.studentId);
+    const studentIds = studentIdsOnPageResult.map((s: any) => s.studentId);
 
     // Step 2: Fetch all grades for these specific students on this page/semester
     const grades = await prisma.grade.findMany({
@@ -295,7 +295,7 @@ export const getBatchGrades = async (
     // Group by Student
     const grouped: Record<string, any> = {};
 
-    grades.forEach((g:any) => {
+    grades.forEach((g: any) => {
       if (!grouped[g.studentId]) {
         const profile = profileMap.get(g.studentId) || {};
         grouped[g.studentId] = {
@@ -325,7 +325,7 @@ export const getBatchGrades = async (
         totalStudents: totalStudentsCount,
         pageCount: studentsList.length,
         totalRecords: grades.length,
-        failedRecords: grades.filter((g:any) => g.grade <= 0).length,
+        failedRecords: grades.filter((g: any) => g.grade <= 0).length,
         timestamp: new Date().toISOString(),
       },
       meta: {
@@ -437,7 +437,7 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
     const semCredits: Record<string, number> = {};
     const semFails: Record<string, boolean> = {};
 
-    grades.forEach((g:any) => {
+    grades.forEach((g: any) => {
       const semId = g.semesterId;
       const points = g.grade;
       // Handle optional subject relation if data integrity is poor, though include ensures it.
@@ -469,7 +469,7 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
     let totalWeightedCredits = 0;
     let backlogCount = 0;
 
-    grades.forEach((g:any) => {
+    grades.forEach((g: any) => {
       const points = g.grade;
       const credits = g.subject?.credits || 0;
 
@@ -493,10 +493,11 @@ export const getGrades = async (req: AuthenticatedRequest, res: Response) => {
     // 3. Group by Attempt for UI Display
     const attemptsGrouped: Record<string, any[]> = {};
     grades.forEach((g: any) => {
-      const attemptLabel = g.attemptNumber === 1 
-        ? "REGULAR RESULTS" 
-        : `REMEDIAL RESULTS ${g.attemptNumber > 2 ? `- ${g.attemptNumber - 1}` : ""}`;
-      
+      const attemptLabel =
+        g.attemptNumber === 1
+          ? "REGULAR RESULTS"
+          : `REMEDIAL RESULTS ${g.attemptNumber > 2 ? `- ${g.attemptNumber - 1}` : ""}`;
+
       if (!attemptsGrouped[attemptLabel]) attemptsGrouped[attemptLabel] = [];
       attemptsGrouped[attemptLabel].push(g);
     });
@@ -580,7 +581,9 @@ export const addGrades = async (req: AuthenticatedRequest, res: Response) => {
     const resolvedSubjects = await prisma.subject.findMany({
       where: { id: { in: subjectIds } },
     });
-    const subMap = new Map(resolvedSubjects.map((s:any) => [s.id, s.semester]));
+    const subMap = new Map(
+      resolvedSubjects.map((s: any) => [s.id, s.semester]),
+    );
 
     const results = await Promise.all(
       grades.map((g: any) => {
@@ -598,7 +601,7 @@ export const addGrades = async (req: AuthenticatedRequest, res: Response) => {
           update: {
             grade: g.grade,
             subjectNameOverride: g.subjectNameOverride,
-            updatedAt: new Date()
+            updatedAt: new Date(),
           },
           create: {
             studentId,
@@ -659,7 +662,7 @@ export const bulkUpdateGrades = async (
     });
 
     const subjectMap = new Map();
-    subjects.forEach((s:any) => {
+    subjects.forEach((s: any) => {
       subjectMap.set(s.id, s);
       subjectMap.set(s.code, s);
     });
@@ -695,7 +698,7 @@ export const bulkUpdateGrades = async (
 
         // Target Record: the one that HAS the correct canonical semesterID
         const canonicalMatch = existingGrades.find(
-          (g:any) => g.semesterId === canonicalSemester,
+          (g: any) => g.semesterId === canonicalSemester,
         );
 
         if (canonicalMatch) {
@@ -844,7 +847,7 @@ export const getAttendance = async (
     });
 
     // Calculate summaries and percentages
-    const attendanceWithInsights = attendance.map((a:any) => ({
+    const attendanceWithInsights = attendance.map((a: any) => ({
       ...a,
       percentage:
         a.totalClasses > 0
@@ -853,7 +856,7 @@ export const getAttendance = async (
     }));
 
     const summary: Record<string, any> = {};
-    attendance.forEach((a:any) => {
+    attendance.forEach((a: any) => {
       if (!summary[a.semesterId]) {
         summary[a.semesterId] = { total: 0, attended: 0 };
       }
@@ -1073,7 +1076,7 @@ export const publishResults = async (
 
       // 3. Group by Student
       const studentGrades: Record<string, typeof grades> = {};
-      grades.forEach((g:any) => {
+      grades.forEach((g: any) => {
         if (!studentGrades[g.studentId]) studentGrades[g.studentId] = [];
         studentGrades[g.studentId].push(g);
       });
@@ -1287,7 +1290,7 @@ export const publishAttendance = async (
       }
 
       // 2. Fetch Profiles for metadata
-      const studentIds = [...new Set(attendance.map((a:any) => a.studentId))];
+      const studentIds = [...new Set(attendance.map((a: any) => a.studentId))];
       const profilesMap: Record<string, any> = {};
 
       try {
@@ -1313,7 +1316,7 @@ export const publishAttendance = async (
 
       // 3. Group by Student
       const studentAttendance: Record<string, typeof attendance> = {};
-      attendance.forEach((a:any) => {
+      attendance.forEach((a: any) => {
         if (!studentAttendance[a.studentId])
           studentAttendance[a.studentId] = [];
         studentAttendance[a.studentId].push(a);
@@ -1536,7 +1539,14 @@ export const addSubject = async (req: AuthenticatedRequest, res: Response) => {
     const subject = await prisma.subject.upsert({
       where: { code },
       update: { name, credits: Number(credits), department, semester },
-      create: { id: code, code, name, credits: Number(credits), department, semester },
+      create: {
+        id: code,
+        code,
+        name,
+        credits: Number(credits),
+        department,
+        semester,
+      },
     });
     return res.json({ success: true, subject });
   } catch (e: any) {
@@ -1730,7 +1740,7 @@ export const getGradesTemplate = async (
           semesterId: semesterId as string,
         },
       });
-      students = failures.map((f:any) => ({
+      students = failures.map((f: any) => ({
         username: f.studentId,
         name: "REMEDIAL STUDENT",
       }));
@@ -1782,7 +1792,7 @@ export const getGradesTemplate = async (
     const activeSubjects = isAllSubjects
       ? subjects
       : subjects.filter(
-          (s:any) =>
+          (s: any) =>
             s.code.toUpperCase() === subjectCodeStr ||
             s.code.toUpperCase().includes(subjectCodeStr),
         );
@@ -1825,12 +1835,18 @@ export const getGradesTemplate = async (
     console.log(`[Academics] Final Template Rows: ${headers.length - 1}`);
     return generateExcel(headers, `Grades_Template_${year}_${branch}`, res);
   } catch (e: any) {
-    console.error(`[Academics] Grades Template Error: ${e.message}`, e.response?.data || e);
-    const msg = e.response?.data?.message || e.message || "An internal error occurred while generating the template.";
+    console.error(
+      `[Academics] Grades Template Error: ${e.message}`,
+      e.response?.data || e,
+    );
+    const msg =
+      e.response?.data?.message ||
+      e.message ||
+      "An internal error occurred while generating the template.";
     return res.status(e.response?.status || 500).json({
       success: false,
       message: msg,
-      details: e.response?.data
+      details: e.response?.data,
     });
   }
 };
@@ -1901,7 +1917,7 @@ export const uploadGrades = async (req: any, res: Response) => {
       rows.push(rowData);
     });
 
-    const total = rows.length;    // 1. Upload to Cloudinary (AWAIT for Audit consistency)
+    const total = rows.length; // 1. Upload to Cloudinary (AWAIT for Audit consistency)
     const uploadToCloudinary = async (buffer: Buffer, filename: string) => {
       try {
         const FormData = require("form-data");
@@ -2105,12 +2121,18 @@ export const getAttendanceTemplate = async (
 
     return generateExcel(headers, `Attendance_Template_${year}_${branch}`, res);
   } catch (e: any) {
-    console.error(`[Academics] Attendance Template Error: ${e.message}`, e.response?.data || e);
-    const msg = e.response?.data?.message || e.message || "An internal error occurred while generating the template.";
+    console.error(
+      `[Academics] Attendance Template Error: ${e.message}`,
+      e.response?.data || e,
+    );
+    const msg =
+      e.response?.data?.message ||
+      e.message ||
+      "An internal error occurred while generating the template.";
     return res.status(e.response?.status || 500).json({
       success: false,
       message: msg,
-      details: e.response?.data
+      details: e.response?.data,
     });
   }
 };
@@ -2168,7 +2190,7 @@ export const uploadAttendance = async (req: any, res: Response) => {
       rows.push(rowData);
     });
 
-    const total = rows.length;    // 1. Upload to Cloudinary (AWAIT for Audit consistency)
+    const total = rows.length; // 1. Upload to Cloudinary (AWAIT for Audit consistency)
     const uploadToCloudinaryAtt = async (buffer: Buffer, filename: string) => {
       try {
         const FormData = require("form-data");
@@ -2281,7 +2303,9 @@ export const downloadGrades = async (
   ).toUpperCase();
 
   const semesterId = req.params.semesterId;
-  const reportType = (req.query.reportType as string || "REGULAR").toUpperCase();
+  const reportType = (
+    (req.query.reportType as string) || "REGULAR"
+  ).toUpperCase();
 
   // Security check
   if (targetStudentId !== user.username && user.role === "student") {
@@ -2301,7 +2325,7 @@ export const downloadGrades = async (
     // Grouping logic for the PDF
     let filteredGrades = [];
     if (reportType === "REGULAR") {
-      filteredGrades = allGrades.filter(g => g.attemptNumber === 1);
+      filteredGrades = allGrades.filter((g) => g.attemptNumber === 1);
     } else {
       const latestGradesMap = new Map();
       allGrades.forEach((g: any) => {
@@ -2314,7 +2338,8 @@ export const downloadGrades = async (
     }
 
     const attemptsGrouped: Record<string, any[]> = {};
-    const label = reportType === "REGULAR" ? "REGULAR RESULTS" : "REMEDIAL RESULTS";
+    const label =
+      reportType === "REGULAR" ? "REGULAR RESULTS" : "REMEDIAL RESULTS";
     attemptsGrouped[label] = filteredGrades;
 
     const attempts = Object.keys(attemptsGrouped).map((label) => ({
@@ -2471,7 +2496,7 @@ export const downloadAttendance = async (
       branch: branch,
       campus: campus,
       semesterId,
-      records: records.map((r:any) => ({
+      records: records.map((r: any) => ({
         attendedClasses: r.attendedClasses,
         totalClasses: r.totalClasses,
         subject: {

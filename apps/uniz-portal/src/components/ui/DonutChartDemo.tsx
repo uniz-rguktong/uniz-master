@@ -17,18 +17,21 @@ const financialData = [
 const totalFinancialValue = financialData.reduce((sum, d) => sum + d.value, 0);
 
 export default function DonutChartDemo() {
-  const [hoveredSegmentLabel, setHoveredSegmentLabel] = useState<string | null>(null);
+  const [hoveredSegmentLabel, setHoveredSegmentLabel] = useState<string | null>(
+    null,
+  );
 
   // Find the currently hovered segment data
   const activeSegment = financialData.find(
-    (segment) => segment.label === hoveredSegmentLabel
+    (segment) => segment.label === hoveredSegmentLabel,
   );
-  
+
   // Determine total value (either hovered or overall)
   const displayValue = activeSegment?.value ?? totalFinancialValue;
   const displayLabel = activeSegment?.label ?? "Total Objections";
-  const displayPercentage =
-    activeSegment ? (activeSegment.value / totalFinancialValue) * 100 : 100;
+  const displayPercentage = activeSegment
+    ? (activeSegment.value / totalFinancialValue) * 100
+    : 100;
 
   return (
     <Card className="p-6 md:p-8 w-full max-w-md mx-auto flex flex-col items-center justify-center space-y-6 bg-background text-foreground shadow-lg rounded-xl">
@@ -43,7 +46,9 @@ export default function DonutChartDemo() {
           animationDuration={1.2}
           animationDelayPerSegment={0.05}
           highlightOnHover={true}
-          onSegmentHover={(segment) => setHoveredSegmentLabel(segment?.label || null)}
+          onSegmentHover={(segment) =>
+            setHoveredSegmentLabel(segment?.label || null)
+          }
           centerContent={
             <AnimatePresence mode="wait">
               <motion.div
@@ -61,9 +66,9 @@ export default function DonutChartDemo() {
                   {displayValue}
                 </p>
                 {activeSegment && (
-                    <p className="text-lg font-medium text-muted-foreground">
-                        [{displayPercentage.toFixed(0)}%]
-                    </p>
+                  <p className="text-lg font-medium text-muted-foreground">
+                    [{displayPercentage.toFixed(0)}%]
+                  </p>
                 )}
               </motion.div>
             </AnimatePresence>
@@ -80,7 +85,7 @@ export default function DonutChartDemo() {
             transition={{ delay: 1.2 + index * 0.1, duration: 0.4 }}
             className={cn(
               "flex items-center justify-between p-2 rounded-md transition-all duration-200 cursor-pointer",
-              hoveredSegmentLabel === segment.label && "bg-muted"
+              hoveredSegmentLabel === segment.label && "bg-muted",
             )}
             onMouseEnter={() => setHoveredSegmentLabel(segment.label)}
             onMouseLeave={() => setHoveredSegmentLabel(null)}

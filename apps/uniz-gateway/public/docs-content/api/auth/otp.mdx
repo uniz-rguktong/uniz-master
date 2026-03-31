@@ -7,21 +7,27 @@ OTP verification is the first step of the password reset flow. The full flow is:
 
 <Steps>
   <Step title="Request an OTP">
-    Call `POST /auth/otp/request` (push notification) or `POST /auth/otp/request-email` (email) with the account username.
+    Call `POST /auth/otp/request` (push notification) or `POST
+    /auth/otp/request-email` (email) with the account username.
   </Step>
   <Step title="Receive the code">
     The user receives a 6-digit code via the chosen channel.
   </Step>
   <Step title="Verify the OTP">
-    Call `POST /auth/otp/verify` with the username and the 6-digit code. On success you receive a `resetToken`.
+    Call `POST /auth/otp/verify` with the username and the 6-digit code. On
+    success you receive a `resetToken`.
   </Step>
   <Step title="Reset the password">
-    Pass the `resetToken` to `POST /auth/password/reset` along with the new password. See the [Password](/api/auth/password) page for details.
+    Pass the `resetToken` to `POST /auth/password/reset` along with the new
+    password. See the [Password](/api/auth/password) page for details.
   </Step>
 </Steps>
 
 <Warning>
-  OTP endpoints are rate-limited. Each account is subject to an hourly limit that applies across both channels, a separate per-request limit for push notifications, and a separate per-request limit for email. Exceeding any limit returns `429 Too Many Requests`.
+  OTP endpoints are rate-limited. Each account is subject to an hourly limit
+  that applies across both channels, a separate per-request limit for push
+  notifications, and a separate per-request limit for email. Exceeding any limit
+  returns `429 Too Many Requests`.
 </Warning>
 
 ---
@@ -74,10 +80,10 @@ curl --request POST \
 
 ### Error responses
 
-| Status | Meaning |
-|--------|---------|
-| `404 Not Found` | No account found for the given username. |
-| `429 Too Many Requests` | Hourly or per-push rate limit exceeded. |
+| Status                  | Meaning                                  |
+| ----------------------- | ---------------------------------------- |
+| `404 Not Found`         | No account found for the given username. |
+| `429 Too Many Requests` | Hourly or per-push rate limit exceeded.  |
 
 ---
 
@@ -129,9 +135,9 @@ curl --request POST \
 
 ### Error responses
 
-| Status | Meaning |
-|--------|---------|
-| `404 Not Found` | No account found for the given username. |
+| Status                  | Meaning                                  |
+| ----------------------- | ---------------------------------------- |
+| `404 Not Found`         | No account found for the given username. |
 | `429 Too Many Requests` | Hourly or per-email rate limit exceeded. |
 
 ---
@@ -151,7 +157,8 @@ Validates the 6-digit code and, if correct, returns a short-lived `resetToken`. 
 </ParamField>
 
 <ParamField body="otp" type="string" required>
-  The 6-digit one-time password received via push or email. Must be exactly 6 characters.
+  The 6-digit one-time password received via push or email. Must be exactly 6
+  characters.
 </ParamField>
 
 ### Response
@@ -161,7 +168,8 @@ Validates the 6-digit code and, if correct, returns a short-lived `resetToken`. 
 </ResponseField>
 
 <ResponseField name="resetToken" type="string" required>
-  A short-lived token authorising a single password reset. Pass this to `POST /auth/password/reset`.
+  A short-lived token authorising a single password reset. Pass this to `POST
+  /auth/password/reset`.
 </ResponseField>
 
 ### Example
@@ -187,8 +195,8 @@ curl --request POST \
 
 ### Error responses
 
-| Status | Meaning |
-|--------|---------|
-| `400 Bad Request` | OTP is invalid or has expired. |
-| `404 Not Found` | No account found for the given username. |
-| `429 Too Many Requests` | Rate limit exceeded. |
+| Status                  | Meaning                                  |
+| ----------------------- | ---------------------------------------- |
+| `400 Bad Request`       | OTP is invalid or has expired.           |
+| `404 Not Found`         | No account found for the given username. |
+| `429 Too Many Requests` | Rate limit exceeded.                     |

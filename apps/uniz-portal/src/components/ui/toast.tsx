@@ -1,35 +1,25 @@
-'use client'
+"use client";
 
-import { forwardRef, useImperativeHandle, useRef } from 'react';
-import { motion } from 'framer-motion';
-import {
-  Toaster as SonnerToaster,
-  toast as sonnerToast,
-} from 'sonner';
-import {
-  CheckCircle,
-  AlertCircle,
-  Info,
-  AlertTriangle,
-  X,
-} from 'lucide-react';
+import { forwardRef, useImperativeHandle, useRef } from "react";
+import { motion } from "framer-motion";
+import { Toaster as SonnerToaster, toast as sonnerToast } from "sonner";
+import { CheckCircle, AlertCircle, Info, AlertTriangle, X } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 
-import { cn } from '@/lib/utils';
-
-type Variant = 'default' | 'success' | 'error' | 'warning';
+type Variant = "default" | "success" | "error" | "warning";
 type Position =
-  | 'top-left'
-  | 'top-center'
-  | 'top-right'
-  | 'bottom-left'
-  | 'bottom-center'
-  | 'bottom-right';
+  | "top-left"
+  | "top-center"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-center"
+  | "bottom-right";
 
 interface ActionButton {
   label: string;
   onClick: () => void;
-  variant?: 'default' | 'outline' | 'ghost';
+  variant?: "default" | "outline" | "ghost";
 }
 
 export interface ToasterProps {
@@ -50,13 +40,16 @@ export interface ToasterRef {
 }
 
 const variantStyles: Record<Variant, string> = {
-  default: 'bg-slate-900 border-none text-white',
-  success: 'bg-[#10B981] border-none text-white',
-  error: 'bg-[#EF4444] border-none text-white',
-  warning: 'bg-[#F59E0B] border-none text-white',
+  default: "bg-slate-900 border-none text-white",
+  success: "bg-[#10B981] border-none text-white",
+  error: "bg-[#EF4444] border-none text-white",
+  warning: "bg-[#F59E0B] border-none text-white",
 };
 
-const variantIcons: Record<Variant, React.ComponentType<{ className?: string }>> = {
+const variantIcons: Record<
+  Variant,
+  React.ComponentType<{ className?: string }>
+> = {
   default: Info,
   success: CheckCircle,
   error: AlertCircle,
@@ -70,14 +63,16 @@ const toastAnimation = {
 };
 
 const Toaster = forwardRef<ToasterRef, { defaultPosition?: Position }>(
-  ({ defaultPosition = 'top-center' }, ref) => {
-    const toastReference = useRef<ReturnType<typeof sonnerToast.custom> | null>(null);
+  ({ defaultPosition = "top-center" }, ref) => {
+    const toastReference = useRef<ReturnType<typeof sonnerToast.custom> | null>(
+      null,
+    );
 
     useImperativeHandle(ref, () => ({
       show({
         title,
         message,
-        variant = 'default',
+        variant = "default",
         duration = 4000,
         autoClose,
         icon: customIcon,
@@ -98,11 +93,11 @@ const Toaster = forwardRef<ToasterRef, { defaultPosition?: Position }>(
               transition={{
                 type: "spring",
                 stiffness: 450,
-                damping: 30
+                damping: 30,
               }}
               className={cn(
-                'flex flex-row items-center gap-3 w-fit max-w-[90vw] h-10 px-4 rounded-full shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] mb-4 relative overflow-hidden',
-                variantStyles[variant]
+                "flex flex-row items-center gap-3 w-fit max-w-[90vw] h-10 px-4 rounded-full shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] mb-4 relative overflow-hidden",
+                variantStyles[variant],
               )}
             >
               {customIcon ? (
@@ -143,7 +138,7 @@ const Toaster = forwardRef<ToasterRef, { defaultPosition?: Position }>(
               </button>
             </motion.div>
           ),
-          { duration: finalDuration, position }
+          { duration: finalDuration, position },
         );
       },
     }));
@@ -154,11 +149,11 @@ const Toaster = forwardRef<ToasterRef, { defaultPosition?: Position }>(
         className="flex justify-center"
         toastOptions={{
           unstyled: true,
-          className: 'z-[9999] flex justify-center w-full'
+          className: "z-[9999] flex justify-center w-full",
         }}
       />
     );
-  }
+  },
 );
 
 export default Toaster;

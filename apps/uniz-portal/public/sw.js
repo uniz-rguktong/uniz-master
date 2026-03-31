@@ -18,12 +18,12 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   // Pass-through handler with basic cache matching to satisfy Chrome 120+ strict PWA criteria
   // Without event.respondWith, Chrome completely ignores the fetch handler and disables PWA installs.
-  if (event.request.method !== 'GET') return;
-  
+  if (event.request.method !== "GET") return;
+
   event.respondWith(
-    fetch(event.request).catch(function() {
+    fetch(event.request).catch(function () {
       return caches.match(event.request);
-    })
+    }),
   );
 });
 

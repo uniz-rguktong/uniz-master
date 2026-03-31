@@ -82,7 +82,7 @@ export const runStorageCleanup = async () => {
   try {
     const { stdout } = await execAsync("df -h /");
     console.log("[STORAGE] Final disk status:\n", stdout);
-  } catch (e) { }
+  } catch (e) {}
 
   console.log("[STORAGE] Automated cleanup complete.");
 };

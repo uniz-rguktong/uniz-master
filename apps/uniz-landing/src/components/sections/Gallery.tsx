@@ -29,7 +29,7 @@ const ImageCard: React.FC<ImageCardProps> = ({
         "absolute left-1/2 top-1/2 cursor-pointer overflow-hidden rounded-2xl transition-all duration-500 ease-in-out",
         isCenter
           ? "z-10 ring-4 ring-primary/60 shadow-2xl shadow-primary/20"
-          : "z-0 ring-2 ring-slate-200 hover:ring-primary/30 shadow-lg"
+          : "z-0 ring-2 ring-slate-200 hover:ring-primary/30 shadow-lg",
       )}
       style={{
         width: cardSize,
@@ -49,7 +49,7 @@ const ImageCard: React.FC<ImageCardProps> = ({
         alt={`Campus gallery ${image.tempId + 1}`}
         className={clsx(
           "w-full h-full object-cover transition-all duration-500",
-          isCenter ? "brightness-100" : "brightness-[0.7]"
+          isCenter ? "brightness-100" : "brightness-[0.7]",
         )}
         draggable={false}
       />
@@ -72,7 +72,7 @@ export function Gallery({ images }: { images: readonly string[] }) {
         images.map((src, idx) => ({
           imgSrc: src,
           tempId: idx,
-        }))
+        })),
       );
     }
   }, [images]);
@@ -119,7 +119,10 @@ export function Gallery({ images }: { images: readonly string[] }) {
   if (!imageList.length) return null;
 
   return (
-    <section id="photo-gallery" className="py-24 bg-gradient-to-b from-white via-slate-50 to-white overflow-hidden">
+    <section
+      id="photo-gallery"
+      className="py-24 bg-gradient-to-b from-white via-slate-50 to-white overflow-hidden"
+    >
       {/* Section Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-14">
         <div className="text-center">

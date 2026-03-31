@@ -6,7 +6,8 @@ description: "How security staff use the UniZ Security Portal to verify students
 The Security Portal gives security staff at the campus gate a dedicated interface for verifying approved passes, logging student entry and exit, and tracking who is currently outside campus.
 
 <Info>
-Log in with the `security_admin` username. The Security Portal is role-restricted — other admin roles cannot access the gate control functions.
+  Log in with the `security_admin` username. The Security Portal is
+  role-restricted — other admin roles cannot access the gate control functions.
 </Info>
 
 ## Dashboard overview
@@ -106,6 +107,7 @@ Use this procedure when a student presents their approved pass at the gate to le
     ```
 
     The response returns matching student records with name, branch, and year.
+
   </Step>
   <Step title="Verify the approved pass">
     Confirm that the student has an approved outpass or outing by checking `isApproved: true` on their request record. Cross-check the `fromDay`/`toDay` (outpass) or `fromTime`/`toTime` (outing) against the current date and time.
@@ -128,6 +130,7 @@ Use this procedure when a student presents their approved pass at the gate to le
     ```
 
     The student's `is_in_campus` status changes to `false` in the system.
+
   </Step>
 </Steps>
 
@@ -157,6 +160,7 @@ When a student returns to campus, log their entry to update their presence statu
     ```
 
     The student's `is_in_campus` status changes to `true`.
+
   </Step>
 </Steps>
 
@@ -182,7 +186,9 @@ Set `isPresent` to `false` when the student is leaving, and `true` when they hav
 ```
 
 <Warning>
-Manually updating presence status bypasses the outpass verification check. Only use this endpoint to correct data errors, not as a substitute for the standard check-in/check-out flow.
+  Manually updating presence status bypasses the outpass verification check.
+  Only use this endpoint to correct data errors, not as a substitute for the
+  standard check-in/check-out flow.
 </Warning>
 
 ## Viewing all students currently outside campus
