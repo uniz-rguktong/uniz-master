@@ -1,0 +1,11 @@
+{
+  "name": "uniz-docs",
+  "version": "1.0.0",
+  "description": "UniZ Technical Documentation Service",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx mint dev --port 3333",
+    "build": "echo 'No build step required for Mintlify docs'",
+    "start": "npx mint dev --port 3333"
+  }
+}

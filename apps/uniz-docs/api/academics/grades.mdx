@@ -1,0 +1,539 @@
+---
+title: "Grades"
+description: "Retrieve, add, update, and publish student grades. Includes Excel template download and bulk upload support."
+---
+
+All grades endpoints require authentication. The specific role required varies per endpoint and is noted in each section.
+
+<Info>
+  `GET /academics/grades` is served from a cache layer and typically responds in
+  under 50 ms.
+</Info>
+
+---
+
+## Get my grades
+
+`GET /academics/grades`
+
+Returns the authenticated student's grades across all semesters.
+
+**Auth required:** Yes (student)
+
+### Example
+
+```bash
+curl --request GET \
+  --url https://api.uniz.rguktong.in/api/v1/academics/grades \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "grades": [
+    {
+      "id": "abc-123",
+      "grade": "EX",
+      "semesterId": "E3S1",
+      "subject": {
+        "code": "CS3101",
+        "name": "Operating Systems",
+        "credits": 4
+      }
+    },
+    {
+      "id": "abc-456",
+      "grade": "A",
+      "semesterId": "E3S1",
+      "subject": {
+        "code": "CS3102",
+        "name": "Compiler Design",
+        "credits": 4
+      }
+    }
+  ],
+  "source": "cache"
+}
+```
+
+### Response fields
+
+<ResponseField name="success" type="boolean" required>
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="grades" type="object[]" required>
+  <Expandable title="grade object properties">
+    <ResponseField name="id" type="string">
+      Unique grade record identifier.
+    </ResponseField>
+    <ResponseField name="grade" type="string">
+      Letter grade assigned (e.g. `EX`, `A`, `B`, `C`, `F`).
+    </ResponseField>
+    <ResponseField name="semesterId" type="string">
+      Semester the grade belongs to (e.g. `E3S1`).
+    </ResponseField>
+    <ResponseField name="subject" type="object">
+      <Expandable title="subject properties">
+        <ResponseField name="code" type="string">
+          Subject code (e.g. `CS3101`).
+        </ResponseField>
+        <ResponseField name="name" type="string">
+          Full subject name.
+        </ResponseField>
+        <ResponseField name="credits" type="number">
+          Credit hours for the subject.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="source" type="string">
+  `cache` if served from the cache layer, `db` if fetched directly from the
+  database.
+</ResponseField>
+
+---
+
+## Get batch grades
+
+`GET /academics/grades/batch`
+
+Returns grades for an entire batch, with optional filtering. Intended for administrative use.
+
+**Auth required:** Yes (webmaster, dean, director)
+
+### Query parameters
+
+<ParamField query="branch" type="string" required>
+  Branch code (e.g. `CSE`, `ECE`, `ME`).
+</ParamField>
+
+<ParamField query="year" type="string" required>
+  Academic year (e.g. `E1`, `E2`, `E3`, `E4`).
+</ParamField>
+
+<ParamField query="semesterId" type="string" required>
+  Semester identifier (e.g. `SEM-1`, `SEM-2`).
+</ParamField>
+
+<ParamField query="failedOnly" type="boolean">
+  When `true`, returns only students with failing grades. Defaults to `false`.
+</ParamField>
+
+### Example
+
+```bash
+curl --request GET \
+  --url 'https://api.uniz.rguktong.in/api/v1/academics/grades/batch?branch=CSE&year=E2&semesterId=SEM-1&failedOnly=true' \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "summary": {
+    "totalStudents": 3,
+    "totalRecords": 7,
+    "failedRecords": 7,
+    "timestamp": "2026-02-01T10:00:00.000Z"
+  },
+  "students": [
+    {
+      "studentId": "O210139",
+      "name": "DAMARLA SEETHA RAM PRAVEEN",
+      "branch": "CSE",
+      "year": "E2",
+      "records": [
+        {
+          "subjectCode": "E2-SEM-1-CSE-3",
+          "subjectName": "Design & Analysis of Algorithms",
+          "grade": 0,
+          "credits": 4,
+          "semesterId": "SEM-1"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Response fields
+
+<ResponseField name="summary" type="object">
+  <Expandable title="summary properties">
+    <ResponseField name="totalStudents" type="number">
+      Number of distinct students in the result set.
+    </ResponseField>
+    <ResponseField name="totalRecords" type="number">
+      Total grade records returned.
+    </ResponseField>
+    <ResponseField name="failedRecords" type="number">
+      Number of failing grade records.
+    </ResponseField>
+    <ResponseField name="timestamp" type="string">
+      ISO 8601 timestamp of when the data was fetched.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="students" type="object[]">
+  Array of student grade summaries.
+</ResponseField>
+
+---
+
+## Add grade
+
+`POST /academics/grades/add`
+
+Records a grade for a single student in a specific subject and semester.
+
+**Auth required:** Yes (faculty, admin)
+
+### Request body
+
+<ParamField body="studentId" type="string" required>
+  Student roll number (e.g. `O210008`).
+</ParamField>
+
+<ParamField body="subjectId" type="string" required>
+  UUID of the subject.
+</ParamField>
+
+<ParamField body="semesterId" type="string" required>
+  Semester identifier (e.g. `SEM-1`).
+</ParamField>
+
+<ParamField body="grade" type="string" required>
+  Letter grade or numeric points to assign (e.g. `EX`, `A`, `9.5`).
+</ParamField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/academics/grades/add \
+  --header 'Authorization: Bearer <token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "studentId": "O210008",
+    "subjectId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "semesterId": "SEM-1",
+    "grade": "EX"
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "message": "Grade added successfully"
+}
+```
+
+---
+
+## Bulk update grades
+
+`PUT /academics/grades/bulk-update`
+
+Updates multiple grade records in a single request. Useful for re-evaluations or corrections without uploading an Excel file.
+
+**Auth required:** Yes (webmaster, dean)
+
+### Request body
+
+<ParamField body="updates" type="object[]" required>
+  Array of grade update objects.
+  <Expandable title="update object properties">
+    <ParamField body="studentId" type="string" required>
+      Student roll number.
+    </ParamField>
+    <ParamField body="subjectId" type="string" required>
+      UUID of the subject.
+    </ParamField>
+    <ParamField body="semesterId" type="string" required>
+      Semester identifier.
+    </ParamField>
+    <ParamField body="grade" type="string" required>
+      New letter grade or numeric points.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Example
+
+```bash
+curl --request PUT \
+  --url https://api.uniz.rguktong.in/api/v1/academics/grades/bulk-update \
+  --header 'Authorization: Bearer <token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "updates": [
+      {
+        "studentId": "O210008",
+        "subjectId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "semesterId": "SEM-1",
+        "grade": "EX"
+      },
+      {
+        "studentId": "O210139",
+        "subjectId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "semesterId": "SEM-1",
+        "grade": "A"
+      }
+    ]
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "message": "Grades updated successfully",
+  "updated": 2
+}
+```
+
+---
+
+## Download grade template
+
+`GET /academics/grades/template`
+
+Downloads an Excel template pre-filled with student IDs for the specified batch. Fill in the grade column and upload the file using the upload endpoint.
+
+**Auth required:** Yes (faculty, admin)
+
+### Query parameters
+
+<ParamField query="branch" type="string" required>
+  Branch code (e.g. `CSE`).
+</ParamField>
+
+<ParamField query="year" type="string" required>
+  Academic year (e.g. `E1`).
+</ParamField>
+
+<ParamField query="semester" type="string" required>
+  Semester label (e.g. `SEM-1`).
+</ParamField>
+
+<ParamField query="subjectCode" type="string" required>
+  Subject code to generate the template for (e.g. `E1-SEM-1-CSE-1`).
+</ParamField>
+
+### Example
+
+```bash
+curl --request GET \
+  --url 'https://api.uniz.rguktong.in/api/v1/academics/grades/template?branch=CSE&year=E1&semester=SEM-1&subjectCode=E1-SEM-1-CSE-1' \
+  --header 'Authorization: Bearer <token>' \
+  --output grades_template.xlsx
+```
+
+Returns a binary Excel file (`.xlsx`).
+
+---
+
+## Upload grades
+
+`POST /academics/grades/upload`
+
+Uploads a filled-in Excel template to import grades in bulk. The file is processed in batches in the background.
+
+**Auth required:** Yes (faculty, admin)
+
+**Content type:** `multipart/form-data`
+
+### Request body
+
+<ParamField body="file" type="file" required>
+  The completed Excel file (`.xlsx`) previously downloaded from the template
+  endpoint.
+</ParamField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/academics/grades/upload \
+  --header 'Authorization: Bearer <token>' \
+  --form 'file=@/path/to/grades_template.xlsx'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "message": "Upload started",
+  "jobId": "job-abc-123"
+}
+```
+
+<Tip>
+  Poll `GET /academics/grades/upload/progress` with the returned `jobId` to
+  track processing status.
+</Tip>
+
+---
+
+## Check upload progress
+
+`GET /academics/grades/upload/progress`
+
+Polls the status of a background grade upload job.
+
+**Auth required:** Yes (faculty, admin)
+
+### Example
+
+```bash
+curl --request GET \
+  --url https://api.uniz.rguktong.in/api/v1/academics/grades/upload/progress \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "progress": {
+    "status": "processing",
+    "percent": 45,
+    "processed": 150,
+    "total": 330
+  }
+}
+```
+
+### Response fields
+
+<ResponseField name="progress" type="object">
+  <Expandable title="progress properties">
+    <ResponseField name="status" type="string">
+      Current job status. One of `queued`, `processing`, `completed`, `failed`.
+    </ResponseField>
+    <ResponseField name="percent" type="number">
+      Completion percentage (0–100).
+    </ResponseField>
+    <ResponseField name="processed" type="number">
+      Number of records processed so far.
+    </ResponseField>
+    <ResponseField name="total" type="number">
+      Total number of records in the job.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+## Check publish progress
+
+`GET /academics/grades/publish/progress`
+
+Polls the status of a background grade publishing (email dispatch) job.
+
+**Auth required:** Yes (director)
+
+### Example
+
+```bash
+curl --request GET \
+  --url https://api.uniz.rguktong.in/api/v1/academics/grades/publish/progress \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "progress": {
+    "status": "processing",
+    "percent": 72,
+    "processed": 240,
+    "total": 330
+  }
+}
+```
+
+---
+
+## Download grade report
+
+`GET /academics/grades/download/:semesterId`
+
+Downloads the compiled grade report for a semester as a file.
+
+**Auth required:** Yes (admin)
+
+### Path parameters
+
+<ParamField path="semesterId" type="string" required>
+  Semester identifier (e.g. `SEM-1`).
+</ParamField>
+
+### Example
+
+```bash
+curl --request GET \
+  --url https://api.uniz.rguktong.in/api/v1/academics/grades/download/SEM-1 \
+  --header 'Authorization: Bearer <token>' \
+  --output grades_report_SEM-1.xlsx
+```
+
+Returns a binary Excel file.
+
+---
+
+## Publish results via email
+
+`POST /academics/grades/publish-email`
+
+Triggers a background job that emails grade report cards to all students for the given semester.
+
+**Auth required:** Yes (director only)
+
+### Request body
+
+<ParamField body="semesterId" type="string" required>
+  Semester identifier whose results should be published (e.g. `SEM-1`).
+</ParamField>
+
+### Example
+
+```bash
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/academics/grades/publish-email \
+  --header 'Authorization: Bearer <token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "semesterId": "SEM-1"
+  }'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "message": "Publishing job started"
+}
+```
+
+<Tip>
+  Poll `GET /academics/grades/publish/progress` to monitor email dispatch
+  status.
+</Tip>

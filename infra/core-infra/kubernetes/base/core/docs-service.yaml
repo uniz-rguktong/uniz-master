@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniz-docs-service
+  labels:
+    app: uniz-docs-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uniz-docs-service
+  template:
+    metadata:
+      labels:
+        app: uniz-docs-service
+    spec:
+      containers:
+        - name: docs-service
+          image: uniz-docs-service:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3333
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniz-docs-service
+spec:
+  selector:
+    app: uniz-docs-service
+  ports:
+    - protocol: TCP
+      port: 3333
+      targetPort: 3333

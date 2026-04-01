@@ -15,3 +15,4 @@ resources:
   - portal.yaml
   - storage-cleanup-job.yaml
   - user-service.yaml
+  - docs-service.yaml

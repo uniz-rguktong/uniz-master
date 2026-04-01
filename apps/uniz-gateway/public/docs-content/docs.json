@@ -2,7 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "luma",
   "name": "UniZ",
-  "favicon": "https://media.brand.dev/288cc7c4-5cef-4376-950b-bdf0083eedae.png",
+  "favicon": "./favicon.png",
   "colors": {
     "primary": "#94cb04",
     "light": "#545454",
