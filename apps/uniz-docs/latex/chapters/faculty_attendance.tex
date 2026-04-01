@@ -1,0 +1,362 @@
+
+
+
+Use this guide to submit attendance records for your subjects, correct individual entries, and download attendance reports. Once you upload attendance, students can immediately see their attendance percentage per subject in their portal.
+
+<Info>
+  You log in to UniZ with the same endpoint used by admins. Your `role` in the
+  login response determines your access level.
+</Info>
+
+\subsection{Upload attendance via Excel template}
+
+The recommended workflow for submitting a batch's attendance is to download the pre-filled Excel template, fill in classes attended and total classes, then upload the completed file.
+
+
+\section{Instruction Step}
+
+  
+\section{Instruction Step}
+
+    Send a `GET` request to `/academics/attendance/template` with query
+    parameters for the batch you are recording attendance for. The template
+    comes pre-filled with all student IDs so you do not need to enter them
+    manually.
+
+    \begin{lstlisting}[language=bash]
+    GET https://api.uniz.rguktong.in/api/v1/academics/attendance/template?branch=CSE&year=E3&semester=SEM-1&subjectCode=E3-SEM-1-CSE-1
+    Authorization: Bearer <your-token>
+    
+\end{lstlisting}
+
+    | Parameter     | Example          | Description                        |
+    | ------------- | ---------------- | ---------------------------------- |
+    | `branch`      | `CSE`            | Department code                    |
+    | `year`        | `E3`             | Batch year (E1–E4, P1–P2)          |
+    | `semester`    | `SEM-1`          | Semester identifier                |
+    | `subjectCode` | `E3-SEM-1-CSE-1` | Subject code as registered in UniZ |
+
+    The response is an `.xlsx` file download. Save it before filling it in.
+
+  
+
+  
+\section{Instruction Step}
+
+    Open the downloaded template. Each row corresponds to one student. Fill in
+    the following columns for each student:
+
+    | Column            | Description                                        |
+    | ----------------- | -------------------------------------------------- |
+    | `attendedClasses` | Number of classes the student physically attended  |
+    | `totalClasses`    | Total number of classes conducted for the subject  |
+
+    **Example rows:**
+
+    | Student ID | Attended Classes | Total Classes |
+    | ---------- | ---------------- | ------------- |
+    | O210008    | 45               | 50            |
+    | O210045    | 38               | 50            |
+    | O210139    | 50               | 50            |
+
+    Do not modify the student ID column or add or remove rows. Both values must
+    be whole numbers. `attendedClasses` cannot exceed `totalClasses`.
+
+    <Warning>
+      The file size limit for uploads is **50 MB**. Standard attendance sheets
+      are well within this limit, but avoid embedding images or charts in the
+      spreadsheet.
+    </Warning>
+
+    <Tip>
+      If a student was not enrolled in the subject, leave both cells blank
+      rather than entering zeros. Entering `0/50` will register as 0%
+      attendance and will be visible to the student.
+    </Tip>
+
+  
+
+  
+\section{Instruction Step}
+
+    Post the completed file to `/academics/attendance/upload` as a multipart
+    form.
+
+    \begin{lstlisting}[language=bash]
+    POST https://api.uniz.rguktong.in/api/v1/academics/attendance/upload
+    Authorization: Bearer <your-token>
+    Content-Type: multipart/form-data
+
+    file=<your-filled-attendance-template.xlsx>
+    
+\end{lstlisting}
+
+    **Success response:**
+
+    \begin{lstlisting}[language=json]
+    {
+      "success": true,
+      "processed": 62,
+      "successCount": 61,
+      "failCount": 1,
+      "errors": [
+        "Row 22: attendedClasses (55) exceeds totalClasses (50) for student O210077"
+      ]
+    }
+    
+\end{lstlisting}
+
+    Upload is processed as a background batch job. The `successCount` and
+    `failCount` fields give you an immediate summary. Review any entries listed
+    in `errors`, correct them in the sheet, and re-upload only the corrected
+    rows if needed — or fix the values individually using the manual add
+    endpoint below.
+
+    <Note>
+      Uploading a file does not overwrite existing attendance for students
+      not included in the new file. Only rows present in the uploaded sheet
+      are processed.
+    </Note>
+
+  
+
+  
+\section{Instruction Step}
+
+    For large batches, poll the progress endpoint until the job completes.
+
+    \begin{lstlisting}[language=bash]
+    GET https://api.uniz.rguktong.in/api/v1/academics/attendance/upload/progress
+    Authorization: Bearer <your-token>
+    
+\end{lstlisting}
+
+    **Response:**
+
+    \begin{lstlisting}[language=json]
+    {
+      "success": true,
+      "progress": {
+        "status": "processing",
+        "percent": 68,
+        "processed": 210,
+        "total": 310
+      }
+    }
+    
+\end{lstlisting}
+
+    Poll every few seconds until `status` is `"completed"` and `percent`
+    reaches `100`.
+
+  
+</Steps>
+
+---
+
+\subsection{Add attendance manually for individual students}
+
+To record or correct attendance for a single student without re-uploading a
+full sheet, use the add attendance endpoint directly.
+
+\begin{lstlisting}[language=bash]
+POST https://api.uniz.rguktong.in/api/v1/academics/attendance/add
+Authorization: Bearer <your-token>
+Content-Type: application/json
+
+\end{lstlisting}
+
+**Request body:**
+
+\begin{lstlisting}[language=json]
+{
+  "studentId": "O210008",
+  "subjectCode": "E3-SEM-1-CSE-1",
+  "semesterId": "SEM-1",
+  "attendedClasses": 45,
+  "totalClasses": 50
+}
+
+\end{lstlisting}
+
+**Success response:**
+
+\begin{lstlisting}[language=json]
+{
+  "success": true,
+  "message": "Attendance added successfully"
+}
+
+\end{lstlisting}
+
+If a record already exists for that student and subject, this call updates it
+in place.
+
+---
+
+\subsection{Download an attendance report}
+
+To download a consolidated attendance report for a semester, use the download
+endpoint with the semester ID.
+
+\begin{lstlisting}[language=bash]
+GET https://api.uniz.rguktong.in/api/v1/academics/attendance/download/:semesterId
+Authorization: Bearer <your-token>
+
+\end{lstlisting}
+
+**Example:**
+
+\begin{lstlisting}[language=bash]
+GET https://api.uniz.rguktong.in/api/v1/academics/attendance/download/SEM-1
+Authorization: Bearer <your-token>
+
+\end{lstlisting}
+
+The response is a downloadable report file for that semester. Use this to
+identify students who fall below the required attendance threshold before
+finalising records.
+
+---
+
+\subsection{What students see}
+
+After you upload attendance, students can view their attendance percentage for
+each subject in their portal immediately — no additional publish step is
+required for attendance data.
+
+Each student sees:
+
+- Subject name and code
+- Number of classes attended
+- Total classes conducted
+- Calculated attendance percentage
+
+**Example of what the student portal displays (derived from uploaded data):**
+
+\begin{lstlisting}[language=json]
+{
+  "success": true,
+  "attendance": [
+    {
+      "id": "att-123",
+      "attendedClasses": 45,
+      "totalClasses": 50,
+      "subject": {
+        "code": "CS3101",
+        "name": "Operating Systems"
+      }
+    },
+    {
+      "id": "att-124",
+      "attendedClasses": 38,
+      "totalClasses": 50,
+      "subject": {
+        "code": "CS3102",
+        "name": "Compiler Design"
+      }
+    }
+  ]
+}
+
+\end{lstlisting}
+
+The attendance percentage displayed to the student is calculated as
+`(attendedClasses / totalClasses) × 100`. Ensure your `totalClasses` value is
+accurate before uploading, as corrections after students have viewed their
+records can cause confusion.
+
+---
+
+\subsection{Publish attendance summary via email}
+
+<Warning>
+  The email publish endpoint (`POST /academics/attendance/publish-email`) is
+  **deprecated**. Prefer downloading the attendance report directly using
+  `GET /academics/attendance/download/:semesterId` and sharing it through your
+  department's standard communication channels.
+
+The endpoint is retained for audit compliance and may be removed in a future
+release.
+
+</Warning>
+
+If you need to trigger an email summary for audit or legacy purposes:
+
+\begin{lstlisting}[language=bash]
+POST https://api.uniz.rguktong.in/api/v1/academics/attendance/publish-email
+Authorization: Bearer <your-token>
+Content-Type: application/json
+
+\end{lstlisting}
+
+**Request body:**
+
+\begin{lstlisting}[language=json]
+{
+  "semesterId": "SEM-1"
+}
+
+\end{lstlisting}
+
+**Response:**
+
+\begin{lstlisting}[language=json]
+{
+  "success": true,
+  "message": "Attendance summary email job queued"
+}
+
+\end{lstlisting}
+
+---
+
+\subsection{Attendance format reference}
+
+
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    Each row in the template requires:
+
+    - **Student ID** — pre-filled, do not edit
+    - **attendedClasses** — whole number
+    - **totalClasses** — whole number, must be ≥ attendedClasses
+
+  
+\end{tcolorbox}
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    The upload endpoint accepts:
+
+    - `.xlsx` (recommended)
+    - `.xls`
+    - `.csv`
+
+    Maximum file size: **50 MB**
+
+  
+\end{tcolorbox}
+
+</CardGroup>
+
+
+\section{Deep Technical Analysis}
+The underlying system architecture for this module is built upon the \textbf{UniZ Microservices Framework}. 
+This design ensures that each functional unit (Auth, Profile, Academics) remains isolated, preventing cascading failures across the university ecosystem.
+
+\subsection{Operational Hardening}
+Deployments are managed via K3s (Kubernetes) and containerized using high-performance Alpine Linux Docker images. 
+Resource management is critical; for instance, the documentation service itself is provisioned with 2GB of RAM to ensure the responsive rendering of complex documentation graphs and state-management components.
+
+\subsection{Enterprise Security Topology}
+Every request entering the UniZ gateway is subjected to an aggressive JWT validation layer. 
+Permissions are granular, mapping directly onto the RBAC (Role-Based Access Control) matrix defined in the core system specifications.
+
+\subsection{Data Governance}
+Prisma-driven data access ensures type safety and predictable query performance. 
+We utilize PostgreSQL connection pooling to handle concurrent requests from the student portal and administrative dashboards simultaneously.

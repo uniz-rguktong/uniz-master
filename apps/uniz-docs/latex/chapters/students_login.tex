@@ -1,0 +1,297 @@
+
+
+
+The UniZ portal is your central hub for academics, leave requests, and your student profile. Your login credentials are your RGUKT roll number and a password set by the administration.
+
+\subsection{Sign in}
+
+
+\section{Instruction Step}
+
+  
+\section{Instruction Step}
+
+    Navigate to the UniZ student portal URL provided by your institution.
+  
+  
+\section{Instruction Step}
+
+    - **Username** — your roll number (e.g., `O210008`) - **Password** — your
+    current password
+  
+  
+\section{Instruction Step}
+
+    On success, you are redirected to your profile dashboard. The portal stores
+    your session securely in the browser — you do not need to enter your
+    credentials again until you log out or your session expires.
+  
+</Steps>
+
+<Note>
+  Your username is always your roll number in uppercase (e.g., `O210008`). It
+  never changes.
+</Note>
+
+\subsubsection{How authentication works}
+
+When you sign in, the server issues a JWT (JSON Web Token) that the portal stores in your browser. Every subsequent request automatically includes this token — you don't need to do anything extra in the portal.
+
+If you are building on top of the API directly, include the token in every request:
+
+\begin{lstlisting}[language=bash]
+Authorization: Bearer <your-token>
+
+\end{lstlisting}
+
+**Login endpoint (for API use):**
+
+\begin{lstlisting}[language=bash]
+POST https://api.uniz.rguktong.in/api/v1/auth/login/student
+
+\end{lstlisting}
+
+\begin{lstlisting}[language=json]
+{
+  "username": "O210008",
+  "password": "password123"
+}
+
+\end{lstlisting}
+
+**Success response:**
+
+\begin{lstlisting}[language=json]
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUz...",
+  "role": "student",
+  "username": "O210008"
+}
+
+\end{lstlisting}
+
+---
+
+\subsection{Reset your password}
+
+Use this flow if you've forgotten your password. You'll need access to the email address registered with your account.
+
+
+\section{Instruction Step}
+
+  
+\section{Instruction Step}
+
+    Tap **Forgot Password** on the sign-in screen.
+  
+  
+\section{Instruction Step}
+
+    Submit your username (`O210008`). The system sends a 6-digit OTP to your registered email address.
+
+    \begin{lstlisting}[language=json]
+    POST /auth/otp/request
+    { "username": "O210008" }
+    
+\end{lstlisting}
+
+  
+  
+\section{Instruction Step}
+
+    Check your inbox and enter the 6-digit code in the verification field.
+
+    \begin{lstlisting}[language=json]
+    POST /auth/otp/verify
+    {
+      "username": "O210008",
+      "otp": "123456"
+    }
+    
+\end{lstlisting}
+
+  
+  
+\section{Instruction Step}
+
+    Enter and confirm your new password. The reset requires a valid OTP and the same username.
+
+    \begin{lstlisting}[language=json]
+    POST /auth/password/reset
+    {
+      "username": "O210008",
+      "resetToken": "123456",
+      "newPassword": "newSecurePassword123"
+    }
+    
+\end{lstlisting}
+
+  
+</Steps>
+
+<Warning>
+  OTP requests are rate-limited. If you request too many OTPs in a short period,
+  you'll be temporarily blocked. Wait a few minutes before trying again.
+</Warning>
+
+---
+
+\subsection{Change your password}
+
+Once logged in, you can change your password from the **Reset Password** page in the portal. You'll need your current password.
+
+A strong password must meet all three criteria:
+
+- At least 8 characters
+- Contains at least one number
+- Contains at least one special character (e.g., `!@#$%`)
+
+<Warning>
+  After a successful password change, all active sessions are immediately logged
+  out for security. You'll need to sign in again with your new password.
+</Warning>
+
+The portal evaluates your new password in real time and shows a strength indicator (Weak / Moderate / Strong). Weak and Moderate passwords are rejected.
+
+---
+
+\subsection{Install as a PWA}
+
+UniZ is a Progressive Web App (PWA). You can install it on your phone or desktop so it opens like a native app — no app store required.
+
+<Tabs>
+  <Tab title="Android">
+    
+\section{Instruction Step}
+
+      
+\section{Instruction Step}
+
+        Navigate to the UniZ portal URL.
+      
+      
+\section{Instruction Step}
+
+        Chrome shows an **Add to Home Screen** banner at the bottom, or you can
+        tap the three-dot menu and select **Install app** / **Add to Home
+        Screen**.
+      
+      
+\section{Instruction Step}
+
+        Tap **Install**. The app icon appears on your home screen and opens in
+        standalone mode.
+      
+    </Steps>
+  </Tab>
+  <Tab title="iOS (Safari)">
+    
+\section{Instruction Step}
+
+      
+\section{Instruction Step}
+
+        PWA installation on iOS only works in Safari.
+      
+      
+\section{Instruction Step}
+
+        Tap the share icon at the bottom of the screen (the box with an arrow
+        pointing up).
+      
+      
+\section{Instruction Step}
+
+        Scroll down in the share sheet and tap **Add to Home Screen**, then tap
+        **Add**.
+      
+    </Steps>
+  </Tab>
+  <Tab title="Desktop (Chrome/Edge)">
+    
+\section{Instruction Step}
+
+      
+\section{Instruction Step}
+
+        Navigate to the UniZ portal URL in Chrome or Edge.
+      
+      
+\section{Instruction Step}
+
+        Look for an install icon in the address bar (a monitor with a download
+        arrow), or open the browser menu and select **Install UniZ**.
+      
+      
+\section{Instruction Step}
+
+        Click **Install**. The app opens in its own window.
+      
+    </Steps>
+  </Tab>
+</Tabs>
+
+<Tip>
+  Installing the PWA gives you a faster experience and keeps your session active
+  between visits without navigating to the URL each time.
+</Tip>
+
+---
+
+\subsection{Common errors}
+
+
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    Double-check that your roll number is entered in the correct format (e.g.,
+    `O210008` — capital letter O, not zero). Passwords are case-sensitive.
+  
+\end{tcolorbox}
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    If your account has been suspended by the administration, you'll see a
+    suspension message on sign-in. Contact your warden or SWO to resolve this.
+  
+\end{tcolorbox}
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    Check your spam folder. If the email still hasn't arrived after a few
+    minutes, confirm your registered email with your hostel admin and try
+    requesting the OTP again.
+  
+\end{tcolorbox}
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    JWT tokens expire after a set period. If you're redirected to the login page
+    unexpectedly, simply sign in again.
+  
+\end{tcolorbox}
+
+</CardGroup>
+
+
+\section{Deep Technical Analysis}
+The underlying system architecture for this module is built upon the \textbf{UniZ Microservices Framework}. 
+This design ensures that each functional unit (Auth, Profile, Academics) remains isolated, preventing cascading failures across the university ecosystem.
+
+\subsection{Operational Hardening}
+Deployments are managed via K3s (Kubernetes) and containerized using high-performance Alpine Linux Docker images. 
+Resource management is critical; for instance, the documentation service itself is provisioned with 2GB of RAM to ensure the responsive rendering of complex documentation graphs and state-management components.
+
+\subsection{Enterprise Security Topology}
+Every request entering the UniZ gateway is subjected to an aggressive JWT validation layer. 
+Permissions are granular, mapping directly onto the RBAC (Role-Based Access Control) matrix defined in the core system specifications.
+
+\subsection{Data Governance}
+Prisma-driven data access ensures type safety and predictable query performance. 
+We utilize PostgreSQL connection pooling to handle concurrent requests from the student portal and administrative dashboards simultaneously.

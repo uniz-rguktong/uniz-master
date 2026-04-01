@@ -1,0 +1,247 @@
+
+
+
+All login endpoints are **unauthenticated**. On success, you receive a `token` that must be sent as `Authorization: Bearer <token>` on every subsequent request.
+
+<Warning>
+  Login endpoints are rate-limited per IP. Repeated failed attempts will result
+  in a `429 Too Many Requests` response.
+</Warning>
+
+---
+
+\subsection{General login}
+
+`POST /auth/login`
+
+Authenticates any user — student or admin — and returns a JWT with the caller's role. Use the role-specific endpoints (`/auth/login/student`, `/auth/login/admin`) when you need to restrict which account types are accepted.
+
+**Auth required:** No
+
+\subsubsection{Request body}
+
+<ParamField body="username" type="string" required>
+  The student roll number (e.g. `O210008`) or admin username (e.g. `director`).
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  The account password.
+</ParamField>
+
+\subsubsection{Response}
+
+<ResponseField name="success" type="boolean" required>
+  `true` on successful authentication.
+</ResponseField>
+
+<ResponseField name="token" type="string" required>
+  Signed JWT. Pass this value in the `Authorization: Bearer` header for all
+  authenticated requests.
+</ResponseField>
+
+<ResponseField name="role" type="string" required>
+  The role assigned to this account. Possible values: `student`, `director`,
+  `dean`, `warden_male`, `warden_female`, `caretaker_male`, `caretaker_female`,
+  `security`, `webmaster`.
+</ResponseField>
+
+<ResponseField name="username" type="string" required>
+  The username that was authenticated.
+</ResponseField>
+
+\subsubsection{Example}
+
+\begin{lstlisting}[language=bash]
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/auth/login \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "username": "O210008",
+    "password": "password123"
+  }'
+
+\end{lstlisting}
+
+**200 OK — student**
+
+\begin{lstlisting}[language=json]
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "role": "student",
+  "username": "O210008"
+}
+
+\end{lstlisting}
+
+**200 OK — admin**
+
+\begin{lstlisting}[language=json]
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "role": "director",
+  "username": "director"
+}
+
+\end{lstlisting}
+
+\subsubsection{Error responses}
+
+| Status                  | Meaning                          |
+| ----------------------- | -------------------------------- |
+| `401 Unauthorized`      | Incorrect password.              |
+| `403 Forbidden`         | Account is suspended.            |
+| `429 Too Many Requests` | Rate limit exceeded for this IP. |
+
+---
+
+\subsection{Student login}
+
+`POST /auth/login/student`
+
+Identical to general login but rejects credentials that do not belong to a `student` role. Use this endpoint in student-facing clients to prevent admins from signing in through the student app.
+
+**Auth required:** No
+
+\subsubsection{Request body}
+
+<ParamField body="username" type="string" required>
+  Student roll number (e.g. `O210008`).
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  The student's password.
+</ParamField>
+
+\subsubsection{Example}
+
+\begin{lstlisting}[language=bash]
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/auth/login/student \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "username": "O210008",
+    "password": "password123"
+  }'
+
+\end{lstlisting}
+
+**200 OK**
+
+\begin{lstlisting}[language=json]
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "role": "student",
+  "username": "O210008"
+}
+
+\end{lstlisting}
+
+\subsubsection{Error responses}
+
+| Status                  | Meaning                                                             |
+| ----------------------- | ------------------------------------------------------------------- |
+| `401 Unauthorized`      | Incorrect password.                                                 |
+| `403 Forbidden`         | Account is suspended, or the account belongs to a non-student role. |
+| `429 Too Many Requests` | Rate limit exceeded for this IP.                                    |
+
+---
+
+\subsection{Admin login}
+
+`POST /auth/login/admin`
+
+Authenticates administrative accounts only. Rejects student credentials.
+
+**Auth required:** No
+
+\subsubsection{Request body}
+
+<ParamField body="username" type="string" required>
+  Admin username (e.g. `director`, `dean_cse`, `warden_male`,
+  `caretaker_female`, `security_admin`).
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  The admin's password.
+</ParamField>
+
+\subsubsection{Example}
+
+\begin{lstlisting}[language=bash]
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/auth/login/admin \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "username": "director",
+    "password": "director@uniz"
+  }'
+
+\end{lstlisting}
+
+**200 OK**
+
+\begin{lstlisting}[language=json]
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "role": "director",
+  "username": "director"
+}
+
+\end{lstlisting}
+
+\subsubsection{Error responses}
+
+| Status                  | Meaning                                                         |
+| ----------------------- | --------------------------------------------------------------- |
+| `401 Unauthorized`      | Incorrect password.                                             |
+| `403 Forbidden`         | Account is suspended, or the account belongs to a student role. |
+| `429 Too Many Requests` | Rate limit exceeded for this IP.                                |
+
+---
+
+\subsection{Logout}
+
+`POST /auth/logout`
+
+Clears the server-side session. The client should also discard the stored JWT.
+
+**Auth required:** No
+
+\subsubsection{Example}
+
+\begin{lstlisting}[language=bash]
+curl --request POST \
+  --url https://api.uniz.rguktong.in/api/v1/auth/logout \
+  --header 'Authorization: Bearer <token>'
+
+\end{lstlisting}
+
+**200 OK**
+
+\begin{lstlisting}[language=json]
+{
+  "success": true
+}
+
+\end{lstlisting}
+
+
+\section{Deep Technical Analysis}
+The underlying system architecture for this module is built upon the \textbf{UniZ Microservices Framework}. 
+This design ensures that each functional unit (Auth, Profile, Academics) remains isolated, preventing cascading failures across the university ecosystem.
+
+\subsection{Operational Hardening}
+Deployments are managed via K3s (Kubernetes) and containerized using high-performance Alpine Linux Docker images. 
+Resource management is critical; for instance, the documentation service itself is provisioned with 2GB of RAM to ensure the responsive rendering of complex documentation graphs and state-management components.
+
+\subsection{Enterprise Security Topology}
+Every request entering the UniZ gateway is subjected to an aggressive JWT validation layer. 
+Permissions are granular, mapping directly onto the RBAC (Role-Based Access Control) matrix defined in the core system specifications.
+
+\subsection{Data Governance}
+Prisma-driven data access ensures type safety and predictable query performance. 
+We utilize PostgreSQL connection pooling to handle concurrent requests from the student portal and administrative dashboards simultaneously.
