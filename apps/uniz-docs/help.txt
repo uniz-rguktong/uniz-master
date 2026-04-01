@@ -1,0 +1,17 @@
+usage: mintlify dev [options]
+
+Options:
+  -t, --telemetry        Enable or disable anonymous usage telemetry   [boolean]
+      --open             open a local preview in the browser
+                                                       [boolean] [default: true]
+      --groups           Mock user groups for local development and testing
+                                                                         [array]
+      --disable-openapi  Disable OpenAPI file generation
+                                                      [boolean] [default: false]
+  -h, --help             Show help                                     [boolean]
+  -v, --version          Show version number                           [boolean]
+
+Examples:
+  mintlify dev            run with default settings (opens in browser)
+  mintlify dev --no-open  run without opening in browser
+
