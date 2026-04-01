@@ -164,62 +164,21 @@ const serviceMap: Record<string, string> = {
     "http://uniz-outpass-service.default.svc.cluster.local:3003",
 };
 
-// 4. Documentation Engine (UniZ Elegant Docs)
-app.use(
-  "/docs-content",
-  express.static(path.join(process.cwd(), "public/docs-content")),
-);
+// 4. Documentation Engine (UniZ Mintlify Docs Proxy)
+app.use("/docs-content", (req, res) => {
+  // Directly proxy docs-content if referenced by old paths
+  proxy.web(req, res, { target: "http://localhost:3333" });
+});
 
-app.get("/docs", (req, res) => {
-  res.send(`
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>UniZ | Technical Documentation</title>
-  <link rel="icon" href="https://uniz.rguktong.in/favicon.ico">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
-  <style>
-    :root {
-      --theme-color: #003366;
-    }
-    .sidebar { background-color: #f8fafc; border-right: 1px solid #e2e8f0; }
-    .content { padding-top: 40px; }
-    section.cover { background: linear-gradient(to bottom right, #003366, #001a33) !important; }
-    .markdown-section h1 { color: #003366; font-weight: 700; }
-    .markdown-section h2 { color: #334155; border-bottom: none; }
-    .app-name-link img { width: 80px; }
-  </style>
-</head>
-<body>
-  <div id="app">Loading UniZ Documentation...</div>
-  <script>
-    window.$docsify = {
-      el: '#app',
-      name: 'UniZ Manual',
-      repo: 'https://github.com/uniz-rguktong/uniz-master',
-      basePath: '/docs-content/',
-      loadSidebar: true,
-      subMaxLevel: 2,
-      homepage: 'introduction.mdx',
-      ext: '.mdx',
-      auto2top: true,
-      executeScript: true,
-      search: 'auto',
-      placeholder: 'Search documentation...',
-      noData: 'No matches',
-      version: '1.4'
-    }
-  </script>
-  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify-yml-front-matter/dist/docsify-yml-front-matter.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
-</body>
-</html>
-  `);
+app.all("/docs*", (req, res) => {
+  // Rewrite /docs/something to /something for Mintlify
+  req.url = req.url.replace(/^\/docs/, "");
+  if (req.url === "") req.url = "/";
+  
+  proxy.web(req, res, { 
+    target: process.env.DOCS_SERVICE_URL || "http://localhost:3333",
+    changeOrigin: true 
+  });
 });
 
 // 4. Standard Health Endpoints with Precision Timing & 2s Cache
@@ -256,18 +215,6 @@ app.get(
     res.status(allOk ? 200 : 503).json(data);
   },
 );
-
-// DEBUG: Verify Docs Path
-app.get("/api/v1/system/docs-debug", (req, res) => {
-  const p = path.join(__dirname, "../public/docs-content");
-  const fs = require("fs");
-  try {
-    const files = fs.existsSync(p) ? fs.readdirSync(p) : "PATH_NOT_FOUND";
-    res.json({ resolved_path: p, files });
-  } catch (e: any) {
-    res.json({ error: e.message, path: p });
-  }
-});
 
 // 5. Warp-Speed Proxy Engine
 app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {

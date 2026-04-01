@@ -52,6 +52,7 @@ deploy_logic() {
     "uniz-outpass:uniz-outpass-service:uniz-outpass-service:outpass-service"
     "uniz-portal:uniz-portal:uniz-portal:portal"
     "uniz-landing:uniz-landing:uniz-landing:landing"
+    "uniz-docs:uniz-docs-service:uniz-docs-service:docs-service"
     "uniz-user:uniz-user-service:uniz-user-service:user-service"
     "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
   )
