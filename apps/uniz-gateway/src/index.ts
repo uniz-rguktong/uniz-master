@@ -162,6 +162,9 @@ const serviceMap: Record<string, string> = {
   grievance:
     process.env.OUTPASS_SERVICE_URL ||
     "http://uniz-outpass-service.default.svc.cluster.local:3003",
+  docs:
+    process.env.DOCS_SERVICE_URL ||
+    "http://uniz-docs-service.default.svc.cluster.local:3333",
 };
 
 // 4. Documentation Engine (UniZ Mintlify Docs Proxy)
@@ -170,7 +173,7 @@ app.use("/docs-content", (req, res) => {
   proxy.web(req, res, { target: "http://localhost:3333" });
 });
 
-app.all("/docs*", (req, res) => {
+app.use("/docs", (req, res) => {
   // Rewrite /docs/something to /something for Mintlify
   req.url = req.url.replace(/^\/docs/, "");
   if (req.url === "") req.url = "/";
