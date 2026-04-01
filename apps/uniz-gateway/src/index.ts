@@ -167,19 +167,28 @@ const serviceMap: Record<string, string> = {
     "http://uniz-docs-service.default.svc.cluster.local:3333",
 };
 
-// 4. Documentation Engine (UniZ Mintlify Docs Proxy)
-app.use("/docs-content", (req, res) => {
-  // Directly proxy docs-content if referenced by old paths
-  proxy.web(req, res, { target: "http://localhost:3333" });
+// 4. Documentation Engine Assets Helper (Aggressive Asset Retrieval)
+app.use((req, res, next) => {
+  const referer = req.headers.referer || "";
+  const isDocsReferer = referer.includes("/docs");
+  const isApiRequest = req.url.startsWith("/api/v1");
+  const isDocsRequest = req.url.startsWith("/docs");
+  
+  // If it's a non-API asset request originating from the docs page, 
+  // try to fetch it from the docs service before letting it fall through
+  if (isDocsReferer && !isApiRequest && !isDocsRequest) {
+    return proxy.web(req, res, { target: "http://localhost:3333" });
+  }
+  next();
 });
 
 app.use("/docs", (req, res) => {
-  // Rewrite /docs/something to /something for Mintlify
-  req.url = req.url.replace(/^\/docs/, "");
-  if (req.url === "") req.url = "/";
+  // Pass the full original path to the documentation service
+  const path = req.originalUrl.replace(/^\/docs/, "/").replace(/\/+/, "/");
+  req.url = path;
   
   proxy.web(req, res, { 
-    target: process.env.DOCS_SERVICE_URL || "http://localhost:3333",
+    target: "http://localhost:3333",
     changeOrigin: true 
   });
 });
