@@ -1,0 +1,313 @@
+---
+title: "Attendance"
+description: "Upload and manage student attendance records for your subjects on UniZ."
+---
+
+Use this guide to submit attendance records for your subjects, correct individual entries, and download attendance reports. Once you upload attendance, students can immediately see their attendance percentage per subject in their portal.
+
+<Info>
+  You log in to UniZ with the same endpoint used by admins. Your `role` in the
+  login response determines your access level.
+</Info>
+
+## Upload attendance via Excel template
+
+The recommended workflow for submitting a batch's attendance is to download the pre-filled Excel template, fill in classes attended and total classes, then upload the completed file.
+
+<Steps>
+  <Step title="Download the attendance template">
+    Send a `GET` request to `/academics/attendance/template` with query
+    parameters for the batch you are recording attendance for. The template
+    comes pre-filled with all student IDs so you do not need to enter them
+    manually.
+
+    ```bash
+    GET https://api.uniz.rguktong.in/api/v1/academics/attendance/template?branch=CSE&year=E3&semester=SEM-1&subjectCode=E3-SEM-1-CSE-1
+    Authorization: Bearer <your-token>
+    ```
+
+    | Parameter     | Example          | Description                        |
+    | ------------- | ---------------- | ---------------------------------- |
+    | `branch`      | `CSE`            | Department code                    |
+    | `year`        | `E3`             | Batch year (E1–E4, P1–P2)          |
+    | `semester`    | `SEM-1`          | Semester identifier                |
+    | `subjectCode` | `E3-SEM-1-CSE-1` | Subject code as registered in UniZ |
+
+    The response is an `.xlsx` file download. Save it before filling it in.
+
+  </Step>
+
+  <Step title="Fill in attendance for each student">
+    Open the downloaded template. Each row corresponds to one student. Fill in
+    the following columns for each student:
+
+    | Column            | Description                                        |
+    | ----------------- | -------------------------------------------------- |
+    | `attendedClasses` | Number of classes the student physically attended  |
+    | `totalClasses`    | Total number of classes conducted for the subject  |
+
+    **Example rows:**
+
+    | Student ID | Attended Classes | Total Classes |
+    | ---------- | ---------------- | ------------- |
+    | O210008    | 45               | 50            |
+    | O210045    | 38               | 50            |
+    | O210139    | 50               | 50            |
+
+    Do not modify the student ID column or add or remove rows. Both values must
+    be whole numbers. `attendedClasses` cannot exceed `totalClasses`.
+
+    <Warning>
+      The file size limit for uploads is **50 MB**. Standard attendance sheets
+      are well within this limit, but avoid embedding images or charts in the
+      spreadsheet.
+    </Warning>
+
+    <Tip>
+      If a student was not enrolled in the subject, leave both cells blank
+      rather than entering zeros. Entering `0/50` will register as 0%
+      attendance and will be visible to the student.
+    </Tip>
+
+  </Step>
+
+  <Step title="Upload the filled template">
+    Post the completed file to `/academics/attendance/upload` as a multipart
+    form.
+
+    ```bash
+    POST https://api.uniz.rguktong.in/api/v1/academics/attendance/upload
+    Authorization: Bearer <your-token>
+    Content-Type: multipart/form-data
+
+    file=<your-filled-attendance-template.xlsx>
+    ```
+
+    **Success response:**
+
+    ```json
+    {
+      "success": true,
+      "processed": 62,
+      "successCount": 61,
+      "failCount": 1,
+      "errors": [
+        "Row 22: attendedClasses (55) exceeds totalClasses (50) for student O210077"
+      ]
+    }
+    ```
+
+    Upload is processed as a background batch job. The `successCount` and
+    `failCount` fields give you an immediate summary. Review any entries listed
+    in `errors`, correct them in the sheet, and re-upload only the corrected
+    rows if needed — or fix the values individually using the manual add
+    endpoint below.
+
+    <Note>
+      Uploading a file does not overwrite existing attendance for students
+      not included in the new file. Only rows present in the uploaded sheet
+      are processed.
+    </Note>
+
+  </Step>
+
+  <Step title="Monitor upload progress">
+    For large batches, poll the progress endpoint until the job completes.
+
+    ```bash
+    GET https://api.uniz.rguktong.in/api/v1/academics/attendance/upload/progress
+    Authorization: Bearer <your-token>
+    ```
+
+    **Response:**
+
+    ```json
+    {
+      "success": true,
+      "progress": {
+        "status": "processing",
+        "percent": 68,
+        "processed": 210,
+        "total": 310
+      }
+    }
+    ```
+
+    Poll every few seconds until `status` is `"completed"` and `percent`
+    reaches `100`.
+
+  </Step>
+</Steps>
+
+---
+
+## Add attendance manually for individual students
+
+To record or correct attendance for a single student without re-uploading a
+full sheet, use the add attendance endpoint directly.
+
+```bash
+POST https://api.uniz.rguktong.in/api/v1/academics/attendance/add
+Authorization: Bearer <your-token>
+Content-Type: application/json
+```
+
+**Request body:**
+
+```json
+{
+  "studentId": "O210008",
+  "subjectCode": "E3-SEM-1-CSE-1",
+  "semesterId": "SEM-1",
+  "attendedClasses": 45,
+  "totalClasses": 50
+}
+```
+
+**Success response:**
+
+```json
+{
+  "success": true,
+  "message": "Attendance added successfully"
+}
+```
+
+If a record already exists for that student and subject, this call updates it
+in place.
+
+---
+
+## Download an attendance report
+
+To download a consolidated attendance report for a semester, use the download
+endpoint with the semester ID.
+
+```bash
+GET https://api.uniz.rguktong.in/api/v1/academics/attendance/download/:semesterId
+Authorization: Bearer <your-token>
+```
+
+**Example:**
+
+```bash
+GET https://api.uniz.rguktong.in/api/v1/academics/attendance/download/SEM-1
+Authorization: Bearer <your-token>
+```
+
+The response is a downloadable report file for that semester. Use this to
+identify students who fall below the required attendance threshold before
+finalising records.
+
+---
+
+## What students see
+
+After you upload attendance, students can view their attendance percentage for
+each subject in their portal immediately — no additional publish step is
+required for attendance data.
+
+Each student sees:
+
+- Subject name and code
+- Number of classes attended
+- Total classes conducted
+- Calculated attendance percentage
+
+**Example of what the student portal displays (derived from uploaded data):**
+
+```json
+{
+  "success": true,
+  "attendance": [
+    {
+      "id": "att-123",
+      "attendedClasses": 45,
+      "totalClasses": 50,
+      "subject": {
+        "code": "CS3101",
+        "name": "Operating Systems"
+      }
+    },
+    {
+      "id": "att-124",
+      "attendedClasses": 38,
+      "totalClasses": 50,
+      "subject": {
+        "code": "CS3102",
+        "name": "Compiler Design"
+      }
+    }
+  ]
+}
+```
+
+The attendance percentage displayed to the student is calculated as
+`(attendedClasses / totalClasses) × 100`. Ensure your `totalClasses` value is
+accurate before uploading, as corrections after students have viewed their
+records can cause confusion.
+
+---
+
+## Publish attendance summary via email
+
+<Warning>
+  The email publish endpoint (`POST /academics/attendance/publish-email`) is
+  **deprecated**. Prefer downloading the attendance report directly using
+  `GET /academics/attendance/download/:semesterId` and sharing it through your
+  department's standard communication channels.
+
+The endpoint is retained for audit compliance and may be removed in a future
+release.
+
+</Warning>
+
+If you need to trigger an email summary for audit or legacy purposes:
+
+```bash
+POST https://api.uniz.rguktong.in/api/v1/academics/attendance/publish-email
+Authorization: Bearer <your-token>
+Content-Type: application/json
+```
+
+**Request body:**
+
+```json
+{
+  "semesterId": "SEM-1"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Attendance summary email job queued"
+}
+```
+
+---
+
+## Attendance format reference
+
+<CardGroup cols={2}>
+  <Card title="Required columns" icon="table">
+    Each row in the template requires:
+
+    - **Student ID** — pre-filled, do not edit
+    - **attendedClasses** — whole number
+    - **totalClasses** — whole number, must be ≥ attendedClasses
+
+  </Card>
+  <Card title="Accepted file formats" icon="file">
+    The upload endpoint accepts:
+
+    - `.xlsx` (recommended)
+    - `.xls`
+    - `.csv`
+
+    Maximum file size: **50 MB**
+
+  </Card>
+</CardGroup>

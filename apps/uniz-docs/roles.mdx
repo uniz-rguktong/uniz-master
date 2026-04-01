@@ -1,0 +1,177 @@
+---
+title: "Roles"
+description: "UniZ uses role-based access to give every user the tools they need. Learn what each role can do on the platform."
+---
+
+Every user in UniZ is assigned a role when their account is created. Your role determines which features you can access, which dashboards you see after logging in, and what actions you are authorized to take. There is no manual role switching — your role is fixed to your account.
+
+## Role overview
+
+| Role                                  | Who it's for                | Primary function                                       |
+| ------------------------------------- | --------------------------- | ------------------------------------------------------ |
+| `student`                             | Enrolled RGUKT students     | Academics, outpass requests, profile management        |
+| `caretaker_male` / `caretaker_female` | Hostel caretakers           | First-level outpass approval                           |
+| `warden_male` / `warden_female`       | Hostel wardens              | Second-level outpass approval                          |
+| `swo`                                 | Student Welfare Officer     | Approval chain for student requests                    |
+| `dean`                                | Dean of the institution     | Final outpass authority, batch grade review            |
+| `director`                            | Director of the institution | Super authority, student status override               |
+| `security`                            | Security staff at gates     | Gate check-in/check-out, approved outpass verification |
+| `faculty`                             | Teaching staff              | Grade and attendance uploads, student record access    |
+| `webmaster`                           | Platform administrator      | Banner management, announcements, system health        |
+
+---
+
+## Detailed role capabilities
+
+<CardGroup cols={2}>
+  <Card title="Student" icon="graduation-cap" href="/students/login">
+    The default role for all enrolled students.
+
+    **You can:**
+    - Log in and view your profile (name, branch, year, campus status)
+    - View your grades and subject-wise attendance
+    - Submit outpass requests (multi-day leave from campus)
+    - Submit outing requests (short-duration exits)
+    - Track the status and history of your requests
+    - Update personal contact details
+
+    **You cannot:**
+    - View other students' data
+    - Approve any request
+    - Access admin or faculty dashboards
+
+  </Card>
+
+  <Card title="Caretaker" icon="house" href="/admin/approvals">
+    Assigned to hostel caretakers (`caretaker_male` or `caretaker_female`).
+
+    **You can:**
+    - View all pending outpass requests for your gender group
+    - Approve a request, moving it forward to the warden level
+    - Reject a request with a comment
+    - Add a comment when approving (for example, "Parent verified via call")
+
+    **You cannot:**
+    - Give final approval for outpasses — caretaker approval is the first step only
+    - View or act on requests for the other gender group
+
+  </Card>
+
+  <Card title="Warden" icon="shield-check" href="/admin/approvals">
+    Assigned to hostel wardens (`warden_male` or `warden_female`).
+
+    **You can:**
+    - View pending outpass requests at the warden level
+    - Approve a request, advancing it to the SWO or final authority
+    - Reject a request with a comment
+    - Check academic schedule or disciplinary context before approving
+
+    **You cannot:**
+    - See requests that have not yet been approved by the caretaker
+
+  </Card>
+
+  <Card title="SWO" icon="user-check" href="/admin/approvals">
+    Assigned to the Student Welfare Officer.
+
+    **You can:**
+    - Review outpass requests escalated from the warden level
+    - Approve or reject requests with comments
+    - Act as an intermediary step in the full approval chain
+
+    The SWO sits between the warden and the final authority (dean/director) in the approval workflow.
+
+  </Card>
+
+  <Card title="Dean" icon="building-columns" href="/admin/approvals">
+    Assigned to the Dean of the institution.
+
+    **You can:**
+    - Give **final approval** on outpass requests — your approval immediately grants the outpass
+    - Reject any pending request at any stage
+    - Search and view any student profile
+    - Review batch grades across branches and years
+    - Filter for failed students to identify academic risks
+    - Override student campus status if needed
+
+    Dean approval is binding — no further approval is required after a dean approves a request.
+
+  </Card>
+
+  <Card title="Director" icon="star" href="/admin/approvals">
+    Assigned to the Director of the institution. The highest authority on the platform.
+
+    **You can:**
+    - Give **final approval** on outpass and outing requests
+    - Search and view **any** student profile (super search)
+    - Manually override a student's campus status (mark in/out)
+    - View batch grades and all academic data
+    - Trigger result publication emails to students
+
+    The director has full override capability across the platform with no access restrictions.
+
+  </Card>
+
+  <Card title="Security" icon="shield" href="/admin/security">
+    Assigned to security staff at campus gates.
+
+    **You can:**
+    - View all approved outpasses and outings to verify students at the gate
+    - Mark a student as **checked out** when they leave campus
+    - Mark a student as **checked in** when they return
+    - View a live list of all students currently outside campus
+    - Search for a specific student by ID to verify their status
+
+    **You cannot:**
+    - Approve or reject outpass requests (you only act after final approval is granted)
+    - Access academic records
+
+  </Card>
+
+  <Card title="Faculty" icon="chalkboard-teacher" href="/faculty/grades">
+    Assigned to teaching staff.
+
+    **You can:**
+    - Download a pre-filled Excel grade template for any batch (by branch, year, semester)
+    - Upload completed grade sheets — processed in bulk with error reporting
+    - Upload attendance records for your subjects
+    - Monitor the status of a grade or attendance upload job
+    - View student records for your assigned subjects
+
+    **You cannot:**
+    - Approve outpass requests
+    - Access student mobility or outpass data
+
+  </Card>
+</CardGroup>
+
+<Card title="Webmaster" icon="wrench" href="/admin/overview">
+  Assigned to the platform administrator responsible for content and system health.
+
+**You can:**
+
+- Create campus announcements and banners (title, body text, image)
+- Publish or unpublish banners — published banners appear to all logged-in users
+- Manage technical configurations
+- Monitor real-time system health across all UniZ services
+
+The webmaster role is the only role that can control what announcements the entire user base sees.
+
+</Card>
+
+---
+
+## Outpass approval chain
+
+When a student submits an outpass request, it moves through a structured approval workflow. Each level must approve before it advances to the next.
+
+```
+Student submits → Caretaker → Warden → SWO → Dean / Director (final approval)
+```
+
+At any stage, the approver can reject the request with a comment. If rejected, the request does not advance further. A dean or director can grant final approval at any point in the chain — their approval immediately marks the outpass as approved regardless of which stage it is currently at.
+
+<Info>
+  Outing requests (short-duration exits, typically a few hours) follow a shorter
+  approval path and are handled separately from multi-day outpass requests.
+</Info>
