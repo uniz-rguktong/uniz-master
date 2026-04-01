@@ -175,13 +175,21 @@ app.use((req, res, next) => {
   const isDocsRequest = req.url.startsWith("/docs");
   const docsTarget = process.env.DOCS_SERVICE_URL || (process.env.NODE_ENV === 'production' ? "http://uniz-docs-service.default.svc.cluster.local:3333" : "http://localhost:3333");
   
-  // List of high-level documentation paths that shouldn't be handled by the root
-  const docRoutes = ["/introduction", "/quickstart", "/roles", "/students", "/admin", "/faculty", "/api-reference"];
+  // List of high-level documentation paths that should be prefixed with /docs
+  const docRoutes = [
+    "/introduction", "/quickstart", "/roles", "/students", "/admin", "/faculty", "/api-reference",
+    "/api/auth", "/api/academics", "/api/requests", "/api/profile" // API Doc Routes
+  ];
   const isDocNavigation = docRoutes.some(route => req.url.startsWith(route));
 
-  // If it's a documentation navigation or a non-API asset request originating from the docs page, 
+  // If it's a direct navigation to a doc page without /docs prefix, REDIRECT them to the correct home
+  if (isDocNavigation && !isDocsRequest && !isApiRequest) {
+    return res.redirect(308, `/docs${req.url}`);
+  }
+
+  // If it's a non-API asset request originating from the docs page, 
   // try to fetch it from the docs service before letting it fall through
-  if ((isDocsReferer || isDocNavigation) && !isApiRequest && !isDocsRequest) {
+  if (isDocsReferer && !isApiRequest && !isDocsRequest) {
     return proxy.web(req, res, { target: docsTarget });
   }
   next();
