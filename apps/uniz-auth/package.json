@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.19.2",
-    "@types/nodemailer": "^8.0.2",
+    "@types/nodemailer": "^6.4.15",
     "axios": "^1.13.4",
     "bcrypt": "^5.1.1",
     "compression": "^1.8.1",
@@ -31,7 +31,7 @@
     "helmet": "^7.1.0",
     "ioredis": "^5.9.2",
     "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^8.0.4",
+    "nodemailer": "^6.9.15",
     "tar": "^7.5.9",
     "ua-parser-js": "^2.0.9",
     "zod": "^3.23.8"
