@@ -167,7 +167,7 @@ const serviceMap: Record<string, string> = {
     "http://uniz-docs-service.default.svc.cluster.local:3333",
 };
 
-// 4. Documentation Engine Assets Helper (Aggressive Asset Retrieval)
+// 4. Documentation Engine Assets & Navigation Helper (Aggressive Asset Retrieval)
 app.use((req, res, next) => {
   const referer = req.headers.referer || "";
   const isDocsReferer = referer.includes("/docs");
@@ -175,9 +175,13 @@ app.use((req, res, next) => {
   const isDocsRequest = req.url.startsWith("/docs");
   const docsTarget = process.env.DOCS_SERVICE_URL || (process.env.NODE_ENV === 'production' ? "http://uniz-docs-service.default.svc.cluster.local:3333" : "http://localhost:3333");
   
-  // If it's a non-API asset request originating from the docs page, 
+  // List of high-level documentation paths that shouldn't be handled by the root
+  const docRoutes = ["/introduction", "/quickstart", "/roles", "/students", "/admin", "/faculty", "/api-reference"];
+  const isDocNavigation = docRoutes.some(route => req.url.startsWith(route));
+
+  // If it's a documentation navigation or a non-API asset request originating from the docs page, 
   // try to fetch it from the docs service before letting it fall through
-  if (isDocsReferer && !isApiRequest && !isDocsRequest) {
+  if ((isDocsReferer || isDocNavigation) && !isApiRequest && !isDocsRequest) {
     return proxy.web(req, res, { target: docsTarget });
   }
   next();
