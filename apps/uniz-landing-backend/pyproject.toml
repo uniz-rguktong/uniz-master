@@ -20,4 +20,5 @@ dependencies = [
     "aiosqlite>=0.22.1",
     "asyncpg>=0.31.0",
     "fastapi-cache2>=0.2.2",
+    "jinja2>=3.1.2",
 ]
