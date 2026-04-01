@@ -173,11 +173,12 @@ app.use((req, res, next) => {
   const isDocsReferer = referer.includes("/docs");
   const isApiRequest = req.url.startsWith("/api/v1");
   const isDocsRequest = req.url.startsWith("/docs");
+  const docsTarget = process.env.DOCS_SERVICE_URL || (process.env.NODE_ENV === 'production' ? "http://uniz-docs-service.default.svc.cluster.local:3333" : "http://localhost:3333");
   
   // If it's a non-API asset request originating from the docs page, 
   // try to fetch it from the docs service before letting it fall through
   if (isDocsReferer && !isApiRequest && !isDocsRequest) {
-    return proxy.web(req, res, { target: "http://localhost:3333" });
+    return proxy.web(req, res, { target: docsTarget });
   }
   next();
 });
@@ -186,9 +187,10 @@ app.use("/docs", (req, res) => {
   // Pass the full original path to the documentation service
   const path = req.originalUrl.replace(/^\/docs/, "/").replace(/\/+/, "/");
   req.url = path;
+  const docsTarget = process.env.DOCS_SERVICE_URL || (process.env.NODE_ENV === 'production' ? "http://uniz-docs-service.default.svc.cluster.local:3333" : "http://localhost:3333");
   
   proxy.web(req, res, { 
-    target: "http://localhost:3333",
+    target: docsTarget,
     changeOrigin: true 
   });
 });
