@@ -1,0 +1,113 @@
+\documentclass[12pt,a4paper,oneside]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{tcolorbox}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+% Page Geometry
+\geometry{margin=1in}
+
+% Colors
+\definecolor{primary}{HTML}{94cb04}
+\definecolor{darkgray}{HTML}{333333}
+
+% Liststyles (Code Snippets)
+\lstset{
+    backgroundcolor=\color{gray!5},
+    basicstyle=\ttfamily\small,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    commentstyle=\color{green!60!black},
+    keywordstyle=\color{blue},
+    stringstyle=\color{orange},
+    showstringspaces=false,
+    frame=single,
+    rulecolor=\color{gray!20}
+}
+
+% Headers and Footers
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\color{primary}\textbf{UniZ System Documentation}}
+\lhead{Reference Manual v1.0}
+\rfoot{\thepage}
+\lfoot{© 2026 UniZ RGUKT}
+
+% Titles styling
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{darkgray}}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{darkgray}}{\thesection}{1em}{}
+
+\begin{document}
+
+% Title Page
+\begin{titlepage}
+    \centering
+    \vspace*{5cm}
+    {\Huge \textbf{UniZ} \par}
+    \vspace{0.5cm}
+    {\Large \textbf{Enterprise-Grade University Intelligence Engine} \par}
+    \vspace{1.5cm}
+    {\huge \textbf{System Architecture \& Technical Reference Manual} \par}
+    \vspace{3cm}
+    \includegraphics[width=0.4\textwidth]{../favicon.png} \par
+    \vspace{3cm}
+    {\large \textbf{Prepared for RGUKT Campus Operations} \par}
+    {\large Version 1.0.0 | April 2026 \par}
+\end{titlepage}
+
+\frontmatter
+\tableofcontents
+\listoffigures
+\listoftables
+
+\mainmatter
+
+\chapter{Introduction}
+\input{chapters/introduction.tex}
+
+\chapter{Getting Started}
+\input{chapters/quickstart.tex}
+\input{chapters/roles.tex}
+
+\chapter{Student Portal Interface}
+\input{chapters/students_login.tex}
+\input{chapters/students_academics.tex}
+\input{chapters/students_outpass.tex}
+\input{chapters/students_profile.tex}
+
+\chapter{Administrative and Faculty Operations}
+\input{chapters/admin_overview.tex}
+\input{chapters/admin_approvals.tex}
+\input{chapters/faculty_grades.tex}
+\input{chapters/faculty_attendance.tex}
+
+\chapter{API Architecture (Core V1)}
+\section{Master Endpoint: \texttt{api.uniz.rguktong.in}}
+
+\input{chapters/api_auth_login.tex}
+\input{chapters/api_academics_grades.tex}
+\input{chapters/api_requests_outpass.tex}
+
+\chapter{Security and Data Privacy}
+\input{chapters/admin_security.tex}
+
+% Appendix: Full Reference Table
+\appendix
+\chapter{System Glossary}
+\chapter{Deployment Guide}
+
+\end{document}
