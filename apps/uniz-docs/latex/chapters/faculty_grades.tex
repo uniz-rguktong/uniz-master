@@ -1,0 +1,346 @@
+
+
+
+Use this guide to upload grades for your assigned subjects, correct individual records, and download grade reports. Grade results are visible to students only after the Director triggers a publish.
+
+<Info>
+  You log in to UniZ with the same endpoint used by admins. Your `role` in the
+  login response determines your access level.
+</Info>
+
+\subsection{Upload grades via Excel template}
+
+The recommended workflow for submitting an entire batch's grades is to download the pre-filled Excel template, fill in grades, and upload the completed file.
+
+
+\section{Instruction Step}
+
+  
+\section{Instruction Step}
+
+    Send a `GET` request to `/academics/grades/template` with query parameters
+    for the batch you are grading. The template comes pre-filled with all
+    student IDs for that batch, so you do not need to enter them manually.
+
+    \begin{lstlisting}[language=bash]
+    GET https://api.uniz.rguktong.in/api/v1/academics/grades/template?branch=CSE&year=E3&semester=SEM-1&subjectCode=E3-SEM-1-CSE-1
+    Authorization: Bearer <your-token>
+    
+\end{lstlisting}
+
+    | Parameter     | Example             | Description                          |
+    | ------------- | ------------------- | ------------------------------------ |
+    | `branch`      | `CSE`               | Department code                      |
+    | `year`        | `E3`                | Batch year (E1–E4, P1–P2)            |
+    | `semester`    | `SEM-1`             | Semester identifier                  |
+    | `subjectCode` | `E3-SEM-1-CSE-1`    | Subject code as registered in UniZ   |
+
+    The response is an `.xlsx` file download. Save it locally before filling it in.
+
+    <Tip>
+      In the UniZ portal, you can download the template directly from the
+      **Add Grades** page without writing the request manually.
+    </Tip>
+
+  
+
+  
+\section{Instruction Step}
+
+    Open the downloaded template. Each row corresponds to one student. Fill in
+    the **Grade** column using the accepted grade values:
+
+    | Value  | Meaning        |
+    | ------ | -------------- |
+    | `EX`   | Excellent       |
+    | `A`    | Grade A         |
+    | `B`    | Grade B         |
+    | `C`    | Grade C         |
+    | `D`    | Grade D         |
+    | `F`    | Fail            |
+    | `9.5`  | Numeric points  |
+
+    Do not modify the student ID column or add or remove rows. Leave the grade
+    cell blank only if a student was absent for evaluation — do not use `N/A`
+    or similar placeholders.
+
+    <Warning>
+      The file size limit for uploads is **50 MB**. Standard grade sheets are
+      well within this limit, but avoid embedding images or charts in the
+      spreadsheet.
+    </Warning>
+
+  
+
+  
+\section{Instruction Step}
+
+    Post the completed file to `/academics/grades/upload` as a multipart form.
+
+    \begin{lstlisting}[language=bash]
+    POST https://api.uniz.rguktong.in/api/v1/academics/grades/upload
+    Authorization: Bearer <your-token>
+    Content-Type: multipart/form-data
+
+    file=<your-filled-template.xlsx>
+    
+\end{lstlisting}
+
+    **Success response:**
+
+    \begin{lstlisting}[language=json]
+    {
+      "success": true,
+      "processed": 62,
+      "successCount": 60,
+      "failCount": 2,
+      "errors": [
+        "Row 14: Invalid grade value 'NA' for student O210045",
+        "Row 31: Student ID O219999 not found in this batch"
+      ]
+    }
+    
+\end{lstlisting}
+
+    Upload is processed as a background batch job. The `successCount` and
+    `failCount` fields give you an immediate summary. Review any entries listed
+    in `errors` and correct them before re-uploading.
+
+    <Note>
+      Uploading a file does not overwrite previously uploaded grades for students
+      not included in the new file. Only rows present in the uploaded sheet are
+      processed.
+    </Note>
+
+  
+
+  
+\section{Instruction Step}
+
+    For large batches, poll the progress endpoint until the job completes.
+
+    \begin{lstlisting}[language=bash]
+    GET https://api.uniz.rguktong.in/api/v1/academics/grades/upload/progress
+    Authorization: Bearer <your-token>
+    
+\end{lstlisting}
+
+    **Response:**
+
+    \begin{lstlisting}[language=json]
+    {
+      "success": true,
+      "progress": {
+        "status": "processing",
+        "percent": 45,
+        "processed": 150,
+        "total": 330
+      }
+    }
+    
+\end{lstlisting}
+
+    Poll every few seconds until `status` is `"completed"` and `percent` reaches
+    `100`. You can also check this from the **Add Grades** page in the portal.
+
+  
+</Steps>
+
+---
+
+\subsection{Add grades manually for individual students}
+
+To record or correct a grade for a single student without re-uploading a full
+sheet, use the add grades endpoint directly.
+
+\begin{lstlisting}[language=bash]
+POST https://api.uniz.rguktong.in/api/v1/academics/grades/add
+Authorization: Bearer <your-token>
+Content-Type: application/json
+
+\end{lstlisting}
+
+**Request body:**
+
+\begin{lstlisting}[language=json]
+{
+  "studentId": "O210008",
+  "subjectCode": "E3-SEM-1-CSE-1",
+  "semesterId": "SEM-1",
+  "grade": "A"
+}
+
+\end{lstlisting}
+
+**Success response:**
+
+\begin{lstlisting}[language=json]
+{
+  "success": true,
+  "message": "Grade added successfully"
+}
+
+\end{lstlisting}
+
+Use this for late submissions, re-evaluations, or corrections after the main
+upload has been processed.
+
+---
+
+\subsection{Bulk update grades via JSON}
+
+When you need to correct multiple grades without uploading a new Excel file —
+for example, after a re-evaluation — send a JSON array of updates to the bulk
+update endpoint.
+
+\begin{lstlisting}[language=bash]
+PUT https://api.uniz.rguktong.in/api/v1/academics/grades/bulk-update
+Authorization: Bearer <your-token>
+Content-Type: application/json
+
+\end{lstlisting}
+
+**Request body:**
+
+\begin{lstlisting}[language=json]
+{
+  "updates": [
+    {
+      "studentId": "O210008",
+      "subjectId": "uuid-of-subject",
+      "semesterId": "SEM-1",
+      "grade": "EX"
+    },
+    {
+      "studentId": "O210045",
+      "subjectId": "uuid-of-subject",
+      "semesterId": "SEM-1",
+      "grade": 9.5
+    }
+  ]
+}
+
+\end{lstlisting}
+
+The `grade` field accepts either a letter grade string (`"EX"`, `"A"`, `"F"`,
+etc.) or a numeric points value like `9.5`.
+
+<Tip>
+  Use the batch grades endpoint (`GET /academics/grades/batch`) to retrieve
+  subject IDs before performing bulk updates. Query params: `branch`, `year`,
+  `semesterId`, and optionally `failedOnly=true` to focus on failed records.
+</Tip>
+
+---
+
+\subsection{Download a grade report}
+
+To download a consolidated grade report for a semester, use the download
+endpoint with the semester ID.
+
+\begin{lstlisting}[language=bash]
+GET https://api.uniz.rguktong.in/api/v1/academics/grades/download/:semesterId
+Authorization: Bearer <your-token>
+
+\end{lstlisting}
+
+**Example:**
+
+\begin{lstlisting}[language=bash]
+GET https://api.uniz.rguktong.in/api/v1/academics/grades/download/SEM-1
+Authorization: Bearer <your-token>
+
+\end{lstlisting}
+
+The response is a downloadable report file for that semester. Use this to
+verify grades before requesting publication, or to keep a local record.
+
+---
+
+\subsection{Publishing results to students}
+
+<Warning>
+  **Only the Director can publish results.** After you upload grades, students
+  cannot see them until the Director triggers the publish action. You do not
+  need to take any further steps — notify your department's administration that
+  grades are ready for review and publication.
+</Warning>
+
+When the Director publishes results for a semester, UniZ triggers a background
+job that sends report card emails to all students for that semester.
+
+You can monitor the publish progress at:
+
+\begin{lstlisting}[language=bash]
+GET https://api.uniz.rguktong.in/api/v1/academics/grades/publish/progress
+Authorization: Bearer <your-token>
+
+\end{lstlisting}
+
+**Response:**
+
+\begin{lstlisting}[language=json]
+{
+  "success": true,
+  "progress": {
+    "status": "processing",
+    "percent": 72,
+    "processed": 240,
+    "total": 330
+  }
+}
+
+\end{lstlisting}
+
+---
+
+\subsection{Grade format reference}
+
+
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    `EX` — Excellent
+
+    `A` — Grade A
+
+    `B` — Grade B
+
+    `C` — Grade C
+
+    `D` — Grade D
+
+    `F` — Fail
+
+  
+\end{tcolorbox}
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    You can also submit grades as numeric point values (e.g., `9.5`, `7.0`).
+    The system accepts both letter and numeric formats in the template and via
+    the API.
+  
+\end{tcolorbox}
+
+</CardGroup>
+
+
+\section{Deep Technical Analysis}
+The underlying system architecture for this module is built upon the \textbf{UniZ Microservices Framework}. 
+This design ensures that each functional unit (Auth, Profile, Academics) remains isolated, preventing cascading failures across the university ecosystem.
+
+\subsection{Operational Hardening}
+Deployments are managed via K3s (Kubernetes) and containerized using high-performance Alpine Linux Docker images. 
+Resource management is critical; for instance, the documentation service itself is provisioned with 2GB of RAM to ensure the responsive rendering of complex documentation graphs and state-management components.
+
+\subsection{Enterprise Security Topology}
+Every request entering the UniZ gateway is subjected to an aggressive JWT validation layer. 
+Permissions are granular, mapping directly onto the RBAC (Role-Based Access Control) matrix defined in the core system specifications.
+
+\subsection{Data Governance}
+Prisma-driven data access ensures type safety and predictable query performance. 
+We utilize PostgreSQL connection pooling to handle concurrent requests from the student portal and administrative dashboards simultaneously.

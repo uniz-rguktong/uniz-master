@@ -1,0 +1,231 @@
+
+
+
+Every user in UniZ is assigned a role when their account is created. Your role determines which features you can access, which dashboards you see after logging in, and what actions you are authorized to take. There is no manual role switching — your role is fixed to your account.
+
+\subsection{Role overview}
+
+| Role                                  | Who it's for                | Primary function                                       |
+| ------------------------------------- | --------------------------- | ------------------------------------------------------ |
+| `student`                             | Enrolled RGUKT students     | Academics, outpass requests, profile management        |
+| `caretaker_male` / `caretaker_female` | Hostel caretakers           | First-level outpass approval                           |
+| `warden_male` / `warden_female`       | Hostel wardens              | Second-level outpass approval                          |
+| `swo`                                 | Student Welfare Officer     | Approval chain for student requests                    |
+| `dean`                                | Dean of the institution     | Final outpass authority, batch grade review            |
+| `director`                            | Director of the institution | Super authority, student status override               |
+| `security`                            | Security staff at gates     | Gate check-in/check-out, approved outpass verification |
+| `faculty`                             | Teaching staff              | Grade and attendance uploads, student record access    |
+| `webmaster`                           | Platform administrator      | Banner management, announcements, system health        |
+
+---
+
+\subsection{Detailed role capabilities}
+
+
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    The default role for all enrolled students.
+
+    **You can:**
+    - Log in and view your profile (name, branch, year, campus status)
+    - View your grades and subject-wise attendance
+    - Submit outpass requests (multi-day leave from campus)
+    - Submit outing requests (short-duration exits)
+    - Track the status and history of your requests
+    - Update personal contact details
+
+    **You cannot:**
+    - View other students' data
+    - Approve any request
+    - Access admin or faculty dashboards
+
+  
+\end{tcolorbox}
+
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    Assigned to hostel caretakers (`caretaker_male` or `caretaker_female`).
+
+    **You can:**
+    - View all pending outpass requests for your gender group
+    - Approve a request, moving it forward to the warden level
+    - Reject a request with a comment
+    - Add a comment when approving (for example, "Parent verified via call")
+
+    **You cannot:**
+    - Give final approval for outpasses — caretaker approval is the first step only
+    - View or act on requests for the other gender group
+
+  
+\end{tcolorbox}
+
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    Assigned to hostel wardens (`warden_male` or `warden_female`).
+
+    **You can:**
+    - View pending outpass requests at the warden level
+    - Approve a request, advancing it to the SWO or final authority
+    - Reject a request with a comment
+    - Check academic schedule or disciplinary context before approving
+
+    **You cannot:**
+    - See requests that have not yet been approved by the caretaker
+
+  
+\end{tcolorbox}
+
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    Assigned to the Student Welfare Officer.
+
+    **You can:**
+    - Review outpass requests escalated from the warden level
+    - Approve or reject requests with comments
+    - Act as an intermediary step in the full approval chain
+
+    The SWO sits between the warden and the final authority (dean/director) in the approval workflow.
+
+  
+\end{tcolorbox}
+
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    Assigned to the Dean of the institution.
+
+    **You can:**
+    - Give **final approval** on outpass requests — your approval immediately grants the outpass
+    - Reject any pending request at any stage
+    - Search and view any student profile
+    - Review batch grades across branches and years
+    - Filter for failed students to identify academic risks
+    - Override student campus status if needed
+
+    Dean approval is binding — no further approval is required after a dean approves a request.
+
+  
+\end{tcolorbox}
+
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    Assigned to the Director of the institution. The highest authority on the platform.
+
+    **You can:**
+    - Give **final approval** on outpass and outing requests
+    - Search and view **any** student profile (super search)
+    - Manually override a student's campus status (mark in/out)
+    - View batch grades and all academic data
+    - Trigger result publication emails to students
+
+    The director has full override capability across the platform with no access restrictions.
+
+  
+\end{tcolorbox}
+
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    Assigned to security staff at campus gates.
+
+    **You can:**
+    - View all approved outpasses and outings to verify students at the gate
+    - Mark a student as **checked out** when they leave campus
+    - Mark a student as **checked in** when they return
+    - View a live list of all students currently outside campus
+    - Search for a specific student by ID to verify their status
+
+    **You cannot:**
+    - Approve or reject outpass requests (you only act after final approval is granted)
+    - Access academic records
+
+  
+\end{tcolorbox}
+
+
+  
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+    Assigned to teaching staff.
+
+    **You can:**
+    - Download a pre-filled Excel grade template for any batch (by branch, year, semester)
+    - Upload completed grade sheets — processed in bulk with error reporting
+    - Upload attendance records for your subjects
+    - Monitor the status of a grade or attendance upload job
+    - View student records for your assigned subjects
+
+    **You cannot:**
+    - Approve outpass requests
+    - Access student mobility or outpass data
+
+  
+\end{tcolorbox}
+
+</CardGroup>
+
+
+\begin{tcolorbox}[colback=gray!5,colframe=primary,title=Documentation Note]
+
+  Assigned to the platform administrator responsible for content and system health.
+
+**You can:**
+
+- Create campus announcements and banners (title, body text, image)
+- Publish or unpublish banners — published banners appear to all logged-in users
+- Manage technical configurations
+- Monitor real-time system health across all UniZ services
+
+The webmaster role is the only role that can control what announcements the entire user base sees.
+
+
+\end{tcolorbox}
+
+
+---
+
+\subsection{Outpass approval chain}
+
+When a student submits an outpass request, it moves through a structured approval workflow. Each level must approve before it advances to the next.
+
+\begin{lstlisting}[language=]
+Student submits → Caretaker → Warden → SWO → Dean / Director (final approval)
+
+\end{lstlisting}
+
+At any stage, the approver can reject the request with a comment. If rejected, the request does not advance further. A dean or director can grant final approval at any point in the chain — their approval immediately marks the outpass as approved regardless of which stage it is currently at.
+
+<Info>
+  Outing requests (short-duration exits, typically a few hours) follow a shorter
+  approval path and are handled separately from multi-day outpass requests.
+</Info>
+
+
+\section{Deep Technical Analysis}
+The underlying system architecture for this module is built upon the \textbf{UniZ Microservices Framework}. 
+This design ensures that each functional unit (Auth, Profile, Academics) remains isolated, preventing cascading failures across the university ecosystem.
+
+\subsection{Operational Hardening}
+Deployments are managed via K3s (Kubernetes) and containerized using high-performance Alpine Linux Docker images. 
+Resource management is critical; for instance, the documentation service itself is provisioned with 2GB of RAM to ensure the responsive rendering of complex documentation graphs and state-management components.
+
+\subsection{Enterprise Security Topology}
+Every request entering the UniZ gateway is subjected to an aggressive JWT validation layer. 
+Permissions are granular, mapping directly onto the RBAC (Role-Based Access Control) matrix defined in the core system specifications.
+
+\subsection{Data Governance}
+Prisma-driven data access ensures type safety and predictable query performance. 
+We utilize PostgreSQL connection pooling to handle concurrent requests from the student portal and administrative dashboards simultaneously.
