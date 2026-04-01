@@ -15,7 +15,7 @@
   "dependencies": {
     "@prisma/client": "^6.19.2",
     "@types/multer": "^2.0.0",
-    "@types/nodemailer": "^7.0.9",
+    "@types/nodemailer": "^8.0.2",
     "axios": "^1.13.4",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.9.0",
@@ -28,7 +28,7 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.1.0",
     "multer-storage-cloudinary": "^4.0.0",
-    "nodemailer": "^7.0.13",
+    "nodemailer": "^8.0.4",
     "zod": "^3.23.8"
   },
   "devDependencies": {
