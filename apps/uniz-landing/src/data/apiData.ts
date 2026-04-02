@@ -1,3 +1,5 @@
+// Auto-generated from https://landing-api.rguktong.in/docs — 2026-03-23T16:18:13.130Z
+// Do not edit manually. Re-run: node fetch-apis.mjs
 export const apiData = {
   "home": {
     "announcements": [
@@ -124,34 +126,16 @@ export const apiData = {
       "https://rguktong.ac.in/img/new.gif",
       "https://rguktong.ac.in/img/new.gif",
       "https://rguktong.ac.in/img/new.gif",
+      "https://rguktong.ac.in/img/new.gif",
+      "https://rguktong.ac.in/img/new.gif",
+      "https://rguktong.ac.in/img/new.gif",
+      "https://rguktong.ac.in/img/new.gif",
       "https://rguktong.ac.in/svgs/8libarary-min.jpg",
       "https://rguktong.ac.in/svgs/2cse-min.jpg",
       "https://rguktong.ac.in/svgs/1humanities-min.jpg",
       "https://rguktong.ac.in/svgs/sports2.svg",
       "https://rguktong.ac.in/img/rguktlogo.png",
       "https://www.cutercounter.com/hits.php?id=hmvxkkodo&nd=6&style=10"
-    ],
-    "explore_campus": [
-      {
-        "title": "Central Library",
-        "desc": "Well equipped library with more than 20,000 books and 10,000 periodicals.",
-        "links": [{"url": "/academics"}]
-      },
-      {
-        "title": "Internships & Placements",
-        "desc": "RGUKT Ongole has a dedicated Career Development and Placement Cell (CDPC) for its student community, which organizes campus placement and internship opportunities",
-        "links": [{"url": "/campus-life"}]
-      },
-      {
-        "title": "Resources & Facilities",
-        "desc": "State of the art infrastructure added with pristine greenery make RGUKT Ongole campus idle for learning and continuous growth.",
-        "links": [{"url": "/institute"}]
-      },
-      {
-        "title": "Extra curricular Activities",
-        "desc": "We RGUKT believe, Playing sports help in maintaining physical coordination, enhancing body strength, improving mental power and also, playing sports on regular basics builds the character and health of any person.",
-        "links": [{"url": "/campus-life"}]
-      }
     ]
   },
   "notifications": {
@@ -289,12 +273,42 @@ export const apiData = {
     ],
     "tenders": [
       {
-        "title": "Ongole invites sealed quotations from the registered firms/suppliers for 34 Magazines for Rajiv Gandhi University of Knowledge Technologies, Ongole Campus, Ongole.",
-        "date": "07-03-2026",
+        "title": "Ongole invites sealed quotations from the registered firms/suppliers for Stage & Stalls components for Rajiv Gandhi University of Knowledge Technologies, Ongole Campus, Ongole",
+        "date": "16/03/2026",
         "links": [
           {
             "label": "Detailed Notification",
-            "url": "https://rguktong.ac.in/pdfs/tenders/71.WQ -Libary Books 07.03.2026.pdf"
+            "url": "https://rguktong.ac.in/pdfs/tenders/stalls&tent 16.3.2026.pdf"
+          }
+        ]
+      },
+      {
+        "title": "Ongole invites sealed quotations from the registered firms/suppliers for Electrical Items for Rajiv Gandhi University of Knowledge Technologies, Ongole Campus, Ongole.",
+        "date": "16/03/2026",
+        "links": [
+          {
+            "label": "Detailed Notification",
+            "url": "https://rguktong.ac.in/pdfs/tenders/electrical items 16.3.2026.pdf"
+          }
+        ]
+      },
+      {
+        "title": "Ongole invites sealed quotations from the registered firms/suppliers for Switches Hardware for Rajiv Gandhi University of Knowledge Technologies, Ongole Campus, Ongole.",
+        "date": "16/03/2026",
+        "links": [
+          {
+            "label": "Detailed Notification",
+            "url": "https://rguktong.ac.in/pdfs/tenders/Manageble-Switch 17.3.2026.pdf"
+          }
+        ]
+      },
+      {
+        "title": "Ongole invites sealed quotations from the registered firms/suppliers for Photography and Videography services (ORNATE 26) for Rajiv Gandhi University of Knowledge Technologies, Ongole Campus, Ongole",
+        "date": "16/03/2026",
+        "links": [
+          {
+            "label": "Detailed Notification",
+            "url": "https://rguktong.ac.in/pdfs/tenders/WEB Advertisment - photography 17.3.2026.pdf"
           }
         ]
       },

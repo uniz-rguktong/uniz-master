@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 export function GridSection({
   id,
@@ -65,9 +66,10 @@ export function GridSection({
                       href={item.links?.[0]?.url || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block text-indigo-600 hover:text-indigo-700 font-semibold"
+                      className="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-700 font-semibold"
                     >
-                      Read More &rarr;
+                      Read More
+                      <ArrowRight className="w-4 h-4" />
                     </a>
                   </div>
                 )}
@@ -78,9 +80,10 @@ export function GridSection({
         <div className="text-center mt-16">
           <Link
             to={viewAllLink}
-            className="inline-flex items-center px-8 py-3 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-semibold shadow-md hover:shadow-lg transition"
+            className="group inline-flex items-center gap-2 px-8 py-3 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-semibold shadow-md hover:shadow-lg transition-all"
           >
             {viewAllText}
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>

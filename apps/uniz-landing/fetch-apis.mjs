@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = "https://landing-api.rguktong.in";
 
 const INSTITUTE_PAGES = [
     "aboutrgukt",
