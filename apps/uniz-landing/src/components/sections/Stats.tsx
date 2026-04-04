@@ -1,31 +1,31 @@
 import { useEffect, useRef } from "react";
+import { TrendingUp } from "lucide-react";
 
 export function Stats({ stats }: { stats: readonly any[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const statsContainer = containerRef.current;
-    if (!statsContainer) return;
+    const el = containerRef.current;
+    if (!el) return;
 
-    const counters =
-      statsContainer.querySelectorAll<HTMLElement>("[data-target]");
-    const speed = 200;
+    const counters = el.querySelectorAll<HTMLElement>("[data-target]");
 
     const animateCounter = (counter: HTMLElement) => {
       const target = +counter.getAttribute("data-target")!;
-      let current = 0;
-      const increment = target / speed;
+      const duration = 1800;
+      const start = performance.now();
 
-      const updateCount = () => {
-        if (current < target) {
-          current += increment;
-          counter.innerText = Math.ceil(current).toString();
-          requestAnimationFrame(updateCount);
-        } else {
-          counter.innerText = target.toString();
-        }
+      const step = (now: number) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        counter.innerText = Math.ceil(eased * target).toLocaleString();
+        if (progress < 1) requestAnimationFrame(step);
+        else counter.innerText = target.toLocaleString();
       };
-      updateCount();
+
+      requestAnimationFrame(step);
     };
 
     const observer = new IntersectionObserver(
@@ -37,72 +37,79 @@ export function Stats({ stats }: { stats: readonly any[] }) {
           }
         });
       },
-      { threshold: 0.5 },
+      { threshold: 0.3 }
     );
 
-    observer.observe(statsContainer);
-
+    observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
   return (
-    <section
-      id="statistics"
-      className="py-24 bg-white relative overflow-hidden"
-    >
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Background Decorative Box - Soft Rose/Maroon Tint */}
-        <div className="absolute inset-x-0 top-32 bottom-0 bg-rose-50/40 rounded-[3.5rem] -z-10 border border-rose-100/50"></div>
+    <section id="statistics" className="py-24 bg-white relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 line-height-tight">
-            Our Academic <span className="text-[#800000]">Footprint</span>
+        {/* Header */}
+        <div className="text-center mb-16">
+          <span className="inline-flex items-center gap-2 mb-5 px-4 py-2 text-sm font-bold tracking-widest text-[#000035] bg-[#000035]/5 rounded-full border border-[#000035]/10">
+            <TrendingUp className="w-4 h-4" />
+            BY THE NUMBERS
+          </span>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+            Our Academic <span className="text-[#000035]">Footprint</span>
           </h2>
-          <p className="mt-6 max-w-2xl mx-auto text-lg text-slate-600 font-medium">
-            Discover the scale of our academic excellence and student success
-            through these core institutional metrics.
+          <p className="mt-5 max-w-2xl mx-auto text-lg text-slate-600">
+            Discover the scale of our academic excellence and student success through these core institutional metrics.
           </p>
         </div>
 
-        {/* Stats Container Box - Refined Maroon Background */}
-        <div className="bg-gradient-to-br from-[#800000]/[0.02] to-rose-50/80 p-8 md:p-14 rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(128,0,0,0.08)] border border-rose-100 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#800000]/5 blur-[120px] rounded-full -mr-48 -mt-48 transition-transform duration-1000 group-hover:scale-110"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-rose-200/20 blur-[100px] rounded-full -ml-32 -mb-32"></div>
+        {/* Dark Premium Stats Panel */}
+        <div
+          ref={containerRef}
+          className="relative rounded-3xl overflow-hidden bg-[#000035]"
+          style={{
+            boxShadow: "0 32px 80px -12px rgba(0,0,53,0.35)",
+          }}
+        >
+          {/* Subtle mesh glow */}
+          <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-white/5 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-white/5 blur-3xl pointer-events-none" />
 
-          <div
-            ref={containerRef}
-            id="stats-container"
-            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 relative z-10"
-          >
+          {/* Grid */}
+          <div className="relative grid gap-px bg-white/10 grid-cols-2 md:grid-cols-3 lg:grid-cols-6 z-10">
             {stats.map((stat, idx) => {
               const num = parseInt(stat.value.replace(/,/g, ""), 10) || 0;
               return (
                 <div
                   key={idx}
-                  className="group relative bg-white/50 border border-slate-100 p-6 rounded-2xl hover:border-rose-200 hover:bg-white hover:shadow-lg hover:shadow-rose-900/5 transition-all duration-300 flex flex-col items-center text-center"
+                  className="group flex flex-col items-center justify-center text-center bg-[#000035] px-6 py-10 hover:bg-white/5 transition-colors duration-300"
                 >
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-[#800000] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-b-full"></div>
-
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-[#800000] transition-colors duration-300 mb-3">
-                    {stat.label}
-                  </p>
-
-                  <div className="flex items-baseline justify-center">
-                    <h3
-                      className="text-3xl font-black text-slate-900 group-hover:text-[#800000] transition-colors duration-300"
+                  {/* Animated counter */}
+                  <div className="flex items-end gap-0.5 mb-3">
+                    <span
+                      className="text-4xl font-black text-white leading-none"
                       data-target={num}
                     >
                       0
-                    </h3>
-                    <span className="text-rose-500 font-bold ml-0.5 text-lg">
-                      +
                     </span>
+                    <span className="text-xl font-bold text-amber-400 leading-snug mb-0.5">+</span>
                   </div>
+
+                  {/* Divider */}
+                  <div className="w-8 h-px bg-white/20 mb-3 group-hover:w-12 group-hover:bg-amber-400 transition-all duration-300" />
+
+                  {/* Label */}
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 group-hover:text-white/80 transition-colors duration-300 leading-relaxed">
+                    {stat.label}
+                  </p>
                 </div>
               );
             })}
           </div>
+
+          {/* Bottom accent bar */}
+          <div className="h-1 w-full bg-gradient-to-r from-amber-400 via-white/20 to-amber-400" />
         </div>
+
       </div>
     </section>
   );
