@@ -1,175 +1,134 @@
 import { Link } from "react-router-dom";
-import {
-  Facebook,
-  Twitter,
-  Linkedin,
-  Instagram,
-  Youtube,
-  ArrowUp,
-  MapPin,
-  ChevronRight,
-} from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { Facebook, Twitter, Linkedin, Instagram, Youtube, ArrowUp, MapPin, Mail } from "lucide-react";
+
+// ── Flickering Grid ──────────────────────────────────────────────────
+function FlickeringGrid({ text = "", fontSize = 90, color = "#4B5563", maxOpacity = 0.3, flickerChance = 0.08, squareSize = 2, gridGap = 3 }: {
+  text?: string; fontSize?: number; color?: string; maxOpacity?: number; flickerChance?: number; squareSize?: number; gridGap?: number;
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>(0);
+  const squares = useRef<Float32Array | null>(null);
+  const [r, g, b] = color.replace("#", "").match(/.{2}/g)!.map(h => parseInt(h, 16));
+
+  const draw = useCallback(() => {
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
+    const dpr = window.devicePixelRatio || 1;
+    const w = container.clientWidth, h = container.clientHeight;
+    if (canvas.width !== w * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; canvas.style.width = `${w}px`; canvas.style.height = `${h}px`; squares.current = null; }
+    const ctx = canvas.getContext("2d"); if (!ctx) return;
+    const cols = Math.ceil(w / (squareSize + gridGap)), rows = Math.ceil(h / (squareSize + gridGap));
+    if (!squares.current || squares.current.length !== cols * rows) squares.current = new Float32Array(cols * rows).map(() => Math.random() * maxOpacity);
+    const sq = squares.current;
+    const mk = document.createElement("canvas"); mk.width = w * dpr; mk.height = h * dpr;
+    const mc = mk.getContext("2d", { willReadFrequently: true })!;
+    if (text) { mc.save(); mc.scale(dpr, dpr); mc.fillStyle = "white"; mc.font = `700 ${fontSize}px "Google Sans",sans-serif`; mc.textAlign = "center"; mc.textBaseline = "middle"; mc.fillText(text, w / 2, h / 2); mc.restore(); }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
+      if (Math.random() < flickerChance) sq[i * rows + j] = Math.random() * maxOpacity;
+      const x = i * (squareSize + gridGap) * dpr, y = j * (squareSize + gridGap) * dpr, s = squareSize * dpr;
+      const inText = mc.getImageData(x, y, s, s).data.some((v, k) => k % 4 === 0 && v > 0);
+      const op = inText ? Math.min(1, sq[i * rows + j] * 3.5 + 0.55) : sq[i * rows + j];
+      ctx.fillStyle = `rgba(${r},${g},${b},${op})`; ctx.fillRect(x, y, s, s);
+    }
+  }, [text, fontSize, r, g, b, maxOpacity, flickerChance, squareSize, gridGap]);
+
+  useEffect(() => {
+    const loop = () => { draw(); rafRef.current = requestAnimationFrame(loop); };
+    rafRef.current = requestAnimationFrame(loop);
+    const ro = new ResizeObserver(draw);
+    if (containerRef.current) ro.observe(containerRef.current);
+    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); };
+  }, [draw]);
+
+  return <div ref={containerRef} className="h-full w-full"><canvas ref={canvasRef} className="pointer-events-none" /></div>;
+}
+
+// ── Data ─────────────────────────────────────────────────────────────
+const columns = [
+  { title: "Academics", links: [{ n: "Programs", p: "/academics/AcademicPrograms" }, { n: "Calendar", p: "/academics/AcademicCalender" }, { n: "Regulations", p: "/academics/AcademicRegulations" }, { n: "Curricula", p: "/academics/curicula" }] },
+  { title: "Departments", links: [{ n: "Computer Science", p: "/departments/CSE" }, { n: "Electronics", p: "/departments/ECE" }, { n: "Civil Engg", p: "/departments/CIVIL" }, { n: "Mechanical", p: "/departments/ME" }, { n: "Mathematics", p: "/departments/MATHEMATICS" }] },
+  { title: "Institute", links: [{ n: "About RGUKT", p: "/institute/aboutrgukt" }, { n: "Campus Life", p: "/institute/campuslife" }, { n: "Governing Council", p: "/institute/govcouncil" }, { n: "RTI Info", p: "/institute/rtiinfo" }, { n: "SC/ST Cell", p: "/institute/scst" }] },
+  { title: "Notifications", links: [{ n: "News & Notifications", p: "/notifications/news" }, { n: "Careers", p: "/notifications/careers" }, { n: "Tenders", p: "/notifications/tenders" }] },
+];
 
 export function Footer() {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const sections = [
-    {
-      title: "Academics",
-      links: [
-        { name: "Programs", path: "/academics/AcademicPrograms" },
-        { name: "Academic Calendar", path: "/academics/AcademicCalender" },
-        { name: "Regulations", path: "/academics/AcademicRegulations" },
-        { name: "Curricula", path: "/academics/curicula" },
-        { name: "Office of Academics", path: "/institute/aboutrgukt" },
-      ],
-    },
-    {
-      title: "Departments",
-      links: [
-        { name: "Computer Science", path: "/departments/CSE" },
-        { name: "Electronics & Comms", path: "/departments/ECE" },
-        { name: "Civil Engineering", path: "/departments/CIVIL" },
-        { name: "Mechanical Engg", path: "/departments/ME" },
-        { name: "Mathematics & Physics", path: "/departments/MATHEMATICS" },
-      ],
-    },
-    {
-      title: "Institute Life",
-      links: [
-        { name: "Campus Life", path: "/institute/campuslife" },
-        { name: "Governance Council", path: "/institute/govcouncil" },
-        { name: "SC/ST Cell", path: "/institute/scst" },
-        { name: "Library & Computing", path: "#" },
-        { name: "Hostel Management", path: "#" },
-      ],
-    },
-    {
-      title: "Updates",
-      links: [
-        { name: "Latest News", path: "/notifications" },
-        { name: "Careers", path: "/notifications" },
-        { name: "Tender Invitations", path: "/notifications" },
-        { name: "Events & Symposiums", path: "#" },
-      ],
-    },
-  ];
+  const [narrow, setNarrow] = useState(window.innerWidth < 1024);
+  useEffect(() => { const mq = window.matchMedia("(max-width:1024px)"); const fn = (e: MediaQueryListEvent) => setNarrow(e.matches); mq.addEventListener("change", fn); return () => mq.removeEventListener("change", fn); }, []);
 
   return (
-    <footer className="bg-[#020617] text-white relative border-t border-slate-800">
-      {/* Newsletter / CTA Section */}
-      <div className="border-b border-slate-800/50">
-        <div className="container mx-auto max-w-7xl px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-[#800000]/10 rounded-2xl border border-[#800000]/20">
-              <img
-                src="/rgukt-logo.png"
-                alt="Logo"
-                className="w-10 h-10 object-contain brightness-110 grayscale-0"
-              />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold tracking-tight">
-                Rajiv Gandhi University of Knowledge Technologies
-              </h3>
-              <p className="text-slate-400 text-sm font-medium italic">
-                Catering to the Educational Needs of Gifted Rural Youth
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-4"></div>
-        </div>
-      </div>
+    <footer className="relative w-full overflow-hidden bg-[#07091280]"
+      style={{ background: "linear-gradient(180deg,#0a0f1e 0%,#06091a 100%)" }}>
 
-      <div className="container mx-auto max-w-7xl px-4 pt-16 pb-8">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-8 mb-12">
-          {/* Logo & Info */}
-          <div className="col-span-2 md:col-span-3 lg:col-span-2 flex flex-col gap-6">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-black italic tracking-tighter text-white">
-                UNI<span className="text-[#800000]">Z</span>
-              </span>
-              <span className="text-xs font-bold uppercase tracking-widest text-slate-500 border-l border-slate-700 pl-2">
-                Ongole Campus
-              </span>
-            </div>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
-              Pioneering technical excellence and academic innovation at RGUKT
-              Ongole.
-            </p>
-            <div className="flex flex-col gap-4">
-              <div className="flex items-start gap-3 text-slate-400 group">
-                <MapPin className="w-5 h-5 text-[#800000] shrink-0 mt-0.5" />
-                <span className="text-sm group-hover:text-white transition-colors leading-snug">
-                  RGUKT Ongole Campus, <br />
-                  Prakasam District, AP - 523225
-                </span>
-              </div>
-            </div>
-            <div className="flex gap-4 pt-2">
-              {[Facebook, Twitter, Linkedin, Instagram, Youtube].map(
-                (Icon, i) => (
-                  <a
-                    key={i}
-                    href="#"
-                    className="w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-800 rounded-lg text-slate-400 hover:text-white hover:bg-[#800000] hover:border-[#800000] transition-all duration-300"
-                  >
-                    <Icon className="w-5 h-5" />
-                  </a>
-                ),
-              )}
-            </div>
-          </div>
+      {/* ── Single combined row: brand + links ── */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 border-b border-white/5">
 
-          {/* Dynamic Sections */}
-          {sections.map((section, idx) => (
-            <div key={idx} className="flex flex-col gap-6">
-              <h4 className="font-bold tracking-tight text-white relative inline-block">
-                {section.title}
-                <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-[#800000]"></span>
-              </h4>
-              <div className="flex flex-col gap-3">
-                {section.links.map((link, lIdx) => (
-                  <Link
-                    key={lIdx}
-                    to={link.path}
-                    className="text-slate-400 hover:text-white text-sm transition-all flex items-center group gap-1"
-                  >
-                    <ChevronRight className="w-3 h-3 text-[#800000] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
+        {/* Brand col */}
+        <div className="col-span-2 flex flex-col gap-4">
+          <Link to="/" className="flex items-center gap-2">
+            <img src="/rgukt-logo.png" alt="RGUKT" className="w-9 h-9 object-contain mix-blend-lighten" />
+            <div className="flex flex-col leading-none">
+              <span className="font-extrabold text-white text-base tracking-tight">RGUKT</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#800000]">Ongole Campus</span>
             </div>
-          ))}
-        </div>
-
-        {/* BOTTOM COPYRIGHT ROW */}
-        <div className="border-t border-slate-800/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-[11px] font-medium uppercase tracking-[0.1em] text-slate-500">
-          <p>
-            © {new Date().getFullYear()} Rajiv Gandhi University of Knowledge
-            Technologies. All rights reserved.
+          </Link>
+          <p className="text-slate-500 text-sm leading-relaxed">
+            Empowering gifted rural youth through world-class technical education in Andhra Pradesh.
           </p>
-          <div className="flex items-center gap-8">
-            <a href="#" className="hover:text-white transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              Contact Support
-            </a>
+          <div className="flex flex-col gap-1.5 text-xs text-slate-500">
+            <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-[#800000]" />Prakasam District, AP – 523225</span>
+            <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-[#800000]" />info@rguktong.ac.in</span>
           </div>
+          <div className="flex gap-2 mt-1">
+            {[Facebook, Twitter, Linkedin, Instagram, Youtube].map((Icon, i) => (
+              <a key={i} href="#" className="w-8 h-8 rounded-lg flex items-center justify-center border border-white/8 bg-white/4 text-slate-500 hover:text-white hover:bg-[#800000] hover:border-[#800000] transition-all duration-200">
+                <Icon className="w-3.5 h-3.5" />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Link columns */}
+        {columns.map((col, idx) => (
+          <div key={idx}>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 mb-4">{col.title}</p>
+            <ul className="flex flex-col gap-2.5">
+              {col.links.map((lk, li) => (
+                <li key={li}>
+                  <Link to={lk.p} className="text-sm text-slate-500 hover:text-white transition-colors duration-150">{lk.n}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Bottom bar ── */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <p className="text-[10px] font-medium uppercase tracking-widest text-slate-600">
+          © {new Date().getFullYear()} RGUKT Ongole. All rights reserved.
+        </p>
+        <div className="flex gap-5 text-[10px] font-medium uppercase tracking-widest text-slate-600">
+          <a href="#" className="hover:text-slate-300 transition-colors">Privacy Policy</a>
+          <a href="#" className="hover:text-slate-300 transition-colors">Contact</a>
         </div>
       </div>
 
-      {/* FLOATING SCROLL TO TOP */}
-      <button
-        onClick={scrollToTop}
-        aria-label="Scroll to top"
-        className="fixed bottom-8 right-8 w-14 h-14 bg-[#800000] hover:bg-[#600000] text-white rounded-2xl flex items-center justify-center shadow-2xl shadow-[#800000]/40 transition-all duration-300 hover:-translate-y-2 active:scale-95 group z-50"
-      >
-        <ArrowUp className="w-6 h-6 group-hover:animate-bounce" />
+      {/* ── Flickering wordmark ── */}
+      <div className="relative w-full h-28 sm:h-36">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#06091a] via-transparent to-[#06091a] z-10 pointer-events-none" />
+        <div className="absolute inset-x-4 inset-y-0">
+          <FlickeringGrid text={narrow ? "RGUKT" : "RGUKT Ongole"} fontSize={narrow ? 60 : 88} color="#6B7280" maxOpacity={0.3} flickerChance={0.07} squareSize={2} gridGap={3} />
+        </div>
+      </div>
+
+      {/* Scroll to top */}
+      <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Scroll to top"
+        className="fixed bottom-8 right-8 z-50 w-10 h-10 rounded-xl bg-[#800000] hover:bg-[#a00000] text-white flex items-center justify-center shadow-lg shadow-[#800000]/30 transition-all duration-300 hover:-translate-y-1">
+        <ArrowUp className="w-5 h-5" />
       </button>
     </footer>
   );
