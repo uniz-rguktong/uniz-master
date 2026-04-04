@@ -9,6 +9,7 @@ import { HomePage } from "./pages/HomePage";
 import { InstitutePage } from "./pages/InstitutePage";
 import { AcademicsPage } from "./pages/AcademicsPage";
 import { DepartmentPage } from "./pages/DepartmentPage";
+import { FacultyProfilePage } from "./pages/FacultyProfilePage";
 import { NotificationsPage } from "./pages/NotificationsPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 
@@ -21,8 +22,9 @@ export default function App() {
           <Route path="institute/:pageName" element={<InstitutePage />} />
           <Route path="academics/:pageName" element={<AcademicsPage />} />
           <Route path="departments/:deptCode" element={<DepartmentPage />} />
-          <Route path="notifications" element={<NotificationsPage />} />
-
+          <Route path="departments/:deptCode/faculty/:facultyIndex" element={<FacultyProfilePage />} />
+          <Route path="notifications/:type" element={<NotificationsPage />} />
+          
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

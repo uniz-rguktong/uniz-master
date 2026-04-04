@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 export function GridSection({
   id,
@@ -29,9 +30,7 @@ export function GridSection({
     <section id={id} className={`py-24 ${bgColor}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
-            {title}
-          </h2>
+          <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">{title}</h2>
           {subtitle && (
             <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
               {subtitle}
@@ -53,17 +52,13 @@ export function GridSection({
               </div>
               <div className="p-6 flex-1 flex flex-col">
                 {item.date && (
-                  <p className="text-sm font-medium text-indigo-600">
-                    {item.date}
-                  </p>
+                  <p className="text-sm font-medium text-indigo-600">{item.date}</p>
                 )}
                 <h3 className="mt-2 text-xl font-semibold text-slate-800 line-clamp-3">
                   {item.title}
                 </h3>
                 {item.desc && (
-                  <p className="mt-2 text-base text-gray-600 line-clamp-4">
-                    {item.desc}
-                  </p>
+                  <p className="mt-2 text-base text-gray-600 line-clamp-4">{item.desc}</p>
                 )}
                 {!hideReadMore && (
                   <div className="mt-auto pt-4">
@@ -71,9 +66,10 @@ export function GridSection({
                       href={item.links?.[0]?.url || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block text-indigo-600 hover:text-indigo-700 font-semibold"
+                      className="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-700 font-semibold"
                     >
-                      Read More &rarr;
+                      Read More
+                      <ArrowRight className="w-4 h-4" />
                     </a>
                   </div>
                 )}
@@ -84,9 +80,10 @@ export function GridSection({
         <div className="text-center mt-16">
           <Link
             to={viewAllLink}
-            className="inline-flex items-center px-8 py-3 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-semibold shadow-md hover:shadow-lg transition"
+            className="group inline-flex items-center gap-2 px-8 py-3 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-semibold shadow-md hover:shadow-lg transition-all"
           >
             {viewAllText}
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>
