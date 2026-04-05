@@ -110,12 +110,27 @@ export function HeroAndTitle({
             className="absolute inset-0 transition-opacity duration-700 ease-in-out"
             style={{ opacity: idx === current && !animating ? 1 : 0, zIndex: idx === current ? 1 : 0 }}
           >
-            <img
-              src={img}
-              alt={`Campus ${idx + 1}`}
-              className="w-full h-full object-cover object-center"
-              loading={idx === 0 ? "eager" : "lazy"}
-            />
+            {img.includes('Cul.png') ? (
+              <>
+                <div
+                  className="absolute inset-0 bg-cover bg-center blur-xl scale-110 opacity-60"
+                  style={{ backgroundImage: `url(${img})` }}
+                />
+                <img
+                  src={img}
+                  alt={`Campus ${idx + 1}`}
+                  className="relative z-10 w-full h-full object-contain"
+                  loading={idx === 0 ? "eager" : "lazy"}
+                />
+              </>
+            ) : (
+              <img
+                src={img}
+                alt={`Campus ${idx + 1}`}
+                className={`w-full h-full object-cover ${img.includes('VRD.png') ? 'object-[center_15%]' : 'object-center'}`}
+                loading={idx === 0 ? "eager" : "lazy"}
+              />
+            )}
             {/* Dark vignette overlay for premium feel */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 pointer-events-none" />
           </div>
