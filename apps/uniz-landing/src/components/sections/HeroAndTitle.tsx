@@ -62,7 +62,7 @@ export function HeroAndTitle({
         {/* Left 'Notifications' Block */}
         <div className="relative z-20 flex items-center justify-center bg-[#800000] text-white px-4 sm:px-8 h-full shadow-[2px_0_8px_rgba(0,0,0,0.15)]">
           <span className="text-[13px] sm:text-[15px] font-bold tracking-wider uppercase">
-            Notifications
+            Updates
           </span>
         </div>
 
