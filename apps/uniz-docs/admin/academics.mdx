@@ -338,6 +338,36 @@ Content-Type: application/json
 
 New banners are created as drafts (`isPublished: false`) and are not visible to students until you publish them.
 
+## Global cohort promotion protocol
+
+The Global Cohort Promotion protocol allows administrators to bulk upgrade the academic year for entire student batches (e.g., E1 to E2).
+
+### Bulk Promoting Students
+
+**Endpoint:** `POST /profile/admin/student/promote`
+
+```bash
+POST https://api.uniz.rguktong.in/api/v1/profile/admin/student/promote
+Authorization: Bearer <TOKEN>
+Content-Type: application/json
+```
+
+```json
+{
+  "fromYear": "E3",
+  "toYear": "E4",
+  "branch": "CSE"
+}
+```
+
+- **fromYear**: The current academic year of the cohort (e.g., "E3", "P2").
+- **toYear**: The destination year (e.g., "E4", "PASSED_OUT").
+- **branch**: (Optional) Filter by department (e.g., "CSE"). Use "ALL" or omit to promote the entire year.
+
+**Safety mechanism**: The administrative interface requires explicit text confirmation ("PROMOTE") before executing this destructive operation.
+
+**Restrictions**: This protocol is only accessible to WEBMASTER, DEAN, and DIRECTOR roles.
+
 ### Publishing and unpublishing a banner
 
 **Endpoint:** `POST /profile/admin/banners/:id/publish`
