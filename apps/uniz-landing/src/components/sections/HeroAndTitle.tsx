@@ -59,6 +59,16 @@ export function HeroAndTitle({
 
       {/* ── NEW PREMIUM TICKER (ABOVE CAROUSEL) ── */}
       <section className="relative w-full overflow-hidden bg-slate-100 border-b border-slate-200 flex h-10 sm:h-12 items-center">
+        <style>{`
+          @keyframes rgb-text {
+            0%, 33.32% { color: #ff0000; }
+            33.33%, 66.65% { color: #00ff00; }
+            66.66%, 100% { color: #0000ff; }
+          }
+          .rgb-animate {
+            animation: rgb-text 1.5s infinite;
+          }
+        `}</style>
         {/* Left 'Notifications' Block */}
         <div className="relative z-20 flex items-center justify-center bg-[#800000] text-white px-4 sm:px-8 h-full shadow-[2px_0_8px_rgba(0,0,0,0.15)]">
           <span className="text-[13px] sm:text-[15px] font-bold tracking-wider uppercase">
@@ -82,7 +92,7 @@ export function HeroAndTitle({
                 className="group inline-flex items-center transition-colors duration-300"
               >
                 {/* Prefix NEW */}
-                <span className="text-[11px] sm:text-xs font-black uppercase text-[#800000] mr-2">
+                <span className="text-[12px] sm:text-[13px] tracking-widest font-black uppercase rgb-animate mr-2">
                   NEW
                 </span>
 
@@ -91,7 +101,7 @@ export function HeroAndTitle({
                 </span>
 
                 {/* Suffix NEW */}
-                <span className="text-[11px] sm:text-xs font-black uppercase text-[#800000] ml-2">
+                <span className="text-[12px] sm:text-[13px] tracking-widest font-black uppercase rgb-animate ml-2">
                   NEW
                 </span>
               </a>
@@ -110,7 +120,7 @@ export function HeroAndTitle({
             className="absolute inset-0 transition-opacity duration-700 ease-in-out"
             style={{ opacity: idx === current && !animating ? 1 : 0, zIndex: idx === current ? 1 : 0 }}
           >
-            {img.includes('Cul.png') ? (
+            {img.includes('Cul.png') || img.includes('swatch.png') ? (
               <>
                 <div
                   className="absolute inset-0 bg-cover bg-center blur-xl scale-110 opacity-60"
@@ -119,7 +129,7 @@ export function HeroAndTitle({
                 <img
                   src={img}
                   alt={`Campus ${idx + 1}`}
-                  className="relative z-10 w-full h-full object-contain"
+                  className={`relative z-10 w-full h-full object-contain ${img.includes('swatch.png') ? 'scale-x-[1.15]' : ''}`}
                   loading={idx === 0 ? "eager" : "lazy"}
                 />
               </>
