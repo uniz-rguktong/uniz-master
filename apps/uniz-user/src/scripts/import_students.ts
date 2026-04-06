@@ -65,6 +65,10 @@ async function importStudents() {
         .trim()
         .toUpperCase();
 
+      if (id.startsWith("RO")) {
+        id = "O" + id.slice(2);
+      }
+
       if (!id || !id.startsWith("O")) continue;
 
       const name = (

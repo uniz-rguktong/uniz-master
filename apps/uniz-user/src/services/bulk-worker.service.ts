@@ -83,13 +83,16 @@ export async function processNextStudentBatch() {
           return val ? String(val).trim() : "";
         };
 
-        const id = getVal([
+        let id = getVal([
           "student id",
           "studentid",
           "student_id",
           "id",
           "username",
         ]).toUpperCase();
+        if (id.startsWith("RO")) {
+          id = "O" + id.slice(2);
+        }
         const name = getVal(["name", "student name", "student_name"]);
         const email = getVal(["email", "mail", "student_email"]);
         const gender = getVal(["gender", "sex"]);
