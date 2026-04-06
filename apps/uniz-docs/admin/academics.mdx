@@ -235,6 +235,62 @@ Use the Add Students feature to onboard a new batch or add records for a new sem
   </Step>
 </Steps>
 
+## Individual student management
+
+For granular control, administrators can provision and modify individual student identities manually without using bulk spreadsheets. This is ideal for adding late admissions or correcting specific profile parameters.
+
+### Provisioning a new student
+
+Manual provisioning creates both the authentication credentials and the academic profile in one atomic operation.
+
+**Endpoint:** `POST /profile/admin/student/create`
+
+```bash
+POST https://api.uniz.rguktong.in/api/v1/profile/admin/student/create
+Authorization: Bearer <TOKEN>
+Content-Type: application/json
+```
+
+```json
+{
+  "username": "O210008",
+  "name": "DESU SREECHARAN",
+  "email": "o210008@rguktong.ac.in",
+  "gender": "M",
+  "branch": "CSE",
+  "year": "E1",
+  "semester": "SEM-1",
+  "section": "A",
+  "batch": "O21",
+  "cgpa": 9.2,
+  "motivation": "Strive for excellence in every academic pursuit."
+}
+```
+
+<Note>
+  Provisioning a new student automatically generates a default password: `{username.toLowerCase()}@rguktong`. The student can change this upon their first login.
+</Note>
+
+### Modifying an existing record
+
+To update any parameter of an existing student (academic, personal, or family), use the selective update endpoint.
+
+**Endpoint:** `PUT /profile/admin/student/:username`
+
+```bash
+PUT https://api.uniz.rguktong.in/api/v1/profile/admin/student/O210008
+Authorization: Bearer <TOKEN>
+Content-Type: application/json
+```
+
+```json
+{
+  "cgpa": 9.4,
+  "roomno": "C-102",
+  "isPresentInCampus": true
+}
+```
+
 ## Banner management
 
 Webmasters create and manage homepage banners visible to all students in the UniZ portal. Banners support a title, description text, and an image.

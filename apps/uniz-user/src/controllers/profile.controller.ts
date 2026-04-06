@@ -340,6 +340,89 @@ export const adminUpdateStudentProfile = async (
   }
 };
 
+export const createIndividualStudent = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const studentData = req.body;
+  const username = String(studentData.username || "").toUpperCase();
+
+  const allowedRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
+  if (!user || !allowedRoles.includes(user.role as UserRole)) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  if (!username) {
+    return res.status(400).json({
+      success: false,
+      message: "Student ID (Username) is required",
+    });
+  }
+
+  try {
+    // 1. Sync with Auth Service (Create account if doesn't exist)
+    const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+    const defaultPassword = `${username.toLowerCase()}@rguktong`; // Default password pattern
+
+    try {
+      await axios.post(
+        `${AUTH_SERVICE_URL}/signup`,
+        {
+          username: username,
+          password: defaultPassword,
+          role: "student",
+          email: studentData.email || `${username.toLowerCase()}@rguktong.ac.in`,
+        },
+        {
+          headers: { "x-internal-secret": SECRET },
+          timeout: 5000,
+        },
+      );
+      console.log(`[USER] Successfully synced auth for individual student: ${username}`);
+    } catch (authErr: any) {
+      // If student already exists in auth, that's fine, we continue to profile creation/update
+      if (authErr.response?.status !== 409) {
+        console.error(
+          `[USER][ERROR] Failed to sync auth for ${username}:`,
+          authErr.message,
+        );
+      }
+    }
+
+    // 2. Create or Update Student Profile
+    const updated = await prisma.studentProfile.upsert({
+      where: { username },
+      update: {
+        ...studentData,
+        updatedAt: new Date(),
+      },
+      create: {
+        id: randomUUID(),
+        ...studentData,
+      },
+    });
+
+    // Invalidate cache
+    await redis.del(`profile:v2:${username}`);
+
+    return res.json({
+      success: true,
+      message: "Student added/updated successfully",
+      student: mapStudentProfile(updated),
+    });
+  } catch (e: any) {
+    console.error(`[ERROR] createIndividualStudent failed for ${username}:`, e);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to process student request",
+      details: e.message,
+    });
+  }
+};
+
 export const searchStudents = async (
   req: AuthenticatedRequest,
   res: Response,

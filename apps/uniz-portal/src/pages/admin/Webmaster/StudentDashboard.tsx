@@ -12,6 +12,7 @@ import {
   ShieldAlert,
   History,
   KeyRound,
+  Edit3,
 } from "lucide-react";
 import {
   LineChart,
@@ -31,6 +32,7 @@ interface StudentDashboardProps {
   data: any;
   onSuspendToggle?: (username: string, currentStatus: boolean) => void;
   onResetPassword?: (username: string) => void;
+  onEditDetails?: (student: any) => void;
   isActionLoading?: boolean;
 }
 
@@ -38,6 +40,7 @@ export default function StudentDashboard({
   data,
   onSuspendToggle,
   onResetPassword,
+  onEditDetails,
   isActionLoading,
 }: StudentDashboardProps) {
   const student = data;
@@ -172,6 +175,14 @@ export default function StudentDashboard({
           >
             <KeyRound className="w-4 h-4" />
             Reset Password
+          </button>
+
+          <button
+            onClick={() => onEditDetails?.(student)}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-900 bg-slate-900 text-white font-bold uppercase tracking-widest text-[10px] transition-all group active:scale-95 shadow-lg shadow-slate-900/10 hover:bg-slate-800"
+          >
+            <Edit3 className="w-4 h-4" />
+            Edit Profile
           </button>
         </div>
 
