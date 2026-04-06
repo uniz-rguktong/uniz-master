@@ -6,7 +6,7 @@ import type { HomeData } from "../types/api";
 import { HeroAndTitle } from "../components/sections/HeroAndTitle";
 import { Leadership } from "../components/sections/Leadership";
 import { Media } from "../components/sections/Media";
-import { GridSection } from "../components/sections/GridSection";
+import { Logos3 } from "../components/blocks/logos3";
 import { ExploreCampus } from "../components/sections/ExploreCampus";
 import { Stats } from "../components/sections/Stats";
 
@@ -97,7 +97,7 @@ export function HomePage() {
     return result;
   };
 
-  const highlightsImages = getPoolSlice(4, 6);
+
 
   const galleryImages = getPoolSlice(0, 16);
 
@@ -132,32 +132,24 @@ export function HomePage() {
         <ExploreCampus />
       </div>
 
-      {/* 5. Careers & Recruitment */}
+      {/* 5. Recruiters and Industry Partners */}
       <div className="clear-both">
-        <GridSection
-          id="careers"
-          title="Careers & Recruitment"
-          items={notificationsData.careers || []}
-          images={highlightsImages}
-          viewAllLink="/notifications/careers"
-          viewAllText="View All Careers"
-          bgColor="bg-white"
-        />
+        <Logos3 />
       </div>
-
-      {/* 6. Statistics */}
-      <div className="clear-both">
-        <Stats
-          stats={homeData.stats || []}
-        />
-      </div>
-
-
 
       {/* 8. Director's Message */}
       <div className="clear-both">
         <DirectorMessage
           directorImage={directorImage}
+        />
+      </div>
+
+
+
+      {/* 6. Statistics */}
+      <div className="clear-both">
+        <Stats
+          stats={homeData.stats || []}
         />
       </div>
 
