@@ -86,11 +86,10 @@ function CampusCard({
     <div
       ref={ref}
       // ← KEY: sticky with incrementing top so cards stack behind each other
-      className="sticky rounded-3xl overflow-hidden shadow-2xl border border-slate-100 flex flex-col md:flex-row"
+      className="sticky w-full h-auto md:h-[460px] rounded-3xl overflow-hidden shadow-2xl border border-slate-100 flex flex-col md:flex-row"
       style={{
         top: `${80 + index * 32}px`,       // Each card sticks a bit lower than the previous
         zIndex: index + 1,                  // Later cards render on top of earlier ones
-        minHeight: "420px",
         // Slide-up reveal on first intersection
         transform: revealed ? "translateY(0)" : "translateY(60px)",
         opacity: revealed ? 1 : 0,
@@ -198,7 +197,7 @@ export function ExploreCampus() {
         We add padding-bottom equal to roughly the height of all cards stacked.
       */}
       <div
-        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10"
         style={{
           paddingBottom: `${campusAreas.length * 32}px`,
         }}

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Facebook, Twitter, Linkedin, Instagram, Youtube, ArrowUp, MapPin, Mail } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Instagram, Youtube, ArrowUp, MapPin } from "lucide-react";
 
 // ── Flickering Grid ──────────────────────────────────────────────────
 function FlickeringGrid({ text = "", fontSize = 90, color = "#4B5563", maxOpacity = 0.3, flickerChance = 0.08, squareSize = 2, gridGap = 3 }: {
@@ -64,7 +64,7 @@ export function Footer() {
       style={{ background: "linear-gradient(180deg,#0a0f1e 0%,#06091a 100%)" }}>
 
       {/* ── Single combined row: brand + links ── */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 border-b border-white/5">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 border-b border-white/5">
 
         {/* Brand col */}
         <div className="col-span-2 flex flex-col gap-4">
@@ -78,16 +78,15 @@ export function Footer() {
           <p className="text-slate-500 text-sm leading-relaxed">
             Empowering gifted rural youth through world-class technical education in Andhra Pradesh.
           </p>
-          <div className="flex flex-col gap-1.5 text-xs text-slate-500">
-            <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-[#800000]" />Prakasam District, AP – 523225</span>
-            <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-[#800000]" />info@rguktong.ac.in</span>
-          </div>
-          <div className="flex gap-2 mt-1">
-            {[Facebook, Twitter, Linkedin, Instagram, Youtube].map((Icon, i) => (
-              <a key={i} href="#" className="w-8 h-8 rounded-lg flex items-center justify-center border border-white/8 bg-white/4 text-slate-500 hover:text-white hover:bg-[#800000] hover:border-[#800000] transition-all duration-200">
-                <Icon className="w-3.5 h-3.5" />
-              </a>
-            ))}
+          <div className="flex gap-3 text-xs text-slate-500 mt-2">
+            <MapPin className="w-4 h-4 mt-0.5 text-[#800000] flex-shrink-0" />
+            <div className="flex flex-col gap-1 leading-relaxed">
+              <span className="font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-1">Contact Us</span>
+              <span>RGUKT Ongole Campus,</span>
+              <span>Kurnool Road,</span>
+              <span>Santhanuthalapadu(V&M),</span>
+              <span>Prakasam District, Andhra Pradesh -523225.</span>
+            </div>
           </div>
         </div>
 
@@ -107,21 +106,30 @@ export function Footer() {
       </div>
 
       {/* ── Bottom bar ── */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex flex-col sm:flex-row justify-between items-center gap-3">
-        <p className="text-[10px] font-medium uppercase tracking-widest text-slate-600">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-3 flex flex-col sm:flex-row justify-between items-center gap-5">
+        <p className="text-[10px] font-medium uppercase tracking-widest text-slate-600 text-center sm:text-left">
           © {new Date().getFullYear()} RGUKT Ongole. All rights reserved.
         </p>
-        <div className="flex gap-5 text-[10px] font-medium uppercase tracking-widest text-slate-600">
-          <a href="#" className="hover:text-slate-300 transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-slate-300 transition-colors">Contact</a>
+        <div className="flex gap-2">
+          {[
+            { Icon: Facebook, url: "https://www.facebook.com/RGUKTOfficial/" },
+            { Icon: Twitter, url: "https://x.com/RGUKT_ONGOLE" },
+            { Icon: Linkedin, url: "https://in.linkedin.com/company/rguktongole" },
+            { Icon: Instagram, url: "https://www.instagram.com/rgukt__ongole" },
+            { Icon: Youtube, url: "https://www.youtube.com/@Rgukt-Ongole" }
+          ].map(({ Icon, url }, i) => (
+            <a key={i} href={url} target="_blank" rel="noopener noreferrer" aria-label="Social Link" className="w-8 h-8 rounded-lg flex items-center justify-center border border-white/8 bg-white/4 text-slate-500 hover:text-white hover:bg-[#800000] hover:border-[#800000] transition-all duration-200">
+              <Icon className="w-3.5 h-3.5" />
+            </a>
+          ))}
         </div>
       </div>
 
       {/* ── Flickering wordmark ── */}
-      <div className="relative w-full h-28 sm:h-36">
+      <div className="relative w-full h-20 sm:h-28">
         <div className="absolute inset-0 bg-gradient-to-t from-[#06091a] via-transparent to-[#06091a] z-10 pointer-events-none" />
         <div className="absolute inset-x-4 inset-y-0">
-          <FlickeringGrid text={narrow ? "RGUKT" : "RGUKT Ongole"} fontSize={narrow ? 60 : 88} color="#6B7280" maxOpacity={0.3} flickerChance={0.07} squareSize={2} gridGap={3} />
+          <FlickeringGrid text={narrow ? "RGUKT" : "RGUKT Ongole"} fontSize={narrow ? 50 : 76} color="#6B7280" maxOpacity={0.3} flickerChance={0.07} squareSize={2} gridGap={3} />
         </div>
       </div>
 
