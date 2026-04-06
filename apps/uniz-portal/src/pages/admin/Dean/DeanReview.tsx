@@ -229,14 +229,15 @@ export default function DeanReview() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <button
-            onClick={handleExport}
-            disabled={allocations.length === 0}
-            className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-slate-600 font-bold text-xs hover:bg-slate-50 transition-all shadow-sm disabled:opacity-50"
-          >
-            <FileSpreadsheet size={16} />
-            Export XLS
-          </button>
+          {allocations.length > 0 && (
+            <button
+              onClick={handleExport}
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-slate-600 font-bold text-xs hover:bg-slate-50 transition-all shadow-sm"
+            >
+              <FileSpreadsheet size={16} />
+              Export XLS
+            </button>
+          )}
           <button
             onClick={() => setShowAddModal(true)}
             className="flex items-center gap-2 px-6 py-3 bg-navy-900 text-white rounded-2xl font-bold text-xs hover:bg-navy-800 transition-all shadow-xl"
