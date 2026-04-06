@@ -309,7 +309,7 @@ export default function StudentBulkSection() {
                   className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none font-black text-slate-900 text-[10px] cursor-pointer transition-all appearance-none uppercase tracking-widest shadow-none"
                 >
                   <option value="ALL">All Levels</option>
-                  {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
+                  {["E1", "E2", "E3", "E4"].map((y) => (
                     <option key={y}>{y}</option>
                   ))}
                 </select>
