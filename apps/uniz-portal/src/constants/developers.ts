@@ -3,8 +3,7 @@ export const developers = [
     id: 1,
     name: "Sree Charan",
     designation: "Backend and Architecture",
-    image:
-      "https://res.cloudinary.com/dgp5srab5/image/upload/v1775491651/k07b0fejkixboo3gssbk.png",
+    image: "https://github.com/sreecharan-desu.png",
     url: "https://sreecharan.rguktong.in/",
   },
   {
