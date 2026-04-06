@@ -32,9 +32,9 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
   const toggleMore = () => setIsMoreOpen(!isMoreOpen);
 
   const getPopupItemStyle = (index: number, total: number) => {
-    const radius = 95;
-    const startAngle = -155;
-    const endAngle = -25;
+    const radius = 105;
+    const startAngle = -150;
+    const endAngle = -30;
     const angleStep = total > 1 ? (endAngle - startAngle) / (total - 1) : 0;
     const angle = startAngle + index * angleStep;
     const radian = (angle * Math.PI) / 180;
@@ -66,19 +66,29 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                   exit={{ scale: 0, x: 0, y: 0, opacity: 0 }}
                   transition={{
                     type: "spring",
-                    stiffness: 450,
-                    damping: 28,
+                    stiffness: 400,
+                    damping: 25,
                     mass: 0.8,
-                    delay: index * 0.03,
+                    delay: index * 0.05,
                   }}
                   onClick={() => {
                     item.onClick?.();
                     setIsMoreOpen(false);
                   }}
-                  className="absolute flex items-center justify-center w-12 h-12 rounded-full bg-white text-slate-600 shadow-2xl border border-slate-100 hover:bg-slate-50 active:scale-90 transition-transform"
-                  style={{ left: -24, top: -24 }}
+                  className="absolute flex flex-col items-center justify-center gap-2 group"
+                  style={{ left: -32, top: -32, width: 64, height: 64 }}
                 >
-                  <item.icon size={20} />
+                  <div className="flex items-center justify-center w-[52px] h-[52px] rounded-full bg-white text-navy-900 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 group-hover:bg-slate-50 group-active:scale-95 transition-all">
+                    <item.icon size={24} strokeWidth={2.5} />
+                  </div>
+                  <motion.span
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 + 0.15 }}
+                    className="text-[11px] font-bold text-slate-800 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-3 py-1 rounded-full border border-slate-100 whitespace-nowrap"
+                  >
+                    {item.label}
+                  </motion.span>
                 </motion.button>
               );
             })}
@@ -195,7 +205,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsMoreOpen(false)}
-            className="fixed inset-0 bg-slate-900/10 backdrop-blur-[2px] z-[55]"
+            className="fixed inset-0 bg-[radial-gradient(ellipse_at_bottom_center,_var(--tw-gradient-stops))] from-slate-900/60 via-slate-900/10 to-transparent z-[55] pointer-events-auto"
           />
         )}
       </AnimatePresence>
