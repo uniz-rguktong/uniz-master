@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
-import GlobeFeature from "./ui/globe-feature-section";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dock } from "./ui/dock-two";
 import { InteractiveMenu, InteractiveMenuItem } from "./ui/modern-mobile-menu";
@@ -402,10 +401,6 @@ export default function Sidebar({ content }: MainContent) {
             <Suspense fallback={<ContentSkeleton />}>
               {contentMap[content] || <Error />}
             </Suspense>
-
-            <div className="mt-[50vh] -mx-4 md:-mx-10 border-t border-slate-100 pt-32">
-              <GlobeFeature />
-            </div>
           </div>
         </main>
 
