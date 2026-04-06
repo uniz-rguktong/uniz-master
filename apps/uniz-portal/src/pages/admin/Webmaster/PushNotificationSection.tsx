@@ -375,7 +375,7 @@ export default function PushNotificationSection() {
                       }
                       className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
                     >
-                      {["E1", "E2", "E3", "E4", "P1", "P2"].map((y) => (
+                      {["E1", "E2", "E3", "E4"].map((y) => (
                         <option key={y} value={y}>
                           {y}
                         </option>

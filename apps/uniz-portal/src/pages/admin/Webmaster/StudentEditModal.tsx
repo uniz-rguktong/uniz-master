@@ -286,7 +286,7 @@ export default function StudentEditModal({
                     
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                        <SelectGroup label="Department / Branch" name="branch" value={formData.branch} onChange={handleChange} options={["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME", "AI&ML"].map(b => ({v:b, l:b}))} />
-                       <SelectGroup label="Year Cycle" name="year" value={formData.year} onChange={handleChange} options={["P1", "P2", "E1", "E2", "E3", "E4"].map(y => ({v:y, l:y}))} />
+                       <SelectGroup label="Year Cycle" name="year" value={formData.year} onChange={handleChange} options={["E1", "E2", "E3", "E4"].map(y => ({v:y, l:y}))} />
                        <SelectGroup label="Semester" name="semester" value={formData.semester} onChange={handleChange} options={["SEM-1", "SEM-2"].map(s => ({v:s, l:s}))} />
                        <InputGroup label="Division (Section)" name="section" value={formData.section} icon={<Compass size={14}/>} onChange={handleChange} placeholder="e.g. A" />
                     </div>
