@@ -199,26 +199,29 @@ export default function StudentProfilePage() {
   // Polling removed - now handled centrally in useStudentData hook
 
   // Helper to derive initial fields from user user object
-  const getInitialFields = (userData: any) => ({
-    name: userData?.name || "",
-    gender: userData?.gender || "",
-    address: userData?.address || userData?.Address || "", // Handle different casing if any
-    bloodGroup: userData?.blood_group || userData?.BloodGroup || "",
-    phoneNumber: userData?.phone_number || userData?.PhoneNumber || "",
-    dateOfBirth: userData?.date_of_birth
-      ? new Date(userData.date_of_birth).toISOString().split("T")[0]
-      : "",
-    fatherName: userData?.father_name || "",
-    motherName: userData?.mother_name || "",
-    fatherOccupation: userData?.father_occupation || "",
-    motherOccupation: userData?.mother_occupation || "",
-    fatherEmail: userData?.father_email || "",
-    motherEmail: userData?.mother_email || "",
-    fatherAddress: userData?.father_address || "",
-    motherAddress: userData?.mother_address || "",
-    fatherPhoneNumber: userData?.father_phonenumber || "",
-    motherPhoneNumber: userData?.mother_phonenumber || "",
-  });
+  const getInitialFields = (userData: any) => {
+    const genderMap: any = { "Male": "M", "Female": "F", "M": "M", "F": "F", "Other": "Other" };
+    return {
+      name: userData?.name || "",
+      gender: genderMap[userData?.gender] || userData?.gender || "",
+      address: userData?.address || userData?.Address || "",
+      bloodGroup: userData?.blood_group || userData?.BloodGroup || "",
+      phoneNumber: userData?.phone_number || userData?.PhoneNumber || "",
+      dateOfBirth: userData?.date_of_birth
+        ? new Date(userData.date_of_birth).toISOString().split("T")[0]
+        : "",
+      fatherName: userData?.father_name || "",
+      motherName: userData?.mother_name || "",
+      fatherOccupation: userData?.father_occupation || "",
+      motherOccupation: userData?.mother_occupation || "",
+      fatherEmail: userData?.father_email || "",
+      motherEmail: userData?.mother_email || "",
+      fatherAddress: userData?.father_address || "",
+      motherAddress: userData?.mother_address || "",
+      fatherPhoneNumber: userData?.father_phonenumber || "",
+      motherPhoneNumber: userData?.mother_phonenumber || "",
+    };
+  };
 
   // Init Data
   useEffect(() => {
@@ -500,6 +503,8 @@ export default function StudentProfilePage() {
       label: "Gender",
       name: "gender",
       editable: true,
+      type: "select",
+      options: [{v:"M", l:"Male"}, {v:"F", l:"Female"}, {v:"Other", l:"Other"}]
     },
 
     {
@@ -507,6 +512,8 @@ export default function StudentProfilePage() {
       label: "Blood Group",
       name: "bloodGroup",
       editable: true,
+      type: "select",
+      options: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "N/A"].map(v => ({v, l:v}))
     },
     {
       icon: <Phone className="w-4 h-4" />,

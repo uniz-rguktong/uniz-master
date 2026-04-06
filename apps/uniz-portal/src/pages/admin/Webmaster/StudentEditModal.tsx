@@ -15,7 +15,6 @@ import {
   Briefcase,
   Home,
   ShieldCheck,
-  Heart,
   Globe,
   MapPin,
   Calendar,
@@ -76,8 +75,10 @@ export default function StudentEditModal({
 
   useEffect(() => {
     if (student) {
+      const genderMap: any = { "Male": "M", "Female": "F", "M": "M", "F": "F", "Other": "Other" };
       setFormData({
         ...student,
+        gender: genderMap[student.gender] || student.gender || "M",
         dateOfBirth: student.date_of_birth ? new Date(student.date_of_birth).toISOString().split('T')[0] : "",
         phone: student.phone_number || student.phone || "",
       });
@@ -268,9 +269,9 @@ export default function StudentEditModal({
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                       <SelectGroup label="Gender Descriptor" name="gender" value={formData.gender} onChange={handleChange} options={[{v:"M", l:"Male (XY)"}, {v:"F", l:"Female (XX)"}, {v:"Other", l:"Other"}]} />
+                       <SelectGroup label="Gender Descriptor" name="gender" value={formData.gender} onChange={handleChange} options={[{v:"M", l:"Male"}, {v:"F", l:"Female"}, {v:"Other", l:"Other"}]} />
                        <InputGroup label="Chronological Birth" name="dateOfBirth" value={formData.dateOfBirth} type="date" icon={<Calendar size={14}/>} onChange={handleChange} />
-                       <InputGroup label="Hemoglobin Classification" name="bloodGroup" value={formData.bloodGroup} icon={<Heart size={14}/>} onChange={handleChange} placeholder="e.g. O+" />
+                       <SelectGroup label="Blood Informatics" name="bloodGroup" value={formData.bloodGroup} onChange={handleChange} options={["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "N/A"].map(v => ({v, l:v}))} />
                     </div>
                   </motion.div>
                 )}
