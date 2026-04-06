@@ -120,6 +120,7 @@ export const ADMIN_SUSPEND_STUDENT = (id: string) =>
   `${BASE_URL}/profile/admin/student/${id}/suspend`;
 export const ADMIN_UPDATE_STUDENT = (id: string) =>
   `${BASE_URL}/profile/admin/student/${id}`;
+export const ADMIN_STUDENT_CREATE = `${BASE_URL}/profile/admin/student/create`;
 
 // Student Bulk Management
 export const ADMIN_STUDENT_UPLOAD = `${BASE_URL}/profile/admin/student/upload`;
