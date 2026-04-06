@@ -73,7 +73,7 @@ export const AnimatedTooltip = ({
               />
               <span
                 className={cn(
-                  "absolute top-full mt-2 text-[10px] font-bold text-slate-500 whitespace-nowrap transition-all duration-200 pointer-events-none uppercase tracking-wider",
+                  "absolute top-full mt-2 text-[10px] font-bold text-slate-500 whitespace-nowrap transition-all duration-200 pointer-events-none tracking-wider",
                   hoveredIndex === item.id
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-1",

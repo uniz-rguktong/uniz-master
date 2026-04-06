@@ -27,7 +27,7 @@ export default function GlobeFeature() {
           <div className="flex flex-col gap-8">
             <div className="flex items-center gap-4">
               <span className="text-[10px] font-black  tracking-[0.25em] text-slate-400">
-                developed by
+                meet the developers
               </span>
               <AnimatedTooltip items={people} />
             </div>
