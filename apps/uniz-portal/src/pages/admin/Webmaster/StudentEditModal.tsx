@@ -175,11 +175,11 @@ export default function StudentEditModal({
             className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200]"
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 40, filter: "blur(10px)" }}
-            animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, scale: 0.9, y: 40, filter: "blur(10px)" }}
+            initial={{ opacity: 0, scale: 0.9, x: "-50%", y: "-40%", filter: "blur(10px)" }}
+            animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%", filter: "blur(0px)" }}
+            exit={{ opacity: 0, scale: 0.9, x: "-50%", y: "-40%", filter: "blur(10px)" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-[85vh] bg-white/90 backdrop-blur-2xl rounded-[3.5rem] shadow-[0_80px_150px_-30px_rgba(0,0,0,0.3)] z-[201] overflow-hidden flex"
+            className="fixed left-1/2 top-1/2 w-full max-w-5xl h-[85vh] bg-white/90 backdrop-blur-2xl rounded-[3.5rem] shadow-[0_80px_150px_-30px_rgba(0,0,0,0.3)] z-[201] overflow-hidden flex"
           >
             {/* Sidebar Navigation */}
             <div className="w-72 bg-slate-900 flex flex-col p-8 border-r border-slate-800 shrink-0">
