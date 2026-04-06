@@ -22,6 +22,7 @@ import {
   getAvailableBatches,
   internalSyncStudentStats,
   createIndividualStudent,
+  promoteCohort,
 } from "../controllers/profile.controller";
 
 import multer from "multer";
@@ -242,6 +243,8 @@ router.post(
   validateRequest(AdminUpdateStudentSchema),
   createIndividualStudent,
 );
+
+router.post("/admin/student/promote", authMiddleware, promoteCohort);
 
 router.get("/faculty/me", authMiddleware, getFacultyProfile);
 router.post(

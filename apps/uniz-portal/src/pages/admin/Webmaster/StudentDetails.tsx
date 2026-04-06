@@ -9,10 +9,13 @@ import {
   Shield,
   KeyRound,
   Lock,
+  UserPlus,
+  RefreshCw,
 } from "lucide-react";
 import StudentPerformanceModal from "./StudentPerformanceModal";
 import StudentDashboard from "./StudentDashboard";
 import StudentEditModal from "./StudentEditModal";
+import CohortPromotionModal from "./CohortPromotionModal";
 import { Pagination } from "../../../components/Pagination";
 import { cn } from "../../../utils/cn";
 
@@ -114,6 +117,7 @@ export default function StudentDetails() {
   });
 
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [promotionModalOpen, setPromotionModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<any>(null);
 
   useEffect(() => {
@@ -428,15 +432,25 @@ export default function StudentDetails() {
           </button>
         </div>
 
-        <button
-          onClick={() => {
-            setEditingStudent(null);
-            setEditModalOpen(true);
-          }}
-          className="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-bold uppercase tracking-widest text-[9px] transition-all hover:bg-emerald-600 shadow-lg shadow-emerald-500/20 active:scale-95"
-        >
-          Add Individual Student
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setPromotionModalOpen(true)}
+            className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold uppercase tracking-widest text-[9px] transition-all hover:bg-slate-50 active:scale-95"
+          >
+            <RefreshCw size={14} className="text-slate-400" />
+            Bulk Promote
+          </button>
+          <button
+            onClick={() => {
+              setEditingStudent(null);
+              setEditModalOpen(true);
+            }}
+            className="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-bold uppercase tracking-widest text-[9px] transition-all hover:bg-emerald-600 shadow-lg shadow-emerald-500/20 active:scale-95"
+          >
+            <UserPlus size={14} className="text-white/80" />
+            Add Individual Student
+          </button>
+        </div>
       </div>
 
       <div className="w-full animate-in fade-in slide-in-from-top-4 duration-1000">
@@ -989,6 +1003,16 @@ export default function StudentDetails() {
           if (selectedStudentFullData?.username === updatedStudent.username) {
             setSelectedStudentFullData(updatedStudent);
           }
+          if (searchMode === "filter" || searchMode === "intelligence") {
+            handleSearchByFilter(pagination.page);
+          }
+        }}
+      />
+
+      <CohortPromotionModal
+        isOpen={promotionModalOpen}
+        onClose={() => setPromotionModalOpen(false)}
+        onSuccess={() => {
           if (searchMode === "filter" || searchMode === "intelligence") {
             handleSearchByFilter(pagination.page);
           }
