@@ -298,11 +298,11 @@ export default function Signin({ type }: SigninProps) {
       return;
     }
 
-    const isStudentFormat = /^O\d+/i.test(username.trim());
+    const isStudentFormat = /^[A-Z]\d+/i.test(username.trim());
 
     if (type === "student" && !isStudentFormat) {
       toast.error(
-        "Student username must be your valid college ID (e.g., O210001)",
+        "Student username must be a valid University ID (e.g., O210001 or S220059)",
       );
       return;
     }
@@ -424,10 +424,10 @@ export default function Signin({ type }: SigninProps) {
       return;
     }
 
-    const isStudentFormat = /^O\d+/i.test(username.trim());
+    const isStudentFormat = /^[A-Z]\d+/i.test(username.trim());
 
     if (type === "student" && !isStudentFormat) {
-      toast.error("Student ID must be a valid college ID (e.g., O210001)");
+      toast.error("Student ID must be a valid University ID (e.g., O210001 or S220059)");
       return;
     }
 
@@ -466,10 +466,10 @@ export default function Signin({ type }: SigninProps) {
   }, [username, type, captchaToken]);
 
   const requestEmailOtp = useCallback(async () => {
-    const isStudentFormat = /^O\d+/i.test(username.trim());
+    const isStudentFormat = /^[A-Z]\d+/i.test(username.trim());
 
     if (type === "student" && !isStudentFormat) {
-      toast.error("Student ID must be a valid college ID (e.g., O210001)");
+      toast.error("Student ID must be a valid University ID (e.g., O210001 or S220059)");
       return;
     }
 
@@ -631,7 +631,7 @@ export default function Signin({ type }: SigninProps) {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder={
                   type === "student"
-                    ? "University ID (e.g. O210001)"
+                    ? "University ID (e.g. O210001 or S220059)"
                     : type === "faculty"
                       ? "Staff ID"
                       : "Admin ID"
