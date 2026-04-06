@@ -479,13 +479,17 @@ export default function SemesterRegistrationSection({
               </div>
 
               <div className="flex items-center gap-4">
-                <button
-                  onClick={() => downloadExport("allocations")}
-                  className="flex items-center gap-3 px-6 py-4 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all"
-                >
-                  <Download size={18} />
-                  Export
-                </button>
+                {((activeViewTab === "allocations" && allocations.length > 0) ||
+                  (activeViewTab === "registrations" &&
+                    registeredStudents.length > 0)) && (
+                  <button
+                    onClick={() => downloadExport(activeViewTab)}
+                    className="flex items-center gap-3 px-6 py-4 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all"
+                  >
+                    <Download size={18} />
+                    Export
+                  </button>
+                )}
                 {(role === "dean" || role === "hod" || role === "webmaster") &&
                   activeViewTab === "allocations" && (
                     <button
