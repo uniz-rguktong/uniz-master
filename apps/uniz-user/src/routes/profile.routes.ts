@@ -21,6 +21,7 @@ import {
   bulkDeleteFaculty,
   getAvailableBatches,
   internalSyncStudentStats,
+  createIndividualStudent,
 } from "../controllers/profile.controller";
 
 import multer from "multer";
@@ -234,6 +235,12 @@ router.put(
   "/admin/student/:username/suspend",
   authMiddleware,
   toggleUserSuspension,
+);
+router.post(
+  "/admin/student/create",
+  authMiddleware,
+  validateRequest(AdminUpdateStudentSchema),
+  createIndividualStudent,
 );
 
 router.get("/faculty/me", authMiddleware, getFacultyProfile);

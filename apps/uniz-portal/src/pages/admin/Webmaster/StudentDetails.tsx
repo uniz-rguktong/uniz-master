@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import StudentPerformanceModal from "./StudentPerformanceModal";
 import StudentDashboard from "./StudentDashboard";
+import StudentEditModal from "./StudentEditModal";
 import { Pagination } from "../../../components/Pagination";
 import { cn } from "../../../utils/cn";
 
@@ -111,6 +112,9 @@ export default function StudentDetails() {
     totalPages: 1,
     total: 0,
   });
+
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<any>(null);
 
   useEffect(() => {
     if (searchMode === "id") {
@@ -423,6 +427,16 @@ export default function StudentDetails() {
             Intelligence Filter
           </button>
         </div>
+
+        <button
+          onClick={() => {
+            setEditingStudent(null);
+            setEditModalOpen(true);
+          }}
+          className="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-bold uppercase tracking-widest text-[9px] transition-all hover:bg-emerald-600 shadow-lg shadow-emerald-500/20 active:scale-95"
+        >
+          Add Individual Student
+        </button>
       </div>
 
       <div className="w-full animate-in fade-in slide-in-from-top-4 duration-1000">
@@ -681,6 +695,10 @@ export default function StudentDetails() {
               }}
               onResetPassword={(username) => {
                 handleGlobalResetPassword(username);
+              }}
+              onEditDetails={(std: any) => {
+                setEditingStudent(std);
+                setEditModalOpen(true);
               }}
               isActionLoading={
                 isActionLoading ===
@@ -954,6 +972,28 @@ export default function StudentDetails() {
           </div>
         </div>
       )}
+
+      <StudentPerformanceModal
+        isOpen={performanceModalOpen}
+        onClose={() => setPerformanceModalOpen(false)}
+        studentName={selectedStudentName}
+        studentId={selectedStudentId}
+        data={performanceData}
+      />
+
+      <StudentEditModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        student={editingStudent}
+        onSuccess={(updatedStudent) => {
+          if (selectedStudentFullData?.username === updatedStudent.username) {
+            setSelectedStudentFullData(updatedStudent);
+          }
+          if (searchMode === "filter" || searchMode === "intelligence") {
+            handleSearchByFilter(pagination.page);
+          }
+        }}
+      />
     </div>
   );
 }
