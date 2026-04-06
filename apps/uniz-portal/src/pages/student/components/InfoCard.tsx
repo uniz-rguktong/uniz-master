@@ -12,6 +12,7 @@ export const InfoCard = memo(
     onValueChange,
     type = "text",
     fullWidth,
+    options,
   }: any) => {
     const handleChange = (e: any) => onValueChange(name, e.target.value);
 
@@ -29,15 +30,29 @@ export const InfoCard = memo(
         {isLoading ? (
           <div className="bg-slate-50 rounded-lg w-3/4 h-6 animate-pulse"></div>
         ) : isEditing && editable ? (
-          <input
-            type={type}
-            name={name}
-            value={value}
-            onChange={handleChange}
-            className="w-full bg-slate-50 text-slate-900 text-[15px] font-semibold p-3 rounded-xl border border-slate-100 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none transition-all placeholder:text-slate-400 placeholder:font-normal"
-            autoComplete="off"
-            placeholder={`Enter ${label.toLowerCase()}`}
-          />
+          type === "select" ? (
+            <select
+              name={name}
+              value={value}
+              onChange={handleChange}
+              className="w-full bg-slate-50 text-slate-900 text-[15px] font-semibold p-3.5 rounded-xl border border-slate-100 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none transition-all appearance-none"
+            >
+              <option value="">Select {label}</option>
+              {(options || []).map((opt: any) => (
+                <option key={opt.v} value={opt.v}>{opt.l}</option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type={type}
+              name={name}
+              value={value}
+              onChange={handleChange}
+              className="w-full bg-slate-50 text-slate-900 text-[15px] font-semibold p-3 rounded-xl border border-slate-100 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none transition-all placeholder:text-slate-400 placeholder:font-normal"
+              autoComplete="off"
+              placeholder={`Enter ${label.toLowerCase()}`}
+            />
+          )
         ) : (
           <p className="text-slate-900 text-[15px] font-semibold truncate leading-tight tracking-normal px-1">
             {value ? (
