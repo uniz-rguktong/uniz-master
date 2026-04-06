@@ -30,7 +30,7 @@ export default function CohortPromotionModal({
   const [branch, setBranch] = useState("ALL");
   const [confirmText, setConfirmText] = useState("");
 
-  const years = ["P1", "P2", "E1", "E2", "E3", "E4", "PASSED_OUT"];
+  const years = ["E1", "E2", "E3", "E4", "PASSED_OUT"];
   const branches = ["ALL", "CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME", "AI&ML"];
 
   const handlePromote = async (e: React.FormEvent) => {

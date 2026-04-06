@@ -363,7 +363,7 @@ export default function SearchStudents() {
                       className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-sm font-bold shadow-sm outline-none focus:ring-4 focus:ring-slate-900/5 transition-all appearance-none cursor-pointer"
                     >
                       <option value="">All Years</option>
-                      {["P1", "P2", "E1", "E2", "E3", "E4"].map((y) => (
+                      {["E1", "E2", "E3", "E4"].map((y) => (
                         <option key={y} value={y}>
                           {y}
                         </option>
