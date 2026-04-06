@@ -454,10 +454,13 @@ export default function Signin({ type }: SigninProps) {
       });
 
       if (data && data.success) {
-        toast.success(data.message || "Security code sent successfully", {
-          icon: <span>{data.deliveryMethod === "push" ? "📱" : "📧"}</span>,
-          autoClose: 5000,
-        });
+        toast.success(
+          `${data.message || "Security code sent successfully"}. Please check your Mail or mobile notifications.`,
+          {
+            icon: <span>{data.deliveryMethod === "push" ? "📱" : "📧"}</span>,
+            autoClose: 7000,
+          },
+        );
         setStep("verifyOtp");
       }
     } finally {
@@ -496,10 +499,10 @@ export default function Signin({ type }: SigninProps) {
 
       if (data && data.success) {
         toast.success(
-          data.message || "Security code dispatched to your email",
+          `${data.message || "Security code dispatched to your email"}. Please check your Mail or mobile notifications.`,
           {
-            icon: <span></span>,
-            autoClose: 5000,
+            icon: <span>📧</span>,
+            autoClose: 7000,
           },
         );
       }
@@ -591,7 +594,7 @@ export default function Signin({ type }: SigninProps) {
       ? "Enter your credentials to access the portal"
       : step === "forgot"
         ? "We'll send an OTP to your registered ID"
-        : "Verify your identity to proceed";
+        : "Please Check your Mail or mobile notifications";
 
   const stepTitle =
     step === "signin"
