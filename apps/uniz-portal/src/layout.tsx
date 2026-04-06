@@ -1,5 +1,4 @@
 import React, { Suspense } from "react";
-import GlobeFeature from "./components/ui/globe-feature-section";
 import { useWebSocket } from "./hooks/useWebSocket";
 import { useLocation } from "react-router-dom";
 
@@ -39,7 +38,6 @@ export function Layout({ children }: LayoutProps) {
       >
         <div className="flex-grow h-full w-full">{children}</div>
       </main>
-      {!isHomePage && <GlobeFeature />}
     </div>
   );
 }
