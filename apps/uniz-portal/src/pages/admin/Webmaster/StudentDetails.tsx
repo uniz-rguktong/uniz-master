@@ -1000,10 +1000,10 @@ export default function StudentDetails() {
         onClose={() => setEditModalOpen(false)}
         student={editingStudent}
         onSuccess={(updatedStudent) => {
-          if (selectedStudentFullData?.username === updatedStudent.username) {
-            setSelectedStudentFullData(updatedStudent);
-          }
-          if (searchMode === "filter" || searchMode === "intelligence") {
+          const targetId = updatedStudent?.username || editingStudent?.username;
+          if (searchMode === "id") {
+            if (targetId) fetchStudentById(targetId);
+          } else if (searchMode === "filter" || searchMode === "intelligence") {
             handleSearchByFilter(pagination.page);
           }
         }}
