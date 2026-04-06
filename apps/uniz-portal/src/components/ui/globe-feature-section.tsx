@@ -280,7 +280,7 @@ export default function GlobeFeature() {
           >
             <div className="flex flex-col gap-2.5">
               <span className="text-[9.5px] font-black uppercase tracking-[0.28em] text-zinc-400">
-                Built by
+                meet the developers
               </span>
               <AnimatedTooltip items={people} />
             </div>
