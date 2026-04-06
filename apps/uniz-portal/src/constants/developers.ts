@@ -4,7 +4,7 @@ export const developers = [
     name: "Sree Charan",
     designation: "Backend and Architecture",
     image:
-      "https://res.cloudinary.com/diipfzmyj/image/upload/v1773549659/WhatsApp_Image_2026-01-25_at_20.21.46-modified_e6gcxw.png",
+      "https://res.cloudinary.com/dgp5srab5/image/upload/v1775491651/k07b0fejkixboo3gssbk.png",
     url: "https://sreecharan.rguktong.in/",
   },
   {
