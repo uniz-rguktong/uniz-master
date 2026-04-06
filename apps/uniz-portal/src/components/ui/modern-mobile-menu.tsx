@@ -200,12 +200,9 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
       {/* Backdrop */}
       <AnimatePresence>
         {isMoreOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <div
             onClick={() => setIsMoreOpen(false)}
-            className="fixed inset-0 bg-[radial-gradient(ellipse_at_bottom_center,_var(--tw-gradient-stops))] from-slate-900/60 via-slate-900/10 to-transparent z-[55] pointer-events-auto"
+            className="fixed inset-0 z-[55] pointer-events-auto bg-transparent"
           />
         )}
       </AnimatePresence>
