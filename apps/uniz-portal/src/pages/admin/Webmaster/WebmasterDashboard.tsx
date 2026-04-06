@@ -11,6 +11,7 @@ import {
   Smartphone,
   Lock,
   BookOpen,
+  Globe,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import CurriculumManager from "../Curriculum";
@@ -20,12 +21,11 @@ import WebmasterOverview from "./WebmasterOverview";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
 import StudentDetails from "./StudentDetails";
-// import UnifiedAcademicManager from "./UnifiedAcademicManager";
 import FacultyManagement from "./FacultyManagement";
 import UploadSection from "./UploadSection";
-
 import BannersSection from "./BannersSection";
 import UpdatesSection from "./UpdatesSection";
+import WebsiteUpdatesSection from "./WebsiteUpdatesSection";
 // import TendersSection from "./TendersSection";
 import PushNotificationSection from "./PushNotificationSection";
 import StudentBulkSection from "./StudentBulkSection";
@@ -52,6 +52,7 @@ export default function WebmasterDashboard() {
     | "grievances"
     | "outpass"
     | "outings"
+    | "website_updates"
   >("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
@@ -140,6 +141,7 @@ export default function WebmasterDashboard() {
       items: [
         { id: "banners", label: "Home Banners", icon: Layout },
         { id: "updates", label: "Campus Updates", icon: Bell },
+        { id: "website_updates", label: "Website Updates", icon: Globe },
         { id: "push_alerts", label: "Push Alerts", icon: Smartphone },
       ],
     },
@@ -210,6 +212,8 @@ export default function WebmasterDashboard() {
         return <CurriculumManager />;
       case "security":
         return <SecuritySection username={username} />;
+      case "website_updates":
+        return <WebsiteUpdatesSection />;
       case "grievances":
         return renderComingSoon("Grievance Redressal");
       case "outpass":
