@@ -224,10 +224,20 @@ app.get(
       async ([name, url]) => {
         try {
           const start = performance.now();
-          await internalClient.get(`${url.replace(/\/$/, "")}/health`);
+          // Doc service is a static site server (Mintlify) and uses root for health check
+          const path = name === "docs" ? "/" : "/health";
+          await internalClient.get(`${url.replace(/\/$/, "")}${path}`);
           const latency = (performance.now() - start).toFixed(2);
           return { name, status: "healthy", latency: `${latency}ms` };
         } catch (e: any) {
+          // Fallback: If docs service returns a response (like a 404 page), it's technically UP
+          if (name === "docs" && e.response) {
+            return {
+              name,
+              status: "healthy",
+              statusDetail: "up but path not found",
+            };
+          }
           return { name, status: "unhealthy", error: e.message };
         }
       },
