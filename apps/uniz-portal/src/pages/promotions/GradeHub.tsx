@@ -454,23 +454,25 @@ export default function GradeHub() {
                   {grades.semester}
                 </h2>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={async () => {
-                    const mappedSemester =
-                      selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
-                    const semId = `${selectedYear}-${mappedSemester}`;
-                    await downloadFile(
-                      DOWNLOAD_GRADES(semId),
-                      `Full_Grades_${user.username}_${semId}.pdf`,
-                      { studentId: user.username, reportType: "REGULAR" },
-                    );
-                  }}
-                  className="h-10 px-4 bg-navy-900 hover:bg-navy-800 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm"
-                >
-                  <Download size={14} /> Output PDF
-                </button>
-              </div>
+              {grades.calculation_details && grades.calculation_details.length > 0 && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={async () => {
+                      const mappedSemester =
+                        selectedSemester === "Sem 1" ? "SEM-1" : "SEM-2";
+                      const semId = `${selectedYear}-${mappedSemester}`;
+                      await downloadFile(
+                        DOWNLOAD_GRADES(semId),
+                        `Full_Grades_${user.username}_${semId}.pdf`,
+                        { studentId: user.username, reportType: "REGULAR" },
+                      );
+                    }}
+                    className="h-10 px-4 bg-navy-900 hover:bg-navy-800 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm"
+                  >
+                    <Download size={14} /> Output PDF
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Content */}
