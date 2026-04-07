@@ -57,4 +57,6 @@ fully working with the existing codebase conventions.
 
 **3. Hierarchy through weight, not size** — `font-black` headings + `font-medium text-zinc-500` body creates contrast without needing big size jumps. That's why it reads as premium.
 
+**4. Engineering Stability** — When implementing `AnimatePresence` in Modals or Drawers, **never** trigger a state update (`setState`) inside a `useEffect` on the unmount transition (`isOpen === false`). This will corrupt the `AnimatePresence` exit queue and freeze the React tree, trapping backdrop overlays on the screen. Always prepend state-updating effects with `if (!isOpen) return;`
+
 Save that prompt as a reusable template and swap in the component-specific context each time.
