@@ -74,6 +74,8 @@ export default function StudentEditModal({
   const [activeSection, setActiveSection] = useState<"primary" | "academic" | "family">("primary");
 
   useEffect(() => {
+    if (!isOpen) return;
+
     if (student) {
       const genderMap: any = { "Male": "M", "Female": "F", "M": "M", "F": "F", "Other": "Other" };
       setFormData({
