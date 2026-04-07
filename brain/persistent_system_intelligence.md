@@ -163,6 +163,9 @@ _(This section to be expanded as APIs are indexed)_
 11. **Grievance Push Notification delivery**:
     - **Cause**: Push alerts sent without recipient names were appearing generic ("Dear User").
     - **Fix**: Updated `uniz-notifications` worker to fetch names and inject "Dear {Name}" greetings for a professional notification tone.
+12. **React Modal/Webpage Freezing (Stuck State)**:
+    - **Cause**: Using `framer-motion`'s `<AnimatePresence>` to unmount a component, while triggering a synchronous state update (e.g. `setState` via `useEffect`) on the `isOpen === false` transition. This corrupts the exit animation queue, permanently leaving the background-blur overlay (`z-[200]`) on the screen and blocking all pointer events.
+    - **Fix**: Ensure that `useEffect` hooks heavily dependent on state do not run when a modal is closing. Always prepend state-updating effects in modals with `if (!isOpen) return;` to allow clean unmounts.
 
 ### Scaling Constraints
 
