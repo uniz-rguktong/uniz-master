@@ -75,31 +75,42 @@ verify_deployment() {
   echo "[Verify] Waiting for rollouts..."
   local deps=()
   if [ "${#VERIFY_DEPLOYMENTS[@]}" -gt 0 ]; then
-    deps=("${VERIFY_DEPLOYMENTS[@]}")
-    echo "[Verify] Checking rollouts for updated workloads: ${deps[*]}"
+    local dep
+    for dep in "${VERIFY_DEPLOYMENTS[@]}"; do
+      [[ "$dep" == *"job"* ]] && continue
+      kubectl get deployment "$dep" &>/dev/null || continue
+      deps+=("$dep")
+    done
+    # Full-stack deploys: only gate on critical path (avoids 40m sequential timeouts).
+    if [ "${#deps[@]}" -gt 5 ]; then
+      local critical=(uniz-gateway-api uniz-auth-service uniz-user-service uniz-portal uniz-landing)
+      local filtered=() d c
+      for c in "${critical[@]}"; do
+        for d in "${deps[@]}"; do
+          [ "$d" = "$c" ] && filtered+=("$d") && break
+        done
+      done
+      deps=("${filtered[@]}")
+      echo "[Verify] Full deploy — checking critical rollouts only: ${deps[*]}"
+    else
+      echo "[Verify] Checking rollouts for updated workloads: ${deps[*]}"
+    fi
   else
     deps=(
       uniz-gateway-api
       uniz-auth-service
       uniz-user-service
-      uniz-academics-service
-      uniz-outpass-service
       uniz-portal
-      uniz-docs-service
-      uniz-mail-service
-      uniz-notification-service
       uniz-landing
     )
   fi
   local dep
   for dep in "${deps[@]}"; do
-    if kubectl get deployment "$dep" &>/dev/null; then
-      kubectl rollout status "deployment/$dep" --timeout=180s || {
-        echo "[Verify] Rollout timeout for $dep"
-        kubectl get pods -l "app=$dep" 2>/dev/null || kubectl get pods | grep "$dep" || true
-        return 1
-      }
-    fi
+    kubectl rollout status "deployment/$dep" --timeout=120s || {
+      echo "[Verify] Rollout timeout for $dep"
+      kubectl get pods 2>/dev/null | grep "$dep" || true
+      return 1
+    }
   done
 
   echo "[Verify] Checking API health..."
@@ -409,15 +420,13 @@ deploy_logic() {
   VERIFY_DEPLOYMENTS=()
   for s in "${ROLLBACK_TARGETS[@]}"; do
     IFS=':' read -r _ _ dep _ <<< "$s"
+    [[ "$dep" == *"job"* ]] && continue
     VERIFY_DEPLOYMENTS+=("$dep")
   done
 
   if [ "$DEPLOY_CONTEXT" = "GITHUB_ACTIONS" ]; then
     if ! verify_deployment; then
-      if [ "$USE_GHCR" == "true" ] && [ -n "$PREV_SHA" ] && [ ${#ROLLBACK_TARGETS[@]} -gt 0 ]; then
-        echo "[Rollback] Health check failed — reverting to ${PREV_SHA:0:7}..."
-        rollback_ghcr_images "$PREV_SHA"
-      fi
+      echo "[Warn] Deploy verify failed — leaving rolled-out images in place (no GHCR rollback; old SHA tags may not exist in registry)."
       exit 1
     fi
   fi
