@@ -14,6 +14,7 @@ infra_yaml_to_dir() {
     outpass-service.yaml) echo "uniz-outpass" ;;
     portal.yaml) echo "uniz-portal" ;;
     user-service.yaml) echo "uniz-user" ;;
+    landing.yaml) echo "uniz-landing" ;;
     *) echo "" ;;
   esac
 }
