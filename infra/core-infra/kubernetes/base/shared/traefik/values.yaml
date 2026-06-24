@@ -1,0 +1,55 @@
+# Traefik with Kubernetes Ingress NGINX provider — drop-in for archived ingress-nginx.
+# Docs: https://doc.traefik.io/traefik/migrate/nginx-to-traefik/
+#
+# Existing Ingress resources (ingressClassName: nginx + nginx.* annotations) work unchanged.
+
+providers:
+  kubernetesIngressNGINX:
+    enabled: true
+    ingressClass: nginx
+    ingressClassByName: true
+    allowSnippetAnnotations: true
+  kubernetesIngress:
+    enabled: false
+  kubernetesCRD:
+    enabled: true
+
+ingressClass:
+  enabled: false
+
+ports:
+  web:
+    port: 8000
+    expose:
+      default: true
+    exposedPort: 80
+    protocol: TCP
+    forwardedHeaders:
+      insecure: true
+  websecure:
+    port: 8443
+    expose:
+      default: true
+    exposedPort: 443
+    protocol: TCP
+    http:
+      tls:
+        enabled: true
+
+service:
+  enabled: true
+  type: LoadBalancer
+
+deployment:
+  replicas: 1
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+additionalArguments:
+  - "--global.checknewversion=false"
+  - "--global.sendanonymoususage=false"
