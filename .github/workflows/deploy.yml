@@ -53,6 +53,45 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/cache/restore@v4
+        id: deploy-sha-cache
+        with:
+          path: |
+            .uniz-last-deploy-sha
+            .uniz-k8s-image-tags.json
+          key: uniz-deploy-state-${{ github.ref_name }}
+          restore-keys: |
+            uniz-deploy-state-${{ github.ref_name }}-
+
+      - name: Export cached last successful deploy SHA
+        run: |
+          if [ -f .uniz-last-deploy-sha ]; then
+            SHA=$(tr -d '[:space:]' < .uniz-last-deploy-sha)
+            echo "LAST_SUCCESSFUL_DEPLOY_SHA=$SHA" >> "$GITHUB_ENV"
+            echo "[Cache] Last successful deploy SHA: ${SHA:0:7}"
+          else
+            echo "[Cache] No cached deploy SHA — will use VPS manifest / push fallback"
+          fi
+
+      - name: Fetch live VPS image manifest
+        continue-on-error: true
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}" \
+            'WORK_DIR="/root/uniz-master-main"; [ -f /root/.uniz_k8s_image_tags.json ] || { [ -d "$WORK_DIR" ] && bash "$WORK_DIR/scripts/dump-k8s-image-tags.sh" /root/.uniz_k8s_image_tags.json || true; }'
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/root/.uniz_k8s_image_tags.json" \
+            .uniz-k8s-image-tags.json 2>/dev/null || true
+          if [ ! -f .uniz-k8s-image-tags.json ]; then
+            echo "{}" > .uniz-k8s-image-tags.json
+          fi
+          echo "[VPS] Loaded deployed image manifest ($(wc -c < .uniz-k8s-image-tags.json) bytes)"
+
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -67,6 +106,8 @@ jobs:
           GITHUB_BEFORE_SHA: ${{ github.event.before }}
           DEPLOY_SHA: ${{ github.sha }}
           DEPLOY_BEFORE_SHA: ${{ github.event.before }}
+          LAST_SUCCESSFUL_DEPLOY_SHA: ${{ env.LAST_SUCCESSFUL_DEPLOY_SHA }}
+          K8S_IMAGE_MANIFEST: .uniz-k8s-image-tags.json
           IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
@@ -87,6 +128,7 @@ jobs:
           fetch-depth: 0
 
       - name: Deploy via SSH
+        id: vps_deploy
         uses: appleboy/ssh-action@v1.0.3
         env:
           JWT_SECURITY_KEY: ${{ secrets.JWT_SECURITY_KEY }}
@@ -152,3 +194,28 @@ jobs:
           command_timeout: 60m
           envs: JWT_SECURITY_KEY,INTERNAL_SECRET,INTERNAL_BOT_SECRET,REDIS_URL,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,SES_FROM_EMAIL,EMAIL_USER,EMAIL_PASS,CLOUDINARY_CLOUD_NAME,CLOUDINARY_UPLOAD_PRESET,VITE_CLOUDINARY_CLOUD_NAME,VITE_CLOUDINARY_UPLOAD_PRESET,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY,POSTGRES_USER,POSTGRES_PASSWORD,AUTH_DATABASE_URL,USER_DATABASE_URL,ACADEMICS_DATABASE_URL,OUTPASS_DATABASE_URL,FILES_DATABASE_URL,MAIL_DATABASE_URL,NOTIFICATION_DATABASE_URL,CRON_DATABASE_URL,VITE_API_URL,VITE_MAINTENANCE_MODE,VITE_SCRAPER_URL,VITE_ANALYTICS_URL,VITE_ANALYTICS_API_KEY,INSTITUTION_LOGO_URL,VITE_TURNSTILE_SITE_KEY,TURNSTILE_SECRET_KEY,DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME,LANDING_POSTGRES_USER,LANDING_POSTGRES_PASSWORD,LANDING_POSTGRES_DB,LANDING_DATABASE_URL,LANDING_JWT_SECURITY_KEY,LANDING_JWT_ALGORITHM,DUMMY_TOKEN,CLOUDFLARE_API_TOKEN,GHCR_PULL_TOKEN,GHCR_USERNAME,GITHUB_REF_NAME,GITHUB_SHA,GITHUB_BEFORE_SHA,GITHUB_ACTOR,USE_GHCR,IMAGE_REGISTRY
           script_path: scripts/ci-remote-deploy.sh
+
+      - name: Fetch VPS image manifest after deploy
+        if: success() && steps.vps_deploy.outcome == 'success'
+        continue-on-error: true
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/root/.uniz_k8s_image_tags.json" \
+            .uniz-k8s-image-tags.json 2>/dev/null || echo "{}" > .uniz-k8s-image-tags.json
+
+      - name: Record successful deploy SHA
+        if: success() && steps.vps_deploy.outcome == 'success'
+        run: echo "${{ github.sha }}" > .uniz-last-deploy-sha
+
+      - uses: actions/cache/save@v4
+        if: success() && steps.vps_deploy.outcome == 'success'
+        with:
+          path: |
+            .uniz-last-deploy-sha
+            .uniz-k8s-image-tags.json
+          key: uniz-deploy-state-${{ github.ref_name }}-${{ github.sha }}

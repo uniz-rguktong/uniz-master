@@ -87,6 +87,35 @@ ghcr_image_ref() {
   echo "${IMAGE_REGISTRY:-ghcr.io/uniz-rguktong}/${IMG}:${TAG}"
 }
 
+ghcr_image_exists() {
+  local IMG="$1"
+  local TAG="$2"
+  [ -z "$IMG" ] || [ -z "$TAG" ] && return 1
+  docker manifest inspect "$(ghcr_image_ref "$IMG" "$TAG")" >/dev/null 2>&1
+}
+
+service_dir_changed_between() {
+  local DIR="$1"
+  local FROM_SHA="$2"
+  local TO_SHA="$3"
+  [ -z "$FROM_SHA" ] || [ -z "$TO_SHA" ] && return 1
+  git diff --name-only "$FROM_SHA" "$TO_SHA" 2>/dev/null | grep -q "^apps/$DIR/"
+}
+
+deployed_image_baseline_sha() {
+  local IMG="$1"
+  local MANIFEST="${K8S_IMAGE_MANIFEST:-.uniz-k8s-image-tags.json}"
+  if [ -f "$MANIFEST" ] && command -v jq >/dev/null 2>&1; then
+    local tag
+    tag=$(jq -r --arg img "$IMG" '.[$img] // empty' "$MANIFEST" 2>/dev/null || true)
+    if [ -n "$tag" ] && [ "$tag" != "null" ] && [[ "$tag" =~ ^[0-9a-f]{7,40}$ ]]; then
+      echo "$tag"
+      return 0
+    fi
+  fi
+  return 1
+}
+
 # Populates globals used by service_should_build: CHANGED_FILES, FORCE_ALL,
 # SCOPED_BUILD_DIRS, SCOPED_REBUILD, NEW_HEAD, LAST_SHA, BUILD_MSG
 deploy_detect_changes() {
@@ -135,13 +164,19 @@ deploy_detect_changes() {
 
   STATE_FILE="${STATE_FILE:-/root/.uniz_last_deploy_sha}"
   LAST_SHA=""
-  if [ "$DEPLOY_CONTEXT" = "GITHUB_ACTIONS" ] && [ -n "${DEPLOY_BEFORE_SHA:-}" ] \
+  # Diff from last *successful* deploy — not merely the previous git push.
+  # Using push before-SHA alone misses services when a prior deploy failed or only
+  # partially rolled out (e.g. fix commit after a failed image build).
+  if [ -f "$STATE_FILE" ]; then
+    LAST_SHA=$(tr -d '[:space:]' < "$STATE_FILE")
+    echo "[Git] Using last successful deploy SHA (state): ${LAST_SHA:0:7}"
+  elif [ -n "${LAST_SUCCESSFUL_DEPLOY_SHA:-}" ]; then
+    LAST_SHA="$LAST_SUCCESSFUL_DEPLOY_SHA"
+    echo "[Git] Using last successful deploy SHA (cache): ${LAST_SHA:0:7}"
+  elif [ "$DEPLOY_CONTEXT" = "GITHUB_ACTIONS" ] && [ -n "${DEPLOY_BEFORE_SHA:-}" ] \
     && [ "$DEPLOY_BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
     LAST_SHA="$DEPLOY_BEFORE_SHA"
-    echo "[Git] Using GitHub push before-SHA for change detection: ${LAST_SHA:0:7}"
-  elif [ -f "$STATE_FILE" ]; then
-    LAST_SHA=$(cat "$STATE_FILE")
-    echo "[Git] Using last deploy SHA: ${LAST_SHA:0:7}"
+    echo "[Git] Using GitHub push before-SHA (fallback): ${LAST_SHA:0:7}"
   fi
   [ -z "$LAST_SHA" ] && LAST_SHA="HEAD~1"
 
@@ -170,6 +205,7 @@ deploy_detect_changes() {
 
 service_should_build() {
   local DIR="$1"
+  local IMG="${2:-}"
 
   if [ "$FORCE_ALL" == "true" ]; then
     return 0
@@ -197,6 +233,41 @@ service_should_build() {
 
   if [ -n "${INFRA_CHANGED_DIRS[$DIR]:-}" ]; then
     return 0
+  fi
+
+  # Catch-up: service code changed since what is actually running on the VPS.
+  if [ -n "$IMG" ] && [ -n "${NEW_HEAD:-}" ]; then
+    local baseline=""
+    baseline=$(deployed_image_baseline_sha "$IMG" 2>/dev/null || true)
+    if [ -n "$baseline" ] && service_dir_changed_between "$DIR" "$baseline" "$NEW_HEAD"; then
+      echo "[Build] $DIR changed since deployed image $IMG:$baseline — rebuild required."
+      return 0
+    fi
+  fi
+
+  return 1
+}
+
+# GHCR image build gate — also build when HEAD tag is missing but source changed.
+service_needs_ghcr_build() {
+  local DIR="$1"
+  local IMG="$2"
+  local SHORT_TAG="${3:-${DEPLOY_SHA:0:7}}"
+
+  if service_should_build "$DIR" "$IMG"; then
+    return 0
+  fi
+
+  if [ -n "$SHORT_TAG" ] && ! ghcr_image_exists "$IMG" "$SHORT_TAG"; then
+    local baseline="${LAST_SHA:-}"
+    local deployed=""
+    deployed=$(deployed_image_baseline_sha "$IMG" 2>/dev/null || true)
+    [ -n "$deployed" ] && baseline="$deployed"
+    if [ -n "$baseline" ] && [ -n "${NEW_HEAD:-}" ] \
+      && service_dir_changed_between "$DIR" "$baseline" "$NEW_HEAD"; then
+      echo "[Build] Missing GHCR image $IMG:$SHORT_TAG with pending $DIR changes — rebuilding."
+      return 0
+    fi
   fi
 
   return 1
