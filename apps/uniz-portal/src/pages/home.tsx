@@ -321,9 +321,9 @@ const Home = () => {
         "New academic semester registration is now live. Please check your portals.",
     },
     {
-      title: "Ornate 2026",
+      title: "Campus Events",
       content:
-        "Our biggest technical fest is coming soon. Stay tuned for registrations.",
+        "Watch the notice board and student channels for upcoming workshops, sports, and cultural programs.",
     },
   ]);
 

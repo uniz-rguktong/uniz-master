@@ -59,22 +59,9 @@ deploy_logic() {
     "infra/core-infra/nginx:uniz-gateway:uniz-gateway:gateway-nginx"
   )
 
-  ORNATE_SERVICES=(
-    "ornate-core:ornate-core:ornate-core:ornate-core"
-    "ornate:ornate:ornate:ornate"
-  )
-
-  # Branch Filtering
-  if [ "$CURRENT_BRANCH" == "ornate" ]; then
-    ALL_SERVICES=("${ORNATE_SERVICES[@]}")
-    K_BASE="infra/core-infra/kubernetes/base/ornate"
-    # Fallback if ornate/ folder doesn't exist in base
-    [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
-  else
-    ALL_SERVICES=("${UNIZ_SERVICES[@]}")
-    K_BASE="infra/core-infra/kubernetes/base/core"
-    [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
-  fi
+  ALL_SERVICES=("${UNIZ_SERVICES[@]}")
+  K_BASE="infra/core-infra/kubernetes/base/core"
+  [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
 
   # LOAD SECRETS (Sanitized)
   if [ -f "/root/uniz-secrets.env" ]; then
@@ -87,27 +74,12 @@ deploy_logic() {
       export "$key"="$clean_val"
     done < /root/uniz-secrets.env
 
-    # Ornate Variable Fallbacks (Ensure they are never empty for envsubst)
-    export ORNATE_NEXTAUTH_URL="${ORNATE_NEXTAUTH_URL:-$NEXTAUTH_URL}"
-    export ORNATE_NEXTAUTH_URL_CORE="${ORNATE_NEXTAUTH_URL_CORE:-$NEXTAUTH_URL}"
-    export ORNATE_NEXTAUTH_SECRET="${ORNATE_NEXTAUTH_SECRET:-$NEXTAUTH_SECRET}"
-    export ORNATE_AWS_REGION="${ORNATE_AWS_REGION:-$AWS_REGION}"
-    export ORNATE_AWS_ACCESS_KEY_ID="${ORNATE_AWS_ACCESS_KEY_ID:-$AWS_ACCESS_KEY_ID}"
-    export ORNATE_AWS_SECRET_ACCESS_KEY="${ORNATE_AWS_SECRET_ACCESS_KEY:-$AWS_SECRET_ACCESS_KEY}"
   fi
 
   # Generate Infrastructure from templates
   if [ -f "infra/core-infra/kubernetes/base/shared/secrets.yaml.template" ]; then
     echo "[Infra] Generating secrets.yaml..."
-    # Determine the correct generation path
-    # If K_BASE is the root base (ornate branch), we must put it there.
-    # Otherwise, it goes in shared/ where it's applied by the shared kustomization.
-    if [[ "$K_BASE" == "infra/core-infra/kubernetes/base" ]]; then
-      GEN_PATH="infra/core-infra/kubernetes/base/secrets.yaml"
-    else
-      GEN_PATH="infra/core-infra/kubernetes/base/shared/secrets.yaml"
-    fi
-    envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > "$GEN_PATH"
+    envsubst < infra/core-infra/kubernetes/base/shared/secrets.yaml.template > infra/core-infra/kubernetes/base/shared/secrets.yaml
   fi
 
   # Apply Infrastructure
@@ -173,12 +145,6 @@ deploy_logic() {
           BUILD_ARGS="--build-arg SERVICE_DIR=apps/$DIR --build-arg WORKSPACE_NAME=$WORKSPACE_NAME"
         elif [[ "$DIR" == "uniz-portal" ]]; then
           BUILD_ARGS="--build-arg VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg VITE_API_URL=$VITE_API_URL --build-arg VITE_CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME --build-arg VITE_CLOUDINARY_UPLOAD_PRESET=$CLOUDINARY_UPLOAD_PRESET --build-arg VITE_ANALYTICS_URL=$VITE_ANALYTICS_URL --build-arg VITE_ANALYTICS_KEY=$VITE_ANALYTICS_API_KEY --build-arg VITE_SCRAPER_URL=$VITE_SCRAPER_URL"
-        elif [[ "$DIR" == "ornate" || "$DIR" == "ornate-core" ]]; then 
-          # Ensure NEXTAUTH_URL is valid and not empty
-          EFFECTIVE_AUTH_URL="${ORNATE_NEXTAUTH_URL:-$NEXTAUTH_URL}"
-          [ -z "$EFFECTIVE_AUTH_URL" ] && EFFECTIVE_AUTH_URL="https://ornate.rguktong.in"
-          
-          BUILD_ARGS="--build-arg NEXT_PUBLIC_ASSETS_URL=https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets --build-arg DATABASE_URL=$ORNATE_DATABASE_URL --build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg NEXTAUTH_URL=$EFFECTIVE_AUTH_URL --build-arg REDIS_URL=$ORNATE_REDIS_URL --build-arg R2_ENDPOINT=$R2_ENDPOINT --build-arg R2_ACCESS_KEY_ID=$R2_ACCESS_KEY_ID --build-arg R2_SECRET_ACCESS_KEY=$R2_SECRET_ACCESS_KEY --build-arg R2_PUBLIC_DOMAIN=$R2_PUBLIC_DOMAIN --build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$VAPID_PUBLIC_KEY --build-arg NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY"
         fi
 
         if docker build --platform linux/amd64 $BUILD_ARGS -f "$DOCKERFILE" -t $IMG:$TAG $BUILD_CONTEXT; then
