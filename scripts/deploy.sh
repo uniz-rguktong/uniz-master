@@ -300,7 +300,15 @@ deploy_logic() {
       echo "[Skip] No changes for $DIR — reusing existing image."
       TAG=$(k3s ctr -n k8s.io images ls -q | grep "docker.io/library/$IMG:local-" | sort -V | tail -n 1 | cut -d: -f2)
       if [ -z "$TAG" ]; then
-          TAG="local"
+        # Never fall back to bare "local" — k3s will try docker.io and fail with ImagePullBackOff
+        CURRENT=$(kubectl get deployment "$DEP" -o jsonpath="{.spec.template.spec.containers[?(@.name=='$CON')].image}" 2>/dev/null || true)
+        if [[ "$CURRENT" =~ :local-[0-9]+$ ]]; then
+          TAG="${CURRENT##*:}"
+          echo "[Skip] Reusing deployment image tag $TAG for $DEP"
+        else
+          echo "[Warn] No local image for $IMG — leaving deployment image unchanged"
+          TAG=""
+        fi
       fi
     fi
 
