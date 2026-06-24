@@ -41,6 +41,8 @@ ehthumbs.db
 *secrets.env
 secrets.env
 secrets.yaml
+secrets.env.vps.backup
+*.vps.backup
 !secrets.yaml.template
 infra/core-infra/test_output/
 node_modules

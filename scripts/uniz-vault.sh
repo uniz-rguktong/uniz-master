@@ -5,7 +5,15 @@
 
 MASTER_FILE="secrets.env"
 EXAMPLE_FILE="secrets.env.example"
-VPS_IP="76.13.241.174"
+
+# Optional: source VPS host from local secrets.env (never committed)
+if [ -f "secrets.env" ]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "secrets.env"
+  set +a
+fi
+VPS_IP="${UNIZ_VPS_HOST:-${VPS_IP:-}}"
 
 # List of critical keys that MUST exist for a healthy system
 REQUIRED_KEYS=(
@@ -30,6 +38,11 @@ usage() {
   echo "  get <KEY>     Get a secret value from master vault"
   echo "  set <KEY=VAL> Set or update a secret in master vault"
   echo "  vps-audit     Check if VPS master vault matches local required keys"
+  echo "  vps           Secure VPS access (masking + audit) — run: npm run vault:vps"
+  echo ""
+  echo "VPS secure access (SSH + masking + audit log):"
+  echo "  ./scripts/vps-vault.sh list|show|reveal|status|audit|pull-backup"
+  echo "  npm run vault:vps -- list"
   echo ""
 }
 
@@ -67,18 +80,7 @@ sync_local() {
 }
 
 vps_audit() {
-  log_info "Auditing VPS Vault (SSH: root@$VPS_IP)..."
-  ssh -o ConnectTimeout=5 root@$VPS_IP "if [ -f /root/uniz-secrets.env ]; then echo 'FOUND'; else echo 'NOT_FOUND'; fi" | grep -q "FOUND" || {
-    log_error "VPS vault /root/uniz-secrets.env NOT found on master host!"
-    exit 1
-  }
-  
-  log_info "Checking VPS keys..."
-  # Run a remote check for the same required keys
-  for key in "${REQUIRED_KEYS[@]}"; do
-    ssh root@$VPS_IP "grep -q '^${key}=' /root/uniz-secrets.env" || log_warn "VPS Missing: $key"
-  done
-  log_info "✅ VPS Audit complete."
+  bash "$(dirname "$0")/vps-vault.sh" audit
 }
 
 case "$1" in
@@ -100,5 +102,6 @@ case "$1" in
     log_info "Updated $key"
     ;;
   vps-audit) vps_audit ;;
+  vps) bash "$(dirname "$0")/vps-vault.sh" "${@:2}" ;;
   *) usage ;;
 esac
