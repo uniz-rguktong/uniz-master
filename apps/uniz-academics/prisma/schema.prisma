@@ -34,6 +34,8 @@ model Grade {
   isRemedial    Boolean  @default(false)
   passDate            DateTime?
   subjectNameOverride String? // For electives (e.g. "Cloud Computing" instead of "Elective-VI")
+  subjectCode         String? // Denormalized snapshot — robust to volatile per-semester subjects
+  subjectName         String? // Denormalized snapshot — robust to volatile per-semester subjects
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   subject             Subject  @relation(fields: [subjectId], references: [id])
@@ -53,6 +55,8 @@ model Attendance {
   attendedClasses Int
   batch           String? // e.g. "O21"
   subjectNameOverride String? // For electives (e.g. "Cloud Computing" instead of "Elective-VI")
+  subjectCode         String? // Denormalized snapshot — robust to volatile per-semester subjects
+  subjectName         String? // Denormalized snapshot — robust to volatile per-semester subjects
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   subject         Subject  @relation(fields: [subjectId], references: [id])
@@ -66,6 +70,7 @@ model Attendance {
 enum SemesterStatus {
   DRAFT
   DEAN_REVIEW
+  HOD_REVIEW
   APPROVED
   REGISTRATION_OPEN
   REGISTRATION_CLOSED
@@ -75,11 +80,36 @@ model AcademicSemester {
   id                String             @id
   name              String // e.g. "AY 2024-25 SEM-II"
   status            SemesterStatus     @default(DRAFT)
+  academicYear      String? // e.g. "AY 2026-27"
+  batch             String? // e.g. "O21"
+  program           String?            @default("B.Tech")
+  registrationStart DateTime?
+  registrationEnd   DateTime?
+  semesterStart     DateTime?
+  semesterEnd       DateTime?
   branchAllocations   BranchAllocation[]
   registrations       Registration[]
+  electiveGroups      ElectiveGroup[]
   seatingArrangements SeatingArrangement[]
   createdAt           DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
+}
+
+model ElectiveGroup {
+  id             String           @id @default(uuid()) @db.Uuid
+  semesterId     String
+  branch         String // e.g. "CSE" or "ALL" for open electives
+  academicYear   String?          @default("") // e.g. "E3"
+  groupCode      String // e.g. "PE101"
+  groupName      String // e.g. "Choose Physical Education Activity"
+  selectionLimit Int              @default(1)
+  semester       AcademicSemester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([semesterId, branch, groupCode])
+  @@index([semesterId])
+  @@index([branch])
 }
 
 model Faculty {
@@ -115,7 +145,9 @@ model BranchAllocation {
   status        AllocationStatus @default(DEAN_PENDING)
   isApproved    Boolean          @default(false)
   isMandatory   Boolean          @default(true)
+  subjectType   String?          @default("CORE") // CORE | ELECTIVE | OPEN_ELECTIVE | PE
   electiveGroupId String?        @default("")
+  electiveGroupName String?      @default("")
   electiveLimit Int?             @default(1)
   subject       Subject          @relation(fields: [subjectId], references: [id])
   semester      AcademicSemester @relation(fields: [semesterId], references: [id])
@@ -134,6 +166,7 @@ model Registration {
   subjectId  String
   semesterId String
   status     String           @default("REGISTERED") // "REGISTERED", "DROPPED"
+  submittedAt DateTime?
   subject    Subject          @relation(fields: [subjectId], references: [id])
   semester   AcademicSemester @relation(fields: [semesterId], references: [id])
   createdAt  DateTime         @default(now())

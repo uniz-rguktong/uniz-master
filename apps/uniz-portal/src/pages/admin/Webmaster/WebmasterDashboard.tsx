@@ -11,10 +11,12 @@ import {
   Lock,
   BookOpen,
   Globe,
+  CalendarClock,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { adminCardClass } from "@/components/admin/admin-ui";
 import CurriculumManager from "../Curriculum";
+import SemesterBuilder from "./SemesterBuilder";
 import SecuritySection from "./SecuritySection";
 import WebmasterOverview from "./WebmasterOverview";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -44,6 +46,7 @@ export default function WebmasterDashboard() {
     | "faculty_mgmt"
     | "system_logs"
     | "subjects"
+    | "semester_registration"
     | "security"
     | "grievances"
     | "outpass"
@@ -97,6 +100,15 @@ export default function WebmasterDashboard() {
           : []),
         ...(role === "webmaster" || role === "coe"
           ? [{ id: "subjects", label: "Manage Subjects", icon: BookOpen }]
+          : []),
+        ...(role === "webmaster" || role === "coe"
+          ? [
+              {
+                id: "semester_registration",
+                label: "Semester Registration",
+                icon: CalendarClock,
+              },
+            ]
           : []),
       ],
     },
@@ -172,6 +184,8 @@ export default function WebmasterDashboard() {
         return <SystemLogsSection />;
       case "subjects":
         return <CurriculumManager />;
+      case "semester_registration":
+        return <SemesterBuilder />;
       case "security":
         return <SecuritySection username={username} />;
       case "website_updates":
