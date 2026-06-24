@@ -1,5 +1,9 @@
 name: VPS Automated Deployment
 
+concurrency:
+  group: vps-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
