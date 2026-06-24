@@ -91,14 +91,71 @@ prune_old_local_images() {
   echo "[Cleanup] Docker prune complete."
 }
 
+# Wait for key deployments and verify production health (fail CI if broken).
+verify_deployment() {
+  echo "[Verify] Waiting for rollouts..."
+  local deps=(
+    uniz-gateway-api
+    uniz-auth-service
+    uniz-user-service
+    uniz-academics-service
+    uniz-outpass-service
+    uniz-portal
+    uniz-docs-service
+    uniz-mail-service
+    uniz-notification-service
+  )
+  local dep
+  for dep in "${deps[@]}"; do
+    if kubectl get deployment "$dep" &>/dev/null; then
+      kubectl rollout status "deployment/$dep" --timeout=180s || {
+        echo "[Verify] Rollout timeout for $dep"
+        kubectl get pods -l "app=$dep" 2>/dev/null || kubectl get pods | grep "$dep" || true
+        return 1
+      }
+    fi
+  done
+
+  echo "[Verify] Checking API health..."
+  local attempt code body
+  for attempt in 1 2 3 4 5; do
+    code=$(curl -s -o /tmp/uniz-health.json -w "%{http_code}" --max-time 15 \
+      https://api.uniz.rguktong.in/api/v1/system/health || echo "000")
+    if [ "$code" = "200" ]; then
+      body=$(cat /tmp/uniz-health.json 2>/dev/null || echo "")
+      if echo "$body" | grep -q '"status":"ok"'; then
+        echo "[Verify] Health OK (HTTP 200, status ok)"
+        return 0
+      fi
+      if echo "$body" | grep -q '"status":"degraded"'; then
+        echo "[Verify] Health degraded but reachable — checking critical services..."
+        if echo "$body" | grep -qE '"auth".*"healthy"|"name": "auth".*"healthy"'; then
+          echo "[Verify] Core API reachable (degraded — non-critical service slow/down)"
+          return 0
+        fi
+      fi
+    fi
+    echo "[Verify] Health attempt $attempt/5: HTTP $code — retry in 20s..."
+    sleep 20
+  done
+
+  echo "[Verify] Production health check failed after 5 attempts (last HTTP $code)"
+  cat /tmp/uniz-health.json 2>/dev/null || true
+  return 1
+}
+
 # 16. Deploy Logic
 deploy_logic() {
+  set -e
   echo "[CI/CD] Deployment Verified at $(date)"
   export DOCKER_BUILDKIT=1
 
   CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
   echo "[Git] Branch: $CURRENT_BRANCH | Commit: $(git log -1 --format='%h - %s')"
   NEW_HEAD=$(git rev-parse HEAD)
+  if [ -n "${DEPLOY_SHA:-}" ]; then
+    NEW_HEAD="$DEPLOY_SHA"
+  fi
 
   COMMIT_MSG=$(git log -1 --pretty=%B)
   BUILD_MSG="$COMMIT_MSG $*"
@@ -129,9 +186,17 @@ deploy_logic() {
 
   MONOREPO_SERVICES="uniz-academics uniz-auth uniz-user uniz-outpass uniz-files uniz-mail uniz-notifications uniz-cron uniz-gateway"
 
-  # State tracking
+  # Change detection: GitHub Actions uses push before-SHA (Vercel-style); VPS uses last deploy file
   STATE_FILE="/root/.uniz_last_deploy_sha"
-  LAST_SHA=$( [ -f "$STATE_FILE" ] && cat "$STATE_FILE" || echo "" )
+  LAST_SHA=""
+  if [ "$DEPLOY_CONTEXT" = "GITHUB_ACTIONS" ] && [ -n "${DEPLOY_BEFORE_SHA:-}" ] \
+    && [ "$DEPLOY_BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
+    LAST_SHA="$DEPLOY_BEFORE_SHA"
+    echo "[Git] Using GitHub push before-SHA for change detection: ${LAST_SHA:0:7}"
+  elif [ -f "$STATE_FILE" ]; then
+    LAST_SHA=$(cat "$STATE_FILE")
+    echo "[Git] Using last deploy SHA: ${LAST_SHA:0:7}"
+  fi
   [ -z "$LAST_SHA" ] && LAST_SHA="HEAD~1"
 
   echo "[Git] Diffing from $LAST_SHA to $NEW_HEAD"
@@ -139,6 +204,8 @@ deploy_logic() {
   if [ -n "$CHANGED_FILES" ]; then
     echo "[Git] Changed files:"
     echo "$CHANGED_FILES" | sed 's/^/  /'
+  else
+    echo "[Git] No file diff (infra apply + health verify still run)"
   fi
 
   # Dirs touched by infra manifest changes (one service per yaml)
@@ -333,7 +400,7 @@ deploy_logic() {
           if [ -n "$PREV_TAG" ] && [ "$PREV_TAG" != "$TAG" ]; then
             docker rmi "$IMG:$PREV_TAG" 2>/dev/null || true
           fi
-          ((REBUILT_COUNT++))
+          ((REBUILT_COUNT++)) || true
         else
           echo "[Error] Build failed for $IMG."
           exit 1
@@ -402,6 +469,10 @@ deploy_logic() {
   echo "[Build] Rebuilt $REBUILT_COUNT image(s) this deploy."
   prune_old_local_images
   echo "$NEW_HEAD" > "$STATE_FILE"
+
+  if [ "$DEPLOY_CONTEXT" = "GITHUB_ACTIONS" ]; then
+    verify_deployment
+  fi
 }
 
 # Execution Entry Point
