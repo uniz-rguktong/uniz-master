@@ -69,28 +69,77 @@ graph TD
 | **Orchestration**    | K3s (Kubernetes)     | Production cluster management and auto-scaling.      |
 | **CI/CD**            | GitHub Actions       | Automated build, test, and VPS deployment pipelines. |
 
-## Local Development
+## For RGUKT contributors
 
-Works on **macOS**, **Linux**, **Windows (WSL2)**, and headless Linux VPS environments.
+Anyone with a clone can run UniZ **locally**. You do **not** need production passwords, VPS access, or AWS keys to develop and open pull requests.
 
 ```bash
-git clone https://github.com/uniz-rguktong/uniz-master.git && cd uniz-master
+git clone https://github.com/uniz-rguktong/uniz-master.git
+cd uniz-master
+
+# 1. Create your local env from safe placeholders (never commit secrets.env)
+cp secrets.env.example secrets.env
+
+# 2. Start Postgres + Redis, install deps, sync env, run Prisma
 npm run setup:local
+
+# 3. Optional but recommended first time — sample users & academics data
+npm run seed:local
+
+# 4. Run the stack
 npm run dev:all
 ```
 
-Seed sample users first (`npm run seed:local`), then sign in at http://localhost:5173 as `webmaster` / `password123`.
+| What | Where |
+|------|--------|
+| Portal | http://localhost:5173 |
+| API gateway | http://localhost:3000/api/v1 |
+| Local sign-in (after seed) | `webmaster` / `password123` |
 
-**Full guide:** [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md) — prerequisites per OS, ports, troubleshooting, and optional Python landing backend.
+`secrets.env.example` ships with **dev-only** values (local DB, test Turnstile keys, dummy JWT). Edit `secrets.env` only if you need custom local settings — **never** paste production credentials into it or commit the file.
+
+**More detail:** [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md) · [CONTRIBUTING.md](./CONTRIBUTING.md)
+
+## Local Development (quick)
+
+Works on **macOS**, **Linux**, **Windows (WSL2)**, and headless Linux environments.
+
+```bash
+git clone https://github.com/uniz-rguktong/uniz-master.git && cd uniz-master
+cp secrets.env.example secrets.env
+npm run setup:local
+npm run seed:local   # first time
+npm run dev:all
+```
 
 ## Contributing
 
-We welcome contributions. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full workflow (`setup:local`, `seed:local`, `dev:all`, builds, and PR guidelines). Start with [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md) for environment setup.
+We welcome contributions from the RGUKT community. See [CONTRIBUTING.md](./CONTRIBUTING.md) for PR workflow, builds, and conventions.
 
-## Environment & Security Strategy
+## Environment & security
 
-UniZ uses a "Shielded Vault" pattern to isolate Local and Production environments:
+UniZ separates **contributor local dev** from **production** so cloning the repo never exposes live secrets.
 
-- **Local Development**: Managed via `secrets.env` in the root. The `npm run setup:local` command automatically propagates this to all microservice sub-directories. This file is git-ignored.
-- **Production (VPS)**: Sourced from `/root/uniz-secrets.env` on the VPS host. The `deploy.sh` script reads these values over SSH and injects them directly into Kubernetes Secrets.
-- **Airgap**: Production credentials **never** touch the Git history or your local machine's environment. Changes to production ENV must be made directly on the VPS master file.
+| Layer | Who | Secrets | In git? |
+|-------|-----|---------|---------|
+| **Local dev** | Any contributor | `secrets.env` (from `secrets.env.example`) | **No** — gitignored |
+| **Production** | Maintainers only | VPS `/root/uniz-secrets.env` + GitHub Actions secrets | **No** |
+| **Example template** | Everyone | `secrets.env.example` | **Yes** — placeholders only |
+
+**Contributors:** use `cp secrets.env.example secrets.env` and `npm run setup:local`. Production DB URLs, AWS keys, and VPS SSH keys are not shared via the repo.
+
+**Maintainers** (deploy team with VPS SSH access):
+
+```bash
+# In your local secrets.env (gitignored), set:
+# UNIZ_VPS_HOST, UNIZ_VPS_USER, UNIZ_VPS_SSH_KEY
+
+npm run vault:vps:status          # vault metadata, no values
+npm run vault:vps:list            # key names only
+npm run vault:vps:show -- KEY     # masked value
+npm run vault:vps -- reveal KEY   # full value — prompts + VPS audit log
+```
+
+Production deploys run through GitHub Actions; credentials are injected over SSH at deploy time — not stored in source control.
+
+**Do not** put real production passwords, API keys, or SSH private keys in the README, issues, or pull requests.
