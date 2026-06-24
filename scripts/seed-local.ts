@@ -189,9 +189,21 @@ async function seed() {
       "- Skipping HOD/Faculty Seeding (Only Admin accounts are being kept)",
     );
 
-    // --- SEEDING STUDENTS removed as per user request ---
-    console.log(
-      "- Skipping Student Seeding (Students should be added via bulk upload)",
+    // --- SEEDING STUDENTS (minimal set for local portal testing) ---
+    console.log("- Seeding sample students...");
+    await upsertUser(
+      "o210008-id",
+      "O210008",
+      "student",
+      "Sample E4 CSE Student",
+      "Student",
+      {
+        name: "Desu SABER",
+        email: "o210008@rguktong.ac.in",
+        branch: "CSE",
+        year: "E4",
+        semester: "Sem-1",
+      },
     );
 
     // --- SEEDING CMS CONTENT ---

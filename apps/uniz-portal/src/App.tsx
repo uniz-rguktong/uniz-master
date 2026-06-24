@@ -4,7 +4,6 @@ import "./App.css";
 import "./index.css";
 import { PageTransition } from "./components/Transition";
 import Toaster from "@/components/ui/toast";
-import { toasterRef } from "@/utils/toast-ref";
 import { useIsAuth } from "./hooks/is_authenticated";
 import {
   Construction,
@@ -162,7 +161,7 @@ export default function App() {
   return (
     <>
       <InstallPWA />
-      <Toaster ref={toasterRef} defaultPosition="top-center" />
+      <Toaster defaultPosition="bottom-right" />
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
           {/* Public & Auth */}
