@@ -1,0 +1,23 @@
+# DNS-01 issuer for domains behind Cloudflare proxy (orange cloud).
+# HTTP-01 (cluster-issuer.yaml) fails with 403 when Cloudflare proxies ACME challenges.
+#
+# Prerequisite: create secret in cert-manager namespace (required for ClusterIssuer DNS-01):
+#   kubectl create secret generic cloudflare-api-token -n cert-manager \
+#     --from-literal=api-token='<Cloudflare API token with Zone:DNS:Edit for rguktong.in>'
+# Or see cloudflare-api-token-secret.yaml.example
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod-dns
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: webadmin@rguktong.ac.in
+    privateKeySecretRef:
+      name: letsencrypt-prod-dns
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare-api-token
+              key: api-token
