@@ -76,11 +76,6 @@ export const apiData = {
       "https://rguktong.ac.in/svgs/carosel/WS222.jpeg",
       "https://rguktong.ac.in/svgs/carosel/WS.jpeg",
       "https://rguktong.ac.in/svgs/carosel/APSCHE.jpg",
-      "https://rguktong.ac.in/svgs/carosel/ornat24-1.jpeg",
-      "https://rguktong.ac.in/svgs/carosel/ornat24-3.jpg",
-      "https://rguktong.ac.in/svgs/carosel/ornate24-2.jpg",
-      "https://rguktong.ac.in/svgs/carosel/ORNATE FLYER.jpg",
-      "https://rguktong.ac.in/svgs/carosel/INV ORNATE.jpg",
       "https://rguktong.ac.in/svgs/carosel/Events.jpeg",
       "https://rguktong.ac.in/svgs/carosel/C26.jpeg",
       "https://rguktong.ac.in/svgs/carosel/badminton (2).jpeg",
@@ -299,16 +294,6 @@ export const apiData = {
           {
             "label": "Detailed Notification",
             "url": "https://rguktong.ac.in/pdfs/tenders/Manageble-Switch 17.3.2026.pdf"
-          }
-        ]
-      },
-      {
-        "title": "Ongole invites sealed quotations from the registered firms/suppliers for Photography and Videography services (ORNATE 26) for Rajiv Gandhi University of Knowledge Technologies, Ongole Campus, Ongole",
-        "date": "16/03/2026",
-        "links": [
-          {
-            "label": "Detailed Notification",
-            "url": "https://rguktong.ac.in/pdfs/tenders/WEB Advertisment - photography 17.3.2026.pdf"
           }
         ]
       },
