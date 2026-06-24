@@ -74,7 +74,7 @@ prune_old_local_images() {
 verify_deployment() {
   echo "[Verify] Waiting for rollouts..."
   local deps=()
-  if [ "${#VERIFY_DEPLOYMENTS[@]:-0}" -gt 0 ]; then
+  if [ "${#VERIFY_DEPLOYMENTS[@]}" -gt 0 ]; then
     deps=("${VERIFY_DEPLOYMENTS[@]}")
     echo "[Verify] Checking rollouts for updated workloads: ${deps[*]}"
   else
