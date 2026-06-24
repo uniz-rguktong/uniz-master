@@ -64,9 +64,13 @@ uses_monorepo_dockerfile() {
 
 resolve_build_paths() {
   local DIR="$1"
-  BUILD_CONTEXT="apps/$DIR"
-  DOCKERFILE="$BUILD_CONTEXT/Dockerfile"
-  [[ "$DIR" == *"infra"* ]] && BUILD_CONTEXT="$DIR"
+  if [[ "$DIR" == *"infra"* ]]; then
+    BUILD_CONTEXT="$DIR"
+    DOCKERFILE="$DIR/Dockerfile"
+  else
+    BUILD_CONTEXT="apps/$DIR"
+    DOCKERFILE="$BUILD_CONTEXT/Dockerfile"
+  fi
 
   if uses_monorepo_dockerfile "$DIR"; then
     BUILD_CONTEXT="."
