@@ -1,36 +1,50 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Calendar, MapPin, Clock, AlertCircle, LayoutGrid } from "lucide-react";
 import { GET_STUDENT_SEATING } from "../../../api/endpoints";
 import { apiClient } from "../../../api/apiClient";
 import { motion } from "framer-motion";
+import { InlineError } from "../../../components/feedback/InlineError";
 
 // ─── Module-level singleton cache ───────────────────────────────────────────
 // Shared across SeatingArrangement AND SeatingSummaryWidget in student.tsx
 // so only ONE network request fires no matter how many components mount.
-type SeatingCache = { seating: any[]; semester: any } | null;
-let seatingCache: SeatingCache = null;
-let seatingPromise: Promise<SeatingCache> | null = null;
+type SeatingResult = { seating: any[]; semester: any; error?: string };
+let seatingCache: SeatingResult | null = null;
+let seatingPromise: Promise<SeatingResult> | null = null;
 
-export async function fetchSeatingOnce(): Promise<SeatingCache> {
+const SEATING_LOAD_ERROR =
+  "Couldn't load seating arrangements. Please try again.";
+
+export function resetSeatingCache() {
+  seatingCache = null;
+  seatingPromise = null;
+}
+
+export async function fetchSeatingOnce(): Promise<SeatingResult> {
   if (seatingCache) return seatingCache;
   if (seatingPromise) return seatingPromise;
-  seatingPromise = apiClient<any>(GET_STUDENT_SEATING)
+  seatingPromise = apiClient<any>(GET_STUDENT_SEATING, {}, false)
     .then((data) => {
-      if (data && data.seating) {
-        seatingCache = {
-          seating: data.seating,
-          semester: data.semester ?? null,
+      if (data === null) {
+        return {
+          seating: [],
+          semester: null,
+          error: SEATING_LOAD_ERROR,
         };
-      } else {
-        seatingCache = { seating: [], semester: null };
       }
-      return seatingCache;
+      const result: SeatingResult = {
+        seating: data.seating ?? [],
+        semester: data.semester ?? null,
+      };
+      seatingCache = result;
+      return result;
     })
-    .catch(() => {
-      seatingCache = { seating: [], semester: null };
-      return seatingCache;
-    })
+    .catch(() => ({
+      seating: [],
+      semester: null,
+      error: SEATING_LOAD_ERROR,
+    }))
     .finally(() => {
       seatingPromise = null;
     });
@@ -42,10 +56,17 @@ export default function SeatingArrangement() {
   const [seating, setSeating] = useState<any[]>([]);
   const [semester, setSemester] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadSeating = useCallback(() => {
+    setLoading(true);
+    setFetchError(null);
     fetchSeatingOnce().then((result) => {
-      if (result) {
+      if (result.error) {
+        setFetchError(result.error);
+        setSeating([]);
+        setSemester(null);
+      } else {
         setSeating(result.seating);
         setSemester(result.semester);
       }
@@ -53,11 +74,30 @@ export default function SeatingArrangement() {
     });
   }, []);
 
+  useEffect(() => {
+    loadSeating();
+  }, [loadSeating]);
+
+  const handleRetry = () => {
+    resetSeatingCache();
+    loadSeating();
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-slate-300">
         <div className="w-10 h-10 border-4 border-t-navy-900 border-slate-100 rounded-full animate-spin mb-4"></div>
       </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <InlineError
+        title="Seating unavailable"
+        message={fetchError}
+        onRetry={handleRetry}
+      />
     );
   }
 
