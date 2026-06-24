@@ -229,6 +229,8 @@ deploy_logic() {
 
   # Apply Infrastructure
   echo "[Infra] Applying shared components..."
+  # Stale ingress-nginx admission webhook blocks Ingress updates after controller removal
+  kubectl delete validatingwebhookconfiguration ingress-nginx-admission 2>/dev/null || true
   kubectl apply -k infra/core-infra/kubernetes/base/shared/ || true
 
   if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
