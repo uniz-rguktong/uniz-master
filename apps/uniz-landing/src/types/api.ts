@@ -1,4 +1,5 @@
-const BASE_URL = "https://landing-api.rguktong.in";
+// Same-origin in prod (rguktong.in/api → landing backend via ingress). Override for local dev.
+const BASE_URL = import.meta.env.VITE_LANDING_API_URL ?? "";
 
 async function fetchJson<T>(endpoint: string): Promise<T | null> {
     try {
