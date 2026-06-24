@@ -309,7 +309,7 @@ export default function ProfilePopup({
                   <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl border-2 border-navy-100 text-navy-900 text-[12px] font-semibold hover:bg-navy-50 transition-all disabled:opacity-60 shadow-none"
+                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl border-2 border-zinc-100 text-zinc-950 text-[12px] font-semibold hover:bg-zinc-50 transition-all disabled:opacity-60 shadow-none"
                   >
                     {isSaving ? (
                       <Loader2 size={13} className="animate-spin" />
@@ -463,7 +463,7 @@ function DetailRow({
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="text-[13px] font-medium text-slate-900 bg-transparent border-b border-navy-100 focus:outline-none w-full"
+            className="text-[13px] font-medium text-zinc-900 bg-transparent border-b border-zinc-100 focus:outline-none w-full"
           />
         ) : (
           <p className="text-[13px] font-medium text-slate-900 truncate">

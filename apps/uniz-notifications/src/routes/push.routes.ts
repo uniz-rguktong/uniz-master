@@ -40,6 +40,29 @@ router.post("/subscribe", requireAuth, async (req: Request, res: Response) => {
   }
 });
 
+router.post("/internal/push", requireAuth, async (req, res) => {
+  try {
+    const { username, title, body } = req.body;
+    if (!username || !title || !body) {
+      return res
+        .status(400)
+        .json({ error: "username, title, and body are required" });
+    }
+
+    const sent = await sendWebPush(String(username), {
+      title: String(title),
+      body: String(body),
+      rawBody: true,
+      data: { type: "SYSTEM" },
+    });
+
+    return res.status(200).json({ success: true, sent });
+  } catch (err: any) {
+    console.error("[Push] internal/push error:", err.message);
+    return res.status(200).json({ success: true, sent: 0, status: "skipped" });
+  }
+});
+
 router.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
   try {
     const { target, username, batch, year, branch, title, body, image } =
@@ -49,6 +72,26 @@ router.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
     }
 
     const t = String(target || "").toLowerCase();
+
+    // Single-user system pushes (login alerts, OTP, etc.) — no broadcast plumbing
+    if (t === "user") {
+      if (!username) {
+        return res.status(400).json({ error: "username required for target=user" });
+      }
+      const sent = await sendWebPush(String(username), {
+        title: String(title),
+        body: String(body),
+        rawBody: true,
+        image,
+        data: { type: "SYSTEM" },
+      });
+      return res.status(200).json({
+        success: true,
+        status: sent > 0 ? "done" : "no_subscribers",
+        sent,
+      });
+    }
+
     let targetUsers: Array<{ username: string; name?: string }> = [];
     const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
 
@@ -61,12 +104,7 @@ router.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
       return response.data.success ? response.data.users : [];
     };
 
-    if (t === "user") {
-      if (!username) {
-        return res.status(400).json({ error: "username required for target=user" });
-      }
-      targetUsers = [{ username }];
-    } else if (t === "batch") {
+    if (t === "batch") {
       if (!batch) {
         return res.status(400).json({ error: "batch required (e.g. o21)" });
       }

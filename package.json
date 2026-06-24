@@ -19,6 +19,7 @@
     "dev:all": "concurrently -n \"CORE,ACADEMICS,OUTPASS,FILES,NOTIFY,MAIL,DOCS\" -c \"reset,green,cyan,white,yellow,magenta,blue\" \"npm run dev\" \"npm run dev -w uniz-academics-service\" \"npm run dev -w uniz-outpass-service\" \"npm run dev -w uniz-files-service\" \"npm run dev -w uniz-notification-service\" \"npm run dev -w uniz-mail-service\" \"npm run dev -w uniz-docs-service\"",
     "dev:cron": "npm run dev -w uniz-cron-service",
     "setup:local": "bash ./scripts/setup-local.sh",
+    "prisma:generate": "bash ./scripts/prisma-generate-all.sh",
     "setup:quick": "bash ./scripts/setup.sh",
     "sync": "bash ./scripts/sync-local.sh",
     "seed:local": "ts-node scripts/seed-local.ts && cd apps/uniz-academics && DATABASE_URL='postgresql://user:password@127.0.0.1:5432/uniz_db?sslmode=disable&schema=uniz_academics&connection_limit=10' ts-node prisma/safe_seed.ts",

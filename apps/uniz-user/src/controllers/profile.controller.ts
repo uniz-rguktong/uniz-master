@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../utils/prisma";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { ErrorCode } from "../shared/error-codes";
 import { UserRole } from "../shared/roles.enum";
 import axios from "axios";
 import { redis } from "../utils/redis.util";
 import { randomUUID } from "crypto";
-
-const prisma = new PrismaClient();
 
 const NOTIFICATION_SERVICE_URL = (
   (process.env.DOCKER_ENV === "true"

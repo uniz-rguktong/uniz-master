@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../utils/prisma";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { ErrorCode } from "../shared/error-codes";
 import {
@@ -9,16 +9,13 @@ import {
   ApprovalLogEntry,
 } from "../shared/outpass.schema";
 import { UserRole } from "../shared/roles.enum";
-
-const prisma = new PrismaClient();
+import axios from "axios";
 
 // Helper to append log
 const appendLog = (currentLogs: any, entry: ApprovalLogEntry) => {
   const logs = Array.isArray(currentLogs) ? currentLogs : [];
   return [...logs, entry];
 };
-
-import axios from "axios";
 
 // Helper: Check if student is in campus
 const NOTIFICATION_SERVICE_URL = (
