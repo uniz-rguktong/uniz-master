@@ -74,6 +74,17 @@ npm run build -w uniz     # portal
 
 CI runs the same builds on every pull request to `main`.
 
+### Production deploy (automatic)
+
+**No manual VPS steps are required.** When a PR merges to `main`:
+
+1. GitHub Actions builds the monorepo (shared, backends, portal).
+2. On success, the workflow SSHs to the VPS, checks out the exact commit, and runs `scripts/deploy.sh`.
+3. Only services changed in that push are rebuilt (like Vercel). Use `[rebuild portal]` or `[rebuild all]` in a commit message only when you need to force a specific rebuild.
+4. The job verifies rollouts and `https://api.uniz.rguktong.in/api/v1/system/health` before marking success.
+
+If deploy fails, check the **VPS Automated Deployment** workflow in GitHub Actions — it retries up to 3 times automatically.
+
 ---
 
 ## Coding standards
