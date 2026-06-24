@@ -263,15 +263,15 @@ app.get(
   },
 );
 
-// 5. Warp-Speed Proxy Engine
-app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
+// 5. Warp-Speed Proxy Engine (Express 5 / path-to-regexp v6+ wildcard syntax)
+app.all("/api/v1/:service/*path", async (req: any, res: any) => {
   const service = (req.params.service as string).toLowerCase();
   const target = serviceMap[service];
 
   if (!target) return res.status(404).json({ error: "Service Not Found" });
 
-  const path = req.url.split("/").slice(4).join("/");
-  req.url = `/${path}`;
+  const proxyPath = (req.params.path as string) || "";
+  req.url = proxyPath ? `/${proxyPath}` : "/";
 
   // Bypass Warp Engine for binary files or download routes to prevent corruption
   const isBinaryRequest =
@@ -314,7 +314,7 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
       }
 
       const response = await internalClient.get(
-        `${target.replace(/\/$/, "")}/${path}`,
+        `${target.replace(/\/$/, "")}${req.url}`,
         {
           headers: { ...req.headers, host: new URL(target).host },
           responseType: "arraybuffer", // Use arraybuffer to handle mixed content
