@@ -81,8 +81,8 @@ verify_deployment() {
       kubectl get deployment "$dep" &>/dev/null || continue
       deps+=("$dep")
     done
-    # Full-stack deploys: only gate on critical path (avoids 40m sequential timeouts).
-    if [ "${#deps[@]}" -gt 5 ]; then
+    # Multi-service deploy on a small VPS: gate only the critical path.
+    if [ "${#deps[@]}" -gt 3 ]; then
       local critical=(uniz-gateway-api uniz-auth-service uniz-user-service uniz-portal uniz-landing)
       local filtered=() d c
       for c in "${critical[@]}"; do
@@ -104,9 +104,10 @@ verify_deployment() {
       uniz-landing
     )
   fi
+  local rollout_timeout="${ROLLOUT_TIMEOUT:-300s}"
   local dep
   for dep in "${deps[@]}"; do
-    if kubectl rollout status "deployment/$dep" --timeout=120s; then
+    if kubectl rollout status "deployment/$dep" --timeout="$rollout_timeout"; then
       continue
     fi
     # Single-node VPS: HPA may want more replicas than the node can schedule.
