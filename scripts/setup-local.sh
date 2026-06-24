@@ -1,177 +1,293 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# UniZ local setup — cross-platform (macOS, Linux, WSL, headless VPS).
+set -euo pipefail
 
-# --- UniZ Universal Local Setup (V17) ---
-# Goal: 100% Reliability, Sub-5ms latency, Corruption-Free Envs.
-# Fixes: Smashed .env lines, Prisma mismatches, Landing Page 500s.
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
 
-echo "🚀 Starting UniZ Master Setup (Local Environment)..."
+info()  { printf '%s\n' "$*"; }
+warn()  { printf '⚠️  %s\n' "$*" >&2; }
+fail()  { printf '❌ %b\n' "$*" >&2; exit 1; }
 
-# Ensure we are in the root directory
-cd "$(dirname "$0")/.." || exit 1
-
-check_dep() {
-    if ! command -v "$1" >/dev/null 2>&1; then
-        echo "❌ Error: $1 is not installed. Please install it first."
-        exit 1
-    fi
+# --- OS detection ---
+detect_os() {
+  local uname_s
+  uname_s="$(uname -s 2>/dev/null || echo unknown)"
+  case "$uname_s" in
+    Darwin) echo "darwin" ;;
+    Linux)
+      if [ -r /proc/version ] && grep -qiE 'microsoft|wsl' /proc/version 2>/dev/null; then
+        echo "wsl"
+      else
+        echo "linux"
+      fi
+      ;;
+    MINGW*|MSYS*|CYGWIN*) echo "windows" ;;
+    *) echo "unknown" ;;
+  esac
 }
 
-check_dep node
-check_dep npm
-check_dep docker
+OS="$(detect_os)"
 
-# --- Colima Fix for macOS ---
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    if ! docker ps >/dev/null 2>&1; then
-        echo "🐳 Docker default socket unreachable. Checking for Colima..."
-        if command -v colima >/dev/null 2>&1 && colima status >/dev/null 2>&1; then
-            COLIMA_SOCKET="${HOME}/.colima/default/docker.sock"
-            if [ -S "$COLIMA_SOCKET" ]; then
-                echo "✅ Colima detected! Setting DOCKER_HOST to $COLIMA_SOCKET"
-                export DOCKER_HOST="unix://$COLIMA_SOCKET"
-            fi
-        fi
+install_hint_node() {
+  case "$OS" in
+    darwin)  echo "Install Node 20+: https://nodejs.org/ or: brew install node@20" ;;
+    wsl|linux) echo "Install Node 20+: https://nodejs.org/ or: curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt install -y nodejs" ;;
+    windows) echo "Use WSL2 + Node 20: https://nodejs.org/" ;;
+    *)       echo "Install Node.js 20+ from https://nodejs.org/" ;;
+  esac
+}
+
+install_hint_docker() {
+  case "$OS" in
+    darwin)  echo "Install Docker Desktop: https://docs.docker.com/desktop/setup/install/mac-install/ — or Colima: brew install colima && colima start" ;;
+    wsl)     echo "Install Docker Desktop for Windows with WSL2 integration: https://docs.docker.com/desktop/setup/install/windows-install/" ;;
+    linux)   echo "Install Docker Engine: https://docs.docker.com/engine/install/ — then: sudo usermod -aG docker \$USER (re-login)" ;;
+    windows) echo "Prefer WSL2; see docs/LOCAL_SETUP.md" ;;
+    *)       echo "Install Docker: https://docs.docker.com/get-docker/" ;;
+  esac
+}
+
+check_node() {
+  if ! command -v node >/dev/null 2>&1; then
+    fail "Node.js is not installed.\n   Fix: $(install_hint_node)"
+  fi
+  local major
+  major="$(node -p "process.versions.node.split('.')[0]")"
+  if [ "${major:-0}" -lt 20 ] 2>/dev/null; then
+    fail "Node.js 20+ required (found $(node -v)).\n   Fix: $(install_hint_node)"
+  fi
+  if ! command -v npm >/dev/null 2>&1; then
+    fail "npm is not installed (usually bundled with Node).\n   Fix: $(install_hint_node)"
+  fi
+}
+
+check_docker_cli() {
+  if ! command -v docker >/dev/null 2>&1; then
+    fail "Docker is not installed.\n   Fix: $(install_hint_docker)"
+  fi
+}
+
+# Try Colima (macOS), rootless socket (Linux), then verify daemon responds.
+configure_docker_host() {
+  if docker info >/dev/null 2>&1; then
+    return 0
+  fi
+
+  if [ "$OS" = "darwin" ] && command -v colima >/dev/null 2>&1; then
+    local colima_sock="${HOME}/.colima/default/docker.sock"
+    if colima status >/dev/null 2>&1 && [ -S "$colima_sock" ]; then
+      export DOCKER_HOST="unix://${colima_sock}"
+      info "✅ Colima detected — using DOCKER_HOST=$DOCKER_HOST"
+      docker info >/dev/null 2>&1 && return 0
     fi
-fi
+    warn "Colima installed but not running. Try: colima start"
+  fi
 
-# Detect docker-compose flavor
-COMPOSE_CMD="docker-compose"
-if ! command -v docker-compose &> /dev/null; then
-  COMPOSE_CMD="docker compose"
-fi
+  if [ "$OS" = "linux" ] || [ "$OS" = "wsl" ]; then
+    local uid sock
+    uid="$(id -u 2>/dev/null || echo "")"
+    for sock in \
+      "${XDG_RUNTIME_DIR:-}/docker.sock" \
+      "/run/user/${uid}/docker.sock"; do
+      if [ -n "$sock" ] && [ -S "$sock" ]; then
+        export DOCKER_HOST="unix://${sock}"
+        info "✅ Rootless Docker socket: $DOCKER_HOST"
+        docker info >/dev/null 2>&1 && return 0
+      fi
+    done
+  fi
 
-# 1. Port Clearance (Nuclear)
-echo "🧹 Clearing existing infrastructure (Guaranteeing Port 5432 & 6379)..."
-$COMPOSE_CMD -f infra/core-infra/docker-compose.yml stop uniz-redis uniz-postgres >/dev/null 2>&1 || true
-$COMPOSE_CMD -f infra/core-infra/docker-compose.yml rm -f uniz-redis uniz-postgres >/dev/null 2>&1 || true
+  fail "Docker daemon is not reachable.\n   Fix: start Docker Desktop / run 'colima start' / 'sudo systemctl start docker'\n   Docs: docs/LOCAL_SETUP.md#docker-is-not-running"
+}
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    lsof -ti:5432 | xargs kill -9 >/dev/null 2>&1 || true
-    lsof -ti:6379 | xargs kill -9 >/dev/null 2>&1 || true
-fi
-
-# 2. Infra Startup
-echo "🏗️ Starting Core Infrastructure (Postgres & Redis)..."
-# Create core infra .env if it doesn't exist
-touch infra/core-infra/.env
-
-# Export defaults for docker-compose to suppress warnings
-export POSTGRES_USER=${POSTGRES_USER:-user}
-export POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
-export POSTGRES_DB=${POSTGRES_DB:-uniz_db}
-
-$COMPOSE_CMD -f infra/core-infra/docker-compose.yml up -d uniz-redis uniz-postgres
-
-# --- CRITICAL: Wait for Postgres to be ready ---
-echo "⏳ Waiting for Postgres to accept connections..."
-MAX_RETRIES=30
-RETRY_COUNT=0
-until docker exec uniz-postgres pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} >/dev/null 2>&1 || [ $RETRY_COUNT -eq $MAX_RETRIES ]; do
-  printf "."
-  sleep 1
-  ((RETRY_COUNT++))
-done
-printf "\n"
-
-if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-    echo "❌ Error: Postgres failed to start in time. Check 'docker logs uniz-postgres'."
-    exit 1
-fi
-echo "✅ Postgres is ready!"
-
-# 3. Environment Variable & Dependency Synchronization
-SERVICES=("apps/uniz-gateway" "apps/uniz-auth" "apps/uniz-user" "apps/uniz-academics" "apps/uniz-outpass" "apps/uniz-files" "apps/uniz-mail" "apps/uniz-notifications" "apps/uniz-cron" "apps/uniz-portal")
-PREFIXES=("GATEWAY" "AUTH" "USER" "ACADEMICS" "OUTPASS" "FILES" "MAIL" "NOTIFICATION" "CRON" "VITE")
+resolve_compose_cmd() {
+  if docker compose version >/dev/null 2>&1; then
+    echo "docker compose"
+  elif command -v docker-compose >/dev/null 2>&1; then
+    echo "docker-compose"
+  else
+    fail "Neither 'docker compose' nor 'docker-compose' found.\n   Fix: install Docker Compose plugin — https://docs.docker.com/compose/install/"
+  fi
+}
 
 robust_sed() {
-    local pattern="$1"
-    local file="$2"
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        sed -i '' "$pattern" "$file"
-    else
-        sed -i "$pattern" "$file"
-    fi
+  local pattern="$1"
+  local file="$2"
+  if [ "$OS" = "darwin" ]; then
+    sed -i '' "$pattern" "$file"
+  else
+    sed -i "$pattern" "$file"
+  fi
 }
 
-echo "🧬 Syncing Environment & Healing Dependencies..."
+free_port() {
+  local port="$1"
+  case "$OS" in
+    darwin)
+      if command -v lsof >/dev/null 2>&1; then
+        lsof -ti:"$port" 2>/dev/null | xargs kill -9 2>/dev/null || true
+      fi
+      ;;
+    linux|wsl)
+      if command -v fuser >/dev/null 2>&1; then
+        fuser -k "${port}/tcp" 2>/dev/null || true
+      elif command -v lsof >/dev/null 2>&1; then
+        lsof -ti:"$port" 2>/dev/null | xargs kill -9 2>/dev/null || true
+      fi
+      ;;
+  esac
+}
 
-# A. Ensure secrets.env exists
-if [ ! -f "secrets.env" ]; then
-    echo "⚠️ secrets.env missing! Initializing from secrets.env.example..."
-    cp secrets.env.example secrets.env
+info "🚀 UniZ local setup (OS: $OS)"
+info "   Full guide: docs/LOCAL_SETUP.md"
+info ""
+
+check_node
+check_docker_cli
+configure_docker_host
+
+COMPOSE_CMD="$(resolve_compose_cmd)"
+COMPOSE_FILE="infra/core-infra/docker-compose.yml"
+
+info "🧹 Ensuring ports 5432 (Postgres) and 6379 (Redis) are free..."
+$COMPOSE_CMD -f "$COMPOSE_FILE" stop uniz-redis uniz-postgres >/dev/null 2>&1 || true
+$COMPOSE_CMD -f "$COMPOSE_FILE" rm -f uniz-redis uniz-postgres >/dev/null 2>&1 || true
+free_port 5432
+free_port 6379
+
+info "🏗️  Starting Postgres & Redis..."
+touch infra/core-infra/.env
+export POSTGRES_USER="${POSTGRES_USER:-user}"
+export POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-password}"
+export POSTGRES_DB="${POSTGRES_DB:-uniz_db}"
+
+if ! $COMPOSE_CMD -f "$COMPOSE_FILE" up -d uniz-redis uniz-postgres; then
+  fail "Failed to start Docker containers.\n   Fix: docker logs uniz-postgres — see docs/LOCAL_SETUP.md#troubleshooting"
 fi
 
-# Update root Prisma for seeder stability
-npm install --no-save prisma@6 @prisma/client@6 >/dev/null 2>&1
+info "⏳ Waiting for Postgres..."
+MAX_RETRIES=30
+RETRY_COUNT=0
+until docker exec uniz-postgres pg_isready -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" >/dev/null 2>&1 || [ "$RETRY_COUNT" -eq "$MAX_RETRIES" ]; do
+  printf '.'
+  sleep 1
+  RETRY_COUNT=$((RETRY_COUNT + 1))
+done
+printf '\n'
+
+if [ "$RETRY_COUNT" -eq "$MAX_RETRIES" ]; then
+  fail "Postgres did not become ready in time.\n   Fix: docker logs uniz-postgres"
+fi
+info "✅ Postgres is ready"
+
+SERVICES=(
+  "apps/uniz-gateway"
+  "apps/uniz-auth"
+  "apps/uniz-user"
+  "apps/uniz-academics"
+  "apps/uniz-outpass"
+  "apps/uniz-files"
+  "apps/uniz-mail"
+  "apps/uniz-notifications"
+  "apps/uniz-cron"
+  "apps/uniz-portal"
+)
+PREFIXES=(
+  "GATEWAY"
+  "AUTH"
+  "USER"
+  "ACADEMICS"
+  "OUTPASS"
+  "FILES"
+  "MAIL"
+  "NOTIFICATION"
+  "CRON"
+  "VITE"
+)
+
+if [ ! -f "secrets.env" ]; then
+  if [ -f "secrets.env.example" ]; then
+    warn "secrets.env missing — copying from secrets.env.example"
+    cp secrets.env.example secrets.env
+  else
+    fail "secrets.env and secrets.env.example are both missing."
+  fi
+fi
+
+info "📦 Installing monorepo dependencies (npm install at repo root)..."
+if ! npm install; then
+  fail "npm install failed.\n   Fix: ensure Node 20+ and network access; delete node_modules and retry"
+fi
+
+info "🧬 Syncing .env files and Prisma schemas..."
+PRISMA_ERRORS=0
 
 for i in "${!SERVICES[@]}"; do
-    path="${SERVICES[$i]}"
-    prefix="${PREFIXES[$i]}"
-    
-    if [ -d "$path" ]; then
-        echo "  -> Processing $path..."
-        
-        # B. Update Secrets with Newline Safety
-        if [ -f "secrets.env" ]; then
-            cp secrets.env "$path/.env"
-            # Ensure file ends with newline to prevent smashing
-            [ -n "$(tail -c1 "$path/.env")" ] && printf "\n" >> "$path/.env"
-        fi
-        
-        # B. 127.0.0.1 Fast-Path Overrides
-        robust_sed 's/76.13.241.174/127.0.0.1/g' "$path/.env"
-        robust_sed 's/uniz-redis/127.0.0.1/g' "$path/.env"
-        robust_sed 's/uniz-postgres/127.0.0.1/g' "$path/.env"
-        robust_sed 's/api.uniz.rguktong.in/127.0.0.1:3000/g' "$path/.env"
-        robust_sed 's/https:\/\/127.0.0.1:3000/http:\/\/127.0.0.1:3000/g' "$path/.env"
-        robust_sed 's/0x4AAAAAACnuFU49Yv6dqJum/1x00000000000000000000AA/g' "$path/.env"
-        robust_sed 's/REDACTED_TURNSTILE_SECRET/1x00000000000000000000000000000000/g' "$path/.env"
-        
-        # C. Inject DATABASE_URL & Health-Check Service URLs
-        db_var="${prefix}_DATABASE_URL"
-        val=$(grep "^${db_var}=" "$path/.env" | head -n 1 | cut -d'=' -f2-)
-        if [ -n "$val" ]; then
-            val=$(echo "$val" | sed 's/localhost/127.0.0.1/g' | sed 's/uniz-postgres/127.0.0.1/g')
-            echo "DATABASE_URL=$val" >> "$path/.env"
-        fi
-        
-        {
-            echo "DOCKER_ENV=false"
-            echo "GATEWAY_URL=http://127.0.0.1:3000/api/v1"
-            echo "FORCE_GMAIL=true"
-            echo "AUTH_SERVICE_URL=http://127.0.0.1:3001"
-            echo "USER_SERVICE_URL=http://127.0.0.1:3002"
-            echo "ACADEMICS_SERVICE_URL=http://127.0.0.1:3004"
-            echo "OUTPASS_SERVICE_URL=http://127.0.0.1:3003"
-            echo "FILES_SERVICE_URL=http://127.0.0.1:3005"
-            echo "MAIL_SERVICE_URL=http://127.0.0.1:3006"
-            echo "NOTIFICATION_SERVICE_URL=http://127.0.0.1:3007"
-            echo "CRON_SERVICE_URL=http://127.0.0.1:3008"
-        } >> "$path/.env"
+  path="${SERVICES[$i]}"
+  prefix="${PREFIXES[$i]}"
 
-        # D. HEAL PRISMA CLIENT
-        if [ -f "$path/prisma/schema.prisma" ]; then
-            echo "     💎 Healing Prisma Client for $path..."
-            rm -rf "$path/node_modules/@prisma/client"
-            (cd "$path" && npm install --no-save @prisma/client@6 prisma@6 >/dev/null 2>&1)
-            
-            # Strip surrounding quotes so Prisma parses it properly
-            unquoted_val=$(echo "$val" | sed -e 's/^"//' -e 's/"$//')
-            export DATABASE_URL="$unquoted_val"
-            (cd "$path" && yes | npx prisma@6 generate >/dev/null 2>&1)
-            (cd "$path" && yes | npx prisma@6 db push --accept-data-loss >/dev/null 2>&1)
-        fi
+  [ -d "$path" ] || continue
+  info "  → $path"
+
+  cp secrets.env "$path/.env"
+  [ -n "$(tail -c1 "$path/.env" 2>/dev/null)" ] && printf '\n' >> "$path/.env"
+
+  robust_sed 's/76.13.241.174/127.0.0.1/g' "$path/.env"
+  robust_sed 's/uniz-redis/127.0.0.1/g' "$path/.env"
+  robust_sed 's/uniz-postgres/127.0.0.1/g' "$path/.env"
+  robust_sed 's/api.uniz.rguktong.in/127.0.0.1:3000/g' "$path/.env"
+  robust_sed 's/https:\/\/127.0.0.1:3000/http:\/\/127.0.0.1:3000/g' "$path/.env"
+  robust_sed 's/0x4AAAAAACnuFU49Yv6dqJum/1x00000000000000000000AA/g' "$path/.env"
+  robust_sed 's/REDACTED_TURNSTILE_SECRET/1x00000000000000000000000000000000/g' "$path/.env"
+
+  db_var="${prefix}_DATABASE_URL"
+  val="$(grep "^${db_var}=" "$path/.env" 2>/dev/null | head -n 1 | cut -d'=' -f2- || true)"
+  if [ -n "$val" ]; then
+    val="$(echo "$val" | sed 's/localhost/127.0.0.1/g' | sed 's/uniz-postgres/127.0.0.1/g')"
+    echo "DATABASE_URL=$val" >> "$path/.env"
+  fi
+
+  {
+    echo "DOCKER_ENV=false"
+    echo "GATEWAY_URL=http://127.0.0.1:3000/api/v1"
+    echo "FORCE_GMAIL=true"
+    echo "AUTH_SERVICE_URL=http://127.0.0.1:3001"
+    echo "USER_SERVICE_URL=http://127.0.0.1:3002"
+    echo "ACADEMICS_SERVICE_URL=http://127.0.0.1:3004"
+    echo "OUTPASS_SERVICE_URL=http://127.0.0.1:3003"
+    echo "FILES_SERVICE_URL=http://127.0.0.1:3005"
+    echo "MAIL_SERVICE_URL=http://127.0.0.1:3006"
+    echo "NOTIFICATION_SERVICE_URL=http://127.0.0.1:3007"
+    echo "CRON_SERVICE_URL=http://127.0.0.1:3008"
+  } >> "$path/.env"
+
+  if [ -f "$path/prisma/schema.prisma" ]; then
+    unquoted_val="$(echo "$val" | sed -e 's/^"//' -e 's/"$//')"
+    export DATABASE_URL="$unquoted_val"
+    if ! (cd "$path" && npx prisma generate >/dev/null 2>&1); then
+      warn "Prisma generate failed for $path — re-run setup after Postgres is healthy"
+      PRISMA_ERRORS=$((PRISMA_ERRORS + 1))
+    elif ! (cd "$path" && npx prisma db push --accept-data-loss >/dev/null 2>&1); then
+      warn "Prisma db push failed for $path — check DATABASE_URL in secrets.env"
+      PRISMA_ERRORS=$((PRISMA_ERRORS + 1))
     fi
+  fi
 done
 
-echo "📦 Finalizing global development tools..."
-# Unset DATABASE_URL so it doesn't override dotenv in child services (dev:all)
 unset DATABASE_URL
-npm install --no-save ts-node bcrypt @types/bcrypt pg @types/pg >/dev/null 2>&1
 
-echo ""
-echo "🔥 MISSION CONTROL IS SHIPYARD READY (V17)!"
-echo "--------------------------------------------------------"
-echo "1. SEED DATA:  npm run seed:local"
-echo "2. LAUNCH ALL: npm run dev:all"
-echo "--------------------------------------------------------"
+info ""
+info "✅ Local setup complete"
+info "────────────────────────────────────────"
+if [ "$PRISMA_ERRORS" -gt 0 ]; then
+  warn "$PRISMA_ERRORS Prisma step(s) had issues — see messages above"
+fi
+info "Next steps:"
+info "  1. npm run seed:local     # sample users (password: password123)"
+info "  2. npm run dev:all        # start all services"
+info "  3. Open http://localhost:5173"
+info ""
+info "Health check: curl -s http://127.0.0.1:3000/api/v1/system/health"
+info "Full guide:    docs/LOCAL_SETUP.md"
+info "────────────────────────────────────────"

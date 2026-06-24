@@ -10,23 +10,20 @@ spec:
         spec:
           containers:
             - name: cron-worker
-              image: uniz-cron-service:local
+              image: uniz-outpass-service:local
               imagePullPolicy: IfNotPresent
-              # We use the existing image but trigger the maintenance script
-              # Our current index.js starts a server, but we can override CMD
-              # or just let it run (it will timeout if it doesn't exit, so we should probably add a CLI mode)
               command:
                 [
                   "node",
                   "-e",
-                  "require('./dist/index.js').runMaintenance().then(() => process.exit(0))",
+                  "require('./dist/jobs/maintenance.js').runMaintenance().then(() => process.exit(0))",
                 ]
               env:
                 - name: DATABASE_URL
                   valueFrom:
                     secretKeyRef:
                       name: uniz-secrets
-                      key: CRON_DATABASE_URL
+                      key: OUTPASS_DATABASE_URL
               envFrom:
                 - configMapRef:
                     name: uniz-config

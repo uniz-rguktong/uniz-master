@@ -1,0 +1,17 @@
+{
+  "name": "@uniz/shared",
+  "version": "1.0.0",
+  "description": "Shared types and constants for UniZ microservices",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  }
+}
