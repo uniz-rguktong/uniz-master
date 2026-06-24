@@ -73,17 +73,24 @@ prune_old_local_images() {
 # Wait for key deployments and verify production health (fail CI if broken).
 verify_deployment() {
   echo "[Verify] Waiting for rollouts..."
-  local deps=(
-    uniz-gateway-api
-    uniz-auth-service
-    uniz-user-service
-    uniz-academics-service
-    uniz-outpass-service
-    uniz-portal
-    uniz-docs-service
-    uniz-mail-service
-    uniz-notification-service
-  )
+  local deps=()
+  if [ "${#VERIFY_DEPLOYMENTS[@]:-0}" -gt 0 ]; then
+    deps=("${VERIFY_DEPLOYMENTS[@]}")
+    echo "[Verify] Checking rollouts for updated workloads: ${deps[*]}"
+  else
+    deps=(
+      uniz-gateway-api
+      uniz-auth-service
+      uniz-user-service
+      uniz-academics-service
+      uniz-outpass-service
+      uniz-portal
+      uniz-docs-service
+      uniz-mail-service
+      uniz-notification-service
+      uniz-landing
+    )
+  fi
   local dep
   for dep in "${deps[@]}"; do
     if kubectl get deployment "$dep" &>/dev/null; then
@@ -379,6 +386,12 @@ deploy_logic() {
   fi
 
   echo "[Build] Rebuilt $REBUILT_COUNT image(s) this deploy."
+
+  VERIFY_DEPLOYMENTS=()
+  for s in "${ROLLBACK_TARGETS[@]}"; do
+    IFS=':' read -r _ _ dep _ <<< "$s"
+    VERIFY_DEPLOYMENTS+=("$dep")
+  done
 
   if [ "$DEPLOY_CONTEXT" = "GITHUB_ACTIONS" ]; then
     if ! verify_deployment; then
