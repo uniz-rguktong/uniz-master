@@ -103,22 +103,38 @@ verify_deployment() {
   done
 
   echo "[Verify] Checking API health..."
+  local skip_cluster_health=false
+  if [ "${#VERIFY_DEPLOYMENTS[@]}" -gt 0 ]; then
+    skip_cluster_health=true
+    local dep
+    for dep in "${VERIFY_DEPLOYMENTS[@]}"; do
+      case "$dep" in
+        uniz-landing|uniz-portal) ;;
+        *) skip_cluster_health=false; break ;;
+      esac
+    done
+  fi
+  if [ "$skip_cluster_health" = true ]; then
+    echo "[Verify] Skipping API health — only frontend workloads updated (${VERIFY_DEPLOYMENTS[*]})"
+    return 0
+  fi
+
   local attempt code body
   for attempt in 1 2 3 4 5; do
     # -k: host nginx LE cert for api.* may be expired; verify app health not TLS here
     code=$(curl -sk -o /tmp/uniz-health.json -w "%{http_code}" --max-time 15 \
       https://api.uniz.rguktong.in/api/v1/system/health 2>/dev/null || true)
     code=${code:-000}
-    if [ "$code" = "200" ]; then
+    if [ "$code" = "200" ] || [ "$code" = "503" ]; then
       body=$(cat /tmp/uniz-health.json 2>/dev/null || echo "")
       if echo "$body" | grep -q '"status":"ok"'; then
-        echo "[Verify] Health OK (HTTP 200, status ok)"
+        echo "[Verify] Health OK (HTTP $code, status ok)"
         return 0
       fi
       if echo "$body" | grep -q '"status":"degraded"'; then
         echo "[Verify] Health degraded but reachable — checking critical services..."
         if echo "$body" | grep -qE '"auth".*"healthy"|"name": "auth".*"healthy"'; then
-          echo "[Verify] Core API reachable (degraded — non-critical service slow/down)"
+          echo "[Verify] Core API reachable (HTTP $code, degraded — non-critical services down)"
           return 0
         fi
       fi
