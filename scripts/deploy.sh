@@ -13,21 +13,77 @@ if [ ! -f "/root/uniz-secrets.env" ] && [ "$DEPLOY_CONTEXT" != "GITHUB_ACTIONS" 
   git push origin main
 fi
 
+# Map infra manifest basename -> app directory (single-service rebuild)
+infra_yaml_to_dir() {
+  case "$1" in
+    academics-service.yaml) echo "uniz-academics" ;;
+    auth-service.yaml) echo "uniz-auth" ;;
+    cron-service.yaml|cron-job.yaml|storage-cleanup-job.yaml) echo "uniz-cron" ;;
+    docs-service.yaml) echo "uniz-docs" ;;
+    files-service.yaml) echo "uniz-files" ;;
+    gateway-api.yaml|gateway.yaml) echo "uniz-gateway" ;;
+    mail-service.yaml) echo "uniz-mail" ;;
+    notification-service.yaml) echo "uniz-notifications" ;;
+    outpass-service.yaml) echo "uniz-outpass" ;;
+    portal.yaml) echo "uniz-portal" ;;
+    user-service.yaml) echo "uniz-user" ;;
+    *) echo "" ;;
+  esac
+}
+
+# Map [rebuild <tag>] commit tag -> app directory
+rebuild_tag_to_dir() {
+  case "$1" in
+    docs) echo "uniz-docs" ;;
+    portal) echo "uniz-portal" ;;
+    gateway) echo "uniz-gateway" ;;
+    auth) echo "uniz-auth" ;;
+    academics) echo "uniz-academics" ;;
+    user) echo "uniz-user" ;;
+    files) echo "uniz-files" ;;
+    mail) echo "uniz-mail" ;;
+    notifications) echo "uniz-notifications" ;;
+    outpass) echo "uniz-outpass" ;;
+    cron) echo "uniz-cron" ;;
+    landing) echo "uniz-landing" ;;
+    *) echo "" ;;
+  esac
+}
+
 # 16. Deploy Logic
 deploy_logic() {
   echo "[CI/CD] Deployment Verified at $(date)"
-  
+  export DOCKER_BUILDKIT=1
+
   CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
   echo "[Git] Branch: $CURRENT_BRANCH | Commit: $(git log -1 --format='%h - %s')"
   NEW_HEAD=$(git rev-parse HEAD)
 
+  COMMIT_MSG=$(git log -1 --pretty=%B)
+  BUILD_MSG="$COMMIT_MSG $*"
+
   # Force rebuild all if requested
   FORCE_ALL=false
-  COMMIT_MSG=$(git log -1 --pretty=%B)
-  # Check commit message OR script arguments for force flags
-  if [[ "$COMMIT_MSG" == *"[rebuild all]"* ]] || [[ "$COMMIT_MSG" == *"[force build]"* ]] || [[ "$*" == *"[rebuild all]"* ]] || [[ "$*" == *"[force build]"* ]]; then
+  if [[ "$BUILD_MSG" == *"[rebuild all]"* ]] || [[ "$BUILD_MSG" == *"[force build]"* ]]; then
     echo "[Build] Force rebuild all requested."
     FORCE_ALL=true
+  fi
+
+  # Scoped [rebuild <service>] tags — only build listed services (ignores diff for others)
+  declare -A SCOPED_BUILD_DIRS=()
+  SCOPED_REBUILD=false
+  for tag in docs portal gateway auth academics user files mail notifications outpass cron landing; do
+    if [[ "$BUILD_MSG" == *"[rebuild $tag]"* ]]; then
+      dir=$(rebuild_tag_to_dir "$tag")
+      if [ -n "$dir" ]; then
+        SCOPED_BUILD_DIRS["$dir"]=1
+        SCOPED_REBUILD=true
+        echo "[Build] Scoped rebuild tag: [rebuild $tag] -> $dir"
+      fi
+    fi
+  done
+  if [ "$SCOPED_REBUILD" == "true" ]; then
+    echo "[Build] Scoped rebuild active — only tagged services will build."
   fi
 
   MONOREPO_SERVICES="uniz-academics uniz-auth uniz-user uniz-outpass uniz-files uniz-mail uniz-notifications uniz-cron uniz-gateway"
@@ -39,6 +95,87 @@ deploy_logic() {
 
   echo "[Git] Diffing from $LAST_SHA to $NEW_HEAD"
   CHANGED_FILES=$(git diff --name-only "$LAST_SHA" "$NEW_HEAD" 2>/dev/null || echo "")
+  if [ -n "$CHANGED_FILES" ]; then
+    echo "[Git] Changed files:"
+    echo "$CHANGED_FILES" | sed 's/^/  /'
+  fi
+
+  # Dirs touched by infra manifest changes (one service per yaml)
+  declare -A INFRA_CHANGED_DIRS=()
+  while IFS= read -r f; do
+    [ -z "$f" ] && continue
+    if [[ "$f" =~ ^infra/ ]]; then
+      mapped=$(infra_yaml_to_dir "$(basename "$f")")
+      [ -n "$mapped" ] && INFRA_CHANGED_DIRS["$mapped"]=1
+      if [[ "$f" =~ ^infra/core-infra/nginx/ ]]; then
+        INFRA_CHANGED_DIRS["uniz-gateway"]=1
+        INFRA_CHANGED_DIRS["infra/core-infra/nginx"]=1
+      fi
+    fi
+  done <<< "$CHANGED_FILES"
+
+  service_should_build() {
+    local DIR="$1"
+
+    if [ "$FORCE_ALL" == "true" ]; then
+      return 0
+    fi
+
+    if [ "$SCOPED_REBUILD" == "true" ]; then
+      [ -n "${SCOPED_BUILD_DIRS[$DIR]}" ] && return 0
+      return 1
+    fi
+
+    # Shared workspace deps -> backend monorepo services only (not portal/docs/landing)
+    if [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -qE '^packages/uniz-shared/|^packages/@uniz/shared'; then
+      if echo " $MONOREPO_SERVICES " | grep -q " $DIR "; then
+        return 0
+      fi
+    fi
+    if [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -qE '^package\.json$|^package-lock\.json$|^docker/Dockerfile\.service$'; then
+      if echo " $MONOREPO_SERVICES " | grep -q " $DIR "; then
+        return 0
+      fi
+    fi
+
+    # App source changes -> that app only
+    if [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -q "^apps/$DIR/"; then
+      return 0
+    fi
+
+    # Infra manifest -> mapped service only
+    if [ -n "${INFRA_CHANGED_DIRS[$DIR]}" ]; then
+      return 0
+    fi
+
+    return 1
+  }
+
+  uses_monorepo_dockerfile() {
+    local DIR="$1"
+    echo " $MONOREPO_SERVICES " | grep -q " $DIR "
+  }
+
+  resolve_build_paths() {
+    local DIR="$1"
+    BUILD_CONTEXT="apps/$DIR"
+    DOCKERFILE="$BUILD_CONTEXT/Dockerfile"
+    [[ "$DIR" == *"infra"* ]] && BUILD_CONTEXT="$DIR"
+
+    if uses_monorepo_dockerfile "$DIR"; then
+      BUILD_CONTEXT="."
+      DOCKERFILE="docker/Dockerfile.service"
+      return
+    fi
+
+    # Docs has no @uniz/shared — use lightweight per-app Dockerfile + small context
+    if [[ "$DIR" == "uniz-docs" ]] && [ -f "apps/uniz-docs/Dockerfile" ]; then
+      if ! grep -q '@uniz/shared' "apps/uniz-docs/package.json" 2>/dev/null; then
+        BUILD_CONTEXT="apps/uniz-docs"
+        DOCKERFILE="apps/uniz-docs/Dockerfile"
+      fi
+    fi
+  }
   
   # Service Definitions
   UNIZ_SERVICES=(
@@ -103,29 +240,16 @@ deploy_logic() {
   for s in "${ALL_SERVICES[@]}"; do
     IFS=':' read -r DIR IMG DEP CON <<< "$s"
     SHOULD_BUILD=false
-    
-    if [ "$FORCE_ALL" == "true" ]; then
-       SHOULD_BUILD=true
-    elif [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -qE '^packages/|^package\.json$|^package-lock\.json$|^docker/Dockerfile\.service'; then
-      if echo " $MONOREPO_SERVICES " | grep -q " $DIR "; then
-        SHOULD_BUILD=true
-      fi
-    elif [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
+
+    if service_should_build "$DIR"; then
       SHOULD_BUILD=true
     fi
 
     TAG=""
     if [ "$SHOULD_BUILD" == "true" ]; then
       if [ -z "${BUILT_IMAGES[$IMG]}" ]; then
-        BUILD_CONTEXT="apps/$DIR"
-        DOCKERFILE="$BUILD_CONTEXT/Dockerfile"
-        [[ "$DIR" == *"infra"* ]] && BUILD_CONTEXT="$DIR"
+        resolve_build_paths "$DIR"
 
-        if echo " $MONOREPO_SERVICES " | grep -q " $DIR "; then
-          BUILD_CONTEXT="."
-          DOCKERFILE="docker/Dockerfile.service"
-        fi
-        
         # Verify context and Dockerfile exist
         if [ ! -d "$BUILD_CONTEXT" ]; then
           echo "[Skip] Directory $BUILD_CONTEXT not found in branch $CURRENT_BRANCH"
@@ -137,17 +261,30 @@ deploy_logic() {
         fi
 
         TAG="local-$(date +%s)"
-        echo "[Build] Rebuilding $IMG:$TAG (context=$BUILD_CONTEXT)..."
-        
+        echo "[Build] Rebuilding $IMG:$TAG (context=$BUILD_CONTEXT, dockerfile=$DOCKERFILE)..."
+
         BUILD_ARGS=""
-        if echo " $MONOREPO_SERVICES " | grep -q " $DIR "; then
+        if uses_monorepo_dockerfile "$DIR"; then
           WORKSPACE_NAME=$(node -p "require('./apps/$DIR/package.json').name")
           BUILD_ARGS="--build-arg SERVICE_DIR=apps/$DIR --build-arg WORKSPACE_NAME=$WORKSPACE_NAME"
         elif [[ "$DIR" == "uniz-portal" ]]; then
           BUILD_ARGS="--build-arg VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg VITE_API_URL=$VITE_API_URL --build-arg VITE_CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME --build-arg VITE_CLOUDINARY_UPLOAD_PRESET=$CLOUDINARY_UPLOAD_PRESET --build-arg VITE_ANALYTICS_URL=$VITE_ANALYTICS_URL --build-arg VITE_ANALYTICS_KEY=$VITE_ANALYTICS_API_KEY --build-arg VITE_SCRAPER_URL=$VITE_SCRAPER_URL"
         fi
 
-        if docker build --platform linux/amd64 $BUILD_ARGS -f "$DOCKERFILE" -t $IMG:$TAG $BUILD_CONTEXT; then
+        CACHE_ARGS=""
+        if [ -d "/tmp/.buildx-cache" ]; then
+          CACHE_ARGS="--cache-from type=local,src=/tmp/.buildx-cache"
+        fi
+        mkdir -p /tmp/.buildx-cache 2>/dev/null || true
+
+        if docker build --platform linux/amd64 \
+          ${CACHE_ARGS} \
+          --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
+          $BUILD_ARGS \
+          -f "$DOCKERFILE" \
+          -t $IMG:$TAG \
+          $BUILD_CONTEXT; then
+          [ -d /tmp/.buildx-cache-new ] && rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
           echo "[Docker] Importing $IMG:$TAG..."
           docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
           BUILT_IMAGES[$IMG]=$TAG
@@ -160,7 +297,7 @@ deploy_logic() {
         TAG=${BUILT_IMAGES[$IMG]}
       fi
     else
-      # Not rebuilding -> Find latest local tag to avoid ":local" placeholder trap
+      echo "[Skip] No changes for $DIR — reusing existing image."
       TAG=$(k3s ctr -n k8s.io images ls -q | grep "docker.io/library/$IMG:local-" | sort -V | tail -n 1 | cut -d: -f2)
       if [ -z "$TAG" ]; then
           TAG="local"
@@ -209,12 +346,13 @@ deploy_logic() {
     fi
   fi
 
+  echo "[Build] Rebuilt $REBUILT_COUNT image(s) this deploy."
   echo "$NEW_HEAD" > "$STATE_FILE"
 }
 
 # Execution Entry Point
 if [ -f "/root/uniz-secrets.env" ]; then
-  deploy_logic
+  deploy_logic "$@"
 else
   # On Local Machine -> Trigger VPS
   CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
