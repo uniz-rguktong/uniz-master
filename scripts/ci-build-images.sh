@@ -29,7 +29,7 @@ REBUILT_COUNT=0
 for s in "${UNIZ_SERVICES[@]}"; do
   IFS=':' read -r DIR IMG _DEP _CON <<< "$s"
 
-  if ! service_should_build "$DIR"; then
+  if ! service_needs_ghcr_build "$DIR" "$IMG" "$SHORT_TAG"; then
     echo "[Skip] No changes for $DIR — skip GHCR build."
     continue
   fi
