@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, type ReactElement } from "react";
 import { Route, Routes, Link, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 import "./index.css";
@@ -134,7 +134,7 @@ export function Maintenance() {
   );
 }
 
-const MaintenanceGuard = ({ children }: { children: JSX.Element }) => {
+const MaintenanceGuard = ({ children }: { children: ReactElement }) => {
   const token = localStorage.getItem("admin_token");
   if (isMaintenance && !token) {
     return (

@@ -34,7 +34,7 @@ interface Profile {
 
 interface Props {
   username: string;
-  anchorRef: React.RefObject<HTMLElement>;
+  anchorRef: React.RefObject<HTMLElement | null>;
   open: boolean;
   onClose: () => void;
   onProfileUpdate?: (profile: Profile) => void;

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useIsAuth } from "../hooks/is_authenticated";
 import { useLogout } from "../hooks/useLogout";
 import { useStudentData } from "../hooks/student_info";
-import { useState, useEffect, lazy, Suspense, useRef } from "react";
+import { useState, useEffect, lazy, Suspense, useRef, type ReactElement } from "react";
 import { enableOutingsAndOutpasses } from "../pages/student/student";
 import {
   Clock,
@@ -273,7 +273,7 @@ export default function Sidebar({ content }: MainContent) {
     },
   ];
 
-  const contentMap: Record<MainContent["content"], JSX.Element> = {
+  const contentMap: Record<MainContent["content"], ReactElement> = {
     outing: <OutpassOuting request="outing" />,
     outpass: <OutpassOuting request="outpass" />,
     resetpassword: <ResetPassword />,
