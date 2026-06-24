@@ -19,6 +19,7 @@ import {
   Lock,
   Home,
   HelpCircle,
+  ClipboardCheck,
 } from "lucide-react";
 import { Error } from "../App";
 import { ConfirmModal } from "./ConfirmPopup";
@@ -33,6 +34,7 @@ const RequestComp = lazy(() => import("../pages/student/request-component"));
 const Student = lazy(() => import("../pages/student/student"));
 const GradeHub = lazy(() => import("../pages/promotions/GradeHub"));
 const CurrentSemester = lazy(() => import("../pages/student/CurrentSemester"));
+const Registration = lazy(() => import("../pages/student/Registration"));
 const Grievance = lazy(() => import("../pages/student/Grievance"));
 const SeatingArrangement = lazy(
   () => import("../pages/student/components/SeatingArrangement"),
@@ -53,6 +55,7 @@ interface MainContent {
     | "attendance"
     | "grievance"
     | "currentSemester"
+    | "registration"
     | "seating"
     | "help"
     | "error";
@@ -156,6 +159,15 @@ export default function Sidebar({ content }: MainContent) {
           },
         ]
       : []),
+    {
+      id: "registration",
+      label: "Registration",
+      href: "/student/registration",
+      content: "registration",
+      icon: ClipboardCheck,
+      activeColor: "text-navy-900",
+      hoverColor: "hover:text-navy-900",
+    },
     {
       id: "gradehub",
       label: "Results",
@@ -282,6 +294,7 @@ export default function Sidebar({ content }: MainContent) {
     dashboard: <Student />,
     gradehub: <GradeHub />,
     currentSemester: <CurrentSemester />,
+    registration: <Registration />,
     attendance: <Attendance />,
     grievance: <Grievance />,
     seating: <SeatingArrangement />,
