@@ -1,8 +1,13 @@
+# Push to main → compile gate → GHCR image build/push → VPS pull + kubectl rollout.
 name: VPS Automated Deployment
+
+permissions:
+  contents: read
+  packages: write
 
 concurrency:
   group: vps-deploy-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 on:
   push:
@@ -39,44 +44,67 @@ jobs:
       - name: Build portal
         run: npm run build -w uniz
 
-  deploy:
-    name: Build and Stream to VPS
+  build-images:
+    name: Build and push GHCR images
     needs: ci
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Inject Secrets and Deploy
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push changed images
+        env:
+          DEPLOY_CONTEXT: GITHUB_ACTIONS
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_BEFORE_SHA: ${{ github.event.before }}
+          DEPLOY_SHA: ${{ github.sha }}
+          DEPLOY_BEFORE_SHA: ${{ github.event.before }}
+          IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_UPLOAD_PRESET: ${{ secrets.CLOUDINARY_UPLOAD_PRESET }}
+          VITE_ANALYTICS_URL: ${{ secrets.VITE_ANALYTICS_URL }}
+          VITE_ANALYTICS_API_KEY: ${{ secrets.VITE_ANALYTICS_API_KEY }}
+          VITE_SCRAPER_URL: ${{ secrets.VITE_SCRAPER_URL }}
+        run: bash scripts/ci-build-images.sh
+
+  deploy:
+    name: Deploy to VPS
+    needs: build-images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         env:
-          # --- CORE SECRETS ---
           JWT_SECURITY_KEY: ${{ secrets.JWT_SECURITY_KEY }}
           INTERNAL_SECRET: ${{ secrets.INTERNAL_SECRET }}
           INTERNAL_BOT_SECRET: ${{ secrets.INTERNAL_BOT_SECRET }}
           REDIS_URL: ${{ secrets.REDIS_URL }}
-
-          # email / comms
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SES_FROM_EMAIL: ${{ secrets.SES_FROM_EMAIL }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-
-          # storage / media
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
           CLOUDINARY_UPLOAD_PRESET: ${{ secrets.CLOUDINARY_UPLOAD_PRESET }}
           VITE_CLOUDINARY_CLOUD_NAME: ${{ secrets.VITE_CLOUDINARY_CLOUD_NAME }}
           VITE_CLOUDINARY_UPLOAD_PRESET: ${{ secrets.VITE_CLOUDINARY_UPLOAD_PRESET }}
-
-          # push
           VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
-
-          # database
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           AUTH_DATABASE_URL: ${{ secrets.AUTH_DATABASE_URL }}
@@ -87,8 +115,6 @@ jobs:
           MAIL_DATABASE_URL: ${{ secrets.MAIL_DATABASE_URL }}
           NOTIFICATION_DATABASE_URL: ${{ secrets.NOTIFICATION_DATABASE_URL }}
           CRON_DATABASE_URL: ${{ secrets.CRON_DATABASE_URL }}
-
-          # portal specific
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_MAINTENANCE_MODE: ${{ secrets.VITE_MAINTENANCE_MODE }}
           VITE_SCRAPER_URL: ${{ secrets.VITE_SCRAPER_URL }}
@@ -97,15 +123,11 @@ jobs:
           INSTITUTION_LOGO_URL: ${{ secrets.INSTITUTION_LOGO_URL }}
           VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
           TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
-
-          # analytics db
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASS: ${{ secrets.DB_PASS }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_NAME: ${{ secrets.DB_NAME }}
-
-          # landing backend
           LANDING_POSTGRES_USER: ${{ secrets.LANDING_POSTGRES_USER }}
           LANDING_POSTGRES_PASSWORD: ${{ secrets.LANDING_POSTGRES_PASSWORD }}
           LANDING_POSTGRES_DB: ${{ secrets.LANDING_POSTGRES_DB }}
@@ -113,116 +135,20 @@ jobs:
           LANDING_JWT_SECURITY_KEY: ${{ secrets.LANDING_JWT_SECURITY_KEY }}
           LANDING_JWT_ALGORITHM: ${{ secrets.LANDING_JWT_ALGORITHM }}
           DUMMY_TOKEN: ${{ secrets.DUMMY_TOKEN }}
-
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GHCR_PULL_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_BEFORE_SHA: ${{ github.event.before }}
-
+          GITHUB_ACTOR: ${{ github.actor }}
+          USE_GHCR: "true"
+          IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           timeout: 60m
           command_timeout: 60m
-          envs: JWT_SECURITY_KEY,INTERNAL_SECRET,INTERNAL_BOT_SECRET,REDIS_URL,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,SES_FROM_EMAIL,EMAIL_USER,EMAIL_PASS,CLOUDINARY_CLOUD_NAME,CLOUDINARY_UPLOAD_PRESET,VITE_CLOUDINARY_CLOUD_NAME,VITE_CLOUDINARY_UPLOAD_PRESET,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY,POSTGRES_USER,POSTGRES_PASSWORD,AUTH_DATABASE_URL,USER_DATABASE_URL,ACADEMICS_DATABASE_URL,OUTPASS_DATABASE_URL,FILES_DATABASE_URL,MAIL_DATABASE_URL,NOTIFICATION_DATABASE_URL,CRON_DATABASE_URL,VITE_API_URL,VITE_MAINTENANCE_MODE,VITE_SCRAPER_URL,VITE_ANALYTICS_URL,VITE_ANALYTICS_API_KEY,INSTITUTION_LOGO_URL,VITE_TURNSTILE_SITE_KEY,TURNSTILE_SECRET_KEY,DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME,LANDING_POSTGRES_USER,LANDING_POSTGRES_PASSWORD,LANDING_POSTGRES_DB,LANDING_DATABASE_URL,LANDING_JWT_SECURITY_KEY,LANDING_JWT_ALGORITHM,DUMMY_TOKEN,CLOUDFLARE_API_TOKEN,GITHUB_REF_NAME,GITHUB_SHA,GITHUB_BEFORE_SHA
-          script: |
-            export DEPLOY_CONTEXT="GITHUB_ACTIONS"
-            export WORK_DIR="/root/uniz-master-$GITHUB_REF_NAME"
-
-            # Setup isolated branch directory
-            if [ ! -d "$WORK_DIR" ]; then
-              echo "[Setup] Creating isolated directory for $GITHUB_REF_NAME..."
-              git clone https://github.com/uniz-rguktong/uniz-master.git "$WORK_DIR"
-            fi
-
-            cd "$WORK_DIR"
-
-            echo "[Security] Regenerating secrets.env from GitHub Secrets..."
-            cat <<EOF > /root/uniz-secrets.env
-            # Generated by GitHub Actions - Do not edit manually
-            JWT_SECURITY_KEY="$JWT_SECURITY_KEY"
-            INTERNAL_SECRET="$INTERNAL_SECRET"
-            INTERNAL_BOT_SECRET="$INTERNAL_BOT_SECRET"
-            REDIS_URL="$REDIS_URL"
-            AWS_REGION="$AWS_REGION"
-            AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
-            AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
-            SES_FROM_EMAIL="$SES_FROM_EMAIL"
-            EMAIL_USER="$EMAIL_USER"
-            EMAIL_PASS="$EMAIL_PASS"
-            CLOUDINARY_CLOUD_NAME="$CLOUDINARY_CLOUD_NAME"
-            CLOUDINARY_UPLOAD_PRESET="$CLOUDINARY_UPLOAD_PRESET"
-            VITE_CLOUDINARY_CLOUD_NAME="$VITE_CLOUDINARY_CLOUD_NAME"
-            VITE_CLOUDINARY_UPLOAD_PRESET="$VITE_CLOUDINARY_UPLOAD_PRESET"
-            VAPID_PUBLIC_KEY="$VAPID_PUBLIC_KEY"
-            VAPID_PRIVATE_KEY="$VAPID_PRIVATE_KEY"
-            POSTGRES_USER="$POSTGRES_USER"
-            POSTGRES_PASSWORD="$POSTGRES_PASSWORD"
-            AUTH_DATABASE_URL="$AUTH_DATABASE_URL"
-            USER_DATABASE_URL="$USER_DATABASE_URL"
-            ACADEMICS_DATABASE_URL="$ACADEMICS_DATABASE_URL"
-            OUTPASS_DATABASE_URL="$OUTPASS_DATABASE_URL"
-            FILES_DATABASE_URL="$FILES_DATABASE_URL"
-            MAIL_DATABASE_URL="$MAIL_DATABASE_URL"
-            NOTIFICATION_DATABASE_URL="$NOTIFICATION_DATABASE_URL"
-            CRON_DATABASE_URL="$CRON_DATABASE_URL"
-            VITE_API_URL="$VITE_API_URL"
-            VITE_MAINTENANCE_MODE="$VITE_MAINTENANCE_MODE"
-            VITE_SCRAPER_URL="$VITE_SCRAPER_URL"
-            VITE_ANALYTICS_URL="$VITE_ANALYTICS_URL"
-            VITE_ANALYTICS_API_KEY="$VITE_ANALYTICS_API_KEY"
-            INSTITUTION_LOGO_URL="$INSTITUTION_LOGO_URL"
-            VITE_TURNSTILE_SITE_KEY="$VITE_TURNSTILE_SITE_KEY"
-            TURNSTILE_SECRET_KEY="$TURNSTILE_SECRET_KEY"
-            DB_USER="$DB_USER"
-            DB_PASS="$DB_PASS"
-            DB_HOST="$DB_HOST"
-            DB_PORT="$DB_PORT"
-            DB_NAME="$DB_NAME"
-            LANDING_POSTGRES_USER="$LANDING_POSTGRES_USER"
-            LANDING_POSTGRES_PASSWORD="$LANDING_POSTGRES_PASSWORD"
-            LANDING_POSTGRES_DB="$LANDING_POSTGRES_DB"
-            LANDING_DATABASE_URL="$LANDING_DATABASE_URL"
-            LANDING_JWT_SECURITY_KEY="$LANDING_JWT_SECURITY_KEY"
-            LANDING_JWT_ALGORITHM="$LANDING_JWT_ALGORITHM"
-            DUMMY_TOKEN="$DUMMY_TOKEN"
-            CLOUDFLARE_API_TOKEN="$CLOUDFLARE_API_TOKEN"
-            EOF
-            chmod 600 /root/uniz-secrets.env
-
-            echo "[CI/CD] Triggered by ${{ github.actor }} on commit ${{ github.sha }}"
-            export DEPLOY_SHA="$GITHUB_SHA"
-            export DEPLOY_BEFORE_SHA="$GITHUB_BEFORE_SHA"
-
-            # Security: Verify repo integrity — always match GitHub exactly
-            git fetch origin $GITHUB_REF_NAME
-            git checkout -B $GITHUB_REF_NAME origin/$GITHUB_REF_NAME
-            git reset --hard "$GITHUB_SHA"
-            git clean -fd
-
-            if [ "$(git rev-parse HEAD)" != "$GITHUB_SHA" ]; then
-              echo "[Error] VPS checkout does not match GitHub SHA $GITHUB_SHA"
-              exit 1
-            fi
-
-            # Extract commit message for build-detection
-            COMMIT_MSG=$(git log -1 --pretty=%B)
-            echo "[Log] Last Commit: $COMMIT_MSG"
-
-            # Retry deploy up to 3 times (transient Docker/network failures)
-            DEPLOY_OK=false
-            for attempt in 1 2 3; do
-              echo "[Deploy] Attempt $attempt/3..."
-              if /bin/bash ./scripts/deploy.sh "$COMMIT_MSG"; then
-                DEPLOY_OK=true
-                break
-              fi
-              echo "[Deploy] Attempt $attempt failed — waiting 45s before retry..."
-              sleep 45
-            done
-
-            if [ "$DEPLOY_OK" != "true" ]; then
-              echo "[Error] Deploy failed after 3 attempts"
-              exit 1
-            fi
+          envs: JWT_SECURITY_KEY,INTERNAL_SECRET,INTERNAL_BOT_SECRET,REDIS_URL,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,SES_FROM_EMAIL,EMAIL_USER,EMAIL_PASS,CLOUDINARY_CLOUD_NAME,CLOUDINARY_UPLOAD_PRESET,VITE_CLOUDINARY_CLOUD_NAME,VITE_CLOUDINARY_UPLOAD_PRESET,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY,POSTGRES_USER,POSTGRES_PASSWORD,AUTH_DATABASE_URL,USER_DATABASE_URL,ACADEMICS_DATABASE_URL,OUTPASS_DATABASE_URL,FILES_DATABASE_URL,MAIL_DATABASE_URL,NOTIFICATION_DATABASE_URL,CRON_DATABASE_URL,VITE_API_URL,VITE_MAINTENANCE_MODE,VITE_SCRAPER_URL,VITE_ANALYTICS_URL,VITE_ANALYTICS_API_KEY,INSTITUTION_LOGO_URL,VITE_TURNSTILE_SITE_KEY,TURNSTILE_SECRET_KEY,DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME,LANDING_POSTGRES_USER,LANDING_POSTGRES_PASSWORD,LANDING_POSTGRES_DB,LANDING_DATABASE_URL,LANDING_JWT_SECURITY_KEY,LANDING_JWT_ALGORITHM,DUMMY_TOKEN,CLOUDFLARE_API_TOKEN,GHCR_PULL_TOKEN,GHCR_USERNAME,GITHUB_REF_NAME,GITHUB_SHA,GITHUB_BEFORE_SHA,GITHUB_ACTOR,USE_GHCR,IMAGE_REGISTRY
+          script_path: scripts/ci-remote-deploy.sh
