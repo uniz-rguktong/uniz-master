@@ -20,7 +20,7 @@ import {
   Pencil,
   BadgeCheck,
 } from "lucide-react";
-import { student } from "../../store";
+import { student, studentAuthLoading, studentProfileError } from "../../store";
 import { useIsAuth } from "../../hooks/is_authenticated";
 import { useStudentData } from "../../hooks/student_info";
 import { apiClient } from "../../api/apiClient";
@@ -42,6 +42,7 @@ import SeatingArrangement, {
 } from "./components/SeatingArrangement";
 import { Student } from "../../types";
 import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
+import { InlineError } from "../../components/feedback/InlineError";
 
 // ─────────────────────────────────────────────────────────────────
 // Profile Skeleton
@@ -122,6 +123,8 @@ export default function StudentProfilePage() {
   useIsAuth();
   const { refetch } = useStudentData();
   const user = useRecoilValue<Student | any>(student);
+  const authLoading = useRecoilValue(studentAuthLoading);
+  const profileError = useRecoilValue(studentProfileError);
   const [searchParams, setSearchParams] = useSearchParams();
 
   // State
@@ -225,7 +228,7 @@ export default function StudentProfilePage() {
 
   // Init Data
   useEffect(() => {
-    if (user && Object.keys(user).length > 0) {
+    if (user?._id) {
       setFields(getInitialFields(user));
       setIsLoading(false);
     }
@@ -432,7 +435,7 @@ export default function StudentProfilePage() {
 
     useEffect(() => {
       fetchSeatingOnce().then((result) => {
-        if (result) setSeating(result.seating);
+        if (!result.error) setSeating(result.seating);
         setLoading(false);
       });
     }, []);
@@ -489,7 +492,26 @@ export default function StudentProfilePage() {
     );
   };
 
-  if (isLoading && !user) return <ProfileSkeleton />;
+  const hasToken = !!localStorage.getItem("student_token");
+
+  if (authLoading) return <ProfileSkeleton />;
+
+  if (hasToken && !user?._id && profileError) {
+    return (
+      <div className="font-sans text-slate-900 relative">
+        <BackgroundIconCloud />
+        <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-12 pb-20">
+          <InlineError
+            title="Profile unavailable"
+            message={profileError}
+            onRetry={() => refetch()}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (!user?._id) return <ProfileSkeleton />;
 
   const personalFields = [
     {
