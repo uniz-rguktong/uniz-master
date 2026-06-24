@@ -5,7 +5,7 @@ metadata:
   labels:
     app: uniz-user-service
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: uniz-user-service
@@ -78,7 +78,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-user-service
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 4
   metrics:
     - type: Resource
