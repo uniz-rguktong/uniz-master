@@ -16,6 +16,7 @@ COPY packages ./packages
 COPY apps ./apps
 
 RUN npm ci --ignore-scripts
+RUN npm rebuild bcrypt 2>/dev/null || true
 RUN npm run build -w @uniz/shared
 
 WORKDIR /app/${SERVICE_DIR}
