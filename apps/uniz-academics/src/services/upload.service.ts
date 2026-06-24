@@ -1,6 +1,7 @@
 import { redis } from "../utils/redis.util";
 import prisma from "../utils/prisma.util";
 import { mapGradeToPoint } from "../utils/helpers.util";
+import { buildSubjectSnapshot } from "../utils/subject-snapshot.util";
 import axios from "axios";
 
 const GATEWAY_URL = (
@@ -113,6 +114,27 @@ export async function processNextBatch() {
     return "";
   };
 
+  // Cache per-semester allocation overrides (custom elective names) for snapshot labels
+  const allocationCustomNameCache = new Map<string, string | null>();
+
+  const resolveAllocationCustomName = async (
+    subjectId: string,
+    academicSemesterId?: string,
+  ): Promise<string | null> => {
+    if (!academicSemesterId) return null;
+    const key = `${subjectId}:${academicSemesterId}`;
+    if (allocationCustomNameCache.has(key)) {
+      return allocationCustomNameCache.get(key) ?? null;
+    }
+    const alloc = await prisma.branchAllocation.findFirst({
+      where: { subjectId, semesterId: academicSemesterId },
+      select: { customName: true },
+    });
+    const customName = alloc?.customName?.trim() || null;
+    allocationCustomNameCache.set(key, customName);
+    return customName;
+  };
+
   if (processedInThisRun === 0) {
     console.log(
       `[Worker] [${uploadId}] Normalized Subject Map size: ${subjectMap.size}.`,
@@ -174,6 +196,16 @@ export async function processNextBatch() {
               "custom name",
               "specific_name",
             ]);
+            const spreadsheetSubjectName = getVal(row, [
+              "subject name",
+              "subjectname",
+              "subject title",
+            ]);
+            const academicSemesterId = getVal(row, [
+              "academic semester id",
+              "academicsemesterid",
+              "semester record id",
+            ]);
 
             if (!studentId || !code) {
               console.warn(
@@ -197,6 +229,18 @@ export async function processNextBatch() {
 
             const subject = subjectMap.get(code);
             if (!subject) throw new Error(`Subject [${code}] not found`);
+
+            const customName = await resolveAllocationCustomName(
+              subject.id,
+              academicSemesterId || undefined,
+            );
+            const snapshot = buildSubjectSnapshot({
+              code: subject.code,
+              catalogName: subject.name,
+              subjectNameOverride,
+              customName,
+              spreadsheetName: spreadsheetSubjectName,
+            });
 
             const targetSemester = semesterId || subject.semester || "SEM-1";
 
@@ -259,6 +303,8 @@ export async function processNextBatch() {
                 batch: finalBatch,
                 isRemedial,
                 subjectNameOverride,
+                subjectCode: snapshot.subjectCode,
+                subjectName: snapshot.subjectName,
                 passDate: passDate || undefined,
                 updatedAt: new Date(),
               },
@@ -270,6 +316,8 @@ export async function processNextBatch() {
                 batch: finalBatch,
                 isRemedial,
                 subjectNameOverride,
+                subjectCode: snapshot.subjectCode,
+                subjectName: snapshot.subjectName,
                 passDate,
               },
             });
@@ -359,6 +407,28 @@ export async function processNextBatch() {
               "custom name",
               "specific_name",
             ]);
+            const spreadsheetSubjectName = getVal(row, [
+              "subject name",
+              "subjectname",
+              "subject title",
+            ]);
+            const academicSemesterId = getVal(row, [
+              "academic semester id",
+              "academicsemesterid",
+              "semester record id",
+            ]);
+
+            const customName = await resolveAllocationCustomName(
+              subject.id,
+              academicSemesterId || undefined,
+            );
+            const snapshot = buildSubjectSnapshot({
+              code: subject.code,
+              catalogName: subject.name,
+              subjectNameOverride,
+              customName,
+              spreadsheetName: spreadsheetSubjectName,
+            });
 
             await prisma.attendance.upsert({
               where: {
@@ -373,6 +443,8 @@ export async function processNextBatch() {
                 totalClasses: totalClasses,
                 batch: finalBatch,
                 subjectNameOverride,
+                subjectCode: snapshot.subjectCode,
+                subjectName: snapshot.subjectName,
                 updatedAt: new Date(),
               },
               create: {
@@ -383,6 +455,8 @@ export async function processNextBatch() {
                 totalClasses: totalClasses,
                 batch: finalBatch,
                 subjectNameOverride,
+                subjectCode: snapshot.subjectCode,
+                subjectName: snapshot.subjectName,
               },
             });
             successCount++;

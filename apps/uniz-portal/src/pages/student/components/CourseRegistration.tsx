@@ -9,6 +9,8 @@ import {
   AlertCircle,
   CreditCard,
   Coffee,
+  Sparkles,
+  Hash,
 } from "lucide-react";
 import {
   GET_AVAILABLE_SUBJECTS,
@@ -18,12 +20,12 @@ import { toast } from "@/utils/toast-ref";
 import { apiClient } from "../../../api/apiClient";
 
 export default function CourseRegistration({
-  branch,
-  year,
+  branch = "",
+  year = "",
   onComplete,
 }: {
-  branch: string;
-  year: string;
+  branch?: string;
+  year?: string;
   onComplete: () => void;
 }) {
   const [available, setAvailable] = useState<any[]>([]);
@@ -33,6 +35,7 @@ export default function CourseRegistration({
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const [semesterName, setSemesterName] = useState("");
+  const [confirmation, setConfirmation] = useState<any>(null);
 
   const fetchAvailable = async () => {
     setLoading(true);
@@ -130,12 +133,12 @@ export default function CourseRegistration({
     }
     setSubmitting(true);
     try {
-      await apiClient(REGISTER_SUBJECTS, {
+      const res = await apiClient<any>(REGISTER_SUBJECTS, {
         method: "POST",
         body: JSON.stringify({ subjectIds: selectedIds }),
       });
       toast.success("Successfully registered for subjects!");
-      onComplete();
+      setConfirmation(res?.confirmation || { semester: semesterName });
     } catch (error: any) {
       toast.error(error.message || "Registration failed");
     } finally {
@@ -154,6 +157,76 @@ export default function CourseRegistration({
         <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">
           Fetching available courses...
         </p>
+      </div>
+    );
+  }
+
+  if (confirmation) {
+    const regId = String(confirmation.registrationId || "")
+      .slice(0, 8)
+      .toUpperCase();
+    return (
+      <div className="max-w-2xl mx-auto animate-in fade-in zoom-in-95 duration-500">
+        <div className="rounded-[40px] bg-gradient-to-br from-emerald-600 to-emerald-500 p-10 text-white text-center shadow-2xl shadow-emerald-200/50 relative overflow-hidden">
+          <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-white/15 blur-2xl" />
+          <div className="relative">
+            <div className="w-20 h-20 mx-auto rounded-3xl bg-white/15 backdrop-blur-md flex items-center justify-center mb-6">
+              <CheckCircle2 size={42} />
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/15 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+              <Sparkles size={12} /> Registration Confirmed
+            </div>
+            <h2 className="text-3xl font-black tracking-tight mb-2">
+              You're all set!
+            </h2>
+            <p className="text-white/80 font-medium max-w-sm mx-auto">
+              Your subjects for{" "}
+              <strong>{confirmation.semester || semesterName}</strong> have been
+              recorded.
+            </p>
+            {regId && (
+              <div className="inline-flex items-center gap-2 mt-5 px-4 py-2 bg-white/15 rounded-2xl font-black tracking-widest text-sm">
+                <Hash size={14} /> {regId}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {Array.isArray(confirmation.subjects) &&
+          confirmation.subjects.length > 0 && (
+            <div className="mt-6 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-black uppercase tracking-widest text-slate-500">
+                  Registered Subjects
+                </h3>
+                <span className="text-xs font-black text-navy-900">
+                  {confirmation.totalCredits || 0} credits
+                </span>
+              </div>
+              <div className="space-y-1.5">
+                {confirmation.subjects.map((s: any, i: number) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between text-sm py-1.5 border-b border-slate-50 last:border-0"
+                  >
+                    <span className="font-bold text-slate-700 truncate">
+                      {s.code} · {s.name}
+                    </span>
+                    <span className="text-[11px] font-black text-slate-400 shrink-0 ml-3">
+                      {s.credits}C
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+        <button
+          onClick={onComplete}
+          className="w-full mt-6 bg-navy-900 text-white h-16 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-navy-800 transition-all"
+        >
+          View My Subjects
+        </button>
       </div>
     );
   }

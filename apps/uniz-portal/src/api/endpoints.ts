@@ -185,8 +185,19 @@ export const SUBJECT_BY_ID = (id: string) =>
 // Registration Workflow
 export const SEMESTERS = `${BASE_URL}/academics/semester`;
 export const INIT_SEMESTER = `${BASE_URL}/academics/semester/init`;
+export const CREATE_SEMESTER = `${BASE_URL}/academics/semester/create`;
 export const UPDATE_SEMESTER_STATUS = (id: string) =>
   `${BASE_URL}/academics/semester/status/${id}`;
+export const UPDATE_SEMESTER_CONFIG = (id: string) =>
+  `${BASE_URL}/academics/semester/${id}/config`;
+export const ADD_SEMESTER_SUBJECTS = (id: string) =>
+  `${BASE_URL}/academics/semester/${id}/subjects`;
+export const ADVANCE_SEMESTER = (id: string) =>
+  `${BASE_URL}/academics/semester/${id}/advance`;
+export const ELECTIVE_GROUPS = (id: string) =>
+  `${BASE_URL}/academics/semester/${id}/elective-groups`;
+export const DELETE_ELECTIVE_GROUP = (groupId: string) =>
+  `${BASE_URL}/academics/semester/elective-groups/${groupId}`;
 export const DELETE_SEMESTER = (id: string) =>
   `${BASE_URL}/academics/semester/${id}`;
 

@@ -275,7 +275,7 @@ export const generateResultPdf = async (data: ResultData): Promise<Buffer> => {
 
       attempt.grades.forEach((g: any, idx: number) => {
         const nameText = cleanSubjectName(
-          g.subjectNameOverride || g.subject.name,
+          g.subjectNameOverride || g.subjectName || g.subject.name,
         );
         const nameHeight = doc.heightOfString(nameText, {
           width: tWidths.name - 20,

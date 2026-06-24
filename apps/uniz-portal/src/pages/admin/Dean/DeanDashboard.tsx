@@ -7,6 +7,7 @@ import {
   Bell,
   Smartphone,
   Layout,
+  CalendarClock,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -18,6 +19,7 @@ import StudentBulkSection from "../Webmaster/StudentBulkSection";
 import SystemLogsSection from "../Webmaster/SystemLogsSection";
 import FacultyManagement from "../Webmaster/FacultyManagement";
 import DeanOverview from "./DeanOverview";
+import SemesterApproval from "./SemesterApproval";
 import BannersSection from "../Webmaster/BannersSection";
 import UpdatesSection from "../Webmaster/UpdatesSection";
 import PushNotificationSection from "../Webmaster/PushNotificationSection";
@@ -68,7 +70,13 @@ export default function DeanDashboard() {
     },
     {
       group: "Academic",
-      items: [],
+      items: [
+        {
+          id: "semester_review",
+          label: "Semester Approvals",
+          icon: CalendarClock,
+        },
+      ],
     },
     {
       group: "Campus",
@@ -94,6 +102,8 @@ export default function DeanDashboard() {
         return <StudentBulkSection />;
       case "subjects":
         return <SubjectManagement />;
+      case "semester_review":
+        return <SemesterApproval role={role} />;
       case "attendance":
         return <UploadSection type="attendance" />;
       case "grades":

@@ -23,6 +23,11 @@ const getInternalHeaders = () => ({
 });
 
 import { mapGradeToPoint, getGpaDialogue } from "../utils/helpers.util";
+import {
+  buildSubjectSnapshot,
+  displaySubjectCode,
+  displaySubjectName,
+} from "../utils/subject-snapshot.util";
 import { randomUUID } from "crypto";
 import { redis, notificationQueue } from "../utils/redis.util";
 import { processNextBatch } from "../services/upload.service";
@@ -308,8 +313,8 @@ export const getBatchGrades = async (
         };
       }
       grouped[g.studentId].records.push({
-        subjectCode: g.subject.code,
-        subjectName: g.subject.name,
+        subjectCode: displaySubjectCode(g),
+        subjectName: displaySubjectName(g),
         grade: g.grade,
         credits: g.subject.credits,
         semesterId: g.semesterId,
@@ -589,6 +594,14 @@ export const addGrades = async (req: AuthenticatedRequest, res: Response) => {
       grades.map((g: any) => {
         const canonicalSemester =
           semesterId || subMap.get(g.subjectId) || "SEM-1";
+        const subject = resolvedSubjects.find((s: any) => s.id === g.subjectId);
+        const snapshot = subject
+          ? buildSubjectSnapshot({
+              code: subject.code,
+              catalogName: subject.name,
+              subjectNameOverride: g.subjectNameOverride,
+            })
+          : null;
         return prisma.grade.upsert({
           where: {
             studentId_subjectId_semesterId_attemptNumber: {
@@ -601,6 +614,12 @@ export const addGrades = async (req: AuthenticatedRequest, res: Response) => {
           update: {
             grade: g.grade,
             subjectNameOverride: g.subjectNameOverride,
+            ...(snapshot
+              ? {
+                  subjectCode: snapshot.subjectCode,
+                  subjectName: snapshot.subjectName,
+                }
+              : {}),
             updatedAt: new Date(),
           },
           create: {
@@ -609,6 +628,12 @@ export const addGrades = async (req: AuthenticatedRequest, res: Response) => {
             semesterId: canonicalSemester,
             grade: g.grade,
             subjectNameOverride: g.subjectNameOverride,
+            ...(snapshot
+              ? {
+                  subjectCode: snapshot.subjectCode,
+                  subjectName: snapshot.subjectName,
+                }
+              : {}),
           },
         });
       }),
@@ -677,6 +702,11 @@ export const bulkUpdateGrades = async (
 
         const resolvedSubjectId = subject.id;
         const canonicalSemester = u.semesterId || subject.semester || "SEM-1";
+        const snapshot = buildSubjectSnapshot({
+          code: subject.code,
+          catalogName: subject.name,
+          subjectNameOverride: u.subjectNameOverride,
+        });
 
         const pointValue = mapGradeToPoint(u.grade);
         if (pointValue < 0 || pointValue > 10) {
@@ -721,6 +751,8 @@ export const bulkUpdateGrades = async (
               grade: pointValue,
               batch,
               subjectNameOverride: u.subjectNameOverride,
+              subjectCode: snapshot.subjectCode,
+              subjectName: snapshot.subjectName,
               updatedAt: new Date(),
             },
           });
@@ -744,6 +776,8 @@ export const bulkUpdateGrades = async (
               grade: pointValue,
               batch,
               subjectNameOverride: u.subjectNameOverride,
+              subjectCode: snapshot.subjectCode,
+              subjectName: snapshot.subjectName,
               updatedAt: new Date(),
             },
           });
@@ -757,6 +791,8 @@ export const bulkUpdateGrades = async (
               grade: pointValue,
               batch,
               subjectNameOverride: u.subjectNameOverride,
+              subjectCode: snapshot.subjectCode,
+              subjectName: snapshot.subjectName,
             },
           });
         }
@@ -903,6 +939,13 @@ export const addAttendance = async (
   }
 
   try {
+    const subject = await prisma.subject.findUnique({ where: { id: subjectId } });
+    if (!subject) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Subject not found" });
+    }
+
     // Validation
     for (const r of records) {
       if (r.attended < 0 || r.total < 0) {
@@ -920,8 +963,13 @@ export const addAttendance = async (
     }
 
     const results = await Promise.all(
-      records.map((r: any) =>
-        prisma.attendance.upsert({
+      records.map((r: any) => {
+        const snapshot = buildSubjectSnapshot({
+          code: subject.code,
+          catalogName: subject.name,
+          subjectNameOverride: r.subjectNameOverride,
+        });
+        return prisma.attendance.upsert({
           where: {
             studentId_subjectId_semesterId: {
               studentId: r.studentId,
@@ -929,16 +977,23 @@ export const addAttendance = async (
               semesterId: r.semesterId || "CURRENT",
             },
           },
-          update: { attendedClasses: r.attended, totalClasses: r.total },
+          update: {
+            attendedClasses: r.attended,
+            totalClasses: r.total,
+            subjectCode: snapshot.subjectCode,
+            subjectName: snapshot.subjectName,
+          },
           create: {
             studentId: r.studentId,
             subjectId,
             semesterId: r.semesterId || "CURRENT",
             attendedClasses: r.attended,
             totalClasses: r.total,
+            subjectCode: snapshot.subjectCode,
+            subjectName: snapshot.subjectName,
           },
-        }),
-      ),
+        });
+      }),
     );
     return res.json({ success: true, count: results.length });
   } catch (e) {

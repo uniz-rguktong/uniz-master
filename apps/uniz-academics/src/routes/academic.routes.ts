@@ -23,6 +23,13 @@ import {
 } from "../controllers/academic.controller";
 import {
   initSemester,
+  createSemester,
+  addSemesterSubjects,
+  updateSemesterConfig,
+  advanceSemester,
+  getElectiveGroups,
+  upsertElectiveGroup,
+  deleteElectiveGroup,
   getSemesters,
   updateSemesterStatus,
   getDeanAllocations,
@@ -108,9 +115,16 @@ router.delete("/subjects/:id", deleteSubject);
 // Registration Workflow
 router.get("/semester", getSemesters);
 router.post("/semester/init", initSemester);
+router.post("/semester/create", createSemester);
 router.patch("/semester/status/:id", updateSemesterStatus);
 router.put("/semester/status/:id", updateSemesterStatus);
 router.get("/semester/overview", getSemesterOverview);
+router.put("/semester/:id/config", updateSemesterConfig);
+router.post("/semester/:id/subjects", addSemesterSubjects);
+router.post("/semester/:id/advance", advanceSemester);
+router.get("/semester/:id/elective-groups", getElectiveGroups);
+router.post("/semester/:id/elective-groups", upsertElectiveGroup);
+router.delete("/semester/elective-groups/:groupId", deleteElectiveGroup);
 router.delete("/semester/:id", deleteSemester);
 
 router.get("/dean/review/:branch", getDeanAllocations);
