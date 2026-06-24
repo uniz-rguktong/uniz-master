@@ -11,6 +11,7 @@ logs/
 # Production
 build/
 dist/
+apps/*/src/generated/
 
 # Vercel
 .vercel
