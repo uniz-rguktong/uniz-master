@@ -1,7 +1,8 @@
 import { Navigate } from "react-router-dom";
+import type { ReactElement } from "react";
 
 type Props = {
-  children: JSX.Element;
+  children: ReactElement;
   allowedRoles: string[];
 };
 

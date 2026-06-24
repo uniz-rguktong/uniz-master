@@ -28,7 +28,7 @@
     "vault:sync": "bash ./scripts/uniz-vault.sh sync",
     "vault:audit": "bash ./scripts/uniz-vault.sh audit",
     "vault:vps-audit": "bash ./scripts/uniz-vault.sh vps-audit",
-    "watch": "ssh -t -o StrictHostKeyChecking=no root@76.13.241.174 \"watch -n 1 'kubectl get hpa; echo; kubectl get pods'\""
+    "watch": "ssh -t -o StrictHostKeyChecking=no root@${VPS_HOST:-76.13.241.174} \"watch -n 1 'kubectl get hpa; echo; kubectl get pods'\""
   },
   "dependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -53,6 +53,9 @@
     "path-to-regexp": "^6.3.0",
     "tar": "^7.5.7",
     "minimatch": "^10.2.3",
-    "glob": "^10.3.10"
+    "glob": "^10.3.10",
+    "uniz": {
+      "tailwindcss": "3.4.15"
+    }
   }
 }
