@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../src/generated/prisma";
 import crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
