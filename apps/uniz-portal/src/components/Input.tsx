@@ -6,6 +6,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   label?: string;
   error?: string;
   icon?: React.ReactNode;
+  labelClassName?: string;
   // Legacy support
   onchangeFunction?: React.ChangeEventHandler<HTMLInputElement>;
 }
@@ -18,6 +19,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       label,
       error,
       icon,
+      labelClassName,
       onchangeFunction,
       onChange,
       placeholder,
@@ -38,13 +40,18 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full space-y-1.5 group">
         {label && (
-          <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest block ml-1 mb-1.5">
+          <label
+            className={cn(
+              "text-xs font-bold text-neutral-500 uppercase tracking-widest block ml-1 mb-1.5",
+              labelClassName,
+            )}
+          >
             {label}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-black transition-colors">
+            <div className="pointer-events-none absolute left-3 top-1/2 flex -translate-y-1/2 items-center text-zinc-400 group-focus-within:text-zinc-600 transition-colors">
               {icon}
             </div>
           )}
@@ -53,12 +60,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={finalType}
             className={cn(
               "flex w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm font-medium text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:bg-white focus:border-black focus:ring-1 focus:ring-black disabled:cursor-not-allowed disabled:opacity-50 transition-all shadow-sm hover:border-neutral-300",
-              icon ? "pl-11" : "",
-              isPassword ? "pr-11" : "",
               error
                 ? "border-red-500 focus:border-red-500 focus:ring-red-500 bg-red-50/50"
                 : "",
               className,
+              icon ? "pl-10" : "",
+              isPassword ? "pr-10" : "",
             )}
             placeholder={placeholder}
             onChange={finalOnChange}
@@ -68,7 +75,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <button
               type="button"
               onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black focus:outline-none transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 focus:outline-none transition-colors"
             >
               {isPasswordVisible ? (
                 <EyeOff className="h-4 w-4" />

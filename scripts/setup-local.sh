@@ -121,6 +121,25 @@ robust_sed() {
   fi
 }
 
+local_db_schema_for() {
+  case "$1" in
+    AUTH) echo "uniz_auth" ;;
+    USER) echo "uniz_user" ;;
+    ACADEMICS) echo "uniz_academics" ;;
+    OUTPASS) echo "uniz_outpass" ;;
+    FILES) echo "uniz_files" ;;
+    MAIL) echo "uniz_mail" ;;
+    NOTIFICATION) echo "uniz_notifications" ;;
+    CRON) echo "uniz_cron" ;;
+    *) echo "" ;;
+  esac
+}
+
+local_database_url() {
+  local schema="$1"
+  echo "postgresql://user:password@127.0.0.1:5432/uniz_db?sslmode=disable&schema=${schema}"
+}
+
 free_port() {
   local port="$1"
   case "$OS" in
@@ -238,12 +257,21 @@ for i in "${!SERVICES[@]}"; do
   robust_sed 's/uniz-postgres/127.0.0.1/g' "$path/.env"
   robust_sed 's/api.uniz.rguktong.in/127.0.0.1:3000/g' "$path/.env"
   robust_sed 's/https:\/\/127.0.0.1:3000/http:\/\/127.0.0.1:3000/g' "$path/.env"
+  # Cloudflare Turnstile test keys (always pass) — keep site + secret paired for local login
   robust_sed 's/0x4AAAAAACnuFU49Yv6dqJum/1x00000000000000000000AA/g' "$path/.env"
-  robust_sed 's/REDACTED_TURNSTILE_SECRET/1x00000000000000000000000000000000/g' "$path/.env"
+  robust_sed 's/REDACTED_TURNSTILE_SECRET/1x0000000000000000000000000000000AA/g' "$path/.env"
+  robust_sed 's/TURNSTILE_SECRET_KEY="[^"]*"/TURNSTILE_SECRET_KEY="1x0000000000000000000000000000000AA"/g' "$path/.env"
+  robust_sed 's/VITE_TURNSTILE_SITE_KEY="[^"]*"/VITE_TURNSTILE_SITE_KEY="1x00000000000000000000AA"/g' "$path/.env"
 
   db_var="${prefix}_DATABASE_URL"
-  val="$(grep "^${db_var}=" "$path/.env" 2>/dev/null | head -n 1 | cut -d'=' -f2- || true)"
-  if [ -n "$val" ]; then
+  schema="$(local_db_schema_for "$prefix")"
+  if [ -n "$schema" ]; then
+    val="$(local_database_url "$schema")"
+    grep -v '^DATABASE_URL=' "$path/.env" > "$path/.env.tmp" 2>/dev/null || cp "$path/.env" "$path/.env.tmp"
+    mv "$path/.env.tmp" "$path/.env"
+    echo "DATABASE_URL=\"$val\"" >> "$path/.env"
+  elif [ -n "$(grep "^${db_var}=" "$path/.env" 2>/dev/null || true)" ]; then
+    val="$(grep "^${db_var}=" "$path/.env" 2>/dev/null | head -n 1 | cut -d'=' -f2- || true)"
     val="$(echo "$val" | sed 's/localhost/127.0.0.1/g' | sed 's/uniz-postgres/127.0.0.1/g')"
     echo "DATABASE_URL=$val" >> "$path/.env"
   fi
@@ -263,7 +291,7 @@ for i in "${!SERVICES[@]}"; do
   } >> "$path/.env"
 
   if [ -f "$path/prisma/schema.prisma" ]; then
-    unquoted_val="$(echo "$val" | sed -e 's/^"//' -e 's/"$//')"
+    unquoted_val="$(grep '^DATABASE_URL=' "$path/.env" | tail -1 | cut -d'=' -f2- | sed -e 's/^"//' -e 's/"$//')"
     export DATABASE_URL="$unquoted_val"
     if ! (cd "$path" && npx prisma generate >/dev/null 2>&1); then
       warn "Prisma generate failed for $path — re-run setup after Postgres is healthy"
