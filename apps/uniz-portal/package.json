@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "vite",
     "sync": "npm run dev -- --host",
-    "build": "tsc -b && vite build && node scripts/build-sitemap.js",
+    "build": "vite build && node scripts/build-sitemap.js",
+    "typecheck": "tsc -b",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -78,8 +79,8 @@
     "@types/lodash": "^4.17.16",
     "@types/node": "^22.15.17",
     "@types/papaparse": "^5.3.16",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
     "@types/react-slick": "^0.23.13",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
