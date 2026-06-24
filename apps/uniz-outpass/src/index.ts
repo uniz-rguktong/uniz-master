@@ -24,6 +24,7 @@ app.get("/health", (req, res) => {
 
 import requestRoutes from "./routes/request.routes";
 import grievanceRoutes from "./routes/grievance.routes";
+import maintenanceRoutes from "./routes/maintenance.routes";
 
 // Consolidated Routing
 // 1. Grievance routes (handles both /grievance/list and /list if prefix stripped)
@@ -33,6 +34,9 @@ app.use("/", grievanceRoutes);
 
 // 2. Request routes (handles history, outpass, etc.)
 app.use("/", requestRoutes);
+
+// 3. Scheduled maintenance (formerly uniz-cron)
+app.use("/", maintenanceRoutes);
 
 // 404 Handler with internal path logging
 app.use((req, res) => {

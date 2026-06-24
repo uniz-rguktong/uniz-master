@@ -47,7 +47,7 @@ proxy.on("error", (err: Error, req: any, res: any) => {
 });
 
 // 1. Compression (Drastically reduces payload size)
-app.use(compression());
+app.use(compression() as unknown as express.RequestHandler);
 
 const allowedOrigins = process.env.CLIENT_URL
   ? process.env.CLIENT_URL.split(",").map((origin) => origin.trim())
@@ -157,8 +157,9 @@ const serviceMap: Record<string, string> = {
     process.env.NOTIFICATION_SERVICE_URL ||
     "http://uniz-notification-service.default.svc.cluster.local:3007",
   cron:
+    process.env.OUTPASS_SERVICE_URL ||
     process.env.CRON_SERVICE_URL ||
-    "http://uniz-cron-service.default.svc.cluster.local:3008",
+    "http://uniz-outpass-service.default.svc.cluster.local:3003",
   grievance:
     process.env.OUTPASS_SERVICE_URL ||
     "http://uniz-outpass-service.default.svc.cluster.local:3003",
@@ -321,7 +322,7 @@ app.all("/api/v1/:service/(.*)", async (req: any, res: any) => {
         },
       );
 
-      const contentType = response.headers["content-type"] || "";
+      const contentType = String(response.headers["content-type"] ?? "");
       const isJson = contentType.includes("application/json");
 
       if (response.status === 200 && isJson) {

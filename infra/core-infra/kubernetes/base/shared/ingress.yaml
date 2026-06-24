@@ -5,7 +5,8 @@ metadata:
   name: uniz-ingress
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # DNS-01 via Cloudflare — required while domains are Cloudflare-proxied
+    cert-manager.io/cluster-issuer: "letsencrypt-prod-dns"
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"

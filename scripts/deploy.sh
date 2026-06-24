@@ -30,6 +30,8 @@ deploy_logic() {
     FORCE_ALL=true
   fi
 
+  MONOREPO_SERVICES="uniz-academics uniz-auth uniz-user uniz-outpass uniz-files uniz-mail uniz-notifications uniz-cron uniz-gateway"
+
   # State tracking
   STATE_FILE="/root/.uniz_last_deploy_sha"
   LAST_SHA=$( [ -f "$STATE_FILE" ] && cat "$STATE_FILE" || echo "" )
@@ -42,9 +44,9 @@ deploy_logic() {
   UNIZ_SERVICES=(
     "uniz-academics:uniz-academics-service:uniz-academics-service:academics-service"
     "uniz-auth:uniz-auth-service:uniz-auth-service:auth-service"
-    "uniz-cron:uniz-cron-service:uniz-maintenance-job:cron-worker"
     "uniz-cron:uniz-cron-service:uniz-storage-cleanup-job:storage-cleaner"
     "uniz-cron:uniz-cron-service:uniz-cron-service:cron-worker"
+    "uniz-outpass:uniz-outpass-service:uniz-maintenance-job:cron-worker"
     "uniz-files:uniz-files-service:uniz-files-service:files-service"
     "uniz-gateway:uniz-gateway-api:uniz-gateway-api:gateway-api"
     "uniz-mail:uniz-mail-service:uniz-mail-service:mail-service"
@@ -111,6 +113,13 @@ deploy_logic() {
   # Apply Infrastructure
   echo "[Infra] Applying shared components..."
   kubectl apply -k infra/core-infra/kubernetes/base/shared/ || true
+
+  if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
+    echo "[Infra] Syncing Cloudflare DNS token for cert-manager..."
+    kubectl create secret generic cloudflare-api-token -n cert-manager \
+      --from-literal=api-token="$CLOUDFLARE_API_TOKEN" \
+      --dry-run=client -o yaml | kubectl apply -f -
+  fi
   
   echo "[Infra] Applying branch components ($K_BASE)..."
   kubectl apply -k "$K_BASE" || true
@@ -125,6 +134,10 @@ deploy_logic() {
     
     if [ "$FORCE_ALL" == "true" ]; then
        SHOULD_BUILD=true
+    elif [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -qE '^packages/|^package\.json$|^package-lock\.json$|^docker/Dockerfile\.service'; then
+      if echo " $MONOREPO_SERVICES " | grep -q " $DIR "; then
+        SHOULD_BUILD=true
+      fi
     elif [ -n "$CHANGED_FILES" ] && echo "$CHANGED_FILES" | grep -q "^apps/$DIR/\|^$DIR/"; then
       SHOULD_BUILD=true
     fi
@@ -133,23 +146,32 @@ deploy_logic() {
     if [ "$SHOULD_BUILD" == "true" ]; then
       if [ -z "${BUILT_IMAGES[$IMG]}" ]; then
         BUILD_CONTEXT="apps/$DIR"
+        DOCKERFILE="$BUILD_CONTEXT/Dockerfile"
         [[ "$DIR" == *"infra"* ]] && BUILD_CONTEXT="$DIR"
+
+        if echo " $MONOREPO_SERVICES " | grep -q " $DIR "; then
+          BUILD_CONTEXT="."
+          DOCKERFILE="docker/Dockerfile.service"
+        fi
         
         # Verify context and Dockerfile exist
         if [ ! -d "$BUILD_CONTEXT" ]; then
           echo "[Skip] Directory $BUILD_CONTEXT not found in branch $CURRENT_BRANCH"
           continue
         fi
-        if [ ! -f "$BUILD_CONTEXT/Dockerfile" ]; then
-            echo "[Skip] Dockerfile not found in $BUILD_CONTEXT. Skipping build."
+        if [ ! -f "$DOCKERFILE" ]; then
+            echo "[Skip] Dockerfile not found at $DOCKERFILE. Skipping build."
             continue
         fi
 
         TAG="local-$(date +%s)"
-        echo "[Build] Rebuilding $IMG:$TAG..."
+        echo "[Build] Rebuilding $IMG:$TAG (context=$BUILD_CONTEXT)..."
         
         BUILD_ARGS=""
-        if [[ "$DIR" == "uniz-portal" ]]; then
+        if echo " $MONOREPO_SERVICES " | grep -q " $DIR "; then
+          WORKSPACE_NAME=$(node -p "require('./apps/$DIR/package.json').name")
+          BUILD_ARGS="--build-arg SERVICE_DIR=apps/$DIR --build-arg WORKSPACE_NAME=$WORKSPACE_NAME"
+        elif [[ "$DIR" == "uniz-portal" ]]; then
           BUILD_ARGS="--build-arg VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg VITE_API_URL=$VITE_API_URL --build-arg VITE_CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME --build-arg VITE_CLOUDINARY_UPLOAD_PRESET=$CLOUDINARY_UPLOAD_PRESET --build-arg VITE_ANALYTICS_URL=$VITE_ANALYTICS_URL --build-arg VITE_ANALYTICS_KEY=$VITE_ANALYTICS_API_KEY --build-arg VITE_SCRAPER_URL=$VITE_SCRAPER_URL"
         elif [[ "$DIR" == "ornate" || "$DIR" == "ornate-core" ]]; then 
           # Ensure NEXTAUTH_URL is valid and not empty
@@ -159,7 +181,7 @@ deploy_logic() {
           BUILD_ARGS="--build-arg NEXT_PUBLIC_ASSETS_URL=https://pub-d189280ec8be47c6a7f90812775baa54.r2.dev/landing-assets --build-arg DATABASE_URL=$ORNATE_DATABASE_URL --build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY --build-arg NEXTAUTH_URL=$EFFECTIVE_AUTH_URL --build-arg REDIS_URL=$ORNATE_REDIS_URL --build-arg R2_ENDPOINT=$R2_ENDPOINT --build-arg R2_ACCESS_KEY_ID=$R2_ACCESS_KEY_ID --build-arg R2_SECRET_ACCESS_KEY=$R2_SECRET_ACCESS_KEY --build-arg R2_PUBLIC_DOMAIN=$R2_PUBLIC_DOMAIN --build-arg NEXT_PUBLIC_VAPID_PUBLIC_KEY=$VAPID_PUBLIC_KEY --build-arg NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY"
         fi
 
-        if docker build --platform linux/amd64 $BUILD_ARGS -t $IMG:$TAG $BUILD_CONTEXT; then
+        if docker build --platform linux/amd64 $BUILD_ARGS -f "$DOCKERFILE" -t $IMG:$TAG $BUILD_CONTEXT; then
           echo "[Docker] Importing $IMG:$TAG..."
           docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
           BUILT_IMAGES[$IMG]=$TAG
