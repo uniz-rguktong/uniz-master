@@ -211,17 +211,15 @@ export function Features() {
             </div>
           )}
         </div>
-        <div className="relative col-span-full bg-slate-50/30">
-          <div className="absolute z-10 max-w-lg px-6 pr-12 pt-6 md:px-12 md:pt-12">
+        <div className="col-span-full border-t border-slate-200 bg-slate-50/30 p-6 sm:p-12">
+          <div className="max-w-4xl">
             <span className="text-slate-500 font-bold flex items-center gap-2">
               <Activity className="size-4" />
               Activity feed
             </span>
-
-            <p className="my-8 text-2xl font-semibold text-slate-900">
+            <p className="mt-4 mb-8 text-2xl font-semibold text-slate-900">
               Monitor your application's activity in real-time.{" "}
               <span className="text-slate-500">
-                {" "}
                 Instantly identify and resolve issues.
               </span>
             </p>
@@ -240,23 +238,7 @@ interface ServiceHealth {
   latencyMs: number | null;
   latencyLabel: string;
   status: ServiceStatus;
-  isColdStart: boolean;
 }
-
-const COLD_START_THRESHOLD_MS = 100;
-
-const DEFAULT_SERVICES: ServiceHealth[] = [
-  { name: "auth", latencyMs: 7, latencyLabel: "7ms", status: "healthy", isColdStart: false },
-  { name: "profile", latencyMs: 6, latencyLabel: "6ms", status: "healthy", isColdStart: false },
-  { name: "cms", latencyMs: 6, latencyLabel: "6ms", status: "healthy", isColdStart: false },
-  { name: "academics", latencyMs: 7, latencyLabel: "7ms", status: "healthy", isColdStart: false },
-  { name: "requests", latencyMs: 8, latencyLabel: "8ms", status: "healthy", isColdStart: false },
-  { name: "files", latencyMs: 7, latencyLabel: "7ms", status: "healthy", isColdStart: false },
-  { name: "mail", latencyMs: 8, latencyLabel: "8ms", status: "healthy", isColdStart: false },
-  { name: "notifications", latencyMs: 7, latencyLabel: "7ms", status: "healthy", isColdStart: false },
-  { name: "cron", latencyMs: 8, latencyLabel: "8ms", status: "healthy", isColdStart: false },
-  { name: "grievance", latencyMs: 9, latencyLabel: "9ms", status: "healthy", isColdStart: false },
-];
 
 function parseLatencyMs(value: string | number | undefined | null): number | null {
   if (value == null) return null;
@@ -272,20 +254,16 @@ function toServiceStatus(status: string | undefined): ServiceStatus {
 }
 
 function transformHealthServices(healthStatus: any): ServiceHealth[] {
-  if (!healthStatus?.services?.length) return DEFAULT_SERVICES;
+  if (!healthStatus?.services?.length) return [];
 
   return healthStatus.services.map((svc: any) => {
     const latencyMs = parseLatencyMs(svc.latency);
-    const isDocs = svc.name === "docs";
 
     return {
       name: svc.name,
       latencyMs,
       latencyLabel: svc.latency ?? (latencyMs != null ? `${latencyMs}ms` : "—"),
       status: toServiceStatus(svc.status),
-      isColdStart:
-        isDocs ||
-        (latencyMs != null && latencyMs >= COLD_START_THRESHOLD_MS),
     };
   });
 }
@@ -311,70 +289,27 @@ const statusStyles: Record<
   },
 };
 
-function ServiceLatencyRow({
-  service,
-  maxMs,
-  showColdStartBadge = false,
-}: {
-  service: ServiceHealth;
-  maxMs: number;
-  showColdStartBadge?: boolean;
-}) {
+function ServiceChip({ service }: { service: ServiceHealth }) {
   const styles = statusStyles[service.status];
-  const widthPct =
-    service.latencyMs != null && maxMs > 0
-      ? Math.min(100, (service.latencyMs / maxMs) * 100)
-      : 0;
 
   return (
-    <div className="group relative grid grid-cols-[minmax(5.5rem,6.5rem)_1fr_auto] items-center gap-3 py-2.5 sm:grid-cols-[7rem_1fr_auto]">
-      <div className="flex min-w-0 items-center gap-2">
-        <span
-          className={cn("h-2 w-2 shrink-0 rounded-full", styles.dot)}
-          aria-hidden
-        />
-        <span className="truncate text-sm font-semibold capitalize text-slate-700">
+    <div
+      className={cn(
+        "flex flex-col gap-1 rounded-xl border bg-white px-3 py-3 shadow-sm transition-shadow hover:shadow-md",
+        service.status === "healthy" && "border-slate-200",
+        service.status === "unhealthy" && "border-red-200 bg-red-50/30",
+        service.status === "unknown" && "border-slate-200",
+      )}
+    >
+      <div className="flex items-center gap-2">
+        <span className={cn("h-2 w-2 shrink-0 rounded-full", styles.dot)} />
+        <span className="truncate text-sm font-semibold capitalize text-slate-800">
           {service.name}
         </span>
       </div>
-
-      <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
-        <div
-          className={cn("h-full rounded-full transition-all duration-500", styles.bar)}
-          style={{ width: `${widthPct}%` }}
-        />
-      </div>
-
-      <div className="flex shrink-0 items-center gap-2">
-        <span className="text-sm font-bold tabular-nums text-slate-900">
-          {service.latencyLabel}
-        </span>
-        {showColdStartBadge && (
-          <span className="hidden rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 sm:inline">
-            Mintlify cold start
-          </span>
-        )}
-      </div>
-
-      <div className="pointer-events-none absolute left-0 top-full z-20 mt-1 hidden w-max rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-xl group-hover:block">
-        <p className="font-bold capitalize text-slate-900">{service.name}</p>
-        <p className="mt-0.5 text-slate-600">
-          Latency: <span className="font-semibold text-slate-900">{service.latencyLabel}</span>
-        </p>
-        <p className="text-slate-600">
-          Status:{" "}
-          <span
-            className={cn(
-              "font-semibold",
-              service.status === "healthy" && "text-emerald-600",
-              service.status === "unhealthy" && "text-red-600",
-              service.status === "unknown" && "text-slate-600",
-            )}
-          >
-            {styles.label}
-          </span>
-        </p>
-      </div>
+      <span className="text-lg font-black tabular-nums tracking-tight text-slate-900">
+        {service.latencyLabel}
+      </span>
     </div>
   );
 }
@@ -385,82 +320,109 @@ const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
     [healthStatus],
   );
 
-  const coreServices = useMemo(
-    () => services.filter((svc) => !svc.isColdStart),
+  const apiServices = useMemo(
+    () => services.filter((svc) => svc.name !== "docs"),
     [services],
   );
 
-  const slowServices = useMemo(
-    () => services.filter((svc) => svc.isColdStart),
+  const docsService = useMemo(
+    () => services.find((svc) => svc.name === "docs"),
     [services],
   );
 
-  const coreMaxMs = useMemo(() => {
-    const values = coreServices
+  const avgLatencyMs = useMemo(() => {
+    const values = apiServices
       .map((svc) => svc.latencyMs)
       .filter((ms): ms is number => ms != null);
-    return Math.max(20, ...values, 1);
-  }, [coreServices]);
+    if (!values.length) return null;
+    return values.reduce((a, b) => a + b, 0) / values.length;
+  }, [apiServices]);
 
-  const slowMaxMs = useMemo(() => {
-    const values = slowServices
-      .map((svc) => svc.latencyMs)
-      .filter((ms): ms is number => ms != null);
-    return Math.max(...values, 1);
-  }, [slowServices]);
+  const unhealthyCount = services.filter((s) => s.status === "unhealthy").length;
+
+  if (!healthStatus) {
+    return (
+      <div className="max-w-5xl rounded-2xl border border-slate-200 bg-white p-8">
+        <div className="flex items-center justify-center gap-3 text-slate-400">
+          <div className="size-5 animate-spin rounded-full border-2 border-slate-200 border-t-slate-600" />
+          <span className="text-sm font-medium">Loading service health…</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="mt-32 w-full px-6 pb-10 pt-2 md:mt-16 md:px-12 md:pb-12">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-          Service latency
-        </p>
-        <div className="flex items-center gap-4 text-xs font-semibold text-slate-500">
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            Healthy
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-red-500" />
-            Unhealthy
-          </span>
+    <div className="max-w-5xl space-y-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            API services
+          </p>
+          <p className="mt-1 text-2xl font-black text-slate-900">{apiServices.length}</p>
+        </div>
+        <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            Avg latency
+          </p>
+          <p className="mt-1 text-2xl font-black tabular-nums text-emerald-600">
+            {avgLatencyMs != null ? `${avgLatencyMs.toFixed(1)}ms` : "—"}
+          </p>
+        </div>
+        <div className="col-span-2 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm sm:col-span-1">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            Status
+          </p>
+          <p
+            className={cn(
+              "mt-1 text-lg font-black",
+              unhealthyCount === 0 ? "text-emerald-600" : "text-amber-600",
+            )}
+          >
+            {unhealthyCount === 0 ? "All healthy" : `${unhealthyCount} degraded`}
+          </p>
         </div>
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-        <div className="divide-y divide-slate-100">
-          {coreServices.map((service) => (
-            <ServiceLatencyRow
-              key={service.name}
-              service={service}
-              maxMs={coreMaxMs}
-            />
+        <p className="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">
+          Microservices
+        </p>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
+          {apiServices.map((service) => (
+            <ServiceChip key={service.name} service={service} />
           ))}
         </div>
+      </div>
 
-        {slowServices.length > 0 && (
-          <div className="mt-6 border-t border-dashed border-slate-200 pt-5">
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                Slow / cold-start services
+      {docsService && (
+        <div className="rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50/80 to-white p-4 shadow-sm sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-amber-700/80">
+                Documentation
               </p>
-              <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 sm:hidden">
-                Mintlify cold start
-              </span>
+              <p className="mt-1 text-sm text-slate-600">
+                Mintlify docs run separately from the API — higher latency on cold start is
+                expected and does not affect student services.
+              </p>
             </div>
-            <div className="divide-y divide-slate-100">
-              {slowServices.map((service) => (
-                <ServiceLatencyRow
-                  key={service.name}
-                  service={service}
-                  maxMs={slowMaxMs}
-                  showColdStartBadge={service.name === "docs"}
-                />
-              ))}
+            <div className="flex items-center gap-3 rounded-xl border border-amber-200/60 bg-white px-4 py-2.5">
+              <span
+                className={cn(
+                  "h-2.5 w-2.5 rounded-full",
+                  statusStyles[docsService.status].dot,
+                )}
+              />
+              <div className="text-right">
+                <p className="text-sm font-semibold capitalize text-slate-800">docs</p>
+                <p className="text-lg font-black tabular-nums text-amber-800">
+                  {docsService.latencyLabel}
+                </p>
+              </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
