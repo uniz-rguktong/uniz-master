@@ -263,6 +263,15 @@ app.get(
   },
 );
 
+// Express 5 *path is string[] — String(array) yields "a,b" and breaks upstream routes.
+function proxyPathFromParams(pathParam: unknown): string {
+  if (pathParam == null || pathParam === "") return "/";
+  const segments = Array.isArray(pathParam)
+    ? pathParam.map(String)
+    : String(pathParam).split("/").filter(Boolean);
+  return segments.length ? `/${segments.join("/")}` : "/";
+}
+
 // 5. Warp-Speed Proxy Engine (Express 5 / path-to-regexp v6+ wildcard syntax)
 app.all("/api/v1/:service/*path", async (req: any, res: any) => {
   const service = (req.params.service as string).toLowerCase();
@@ -270,8 +279,7 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
 
   if (!target) return res.status(404).json({ error: "Service Not Found" });
 
-  const proxyPath = (req.params.path as string) || "";
-  req.url = proxyPath ? `/${proxyPath}` : "/";
+  req.url = proxyPathFromParams(req.params.path);
 
   // Bypass Warp Engine for binary files or download routes to prevent corruption
   const isBinaryRequest =
