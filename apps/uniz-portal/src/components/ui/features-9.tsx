@@ -9,14 +9,7 @@ import {
   ShieldAlert,
   Key,
 } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "./chart";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SYSTEM_HEALTH } from "../../api/endpoints";
 import { cn } from "../../lib/utils";
 import { AnimatedList } from "./animated-list";
@@ -240,97 +233,234 @@ export function Features() {
   );
 }
 
-const chartConfig = {
-  latency: {
-    label: "Latency (ms)",
-    color: "#2563eb",
-  },
-} satisfies ChartConfig;
+type ServiceStatus = "healthy" | "unhealthy" | "unknown";
 
-const defaultData = [
-  { service: "auth", latency: 7 },
-  { service: "profile", latency: 6 },
-  { service: "cms", latency: 6 },
-  { service: "academics", latency: 7 },
-  { service: "requests", latency: 8 },
-  { service: "files", latency: 7 },
-  { service: "mail", latency: 8 },
-  { service: "notifications", latency: 7 },
-  { service: "cron", latency: 8 },
-  { service: "grievance", latency: 9 },
+interface ServiceHealth {
+  name: string;
+  latencyMs: number | null;
+  latencyLabel: string;
+  status: ServiceStatus;
+  isColdStart: boolean;
+}
+
+const COLD_START_THRESHOLD_MS = 100;
+
+const DEFAULT_SERVICES: ServiceHealth[] = [
+  { name: "auth", latencyMs: 7, latencyLabel: "7ms", status: "healthy", isColdStart: false },
+  { name: "profile", latencyMs: 6, latencyLabel: "6ms", status: "healthy", isColdStart: false },
+  { name: "cms", latencyMs: 6, latencyLabel: "6ms", status: "healthy", isColdStart: false },
+  { name: "academics", latencyMs: 7, latencyLabel: "7ms", status: "healthy", isColdStart: false },
+  { name: "requests", latencyMs: 8, latencyLabel: "8ms", status: "healthy", isColdStart: false },
+  { name: "files", latencyMs: 7, latencyLabel: "7ms", status: "healthy", isColdStart: false },
+  { name: "mail", latencyMs: 8, latencyLabel: "8ms", status: "healthy", isColdStart: false },
+  { name: "notifications", latencyMs: 7, latencyLabel: "7ms", status: "healthy", isColdStart: false },
+  { name: "cron", latencyMs: 8, latencyLabel: "8ms", status: "healthy", isColdStart: false },
+  { name: "grievance", latencyMs: 9, latencyLabel: "9ms", status: "healthy", isColdStart: false },
 ];
 
-const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
-  // Transform Health API services array to recharts format
-  const chartData =
-    healthStatus?.services?.length > 0
-      ? healthStatus.services.map((svc: any) => ({
-          service: svc.name,
-          latency: svc.latency
-            ? parseInt(svc.latency.replace("ms", "") || "0")
-            : 0,
-        }))
-      : defaultData;
+function parseLatencyMs(value: string | number | undefined | null): number | null {
+  if (value == null) return null;
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  const match = String(value).match(/([\d.]+)/);
+  return match ? parseFloat(match[1]) : null;
+}
+
+function toServiceStatus(status: string | undefined): ServiceStatus {
+  if (status === "healthy") return "healthy";
+  if (status === "unhealthy") return "unhealthy";
+  return "unknown";
+}
+
+function transformHealthServices(healthStatus: any): ServiceHealth[] {
+  if (!healthStatus?.services?.length) return DEFAULT_SERVICES;
+
+  return healthStatus.services.map((svc: any) => {
+    const latencyMs = parseLatencyMs(svc.latency);
+    const isDocs = svc.name === "docs";
+
+    return {
+      name: svc.name,
+      latencyMs,
+      latencyLabel: svc.latency ?? (latencyMs != null ? `${latencyMs}ms` : "—"),
+      status: toServiceStatus(svc.status),
+      isColdStart:
+        isDocs ||
+        (latencyMs != null && latencyMs >= COLD_START_THRESHOLD_MS),
+    };
+  });
+}
+
+const statusStyles: Record<
+  ServiceStatus,
+  { dot: string; bar: string; label: string }
+> = {
+  healthy: {
+    dot: "bg-emerald-500",
+    bar: "bg-emerald-500",
+    label: "Healthy",
+  },
+  unhealthy: {
+    dot: "bg-red-500",
+    bar: "bg-red-500",
+    label: "Unhealthy",
+  },
+  unknown: {
+    dot: "bg-slate-400",
+    bar: "bg-slate-400",
+    label: "Unknown",
+  },
+};
+
+function ServiceLatencyRow({
+  service,
+  maxMs,
+  showColdStartBadge = false,
+}: {
+  service: ServiceHealth;
+  maxMs: number;
+  showColdStartBadge?: boolean;
+}) {
+  const styles = statusStyles[service.status];
+  const widthPct =
+    service.latencyMs != null && maxMs > 0
+      ? Math.min(100, (service.latencyMs / maxMs) * 100)
+      : 0;
 
   return (
-    <ChartContainer
-      className="h-[400px] aspect-auto md:h-[450px] w-full mt-32 md:mt-16"
-      config={chartConfig}
-    >
-      <AreaChart
-        accessibilityLayer
-        data={chartData}
-        margin={{
-          top: 140,
-          left: 20,
-          right: 20,
-          bottom: 20,
-        }}
-      >
-        <defs>
-          <linearGradient id="fillLatency" x1="0" y1="0" x2="0" y2="1">
-            <stop
-              offset="0%"
-              stopColor="var(--color-latency)"
-              stopOpacity={0.4}
+    <div className="group relative grid grid-cols-[minmax(5.5rem,6.5rem)_1fr_auto] items-center gap-3 py-2.5 sm:grid-cols-[7rem_1fr_auto]">
+      <div className="flex min-w-0 items-center gap-2">
+        <span
+          className={cn("h-2 w-2 shrink-0 rounded-full", styles.dot)}
+          aria-hidden
+        />
+        <span className="truncate text-sm font-semibold capitalize text-slate-700">
+          {service.name}
+        </span>
+      </div>
+
+      <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+        <div
+          className={cn("h-full rounded-full transition-all duration-500", styles.bar)}
+          style={{ width: `${widthPct}%` }}
+        />
+      </div>
+
+      <div className="flex shrink-0 items-center gap-2">
+        <span className="text-sm font-bold tabular-nums text-slate-900">
+          {service.latencyLabel}
+        </span>
+        {showColdStartBadge && (
+          <span className="hidden rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 sm:inline">
+            Mintlify cold start
+          </span>
+        )}
+      </div>
+
+      <div className="pointer-events-none absolute left-0 top-full z-20 mt-1 hidden w-max rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-xl group-hover:block">
+        <p className="font-bold capitalize text-slate-900">{service.name}</p>
+        <p className="mt-0.5 text-slate-600">
+          Latency: <span className="font-semibold text-slate-900">{service.latencyLabel}</span>
+        </p>
+        <p className="text-slate-600">
+          Status:{" "}
+          <span
+            className={cn(
+              "font-semibold",
+              service.status === "healthy" && "text-emerald-600",
+              service.status === "unhealthy" && "text-red-600",
+              service.status === "unknown" && "text-slate-600",
+            )}
+          >
+            {styles.label}
+          </span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
+  const services = useMemo(
+    () => transformHealthServices(healthStatus),
+    [healthStatus],
+  );
+
+  const coreServices = useMemo(
+    () => services.filter((svc) => !svc.isColdStart),
+    [services],
+  );
+
+  const slowServices = useMemo(
+    () => services.filter((svc) => svc.isColdStart),
+    [services],
+  );
+
+  const coreMaxMs = useMemo(() => {
+    const values = coreServices
+      .map((svc) => svc.latencyMs)
+      .filter((ms): ms is number => ms != null);
+    return Math.max(20, ...values, 1);
+  }, [coreServices]);
+
+  const slowMaxMs = useMemo(() => {
+    const values = slowServices
+      .map((svc) => svc.latencyMs)
+      .filter((ms): ms is number => ms != null);
+    return Math.max(...values, 1);
+  }, [slowServices]);
+
+  return (
+    <div className="mt-32 w-full px-6 pb-10 pt-2 md:mt-16 md:px-12 md:pb-12">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+          Service latency
+        </p>
+        <div className="flex items-center gap-4 text-xs font-semibold text-slate-500">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            Healthy
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-red-500" />
+            Unhealthy
+          </span>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+        <div className="divide-y divide-slate-100">
+          {coreServices.map((service) => (
+            <ServiceLatencyRow
+              key={service.name}
+              service={service}
+              maxMs={coreMaxMs}
             />
-            <stop
-              offset="90%"
-              stopColor="var(--color-latency)"
-              stopOpacity={0.01}
-            />
-          </linearGradient>
-        </defs>
-        <CartesianGrid
-          vertical={false}
-          stroke="#e2e8f0"
-          strokeDasharray="4 4"
-        />
-        <XAxis
-          dataKey="service"
-          tickLine={false}
-          axisLine={false}
-          tickMargin={12}
-          tick={{ fill: "#94a3b8", fontSize: 12, fontWeight: 500 }}
-        />
-        <ChartTooltip
-          active
-          cursor={false}
-          content={
-            <ChartTooltipContent
-              className="bg-white border-slate-200 shadow-xl"
-              labelKey="service"
-            />
-          }
-        />
-        <Area
-          strokeWidth={2}
-          dataKey="latency"
-          type="monotone"
-          fill="url(#fillLatency)"
-          stroke="var(--color-latency)"
-        />
-      </AreaChart>
-    </ChartContainer>
+          ))}
+        </div>
+
+        {slowServices.length > 0 && (
+          <div className="mt-6 border-t border-dashed border-slate-200 pt-5">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                Slow / cold-start services
+              </p>
+              <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 sm:hidden">
+                Mintlify cold start
+              </span>
+            </div>
+            <div className="divide-y divide-slate-100">
+              {slowServices.map((service) => (
+                <ServiceLatencyRow
+                  key={service.name}
+                  service={service}
+                  maxMs={slowMaxMs}
+                  showColdStartBadge={service.name === "docs"}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };

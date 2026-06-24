@@ -57,7 +57,7 @@ uniz-landing (+ API) → public site
 
 - Root `package.json` workspaces: `packages/*`, `apps/uniz-*`
 - Single root `package-lock.json` — run `npm install` at repo root only
-- Shared code: `@uniz/shared` via `workspace:*`
+- Shared code: `@uniz/shared` via `"*"` (npm workspace link; resolves to local package)
 - Docker: backend services build with `docker/Dockerfile.service` from repo root
 - CI: `.github/workflows/ci.yml` runs `npm ci` + `npm run ci:build` before deploy
 
