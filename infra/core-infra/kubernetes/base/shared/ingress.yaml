@@ -23,6 +23,13 @@ spec:
     - host: rguktong.in
       http:
         paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: uniz-landing-backend-svc
+                port:
+                  number: 8000
           - path: /
             pathType: Prefix
             backend:
