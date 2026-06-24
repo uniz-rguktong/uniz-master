@@ -32,15 +32,10 @@ const sendPush = async (
 ): Promise<number> => {
   if (process.env.SKIP_PUSH === "true") return 0;
   try {
-    const url = `${NOTIFICATION_SERVICE_URL}/push/send`;
+    const url = `${NOTIFICATION_SERVICE_URL}/internal/push`;
     const res = await axios.post(
       url,
-      {
-        target: "user",
-        username: username,
-        title,
-        body,
-      },
+      { username, title, body },
       {
         headers: { "x-internal-secret": INTERNAL_SECRET },
         timeout: 5000,
@@ -52,10 +47,18 @@ const sendPush = async (
     );
     return sentCount;
   } catch (e: any) {
-    console.error(
-      `[AUTH] Failed to send push notification to ${username}:`,
-      e.message,
-    );
+    const status = e.response?.status;
+    if (status && status < 500) {
+      console.warn(
+        `[AUTH] Push skipped for ${username} (${status}):`,
+        e.response?.data?.error || e.message,
+      );
+    } else {
+      console.error(
+        `[AUTH] Failed to send push notification to ${username}:`,
+        e.message,
+      );
+    }
     return 0;
   }
 };

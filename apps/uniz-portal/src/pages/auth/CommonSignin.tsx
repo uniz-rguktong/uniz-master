@@ -85,7 +85,7 @@ function OtpInput({
 
   return (
     <div className="space-y-2">
-      <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest block ml-1">
+      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] block ml-1">
         Verification Code
       </label>
       <div className="flex gap-2.5 justify-center">
@@ -103,7 +103,7 @@ function OtpInput({
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
-            className="w-12 h-14 text-center text-xl font-black rounded-xl border-2 border-neutral-200 bg-neutral-50 text-neutral-900 focus:outline-none focus:border-navy-900 focus:ring-2 focus:ring-navy-900/20 focus:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-12 h-14 text-center text-xl font-black rounded-2xl border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:border-zinc-950 focus:ring-2 focus:ring-zinc-950/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.25 }}
@@ -181,61 +181,96 @@ function PasswordStrength({ password }: { password: string }) {
   );
 }
 
-// ─── Turnstile Widget (extracted to reduce duplication) ───────
+// ─── Shared login styles ──────────────────────────────────────
+const loginLabelClass =
+  "text-[13px] font-medium text-zinc-500 normal-case tracking-normal mb-2";
+
+const loginInputClass =
+  "!h-11 !rounded-lg !border-zinc-200 !bg-white !text-[15px] !font-normal placeholder:!text-zinc-300 focus:!border-zinc-950 focus:!ring-1 focus:!ring-zinc-950/20 !shadow-none hover:!border-zinc-300 transition-colors";
+
+const loginInputWithIconClass = `${loginInputClass} !pl-10 !pr-3.5`;
+
+const loginInputPasswordClass = `${loginInputClass} !pl-10 !pr-10`;
+
+const loginBtnClass =
+  "!rounded-lg w-full h-11 bg-zinc-950 hover:bg-zinc-800 text-white text-[15px] font-semibold disabled:opacity-40 disabled:cursor-not-allowed relative overflow-hidden group transition-colors duration-200 !hover:translate-y-0";
+
+const loginBtnShimmer =
+  "pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]";
+
+const TURNSTILE_TEST_SITE_KEY_PREFIX = "1x00000000000000000000AA";
+
+function isLocalTestTurnstile() {
+  const key = import.meta.env.VITE_TURNSTILE_SITE_KEY ?? "";
+  return import.meta.env.DEV && key.startsWith(TURNSTILE_TEST_SITE_KEY_PREFIX);
+}
+
+function turnstileEnabled() {
+  return !!import.meta.env.VITE_TURNSTILE_SITE_KEY;
+}
+
+function requiresCaptcha() {
+  return turnstileEnabled() && !isLocalTestTurnstile();
+}
+
+/** Visible Cloudflare Turnstile — standard managed challenge */
 function TurnstileWidget({
   turnstileRef,
-  setCaptchaToken,
+  captchaTokenRef,
+  onTokenChange,
   isTurnstileLoaded,
   setIsTurnstileLoaded,
 }: {
   turnstileRef: React.RefObject<any>;
-  setCaptchaToken: (t: string | null) => void;
+  captchaTokenRef: React.MutableRefObject<string | null>;
+  onTokenChange: (token: string | null) => void;
   isTurnstileLoaded: boolean;
   setIsTurnstileLoaded: (v: boolean) => void;
 }) {
-  if (!import.meta.env.VITE_TURNSTILE_SITE_KEY) {
+  if (!turnstileEnabled()) {
     return import.meta.env.DEV ? (
-      <div className="text-center py-2 text-[10px] text-amber-600 font-medium">
-        ⚠️ Turnstile Disabled (No Site Key)
-      </div>
+      <p className="text-center text-[11px] text-amber-600 font-medium py-1">
+        Turnstile not configured (no site key)
+      </p>
     ) : null;
   }
 
   return (
-    <div className="flex flex-col items-center py-2 relative min-h-[65px] justify-center">
+    <div className="flex flex-col items-center justify-center relative min-h-[68px] py-1">
       <AnimatePresence>
         {!isTurnstileLoaded && (
           <motion.div
-            className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/50 rounded-xl border border-slate-100 z-10 pointer-events-none"
+            className="absolute inset-0 flex items-center justify-center rounded-lg border border-zinc-100 bg-zinc-50/80 z-10 pointer-events-none"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
           >
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.3s]" />
-              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.15s]" />
-              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" />
+            <div className="flex items-center gap-1.5">
+              <div className="w-1 h-1 rounded-full bg-zinc-400 animate-bounce [animation-delay:-0.3s]" />
+              <div className="w-1 h-1 rounded-full bg-zinc-400 animate-bounce [animation-delay:-0.15s]" />
+              <div className="w-1 h-1 rounded-full bg-zinc-400 animate-bounce" />
             </div>
-            <span className="text-[10px] font-black text-slate-400 mt-2 tracking-widest uppercase">
-              Initializing Security
-            </span>
           </motion.div>
         )}
       </AnimatePresence>
       <Turnstile
         ref={turnstileRef}
         siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+        options={{ theme: "light", size: "normal" }}
         onSuccess={(token) => {
-          setCaptchaToken(token);
+          captchaTokenRef.current = token;
+          onTokenChange(token);
           setIsTurnstileLoaded(true);
         }}
         onExpire={() => {
-          setCaptchaToken(null);
+          captchaTokenRef.current = null;
+          onTokenChange(null);
           setIsTurnstileLoaded(false);
           turnstileRef.current?.reset();
         }}
         onError={() => {
-          setCaptchaToken(null);
+          captchaTokenRef.current = null;
+          onTokenChange(null);
           setIsTurnstileLoaded(false);
         }}
         onLoad={() => setIsTurnstileLoaded(true)}
@@ -254,11 +289,17 @@ export default function Signin({ type }: SigninProps) {
     "signin",
   );
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaTokenRef = useRef<string | null>(null);
   const turnstileRef = useRef<any>(null);
   const [resetToken, setResetToken] = useRecoilState(resetTokenState);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isTurnstileLoaded, setIsTurnstileLoaded] = useState(false);
+
+  const syncCaptchaToken = useCallback((token: string | null) => {
+    captchaTokenRef.current = token;
+    setCaptchaToken(token);
+  }, []);
   const [authState] = useRecoilState(is_authenticated);
   const setAdmin = useSetRecoilState<any>(adminUsername);
   const setAuth = useSetRecoilState(is_authenticated);
@@ -321,6 +362,11 @@ export default function Signin({ type }: SigninProps) {
 
     setIsLoading(true);
     try {
+      if (requiresCaptcha() && !captchaTokenRef.current) {
+        toast.error("Please complete the security check below.");
+        return;
+      }
+
       const data = await apiClient<SigninResponse>(SIGNIN(type), {
         method: "POST",
         body: JSON.stringify({
@@ -329,13 +375,13 @@ export default function Signin({ type }: SigninProps) {
               ? username.trim().toUpperCase()
               : username.trim(),
           password: password.trim(),
-          captchaToken: captchaToken,
+          captchaToken: captchaTokenRef.current,
         }),
       });
 
       if (!data) {
         turnstileRef.current?.reset?.();
-        setCaptchaToken(null);
+        syncCaptchaToken(null);
         return;
       }
 
@@ -363,7 +409,9 @@ export default function Signin({ type }: SigninProps) {
         localStorage.setItem("student_token", token);
         localStorage.setItem("username", username.trim());
         setAuth({ is_authenticated: true, type: "student" });
-        toast.success(`Welcome back, ${username.trim()}!`);
+        toast.success(`Welcome back, ${username.trim()}.`, {
+          title: "Signed in",
+        });
         navigate("/student", { replace: true });
       } else if (
         type === "admin" &&
@@ -376,7 +424,9 @@ export default function Signin({ type }: SigninProps) {
         localStorage.setItem("username", username.trim());
         localStorage.setItem("role", data.role || "teacher");
         setAuth({ is_authenticated: true, type: "faculty" });
-        toast.success(`Welcome Professor ${username.trim()}!`);
+        toast.success(`Welcome, Professor ${username.trim()}.`, {
+          title: "Signed in",
+        });
         navigate("/faculty", { replace: true });
       } else if (type === "admin" && (token || data.success)) {
         localStorage.removeItem("student_token");
@@ -387,7 +437,9 @@ export default function Signin({ type }: SigninProps) {
 
         setAuth({ is_authenticated: true, type: "admin" });
         setAdmin(username.trim());
-        toast.success("Welcome back, Admin!");
+        toast.success("Your admin session is ready.", {
+          title: "Signed in",
+        });
         setTimeout(() => navigate("/admin", { replace: true }), 100);
       } else if (type === "faculty" && token) {
         localStorage.removeItem("student_token");
@@ -396,7 +448,9 @@ export default function Signin({ type }: SigninProps) {
         localStorage.setItem("username", username.trim());
         localStorage.setItem("role", (data as any).role);
         setAuth({ is_authenticated: true, type: "faculty" });
-        toast.success(`Welcome Professor ${username.trim()}!`);
+        toast.success(`Welcome, Professor ${username.trim()}.`, {
+          title: "Signed in",
+        });
         navigate("/faculty", { replace: true });
       } else {
         toast.error("Access denied: Invalid credentials for this portal.");
@@ -404,7 +458,7 @@ export default function Signin({ type }: SigninProps) {
     } catch (error: any) {
       console.error("Signin failed:", error);
       turnstileRef.current?.reset();
-      setCaptchaToken(null);
+      syncCaptchaToken(null);
     } finally {
       setIsLoading(false);
     }
@@ -412,10 +466,10 @@ export default function Signin({ type }: SigninProps) {
     username,
     password,
     type,
-    captchaToken,
     navigate,
     setAuth,
     setAdmin,
+    syncCaptchaToken,
   ]);
 
   const requestOtp = useCallback(async () => {
@@ -440,6 +494,11 @@ export default function Signin({ type }: SigninProps) {
 
     setIsLoading(true);
     try {
+      if (requiresCaptcha() && !captchaTokenRef.current) {
+        toast.error("Please complete the security check below.");
+        return;
+      }
+
       const data = await apiClient<{
         success: boolean;
         message?: string;
@@ -449,16 +508,20 @@ export default function Signin({ type }: SigninProps) {
         method: "POST",
         body: JSON.stringify({
           username: username.trim(),
-          captchaToken: captchaToken,
+          captchaToken: captchaTokenRef.current,
         }),
       });
 
       if (data && data.success) {
+        const channel =
+          data.deliveryMethod === "push"
+            ? "your registered device"
+            : "your registered email";
         toast.success(
-          `${data.message || "Security code sent successfully"}. Please check your Mail or mobile notifications.`,
+          `Check ${channel} for your security code.`,
           {
-            icon: <span>{data.deliveryMethod === "push" ? "📱" : "📧"}</span>,
-            autoClose: 7000,
+            title: "Code sent",
+            autoClose: 6000,
           },
         );
         setStep("verifyOtp");
@@ -466,7 +529,7 @@ export default function Signin({ type }: SigninProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [username, type, captchaToken]);
+  }, [username, type]);
 
   const requestEmailOtp = useCallback(async () => {
     const isStudentFormat = /^[A-Z]\d+/i.test(username.trim());
@@ -485,6 +548,11 @@ export default function Signin({ type }: SigninProps) {
 
     setIsLoading(true);
     try {
+      if (requiresCaptcha() && !captchaTokenRef.current) {
+        toast.error("Please complete the security check below.");
+        return;
+      }
+
       const data = await apiClient<{
         success: boolean;
         message?: string;
@@ -493,23 +561,20 @@ export default function Signin({ type }: SigninProps) {
         method: "POST",
         body: JSON.stringify({
           username: username.trim(),
-          captchaToken: captchaToken,
+          captchaToken: captchaTokenRef.current,
         }),
       });
 
       if (data && data.success) {
-        toast.success(
-          `${data.message || "Security code dispatched to your email"}. Please check your Mail or mobile notifications.`,
-          {
-            icon: <span>📧</span>,
-            autoClose: 7000,
-          },
-        );
+        toast.success("Check your email for the security code.", {
+          title: "Code sent",
+          autoClose: 6000,
+        });
       }
     } finally {
       setIsLoading(false);
     }
-  }, [username, type, captchaToken]);
+  }, [username, type]);
 
   const handleVerifyOtp = useCallback(async () => {
     if (otp.trim().length !== 6) {
@@ -532,7 +597,9 @@ export default function Signin({ type }: SigninProps) {
 
       if (data && data.success && data.resetToken) {
         setResetToken(data.resetToken);
-        toast.success(data.message || "OTP Verified");
+        toast.success("You can now set a new password.", {
+          title: "Code verified",
+        });
       }
     } finally {
       setIsLoading(false);
@@ -564,7 +631,9 @@ export default function Signin({ type }: SigninProps) {
       );
 
       if (data && data.success) {
-        toast.success(data.message || "Password reset successfully");
+        toast.success("Sign in with your new password.", {
+          title: "Password updated",
+        });
         setOtp("");
         setNewPassword("");
         setResetToken(null);
@@ -584,34 +653,36 @@ export default function Signin({ type }: SigninProps) {
 
   const dashboardLabel =
     type === "student"
-      ? "Student Login"
+      ? "Sign in"
       : type === "faculty"
-        ? "Faculty Portal"
-        : "Administrator Portal";
+        ? "Faculty sign in"
+        : "Admin sign in";
 
   const stepSubtitle =
     step === "signin"
-      ? "Enter your credentials to access the portal"
+      ? type === "student"
+        ? "Use your university ID and password"
+        : "Use your staff credentials"
       : step === "forgot"
-        ? "We'll send an OTP to your registered ID"
-        : "Please Check your Mail or mobile notifications";
+        ? "We'll send a code to your registered email"
+        : "Check your mail or notifications";
 
   const stepTitle =
     step === "signin"
       ? dashboardLabel
       : step === "forgot"
-        ? "Reset Password"
-        : "New Credentials";
+        ? "Reset password"
+        : "New password";
 
   return (
     <div className="min-h-screen bg-white relative">
       <Button
         variant="ghost"
-        className="absolute top-6 left-4 md:top-8 md:left-8 p-2 text-slate-500 hover:text-slate-900 transition-all z-50 flex items-center gap-1.5 font-bold text-sm"
+        className="absolute top-5 left-4 md:top-7 md:left-7 z-50 flex items-center gap-1 text-zinc-400 hover:text-zinc-950 !rounded-lg px-3 py-2 text-sm font-medium transition-colors !hover:translate-y-0"
         onClick={() => navigate("/")}
       >
-        <ChevronLeft className="w-5 h-5" />
-        <span className="hidden sm:inline">Back to Home</span>
+        <ChevronLeft className="w-4 h-4" />
+        <span className="hidden sm:inline">Back</span>
       </Button>
 
       <LoginScreen
@@ -619,22 +690,29 @@ export default function Signin({ type }: SigninProps) {
         title={stepTitle}
         subtitle={stepSubtitle}
         heroTitle={undefined}
-        bottomText="Rgukt Ongole"
+        bottomText="RGUKT Ongole"
         role={type}
         stepKey={step}
       >
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* ─── Sign In Step ─────────────────────────── */}
           {step === "signin" && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <Input
-                label="Username / ID"
+                label={
+                  type === "student"
+                    ? "University ID"
+                    : type === "faculty"
+                      ? "Staff ID"
+                      : "Admin ID"
+                }
+                labelClassName={loginLabelClass}
                 icon={<User className="w-4 h-4" />}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder={
                   type === "student"
-                    ? "University ID (e.g. O210001 or S220059)"
+                    ? "O210001"
                     : type === "faculty"
                       ? "Staff ID"
                       : "Admin ID"
@@ -642,104 +720,96 @@ export default function Signin({ type }: SigninProps) {
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck={false}
-                autoComplete="off"
-                className="h-12"
+                autoComplete="username"
+                className={loginInputWithIconClass}
               />
-              <Input
-                label="Password"
-                type="password"
-                icon={<Lock className="w-4 h-4" />}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="h-12"
-              />
+              <div className="space-y-2">
+                <Input
+                  label="Password"
+                  labelClassName={loginLabelClass}
+                  type="password"
+                  icon={<Lock className="w-4 h-4" />}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  autoComplete="current-password"
+                  className={loginInputPasswordClass}
+                />
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    className="text-[13px] text-zinc-400 hover:text-zinc-950 font-medium transition-colors"
+                    onClick={() => setStep("forgot")}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              </div>
 
               <TurnstileWidget
                 turnstileRef={turnstileRef}
-                setCaptchaToken={setCaptchaToken}
+                captchaTokenRef={captchaTokenRef}
+                onTokenChange={syncCaptchaToken}
                 isTurnstileLoaded={isTurnstileLoaded}
                 setIsTurnstileLoaded={setIsTurnstileLoaded}
               />
 
-              <div className="flex items-center justify-end">
-                <button
-                  type="button"
-                  className="text-sm text-navy-900 hover:text-navy-800 font-bold transition-all hover:underline underline-offset-4"
-                  onClick={() => setStep("forgot")}
-                >
-                  Forgot password?
-                </button>
-              </div>
-
               <Button
-                className="w-full h-12 bg-navy-900 hover:bg-navy-800 text-white rounded-xl text-[15px] font-bold shadow-xl shadow-navy-100 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+                className={loginBtnClass}
                 size="lg"
                 isLoading={isLoading}
                 type="submit"
-                disabled={
-                  !!import.meta.env.VITE_TURNSTILE_SITE_KEY && !captchaToken
-                }
+                disabled={requiresCaptcha() && !captchaToken}
               >
-                <span className="relative z-10">Sign In</span>
-                <span className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
-                {!!import.meta.env.VITE_TURNSTILE_SITE_KEY &&
-                  !captchaToken &&
-                  username &&
-                  password && (
-                    <span className="absolute -bottom-6 left-0 w-full text-center text-[9px] font-black text-blue-500 uppercase tracking-widest animate-pulse">
-                      Awaiting Security Verification...
-                    </span>
-                  )}
+                <span className="relative z-10">Continue</span>
+                <span className={loginBtnShimmer} />
               </Button>
             </div>
           )}
 
           {/* ─── Forgot Password Step ─────────────────── */}
           {step === "forgot" && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <Input
-                label="Student / Staff ID"
+                label="University ID"
+                labelClassName={loginLabelClass}
                 icon={<User className="w-4 h-4" />}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck={false}
-                autoComplete="off"
-                placeholder="Enter your ID to receive OTP"
-                className="h-12"
+                autoComplete="username"
+                placeholder="Enter your ID"
+                className={loginInputWithIconClass}
               />
 
               <TurnstileWidget
                 turnstileRef={turnstileRef}
-                setCaptchaToken={setCaptchaToken}
+                captchaTokenRef={captchaTokenRef}
+                onTokenChange={syncCaptchaToken}
                 isTurnstileLoaded={isTurnstileLoaded}
                 setIsTurnstileLoaded={setIsTurnstileLoaded}
               />
 
               <Button
-                className="w-full h-12 bg-navy-900 hover:bg-navy-800 text-white rounded-xl text-[15px] font-bold disabled:opacity-50 relative overflow-hidden group"
+                className={loginBtnClass}
                 size="lg"
                 isLoading={isLoading}
                 onClick={requestOtp}
-                disabled={
-                  !!import.meta.env.VITE_TURNSTILE_SITE_KEY &&
-                  !import.meta.env.DEV &&
-                  !captchaToken
-                }
+                disabled={requiresCaptcha() && !captchaToken}
               >
-                <span className="relative z-10">Send OTP</span>
-                <span className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
+                <span className="relative z-10">Send code</span>
+                <span className={loginBtnShimmer} />
               </Button>
               <div className="text-center">
                 <button
                   type="button"
-                  className="inline-flex items-center text-sm text-slate-500 hover:text-slate-900 font-bold transition-all group"
+                  className="inline-flex items-center text-[13px] text-zinc-400 hover:text-zinc-950 font-medium transition-colors group"
                   onClick={() => setStep("signin")}
                 >
-                  <ArrowLeft className="w-3 h-3 mr-1.5 group-hover:-translate-x-1 transition-transform" />
-                  Back to Login
+                  <ArrowLeft className="w-3.5 h-3.5 mr-1.5 group-hover:-translate-x-0.5 transition-transform" />
+                  Back to sign in
                 </button>
               </div>
             </div>
@@ -757,32 +827,28 @@ export default function Signin({ type }: SigninProps) {
               {!resetToken && (
                 <div className="space-y-4">
                   <Button
-                    className="w-full h-12 bg-navy-900 hover:bg-navy-800 text-white rounded-xl text-[15px] font-bold relative overflow-hidden group"
+                    className={loginBtnClass}
                     size="lg"
                     isLoading={isLoading}
                     onClick={handleVerifyOtp}
                   >
                     <span className="relative z-10">Verify OTP</span>
-                    <span className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
+                    <span className={loginBtnShimmer} />
                   </Button>
                   <div className="text-center space-y-3">
                     <button
                       type="button"
-                      className="text-[11px] text-slate-500 hover:text-slate-900 font-bold uppercase tracking-widest underline underline-offset-4 transition-all disabled:opacity-50"
+                      className="text-[11px] text-zinc-500 hover:text-zinc-950 font-semibold uppercase tracking-wider transition-all disabled:opacity-50"
                       onClick={requestEmailOtp}
-                      disabled={
-                        isLoading ||
-                        (!!import.meta.env.VITE_TURNSTILE_SITE_KEY &&
-                          !import.meta.env.DEV &&
-                          !captchaToken)
-                      }
+                      disabled={isLoading || (requiresCaptcha() && !captchaToken)}
                     >
                       Resend via Email
                     </button>
 
                     <TurnstileWidget
                       turnstileRef={turnstileRef}
-                      setCaptchaToken={setCaptchaToken}
+                      captchaTokenRef={captchaTokenRef}
+                      onTokenChange={syncCaptchaToken}
                       isTurnstileLoaded={isTurnstileLoaded}
                       setIsTurnstileLoaded={setIsTurnstileLoaded}
                     />
@@ -817,23 +883,24 @@ export default function Signin({ type }: SigninProps) {
                   </div>
 
                   <Input
-                    label="New Secure Password"
+                    label="New password"
+                    labelClassName={loginLabelClass}
                     type="password"
                     icon={<Lock className="w-4 h-4" />}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Min. 6 characters"
-                    className="h-12"
+                    className={loginInputPasswordClass}
                   />
                   <PasswordStrength password={newPassword} />
                   <Button
-                    className="w-full h-12 bg-navy-900 hover:bg-navy-800 text-white rounded-xl text-[15px] font-bold relative overflow-hidden group"
+                    className={loginBtnClass}
                     size="lg"
                     isLoading={isLoading}
                     onClick={resetPassword}
                   >
-                    <span className="relative z-10">Set New Password</span>
-                    <span className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
+                    <span className="relative z-10">Set new password</span>
+                    <span className={loginBtnShimmer} />
                   </Button>
                 </motion.div>
               )}

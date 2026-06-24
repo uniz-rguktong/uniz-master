@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../utils/prisma";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { UserRole } from "../shared/roles.enum";
 import { ErrorCode } from "../shared/error-codes";
-
-const prisma = new PrismaClient();
 
 /**
  * PUBLIC ENDPOINTS
