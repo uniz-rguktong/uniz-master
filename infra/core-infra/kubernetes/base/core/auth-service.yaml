@@ -5,7 +5,7 @@ metadata:
   labels:
     app: uniz-auth-service
 spec:
-  replicas: 6
+  replicas: 1
   selector:
     matchLabels:
       app: uniz-auth-service
@@ -79,7 +79,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-auth-service
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 4
   metrics:
     - type: Resource
