@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../utils/prisma";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import ExcelJS from "exceljs";
 import axios from "axios";
@@ -7,7 +7,6 @@ import { UserRole } from "../shared/roles.enum";
 import { redis } from "../utils/redis.util";
 import { processNextStudentBatch } from "../services/bulk-worker.service";
 
-const prisma = new PrismaClient();
 const AUTH_SERVICE_URL =
   process.env.AUTH_SERVICE_URL || "http://localhost:3001";
 

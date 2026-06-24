@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../utils/prisma";
 import { redis } from "../utils/redis.util";
 import axios from "axios";
 
-const prisma = new PrismaClient();
 const AUTH_SERVICE_URL =
   process.env.AUTH_SERVICE_URL || "http://localhost:3001";
 const INTERNAL_SECRET = process.env.INTERNAL_SECRET || "uniz-core";

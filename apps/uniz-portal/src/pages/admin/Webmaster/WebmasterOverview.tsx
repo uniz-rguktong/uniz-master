@@ -241,7 +241,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
       {/* Info tags */}
       {!loading && (
         <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold mb-6">
-          <span className="text-navy-900 uppercase tracking-widest px-2.5 py-1 bg-navy-50 border border-navy-100 rounded-xl">
+          <span className="text-zinc-950 uppercase tracking-widest px-2.5 py-1 bg-zinc-50 border border-zinc-100 rounded-xl">
             {username}
           </span>
           {profile?.role && (
@@ -279,7 +279,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.2 }}
-            className="w-full max-w-md bg-white rounded-xl border border-slate-100 p-5 space-y-3"
+            className="w-full max-w-md bg-white/80 backdrop-blur-sm rounded-2xl border border-zinc-100/80 p-5 space-y-3 shadow-sm"
           >
             {[
               {
@@ -320,7 +320,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                     onChange={(e) =>
                       setFormData({ ...formData, [key]: e.target.value })
                     }
-                    className="text-[13px] font-medium text-slate-900 bg-transparent border-b border-navy-100 focus:outline-none w-full"
+                    className="text-[13px] font-medium text-zinc-900 bg-transparent border-b border-zinc-100 focus:outline-none w-full"
                   />
                 </div>
               </div>
@@ -331,7 +331,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-[11px] font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 hover:bg-slate-800 transition-all disabled:opacity-60"
+                className="flex-1 py-2.5 rounded-xl bg-zinc-950 text-white text-[11px] font-bold uppercase tracking-widest flex items-center justify-center gap-1.5 hover:bg-zinc-800 transition-all disabled:opacity-60"
               >
                 {isSaving ? (
                   <Loader2 size={13} className="animate-spin" />

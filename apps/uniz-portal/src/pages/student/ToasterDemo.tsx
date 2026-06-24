@@ -1,8 +1,7 @@
 "use client";
 
-import { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import Toaster, { ToasterRef } from "@/components/ui/toast";
+import { toast } from "@/utils/toast-ref";
 
 type Variant = "default" | "success" | "error" | "warning";
 type Position =
@@ -14,55 +13,41 @@ type Position =
   | "bottom-right";
 
 export default function ToasterDemo() {
-  const toasterRef = useRef<ToasterRef>(null);
-
-  const showToast = (variant: Variant, position: Position = "bottom-right") => {
-    toasterRef.current?.show({
-      title: `${variant.charAt(0).toUpperCase() + variant.slice(1)} Notification`,
-      message: `This is a ${variant} toast notification.`,
+  const showToastVariant = (variant: Variant, position: Position = "bottom-right") => {
+    toast.show({
+      title: `${variant.charAt(0).toUpperCase() + variant.slice(1)}`,
+      message: `This is a ${variant} notification.`,
       variant,
-      position,
       duration: 3000,
-      onDismiss: () => console.log(`${variant} toast at ${position} dismissed`),
+      onDismiss: () => console.log(`${variant} toast dismissed`),
     });
   };
 
   const simulateApiCall = async () => {
-    toasterRef.current?.show({
-      title: "Scheduling...",
-      message: "Please wait while we schedule your meeting.",
-      variant: "default",
-      position: "bottom-right",
+    toast.info("Please wait while we schedule your meeting.", {
+      title: "Scheduling",
     });
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      toasterRef.current?.show({
-        title: "Meeting Scheduled",
-        message: "Your meeting is scheduled for July 4, 2025, at 3:42 PM IST.",
-        variant: "success",
-        position: "bottom-right",
-        highlightTitle: true,
+      toast.success("Your meeting is scheduled for July 4, 2025 at 3:42 PM IST.", {
+        title: "Meeting scheduled",
+        autoClose: 5000,
         actions: {
           label: "Undo",
           onClick: () => console.log("Undoing meeting schedule"),
-          variant: "outline",
         },
       });
-    } catch (error) {
-      toasterRef.current?.show({
-        title: "Error Scheduling Meeting",
-        message: "Failed to schedule the meeting. Please try again.",
-        variant: "error",
-        position: "bottom-right",
+    } catch {
+      toast.error("Failed to schedule the meeting. Please try again.", {
+        title: "Error",
       });
     }
   };
 
   return (
     <div className="p-6 space-y-6 bg-white min-h-screen">
-      <Toaster ref={toasterRef} />
 
       <div className="space-y-6 max-w-2xl mx-auto">
         <section>
@@ -73,7 +58,7 @@ export default function ToasterDemo() {
                 <Button
                   key={variantKey}
                   variant="outline"
-                  onClick={() => showToast(variantKey)}
+                  onClick={() => showToastVariant(variantKey)}
                   className={`border-${
                     variantKey === "default"
                       ? "border"
@@ -116,7 +101,7 @@ export default function ToasterDemo() {
               <Button
                 key={positionKey}
                 variant="outline"
-                onClick={() => showToast("default", positionKey)}
+                onClick={() => showToastVariant("default")}
                 className="border-slate-200 text-slate-900 hover:bg-slate-50"
               >
                 {positionKey
