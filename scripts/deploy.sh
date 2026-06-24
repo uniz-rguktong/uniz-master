@@ -50,6 +50,30 @@ rebuild_tag_to_dir() {
   esac
 }
 
+
+# Remove stale uniz-*:local-<timestamp> Docker tags after deploy (keep latest 2 per repo + in-use).
+prune_old_local_images() {
+  echo "[Cleanup] Pruning old local-* Docker images..."
+  local repos
+  repos=$(docker images --format "{{.Repository}}" | grep -E '^uniz-' | sort -u || true)
+  [ -z "$repos" ] && return 0
+
+  for repo in $repos; do
+    mapfile -t tags < <(docker images --format "{{.Tag}}" "$repo" | grep '^local-' | sort -t- -k2 -n || true)
+    local count=${#tags[@]}
+    [ "$count" -le 2 ] && continue
+    local i
+    for ((i=0; i<count-2; i++)); do
+      docker rmi "$repo:${tags[$i]}" 2>/dev/null || true
+    done
+  done
+
+  docker image prune -f >/dev/null 2>&1 || true
+  docker builder prune -f --keep-storage 8GB >/dev/null 2>&1 || docker builder prune -f >/dev/null 2>&1 || true
+  k3s crictl rmi --prune >/dev/null 2>&1 || true
+  echo "[Cleanup] Docker prune complete."
+}
+
 # 16. Deploy Logic
 deploy_logic() {
   echo "[CI/CD] Deployment Verified at $(date)"
@@ -287,7 +311,11 @@ deploy_logic() {
           [ -d /tmp/.buildx-cache-new ] && rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
           echo "[Docker] Importing $IMG:$TAG..."
           docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
+          PREV_TAG="${BUILT_IMAGES[$IMG]:-}"
           BUILT_IMAGES[$IMG]=$TAG
+          if [ -n "$PREV_TAG" ] && [ "$PREV_TAG" != "$TAG" ]; then
+            docker rmi "$IMG:$PREV_TAG" 2>/dev/null || true
+          fi
           ((REBUILT_COUNT++))
         else
           echo "[Error] Build failed for $IMG."
@@ -355,6 +383,7 @@ deploy_logic() {
   fi
 
   echo "[Build] Rebuilt $REBUILT_COUNT image(s) this deploy."
+  prune_old_local_images
   echo "$NEW_HEAD" > "$STATE_FILE"
 }
 
