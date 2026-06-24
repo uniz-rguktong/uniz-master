@@ -202,11 +202,13 @@ export function Features() {
           {health && (
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-200">
               <div
-                className={`w-2 h-2 rounded-full animate-pulse ${health.status === "ok" ? "bg-navy-900" : "bg-red-500"}`}
+                className={`w-2 h-2 rounded-full animate-pulse ${getDisplayHealthStatus(health) === "ok" ? "bg-navy-900" : "bg-red-500"}`}
               ></div>
               <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">
                 Systems{" "}
-                {health.status === "ok" ? "Operating Normally" : "Degraded"}
+                {getDisplayHealthStatus(health) === "ok"
+                  ? "Operating Normally"
+                  : "Degraded"}
               </span>
             </div>
           )}
@@ -256,16 +258,26 @@ function toServiceStatus(status: string | undefined): ServiceStatus {
 function transformHealthServices(healthStatus: any): ServiceHealth[] {
   if (!healthStatus?.services?.length) return [];
 
-  return healthStatus.services.map((svc: any) => {
-    const latencyMs = parseLatencyMs(svc.latency);
+  return healthStatus.services
+    .filter((svc: any) => svc.name !== "docs")
+    .map((svc: any) => {
+      const latencyMs = parseLatencyMs(svc.latency);
 
-    return {
-      name: svc.name,
-      latencyMs,
-      latencyLabel: svc.latency ?? (latencyMs != null ? `${latencyMs}ms` : "—"),
-      status: toServiceStatus(svc.status),
-    };
-  });
+      return {
+        name: svc.name,
+        latencyMs,
+        latencyLabel: svc.latency ?? (latencyMs != null ? `${latencyMs}ms` : "—"),
+        status: toServiceStatus(svc.status),
+      };
+    });
+}
+
+function getDisplayHealthStatus(healthStatus: any): "ok" | "degraded" {
+  const services = transformHealthServices(healthStatus);
+  if (!services.length) {
+    return healthStatus?.status === "ok" ? "ok" : "degraded";
+  }
+  return services.every((svc) => svc.status === "healthy") ? "ok" : "degraded";
 }
 
 const statusStyles: Record<
@@ -320,23 +332,13 @@ const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
     [healthStatus],
   );
 
-  const apiServices = useMemo(
-    () => services.filter((svc) => svc.name !== "docs"),
-    [services],
-  );
-
-  const docsService = useMemo(
-    () => services.find((svc) => svc.name === "docs"),
-    [services],
-  );
-
   const avgLatencyMs = useMemo(() => {
-    const values = apiServices
+    const values = services
       .map((svc) => svc.latencyMs)
       .filter((ms): ms is number => ms != null);
     if (!values.length) return null;
     return values.reduce((a, b) => a + b, 0) / values.length;
-  }, [apiServices]);
+  }, [services]);
 
   const unhealthyCount = services.filter((s) => s.status === "unhealthy").length;
 
@@ -358,7 +360,7 @@ const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             API services
           </p>
-          <p className="mt-1 text-2xl font-black text-slate-900">{apiServices.length}</p>
+          <p className="mt-1 text-2xl font-black text-slate-900">{services.length}</p>
         </div>
         <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -388,41 +390,11 @@ const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
           Microservices
         </p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
-          {apiServices.map((service) => (
+          {services.map((service) => (
             <ServiceChip key={service.name} service={service} />
           ))}
         </div>
       </div>
-
-      {docsService && (
-        <div className="rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50/80 to-white p-4 shadow-sm sm:p-5">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-amber-700/80">
-                Documentation
-              </p>
-              <p className="mt-1 text-sm text-slate-600">
-                Mintlify docs run separately from the API — higher latency on cold start is
-                expected and does not affect student services.
-              </p>
-            </div>
-            <div className="flex items-center gap-3 rounded-xl border border-amber-200/60 bg-white px-4 py-2.5">
-              <span
-                className={cn(
-                  "h-2.5 w-2.5 rounded-full",
-                  statusStyles[docsService.status].dot,
-                )}
-              />
-              <div className="text-right">
-                <p className="text-sm font-semibold capitalize text-slate-800">docs</p>
-                <p className="text-lg font-black tabular-nums text-amber-800">
-                  {docsService.latencyLabel}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
