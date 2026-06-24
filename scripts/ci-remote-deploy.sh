@@ -33,8 +33,6 @@ if [ "$(git rev-parse HEAD)" != "$GITHUB_SHA" ]; then
 fi
 
 ./scripts/render-vps-secrets.sh /root/uniz-secrets.env
-# shellcheck source=/dev/null
-source /root/uniz-secrets.env
 ./scripts/ensure-ghcr-pull-secret.sh
 
 export DEPLOY_SHA="$GITHUB_SHA"

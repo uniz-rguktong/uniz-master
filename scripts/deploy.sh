@@ -204,12 +204,11 @@ deploy_logic() {
   # LOAD SECRETS (Sanitized)
   if [ -f "/root/uniz-secrets.env" ]; then
     echo "[Vault] Loading sanitized secrets..."
-    while IFS='=' read -r key value || [ -n "$key" ]; do
-      [[ "$key" =~ ^#.*$ ]] && continue
-      [[ -z "$key" ]] && continue
-      # Strip all surrounding quotes and whitespace
-      clean_val=$(echo "$value" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^["'\'']*//' -e 's/["'\'']*$//')
-      export "$key"="$clean_val"
+    while IFS= read -r line || [ -n "$line" ]; do
+      [[ "$line" =~ ^#.*$ ]] && continue
+      [[ -z "$line" ]] && continue
+      [[ "$line" != *"="* ]] && continue
+      eval "export $line"
     done < /root/uniz-secrets.env
 
   fi

@@ -195,6 +195,9 @@ deploy_detect_changes() {
     if [[ "$f" =~ ^infra/ ]]; then
       mapped=$(infra_yaml_to_dir "$(basename "$f")")
       [ -n "$mapped" ] && INFRA_CHANGED_DIRS["$mapped"]=1
+      if [[ "$f" =~ shared/ingress\.yaml$ ]]; then
+        INFRA_CHANGED_DIRS["uniz-landing"]=1
+      fi
       if [[ "$f" =~ ^infra/core-infra/nginx/ ]]; then
         INFRA_CHANGED_DIRS["uniz-gateway"]=1
         INFRA_CHANGED_DIRS["infra/core-infra/nginx"]=1

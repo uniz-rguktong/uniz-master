@@ -16,3 +16,4 @@ resources:
   - storage-cleanup-job.yaml
   - user-service.yaml
   - docs-service.yaml
+  - landing.yaml
