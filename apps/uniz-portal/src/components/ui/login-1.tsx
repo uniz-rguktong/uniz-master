@@ -46,7 +46,7 @@ export default function LoginScreen({
               <p className="text-3xl xl:text-[2.75rem] font-black text-white tracking-[-0.04em] leading-[1.08]">
                 One login.
                 <span className="block text-white/40 font-light mt-1">
-                  Everything campus.
+                  Your whole campus.
                 </span>
               </p>
             </div>
