@@ -68,6 +68,21 @@ latest_local_image_tag() {
   return 1
 }
 
+# Import a Docker-built image into k3s containerd (required for local tags).
+import_image_to_k3s() {
+  local IMG="$1"
+  local TAG="$2"
+  if ! docker image inspect "$IMG:$TAG" &>/dev/null; then
+    echo "[Warn] Docker image $IMG:$TAG not found — skip import"
+    return 1
+  fi
+  if k3s ctr -n k8s.io images ls -q 2>/dev/null | grep -q "docker.io/library/$IMG:$TAG"; then
+    return 0
+  fi
+  echo "[Docker] Importing $IMG:$TAG into k3s..."
+  docker save "$IMG:$TAG" | k3s ctr -n k8s.io images import -
+}
+
 # Remove stale uniz-*:local-<timestamp> Docker tags after deploy (keep latest 2 per repo + in-use).
 prune_old_local_images() {
   echo "[Cleanup] Pruning old local-* Docker images..."
@@ -87,7 +102,6 @@ prune_old_local_images() {
 
   docker image prune -f >/dev/null 2>&1 || true
   docker builder prune -f --keep-storage 8GB >/dev/null 2>&1 || docker builder prune -f >/dev/null 2>&1 || true
-  k3s crictl rmi --prune >/dev/null 2>&1 || true
   echo "[Cleanup] Docker prune complete."
 }
 
@@ -394,7 +408,7 @@ deploy_logic() {
           $BUILD_CONTEXT; then
           [ -d /tmp/.buildx-cache-new ] && rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
           echo "[Docker] Importing $IMG:$TAG..."
-          docker save $IMG:$TAG | k3s ctr -n k8s.io images import -
+          import_image_to_k3s "$IMG" "$TAG"
           PREV_TAG="${BUILT_IMAGES[$IMG]:-}"
           BUILT_IMAGES[$IMG]=$TAG
           if [ -n "$PREV_TAG" ] && [ "$PREV_TAG" != "$TAG" ]; then
@@ -425,15 +439,15 @@ deploy_logic() {
     fi
 
     if [ -n "$TAG" ]; then
+      import_image_to_k3s "$IMG" "$TAG" || {
+        echo "[Error] Cannot deploy $DEP — image $IMG:$TAG missing from Docker and k3s"
+        exit 1
+      }
       echo "[Deploy] Updating $DEP -> $IMG:$TAG"
       if [[ "$DEP" == *"job"* ]]; then
         kubectl set image "cronjob/$DEP" "$CON=docker.io/library/$IMG:$TAG"
       else
         kubectl set image "deployment/$DEP" "$CON=docker.io/library/$IMG:$TAG"
-        # Aggressive stabilization: Restart only if it's stuck or we built fresh
-        if [ "$SHOULD_BUILD" == "true" ] || kubectl get pod -l "app=$DEP" 2>/dev/null | grep -q "ImagePullBackOff\|ErrImagePull"; then
-           kubectl rollout restart "deployment/$DEP"
-        fi
       fi
     fi
   done
@@ -467,12 +481,13 @@ deploy_logic() {
   fi
 
   echo "[Build] Rebuilt $REBUILT_COUNT image(s) this deploy."
-  prune_old_local_images
-  echo "$NEW_HEAD" > "$STATE_FILE"
 
   if [ "$DEPLOY_CONTEXT" = "GITHUB_ACTIONS" ]; then
     verify_deployment
   fi
+
+  prune_old_local_images
+  echo "$NEW_HEAD" > "$STATE_FILE"
 }
 
 # Execution Entry Point
