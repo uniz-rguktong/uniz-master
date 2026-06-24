@@ -1,5 +1,9 @@
 import axios from "axios";
 
+/** Cloudflare Turnstile dummy secret — always passes (local/dev only). */
+const TURNSTILE_TEST_SECRET_ALWAYS_PASS =
+  "1x0000000000000000000000000000000AA";
+
 /**
  * Verifies a Cloudflare Turnstile token.
  *
@@ -22,6 +26,14 @@ export const verifyTurnstileToken = async (
 
   if (!token) {
     return false;
+  }
+
+  // Local dev: test site key + test secret must stay paired (see setup-local.sh).
+  if (
+    secretKey === TURNSTILE_TEST_SECRET_ALWAYS_PASS &&
+    process.env.NODE_ENV !== "production"
+  ) {
+    return true;
   }
 
   try {
