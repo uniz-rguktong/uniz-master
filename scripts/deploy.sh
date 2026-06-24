@@ -51,6 +51,23 @@ rebuild_tag_to_dir() {
 }
 
 
+# Latest local-<timestamp> tag for an image repo (docker first, then k3s ctr).
+latest_local_image_tag() {
+  local IMG="$1"
+  local TAG=""
+  mapfile -t tags < <(docker images --format "{{.Tag}}" "$IMG" 2>/dev/null | grep '^local-' | sort -t- -k2 -n || true)
+  if [ "${#tags[@]}" -gt 0 ]; then
+    echo "${tags[$((${#tags[@]} - 1))]}"
+    return 0
+  fi
+  TAG=$(k3s ctr -n k8s.io images ls -q 2>/dev/null | grep "docker.io/library/$IMG:local-" | sort -V | tail -n 1 | cut -d: -f2)
+  if [[ -n "$TAG" && "$TAG" =~ ^local-[0-9]+$ ]]; then
+    echo "$TAG"
+    return 0
+  fi
+  return 1
+}
+
 # Remove stale uniz-*:local-<timestamp> Docker tags after deploy (keep latest 2 per repo + in-use).
 prune_old_local_images() {
   echo "[Cleanup] Pruning old local-* Docker images..."
@@ -326,7 +343,7 @@ deploy_logic() {
       fi
     else
       echo "[Skip] No changes for $DIR — reusing existing image."
-      TAG=$(k3s ctr -n k8s.io images ls -q | grep "docker.io/library/$IMG:local-" | sort -V | tail -n 1 | cut -d: -f2)
+      TAG=$(latest_local_image_tag "$IMG" || true)
       if [ -z "$TAG" ]; then
         # Never fall back to bare "local" — k3s will try docker.io and fail with ImagePullBackOff
         CURRENT=$(kubectl get deployment "$DEP" -o jsonpath="{.spec.template.spec.containers[?(@.name=='$CON')].image}" 2>/dev/null || true)
