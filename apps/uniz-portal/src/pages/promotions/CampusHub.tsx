@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 // Framer Motion is available in this environment
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 export default function CampusHub() {
   const [_isLoaded, setIsLoaded] = useState(false);
@@ -26,7 +26,7 @@ export default function CampusHub() {
   }, []);
 
   // Animation variants
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -37,7 +37,7 @@ export default function CampusHub() {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,

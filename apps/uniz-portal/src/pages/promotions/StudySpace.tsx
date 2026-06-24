@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 // Framer Motion is available in this environment
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 export default function StudySpace() {
   const [_isLoaded, setIsLoaded] = useState(false);
@@ -23,7 +23,7 @@ export default function StudySpace() {
   }, []);
 
   // Animation variants
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -34,7 +34,7 @@ export default function StudySpace() {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
@@ -84,7 +84,7 @@ export default function StudySpace() {
   ];
 
   // Staggered animation for svg elements
-  const svgVariants = {
+  const svgVariants: Variants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: {
       opacity: 1,

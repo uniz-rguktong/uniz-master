@@ -83,6 +83,10 @@ Seed sample users first (`npm run seed:local`), then sign in at http://localhost
 
 **Full guide:** [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md) — prerequisites per OS, ports, troubleshooting, and optional Python landing backend.
 
+## Contributing
+
+We welcome contributions. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full workflow (`setup:local`, `seed:local`, `dev:all`, builds, and PR guidelines). Start with [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md) for environment setup.
+
 ## Environment & Security Strategy
 
 UniZ uses a "Shielded Vault" pattern to isolate Local and Production environments:

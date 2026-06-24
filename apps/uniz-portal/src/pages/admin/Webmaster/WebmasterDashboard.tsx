@@ -61,7 +61,7 @@ export default function WebmasterDashboard() {
   const [profileEmail, setProfileEmail] = useState<string | null>(null);
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
   const [activeAnchor, setActiveAnchor] =
-    useState<React.RefObject<HTMLElement>>(headerAvatarRef);
+    useState<React.RefObject<HTMLButtonElement | null>>(headerAvatarRef);
 
   const username = (localStorage.getItem("username") || "Webmaster").replace(
     /"/g,

@@ -26,3 +26,6 @@ jobs:
 
       - name: Build backend services
         run: npm run ci:build
+
+      - name: Build portal
+        run: npm run build -w uniz
