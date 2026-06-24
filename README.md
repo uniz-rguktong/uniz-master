@@ -69,28 +69,19 @@ graph TD
 | **Orchestration**    | K3s (Kubernetes)     | Production cluster management and auto-scaling.      |
 | **CI/CD**            | GitHub Actions       | Automated build, test, and VPS deployment pipelines. |
 
-### Master Setup (All Systems)
+## Local Development
 
-Run the entire UniZ mission control center with a single setup command. Works natively on **macOS, Linux, and Windows (WSL/Git Bash)**:
+Works on **macOS**, **Linux**, **Windows (WSL2)**, and headless Linux VPS environments.
 
-1. **Auto-Install & Infra**:
-   ```bash
-   npm run setup:local
-   ```
-2. **Seed Ecosystem**:
-   ```bash
-   npm run seed:local
-   ```
-3. **Launch All**:
-   ```bash
-   npm run dev:all
-   ```
+```bash
+git clone https://github.com/uniz-rguktong/uniz-master.git && cd uniz-master
+npm run setup:local
+npm run dev:all
+```
 
-**Test Credentials:**
+Seed sample users first (`npm run seed:local`), then sign in at http://localhost:5173 as `webmaster` / `password123`.
 
-- **Webmaster**: `webmaster` / `password123`
-- **Faculty/HOD**: `hod_cse` / `password123`
-- **Student**: (Use bulk onboarding / seeder to create)
+**Full guide:** [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md) — prerequisites per OS, ports, troubleshooting, and optional Python landing backend.
 
 ## Environment & Security Strategy
 

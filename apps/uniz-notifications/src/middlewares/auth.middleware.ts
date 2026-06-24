@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import { ADMIN_ROLES } from "@uniz/shared";
 
 const JWT_SECRET: string = (
   process.env.JWT_SECURITY_KEY || "default_secret_unsafe"
@@ -8,19 +9,6 @@ const JWT_SECRET: string = (
 const INTERNAL_SECRET: string = (
   process.env.INTERNAL_SECRET || "uniz-core"
 ).trim();
-
-const ADMIN_ROLES = [
-  "admin",
-  "webmaster",
-  "dean",
-  "director",
-  "caretaker",
-  "warden",
-  "dsw",
-  "hod",
-  "faculty",
-  "teacher",
-];
 
 export interface AuthenticatedRequest extends Request {
   user?: {
