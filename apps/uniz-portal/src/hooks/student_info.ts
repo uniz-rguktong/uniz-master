@@ -1,16 +1,22 @@
 import { useEffect, useCallback } from "react";
-import { useSetRecoilState } from "recoil";
-import { student, studentAuthLoading } from "../store";
+import { useSetRecoilState, useRecoilValue } from "recoil";
+import { student, studentAuthLoading, studentProfileError } from "../store";
 import { STUDENT_INFO } from "../api/endpoints";
 import { apiClient } from "../api/apiClient";
 
 const CACHE_KEY = "uniz_student_cache";
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes - background refresh after this
 
+const PROFILE_LOAD_ERROR =
+  "We couldn't load your profile. Please try again.";
+const NETWORK_ERROR =
+  "Network connection error. Please check your internet.";
+
 let lastFetchTime = 0;
 let fetchPromise: Promise<any> | null = null;
 let globalSetStudent: any = null;
 let globalSetAuthLoading: any = null;
+let globalSetProfileError: any = null;
 let isPollingStarted = false;
 
 /** Read from localStorage cache */
@@ -36,10 +42,16 @@ function writeCache(data: any) {
   }
 }
 
+function setProfileErrorMessage(message: string | null) {
+  const setter = globalSetProfileError;
+  if (setter) setter(message);
+}
+
 /** Call this on logout to clear the deduplication cache. */
 export function resetStudentDataCache() {
   lastFetchTime = 0;
   fetchPromise = null;
+  setProfileErrorMessage(null);
   try {
     localStorage.removeItem(CACHE_KEY);
   } catch {}
@@ -64,18 +76,22 @@ interface StudentInfoResponse {
 export function useStudentData() {
   const setStudent = useSetRecoilState(student);
   const setAuthLoading = useSetRecoilState(studentAuthLoading);
+  const setProfileError = useSetRecoilState(studentProfileError);
+  const error = useRecoilValue(studentProfileError);
 
   // Keep references to the latest setters for the global interval
   useEffect(() => {
     globalSetStudent = setStudent;
     globalSetAuthLoading = setAuthLoading;
-  }, [setStudent, setAuthLoading]);
+    globalSetProfileError = setProfileError;
+  }, [setStudent, setAuthLoading, setProfileError]);
 
   const fetchStudentData = useCallback(
     async (force = false) => {
       const token = localStorage.getItem("student_token");
       if (!token) {
         setAuthLoading(false);
+        setProfileError(null);
         return;
       }
 
@@ -85,6 +101,7 @@ export function useStudentData() {
         // Push cached data immediately - UI renders without waiting for network
         const setter = globalSetStudent ?? setStudent;
         setter(cached.data);
+        setProfileError(null);
 
         // If the cache is fresh enough and not forced, skip the network call
         if (!force && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -113,9 +130,20 @@ export function useStudentData() {
             writeCache(data.student); // ← persist to localStorage
             const setter = globalSetStudent ?? setStudent;
             setter(data.student);
+            setProfileErrorMessage(null);
+          } else {
+            setProfileErrorMessage(PROFILE_LOAD_ERROR);
           }
         })
-        .catch((error) => console.error("Error fetching student data:", error))
+        .catch((err) => {
+          console.error("Error fetching student data:", err);
+          const message =
+            err?.message?.toLowerCase?.().includes("fetch") ||
+            err?.name === "TypeError"
+              ? NETWORK_ERROR
+              : PROFILE_LOAD_ERROR;
+          setProfileErrorMessage(message);
+        })
         .finally(() => {
           fetchPromise = null;
           const loadingSetter = globalSetAuthLoading ?? setAuthLoading;
@@ -124,7 +152,7 @@ export function useStudentData() {
 
       return fetchPromise;
     },
-    [setStudent, setAuthLoading],
+    [setStudent, setAuthLoading, setProfileError],
   );
 
   useEffect(() => {
@@ -141,6 +169,7 @@ export function useStudentData() {
                 lastFetchTime = Date.now();
                 writeCache(data.student);
                 globalSetStudent(data.student);
+                setProfileErrorMessage(null);
               }
             })
             .catch(console.error);
@@ -149,5 +178,5 @@ export function useStudentData() {
     }
   }, [fetchStudentData]);
 
-  return { refetch: () => fetchStudentData(true) };
+  return { refetch: () => fetchStudentData(true), error };
 }

@@ -8,6 +8,11 @@ export const studentAuthLoading = atom<boolean>({
   default: !!localStorage.getItem("student_token"),
 });
 
+export const studentProfileError = atom<string | null>({
+  key: "studentProfileError",
+  default: null,
+});
+
 export const is_authenticated = atom({
   key: "is_authenticated",
   default: {
