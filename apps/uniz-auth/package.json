@@ -4,7 +4,7 @@
   "description": "Auth Microservice",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && bash ../../scripts/copy-prisma-to-dist.sh",
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn src/index.ts",
     "prisma:generate": "prisma generate",
