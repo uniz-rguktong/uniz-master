@@ -176,7 +176,7 @@ service_should_build() {
   fi
 
   if [ "$SCOPED_REBUILD" == "true" ]; then
-    [ -n "${SCOPED_BUILD_DIRS[$DIR]}" ] && return 0
+    [ -n "${SCOPED_BUILD_DIRS[$DIR]:-}" ] && return 0
     return 1
   fi
 
@@ -195,7 +195,7 @@ service_should_build() {
     return 0
   fi
 
-  if [ -n "${INFRA_CHANGED_DIRS[$DIR]}" ]; then
+  if [ -n "${INFRA_CHANGED_DIRS[$DIR]:-}" ]; then
     return 0
   fi
 
