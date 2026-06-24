@@ -22,6 +22,10 @@ RUN npm run build -w @uniz/shared
 WORKDIR /app/${SERVICE_DIR}
 RUN if [ -f "prisma/schema.prisma" ]; then npx prisma generate; fi
 RUN npm run build
+# Ensure runtime can resolve dist/../generated (see scripts/copy-prisma-to-dist.sh)
+RUN if [ -d "src/generated" ] && [ ! -d "dist/generated" ]; then \
+      mkdir -p dist && cp -r src/generated dist/generated; \
+    fi
 
 WORKDIR /app/${SERVICE_DIR}
 CMD ["npm", "start"]
