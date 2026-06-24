@@ -66,7 +66,7 @@ export function HomePage() {
     "https://rguktong.ac.in/svgs/carosel/1%20ind.jpeg",
     "https://rguktong.ac.in/svgs/carosel/WS22.jpeg",
     "https://rguktong.ac.in/svgs/carosel/WS222.jpeg",
-    "https://rguktong.ac.in/svgs/carosel/ornat24-1.jpeg",
+    "https://rguktong.ac.in/svgs/carosel/Events.jpeg",
     "https://rguktong.ac.in/svgs/carosel/C26.jpeg",
     "https://rguktong.ac.in/svgs/carosel/WS11.jpeg",
     "https://rguktong.ac.in/svgs/carosel/swatch.png",

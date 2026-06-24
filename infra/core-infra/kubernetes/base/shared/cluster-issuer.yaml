@@ -3,8 +3,7 @@
 #
 # Grey-cloud fallback (no API token): in Cloudflare DNS set all cert hosts to DNS-only,
 # delete failed challenges/orders/certificaterequests/certificate, wait for HTTP-01 renewal,
-# then re-enable proxy. Hosts: rguktong.in, uniz.rguktong.in, api.uniz.rguktong.in,
-# ornate-core.rguktong.in, ornate.rguktong.in, landing-api.rguktong.in
+# then re-enable proxy. Hosts: rguktong.in, uniz.rguktong.in, api.uniz.rguktong.in, landing-api.rguktong.in
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
