@@ -207,6 +207,7 @@ deploy_logic() {
   [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
 
   ROLLBACK_TARGETS=()
+  VERIFY_DEPLOYMENTS=()
 
   # LOAD SECRETS (Sanitized)
   if [ -f "/root/uniz-secrets.env" ]; then
