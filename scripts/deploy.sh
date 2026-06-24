@@ -133,8 +133,10 @@ verify_deployment() {
   echo "[Verify] Checking API health..."
   local attempt code body
   for attempt in 1 2 3 4 5; do
-    code=$(curl -s -o /tmp/uniz-health.json -w "%{http_code}" --max-time 15 \
-      https://api.uniz.rguktong.in/api/v1/system/health || echo "000")
+    # -k: host nginx LE cert for api.* may be expired; verify app health not TLS here
+    code=$(curl -sk -o /tmp/uniz-health.json -w "%{http_code}" --max-time 15 \
+      https://api.uniz.rguktong.in/api/v1/system/health 2>/dev/null || true)
+    code=${code:-000}
     if [ "$code" = "200" ]; then
       body=$(cat /tmp/uniz-health.json 2>/dev/null || echo "")
       if echo "$body" | grep -q '"status":"ok"'; then
