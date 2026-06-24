@@ -36,6 +36,9 @@ jobs:
       - name: Build backend services
         run: npm run ci:build
 
+      - name: Build portal
+        run: npm run build -w uniz
+
   deploy:
     name: Build and Stream to VPS
     needs: ci
@@ -113,6 +116,8 @@ jobs:
 
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_BEFORE_SHA: ${{ github.event.before }}
 
         with:
           host: ${{ secrets.VPS_IP }}
@@ -120,7 +125,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           timeout: 60m
           command_timeout: 60m
-          envs: JWT_SECURITY_KEY,INTERNAL_SECRET,INTERNAL_BOT_SECRET,REDIS_URL,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,SES_FROM_EMAIL,EMAIL_USER,EMAIL_PASS,CLOUDINARY_CLOUD_NAME,CLOUDINARY_UPLOAD_PRESET,VITE_CLOUDINARY_CLOUD_NAME,VITE_CLOUDINARY_UPLOAD_PRESET,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY,POSTGRES_USER,POSTGRES_PASSWORD,AUTH_DATABASE_URL,USER_DATABASE_URL,ACADEMICS_DATABASE_URL,OUTPASS_DATABASE_URL,FILES_DATABASE_URL,MAIL_DATABASE_URL,NOTIFICATION_DATABASE_URL,CRON_DATABASE_URL,VITE_API_URL,VITE_MAINTENANCE_MODE,VITE_SCRAPER_URL,VITE_ANALYTICS_URL,VITE_ANALYTICS_API_KEY,INSTITUTION_LOGO_URL,VITE_TURNSTILE_SITE_KEY,TURNSTILE_SECRET_KEY,DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME,LANDING_POSTGRES_USER,LANDING_POSTGRES_PASSWORD,LANDING_POSTGRES_DB,LANDING_DATABASE_URL,LANDING_JWT_SECURITY_KEY,LANDING_JWT_ALGORITHM,DUMMY_TOKEN,CLOUDFLARE_API_TOKEN,GITHUB_REF_NAME
+          envs: JWT_SECURITY_KEY,INTERNAL_SECRET,INTERNAL_BOT_SECRET,REDIS_URL,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,SES_FROM_EMAIL,EMAIL_USER,EMAIL_PASS,CLOUDINARY_CLOUD_NAME,CLOUDINARY_UPLOAD_PRESET,VITE_CLOUDINARY_CLOUD_NAME,VITE_CLOUDINARY_UPLOAD_PRESET,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY,POSTGRES_USER,POSTGRES_PASSWORD,AUTH_DATABASE_URL,USER_DATABASE_URL,ACADEMICS_DATABASE_URL,OUTPASS_DATABASE_URL,FILES_DATABASE_URL,MAIL_DATABASE_URL,NOTIFICATION_DATABASE_URL,CRON_DATABASE_URL,VITE_API_URL,VITE_MAINTENANCE_MODE,VITE_SCRAPER_URL,VITE_ANALYTICS_URL,VITE_ANALYTICS_API_KEY,INSTITUTION_LOGO_URL,VITE_TURNSTILE_SITE_KEY,TURNSTILE_SECRET_KEY,DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME,LANDING_POSTGRES_USER,LANDING_POSTGRES_PASSWORD,LANDING_POSTGRES_DB,LANDING_DATABASE_URL,LANDING_JWT_SECURITY_KEY,LANDING_JWT_ALGORITHM,DUMMY_TOKEN,CLOUDFLARE_API_TOKEN,GITHUB_REF_NAME,GITHUB_SHA,GITHUB_BEFORE_SHA
           script: |
             export DEPLOY_CONTEXT="GITHUB_ACTIONS"
             export WORK_DIR="/root/uniz-master-$GITHUB_REF_NAME"
@@ -187,16 +192,37 @@ jobs:
             chmod 600 /root/uniz-secrets.env
 
             echo "[CI/CD] Triggered by ${{ github.actor }} on commit ${{ github.sha }}"
+            export DEPLOY_SHA="$GITHUB_SHA"
+            export DEPLOY_BEFORE_SHA="$GITHUB_BEFORE_SHA"
 
-            # Security: Verify repo integrity
+            # Security: Verify repo integrity — always match GitHub exactly
             git fetch origin $GITHUB_REF_NAME
             git checkout -B $GITHUB_REF_NAME origin/$GITHUB_REF_NAME
-            git reset --hard origin/$GITHUB_REF_NAME
+            git reset --hard "$GITHUB_SHA"
             git clean -fd
+
+            if [ "$(git rev-parse HEAD)" != "$GITHUB_SHA" ]; then
+              echo "[Error] VPS checkout does not match GitHub SHA $GITHUB_SHA"
+              exit 1
+            fi
 
             # Extract commit message for build-detection
             COMMIT_MSG=$(git log -1 --pretty=%B)
             echo "[Log] Last Commit: $COMMIT_MSG"
 
-            # Execute the heavy lifter
-            /bin/bash ./scripts/deploy.sh "$COMMIT_MSG"
+            # Retry deploy up to 3 times (transient Docker/network failures)
+            DEPLOY_OK=false
+            for attempt in 1 2 3; do
+              echo "[Deploy] Attempt $attempt/3..."
+              if /bin/bash ./scripts/deploy.sh "$COMMIT_MSG"; then
+                DEPLOY_OK=true
+                break
+              fi
+              echo "[Deploy] Attempt $attempt failed — waiting 45s before retry..."
+              sleep 45
+            done
+
+            if [ "$DEPLOY_OK" != "true" ]; then
+              echo "[Error] Deploy failed after 3 attempts"
+              exit 1
+            fi
