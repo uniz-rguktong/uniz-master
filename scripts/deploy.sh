@@ -273,6 +273,8 @@ deploy_logic() {
   if [ "$USE_GHCR" == "true" ]; then
     echo "[GHCR] Pull-only deploy — images built in GitHub Actions."
     ensure_ghcr_pull_secret
+    echo "[GHCR] Restoring image tags after kubectl apply..."
+    bash "$(dirname "$0")/restore-ghcr-images-from-manifest.sh" /root/.uniz_k8s_image_tags.json
   fi
 
   # Build & Deploy Loop
@@ -425,7 +427,9 @@ deploy_logic() {
   done
 
   if [ "$DEPLOY_CONTEXT" = "GITHUB_ACTIONS" ]; then
-    if ! verify_deployment; then
+    if [ "$REBUILT_COUNT" -eq 0 ]; then
+      echo "[Verify] No images updated this deploy — skipping rollout verify."
+    elif ! verify_deployment; then
       echo "[Warn] Deploy verify failed — leaving rolled-out images in place (no GHCR rollback; old SHA tags may not exist in registry)."
       exit 1
     fi
