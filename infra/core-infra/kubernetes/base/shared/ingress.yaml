@@ -17,8 +17,6 @@ spec:
         - rguktong.in
         - uniz.rguktong.in
         - api.uniz.rguktong.in
-        - ornate-core.rguktong.in
-        - ornate.rguktong.in
         - landing-api.rguktong.in
       secretName: uniz-tls-cert
   rules:
@@ -50,26 +48,6 @@ spec:
             backend:
               service:
                 name: uniz-gateway
-                port:
-                  number: 80
-    - host: ornate-core.rguktong.in
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: ornate-core
-                port:
-                  number: 80
-    - host: ornate.rguktong.in
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: ornate
                 port:
                   number: 80
     - host: landing-api.rguktong.in

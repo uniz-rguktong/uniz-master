@@ -59,7 +59,7 @@ Initialize the database schemas for each service:
 
 ```bash
 # In the root directory
-for d in apps/uniz-* apps/ornate-core; do
+for d in apps/uniz-*; do
   if [ -d "$d/prisma" ]; then
     echo "Syncing $d..."
     (cd $d && npx prisma db push)
