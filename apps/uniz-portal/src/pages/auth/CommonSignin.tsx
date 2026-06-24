@@ -22,6 +22,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import LoginScreen from "../../components/ui/login-1";
+import { TurnstileLoadingPlaceholder } from "../../components/ui/TurnstileLoadingPlaceholder";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -240,16 +241,12 @@ function TurnstileWidget({
       <AnimatePresence>
         {!isTurnstileLoaded && (
           <motion.div
-            className="absolute inset-0 flex items-center justify-center rounded-lg border border-zinc-100 bg-zinc-50/80 z-10 pointer-events-none"
+            className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
             initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
           >
-            <div className="flex items-center gap-1.5">
-              <div className="w-1 h-1 rounded-full bg-zinc-400 animate-bounce [animation-delay:-0.3s]" />
-              <div className="w-1 h-1 rounded-full bg-zinc-400 animate-bounce [animation-delay:-0.15s]" />
-              <div className="w-1 h-1 rounded-full bg-zinc-400 animate-bounce" />
-            </div>
+            <TurnstileLoadingPlaceholder />
           </motion.div>
         )}
       </AnimatePresence>

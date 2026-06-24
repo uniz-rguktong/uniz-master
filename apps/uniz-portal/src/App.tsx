@@ -379,6 +379,16 @@ export default function App() {
             }
           />
           <Route
+            path="/student/registration"
+            element={
+              <MaintenanceGuard>
+                <PageTransition>
+                  <Sidebar content="registration" />
+                </PageTransition>
+              </MaintenanceGuard>
+            }
+          />
+          <Route
             path="/student/grievance"
             element={
               <MaintenanceGuard>
