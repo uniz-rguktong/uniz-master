@@ -1,11 +1,9 @@
 import { Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../utils/prisma";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { ErrorCode } from "../shared/error-codes";
 import { z } from "zod"; // Assuming zod is available as per package.json
 import axios from "axios";
-
-const prisma = new PrismaClient();
 
 const GrievanceSchema = z.object({
   category: z.string().min(1, "Category is required"),

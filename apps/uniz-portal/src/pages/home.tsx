@@ -23,8 +23,15 @@ import {
 import { PUBLIC_BANNERS, BASE_URL } from "../api/endpoints";
 import { usePWAInstall } from "../hooks/usePWAInstall";
 import { HeroBlock } from "../components/ui/hero-block-shadcnui";
-import { Button } from "../components/ui/button";
 import { motion } from "framer-motion";
+import {
+  LandingSection,
+  LandingSectionHeader,
+  LandingDivider,
+  LandingCard,
+  LandingPill,
+  LandingCTA,
+} from "../components/ui/landing-section";
 
 // Lazy load heavy UI sections for better initial paint performance
 const FeaturedCarousel = lazy(() => import("../components/FeaturedCarousel"));
@@ -48,7 +55,7 @@ const GlobeFeature = lazy(
 // Loading placeholder for Suspense
 const SectionLoader = () => (
   <div className="w-full h-48 flex items-center justify-center">
-    <div className="size-8 rounded-full border-2 border-slate-200 border-t-zinc-950 animate-spin" />
+    <div className="size-8 rounded-full border-2 border-zinc-200 border-t-zinc-950 animate-spin" />
   </div>
 );
 
@@ -134,77 +141,59 @@ const LiveUpdatesFeed = ({ notifications }: { notifications: any[] }) => {
   if (!notifications.length) return null;
 
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="w-full py-16 md:py-20"
-    >
-      <div className="max-w-[1280px] mx-auto px-6">
-        {/* Section Header */}
-        <div className="mb-10">
-          <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
-              Live Updates
-            </span>
-          </div>
-          <h2 className="text-2xl md:text-3xl font-black text-zinc-950 tracking-tight leading-tight">
-            Real-time campus events,
-            <span className="text-zinc-400 font-light">
-              {" "}
-              piped directly to your feed.
-            </span>
-          </h2>
-        </div>
+    <LandingSection>
+      <LandingSectionHeader
+        eyebrow="Live Updates"
+        title="Real-time campus events,"
+        titleMuted="piped directly to your feed."
+      />
 
-        {/* Vertical feed */}
-        <div className="rounded-2xl border border-zinc-100 bg-white overflow-hidden">
-          <div className="divide-y divide-zinc-50">
-            {notifications.map((n, idx) => {
-              const style = NOTIF_STYLES[idx % NOTIF_STYLES.length];
+      <LandingCard className="shadow-[0_25px_60px_-20px_rgba(0,0,0,0.06)]">
+        <div className="divide-y divide-zinc-100/80">
+          {notifications.map((n, idx) => {
+            const accents = ["amber", "emerald", "blue", "default", "slate"] as const;
+            const accent = accents[idx % accents.length];
 
-              return (
-                <motion.a
-                  key={idx}
-                  href={n.link || "#"}
-                  target={n.link ? "_blank" : undefined}
-                  rel="noopener noreferrer"
-                  initial={{ opacity: 0, x: -12 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.08, duration: 0.4 }}
-                  className="flex items-center gap-4 px-6 py-5 hover:bg-zinc-50/50 transition-colors group no-underline"
-                >
-                  {/* Icon circle */}
-                  <div
-                    className={`shrink-0 w-10 h-10 rounded-full ${style.bg} ${style.border} border flex items-center justify-center`}
-                  >
-                    <style.Icon size={18} className={style.text} />
+            return (
+              <motion.a
+                key={idx}
+                href={n.link || "#"}
+                target={n.link ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, x: -12 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.08, duration: 0.4 }}
+                className="flex items-center gap-4 px-6 py-5 md:px-8 md:py-6 hover:bg-zinc-50/60 transition-colors group no-underline first:rounded-t-[2.5rem] last:rounded-b-[2.5rem]"
+              >
+                <div className="shrink-0 w-11 h-11 rounded-2xl bg-zinc-950 flex items-center justify-center shadow-[0_8px_24px_-8px_rgba(0,0,0,0.2)]">
+                  {(() => {
+                    const style = NOTIF_STYLES[idx % NOTIF_STYLES.length];
+                    return <style.Icon size={18} className="text-white" />;
+                  })()}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="mb-1.5">
+                    <LandingPill
+                      label={n.title || "Campus Update"}
+                      accent={accent}
+                    />
                   </div>
+                  <p className="text-[14px] font-bold text-zinc-900 group-hover:text-zinc-950 transition-colors leading-snug line-clamp-2">
+                    {n.content}
+                  </p>
+                </div>
 
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-bold text-zinc-900 group-hover:text-zinc-950 transition-colors truncate leading-snug">
-                      {n.content}
-                    </p>
-                    <p className="text-[11px] font-semibold text-zinc-400 mt-0.5 uppercase tracking-wider">
-                      {n.title || "Campus Update"}
-                    </p>
-                  </div>
-
-                  {/* Timestamp */}
-                  <span className="shrink-0 text-[12px] font-medium text-zinc-400">
-                    {getTimeAgo(n.createdAt)}
-                  </span>
-                </motion.a>
-              );
-            })}
-          </div>
+                <span className="shrink-0 text-[11px] font-semibold text-zinc-400 tabular-nums">
+                  {getTimeAgo(n.createdAt)}
+                </span>
+              </motion.a>
+            );
+          })}
         </div>
-      </div>
-    </motion.section>
+      </LandingCard>
+    </LandingSection>
   );
 };
 
@@ -259,20 +248,16 @@ const Home = () => {
       icon: Smartphone,
       content: (
         <div className="space-y-6">
-          <p className="text-slate-500 font-medium text-lg leading-relaxed">
+          <p className="text-zinc-500 font-medium text-[15px] md:text-[17px] leading-relaxed">
             UniZ is built with cutting-edge PWA technology. Directly install the
             platform on your device for a lightning-fast experience.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 items-start pt-4">
             {!isInstalled && (
-              <Button
-                variant="ghost"
-                onClick={handleInstallClick}
-                className="h-14 px-10 bg-zinc-950 hover:bg-black text-white rounded-xl text-[15px] font-bold flex items-center justify-center gap-3 shadow-2xl transition-all"
-              >
+              <LandingCTA onClick={handleInstallClick} className="h-14 px-10 text-[15px]">
                 <platform.PlatformIcon size={18} />
                 Download for {platform.label}
-              </Button>
+              </LandingCTA>
             )}
             {isInstalled && (
               <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-xs font-black uppercase tracking-widest border border-emerald-100">
@@ -291,7 +276,7 @@ const Home = () => {
       icon: Lock,
       content: (
         <div className="space-y-6">
-          <p className="text-slate-500 font-medium text-lg leading-relaxed">
+          <p className="text-zinc-500 font-medium text-[15px] md:text-[17px] leading-relaxed">
             Gain a God's-eye view of your university credentials. Track exact
             GPA numbers and attendance thresholds automatically.
           </p>
@@ -305,7 +290,7 @@ const Home = () => {
       icon: Activity,
       content: (
         <div className="space-y-6">
-          <p className="text-slate-500 font-medium text-lg leading-relaxed">
+          <p className="text-zinc-500 font-medium text-[15px] md:text-[17px] leading-relaxed">
             Request outpasses, track results, and receive broadcast alerts
             directly. Understand the pulse of your university life in real-time.
           </p>
@@ -328,32 +313,55 @@ const Home = () => {
   ]);
 
   useEffect(() => {
-    const myHeaders = new Headers();
-    myHeaders.append("x-cms-api-key", "uniz-landing-v1-key");
+    let cancelled = false;
+    const controller = new AbortController();
+    const headers = new Headers();
+    headers.append("x-cms-api-key", "uniz-landing-v1-key");
 
-    fetch(PUBLIC_BANNERS, {
+    const fetchOpts: RequestInit = {
       method: "GET",
-      headers: myHeaders,
-      cache: "no-store",
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.success) setBanners(result.banners || []);
-      })
-      .catch((error) => console.error(error));
+      headers,
+      signal: controller.signal,
+    };
 
-    fetch(`${BASE_URL}/cms/notifications`, {
-      method: "GET",
-      headers: myHeaders,
-      cache: "no-store",
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.success && result.notifications?.updates?.length > 0) {
-          setNotifications(result.notifications.updates);
-        }
-      })
-      .catch((error) => console.error(error));
+    const loadLandingData = () => {
+      fetch(PUBLIC_BANNERS, fetchOpts)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((result) => {
+          if (!cancelled && result?.success) {
+            setBanners(result.banners || []);
+          }
+        })
+        .catch(() => {});
+
+      fetch(`${BASE_URL}/cms/notifications`, fetchOpts)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((result) => {
+          if (
+            !cancelled &&
+            result?.success &&
+            result.notifications?.updates?.length > 0
+          ) {
+            setNotifications(result.notifications.updates);
+          }
+        })
+        .catch(() => {});
+    };
+
+    const defer =
+      typeof window !== "undefined" && "requestIdleCallback" in window
+        ? window.requestIdleCallback(loadLandingData, { timeout: 2500 })
+        : window.setTimeout(loadLandingData, 200);
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+      if (typeof defer === "number") {
+        window.clearTimeout(defer);
+      } else if (typeof window !== "undefined" && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(defer);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -368,106 +376,98 @@ const Home = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans selection:bg-zinc-100 selection:text-zinc-900 pt-16">
+    <div className="min-h-screen bg-white flex flex-col font-sans selection:bg-zinc-100 selection:text-zinc-900 pt-16 relative overflow-x-hidden">
       <HeroBlock />
 
-      {/* ── Live Updates Feed ── */}
-      <LiveUpdatesFeed notifications={notifications} />
+      <main className="relative">
+        <LiveUpdatesFeed notifications={notifications} />
+        <LandingDivider />
 
-      <Suspense fallback={<SectionLoader />}>
-        {/* FEATURED NOTIFICATIONS CAROUSEL */}
-        <ScrollRevealer>
-          <FeaturedCarousel
-            items={banners.map((b, i) => ({
-              id: b.id || i,
-              imageUrl: b.imageUrl,
-              title: b.title,
-              tag: i % 2 === 0 ? "Featured" : "New Update",
-              hasHeart: true,
-            }))}
-          />
-        </ScrollRevealer>
+        <Suspense fallback={<SectionLoader />}>
+          <ScrollRevealer>
+            <FeaturedCarousel
+              items={banners.map((b, i) => ({
+                id: b.id || i,
+                imageUrl: b.imageUrl,
+                title: b.title,
+                tag: i % 2 === 0 ? "Featured" : "New Update",
+                hasHeart: true,
+              }))}
+            />
+          </ScrollRevealer>
 
-        {/* GETTING STARTED TIMELINE */}
-        <ScrollRevealer>
-          <div className="px-[9px]">
+          <LandingDivider />
+
+          <ScrollRevealer>
             <Timeline data={timelineData} />
-          </div>
-        </ScrollRevealer>
+          </ScrollRevealer>
 
-        {/* DATABASE REST API COMPONENT INTEGRATION */}
-        <ScrollRevealer>
-          <div className="w-full flex flex-col items-center pb-32 pt-32 md:pt-48">
-            <div className="w-full max-w-7xl px-8 md:px-12 lg:px-16 mb-16 px-4">
-              <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1] mb-8">
-                Everything your campus needs,
-                <br className="hidden md:block" />
-                <span className="text-slate-400">managed seamlessly.</span>
-              </h2>
-              <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed max-w-2xl">
-                Eliminate operational friction with smart syncing connecting
-                students, faculty and admin seamlessly.
-              </p>
-            </div>
-            <div className="w-full max-w-[1400px] px-4">
-              <DatabaseWithRestApi />
-            </div>
-          </div>
-        </ScrollRevealer>
+          <LandingDivider />
 
-        {/* SYSTEM HEALTH AND ACTIVITY DASHBOARD */}
-        <ScrollRevealer>
-          <Features />
-        </ScrollRevealer>
+          <ScrollRevealer>
+            <LandingSection className="!pb-8 md:!pb-12">
+              <LandingSectionHeader
+                eyebrow="Platform"
+                title="Everything your campus needs,"
+                titleMuted="managed seamlessly."
+                description="Eliminate operational friction with smart syncing connecting students, faculty and admin seamlessly."
+              />
+              <LandingCard hover={false} className="p-4 md:p-8 shadow-[0_25px_60px_-22px_rgba(0,0,0,0.08)]">
+                <DatabaseWithRestApi />
+              </LandingCard>
+            </LandingSection>
+          </ScrollRevealer>
 
-        {/* FOOTER CTA */}
-        <motion.section
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="w-full border-t border-zinc-100 bg-zinc-50/30"
-        >
-          <div className="max-w-7xl mx-auto px-8 md:px-12 lg:px-16 py-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-            <div>
-              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">
-                UniZ
-              </p>
-              <h3 className="text-2xl md:text-3xl font-black text-zinc-950 tracking-tight mb-2">
-                Built by RGUKT students,
-                <span className="text-zinc-400 font-light">
-                  {" "}
-                  for RGUKT students.
-                </span>
-              </h3>
-              <p className="text-[14px] text-zinc-500">
-                From the developers of{" "}
-                <a
-                  href="https://synapstore.me/"
-                  className="font-semibold text-blue-600 hover:text-blue-700 no-underline"
-                >
-                  Synapstore
-                </a>
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <Button
-                onClick={() => navigate("/student/signin")}
-                className="bg-zinc-950 text-white rounded-xl px-8 font-bold h-12"
-              >
-                Get started now!
-              </Button>
-            </div>
-          </div>
-        </motion.section>
+          <LandingDivider />
 
-        {/* GLOBAL CONNECTIVITY FEATURE - FULL WIDTH */}
-        <ScrollRevealer>
-          <div className="w-full bg-transparent mt-0 flex flex-col items-center pb-20">
+          <ScrollRevealer>
+            <Features />
+          </ScrollRevealer>
+
+          <LandingDivider />
+
+          <ScrollRevealer>
             <GlobeFeature />
-          </div>
-        </ScrollRevealer>
-      </Suspense>
+          </ScrollRevealer>
+
+          <LandingDivider />
+
+          <motion.section
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="w-full"
+          >
+            <div className="max-w-[1280px] mx-auto px-6 py-20 md:py-24">
+              <LandingCard className="p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.08)]">
+                <div>
+                  <LandingPill label="UniZ" accent="emerald" className="mb-4" />
+                  <h3 className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-black text-zinc-950 tracking-[-0.05em] leading-[1.05] mb-3">
+                    Built by RGUKT students,
+                    <span className="text-zinc-400 font-light">
+                      {" "}
+                      for RGUKT students.
+                    </span>
+                  </h3>
+                  <p className="text-[15px] text-zinc-500 font-medium leading-relaxed">
+                    From the developers of{" "}
+                    <a
+                      href="https://synapstore.me/"
+                      className="font-semibold text-zinc-950 hover:text-zinc-700 no-underline underline-offset-4 hover:underline"
+                    >
+                      Synapstore
+                    </a>
+                  </p>
+                </div>
+                <LandingCTA onClick={() => navigate("/student/signin")}>
+                  Get started now!
+                </LandingCTA>
+              </LandingCard>
+            </div>
+          </motion.section>
+        </Suspense>
+      </main>
     </div>
   );
 };
