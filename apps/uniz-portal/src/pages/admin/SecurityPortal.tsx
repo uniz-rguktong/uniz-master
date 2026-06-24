@@ -41,7 +41,7 @@ export default function SecurityPortal() {
   const avatarBtnRef = useRef<HTMLButtonElement>(null);
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
   const [activeAnchor, setActiveAnchor] =
-    useState<React.RefObject<HTMLElement>>(headerAvatarRef);
+    useState<React.RefObject<HTMLButtonElement | null>>(headerAvatarRef);
   const [globalSearch, setGlobalSearch] = useState("");
 
   const [scanQuery, setScanQuery] = useState("");

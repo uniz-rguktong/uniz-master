@@ -1,100 +1,106 @@
 # Contributing to UniZ
 
-First off, thank you for considering contributing to UniZ! It's people like you that make UniZ such a great tool.
+Thank you for contributing to UniZ. This guide matches the local workflow in [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md).
 
-## Technical Architecture
+## Architecture
 
-UniZ is a **Microservices Monorepo**. Each service is independent but they communicate through a central gateway and shared database infrastructure.
+UniZ is a **microservices monorepo**:
 
-- **Apps**: Located in `apps/` (Next.js, Vite/React, Node.js services).
-- **Infrastructure**: Located in `infra/` (Kubernetes manifests, setup scripts).
-- **Scripts**: Located in `scripts/` (Deployment and secret management).
-
----
-
-## Local Development Setup
-
-To get the entire ecosystem running on your machine, follow these steps:
-
-### 1. Prerequisites
-
-- **Node.js**: v20 or higher
-- **Docker**: Desktop or Engine with Docker Compose
-- **Git**: For version control
-
-### 2. Initial Infrastructure
-
-Start the local database and cache:
-
-```bash
-docker-compose up -d
-```
-
-This will spin up:
-
-- **Postgres 17**: Automatically creates all required databases (`uniz_auth`, `uniz_user`, etc.)
-- **Redis**: For caching and messaging.
-
-### 3. Environment Configuration
-
-UniZ uses a "Vault" system to manage secrets. As a new contributor, you can initialize your local environment instantly:
-
-```bash
-npm run setup
-```
-
-_This command clones the `secrets.env.example`, creates all necessary `.env` files for every microservice, and synchronizes them with local developer values._
-
-### 4. Install Dependencies
-
-Install all package dependencies at once:
-
-```bash
-npm run install:all
-```
-
-### 5. Database Setup (Prisma)
-
-Initialize the database schemas for each service:
-
-```bash
-# In the root directory
-for d in apps/uniz-*; do
-  if [ -d "$d/prisma" ]; then
-    echo "Syncing $d..."
-    (cd $d && npx prisma db push)
-  fi
-done
-```
-
-### 6. Run Development Servers
-
-You can start all services using:
-
-```bash
-npm run dev
-```
+- **Apps** — `apps/` (gateway, services, portal, docs)
+- **Infrastructure** — `infra/` (Kubernetes, Docker Compose)
+- **Scripts** — `scripts/` (local setup, vault sync)
 
 ---
 
-## Development Workflow
+## Local development setup
 
-1.  **Fork the Repo**: Always work on your own fork.
-2.  **Create a Branch**: `git checkout -b feature/your-feature-name`
-3.  **Code & Test**: Ensure your changes don't break existing flows.
-4.  **Commit**: Use descriptive commit messages.
-5.  **Pull Request**: Submit a PR to the `main` branch.
+### Prerequisites
 
-## Coding Standards
+| Tool | Version |
+|------|---------|
+| Git | any recent |
+| Node.js | **20+** (LTS) |
+| Docker | Postgres 17 + Redis via Compose |
+| npm | bundled with Node |
 
-- **TypeScript**: All new code must be type-safe. Avoid `any`.
-- **Prettier**: Run `npm run prettify` before committing.
-- **Modularity**: Keep services decoupled. Do not share databases between services.
+See [docs/LOCAL_SETUP.md](./docs/LOCAL_SETUP.md) for macOS, Linux, WSL2, and Windows notes.
 
-## Security Note
+### Quick start
 
-**NEVER commit your `.env` or `secrets.env` files.** They are already in `.gitignore`, but stay vigilant.
+```bash
+git clone https://github.com/uniz-rguktong/uniz-master.git
+cd uniz-master
+cp secrets.env.example secrets.env   # safe dev placeholders
+npm run setup:local                  # infra + deps + env sync + Prisma
+npm run seed:local                   # recommended first time
+npm run dev:all                      # full stack
+```
+
+- **Portal:** http://localhost:5173 (`webmaster` / `password123` after seeding)
+- **API gateway:** http://localhost:3000/api/v1
+- **Health check:** `curl -s http://127.0.0.1:3000/api/v1/system/health`
+
+### Dev commands
+
+| Command | Purpose |
+|---------|---------|
+| `npm run setup:local` | Docker infra, install, env sync, Prisma generate/push |
+| `npm run seed:local` | Sample users and academics data |
+| `npm run dev` | Core stack (gateway, auth, user, portal) |
+| `npm run dev:all` | Full stack including academics, outpass, files, mail, notifications, docs |
+| `npm run dev:cron` | Cron service only (optional) |
+| `npm run prettify` | Format with Prettier |
+
+`secrets.env` is git-ignored. Copy from `secrets.env.example` — you do **not** need production VPS secrets for local work.
 
 ---
 
-Need help? Reach out to the maintainers or open an issue!
+## Development workflow
+
+1. **Fork** the repository.
+2. **Branch** — `git checkout -b feature/your-feature-name`
+3. **Develop** — run `npm run dev:all` and verify your change.
+4. **Test** — ensure affected services build and health checks pass locally.
+5. **Commit** — clear, descriptive messages.
+6. **Pull request** — open against `main` using the PR template.
+
+### Build & test before opening a PR
+
+```bash
+npm run build:shared
+npm run ci:build          # backend services
+npm run build -w uniz     # portal
+```
+
+CI runs the same builds on every pull request to `main`.
+
+---
+
+## Coding standards
+
+- **TypeScript** — type-safe code; avoid `any` where possible.
+- **Prettier** — run `npm run prettify` before committing.
+- **Modularity** — keep services decoupled; do not share databases across services.
+- **Secrets** — never commit `secrets.env`, `.env`, or production credentials.
+
+---
+
+## Maintainer-only scripts
+
+The following are for **project maintainers** with VPS access. OSS contributors do not need them for local development:
+
+| Script / command | Purpose |
+|------------------|---------|
+| `npm run deploy` / `scripts/deploy.sh` | Production VPS deployment |
+| `npm run vault:vps-audit` | Compare VPS vault keys |
+| `npm run watch` | Live kubectl view on VPS (`VPS_HOST` env) |
+| `scripts/redeploy_all_vps.sh` | Full image rebuild on VPS |
+| `scripts/surefire_deploy.sh` | Force rebuild deploy |
+
+Do not run deploy scripts unless you are a maintainer with authorized access.
+
+---
+
+## Need help?
+
+Open a [bug report](.github/ISSUE_TEMPLATE/bug_report.yml) or [feature request](.github/ISSUE_TEMPLATE/feature_request.yml), or reach out to maintainers.

@@ -50,7 +50,7 @@ export default function DeanDashboard() {
   const avatarBtnRef = useRef<HTMLButtonElement>(null);
   const headerAvatarRef = useRef<HTMLButtonElement>(null);
   const [activeAnchor, setActiveAnchor] =
-    useState<React.RefObject<HTMLElement>>(headerAvatarRef);
+    useState<React.RefObject<HTMLButtonElement | null>>(headerAvatarRef);
   const [searchQuery, setSearchQuery] = useState("");
 
   const username = (localStorage.getItem("username") || "Dean").replace(
