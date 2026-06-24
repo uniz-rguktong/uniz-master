@@ -193,16 +193,11 @@ deploy_detect_changes() {
   declare -gA INFRA_CHANGED_DIRS=()
   while IFS= read -r f; do
     [ -z "$f" ] && continue
-    if [[ "$f" =~ ^infra/ ]]; then
-      mapped=$(infra_yaml_to_dir "$(basename "$f")")
-      [ -n "$mapped" ] && INFRA_CHANGED_DIRS["$mapped"]=1
-      if [[ "$f" =~ shared/ingress\.yaml$ ]]; then
-        INFRA_CHANGED_DIRS["uniz-landing"]=1
-      fi
-      if [[ "$f" =~ ^infra/core-infra/nginx/ ]]; then
-        INFRA_CHANGED_DIRS["uniz-gateway"]=1
-        INFRA_CHANGED_DIRS["infra/core-infra/nginx"]=1
-      fi
+    # Only infra that changes container image contents should trigger GHCR rebuilds.
+    # Kubernetes deployment/HPA/replica YAML is applied via kubectl — not baked into images.
+    if [[ "$f" =~ ^infra/core-infra/nginx/ ]]; then
+      INFRA_CHANGED_DIRS["uniz-gateway"]=1
+      INFRA_CHANGED_DIRS["infra/core-infra/nginx"]=1
     fi
   done <<< "$CHANGED_FILES"
 }
