@@ -247,7 +247,7 @@ deploy_logic() {
     IFS=':' read -r DIR IMG DEP CON <<< "$s"
     SHOULD_BUILD=false
 
-    if service_should_build "$DIR"; then
+    if service_should_build "$DIR" "$IMG"; then
       SHOULD_BUILD=true
     fi
 
@@ -394,6 +394,31 @@ deploy_logic() {
   if [ "$USE_GHCR" != "true" ]; then
     prune_old_local_images
   fi
+
+  if [ "$USE_GHCR" == "true" ] && [ -n "${PREV_SHA:-}" ] && [ -n "${NEW_HEAD:-}" ]; then
+    local want="${DEPLOY_SHA:-$NEW_HEAD}"
+    want="${want:0:7}"
+    for s in "${ALL_SERVICES[@]}"; do
+      IFS=':' read -r DIR IMG DEP CON <<< "$s"
+      [[ "$DEP" == *"job"* ]] && continue
+      if ! service_dir_changed_between "$DIR" "$PREV_SHA" "$NEW_HEAD"; then
+        continue
+      fi
+      current=$(kubectl get deployment "$DEP" \
+        -o jsonpath="{.spec.template.spec.containers[?(@.name=='$CON')].image}" 2>/dev/null \
+        | sed 's/.*://' || true)
+      if [ -n "$current" ] && [ "$current" != "$want" ]; then
+        echo "[Error] $DEP still on :$current but $DIR changed since ${PREV_SHA:0:7} — expected :$want"
+        echo "[Error] Refusing to mark deploy successful; fix image build or use [rebuild all]."
+        exit 1
+      fi
+    done
+  fi
+
+  if [ -f "$(dirname "$0")/dump-k8s-image-tags.sh" ]; then
+    bash "$(dirname "$0")/dump-k8s-image-tags.sh" /root/.uniz_k8s_image_tags.json || true
+  fi
+
   echo "$NEW_HEAD" > "$STATE_FILE"
 }
 
