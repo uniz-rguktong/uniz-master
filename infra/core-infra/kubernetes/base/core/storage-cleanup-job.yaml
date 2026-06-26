@@ -27,6 +27,9 @@ spec:
                 - name: docker-logs
                   mountPath: /var/lib/docker/containers
                   readOnly: false
+                - name: rancher-k3s
+                  mountPath: /var/lib/rancher
+                  readOnly: false
               envFrom:
                 - configMapRef:
                     name: uniz-config
@@ -40,4 +43,8 @@ spec:
             - name: docker-logs
               hostPath:
                 path: /var/lib/docker/containers
+                type: DirectoryOrCreate
+            - name: rancher-k3s
+              hostPath:
+                path: /var/lib/rancher
                 type: DirectoryOrCreate
