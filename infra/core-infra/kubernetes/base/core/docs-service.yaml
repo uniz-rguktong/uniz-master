@@ -14,10 +14,11 @@ spec:
       labels:
         app: uniz-docs-service
     spec:
+      priorityClassName: uniz-high-priority
       containers:
         - name: docs-service
           image: uniz-docs-service:local
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3333
           resources:

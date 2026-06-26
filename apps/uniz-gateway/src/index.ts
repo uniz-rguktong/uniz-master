@@ -262,11 +262,18 @@ app.get(
     );
 
     const results = await Promise.all(resultPromises);
+    const optionalServices = new Set(["docs"]);
+    const criticalOk = results
+      .filter((r) => !optionalServices.has(r.name))
+      .every((r) => r.status === "healthy");
     const allOk = results.every((r) => r.status === "healthy");
-    const data = { status: allOk ? "ok" : "degraded", services: results };
+    const data = {
+      status: allOk ? "ok" : criticalOk ? "degraded" : "down",
+      services: results,
+    };
 
     healthCache.set(cacheKey, { data, expiry: now + 2000 }); // Cache for 2 seconds
-    res.status(allOk ? 200 : 503).json(data);
+    res.status(criticalOk ? 200 : 503).json(data);
   },
 );
 
@@ -285,11 +292,24 @@ app.all("/api/v1/analytics/*path", (req: any, res: any) => {
   proxy.web(req, res, { target: landingApiTarget, changeOrigin: true });
 });
 
-// Landing CMS (website content) — same-origin via gateway (never call 127.0.0.1 from browser)
+// CMS split: `/api/*` → landing-backend (website pages); banners/notifications/admin → user-service
 app.all("/api/v1/cms/*path", (req: any, res: any) => {
   const subPath = proxyPathFromParams(req.params.path);
-  req.url = subPath.startsWith("/") ? subPath : `/${subPath}`;
-  proxy.web(req, res, { target: landingApiTarget, changeOrigin: true });
+  const normalized = subPath.startsWith("/") ? subPath : `/${subPath}`;
+  const queryStart = req.originalUrl.indexOf("?");
+  const queryString =
+    queryStart >= 0 ? req.originalUrl.slice(queryStart) : "";
+  req.url = normalized + queryString;
+
+  if (normalized.startsWith("/api/")) {
+    return proxy.web(req, res, { target: landingApiTarget, changeOrigin: true });
+  }
+
+  const cmsTarget = serviceMap.cms;
+  if (!cmsTarget) {
+    return res.status(503).json({ error: "CMS service unavailable" });
+  }
+  proxy.web(req, res, { target: cmsTarget, changeOrigin: true });
 });
 
 // 5. Warp-Speed Proxy Engine (Express 5 / path-to-regexp v6+ wildcard syntax)
