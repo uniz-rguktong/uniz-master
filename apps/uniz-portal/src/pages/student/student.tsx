@@ -697,24 +697,21 @@ export default function StudentProfilePage() {
               />
             </div>
 
-            <div className="flex justify-center items-center mb-1.5 mt-1">
-              <div className="relative">
-                <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em] text-[#1f2122] leading-tight text-center max-w-[85vw] md:max-w-none">
-                  {user?.name}
-                </h1>
-                {!isEditing && (
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="absolute -right-8 md:-right-10 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-transparent text-zinc-400 hover:bg-zinc-100 hover:text-zinc-900 transition-all"
-                    title="Edit Profile"
-                  >
-                    <Pencil
-                      className="w-[18px] h-[18px] shrink-0"
-                      strokeWidth={2}
-                    />
-                  </button>
-                )}
-              </div>
+            <div className="flex flex-col items-center gap-2.5 w-full max-w-xl px-3 mb-1.5 mt-1">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-[-0.01em] text-[#1f2122] leading-snug text-center w-full text-balance [overflow-wrap:anywhere]">
+                {user?.name}
+              </h1>
+              {!isEditing && (
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(true)}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-[11px] font-bold text-zinc-600 shadow-sm hover:border-zinc-300 hover:text-zinc-900 transition-all"
+                  title="Edit Profile"
+                >
+                  <Pencil className="w-3.5 h-3.5 shrink-0" strokeWidth={2.25} />
+                  Edit profile
+                </button>
+              )}
             </div>
             <p className="text-[#3c4043] font-medium text-[13px] tracking-tight text-center relative mb-3.5 flex items-center justify-center gap-1">
               {user?.email || user?.username + "@rguktong.ac.in"}
