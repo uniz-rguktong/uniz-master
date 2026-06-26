@@ -426,7 +426,7 @@ async function run() {
     "PUT",
     "/profile/student/update",
     {
-      name: "SABER Desu (Updated)",
+      name: "SreeCharan Desu (Updated)",
       phone_number: "6300625861",
       blood_group: "O+",
       room_number: "I-207",
