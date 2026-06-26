@@ -18,6 +18,9 @@ import { cn } from "@/lib/utils";
 /**
  * Standard admin modal shell — same structure as Campus Updates broadcast dialog.
  */
+/** Drawer overlays use z-[100]/z-[101]; elevated dialogs sit above them. */
+const ADMIN_DIALOG_ELEVATED_Z = "z-[110]";
+
 export function AdminDialog({
   open,
   onOpenChange,
@@ -27,6 +30,7 @@ export function AdminDialog({
   footer,
   maxWidth = "max-w-xl",
   className,
+  elevated = false,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -36,11 +40,22 @@ export function AdminDialog({
   footer?: ReactNode;
   maxWidth?: string;
   className?: string;
+  /** Render above admin drawers (z-[100]+). */
+  elevated?: boolean;
 }) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent
-        className={cn(maxWidth, adminModalShellClass, className)}
+        overlayClassName={cn(
+          elevated && ADMIN_DIALOG_ELEVATED_Z,
+          elevated && "bg-zinc-900/40 backdrop-blur-sm",
+        )}
+        className={cn(
+          maxWidth,
+          adminModalShellClass,
+          elevated && ADMIN_DIALOG_ELEVATED_Z,
+          className,
+        )}
       >
         <div className="relative">
           <button

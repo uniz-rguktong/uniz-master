@@ -912,3 +912,44 @@ export const getUserStatus = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteUserByUsername = async (req: Request, res: Response) => {
+  const internalSecret = req.headers["x-internal-secret"];
+  const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+  if (internalSecret !== SECRET) {
+    return res.status(403).json({ success: false, message: "Forbidden" });
+  }
+
+  const username = String(req.params.username || "").trim();
+  if (!username) {
+    return res.status(400).json({ success: false, message: "Username required" });
+  }
+
+  try {
+    const existing = await prisma.authCredential.findFirst({
+      where: { username: { equals: username, mode: "insensitive" } },
+    });
+
+    if (!existing) {
+      return res.json({ success: true, message: "No auth record found", deleted: false });
+    }
+
+    await prisma.otpLog.deleteMany({
+      where: { username: { equals: existing.username, mode: "insensitive" } },
+    });
+    await prisma.authCredential.delete({ where: { id: existing.id } });
+
+    return res.json({
+      success: true,
+      message: "Auth credential deleted",
+      deleted: true,
+      username: existing.username,
+    });
+  } catch (error: any) {
+    console.error(`[AUTH-INTERNAL] Delete user failed for ${username}:`, error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete auth credential",
+    });
+  }
+};
