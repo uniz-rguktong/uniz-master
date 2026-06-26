@@ -7,7 +7,7 @@ const faqs = [
   {
     question: "How do I check my semester results?",
     answer:
-      "You can view your results by clicking on the 'Explore' button in the bottom dock and selecting 'Results'. All your subject grades and SGPA/CGPA will be listed there.",
+      "Tap the grid icon in the bottom dock and choose Results. All your subject grades and SGPA/CGPA will be listed there.",
   },
   {
     question: "How can I update my profile details?",
@@ -17,12 +17,17 @@ const faqs = [
   {
     question: "What should I do if my attendance is incorrect?",
     answer:
-      "Go to the 'Grievance' section (under Explore menu) and submit a request with the category 'Attendance'. Our academic team will review your records.",
+      "Open Attendance from the bottom dock menu, or file a grievance under Grievance with the category 'Attendance'. Our academic team will review your records.",
+  },
+  {
+    question: "How do I register for semester subjects?",
+    answer:
+      "Tap Register in the bottom dock to open semester subject registration when the window is open.",
   },
   {
     question: "How do I reset my portal password?",
     answer:
-      "For security, you can change your password anytime through the 'Security' section in the bottom dock. Use a strong password with at least 8 characters.",
+      "Tap the grid icon in the bottom dock and choose Security to change your password. Use a strong password with at least 8 characters.",
   },
   {
     question: "Is the student portal available as an app?",
