@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { JwtPayload, JwtPayloadSchema } from "../shared/jwt.schema";
+import { JwtPayload, JwtPayloadSchema, resolveEffectiveRole } from "@uniz/shared";
 import { ErrorCode } from "../shared/error-codes";
 import axios from "axios";
 import { redis } from "../utils/redis.util";
@@ -47,7 +47,10 @@ export const authMiddleware = async (
     (req as AuthenticatedRequest).user = {
       id: "internal",
       username: (overrideUsername as string) || "internal-service",
-      role: (overrideRole as any) || ("webmaster" as any),
+      role: resolveEffectiveRole({
+        role: (overrideRole as string) || "webmaster",
+        username: (overrideUsername as string) || "internal-service",
+      }) as JwtPayload["role"],
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 3600,
     };
@@ -124,7 +127,10 @@ export const authMiddleware = async (
     }
     // --------------------------------------
 
-    (req as AuthenticatedRequest).user = parsed.data;
+    (req as AuthenticatedRequest).user = {
+      ...parsed.data,
+      role: resolveEffectiveRole(parsed.data) as JwtPayload["role"],
+    };
     next();
   } catch (error) {
     return res.status(401).json({
