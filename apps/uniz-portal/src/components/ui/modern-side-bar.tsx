@@ -103,7 +103,7 @@ export function ModernSidebar({
                 />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-zinc-900 text-lg tracking-tight">
+                <span className="uniz-logo-wordmark text-xl text-zinc-900">
                   uniZ
                 </span>
                 <span className="text-[10px] tracking-[0.14em] text-zinc-500 font-semibold">

@@ -63,11 +63,11 @@ export function UnizLogo({
       <div className="min-w-0 leading-none">
         <p
           className={cn(
-            "uniz-logo-wordmark font-semibold tracking-[-0.075em] text-zinc-950",
+            "uniz-logo-wordmark text-zinc-950",
             large ? "text-[2.35rem]" : "text-[1.65rem]",
           )}
         >
-          uniz
+          uniZ
         </p>
         <p
           className={cn(
