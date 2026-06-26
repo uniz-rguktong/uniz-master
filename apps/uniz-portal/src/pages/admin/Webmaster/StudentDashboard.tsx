@@ -150,55 +150,55 @@ export default function StudentDashboard({
 
         {!readOnly && (
         <div className="flex flex-wrap justify-center gap-2.5 z-10">
-          <button
-            type="button"
-            onClick={() =>
-              onSuspendToggle?.(student.username, student.is_suspended)
-            }
-            disabled={isActionLoading}
-            className={cn(
-              student.is_suspended ? adminPrimaryButtonClass : adminDangerButtonClass,
-              "text-[12px]",
-            )}
-          >
-            {isActionLoading ? (
-              <Loader2 className="animate-spin w-3.5 h-3.5" />
-            ) : student.is_suspended ? (
-              <Shield className="w-4 h-4" />
-            ) : (
-              <ShieldAlert className="w-4 h-4" />
-            )}
-            {student.is_suspended ? "Restore access" : "Suspend"}
-          </button>
+              <button
+                type="button"
+                onClick={() =>
+                  onSuspendToggle?.(student.username, student.is_suspended)
+                }
+                disabled={isActionLoading}
+                className={cn(
+                  student.is_suspended ? adminPrimaryButtonClass : adminDangerButtonClass,
+                  "text-[12px]",
+                )}
+              >
+                {isActionLoading ? (
+                  <Loader2 className="animate-spin w-3.5 h-3.5" />
+                ) : student.is_suspended ? (
+                  <Shield className="w-4 h-4" />
+                ) : (
+                  <ShieldAlert className="w-4 h-4" />
+                )}
+                {student.is_suspended ? "Restore access" : "Suspend"}
+              </button>
 
-          <button
-            type="button"
-            onClick={() => onResetPassword?.(student.username)}
-            disabled={isActionLoading}
-            className={adminGhostButtonClass}
-          >
-            <KeyRound className="w-4 h-4" />
-            Reset password
-          </button>
+              <button
+                type="button"
+                onClick={() => onResetPassword?.(student.username)}
+                disabled={isActionLoading}
+                className={adminGhostButtonClass}
+              >
+                <KeyRound className="w-4 h-4" />
+                Reset password
+              </button>
 
-          <button
-            type="button"
-            onClick={() => onEditDetails?.(student)}
-            className={adminPrimaryButtonClass}
-          >
-            <Edit3 className="w-4 h-4" />
-            Edit profile
-          </button>
+              <button
+                type="button"
+                onClick={() => onEditDetails?.(student)}
+                className={adminPrimaryButtonClass}
+              >
+                <Edit3 className="w-4 h-4" />
+                Edit profile
+              </button>
 
-          <button
-            type="button"
-            onClick={() => onDeleteStudent?.(student.username)}
-            disabled={isActionLoading}
-            className={cn(adminDangerButtonClass, "text-[12px]")}
-          >
-            <Trash2 className="w-4 h-4" />
-            Delete permanently
-          </button>
+              <button
+                type="button"
+                onClick={() => onDeleteStudent?.(student.username)}
+                disabled={isActionLoading}
+                className={cn(adminDangerButtonClass, "text-[12px]")}
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete permanently
+              </button>
         </div>
         )}
 
