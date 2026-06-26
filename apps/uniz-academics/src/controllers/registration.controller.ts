@@ -1185,15 +1185,37 @@ export const getSemesters = async (
   try {
     const semesters = await prisma.academicSemester.findMany({
       orderBy: { createdAt: "desc" },
-      include: { _count: { select: { registrations: true } } },
     });
+
+    const registrationRows = await prisma.registration.findMany({
+      where: { status: "REGISTERED" },
+      select: { semesterId: true, studentId: true },
+    });
+
+    const studentsBySemester = new Map<string, Set<string>>();
+    for (const row of registrationRows) {
+      if (!studentsBySemester.has(row.semesterId)) {
+        studentsBySemester.set(row.semesterId, new Set());
+      }
+      studentsBySemester
+        .get(row.semesterId)!
+        .add(normalizeStudentId(row.studentId));
+    }
+
+    const payload = semesters.map((sem) => ({
+      ...sem,
+      _count: {
+        registrations: studentsBySemester.get(sem.id)?.size ?? 0,
+      },
+    }));
+
     res.setHeader(
       "Cache-Control",
       "no-store, no-cache, must-revalidate, proxy-revalidate",
     );
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
-    res.json(semesters);
+    res.json(payload);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch semesters" });
   }

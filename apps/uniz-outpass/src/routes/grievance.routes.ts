@@ -3,6 +3,7 @@ import { authMiddleware as authenticate } from "../middlewares/auth.middleware";
 import {
   submitGrievance,
   getGrievances,
+  resolveGrievance,
   deleteGrievance,
   deleteAllGrievances,
 } from "../controllers/grievance.controller";
@@ -15,6 +16,9 @@ router.post("/submit", authenticate, submissionLimiter, submitGrievance);
 
 // View Grievances - Protected (Admin/SWO)
 router.get("/list", authenticate, getGrievances);
+
+// Resolve Grievance - Protected (Admin/SWO)
+router.patch("/:id/resolve", authenticate, resolveGrievance);
 
 // Delete Grievances - Protected (Admin/SWO)
 router.delete("/all", authenticate, deleteAllGrievances);

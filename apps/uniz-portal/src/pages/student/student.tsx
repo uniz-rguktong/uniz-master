@@ -788,7 +788,7 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                  className={`pb-3 relative text-[11px] font-bold tracking-[0.15em] transition-all ${
+                  className={`pb-3 relative text-[11px] font-bold tracking-[0.15em] capitalize transition-all ${
                     activeTab === tab
                       ? "text-zinc-900"
                       : "text-zinc-400 hover:text-zinc-600"
