@@ -7,7 +7,9 @@ import {
   Bell,
   Smartphone,
   Layout,
+  BookOpen,
   CalendarClock,
+  ClipboardList,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -25,6 +27,8 @@ import BannersSection from "../Webmaster/BannersSection";
 import UpdatesSection from "../Webmaster/UpdatesSection";
 import PushNotificationSection from "../Webmaster/PushNotificationSection";
 import SecuritySection from "../Webmaster/SecuritySection";
+import { resolveAdminPortalRole } from "../../../utils/adminRole";
+import { parseJwt } from "../../../utils/security";
 
 export default function DeanDashboard() {
   useIsAuth();
@@ -33,29 +37,39 @@ export default function DeanDashboard() {
     /"/g,
     "",
   );
-  const role = (localStorage.getItem("admin_role") || "admin").replace(
-    /"/g,
-    "",
-  );
+  const adminToken = localStorage.getItem("admin_token");
+  const decoded = adminToken ? parseJwt(adminToken) : null;
+  const role = resolveAdminPortalRole(decoded, username);
+
+  const isHod = role === "hod";
 
   const allowedTabs = useMemo(
     () =>
-      [
-        "dashboard",
-        "student",
-        "student_bulk",
-        "subjects",
-        "attendance",
-        "grades",
-        "semester_review",
-        "faculty",
-        "system_logs",
-        "banners",
-        "updates",
-        "push_alerts",
-        "security",
-      ] as const,
-    [],
+      isHod
+        ? ([
+            "dashboard",
+            "student",
+            "subjects",
+            "attendance",
+            "grades",
+            "semester_review",
+          ] as const)
+        : ([
+            "dashboard",
+            "student",
+            "student_bulk",
+            "subjects",
+            "attendance",
+            "grades",
+            "semester_review",
+            "faculty",
+            "system_logs",
+            "banners",
+            "updates",
+            "push_alerts",
+            "security",
+          ] as const),
+    [isHod],
   );
 
   const { activeTab, setActiveTab } = useAdminSectionRoute(allowedTabs);
@@ -67,7 +81,31 @@ export default function DeanDashboard() {
         ? "SWO Portal"
         : "Dean Portal";
 
-  const navGroups = [
+  const navGroups = isHod
+    ? [
+        {
+          group: null,
+          items: [{ id: "dashboard", label: "Overview", icon: LayoutDashboard }],
+        },
+        {
+          group: "Students",
+          items: [{ id: "student", label: "Student Details", icon: Users }],
+        },
+        {
+          group: "Academic",
+          items: [
+            { id: "subjects", label: "Subjects", icon: BookOpen },
+            { id: "attendance", label: "Attendance", icon: ClipboardList },
+            { id: "grades", label: "Grades", icon: ClipboardList },
+            {
+              id: "semester_review",
+              label: "Semester Approvals",
+              icon: CalendarClock,
+            },
+          ],
+        },
+      ]
+    : [
     {
       group: null,
       items: [{ id: "dashboard", label: "Overview", icon: LayoutDashboard }],

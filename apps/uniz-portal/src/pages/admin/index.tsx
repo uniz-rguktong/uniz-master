@@ -37,6 +37,7 @@ import {
   adminLogoutButtonClass,
 } from "@/components/admin/admin-ui";
 import { parseJwt } from "../../utils/security";
+import { resolveAdminPortalRole } from "../../utils/adminRole";
 
 const QuickActionButton = ({
   onClick,
@@ -74,16 +75,14 @@ export default function Admin() {
   useIsAuth();
   useAdminname();
   const navigate = useNavigate();
-  const username = localStorage.getItem("username") || "Admin";
+  const username = (localStorage.getItem("username") || "Admin").replace(
+    /"/g,
+    "",
+  );
 
-  // CRITICAL: Determine role from verified JWT, fallback only to localStorage
   const adminToken = localStorage.getItem("admin_token");
   const decoded = adminToken ? parseJwt(adminToken) : null;
-  const role = (
-    decoded?.role ||
-    localStorage.getItem("admin_role") ||
-    "admin"
-  ).replace(/"/g, "");
+  const role = resolveAdminPortalRole(decoded, username);
 
   if (role === "webmaster" || role === "coe") {
     return <WebmasterDashboard />;
