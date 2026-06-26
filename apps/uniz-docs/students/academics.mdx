@@ -144,17 +144,38 @@ Each subject card shows:
 
 If the page shows "No Active Semester", the administration has not yet opened a semester session for your batch. Check back later or contact your academic office.
 
-### Semester registration (student view)
+### Semester registration (in UniZ)
 
-Registration is managed by the administration. From your side:
+Subject registration happens **inside the UniZ portal** when the administration opens a semester.
 
-1. The administration activates a new semester and opens registration.
-2. You register your subjects through the registration portal (separate from UniZ).
-3. Once confirmed, your registered subjects appear in UniZ automatically.
-4. You can verify your registration is complete by checking that all expected subjects appear under **Current Semester**.
+<Steps>
+  <Step title="Wait for registration to open">
+    Your semester must be in `REGISTRATION_OPEN` status and inside the configured window (IST). The **Register** tab appears in the student mobile dock when registration is available.
+  </Step>
+  <Step title="Select subjects">
+    Mandatory subjects are pre-required. Elective groups let you pick up to the allowed number from each group (e.g. one open elective).
+  </Step>
+  <Step title="Confirm registration">
+    Submit once — you cannot change selections after successful registration for that semester. The API returns **409** if you try again.
+  </Step>
+  <Step title="Verify on your profile">
+    Registered subjects appear under **Current Semester** on the Academic tab.
+  </Step>
+</Steps>
+
+**API endpoints:**
+
+```bash
+GET  /api/v1/academics/student/available
+POST /api/v1/academics/student/register
+```
+
+See [Semester Registration API](/api/academics/registration) for request/response details.
+
+<Warning>
+  If registration is closed, outside the IST window, or you already registered, the portal shows the exact API error message — not a generic failure.
+</Warning>
 
 <Tip>
-  Cross-check your registered subjects at the start of each semester. If a
-  subject is missing or incorrect, contact your academic section before the
-  registration window closes.
+  Cross-check your registered subjects at the start of each semester. If a subject is missing, contact your academic section **before** the registration window closes.
 </Tip>
