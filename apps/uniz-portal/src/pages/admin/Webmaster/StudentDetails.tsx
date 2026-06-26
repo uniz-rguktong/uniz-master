@@ -825,7 +825,7 @@ export default function StudentDetails() {
     return (
       <span className="inline-flex items-center gap-1 group/cell">
         {cellValue(row, col.key, 0)}
-        {EDITABLE_KEYS.has(col.key) && (
+        {!isHodReadOnly && EDITABLE_KEYS.has(col.key) && (
           <Pencil
             size={10}
             className="opacity-0 group-hover/cell:opacity-40 text-zinc-400 shrink-0"
