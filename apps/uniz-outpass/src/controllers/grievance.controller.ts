@@ -19,6 +19,77 @@ const NOTIFICATION_SERVICE_URL = (
   .trim()
   .replace(/\/health$/, "");
 
+const USER_SERVICE_URL = (
+  (process.env.DOCKER_ENV === "true"
+    ? "http://uniz-user-service:3002"
+    : process.env.USER_SERVICE_URL) || "http://localhost:3002"
+).replace(/\/$/, "");
+
+const GATEWAY_URL = (
+  (process.env.DOCKER_ENV === "true"
+    ? "http://uniz-gateway-api:3000/api/v1"
+    : process.env.GATEWAY_URL) || "http://localhost:3000/api/v1"
+).replace(/\/$/, "");
+
+const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+
+function formatGrievanceStatus(status?: string | null) {
+  const raw = String(status || "pending").toLowerCase();
+  if (raw === "resolved") return "Resolved";
+  if (raw === "in-progress" || raw === "in progress") return "In Progress";
+  return "Pending";
+}
+
+async function enrichGrievancesWithProfiles(grievances: any[]) {
+  const usernames = [
+    ...new Set(
+      grievances
+        .filter((g) => !g.isAnonymous && g.studentId)
+        .map((g) => String(g.studentId).trim().toUpperCase()),
+    ),
+  ];
+
+  const profileByUsername = new Map<string, any>();
+  if (usernames.length > 0) {
+    try {
+      const res = await axios.post(
+        `${USER_SERVICE_URL}/internal/bulk-profiles`,
+        { usernames },
+        {
+          headers: { "x-internal-secret": INTERNAL_SECRET },
+          timeout: 15000,
+        },
+      );
+      for (const student of res.data?.students || []) {
+        profileByUsername.set(String(student.username).toUpperCase(), student);
+      }
+    } catch (error: any) {
+      console.warn(
+        "[Grievance] Failed to enrich student profiles:",
+        error?.message || error,
+      );
+    }
+  }
+
+  return grievances.map((g) => {
+    const username = g.studentId
+      ? String(g.studentId).trim().toUpperCase()
+      : null;
+    const profile = username ? profileByUsername.get(username) : null;
+
+    return {
+      ...g,
+      username,
+      studentName: profile?.name || null,
+      studentEmail: g.studentEmail || profile?.email || null,
+      studentBranch: profile?.branch || null,
+      studentYear: profile?.year || null,
+      studentPhone: profile?.phone_number || profile?.phone || null,
+      status: formatGrievanceStatus(g.status),
+    };
+  });
+}
+
 // Helper for sending push notification
 const sendPush = async (username: string, title: string, body: string) => {
   try {
@@ -134,9 +205,11 @@ export const getGrievances = async (
       prisma.grievance.count(),
     ]);
 
+    const enriched = await enrichGrievancesWithProfiles(grievances);
+
     return res.json({
       success: true,
-      data: grievances,
+      data: enriched,
       meta: {
         total,
         page: Number(page),
@@ -148,6 +221,134 @@ export const getGrievances = async (
     return res.status(500).json({
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: "Failed to retrieve grievances.",
+    });
+  }
+};
+
+async function sendGrievanceResolvedEmail(
+  email: string,
+  studentName: string,
+  category: string,
+) {
+  const rawMailUrl = (
+    process.env.MAIL_SERVICE_URL || `${GATEWAY_URL}/mail`
+  ).trim();
+  const MAIL_SERVICE_URL = rawMailUrl.endsWith("/health")
+    ? rawMailUrl.slice(0, -7)
+    : rawMailUrl;
+
+  await axios.post(
+    `${MAIL_SERVICE_URL}/send`,
+    {
+      type: "grievance_resolved",
+      to: email,
+      data: { studentName, category },
+    },
+    {
+      headers: { "x-internal-secret": INTERNAL_SECRET },
+      timeout: 10000,
+    },
+  );
+}
+
+export const resolveGrievance = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  const allowedRoles = ["swo", "director", "admin"];
+  if (!user || !allowedRoles.includes(user.role)) {
+    return res.status(403).json({ code: ErrorCode.AUTH_FORBIDDEN });
+  }
+
+  const { id } = req.params;
+  try {
+    const existing = await prisma.grievance.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({
+        code: ErrorCode.RESOURCE_NOT_FOUND,
+        message: "Grievance not found.",
+      });
+    }
+
+    if (String(existing.status).toLowerCase() === "resolved") {
+      return res.status(400).json({
+        code: ErrorCode.VALIDATION_ERROR,
+        message: "This grievance is already resolved.",
+      });
+    }
+
+    const updated = await prisma.grievance.update({
+      where: { id },
+      data: {
+        status: "resolved",
+        resolvedBy: user.username,
+        resolvedAt: new Date(),
+      },
+    });
+
+    let emailSent = false;
+    if (!updated.isAnonymous && updated.studentId) {
+      let email =
+        updated.studentEmail ||
+        `${String(updated.studentId).toLowerCase()}@rguktong.ac.in`;
+      let studentName = String(updated.studentId).toUpperCase();
+
+      try {
+        const profileRes = await axios.post(
+          `${USER_SERVICE_URL}/internal/bulk-profiles`,
+          { usernames: [String(updated.studentId).toUpperCase()] },
+          {
+            headers: { "x-internal-secret": INTERNAL_SECRET },
+            timeout: 10000,
+          },
+        );
+        const profile = profileRes.data?.students?.[0];
+        if (profile?.email) email = profile.email;
+        if (profile?.name) studentName = profile.name;
+      } catch (profileError: any) {
+        console.warn(
+          "[Grievance] Profile lookup for resolve email failed:",
+          profileError?.message,
+        );
+      }
+
+      try {
+        await sendGrievanceResolvedEmail(
+          email,
+          studentName,
+          updated.category,
+        );
+        emailSent = true;
+      } catch (mailError: any) {
+        console.error(
+          "[Grievance] Failed to send resolve email:",
+          mailError?.message,
+        );
+      }
+
+      sendPush(
+        updated.studentId,
+        "Grievance Resolved",
+        `Your concern about ${updated.category} has been received and we will resolve it.`,
+      );
+    }
+
+    const [enriched] = await enrichGrievancesWithProfiles([updated]);
+
+    return res.json({
+      success: true,
+      message: emailSent
+        ? "Grievance resolved and student notified by email."
+        : "Grievance resolved.",
+      data: enriched,
+      emailSent,
+    });
+  } catch (e) {
+    console.error("Resolve Grievance Error:", e);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to resolve grievance.",
     });
   }
 };

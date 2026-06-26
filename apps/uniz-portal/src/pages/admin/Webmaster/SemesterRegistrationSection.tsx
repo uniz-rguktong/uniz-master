@@ -399,7 +399,7 @@ export default function SemesterRegistrationSection({
                 <div className="flex items-center gap-6 mb-10">
                   <div>
                     <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
-                      Registrations
+                      Students registered
                     </p>
                     <p className="text-xl font-semibold text-zinc-900">
                       {sem._count?.registrations || 0}

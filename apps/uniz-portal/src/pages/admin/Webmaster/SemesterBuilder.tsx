@@ -463,7 +463,7 @@ function SemesterCard({
       <div className="relative grid grid-cols-2 gap-3 mb-6">
         <div className="rounded-2xl bg-zinc-50 px-4 py-3">
           <p className="text-[9px] font-semibold tracking-[0.14em] text-zinc-400">
-            Registrations
+            Students registered
           </p>
           <p className="text-xl font-semibold text-zinc-900">
             {sem._count?.registrations ?? 0}

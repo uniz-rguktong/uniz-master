@@ -15,7 +15,6 @@ import {
   AlertCircle,
   X,
   ChevronLeft,
-  LayoutGrid,
   Lock,
   Home,
   HelpCircle,
@@ -251,8 +250,8 @@ export default function Sidebar({ content }: MainContent) {
       onClick: () => navigate("/student/registration"),
       isActive: content === "registration",
     },
-    // Center FAB placeholder — opens the academics sheet
-    { label: "More", icon: LayoutGrid },
+    // Center tab — toggles academics panel
+    { label: "Academics", icon: GraduationCap },
     {
       label: "Grievance",
       icon: AlertCircle,
@@ -271,18 +270,21 @@ export default function Sidebar({ content }: MainContent) {
     {
       label: "Results",
       icon: GraduationCap,
+      description: "Grades, SGPA & transcripts",
       onClick: () => navigate("/student/gradehub"),
       isActive: content === "gradehub",
     },
     {
       label: "Attendance",
       icon: CalendarCheck,
+      description: "Subject-wise attendance",
       onClick: () => navigate("/student/attendance"),
       isActive: content === "attendance",
     },
     {
       label: "Security",
       icon: Lock,
+      description: "Change your password",
       onClick: () => navigate("/student/resetpassword"),
       isActive: content === "resetpassword",
     },
@@ -432,7 +434,7 @@ export default function Sidebar({ content }: MainContent) {
           <InteractiveMenu
             primaryItems={primaryMobileItems}
             moreItems={moreMobileItems}
-            moreTitle="Academics & account"
+            moreTitle="Academics"
           />
         </div>
       </div>

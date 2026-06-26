@@ -220,8 +220,18 @@ export default function GrievanceSection() {
                       <p className="text-xs font-semibold text-zinc-900 leading-none">
                         {grievance.isAnonymous
                           ? "Anonymous Student"
-                          : grievance.studentId || "Unknown ID"}
+                          : grievance.studentName ||
+                            grievance.studentId ||
+                            "Unknown ID"}
                       </p>
+                      {!grievance.isAnonymous &&
+                        (grievance.studentId || grievance.studentEmail) && (
+                          <p className="text-[10px] font-medium text-zinc-400 mt-1">
+                            {[grievance.studentId, grievance.studentEmail]
+                              .filter(Boolean)
+                              .join(" • ")}
+                          </p>
+                        )}
                     </div>
                   </div>
                   <div className="text-right">

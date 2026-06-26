@@ -6,7 +6,6 @@ import {
   Filter,
   CheckCircle2,
   AlertCircle,
-  ChevronRight,
   UserCheck,
   Search,
   RefreshCw,
@@ -17,12 +16,19 @@ import {
   GET_GRIEVANCES_LIST,
   DELETE_GRIEVANCE,
   DELETE_ALL_GRIEVANCES,
+  RESOLVE_GRIEVANCE,
 } from "../../../api/endpoints";
 import { apiClient } from "../../../api/apiClient";
 
 interface Grievance {
   id: string;
-  username: string;
+  username?: string | null;
+  studentId?: string | null;
+  studentName?: string | null;
+  studentEmail?: string | null;
+  studentBranch?: string | null;
+  studentYear?: string | null;
+  studentPhone?: string | null;
   category: string;
   description: string;
   isAnonymous: boolean;
@@ -30,9 +36,23 @@ interface Grievance {
   createdAt: string;
 }
 
+function studentDisplayName(g: Grievance) {
+  return g.studentName || g.username || g.studentId || "Unknown student";
+}
+
+function studentMetaLine(g: Grievance) {
+  const parts = [
+    g.username || g.studentId,
+    g.studentBranch,
+    g.studentYear,
+  ].filter(Boolean);
+  return parts.join(" • ");
+}
+
 export default function GrievanceList() {
   const [grievances, setGrievances] = useState<Grievance[]>([]);
   const [loading, setLoading] = useState(true);
+  const [resolvingId, setResolvingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
 
@@ -60,6 +80,40 @@ export default function GrievanceList() {
   useEffect(() => {
     fetchGrievances();
   }, [fetchGrievances]);
+
+  const handleResolve = async (id: string) => {
+    if (
+      !window.confirm(
+        "Mark this grievance as resolved? Verified students will receive an email update.",
+      )
+    ) {
+      return;
+    }
+    setResolvingId(id);
+    try {
+      const token =
+        localStorage.getItem("admin_token") ||
+        localStorage.getItem("faculty_token");
+      const res = await fetch(RESOLVE_GRIEVANCE(id), {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${(token || "").replace(/^"|"$/g, "")}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Failed to resolve grievance");
+      }
+      toast.success(
+        data.message || "Grievance marked as resolved.",
+      );
+      fetchGrievances();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to resolve grievance");
+    } finally {
+      setResolvingId(null);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this grievance?"))
@@ -90,9 +144,13 @@ export default function GrievanceList() {
   };
 
   const filteredGrievances = grievances.filter((g) => {
+    const q = searchQuery.toLowerCase();
     const matchesSearch =
-      (g.description || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (g.username || "").toLowerCase().includes(searchQuery.toLowerCase());
+      (g.description || "").toLowerCase().includes(q) ||
+      (g.username || "").toLowerCase().includes(q) ||
+      (g.studentId || "").toLowerCase().includes(q) ||
+      (g.studentName || "").toLowerCase().includes(q) ||
+      (g.studentEmail || "").toLowerCase().includes(q);
     const matchesCategory =
       filterCategory === "All" || g.category === filterCategory;
     return matchesSearch && matchesCategory;
@@ -199,7 +257,7 @@ export default function GrievanceList() {
           />
           <input
             type="text"
-            placeholder="Search by username or description..."
+            placeholder="Search by name, ID, email, or description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-zinc-50 border border-transparent rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:bg-white focus:border-zinc-100 focus:ring-4 focus:ring-zinc-900 transition-all outline-none"
@@ -266,34 +324,55 @@ export default function GrievanceList() {
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm ${g.isAnonymous ? "bg-zinc-100 text-zinc-400" : "bg-zinc-100 text-zinc-900"}`}
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm ${g.isAnonymous ? "bg-zinc-100 text-zinc-400" : "bg-zinc-900 text-white"}`}
                         >
                           {g.isAnonymous
                             ? "??"
-                            : (g.username || "?").charAt(0).toUpperCase()}
+                            : studentDisplayName(g).charAt(0).toUpperCase()}
                         </div>
                         <div>
                           <p
                             className={`text-[14px] font-bold tracking-tight leading-none ${g.isAnonymous ? "text-zinc-400" : "text-zinc-900"}`}
                           >
-                            {g.isAnonymous ? "Anonymous" : g.username}
+                            {g.isAnonymous
+                              ? "Anonymous"
+                              : studentDisplayName(g)}
                           </p>
                           <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mt-1.5 flex items-center gap-1">
                             {g.isAnonymous ? (
-                              <ShieldCheck size={10} />
+                              <>
+                                <ShieldCheck size={10} />
+                                Identity Protected
+                              </>
                             ) : (
-                              <UserCheck size={10} />
+                              <>
+                                <UserCheck size={10} />
+                                {studentMetaLine(g) || "Verified Student"}
+                              </>
                             )}
-                            {g.isAnonymous
-                              ? "Identity Protected"
-                              : "Verified Student"}
                           </p>
+                          {!g.isAnonymous && g.studentEmail && (
+                            <p className="text-[10px] font-medium text-zinc-500 mt-1">
+                              {g.studentEmail}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-6">
                       <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-lg font-bold text-[10px] tracking-[0.14em] whitespace-nowrap">
                         {g.category}
+                      </span>
+                      <span
+                        className={`ml-2 px-2 py-1 rounded-lg font-bold text-[9px] tracking-[0.12em] ${
+                          g.status === "Resolved"
+                            ? "bg-emerald-50 text-emerald-700"
+                            : g.status === "In Progress"
+                              ? "bg-zinc-100 text-zinc-700"
+                              : "bg-amber-50 text-amber-700"
+                        }`}
+                      >
+                        {g.status}
                       </span>
                     </td>
                     <td className="px-6 py-6 max-w-xs">
@@ -316,13 +395,19 @@ export default function GrievanceList() {
                     </td>
                     <td className="px-8 py-6 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="p-2.5 rounded-xl bg-white border border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:border-zinc-100 hover:shadow-lg transition-all active:scale-95 group/btn">
-                          <ChevronRight
-                            size={18}
-                            className="group-hover/btn:translate-x-0.5 transition-transform"
-                          />
-                        </button>
+                        {g.status !== "Resolved" && (
+                          <button
+                            type="button"
+                            onClick={() => handleResolve(g.id)}
+                            disabled={resolvingId === g.id}
+                            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 text-white text-[10px] font-bold tracking-[0.12em] hover:bg-emerald-700 transition-all active:scale-95 disabled:opacity-60"
+                          >
+                            <CheckCircle2 size={14} />
+                            {resolvingId === g.id ? "..." : "Resolve"}
+                          </button>
+                        )}
                         <button
+                          type="button"
                           onClick={() => handleDelete(g.id)}
                           className="p-2.5 rounded-xl bg-white border border-red-100 text-red-400 hover:text-red-700 hover:border-red-300 hover:bg-red-50 hover:shadow-lg transition-all active:scale-95 group/del"
                         >
