@@ -63,7 +63,7 @@ async function main() {
   const students = [
     {
       username: "O210008",
-      name: "Desu SABER",
+      name: "Desu SreeCharan",
       email: "o210008@rguktong.ac.in",
       gender: "Male",
       branch: "CSE",
