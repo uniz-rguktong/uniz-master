@@ -219,15 +219,14 @@ function TurnstileWidget({
   turnstileRef,
   captchaTokenRef,
   onTokenChange,
-  isTurnstileLoaded,
-  setIsTurnstileLoaded,
 }: {
   turnstileRef: React.RefObject<any>;
   captchaTokenRef: React.MutableRefObject<string | null>;
   onTokenChange: (token: string | null) => void;
-  isTurnstileLoaded: boolean;
-  setIsTurnstileLoaded: (v: boolean) => void;
 }) {
+  const [isWidgetReady, setIsWidgetReady] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+
   if (!turnstileEnabled()) {
     return import.meta.env.DEV ? (
       <p className="text-center text-[11px] text-amber-600 font-medium py-1">
@@ -237,46 +236,78 @@ function TurnstileWidget({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center relative min-h-[72px] rounded-xl border border-zinc-100 bg-zinc-50/60 px-3 py-2.5">
-      <AnimatePresence>
-        {!isTurnstileLoaded && (
+    <div className="flex flex-col items-center justify-center relative min-h-[78px] rounded-xl border border-zinc-100 bg-zinc-50/60 px-3 py-3">
+      <AnimatePresence mode="wait">
+        {!isWidgetReady && !isVerified && (
           <motion.div
-            className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
+            key="loading"
+            className="absolute inset-0 flex items-center justify-center z-10"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
           >
             <TurnstileLoadingPlaceholder />
           </motion.div>
         )}
+        {isVerified && (
+          <motion.div
+            key="verified"
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex w-full max-w-[302px] items-center gap-3 rounded-md border border-emerald-200/80 bg-emerald-50/90 px-4 py-3"
+          >
+            <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold text-emerald-800">
+                Security check passed
+              </p>
+              <p className="text-[10px] font-medium text-emerald-600/80">
+                You can continue to sign in
+              </p>
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
-      <Turnstile
-        ref={turnstileRef}
-        siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-        scriptOptions={{ defer: true, async: true }}
-        options={{
-          theme: "light",
-          size: "compact",
-          appearance: "interaction-only",
-        }}
-        onSuccess={(token) => {
-          captchaTokenRef.current = token;
-          onTokenChange(token);
-          setIsTurnstileLoaded(true);
-        }}
-        onExpire={() => {
-          captchaTokenRef.current = null;
-          onTokenChange(null);
-          setIsTurnstileLoaded(false);
-          turnstileRef.current?.reset();
-        }}
-        onError={() => {
-          captchaTokenRef.current = null;
-          onTokenChange(null);
-          setIsTurnstileLoaded(false);
-        }}
-        onLoad={() => setIsTurnstileLoaded(true)}
-      />
+
+      <div
+        className={
+          isVerified
+            ? "sr-only h-0 overflow-hidden"
+            : "flex w-full justify-center min-h-[65px]"
+        }
+        aria-hidden={isVerified}
+      >
+        <Turnstile
+          ref={turnstileRef}
+          siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+          scriptOptions={{ defer: true, async: true }}
+          options={{
+            theme: "light",
+            size: "normal",
+            appearance: "always",
+          }}
+          onSuccess={(token) => {
+            captchaTokenRef.current = token;
+            onTokenChange(token);
+            setIsVerified(true);
+            setIsWidgetReady(true);
+          }}
+          onExpire={() => {
+            captchaTokenRef.current = null;
+            onTokenChange(null);
+            setIsVerified(false);
+            setIsWidgetReady(false);
+            turnstileRef.current?.reset();
+          }}
+          onError={() => {
+            captchaTokenRef.current = null;
+            onTokenChange(null);
+            setIsVerified(false);
+            setIsWidgetReady(false);
+          }}
+          onLoad={() => setIsWidgetReady(true)}
+        />
+      </div>
     </div>
   );
 }
@@ -296,7 +327,6 @@ export default function Signin({ type }: SigninProps) {
   const [resetToken, setResetToken] = useRecoilState(resetTokenState);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isTurnstileLoaded, setIsTurnstileLoaded] = useState(false);
 
   const syncCaptchaToken = useCallback((token: string | null) => {
     captchaTokenRef.current = token;
@@ -748,8 +778,6 @@ export default function Signin({ type }: SigninProps) {
                 turnstileRef={turnstileRef}
                 captchaTokenRef={captchaTokenRef}
                 onTokenChange={syncCaptchaToken}
-                isTurnstileLoaded={isTurnstileLoaded}
-                setIsTurnstileLoaded={setIsTurnstileLoaded}
               />
 
               <Button
@@ -786,8 +814,6 @@ export default function Signin({ type }: SigninProps) {
                 turnstileRef={turnstileRef}
                 captchaTokenRef={captchaTokenRef}
                 onTokenChange={syncCaptchaToken}
-                isTurnstileLoaded={isTurnstileLoaded}
-                setIsTurnstileLoaded={setIsTurnstileLoaded}
               />
 
               <Button
@@ -847,8 +873,6 @@ export default function Signin({ type }: SigninProps) {
                       turnstileRef={turnstileRef}
                       captchaTokenRef={captchaTokenRef}
                       onTokenChange={syncCaptchaToken}
-                      isTurnstileLoaded={isTurnstileLoaded}
-                      setIsTurnstileLoaded={setIsTurnstileLoaded}
                     />
                   </div>
                 </div>
