@@ -21,6 +21,7 @@ import {
   adminLogoutButtonClass,
   adminSearchInputClass,
 } from "./admin-ui";
+import { UnizLogo } from "./UnizLogo";
 
 export interface AdminNavItem {
   id: string;
@@ -211,28 +212,16 @@ export default function AdminShell({
 
         <div
           className={cn(
-            "px-4 pt-6 pb-2 transition-all duration-300",
+            "px-4 pt-5 pb-3 transition-all duration-300",
             collapseBranding === "hide" &&
               !isSidebarOpen &&
-              "opacity-0 h-0 overflow-hidden pt-0 pb-0",
+              "h-0 overflow-hidden pt-0 pb-0 opacity-0",
           )}
         >
-          <div className="flex items-center justify-center">
-            <h1
-              className={cn(
-                "unifrakturcook-bold text-zinc-950 tracking-tight transition-all duration-300",
-                isSidebarOpen || collapseBranding === "abbreviate"
-                  ? collapseBranding === "abbreviate" && !isSidebarOpen
-                    ? "text-3xl"
-                    : "text-4xl"
-                  : "text-3xl",
-              )}
-            >
-              {isSidebarOpen || collapseBranding !== "abbreviate"
-                ? "uniZ"
-                : "Z"}
-            </h1>
-          </div>
+          <UnizLogo
+            collapsed={!isSidebarOpen}
+            abbreviate={collapseBranding === "abbreviate"}
+          />
         </div>
 
         {renderSearch()}
