@@ -23,6 +23,8 @@ import {
 import { PUBLIC_BANNERS, BASE_URL } from "../api/endpoints";
 import { usePWAInstall } from "../hooks/usePWAInstall";
 import { HeroBlock } from "../components/ui/hero-block-shadcnui";
+import { SEO } from "../components/SEO";
+import { HOME_SEO, homePageSchema } from "../lib/seo";
 import { motion } from "framer-motion";
 import {
   LandingSection,
@@ -377,6 +379,12 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans selection:bg-zinc-100 selection:text-zinc-900 pt-16 relative overflow-x-hidden">
+      <SEO
+        title={HOME_SEO.title}
+        description={HOME_SEO.description}
+        canonical="https://uniz.rguktong.in/"
+        schema={homePageSchema}
+      />
       <HeroBlock />
 
       <main className="relative">
