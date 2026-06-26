@@ -21,6 +21,71 @@ const USER_SERVICE_URL = (
     : process.env.USER_SERVICE_URL) || "http://localhost:3002"
 ).replace(/\/$/, "");
 
+function normalizeStudentId(id?: string | null): string {
+  return String(id || "").trim().toUpperCase();
+}
+
+/** RGUKT Ongole campus — datetime-local values from the portal are IST wall times. */
+const CAMPUS_TZ = "+05:30";
+
+function parseCampusDateTime(input: unknown): Date | null {
+  if (input == null || input === "") return null;
+  if (input instanceof Date) {
+    return campusDateFromUtcWall(input);
+  }
+  const raw = String(input).trim();
+  if (!raw) return null;
+  if (/Z$|[+-]\d{2}:\d{2}$/.test(raw)) return new Date(raw);
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(raw)) {
+    const normalized = raw.length === 16 ? `${raw}:00` : raw;
+    return new Date(`${normalized}${CAMPUS_TZ}`);
+  }
+  return new Date(raw);
+}
+
+/** IST wall-clock values were often persisted with UTC digit components — reinterpret for comparisons. */
+function campusDateFromUtcWall(d: Date): Date {
+  const iso = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}T${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}:${String(d.getUTCSeconds()).padStart(2, "0")}${CAMPUS_TZ}`;
+  return new Date(iso);
+}
+
+function formatCampusDateTime(d: Date | null): string {
+  if (!d) return "";
+  return d.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+}
+
+function getRegistrationWindowState(sem: {
+  registrationStart?: Date | string | null;
+  registrationEnd?: Date | string | null;
+}) {
+  const now = Date.now();
+  const start = parseCampusDateTime(sem.registrationStart);
+  const end = parseCampusDateTime(sem.registrationEnd);
+
+  if (start && now < start.getTime()) {
+    return {
+      isOpen: false,
+      message: `Registration opens on ${formatCampusDateTime(start)} (IST)`,
+      opensAt: start,
+      closesAt: end,
+    };
+  }
+  if (end && now > end.getTime()) {
+    return {
+      isOpen: false,
+      message: "The registration window has closed.",
+      opensAt: start,
+      closesAt: end,
+    };
+  }
+  return {
+    isOpen: true,
+    message: null as string | null,
+    opensAt: start,
+    closesAt: end,
+  };
+}
+
 export const initSemester = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -183,6 +248,10 @@ const canonicalSubjectSemester = (
 };
 
 const SEMESTER_ADMIN_ROLES = ["webmaster", "coe", "director"] as const;
+
+function normalizeStudentId(username: string): string {
+  return String(username || "").trim().toUpperCase();
+}
 
 function isWebmaster(role?: string): boolean {
   return role === "webmaster";
@@ -546,10 +615,10 @@ export const createSemester = async (
         academicYear: academicYear || null,
         batch: batch || null,
         program: program || "B.Tech",
-        registrationStart: registrationStart ? new Date(registrationStart) : null,
-        registrationEnd: registrationEnd ? new Date(registrationEnd) : null,
-        semesterStart: semesterStart ? new Date(semesterStart) : null,
-        semesterEnd: semesterEnd ? new Date(semesterEnd) : null,
+        registrationStart: parseCampusDateTime(registrationStart),
+        registrationEnd: parseCampusDateTime(registrationEnd),
+        semesterStart: parseCampusDateTime(semesterStart),
+        semesterEnd: parseCampusDateTime(semesterEnd),
       } as any,
     });
 
@@ -957,27 +1026,19 @@ export const updateSemesterConfig = async (
         program: program ?? undefined,
         registrationStart:
           registrationStart !== undefined
-            ? registrationStart
-              ? new Date(registrationStart)
-              : null
+            ? parseCampusDateTime(registrationStart)
             : undefined,
         registrationEnd:
           registrationEnd !== undefined
-            ? registrationEnd
-              ? new Date(registrationEnd)
-              : null
+            ? parseCampusDateTime(registrationEnd)
             : undefined,
         semesterStart:
           semesterStart !== undefined
-            ? semesterStart
-              ? new Date(semesterStart)
-              : null
+            ? parseCampusDateTime(semesterStart)
             : undefined,
         semesterEnd:
           semesterEnd !== undefined
-            ? semesterEnd
-              ? new Date(semesterEnd)
-              : null
+            ? parseCampusDateTime(semesterEnd)
             : undefined,
       } as any,
     });
@@ -1403,6 +1464,8 @@ export const getAvailableSubjects = async (
       });
     }
 
+    const window = getRegistrationWindowState(openSem);
+
     const branchUpper = (branch as string)?.toUpperCase();
 
     const where: any = {
@@ -1428,7 +1491,7 @@ export const getAvailableSubjects = async (
     const registrationCount = await prisma.registration.count({
       where: {
         studentId: {
-          equals: String(req.user?.username || ""),
+          equals: normalizeStudentId(req.user?.username),
           mode: "insensitive",
         },
         semesterId: openSem.id,
@@ -1469,14 +1532,15 @@ export const getAvailableSubjects = async (
 
     res.json({
       semester: openSem,
-      subjects,
-      electiveGroups,
+      subjects: window.isOpen ? subjects : [],
+      electiveGroups: window.isOpen ? electiveGroups : [],
       registrationWindow: {
-        start: (openSem as any).registrationStart,
-        end: (openSem as any).registrationEnd,
+        start: window.opensAt,
+        end: window.closesAt,
       },
       alreadyRegistered: registrationCount > 0,
-      isOpen: true,
+      isOpen: window.isOpen,
+      windowMessage: window.message,
     });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch subjects" });
@@ -1497,6 +1561,8 @@ export const registerSubjects = async (
 
   if (!user) return res.status(401).json({ error: "Unauthorized" });
 
+  const studentId = normalizeStudentId(user.username);
+
   try {
     // 1. Get current registration-open semester
     const sem = await prisma.academicSemester.findFirst({
@@ -1509,23 +1575,16 @@ export const registerSubjects = async (
     }
 
     // 1b. Enforce the registration window (if configured)
-    const now = new Date();
-    if ((sem as any).registrationStart && now < (sem as any).registrationStart) {
+    const window = getRegistrationWindowState(sem);
+    if (!window.isOpen) {
       return res.status(403).json({
-        error: `Registration opens on ${new Date(
-          (sem as any).registrationStart,
-        ).toLocaleString("en-IN")}`,
-      });
-    }
-    if ((sem as any).registrationEnd && now > (sem as any).registrationEnd) {
-      return res.status(403).json({
-        error: "The registration window has closed.",
+        error: window.message || "Registration is not open",
       });
     }
 
     const existingRegistrationCount = await prisma.registration.count({
       where: {
-        studentId: { equals: user.username, mode: "insensitive" },
+        studentId: { equals: studentId, mode: "insensitive" },
         semesterId: sem.id,
         status: "REGISTERED",
       },
@@ -1630,32 +1689,34 @@ export const registerSubjects = async (
       }
     }
 
-    // 3. Perform subject registration
-    await Promise.all(
-      subjectIds.map((id: string) =>
-        prisma.registration.upsert({
-          where: {
-            studentId_subjectId_semesterId: {
-              studentId: user.username,
+    // 3. Perform subject registration (atomic — block duplicate semester enrollments)
+    await prisma.$transaction(async (tx) => {
+      const lockedCount = await tx.registration.count({
+        where: {
+          studentId: { equals: studentId, mode: "insensitive" },
+          semesterId: sem.id,
+          status: "REGISTERED",
+        },
+      });
+      if (lockedCount > 0) {
+        throw new Error("ALREADY_REGISTERED");
+      }
+
+      await Promise.all(
+        subjectIds.map((id: string) =>
+          tx.registration.create({
+            data: {
+              studentId,
               subjectId: id,
               semesterId: sem.id,
-            },
-          },
-          update: {
-            status: "REGISTERED",
-            batch: studentBatch,
-            submittedAt: new Date(),
-          } as any,
-          create: {
-            studentId: user.username,
-            subjectId: id,
-            semesterId: sem.id,
-            batch: studentBatch,
-            submittedAt: new Date(),
-          } as any,
-        }),
-      ),
-    );
+              status: "REGISTERED",
+              batch: studentBatch,
+              submittedAt: new Date(),
+            } as any,
+          }),
+        ),
+      );
+    });
 
     // 3. Update Student Academic Profile in uniz-user service
     const firstSubject = await prisma.subject.findFirst({
@@ -1704,7 +1765,7 @@ export const registerSubjects = async (
     // Build a confirmation payload (registration ID + registered subjects)
     const registered = await prisma.registration.findMany({
       where: {
-        studentId: user.username,
+        studentId: { equals: studentId, mode: "insensitive" },
         semesterId: sem.id,
         status: "REGISTERED",
       },
@@ -1756,7 +1817,13 @@ export const registerSubjects = async (
       message: "Registration successful",
       confirmation,
     });
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.message === "ALREADY_REGISTERED") {
+      return res.status(409).json({
+        error: "You have already registered for this semester",
+        alreadyRegistered: true,
+      });
+    }
     console.error("Registration Error:", error);
     res.status(500).json({ error: "Registration failed" });
   }
@@ -1770,7 +1837,16 @@ export const getCurrentSubjects = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const { studentId } = req.params;
+  const user = req.user;
+  const requestedId = normalizeStudentId(req.params.studentId || user?.username);
+
+  if (!user) return res.status(401).json({ error: "Unauthorized" });
+  if (
+    user.role === "student" &&
+    normalizeStudentId(user.username) !== requestedId
+  ) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
 
   try {
     // 1. Get the latest active/open semester
@@ -1795,18 +1871,20 @@ export const getCurrentSubjects = async (
     // 2. Fetch registrations for this student in this semester
     const registrations = await prisma.registration.findMany({
       where: {
-        studentId,
+        studentId: { equals: requestedId, mode: "insensitive" },
         semesterId: activeSem.id,
         status: "REGISTERED",
       },
       include: {
         subject: true,
       },
+      orderBy: { subject: { code: "asc" } },
     });
 
     res.json({
       semester: activeSem,
       subjects: registrations,
+      alreadyRegistered: registrations.length > 0,
     });
   } catch (error) {
     console.error("Get Current Subjects Error:", error);
@@ -2176,10 +2254,11 @@ export const getSemesterOverview = async (
     }
 
     if (user.role === "student") {
+      const studentId = normalizeStudentId(user.username);
       // For Students: Show registered subjects
       const registrations = await prisma.registration.findMany({
         where: {
-          studentId: user.username,
+          studentId: { equals: studentId, mode: "insensitive" },
           semesterId: activeSem.id,
           status: "REGISTERED",
         },
