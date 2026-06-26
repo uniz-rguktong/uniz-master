@@ -76,15 +76,22 @@ function avgAttendance(summary: Record<string, { percentage?: number }> | undefi
 
 function TableSkeleton() {
   return (
-    <div className={cn(adminCardClass, "overflow-hidden animate-pulse")}>
-      <div className="h-10 bg-zinc-50 border-b border-zinc-200" />
+    <div className={cn(adminCardClass, "overflow-hidden p-0 animate-pulse")}>
+      <div className="h-11 bg-zinc-50 border-b border-zinc-200" />
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="h-11 border-b border-zinc-100 flex gap-4 px-4 items-center">
+        <div
+          key={i}
+          className={cn(
+            "h-11 border-b border-zinc-200 flex gap-4 px-4 items-center",
+            i % 2 === 1 && "bg-zinc-50/40",
+          )}
+        >
           <div className="h-3 w-16 bg-zinc-100 rounded" />
           <div className="h-3 w-32 bg-zinc-100 rounded" />
           <div className="h-3 w-24 bg-zinc-100 rounded flex-1" />
         </div>
       ))}
+      <div className="h-14 bg-zinc-50/80 border-t border-zinc-200" />
     </div>
   );
 }
@@ -148,10 +155,34 @@ const GENDER_OPTIONS = ["ALL", "M", "F", "Other"];
 const CATEGORY_OPTIONS = ["ALL", "GENERAL", "OBC", "SC", "ST", "EWS"];
 const CAMPUS_OPTIONS = ["ALL", "ONGOLE", "NIDADAVOLE"];
 
+const STICKY_COLS: Record<string, { left: string; z: string }> = {
+  checkbox: { left: "left-0", z: "z-20" },
+  row: { left: "left-10", z: "z-20" },
+  username: { left: "left-[5.5rem]", z: "z-20" },
+  name: { left: "left-[11.75rem]", z: "z-20" },
+};
+
+function stickyCellClass(
+  key: string,
+  extra?: string,
+  isHeader = false,
+) {
+  const sticky = STICKY_COLS[key];
+  if (!sticky) return extra;
+  return cn(
+    extra,
+    "sticky",
+    sticky.left,
+    sticky.z,
+    isHeader ? "bg-zinc-50" : "bg-inherit",
+    key === "name" && "shadow-[4px_0_12px_-6px_rgba(10,10,10,0.12)]",
+  );
+}
+
 const COLUMNS: { key: string; label: string; className?: string }[] = [
   { key: "row", label: "#", className: "w-12 text-center" },
   { key: "username", label: "Student ID", className: "min-w-[100px]" },
-  { key: "name", label: "Name", className: "min-w-[160px]" },
+  { key: "name", label: "Name", className: "min-w-[200px] max-w-[240px]" },
   { key: "email", label: "Email", className: "min-w-[200px]" },
   { key: "branch", label: "Branch", className: "w-20" },
   { key: "year", label: "Year", className: "w-16" },
@@ -1197,12 +1228,18 @@ export default function StudentDetails() {
           <p className="text-[12px] text-zinc-400 mt-1">Adjust filters or search by ID</p>
         </div>
       ) : (
-        <div className={cn(adminCardClass, "overflow-hidden")}>
-          <div className="overflow-x-auto custom-sidebar-scroll max-h-[calc(100vh-22rem)]">
+        <div className={cn(adminCardClass, "overflow-hidden p-0")}>
+          <div className="overflow-x-auto custom-sidebar-scroll max-h-[calc(100vh-22rem)] border-b border-zinc-200">
             <table className="w-full border-collapse text-[12px] min-w-[1500px]">
-              <thead className="sticky top-0 z-10">
-                <tr className="bg-zinc-50 border-b border-zinc-200 shadow-sm">
-                  <th className="w-10 px-2 py-2.5 border-r border-zinc-100">
+              <thead className="sticky top-0 z-30">
+                <tr className="bg-zinc-50 border-b border-zinc-200">
+                  <th
+                    className={stickyCellClass(
+                      "checkbox",
+                      "w-10 px-2 py-2.5 border-r border-zinc-200",
+                      true,
+                    )}
+                  >
                     <button
                       type="button"
                       onClick={toggleSelectAll}
@@ -1223,9 +1260,13 @@ export default function StudentDetails() {
                       key={col.key}
                       onClick={() => handleSort(col.key)}
                       className={cn(
-                        "px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wide text-zinc-500 whitespace-nowrap border-r border-zinc-100 last:border-r-0",
+                        stickyCellClass(
+                          col.key,
+                          "px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wide text-zinc-500 whitespace-nowrap border-r border-zinc-200 last:border-r-0",
+                          true,
+                        ),
                         SORTABLE_KEYS.has(col.key) &&
-                          "cursor-pointer hover:bg-zinc-100/80 select-none",
+                          "cursor-pointer hover:bg-zinc-100 select-none",
                         col.className,
                       )}
                     >
@@ -1235,7 +1276,7 @@ export default function StudentDetails() {
                       </span>
                     </th>
                   ))}
-                  <th className="w-10 px-2 py-2.5 border-l border-zinc-100" />
+                  <th className="w-10 px-2 py-2.5 border-l border-zinc-200 bg-zinc-50" />
                 </tr>
               </thead>
               <tbody>
@@ -1245,16 +1286,19 @@ export default function StudentDetails() {
                     onClick={() => openDetail(row)}
                     onDoubleClick={() => handleOpenPerformance(row)}
                     className={cn(
-                      "border-b border-zinc-100 cursor-pointer transition-colors",
-                      selectedIds.has(row.username) && "bg-zinc-100",
+                      "border-b border-zinc-200 cursor-pointer transition-colors",
+                      selectedIds.has(row.username) && "bg-zinc-100/90",
                       selectedRow?.username === row.username && !selectedIds.has(row.username)
                         ? "bg-zinc-100/80"
-                        : !selectedIds.has(row.username) && "hover:bg-zinc-50/80",
-                      idx % 2 === 0 ? "bg-white" : "bg-zinc-50/30",
+                        : !selectedIds.has(row.username) && "hover:bg-zinc-50",
+                      idx % 2 === 1 && !selectedIds.has(row.username) && "bg-zinc-50/40",
                     )}
                   >
                     <td
-                      className="px-2 py-2 border-r border-zinc-50"
+                      className={stickyCellClass(
+                        "checkbox",
+                        "px-2 py-2 border-r border-zinc-200",
+                      )}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <button
@@ -1276,12 +1320,17 @@ export default function StudentDetails() {
                           if (EDITABLE_KEYS.has(col.key)) startCellEdit(row, col.key, e);
                         }}
                         className={cn(
-                          "px-3 py-2 text-zinc-800 whitespace-nowrap border-r border-zinc-50 last:border-r-0 font-medium",
+                          stickyCellClass(
+                            col.key,
+                            "px-3 py-2.5 text-zinc-800 whitespace-nowrap border-r border-zinc-200 last:border-r-0 font-medium",
+                          ),
+                          col.key === "name" && "truncate max-w-[240px]",
                           col.key === "username" && "font-semibold text-zinc-900 tabular-nums",
                           col.key === "email" && "text-zinc-500 text-[11px]",
                           col.key === "cgpa" && adminNumsClass,
                           col.key === "attendance_pct" && adminNumsClass,
-                          EDITABLE_KEYS.has(col.key) && "hover:ring-1 hover:ring-inset hover:ring-zinc-200",
+                          EDITABLE_KEYS.has(col.key) &&
+                            "hover:bg-zinc-100/60 hover:ring-1 hover:ring-inset hover:ring-zinc-300/80",
                           col.className,
                         )}
                       >
@@ -1290,7 +1339,7 @@ export default function StudentDetails() {
                           : cellValue(row, col.key, rangeStart + idx)}
                       </td>
                     ))}
-                    <td className="px-2 py-2 border-l border-zinc-50 text-zinc-300">
+                    <td className="px-2 py-2.5 border-l border-zinc-200 text-zinc-300">
                       <ChevronRight size={14} />
                     </td>
                   </tr>
@@ -1298,17 +1347,18 @@ export default function StudentDetails() {
               </tbody>
             </table>
           </div>
+          <Pagination
+            currentPage={pagination.page}
+            totalPages={pagination.totalPages}
+            totalItems={pagination.total}
+            pageSize={PAGE_SIZE}
+            onPageChange={(p) => {
+              setSelectedIds(new Set());
+              fetchStudents(p);
+            }}
+          />
         </div>
       )}
-
-      <Pagination
-        currentPage={pagination.page}
-        totalPages={pagination.totalPages}
-        onPageChange={(p) => {
-          setSelectedIds(new Set());
-          fetchStudents(p);
-        }}
-      />
 
       {/* Detail drawer */}
       <AnimatePresence>
