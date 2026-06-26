@@ -1,40 +1,52 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL } from "../lib/seo";
 
 interface SEOProps {
   title?: string;
   description?: string;
   canonical?: string;
-  schema?: any;
+  image?: string;
+  type?: "website" | "article";
+  schema?: unknown;
 }
 
-export function SEO({ title, description, canonical, schema }: SEOProps) {
+function upsertMeta(
+  attr: "name" | "property",
+  key: string,
+  content: string,
+) {
+  const selector = `meta[${attr}="${key}"]`;
+  let el = document.querySelector<HTMLMetaElement>(selector);
+  if (!el) {
+    el = document.createElement("meta");
+    el.setAttribute(attr, key);
+    document.head.appendChild(el);
+  }
+  el.content = content;
+}
+
+export function SEO({
+  title,
+  description,
+  canonical,
+  image = DEFAULT_OG_IMAGE,
+  type = "website",
+  schema,
+}: SEOProps) {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // 1. Title
-    if (title) {
-      document.title = title;
-    }
+    const pageTitle = title || `${SITE_NAME} — Campus platform for RGUKT students`;
+    const pageDescription =
+      description ||
+      "Manage academics, semester registration, outpasses, and campus updates in one place.";
 
-    // 2. Meta Description
-    if (description) {
-      let metaDesc: HTMLMetaElement | null = document.querySelector(
-        "meta[name='description']",
-      );
-      if (!metaDesc) {
-        metaDesc = document.createElement("meta");
-        metaDesc.name = "description";
-        document.head.appendChild(metaDesc);
-      }
-      metaDesc.content = description;
-    }
+    document.title = pageTitle;
+    upsertMeta("name", "description", pageDescription);
 
-    // 3. Canonical Link
-    const defaultCanonical = `https://uniz.rguktong.in${pathname}`;
-    const canonicalUrl = canonical || defaultCanonical;
-
-    let linkCanonical: HTMLLinkElement | null = document.querySelector(
+    const canonicalUrl = canonical || `${SITE_URL}${pathname === "/" ? "" : pathname}`;
+    let linkCanonical = document.querySelector<HTMLLinkElement>(
       "link[rel='canonical']",
     );
     if (!linkCanonical) {
@@ -44,7 +56,19 @@ export function SEO({ title, description, canonical, schema }: SEOProps) {
     }
     linkCanonical.href = canonicalUrl;
 
-    // 4. JSON-LD Breadcrumbs (Auto-generated if schema not provided, but we can just use schema prop)
+    upsertMeta("property", "og:site_name", SITE_NAME);
+    upsertMeta("property", "og:locale", "en_IN");
+    upsertMeta("property", "og:title", pageTitle);
+    upsertMeta("property", "og:description", pageDescription);
+    upsertMeta("property", "og:image", image);
+    upsertMeta("property", "og:url", canonicalUrl);
+    upsertMeta("property", "og:type", type);
+
+    upsertMeta("name", "twitter:card", "summary_large_image");
+    upsertMeta("name", "twitter:title", pageTitle);
+    upsertMeta("name", "twitter:description", pageDescription);
+    upsertMeta("name", "twitter:image", image);
+
     const breadcrumbSchema = {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
@@ -55,13 +79,13 @@ export function SEO({ title, description, canonical, schema }: SEOProps) {
           "@type": "ListItem",
           position: index + 1,
           name: part.charAt(0).toUpperCase() + part.slice(1).replace(/-/g, " "),
-          item: `https://uniz.rguktong.in/${arr.slice(0, index + 1).join("/")}`,
+          item: `${SITE_URL}/${arr.slice(0, index + 1).join("/")}`,
         })),
     };
 
     const finalSchema = schema || breadcrumbSchema;
 
-    let scriptSchema: HTMLScriptElement | null = document.querySelector(
+    let scriptSchema = document.querySelector<HTMLScriptElement>(
       "#dynamic-schema-route",
     );
     if (!scriptSchema) {
@@ -71,13 +95,7 @@ export function SEO({ title, description, canonical, schema }: SEOProps) {
       document.head.appendChild(scriptSchema);
     }
     scriptSchema.innerText = JSON.stringify(finalSchema);
-
-    // Cleanup
-    return () => {
-      // Optional cleanup
-      // scriptSchema?.remove();
-    };
-  }, [pathname, title, description, canonical, schema]);
+  }, [pathname, title, description, canonical, image, type, schema]);
 
   return null;
 }
