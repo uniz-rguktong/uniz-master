@@ -70,6 +70,18 @@ prune_old_local_images() {
   echo "[Cleanup] Docker prune complete."
 }
 
+# Prune stale images from k3s/containerd (main disk consumer on VPS).
+prune_k3s_images() {
+  if ! command -v k3s >/dev/null 2>&1; then
+    return 0
+  fi
+  echo "[Cleanup] Pruning unused k3s/containerd images..."
+  export CRICTL_TIMEOUT="${CRICTL_TIMEOUT:-10m}"
+  k3s crictl rmi --prune 2>/dev/null || true
+  k3s ctr -n k8s.io images prune --all 2>/dev/null || true
+  echo "[Cleanup] k3s prune complete."
+}
+
 # Wait for key deployments and verify production health (fail CI if broken).
 verify_deployment() {
   echo "[Verify] Waiting for rollouts..."
@@ -454,6 +466,16 @@ deploy_logic() {
 
   if [ "$USE_GHCR" != "true" ]; then
     prune_old_local_images
+  else
+    prune_k3s_images
+  fi
+
+  if [ -f "$(dirname "$0")/install-vps-storage-cron.sh" ]; then
+    bash "$(dirname "$0")/install-vps-storage-cron.sh" || true
+  fi
+
+  if [ -f "$(dirname "$0")/vps-storage-cleanup.sh" ]; then
+    bash "$(dirname "$0")/vps-storage-cleanup.sh" || true
   fi
 
   if [ "$USE_GHCR" == "true" ] && [ -n "${PREV_SHA:-}" ] && [ -n "${NEW_HEAD:-}" ]; then

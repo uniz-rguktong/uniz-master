@@ -6,6 +6,7 @@ import { constants } from "fs";
 const execAsync = promisify(exec);
 
 const CRI_SOCK = "/run/k3s/containerd/containerd.sock";
+const CRICTL_TIMEOUT = process.env.CRICTL_TIMEOUT || "10m";
 
 async function pathExists(path: string): Promise<boolean> {
   try {
@@ -48,13 +49,19 @@ export const runStorageCleanup = async () => {
     {
       name: "K3s Image Prune (crictl)",
       tool: "crictl",
-      cmd: `crictl --runtime-endpoint unix://${CRI_SOCK} rmi --prune`,
+      cmd: `CRICTL_TIMEOUT=${CRICTL_TIMEOUT} crictl --runtime-endpoint unix://${CRI_SOCK} rmi --prune`,
       when: hasCriSock,
     },
     {
       name: "K3s Image Prune (k3s crictl)",
       tool: "k3s",
-      cmd: "k3s crictl rmi --prune",
+      cmd: `CRICTL_TIMEOUT=${CRICTL_TIMEOUT} k3s crictl rmi --prune`,
+      when: hasCriSock,
+    },
+    {
+      name: "K3s Containerd Prune (k3s ctr --all)",
+      tool: "k3s",
+      cmd: "k3s ctr -n k8s.io images prune --all",
       when: hasCriSock,
     },
     {
@@ -82,9 +89,15 @@ export const runStorageCleanup = async () => {
       when: await pathExists("/var/lib/docker/containers"),
     },
     {
+      name: "K3s Containerd Log Truncation",
+      tool: "find",
+      cmd: "find /var/lib/rancher/k3s/agent/containerd -name '*.log' -size +10M -exec truncate -s 0 {} \\;",
+      when: await pathExists("/var/lib/rancher/k3s/agent/containerd"),
+    },
+    {
       name: "Journal Log Vacuum",
       tool: "journalctl",
-      cmd: "journalctl --vacuum-time=1d",
+      cmd: "journalctl --vacuum-time=2d",
     },
     {
       name: "Apt Cleanup",
