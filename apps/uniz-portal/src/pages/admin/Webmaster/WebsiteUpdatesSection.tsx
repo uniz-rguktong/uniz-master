@@ -577,8 +577,9 @@ export default function WebsiteUpdatesSection() {
               </div>
               <h4 className="text-xl font-semibold text-zinc-900 tracking-tight mb-2">Could not load content</h4>
               <p className="text-sm text-zinc-500 max-w-md mx-auto leading-relaxed">
-                The data node is empty or the landing API is unreachable. Ensure{" "}
-                <code className="text-xs bg-zinc-100 px-1.5 py-0.5 rounded">{LANDING_API_URL}</code> is running.
+                Could not reach the landing CMS. Requests go through{" "}
+                <code className="text-xs bg-zinc-100 px-1.5 py-0.5 rounded">{LANDING_API_URL}</code>
+                {" "}(same-origin via the API gateway). Ensure the gateway and landing API service are running.
               </p>
               <button type="button" onClick={fetchData} className={cn(adminGhostButtonClass, "mt-6")}>
                 <RefreshCw size={14} /> Retry

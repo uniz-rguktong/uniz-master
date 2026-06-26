@@ -12,6 +12,7 @@ import {
   Download,
   X,
   FileSpreadsheet,
+  Trash2,
 } from "lucide-react";
 import StudentPerformanceModal from "./StudentPerformanceModal";
 import StudentDashboard from "./StudentDashboard";
@@ -31,6 +32,7 @@ import {
   adminGhostButtonClass,
   adminChipClass,
   adminNumsClass,
+  adminDangerButtonClass,
 } from "../../../components/admin/admin-ui";
 import {
   ADMIN_VIEW_STUDENT,
@@ -39,10 +41,13 @@ import {
   ADMIN_GLOBAL_RESET_PASS,
   GET_AVAILABLE_BATCHES,
   ADMIN_STUDENT_EXPORT,
+  ADMIN_DELETE_STUDENT,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 
 const PAGE_SIZE = 25;
+const SEARCH_DEBOUNCE_MS = 450;
+const ENRICH_CONCURRENCY = 4;
 
 const EXPORT_FIELDS =
   "username,name,email,gender,phone,fatherName,motherName,fatherOccupation,motherOccupation,fatherEmail,motherEmail,fatherAddress,motherAddress,bloodGroup,dateOfBirth,year,semester,branch,section,batch,roomno,isPresentInCampus,isApplicationPending,isSuspended,category,campus,cgpa,totalBacklogs";
@@ -135,8 +140,11 @@ export default function StudentDetails() {
   const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
 
   const [recommendations, setRecommendations] = useState<any[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const detailRequestRef = useRef(0);
+  const fetchGenRef = useRef(0);
+  const enrichGenRef = useRef(0);
+  const skipAutoSearchRef = useRef(true);
 
   const [branch, setBranch] = useState("ALL");
   const [year, setYear] = useState("ALL");
@@ -169,6 +177,11 @@ export default function StudentDetails() {
   const [resetTargetUser, setResetTargetUser] = useState("");
   const [resetPasswordValue, setResetPasswordValue] = useState("");
 
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteTargetUser, setDeleteTargetUser] = useState("");
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+
   const authHeaders = () => ({
     Authorization: `Bearer ${(localStorage.getItem("admin_token") || "").replace(/"/g, "")}`,
     "Content-Type": "application/json",
@@ -176,100 +189,120 @@ export default function StudentDetails() {
 
   const enrichAttendance = useCallback(async (students: StudentRow[]) => {
     if (!students.length) return;
+    const gen = ++enrichGenRef.current;
     setEnriching(true);
     const token = localStorage.getItem("admin_token");
-    const results = await Promise.all(
-      students.map(async (s) => {
-        try {
-          const res = await fetch(ADMIN_VIEW_STUDENT(s.username), {
-            headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
-          });
-          const data = await res.json();
-          if (data.success && data.student) {
-            return {
-              ...s,
-              attendance_pct: avgAttendance(data.student.attendance_summary),
-              cgpa: data.student.cgpa ?? s.cgpa,
-              total_backlogs: data.student.total_backlogs ?? s.total_backlogs,
-            };
+    const auth = `Bearer ${(token || "").replace(/"/g, "")}`;
+    const enriched = [...students];
+
+    for (let i = 0; i < students.length; i += ENRICH_CONCURRENCY) {
+      if (gen !== enrichGenRef.current) return;
+      const chunk = students.slice(i, i + ENRICH_CONCURRENCY);
+      const chunkResults = await Promise.all(
+        chunk.map(async (s) => {
+          try {
+            const res = await fetch(ADMIN_VIEW_STUDENT(s.username), {
+              headers: { Authorization: auth },
+            });
+            const data = await res.json();
+            if (data.success && data.student) {
+              return {
+                ...s,
+                attendance_pct: avgAttendance(data.student.attendance_summary),
+                cgpa: data.student.cgpa ?? s.cgpa,
+                total_backlogs: data.student.total_backlogs ?? s.total_backlogs,
+              };
+            }
+          } catch {
+            /* keep row */
           }
-        } catch {
-          /* keep row */
-        }
-        return { ...s, attendance_pct: null };
-      }),
-    );
-    setRows(results);
+          return { ...s, attendance_pct: null };
+        }),
+      );
+      chunkResults.forEach((row, idx) => {
+        enriched[i + idx] = row;
+      });
+    }
+
+    if (gen !== enrichGenRef.current) return;
+    setRows(enriched);
     setEnriching(false);
   }, []);
 
-  const fetchStudents = async (
-    page = 1,
-    overrides?: { query?: string },
-  ) => {
-    const q = overrides?.query ?? query;
-    setLoading(true);
-    setSelectedRow(null);
-    setDrawerOpen(false);
-    try {
-      const res = await fetch(SEARCH_STUDENTS, {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify({
-          username: q.trim() || undefined,
-          branch,
-          year,
-          batch,
-          ...intelligenceFilters,
-          page,
-          limit: PAGE_SIZE,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        const list: StudentRow[] = data.students || [];
-        setRows(list);
-        if (data.pagination) setPagination(data.pagination);
-        if (list.length === 0) toast.info("No students match these filters");
-        else enrichAttendance(list);
-      } else {
-        toast.error(data.msg || data.message || "Search failed");
-        setRows([]);
+  const fetchStudents = useCallback(
+    async (page = 1, overrides?: { query?: string }) => {
+      const gen = ++fetchGenRef.current;
+      const q = (overrides?.query ?? query).trim();
+      setLoading(true);
+      try {
+        const res = await fetch(SEARCH_STUDENTS, {
+          method: "POST",
+          headers: authHeaders(),
+          body: JSON.stringify({
+            username: q ? q.toUpperCase() : undefined,
+            branch,
+            year,
+            batch,
+            ...intelligenceFilters,
+            page,
+            limit: PAGE_SIZE,
+          }),
+        });
+        if (gen !== fetchGenRef.current) return;
+        const data = await res.json();
+        if (data.success) {
+          const list: StudentRow[] = data.students || [];
+          setRows(list);
+          if (data.pagination) setPagination(data.pagination);
+          if (list.length === 0 && page === 1) toast.info("No students match these filters");
+          else if (list.length > 0) enrichAttendance(list);
+        } else {
+          toast.error(data.msg || data.message || "Search failed");
+          setRows([]);
+        }
+      } catch {
+        if (gen === fetchGenRef.current) toast.error("Error loading students");
+      } finally {
+        if (gen === fetchGenRef.current) setLoading(false);
       }
-    } catch {
-      toast.error("Error loading students");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [query, branch, year, batch, intelligenceFilters, enrichAttendance],
+  );
 
   useEffect(() => {
     fetchBatches();
     fetchStudents(1);
+    const t = setTimeout(() => {
+      skipAutoSearchRef.current = false;
+    }, 0);
+    return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (!query || query.length < 3) {
+    if (skipAutoSearchRef.current) return;
+    const t = setTimeout(() => fetchStudents(1), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(t);
+  }, [query, branch, year, batch, intelligenceFilters, fetchStudents]);
+
+  useEffect(() => {
+    if (!query || query.trim().length < 2) {
       setRecommendations([]);
       return;
     }
-    setIsTyping(true);
     const t = setTimeout(async () => {
       try {
         const res = await fetch(SEARCH_STUDENTS, {
           method: "POST",
           headers: authHeaders(),
-          body: JSON.stringify({ username: query, limit: 6 }),
+          body: JSON.stringify({ username: query.trim().toUpperCase(), limit: 6 }),
         });
         const data = await res.json();
         if (data.success) setRecommendations(data.students || []);
       } catch {
         /* ignore */
-      } finally {
-        setIsTyping(false);
       }
-    }, 350);
+    }, 300);
     return () => clearTimeout(t);
   }, [query]);
 
@@ -282,6 +315,17 @@ export default function StudentDetails() {
     window.addEventListener("mousedown", handleClick);
     return () => window.removeEventListener("mousedown", handleClick);
   }, []);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      if (resetModalOpen || editModalOpen || performanceModalOpen || deleteModalOpen) return;
+      setDrawerOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [drawerOpen, resetModalOpen, editModalOpen, performanceModalOpen, deleteModalOpen]);
 
   const fetchBatches = async () => {
     try {
@@ -296,6 +340,7 @@ export default function StudentDetails() {
   };
 
   const openDetail = async (row: StudentRow) => {
+    const requestId = ++detailRequestRef.current;
     setSelectedRow(row);
     setDrawerOpen(true);
     setDetailLoading(true);
@@ -305,14 +350,28 @@ export default function StudentDetails() {
         headers: { Authorization: authHeaders().Authorization },
       });
       const data = await res.json();
+      if (requestId !== detailRequestRef.current) return;
       if (data.success) setDetailData(data.student);
       else toast.error(data.msg || "Could not load student");
     } catch {
+      if (requestId !== detailRequestRef.current) return;
       toast.error("Failed to load student details");
     } finally {
-      setDetailLoading(false);
+      if (requestId === detailRequestRef.current) setDetailLoading(false);
     }
   };
+
+  const closeDrawer = () => {
+    detailRequestRef.current += 1;
+    setDrawerOpen(false);
+    setDetailData(null);
+    setSelectedRow(null);
+  };
+
+  const drawerStudentName =
+    detailData && selectedRow && detailData.username === selectedRow.username
+      ? detailData.name || selectedRow.name || selectedRow.username
+      : selectedRow?.name || selectedRow?.username || "";
 
   const handleExport = async () => {
     setExporting(true);
@@ -404,6 +463,40 @@ export default function StudentDetails() {
     }
   };
 
+  const handleDeleteStudent = (username: string) => {
+    setDeleteTargetUser(username);
+    setDeleteConfirmText("");
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDeleteStudent = async () => {
+    if (deleteConfirmText.trim().toUpperCase() !== deleteTargetUser.toUpperCase()) {
+      toast.error("Student ID does not match");
+      return;
+    }
+    setDeleting(true);
+    try {
+      const res = await fetch(ADMIN_DELETE_STUDENT(deleteTargetUser), {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Student ${deleteTargetUser} permanently deleted`);
+        setDeleteModalOpen(false);
+        setRows((prev) => prev.filter((s) => s.username !== deleteTargetUser));
+        closeDrawer();
+        fetchStudents(pagination.page);
+      } else {
+        toast.error(data.message || data.msg || "Delete failed");
+      }
+    } catch {
+      toast.error("Failed to delete student");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const handleOpenPerformance = async (std: StudentRow) => {
     setSelectedStudentName(std.name);
     setSelectedStudentId(std.username);
@@ -482,18 +575,17 @@ export default function StudentDetails() {
               type="text"
               placeholder="Search by Student ID or name…"
               value={query}
-              onChange={(e) => setQuery(e.target.value.toUpperCase())}
-              onKeyDown={(e) => e.key === "Enter" && fetchStudents(1)}
+              onChange={(e) => setQuery(e.target.value)}
               className={cn(adminInputClass, "pl-10")}
             />
-            {isTyping && (
+            {(loading || enriching) && (
               <Loader2
                 size={14}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-zinc-400"
               />
             )}
             <AnimatePresence>
-              {recommendations.length > 0 && (
+              {recommendations.length > 0 && query.trim().length >= 2 && (
                 <motion.div
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -507,7 +599,6 @@ export default function StudentDetails() {
                       onClick={() => {
                         setQuery(rec.username);
                         setRecommendations([]);
-                        fetchStudents(1, { query: rec.username });
                       }}
                       className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 text-left text-[13px]"
                     >
@@ -520,15 +611,11 @@ export default function StudentDetails() {
               )}
             </AnimatePresence>
           </div>
-          <button
-            type="button"
-            onClick={() => fetchStudents(1)}
-            disabled={loading}
-            className={adminPrimaryButtonClass}
-          >
-            {loading ? <Loader2 size={14} className="animate-spin" /> : <Search size={14} />}
-            Search
-          </button>
+          {(loading || enriching) && (
+            <span className={cn(adminChipClass, "self-center shrink-0")}>
+              {loading ? "Searching…" : "Loading attendance…"}
+            </span>
+          )}
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
@@ -747,7 +834,10 @@ export default function StudentDetails() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-[100] bg-zinc-900/30 backdrop-blur-sm"
-              onClick={() => setDrawerOpen(false)}
+              onClick={() => {
+                if (resetModalOpen || editModalOpen || deleteModalOpen) return;
+                closeDrawer();
+              }}
             />
             <motion.aside
               initial={{ x: "100%" }}
@@ -762,12 +852,12 @@ export default function StudentDetails() {
                     Student profile
                   </p>
                   <p className="text-lg font-semibold text-zinc-900">
-                    {selectedRow?.name || selectedRow?.username}
+                    {drawerStudentName}
                   </p>
                 </div>
                 <button
                   type="button"
-                  onClick={() => setDrawerOpen(false)}
+                  onClick={closeDrawer}
                   className={cn(adminGhostButtonClass, "w-10 h-10 px-0")}
                 >
                   <X size={18} />
@@ -778,11 +868,13 @@ export default function StudentDetails() {
                   <div className="flex items-center justify-center py-20">
                     <Loader2 className="animate-spin text-zinc-400" size={28} />
                   </div>
-                ) : detailData ? (
+                ) : detailData && detailData.username === selectedRow?.username ? (
                   <StudentDashboard
+                    key={detailData.username}
                     data={detailData}
                     onSuspendToggle={handleToggleSuspension}
                     onResetPassword={handleGlobalResetPassword}
+                    onDeleteStudent={handleDeleteStudent}
                     onEditDetails={(std) => {
                       setEditingStudent(std);
                       setEditModalOpen(true);
@@ -812,6 +904,7 @@ export default function StudentDetails() {
       <AdminDialog
         open={resetModalOpen}
         onOpenChange={setResetModalOpen}
+        elevated
         title="Reset password"
         description={resetTargetUser}
         maxWidth="max-w-md"
@@ -844,10 +937,61 @@ export default function StudentDetails() {
         </div>
       </AdminDialog>
 
+      <AdminDialog
+        open={deleteModalOpen}
+        onOpenChange={setDeleteModalOpen}
+        elevated
+        title="Permanently delete student"
+        description="This cannot be undone. Profile, login, grades, attendance, and request history will be removed."
+        maxWidth="max-w-md"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setDeleteModalOpen(false)}
+              className={adminGhostButtonClass}
+              disabled={deleting}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={confirmDeleteStudent}
+              disabled={
+                deleting ||
+                deleteConfirmText.trim().toUpperCase() !== deleteTargetUser.toUpperCase()
+              }
+              className={adminDangerButtonClass}
+            >
+              {deleting ? <Loader2 className="animate-spin w-4 h-4" /> : <Trash2 className="w-4 h-4" />}
+              Delete permanently
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-[13px] text-zinc-600">
+            Type <span className="font-semibold text-zinc-900">{deleteTargetUser}</span> to confirm.
+          </p>
+          <div className="space-y-2">
+            <label className={adminLabelClass}>Student ID</label>
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder={deleteTargetUser}
+              className={adminInputClass}
+              autoComplete="off"
+            />
+          </div>
+        </div>
+      </AdminDialog>
+
       <StudentEditModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         student={editingStudent}
+        elevated={drawerOpen}
         onSuccess={() => fetchStudents(pagination.page)}
       />
 

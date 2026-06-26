@@ -63,6 +63,25 @@ router.post("/internal/push", requireAuth, async (req, res) => {
   }
 });
 
+router.delete("/internal/subscriptions/:username", requireAuth, async (req, res) => {
+  try {
+    const username = String(req.params.username || "").toLowerCase();
+    if (!username) {
+      return res.status(400).json({ success: false, error: "Username required" });
+    }
+    const result = await prisma.pushSubscription.deleteMany({
+      where: { username: { equals: username, mode: "insensitive" } },
+    });
+    return res.json({
+      success: true,
+      deleted: result.count,
+      message: `Removed ${result.count} push subscription(s)`,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 router.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
   try {
     const { target, username, batch, year, branch, title, body, image } =
@@ -178,21 +197,102 @@ router.post("/push/send", requireAuth, requireAdmin, async (req, res) => {
 
 router.get("/push/subscribers", requireAuth, requireAdmin, async (req, res) => {
   try {
-    const prefix = req.query.prefix as string | undefined;
+    const search = String(req.query.search || req.query.prefix || "").trim();
     const page = Math.max(1, parseInt(String(req.query.page || "1"), 10));
     const limit = Math.min(500, parseInt(String(req.query.limit || "50"), 10));
     const skip = (page - 1) * limit;
+    const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
 
-    const where = prefix
-      ? { username: { startsWith: prefix, mode: "insensitive" as const } }
-      : {};
+    let where: Record<string, unknown> = {};
+
+    if (search) {
+      const directWhere = {
+        OR: [
+          { username: { contains: search, mode: "insensitive" as const } },
+          { endpoint: { contains: search, mode: "insensitive" as const } },
+        ],
+      };
+
+      let nameMatchedUsernames: string[] = [];
+      if (search.length >= 2) {
+        try {
+          const searchRes = await axios.post(
+            `${USER_SERVICE_URL}/student/search`,
+            { username: search, limit: 150, page: 1 },
+            { headers: { "x-internal-secret": SECRET } },
+          );
+          if (searchRes.data?.students?.length) {
+            nameMatchedUsernames = searchRes.data.students.map((s: { username: string }) =>
+              String(s.username).toLowerCase(),
+            );
+          }
+        } catch {
+          /* name search optional */
+        }
+      }
+
+      if (nameMatchedUsernames.length) {
+        where = {
+          OR: [
+            directWhere,
+            { username: { in: nameMatchedUsernames, mode: "insensitive" as const } },
+          ],
+        };
+      } else {
+        where = directWhere;
+      }
+    }
 
     const [total, subscribers] = await Promise.all([
       prisma.pushSubscription.count({ where }),
-      prisma.pushSubscription.findMany({ where, orderBy: { createdAt: "desc" }, skip, take: limit }),
+      prisma.pushSubscription.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
     ]);
 
-    res.json({ success: true, total, page, limit, subscribers });
+    const usernames = [
+      ...new Set(subscribers.map((s) => String(s.username).toUpperCase())),
+    ];
+    const profileMap = new Map<string, Record<string, string>>();
+
+    if (usernames.length) {
+      try {
+        const profRes = await axios.post(
+          `${USER_SERVICE_URL}/internal/bulk-profiles`,
+          { usernames },
+          { headers: { "x-internal-secret": SECRET } },
+        );
+        for (const p of profRes.data?.students || []) {
+          profileMap.set(String(p.username).toUpperCase(), p);
+        }
+      } catch {
+        /* enrichment optional */
+      }
+    }
+
+    const enriched = subscribers.map((s) => {
+      const profile = profileMap.get(String(s.username).toUpperCase());
+      return {
+        ...s,
+        displayName: profile?.name || null,
+        branch: profile?.branch || null,
+        year: profile?.year || null,
+        batch: profile?.batch || null,
+        email: profile?.email || null,
+      };
+    });
+
+    res.json({
+      success: true,
+      total,
+      page,
+      limit,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
+      subscribers: enriched,
+    });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }
