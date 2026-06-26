@@ -212,7 +212,7 @@ async function seed() {
       "Sample E4 CSE Student",
       "Student",
       {
-        name: "Desu SABER",
+        name: "Desu SreeCharan",
         email: "o210008@rguktong.ac.in",
         branch: "CSE",
         year: "E4",
