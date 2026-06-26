@@ -36,6 +36,7 @@ import {
   adminPrimaryButtonClass,
   adminGhostButtonClass,
 } from "../../../components/admin/admin-ui";
+import DirectPublishModal from "./DirectPublishModal";
 
 interface Semester {
   id: string;
@@ -110,6 +111,7 @@ export default function SemesterRegistrationSection({
     academicYear: "E1",
   });
   const [subjectSearchQuery, setSubjectSearchQuery] = useState("");
+  const [publishSem, setPublishSem] = useState<Semester | null>(null);
 
   const role = (() => {
     try {
@@ -423,16 +425,16 @@ export default function SemesterRegistrationSection({
 
                   {isAdmin && (
                     <div className="flex items-center gap-3 mt-2">
-                      {sem.status !== "REGISTRATION_OPEN" && (
-                        <button
-                          onClick={() =>
-                            updateStatus(sem.id, "REGISTRATION_OPEN")
-                          }
-                          className="flex-1 py-4 bg-zinc-900 text-white rounded-xl font-bold text-xs hover:bg-zinc-800 transition-all shadow-none"
-                        >
-                          Open Enrollment
-                        </button>
-                      )}
+                      {role === "webmaster" &&
+                        sem.status !== "REGISTRATION_OPEN" &&
+                        sem.status !== "REGISTRATION_CLOSED" && (
+                          <button
+                            onClick={() => setPublishSem(sem)}
+                            className="flex-1 py-4 bg-zinc-900 text-white rounded-xl font-bold text-xs hover:bg-zinc-800 transition-all shadow-none"
+                          >
+                            Publish to Students
+                          </button>
+                        )}
                       {sem.status === "REGISTRATION_OPEN" && (
                         <button
                           onClick={() =>
@@ -939,6 +941,17 @@ export default function SemesterRegistrationSection({
             </div>
           </div>
         </div>
+      )}
+
+      {publishSem && (
+        <DirectPublishModal
+          semester={publishSem}
+          onClose={() => setPublishSem(null)}
+          onPublished={() => {
+            setPublishSem(null);
+            fetchSemesters();
+          }}
+        />
       )}
     </div>
   );

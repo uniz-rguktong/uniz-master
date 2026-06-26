@@ -247,6 +247,7 @@ export default function SemesterBuilder() {
   const [loading, setLoading] = useState(true);
   const [builderOpen, setBuilderOpen] = useState(false);
   const [trackingSem, setTrackingSem] = useState<any | null>(null);
+  const [publishSem, setPublishSem] = useState<any | null>(null);
 
   const fetchSemesters = async () => {
     setLoading(true);
@@ -351,6 +352,7 @@ export default function SemesterBuilder() {
               onAdvance={advance}
               onSetStatus={setStatus}
               onRemove={remove}
+              onPublish={() => setPublishSem(sem)}
               onTrack={
                 sem.status === "REGISTRATION_OPEN" ||
                 sem.status === "REGISTRATION_CLOSED"
@@ -373,6 +375,17 @@ export default function SemesterBuilder() {
           />
         )}
       </AnimatePresence>
+
+      {publishSem && (
+        <DirectPublishModal
+          semester={publishSem}
+          onClose={() => setPublishSem(null)}
+          onPublished={() => {
+            setPublishSem(null);
+            fetchSemesters();
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -403,6 +416,7 @@ function SemesterCard({
   onAdvance,
   onSetStatus,
   onRemove,
+  onPublish,
   onTrack,
 }: {
   sem: any;
@@ -410,8 +424,11 @@ function SemesterCard({
   onAdvance: (id: string, action: string, label: string) => void;
   onSetStatus: (id: string, status: string, label: string) => void;
   onRemove: (id: string, name: string) => void;
+  onPublish: () => void;
   onTrack?: () => void;
 }) {
+  const canPublishDirect =
+    sem.status !== "REGISTRATION_OPEN" && sem.status !== "REGISTRATION_CLOSED";
   const meta = STATUS_META[sem.status] || STATUS_META.DRAFT;
   const fmt = (d?: string) =>
     d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : "—";
@@ -479,14 +496,12 @@ function SemesterCard({
             Awaiting {sem.status === "DEAN_REVIEW" ? "Dean" : "HOD"} approval
           </span>
         )}
-        {sem.status === "APPROVED" && (
+        {canPublishDirect && (
           <ActionBtn
             tone="primary"
-            icon={<PlayCircle size={14} />}
-            label="Open Registration"
-            onClick={() =>
-              onSetStatus(sem.id, "REGISTRATION_OPEN", "Registration opened")
-            }
+            icon={<Rocket size={14} />}
+            label="Publish to Students"
+            onClick={onPublish}
           />
         )}
         {sem.status === "REGISTRATION_OPEN" && (
