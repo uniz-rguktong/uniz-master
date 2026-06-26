@@ -31,3 +31,59 @@ export function resolveAdminPortalRole(
 
   return role;
 }
+
+/** HOD department from JWT, storage, or username pattern (e.g. hod_cse → CSE). */
+export function resolveHodDepartment(
+  decoded: DecodedToken | null,
+  usernameFallback = "",
+): string {
+  const fromJwt = (decoded?.department || "")
+    .replace(/"/g, "")
+    .trim()
+    .toUpperCase();
+  if (fromJwt && fromJwt !== "GENERAL") return fromJwt;
+
+  const fromStorage = (localStorage.getItem("department") || "")
+    .replace(/"/g, "")
+    .trim()
+    .toUpperCase();
+  if (fromStorage && fromStorage !== "GENERAL") return fromStorage;
+
+  const uname = (
+    decoded?.username ||
+    usernameFallback ||
+    localStorage.getItem("username") ||
+    ""
+  )
+    .replace(/"/g, "")
+    .toLowerCase();
+
+  const part = uname.split(/[_-]/)[1];
+  return part ? part.toUpperCase() : "CSE";
+}
+
+/** Branch code for HOD accounts (e.g. hod_cse → CSE). */
+export function resolveHodBranch(
+  decoded: DecodedToken | null,
+  usernameFallback = "",
+): string {
+  const fromJwt = String(
+    decoded?.department || localStorage.getItem("department") || "",
+  )
+    .trim()
+    .toUpperCase();
+  if (fromJwt && fromJwt !== "GENERAL") return fromJwt;
+
+  const uname = (
+    decoded?.username ||
+    usernameFallback ||
+    localStorage.getItem("username") ||
+    ""
+  )
+    .replace(/"/g, "")
+    .toLowerCase();
+
+  return String(uname.split(/[_-]/)[1] || "")
+    .trim()
+    .toUpperCase();
+}
