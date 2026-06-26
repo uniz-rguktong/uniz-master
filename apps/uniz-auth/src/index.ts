@@ -32,7 +32,7 @@ app.use((req, res) => {
     status: "error",
     message: `Route ${req.method} ${req.url} not found`,
     timestamp: new Date().toISOString(),
-    attribution: "SABER",
+    attribution: "SreeCharan",
   });
 });
 

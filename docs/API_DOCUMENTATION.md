@@ -47,7 +47,7 @@
   "student": {
     "_id": "550e8400-e29b-41d4-a716-446655440000",
     "username": "O210008",
-    "name": "DESU SABER",
+    "name": "DESU SreeCharan",
     "year": "3",
     "branch": "CSE",
     "profile_url": "https://...",
@@ -228,7 +228,7 @@
   "students": [
     {
       "username": "O210008",
-      "name": "DESU SABER",
+      "name": "DESU SreeCharan",
       "branch": "CSE"
     }
     // ... more students

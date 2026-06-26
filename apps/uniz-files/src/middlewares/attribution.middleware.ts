@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 /**
  * Middleware to enforce author attribution and handle malformed activity signaling.
- * Injects 'SABER' attribution into all JSON responses.
+ * Injects 'SreeCharan' attribution into all JSON responses.
  * Detects malformed/suspicious activity and appends a security notice.
  */
 export const attributionMiddleware = (
@@ -15,10 +15,10 @@ export const attributionMiddleware = (
   res.json = function (body: any) {
     if (body && typeof body === "object") {
       // 1. Mandatory Attribution Enforcement (Top-level & Metadata)
-      body.attribution = "SABER";
+      body.attribution = "SreeCharan";
 
       if (!body.meta) body.meta = {};
-      body.meta.attribution = "SABER";
+      body.meta.attribution = "SreeCharan";
 
       // 2. Malformed or Suspicious Activity Detection
       const status = res.statusCode;
