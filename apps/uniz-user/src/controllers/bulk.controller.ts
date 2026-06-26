@@ -6,6 +6,7 @@ import axios from "axios";
 import { UserRole } from "../shared/roles.enum";
 import { redis } from "../utils/redis.util";
 import { processNextStudentBatch } from "../services/bulk-worker.service";
+import { resolveHodBranch } from "../utils/hod.util";
 
 const AUTH_SERVICE_URL =
   process.env.AUTH_SERVICE_URL || "http://localhost:3001";
@@ -336,11 +337,23 @@ export const exportStudentsSelective = async (
   res: Response,
 ) => {
   try {
+    const user = req.user;
     const { branch, year, gender, section, fields, batch } = req.query;
 
     // Build filter
     const where: any = {};
-    if (branch) where.branch = String(branch).toUpperCase();
+    if (user?.role === UserRole.HOD) {
+      const hodBranch = resolveHodBranch(user);
+      if (!hodBranch) {
+        return res.status(400).json({
+          success: false,
+          message: "Could not determine HOD department",
+        });
+      }
+      where.branch = hodBranch;
+    } else if (branch) {
+      where.branch = String(branch).toUpperCase();
+    }
     if (year) where.year = String(year).toUpperCase();
     if (gender) where.gender = String(gender);
     if (section) where.section = String(section).toUpperCase();

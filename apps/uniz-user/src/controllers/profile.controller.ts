@@ -6,6 +6,7 @@ import { UserRole } from "../shared/roles.enum";
 import axios from "axios";
 import { redis } from "../utils/redis.util";
 import { randomUUID } from "crypto";
+import { resolveHodBranch } from "../utils/hod.util";
 
 const NOTIFICATION_SERVICE_URL = (
   (process.env.DOCKER_ENV === "true"
@@ -192,6 +193,23 @@ export const getStudentProfile = async (
         code: ErrorCode.RESOURCE_NOT_FOUND,
         message: "Profile not found",
       });
+    }
+
+    if (
+      user.role === UserRole.HOD &&
+      req.params.username &&
+      !isSelf
+    ) {
+      const hodBranch = resolveHodBranch(user);
+      const studentBranch = String(profile.branch || "")
+        .trim()
+        .toUpperCase();
+      if (hodBranch && studentBranch !== hodBranch) {
+        return res.status(403).json({
+          code: ErrorCode.AUTH_FORBIDDEN,
+          message: `HODs can only view students in their department (${hodBranch})`,
+        });
+      }
     }
 
     const mapped: any = mapStudentProfile(profile);
@@ -553,6 +571,17 @@ export const searchStudents = async (
         where.totalBacklogs.gte = Number(minBacklogs);
       if (maxBacklogs !== undefined && maxBacklogs !== "")
         where.totalBacklogs.lte = Number(maxBacklogs);
+    }
+
+    if (user.role === UserRole.HOD) {
+      const hodBranch = resolveHodBranch(user);
+      if (!hodBranch) {
+        return res.status(400).json({
+          code: ErrorCode.VALIDATION_ERROR,
+          message: "Could not determine HOD department",
+        });
+      }
+      where.branch = { equals: hodBranch, mode: "insensitive" };
     }
 
     const sortFieldMap: Record<string, string> = {

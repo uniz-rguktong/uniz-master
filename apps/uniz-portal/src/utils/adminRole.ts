@@ -67,23 +67,5 @@ export function resolveHodBranch(
   decoded: DecodedToken | null,
   usernameFallback = "",
 ): string {
-  const fromJwt = String(
-    decoded?.department || localStorage.getItem("department") || "",
-  )
-    .trim()
-    .toUpperCase();
-  if (fromJwt && fromJwt !== "GENERAL") return fromJwt;
-
-  const uname = (
-    decoded?.username ||
-    usernameFallback ||
-    localStorage.getItem("username") ||
-    ""
-  )
-    .replace(/"/g, "")
-    .toLowerCase();
-
-  return String(uname.split(/[_-]/)[1] || "")
-    .trim()
-    .toUpperCase();
+  return resolveHodDepartment(decoded, usernameFallback);
 }

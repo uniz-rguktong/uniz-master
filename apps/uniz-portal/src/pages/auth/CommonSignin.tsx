@@ -466,10 +466,14 @@ export default function Signin({ type }: SigninProps) {
         localStorage.setItem("admin_token", token);
         localStorage.setItem("username", username.trim());
         const jwtRole = token ? parseJwt(token)?.role : null;
+        const jwtDept = token ? parseJwt(token)?.department : null;
         localStorage.setItem(
           "admin_role",
           (jwtRole || (data as any).role || "admin").toLowerCase(),
         );
+        if (jwtDept) {
+          localStorage.setItem("department", jwtDept);
+        }
 
         setAuth({ is_authenticated: true, type: "admin" });
         setAdmin(username.trim());
