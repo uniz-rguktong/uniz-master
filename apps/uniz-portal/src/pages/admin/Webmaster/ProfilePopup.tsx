@@ -444,7 +444,7 @@ function DetailRow({
         {icon}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[9.5px] font-bold text-zinc-400 uppercase tracking-[0.14em] leading-none mb-0.5">
+        <p className="text-[9.5px] font-bold text-zinc-400 tracking-[0.14em] leading-none mb-0.5">
           {label}
         </p>
         {editable && onChange ? (

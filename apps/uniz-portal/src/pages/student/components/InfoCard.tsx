@@ -22,7 +22,7 @@ export const InfoCard = memo(
       >
         <div className="flex items-center gap-2 mb-3">
           <span className="text-zinc-900">{icon}</span>
-          <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400">
+          <span className="text-[10px] font-bold tracking-[0.14em] text-zinc-400">
             {label}
           </span>
         </div>

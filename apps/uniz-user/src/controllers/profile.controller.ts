@@ -1410,16 +1410,56 @@ export const deleteStudentProfile = async (
     return res.status(400).json({ success: false, message: "Student ID required" });
   }
 
+  try {
+    const result = await purgeStudentAccount(username);
+    if (result.status === "not_found") {
+      return res.status(404).json({ success: false, message: "Student not found" });
+    }
+    if (result.status === "error") {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to delete student",
+        details: result.reason,
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: `Student ${result.username} permanently deleted`,
+      username: result.username,
+    });
+  } catch (e: any) {
+    console.error(`[ERROR] deleteStudentProfile failed for ${username}:`, e.message || e);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete student",
+      details: e.message,
+    });
+  }
+};
+
+type PurgeStudentResult = {
+  username: string;
+  status: "deleted" | "not_found" | "error";
+  reason?: string;
+};
+
+async function purgeStudentAccount(rawUsername: string): Promise<PurgeStudentResult> {
+  const lookup = String(rawUsername || "").trim();
+  if (!lookup) {
+    return { username: lookup, status: "error", reason: "empty username" };
+  }
+
   const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
   const internalHeaders = { headers: { "x-internal-secret": SECRET }, timeout: 20000 };
 
   try {
     const existing = await prisma.studentProfile.findFirst({
-      where: { username: { equals: username, mode: "insensitive" } },
+      where: { username: { equals: lookup, mode: "insensitive" } },
     });
 
     if (!existing) {
-      return res.status(404).json({ success: false, message: "Student not found" });
+      return { username: lookup.toUpperCase(), status: "not_found" };
     }
 
     const canonicalUsername = existing.username;
@@ -1457,19 +1497,68 @@ export const deleteStudentProfile = async (
     await prisma.studentProfile.delete({ where: { id: existing.id } });
     await redis.del(`profile:v2:${canonicalUsername}`);
 
-    return res.json({
-      success: true,
-      message: `Student ${canonicalUsername} permanently deleted`,
-      username: canonicalUsername,
-    });
+    return { username: canonicalUsername, status: "deleted" };
   } catch (e: any) {
-    console.error(`[ERROR] deleteStudentProfile failed for ${username}:`, e.message || e);
-    return res.status(500).json({
+    return {
+      username: lookup.toUpperCase(),
+      status: "error",
+      reason: e.message,
+    };
+  }
+}
+
+export const bulkDeleteStudents = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user || user.role !== UserRole.WEBMASTER) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  const usernames: string[] = req.body?.usernames;
+  if (!Array.isArray(usernames) || usernames.length === 0) {
+    return res.status(400).json({
       success: false,
-      message: "Failed to delete student",
-      details: e.message,
+      message: "usernames array is required",
     });
   }
+
+  const unique = [
+    ...new Set(
+      usernames
+        .map((u) => String(u || "").trim().toUpperCase())
+        .filter(Boolean),
+    ),
+  ];
+
+  if (unique.length > 100) {
+    return res.status(400).json({
+      success: false,
+      message: "Maximum 100 students per bulk delete request",
+    });
+  }
+
+  const results: PurgeStudentResult[] = [];
+  const concurrency = 3;
+  for (let i = 0; i < unique.length; i += concurrency) {
+    const chunk = unique.slice(i, i + concurrency);
+    const chunkResults = await Promise.all(chunk.map((u) => purgeStudentAccount(u)));
+    results.push(...chunkResults);
+  }
+
+  const deleted = results.filter((r) => r.status === "deleted").length;
+  const notFound = results.filter((r) => r.status === "not_found").length;
+  const errors = results.filter((r) => r.status === "error").length;
+
+  return res.json({
+    success: errors === 0 || deleted > 0,
+    message: `Deleted ${deleted} student(s)${notFound ? `, ${notFound} not found` : ""}${errors ? `, ${errors} failed` : ""}`,
+    summary: { total: unique.length, deleted, notFound, errors },
+    results,
+  });
 };
 
 export const updateFacultyProfileSelf = async (
@@ -1946,15 +2035,22 @@ export const promoteCohort = async (
     return res.status(400).json({ success: false, message: "Missing fromYear or toYear" });
   }
 
-  // Security: only DEAN or WEBMASTER or DIRECTOR can promote
-  const userRole = (req as any).user?.role;
-  if (!["DEAN", "WEBMASTER", "DIRECTOR"].includes(userRole)) {
-    return res.status(403).json({ success: false, message: "Insufficient hierarchy for cohort promotion" });
+  const user = req.user;
+  const allowedRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR, UserRole.COE];
+  if (!user || !allowedRoles.includes(user.role as UserRole)) {
+    return res.status(403).json({
+      success: false,
+      message: "Insufficient hierarchy for cohort promotion",
+    });
   }
 
   try {
-    const where: any = { year: fromYear };
-    if (branch && branch !== "ALL") where.branch = branch;
+    const where: any = {
+      year: { equals: String(fromYear), mode: "insensitive" },
+    };
+    if (branch && String(branch).toUpperCase() !== "ALL") {
+      where.branch = { equals: String(branch), mode: "insensitive" };
+    }
 
     const result = await prisma.studentProfile.updateMany({
       where,

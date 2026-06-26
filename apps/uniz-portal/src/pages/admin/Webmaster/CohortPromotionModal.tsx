@@ -49,8 +49,8 @@ export default function CohortPromotionModal({
   const handlePromote = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (confirmText !== "PROMOTE") {
-      toast.error('Type PROMOTE to confirm this action');
+    if (confirmText.toLowerCase() !== "promote") {
+      toast.error("Type Promote to confirm this action");
       return;
     }
 
@@ -83,7 +83,7 @@ export default function CohortPromotionModal({
     }
   };
 
-  const canSubmit = confirmText === "PROMOTE" && !loading;
+  const canSubmit = confirmText.toLowerCase() === "promote" && !loading;
 
   return (
     <AdminDialog
@@ -156,13 +156,13 @@ export default function CohortPromotionModal({
 
         <div className="space-y-2">
           <label className={cn(adminLabelClass, "text-rose-500")}>
-            Type PROMOTE to confirm
+            Type Promote to confirm
           </label>
           <input
             type="text"
             value={confirmText}
-            onChange={(e) => setConfirmText(e.target.value.toUpperCase())}
-            placeholder="PROMOTE"
+            onChange={(e) => setConfirmText(e.target.value)}
+            placeholder="Promote"
             className={adminDangerInputClass}
           />
         </div>

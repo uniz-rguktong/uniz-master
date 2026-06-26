@@ -268,7 +268,7 @@ export default function RoleManagement() {
 
             <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
               <table className="w-full text-left text-sm">
-                <thead className="bg-zinc-50 text-zinc-500 uppercase text-xs font-semibold">
+                <thead className="bg-zinc-50 text-zinc-500 text-xs font-semibold">
                   <tr>
                     <th className="px-6 py-4">Admin User</th>
                     <th className="px-6 py-4">Assigned Role</th>
@@ -427,7 +427,7 @@ export default function RoleManagement() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Role Selector Sidebar */}
               <div className="bg-white border border-zinc-200 rounded-xl p-4 h-fit">
-                <h3 className="font-semibold text-zinc-900 px-2 mb-3 text-sm uppercase tracking-wide">
+                <h3 className="font-semibold text-zinc-900 px-2 mb-3 text-sm tracking-wide">
                   Select Role
                 </h3>
                 <div className="space-y-1">
@@ -470,7 +470,7 @@ export default function RoleManagement() {
                 {selectedRole ? (
                   <div className="bg-white border border-zinc-200 rounded-xl p-8 shadow-sm">
                     <div className="flex items-center gap-3 mb-6 pb-6 border-b border-zinc-100">
-                      <div className="h-10 w-10 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-900 font-bold uppercase text-lg">
+                      <div className="h-10 w-10 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-900 font-bold text-lg">
                         {selectedRole[0]}
                       </div>
                       <div>

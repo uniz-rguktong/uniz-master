@@ -202,7 +202,7 @@ export default function SubjectManagement() {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="h-11 px-6 bg-zinc-900 text-white rounded-xl font-bold uppercase tracking-[0.14em] text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2"
+          className="h-11 px-6 bg-zinc-900 text-white rounded-xl font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2"
         >
           <Plus size={16} /> New Subject
         </button>
@@ -231,7 +231,7 @@ export default function SubjectManagement() {
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            className="bg-white border border-zinc-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] uppercase tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
+            className="bg-white border border-zinc-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Departments</option>
             <option value="CSE">CSE</option>
@@ -256,7 +256,7 @@ export default function SubjectManagement() {
           <select
             value={semester}
             onChange={(e) => setSemester(e.target.value)}
-            className="bg-white border border-zinc-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] uppercase tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
+            className="bg-white border border-zinc-200 pl-11 pr-10 h-11 rounded-xl font-bold text-[10px] tracking-[0.14em] text-zinc-600 outline-none focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 min-w-[170px] transition-all cursor-pointer appearance-none shadow-none"
           >
             <option value="">All Semesters</option>
             {["E1", "E2", "E3", "E4"].map((y) => (
@@ -318,7 +318,7 @@ export default function SubjectManagement() {
                   </div>
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+                      <span className="text-[9px] font-semibold tracking-[0.14em] text-zinc-400">
                         {sub.code}
                       </span>
                     </div>
@@ -344,7 +344,7 @@ export default function SubjectManagement() {
 
                 <div className="grid grid-cols-2 gap-3 pt-3 border-t border-zinc-50">
                   <div className="flex flex-col">
-                    <p className="text-[8px] font-semibold text-zinc-300 uppercase tracking-[0.14em] leading-none mb-1">
+                    <p className="text-[8px] font-semibold text-zinc-300 tracking-[0.14em] leading-none mb-1">
                       Department
                     </p>
                     <p className="font-bold text-zinc-600 text-[10px] flex items-center gap-1.5">
@@ -353,7 +353,7 @@ export default function SubjectManagement() {
                     </p>
                   </div>
                   <div className="flex flex-col">
-                    <p className="text-[8px] font-semibold text-zinc-300 uppercase tracking-[0.14em] leading-none mb-1">
+                    <p className="text-[8px] font-semibold text-zinc-300 tracking-[0.14em] leading-none mb-1">
                       Semester
                     </p>
                     <p className="font-bold text-zinc-600 text-[10px] flex items-center gap-1.5">
@@ -363,7 +363,7 @@ export default function SubjectManagement() {
                   </div>
                   <div className="col-span-2 pt-1">
                     <div className="flex items-center justify-between mb-1.5">
-                      <p className="text-[8px] font-semibold text-zinc-300 uppercase tracking-[0.14em]">
+                      <p className="text-[8px] font-semibold text-zinc-300 tracking-[0.14em]">
                         Academic Weight
                       </p>
                       <span className="text-[9px] font-semibold text-zinc-900 px-1.5 py-0.5 bg-zinc-50 rounded-md">
@@ -462,7 +462,7 @@ export default function SubjectManagement() {
               setDepartment("");
               setSemester("");
             }}
-            className="text-zinc-900 font-semibold text-sm uppercase tracking-[0.14em] hover:underline active:scale-95"
+            className="text-zinc-900 font-semibold text-sm tracking-[0.14em] hover:underline active:scale-95"
           >
             Clear all filters
           </button>
@@ -511,7 +511,7 @@ export default function SubjectManagement() {
                       code: e.target.value.toUpperCase(),
                     })
                   }
-                  className={cn(adminInputClass, "uppercase")}
+                  className={cn(adminInputClass, "")}
                   placeholder="CSE402"
                 />
               </div>

@@ -123,7 +123,7 @@ export default function Resetpassword() {
               <div className="space-y-4 md:space-y-6">
                 {/* Current Password */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500 mb-1.5 block">
+                  <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
                     Current Password
                   </label>
                   <div className="relative group">
@@ -138,7 +138,7 @@ export default function Resetpassword() {
 
                 {/* New Password */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500 mb-1.5 block">
+                  <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
                     New Password
                   </label>
                   <div className="relative group">
@@ -160,7 +160,7 @@ export default function Resetpassword() {
                             }}
                           ></div>
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                        <span className="text-[10px] font-bold tracking-wider text-zinc-400">
                           {passwordStrength.label}
                         </span>
                       </div>
@@ -170,7 +170,7 @@ export default function Resetpassword() {
 
                 {/* Confirm New Password */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500 mb-1.5 block">
+                  <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
                     Confirm Password
                   </label>
                   <div className="relative group">
@@ -197,7 +197,7 @@ export default function Resetpassword() {
             {/* Info Section */}
             <div className="hidden md:flex md:w-1/3 bg-zinc-50/50 p-6 md:p-8 border-l border-zinc-100 flex-col justify-between">
               <div>
-                <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-[0.14em] mb-6 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-zinc-400 tracking-[0.14em] mb-6 flex items-center gap-2">
                   Password Strength
                 </h3>
 
@@ -247,7 +247,7 @@ export default function Resetpassword() {
                       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                     />
                   </svg>
-                  <p className="text-[11px] font-medium text-zinc-400 leading-relaxed uppercase tracking-wider">
+                  <p className="text-[11px] font-medium text-zinc-400 leading-relaxed tracking-wider">
                     Terminal security protocol will automatically log out all
                     sessions after successful credential update.
                   </p>

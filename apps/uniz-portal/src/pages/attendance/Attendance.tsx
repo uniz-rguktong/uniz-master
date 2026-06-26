@@ -232,7 +232,7 @@ export default function Attendance() {
         <div className="mb-8 md:bg-white p-6 md:rounded-xl md:border md:border-zinc-100 md:shadow-sm bg-transparent transition-all duration-300 px-0 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
             <div className="relative group">
-              <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500 mb-1.5 block">
+              <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
                 Academic Year
               </label>
               <div
@@ -275,7 +275,7 @@ export default function Attendance() {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500 mb-1.5 block">
+              <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
                 Semester
               </label>
               <div className="relative">
@@ -309,7 +309,7 @@ export default function Attendance() {
                   disabled={isLoading || !user?.username}
                 >
                   {isLoading ? (
-                    <span className="flex items-center gap-1.5 text-sm uppercase tracking-[0.14em]">
+                    <span className="flex items-center gap-1.5 text-sm tracking-[0.14em]">
                       Syncing...
                     </span>
                   ) : fromCache ? (
@@ -365,7 +365,7 @@ export default function Attendance() {
               {/* Header */}
               <div className="flex items-end justify-between border-b pb-4 border-zinc-100 px-4 md:px-0 pt-5 md:pt-0">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400 block mb-1">
+                  <span className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 block mb-1">
                     Matrix Snapshot
                   </span>
                   <h2 className="text-[17px] font-semibold tracking-tight text-zinc-900">
@@ -422,16 +422,16 @@ export default function Attendance() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-zinc-200 md:bg-zinc-50/50 bg-transparent">
-                          <th className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500">
+                          <th className="px-4 py-2 text-left text-[10px] font-bold tracking-[0.14em] text-zinc-500">
                             Subject
                           </th>
-                          <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500">
+                          <th className="px-4 py-2 text-center text-[10px] font-bold tracking-[0.14em] text-zinc-500">
                             Total Classes
                           </th>
-                          <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500">
+                          <th className="px-4 py-2 text-center text-[10px] font-bold tracking-[0.14em] text-zinc-500">
                             Attended
                           </th>
-                          <th className="px-4 py-2 text-center text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500">
+                          <th className="px-4 py-2 text-center text-[10px] font-bold tracking-[0.14em] text-zinc-500">
                             Percentage
                           </th>
                         </tr>
@@ -488,7 +488,7 @@ export default function Attendance() {
                       {/* Summary calculation if available, or just a placeholder */}
                       <div className="flex items-center gap-6">
                         <div className="text-right flex items-center gap-3">
-                          <p className="text-zinc-400 font-bold text-[10px] uppercase tracking-[0.14em]">
+                          <p className="text-zinc-400 font-bold text-[10px] tracking-[0.14em]">
                             Semester Avg :
                           </p>
                           <p className="text-3xl font-semibold text-zinc-900 md:text-white tracking-tighter">

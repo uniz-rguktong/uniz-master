@@ -86,7 +86,7 @@ function OtpInput({
 
   return (
     <div className="space-y-2">
-      <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] block ml-1">
+      <label className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] block ml-1">
         Verification Code
       </label>
       <div className="flex gap-2.5 justify-center">
@@ -161,11 +161,11 @@ function PasswordStrength({ password }: { password: string }) {
         />
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+        <span className="text-[10px] font-bold tracking-wider text-zinc-400">
           Password strength
         </span>
         <span
-          className={`text-[10px] font-semibold uppercase tracking-wider ${
+          className={`text-[10px] font-semibold tracking-wider ${
             score <= 1
               ? "text-red-500"
               : score <= 2
@@ -840,7 +840,7 @@ export default function Signin({ type }: SigninProps) {
                   <div className="text-center space-y-3">
                     <button
                       type="button"
-                      className="text-[11px] text-zinc-500 hover:text-zinc-950 font-semibold uppercase tracking-wider transition-all disabled:opacity-50"
+                      className="text-[11px] text-zinc-500 hover:text-zinc-950 font-semibold tracking-wider transition-all disabled:opacity-50"
                       onClick={requestEmailOtp}
                       disabled={isLoading || (requiresCaptcha() && !captchaToken)}
                     >
@@ -878,7 +878,7 @@ export default function Signin({ type }: SigninProps) {
                       }}
                     >
                       <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      <span className="text-[11px] font-semibold text-emerald-700 uppercase tracking-[0.14em]">
+                      <span className="text-[11px] font-semibold text-emerald-700 tracking-[0.14em]">
                         OTP Verified
                       </span>
                     </motion.div>

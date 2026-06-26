@@ -84,9 +84,9 @@ export default function ContactUs() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-zinc-100 shadow-sm rounded-full mb-8">
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            <span className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.14em]">Contact Channels</span>
+            <span className="text-zinc-600 text-[10px] font-bold tracking-[0.14em]">Contact Channels</span>
           </div>
-          <h1 className="text-7xl font-semibold text-zinc-900 mb-6 uppercase tracking-tighter leading-none">
+          <h1 className="text-7xl font-semibold text-zinc-900 mb-6 tracking-tighter leading-none">
             Get in <span className="text-zinc-300">Touch</span>
           </h1>
           <p className="text-zinc-400 text-xl font-medium max-w-md mx-auto leading-relaxed">
@@ -122,7 +122,7 @@ export default function ContactUs() {
               className="h-16 px-12 rounded-full border-zinc-200 bg-white text-zinc-500 hover:text-zinc-900 hover:border-zinc-900 transition-all duration-500 group"
             >
               <ArrowLeft className="w-5 h-5 mr-3 group-hover:-translate-x-1 transition-transform" />
-              <span className="font-bold uppercase tracking-[0.14em] text-xs">Return to Home</span>
+              <span className="font-bold tracking-[0.14em] text-xs">Return to Home</span>
             </Button>
           </Link>
         </motion.div>
