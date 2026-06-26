@@ -12,6 +12,11 @@ logs/
 build/
 dist/
 apps/*/src/generated/
+*.tsbuildinfo
+
+# Local data exports (not for version control)
+*.xlsx
+tests/final_data/
 
 # Vercel
 .vercel
