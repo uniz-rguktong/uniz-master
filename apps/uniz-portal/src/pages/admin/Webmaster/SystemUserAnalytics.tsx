@@ -117,7 +117,7 @@ export default function SystemUserAnalytics() {
             <DonutChartSkeleton />
           </div>
           <div className="lg:col-span-8 flex">
-            <div className="w-full bg-slate-50/50 rounded-xl animate-pulse min-h-[400px]" />
+            <div className="w-full bg-zinc-50/50 rounded-xl animate-pulse min-h-[400px]" />
           </div>
         </div>
       </div>
@@ -185,8 +185,8 @@ export default function SystemUserAnalytics() {
           value={staffTotal.toLocaleString()}
           icon={Shield}
           badge="Secured"
-          iconColor="text-indigo-600"
-          iconBg="bg-indigo-50"
+          iconColor="text-zinc-600"
+          iconBg="bg-zinc-50"
         />
       </div>
 

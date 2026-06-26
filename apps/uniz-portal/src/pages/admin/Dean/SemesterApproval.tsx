@@ -21,6 +21,22 @@ import {
   ELECTIVE_GROUPS,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { SectionHeader } from "../../../components/admin/SectionHeader";
+import {
+  adminPageWrapClass,
+  adminCardClass,
+  adminChipClass,
+  adminEyebrowClass,
+  adminLabelClass,
+  adminSectionTitleClass,
+  adminPrimaryButtonClass,
+  adminGhostButtonClass,
+  adminDangerButtonClass,
+  adminSegmentWrapClass,
+  adminSegmentActiveClass,
+  adminSegmentInactiveClass,
+} from "../../../components/admin/admin-ui";
+import { cn } from "../../../utils/cn";
 
 const BRANCHES = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"];
 
@@ -140,36 +156,37 @@ export default function SemesterApproval({ role }: { role: string }) {
   }
 
   return (
-    <div className="p-6 md:p-8 space-y-8 animate-in fade-in duration-500">
-      <div className="space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-navy-50 text-navy-900 text-[10px] font-black uppercase tracking-[0.2em]">
-          <ShieldCheck size={12} /> {isHod ? `HOD · ${myBranch}` : "Dean of Academics"}
-        </div>
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900">
-          Semester Approvals
-        </h1>
-        <p className="text-slate-500 font-medium max-w-xl">
-          {isHod
+    <div className={cn(adminPageWrapClass, "animate-in fade-in duration-500")}>
+      <SectionHeader
+        eyebrow={
+          <>
+            <ShieldCheck size={12} /> {isHod ? `HOD · ${myBranch}` : "Dean of Academics"}
+          </>
+        }
+        title="Semester Approvals"
+        subtitle={
+          isHod
             ? "Review your branch's subjects and electives, then open registration."
-            : "Verify each semester's subjects, electives and dates before routing to HODs."}
-        </p>
-      </div>
+            : "Verify each semester's subjects, electives and dates before routing to HODs."
+        }
+        icon={<ShieldCheck size={18} />}
+      />
 
       {/* Pending */}
       <section className="space-y-4">
-        <h2 className="text-xs font-black uppercase tracking-widest text-amber-600 flex items-center gap-2">
-          <Hourglass size={14} /> Awaiting your approval ({pending.length})
+        <h2 className={cn(adminEyebrowClass, "text-amber-600")}>
+          <Hourglass size={14} className="inline mr-1.5" /> Awaiting your approval ({pending.length})
         </h2>
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
             {[0, 1].map((i) => (
-              <div key={i} className="h-40 rounded-3xl bg-slate-100/70 animate-pulse" />
+              <div key={i} className="h-40 rounded-3xl bg-zinc-100/70 animate-pulse" />
             ))}
           </div>
         ) : pending.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-slate-200 bg-white/60 py-14 text-center">
-            <Inbox size={32} className="mx-auto text-slate-300 mb-3" />
-            <p className="text-sm font-bold text-slate-500">
+          <div className={cn(adminCardClass, "border-dashed py-14 text-center")}>
+            <Inbox size={32} className="mx-auto text-zinc-300 mb-3" />
+            <p className="text-sm font-bold text-zinc-500">
               Nothing pending right now.
             </p>
           </div>
@@ -185,7 +202,7 @@ export default function SemesterApproval({ role }: { role: string }) {
       {/* Others */}
       {others.length > 0 && (
         <section className="space-y-4">
-          <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">
+          <h2 className={adminEyebrowClass}>
             All semesters
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -193,12 +210,12 @@ export default function SemesterApproval({ role }: { role: string }) {
               <button
                 key={sem.id}
                 onClick={() => openDetail(sem)}
-                className="text-left rounded-2xl border border-slate-200/70 bg-white px-5 py-4 hover:shadow-md hover:border-slate-300 transition-all"
+                className={cn(adminCardClass, "text-left px-5 py-4 hover:border-zinc-300 transition-all")}
               >
-                <p className="text-sm font-black text-slate-800 truncate">
+                <p className={cn(adminSectionTitleClass, "truncate")}>
                   {sem.name}
                 </p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                <p className={cn(adminLabelClass, "mt-1 normal-case")}>
                   {sem.status.replace(/_/g, " ")}
                 </p>
               </button>
@@ -231,18 +248,18 @@ function PendingCard({
         <div className="w-11 h-11 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
           <CalendarClock size={22} />
         </div>
-        <span className="px-3 py-1 rounded-full bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest">
+        <span className={cn(adminChipClass, "bg-amber-500 text-white border-amber-500")}>
           Review
         </span>
       </div>
-      <h3 className="text-lg font-black text-slate-900 tracking-tight truncate">
+      <h3 className={cn(adminSectionTitleClass, "text-lg truncate")}>
         {sem.name}
       </h3>
-      <p className="text-xs font-semibold text-slate-400 mt-1">
+      <p className="text-xs font-medium text-zinc-400 mt-1">
         {sem.batch ? `Batch ${sem.batch} · ` : ""}
         {sem.program || "B.Tech"}
       </p>
-      <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-navy-900 group-hover:gap-2.5 transition-all">
+      <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 group-hover:gap-2.5 transition-all">
         Review now <ChevronLeft size={16} className="rotate-180" />
       </div>
     </motion.button>
@@ -294,24 +311,25 @@ function DetailView({
   );
 
   return (
-    <div className="p-6 md:p-8 space-y-6 animate-in fade-in duration-400">
+    <div className={cn(adminPageWrapClass, "animate-in fade-in duration-400")}>
       <button
+        type="button"
         onClick={onBack}
-        className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-navy-900 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-500 hover:text-zinc-900 transition-colors"
       >
         <ChevronLeft size={16} /> Back to approvals
       </button>
 
       {/* Hero */}
-      <div className="rounded-3xl bg-gradient-to-br from-navy-900 to-navy-700 text-white p-7 relative overflow-hidden">
+      <div className="rounded-3xl bg-zinc-900 text-white p-7 relative overflow-hidden">
         <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-white/10 blur-2xl" />
         <div className="relative">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 mb-1">
+          <p className={cn(adminLabelClass, "text-white/60 mb-1")}>
             {sem.program || "B.Tech"}
             {sem.batch ? ` · Batch ${sem.batch}` : ""} ·{" "}
             {sem.status.replace(/_/g, " ")}
           </p>
-          <h1 className="text-2xl md:text-3xl font-black tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em]">
             {sem.name}
           </h1>
           <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm font-semibold text-white/80">
@@ -330,16 +348,17 @@ function DetailView({
 
       {/* Filter (dean only) */}
       {!isHod && (
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1">
+        <div className={adminSegmentWrapClass}>
           {["all", ...BRANCHES].map((b) => (
             <button
               key={b}
+              type="button"
               onClick={() => setBranchFilter(b)}
-              className={`px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${
+              className={
                 branchFilter === b
-                  ? "bg-navy-900 text-white"
-                  : "bg-white text-slate-400 border border-slate-200"
-              }`}
+                  ? adminSegmentActiveClass
+                  : adminSegmentInactiveClass
+              }
             >
               {b === "all" ? "All Branches" : b}
             </button>
@@ -350,7 +369,7 @@ function DetailView({
       {loading ? (
         <div className="space-y-3">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-16 rounded-2xl bg-slate-100/70 animate-pulse" />
+            <div key={i} className="h-16 rounded-2xl bg-zinc-100/70 animate-pulse" />
           ))}
         </div>
       ) : (
@@ -367,10 +386,10 @@ function DetailView({
                     <Layers size={16} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-black text-slate-800 truncate">
+                    <p className="text-sm font-semibold text-zinc-800 truncate">
                       {g.groupName}
                     </p>
-                    <p className="text-[10px] font-bold text-slate-400 tracking-wide">
+                    <p className="text-[10px] font-bold text-zinc-400 tracking-wide">
                       {g.groupCode} · {g.branch} · choose {g.selectionLimit}
                     </p>
                   </div>
@@ -387,9 +406,9 @@ function DetailView({
           />
 
           {filtered.length === 0 && (
-            <div className="rounded-3xl border border-dashed border-slate-200 bg-white/60 py-14 text-center">
-              <Building2 size={30} className="mx-auto text-slate-300 mb-3" />
-              <p className="text-sm font-bold text-slate-500">
+            <div className={cn(adminCardClass, "border-dashed py-14 text-center")}>
+              <Building2 size={30} className="mx-auto text-zinc-300 mb-3" />
+              <p className="text-sm font-bold text-zinc-500">
                 No subjects allocated{branchFilter !== "all" ? ` for ${branchFilter}` : ""}.
               </p>
             </div>
@@ -398,33 +417,33 @@ function DetailView({
       )}
 
       {/* Credits + actions */}
-      <div className="sticky bottom-0 -mx-6 md:-mx-8 px-6 md:px-8 py-4 bg-white/80 backdrop-blur-xl border-t border-slate-100 flex items-center gap-3">
+      <div className="sticky bottom-0 -mx-6 md:-mx-8 px-6 md:px-8 py-4 bg-white/80 backdrop-blur-xl border-t border-zinc-200/70 flex items-center gap-3">
         <div className="mr-auto">
-          <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-            Total Credits
-          </p>
-          <p className="text-xl font-black text-slate-900">{totalCredits}</p>
+          <p className={adminLabelClass}>Total Credits</p>
+          <p className="text-xl font-semibold text-zinc-900 tabular-nums">{totalCredits}</p>
         </div>
         {canAct ? (
           <>
             <button
+              type="button"
               disabled={acting}
               onClick={() => onAct("reject")}
-              className="inline-flex items-center gap-1.5 px-5 py-3 rounded-xl bg-rose-50 text-rose-600 font-bold text-sm hover:bg-rose-100 transition-all disabled:opacity-50"
+              className={cn(adminDangerButtonClass, "disabled:opacity-50")}
             >
               <RotateCcw size={15} /> Send Back
             </button>
             <button
+              type="button"
               disabled={acting}
               onClick={() => onAct("approve")}
-              className="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-500 text-white font-bold text-sm hover:shadow-lg transition-all disabled:opacity-50"
+              className={cn(adminPrimaryButtonClass, "disabled:opacity-50")}
             >
               <CheckCircle2 size={16} />
               {isHod ? `Approve ${myBranch}` : "Approve → HODs"}
             </button>
           </>
         ) : (
-          <span className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-400">
+          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-400">
             <CheckCircle2 size={15} className="text-emerald-500" /> Read only
           </span>
         )}
@@ -444,31 +463,29 @@ function SubjectGroup({
 }) {
   if (items.length === 0) return null;
   return (
-    <div className="rounded-3xl border border-slate-200/70 bg-white overflow-hidden">
-      <div className="px-5 py-3.5 border-b border-slate-100 flex items-center gap-2">
-        <span className="text-slate-400">{icon}</span>
-        <h3 className="text-xs font-black uppercase tracking-widest text-slate-500">
-          {title}
-        </h3>
-        <span className="ml-auto text-[10px] font-black text-slate-300">
+    <div className={cn(adminCardClass, "overflow-hidden p-0")}>
+      <div className="px-5 py-3.5 border-b border-zinc-200/70 flex items-center gap-2">
+        <span className="text-zinc-400">{icon}</span>
+        <h3 className={adminEyebrowClass}>{title}</h3>
+        <span className="ml-auto text-[10px] font-semibold text-zinc-300 tabular-nums">
           {items.length}
         </span>
       </div>
       <AnimatePresence>
-        <div className="divide-y divide-slate-50">
+        <div className="divide-y divide-zinc-50">
           {items.map((a) => (
             <div
               key={a.id}
-              className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50/50 transition-colors"
+              className="flex items-center gap-3 px-5 py-3.5 hover:bg-zinc-50/50 transition-colors"
             >
-              <div className="w-9 h-9 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-zinc-50 text-zinc-400 flex items-center justify-center shrink-0">
                 <BookOpen size={15} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-black text-slate-800 truncate">
+                <p className={cn(adminSectionTitleClass, "truncate")}>
                   {a.customName || a.subject?.name}
                 </p>
-                <p className="text-[10px] font-bold text-slate-400 tracking-wide">
+                <p className="text-[10px] font-medium text-zinc-400 tracking-wide">
                   {a.subject?.code} · {a.branch} · {a.academicYear} ·{" "}
                   {a.customCredits || a.subject?.credits || 0}C
                   {a.electiveGroupId ? ` · ${a.electiveGroupId}` : ""}

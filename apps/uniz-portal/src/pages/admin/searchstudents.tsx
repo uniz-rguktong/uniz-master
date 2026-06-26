@@ -62,10 +62,10 @@ interface StudentProps {
 
 const Detail = ({ label, value }: { label: string; value?: any }) => (
   <div className="group">
-    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 block group-hover:text-slate-500 transition-colors">
+    <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1 block group-hover:text-zinc-500 transition-colors">
       {label}
     </label>
-    <p className="text-sm font-semibold text-slate-700">{value || "-"}</p>
+    <p className="text-sm font-semibold text-zinc-700">{value || "-"}</p>
   </div>
 );
 
@@ -78,12 +78,12 @@ const Section = ({
   title: string;
   children: React.ReactNode;
 }) => (
-  <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-    <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+  <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm">
+    <div className="px-6 py-4 border-b border-zinc-100 bg-zinc-50/50 flex items-center gap-3">
       <div className="p-2 bg-white rounded-lg shadow-sm">
-        <Icon className="w-4 h-4 text-slate-600" />
+        <Icon className="w-4 h-4 text-zinc-600" />
       </div>
-      <h3 className="font-bold text-slate-900 text-sm">{title}</h3>
+      <h3 className="font-bold text-zinc-900 text-sm">{title}</h3>
     </div>
     <div className="p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -227,7 +227,7 @@ export default function SearchStudents() {
           : Number(avg) >= 7
             ? "Pass"
             : "Good",
-      color: hasFail ? "text-white bg-black" : "text-slate-900 bg-slate-100",
+      color: hasFail ? "text-white bg-black" : "text-zinc-900 bg-zinc-100",
     };
   };
 
@@ -238,7 +238,7 @@ export default function SearchStudents() {
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigate("/admin")}
-            className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+            className="inline-flex items-center text-sm font-medium text-zinc-500 hover:text-zinc-800 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Admin
           </button>
@@ -246,7 +246,7 @@ export default function SearchStudents() {
             {selectedStudent && (
               <button
                 onClick={() => setSelectedStudent(null)}
-                className="p-2 bg-white border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 transition-all font-black text-xs uppercase"
+                className="p-2 bg-white border border-zinc-200 rounded-lg shadow-sm hover:bg-zinc-50 transition-all font-semibold text-xs uppercase"
               >
                 Close Profile
               </button>
@@ -256,8 +256,8 @@ export default function SearchStudents() {
               className={cn(
                 "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all border shadow-sm",
                 showFilters
-                  ? "bg-slate-900 text-white border-slate-900"
-                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50",
+                  ? "bg-zinc-900 text-white border-zinc-900"
+                  : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50",
               )}
             >
               <Filter className="w-4 h-4" /> Filters
@@ -265,13 +265,13 @@ export default function SearchStudents() {
           </div>
         </div>
 
-        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+        <div className="bg-white p-8 rounded-3xl border border-zinc-200 shadow-sm space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
-              <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-3xl font-semibold text-zinc-900 tracking-tight">
                 Search Directory
               </h1>
-              <p className="text-slate-500 text-sm font-medium italic">
+              <p className="text-zinc-500 text-sm font-medium italic">
                 Find students, view academic performance and request history.
               </p>
             </div>
@@ -280,8 +280,8 @@ export default function SearchStudents() {
                 placeholder="Search by ID or Name..."
                 value={query}
                 onchangeFunction={(e: any) => setQuery(e.target.value)}
-                icon={<Search className="w-5 h-5 text-slate-400" />}
-                className="h-14 bg-slate-50 border-transparent focus:bg-white focus:border-slate-300 transition-all rounded-2xl"
+                icon={<Search className="w-5 h-5 text-zinc-400" />}
+                className="h-14 bg-zinc-50 border-transparent focus:bg-white focus:border-zinc-300 transition-all rounded-2xl"
               />
 
               <AnimatePresence>
@@ -290,16 +290,16 @@ export default function SearchStudents() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute left-0 right-0 top-full mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 overflow-hidden divide-y divide-slate-100"
+                    className="absolute left-0 right-0 top-full mt-2 bg-white border border-zinc-200 rounded-2xl shadow-2xl z-50 overflow-hidden divide-y divide-zinc-100"
                   >
                     {suggestions.map((s) => (
                       <button
                         key={s.id}
                         onClick={() => handleSelectStudent(s)}
-                        className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-all group"
+                        className="w-full px-6 py-4 flex items-center justify-between hover:bg-zinc-50 transition-all group"
                       >
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-500 font-bold overflow-hidden ring-2 ring-slate-50">
+                          <div className="w-10 h-10 bg-zinc-100 rounded-xl flex items-center justify-center text-zinc-500 font-bold overflow-hidden ring-2 ring-zinc-50">
                             {s.profile_url ? (
                               <img
                                 src={s.profile_url}
@@ -310,15 +310,15 @@ export default function SearchStudents() {
                             )}
                           </div>
                           <div className="text-left">
-                            <p className="text-sm font-bold text-slate-900 group-hover:text-black transition-colors">
+                            <p className="text-sm font-bold text-zinc-900 group-hover:text-black transition-colors">
                               {s.name}
                             </p>
-                            <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-[0.14em]">
                               {s.username} • {s.branch} {s.year}
                             </p>
                           </div>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-black group-hover:translate-x-1 transition-all" />
+                        <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-black group-hover:translate-x-1 transition-all" />
                       </button>
                     ))}
                   </motion.div>
@@ -335,15 +335,15 @@ export default function SearchStudents() {
                 exit={{ height: 0, opacity: 0 }}
                 className="overflow-hidden"
               >
-                <div className="pt-6 border-t border-slate-100 grid grid-cols-2 lg:grid-cols-5 gap-6">
+                <div className="pt-6 border-t border-zinc-100 grid grid-cols-2 lg:grid-cols-5 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
+                    <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] px-1">
                       Branch
                     </label>
                     <select
                       value={branch}
                       onChange={(e) => setBranch(e.target.value)}
-                      className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-sm font-bold shadow-sm outline-none focus:ring-4 focus:ring-slate-900/5 transition-all appearance-none cursor-pointer"
+                      className="w-full h-11 px-4 rounded-xl border border-zinc-200 bg-white text-sm font-bold shadow-sm outline-none focus:ring-4 focus:ring-zinc-900/5 transition-all appearance-none cursor-pointer"
                     >
                       <option value="">All Branches</option>
                       {["CSE", "ECE", "EEE", "CIVIL", "MECH"].map((b) => (
@@ -354,13 +354,13 @@ export default function SearchStudents() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
+                    <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] px-1">
                       Year
                     </label>
                     <select
                       value={year}
                       onChange={(e) => setYear(e.target.value)}
-                      className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-sm font-bold shadow-sm outline-none focus:ring-4 focus:ring-slate-900/5 transition-all appearance-none cursor-pointer"
+                      className="w-full h-11 px-4 rounded-xl border border-zinc-200 bg-white text-sm font-bold shadow-sm outline-none focus:ring-4 focus:ring-zinc-900/5 transition-all appearance-none cursor-pointer"
                     >
                       <option value="">All Years</option>
                       {["E1", "E2", "E3", "E4"].map((y) => (
@@ -371,7 +371,7 @@ export default function SearchStudents() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
+                    <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] px-1">
                       Type Filter
                     </label>
                     <div className="flex gap-2">
@@ -380,10 +380,10 @@ export default function SearchStudents() {
                           setIsPending(isPending === true ? undefined : true)
                         }
                         className={cn(
-                          "flex-1 h-11 rounded-xl text-[10px] font-black uppercase border shadow-sm transition-all",
+                          "flex-1 h-11 rounded-xl text-[10px] font-semibold uppercase border shadow-sm transition-all",
                           isPending
-                            ? "bg-slate-900 border-slate-900 text-white shadow-slate-200"
-                            : "bg-white border-slate-200 text-slate-600",
+                            ? "bg-zinc-900 border-zinc-900 text-white shadow-zinc-200"
+                            : "bg-white border-zinc-200 text-zinc-600",
                         )}
                       >
                         Pending
@@ -393,10 +393,10 @@ export default function SearchStudents() {
                           setIsOutside(isOutside === true ? undefined : true)
                         }
                         className={cn(
-                          "flex-1 h-11 rounded-xl text-[10px] font-black uppercase border shadow-sm transition-all",
+                          "flex-1 h-11 rounded-xl text-[10px] font-semibold uppercase border shadow-sm transition-all",
                           isOutside
                             ? "bg-black border-black text-white"
-                            : "bg-white border-slate-200 text-slate-600",
+                            : "bg-white border-zinc-200 text-zinc-600",
                         )}
                       >
                         Outside
@@ -408,10 +408,10 @@ export default function SearchStudents() {
                           )
                         }
                         className={cn(
-                          "flex-1 h-11 rounded-xl text-[10px] font-black uppercase border shadow-sm transition-all",
+                          "flex-1 h-11 rounded-xl text-[10px] font-semibold uppercase border shadow-sm transition-all",
                           isSuspended
                             ? "bg-red-900 border-red-900 text-white shadow-red-200"
-                            : "bg-white border-slate-200 text-slate-600",
+                            : "bg-white border-zinc-200 text-zinc-600",
                         )}
                       >
                         Suspended
@@ -429,7 +429,7 @@ export default function SearchStudents() {
                         setIsSuspended(undefined);
                         setQuery("");
                       }}
-                      className="w-full h-11 text-xs font-black text-slate-400 hover:text-slate-900 uppercase tracking-widest transition-all"
+                      className="w-full h-11 text-xs font-semibold text-zinc-400 hover:text-zinc-900 uppercase tracking-[0.14em] transition-all"
                     >
                       Reset All Application Filters
                     </button>
@@ -456,8 +456,8 @@ export default function SearchStudents() {
       <div className="space-y-8">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <div className="w-12 h-12 border-4 border-slate-200 border-t-slate-900 rounded-full animate-spin" />
-            <p className="text-slate-400 font-bold text-sm animate-pulse">
+            <div className="w-12 h-12 border-4 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+            <p className="text-zinc-400 font-bold text-sm animate-pulse">
               Scanning database...
             </p>
           </div>
@@ -468,10 +468,10 @@ export default function SearchStudents() {
                 <button
                   key={student.id}
                   onClick={() => handleSelectStudent(student)}
-                  className="text-left bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group"
+                  className="text-left bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group"
                 >
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white text-xl font-black overflow-hidden shadow-lg">
+                    <div className="w-14 h-14 bg-zinc-900 rounded-2xl flex items-center justify-center text-white text-xl font-semibold overflow-hidden shadow-lg">
                       {student.profile_url ? (
                         <img
                           src={student.profile_url}
@@ -482,33 +482,33 @@ export default function SearchStudents() {
                       )}
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-900 text-lg leading-tight group-hover:text-black transition-colors">
+                      <h4 className="font-bold text-zinc-900 text-lg leading-tight group-hover:text-black transition-colors">
                         {student.name}
                       </h4>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                      <p className="text-xs font-bold text-zinc-400 uppercase tracking-[0.14em]">
                         {student.username}
                       </p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-3 bg-slate-50 rounded-2xl relative">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">
+                    <div className="p-3 bg-zinc-50 rounded-2xl relative">
+                      <p className="text-[10px] font-bold text-zinc-400 uppercase mb-1">
                         Branch
                       </p>
-                      <p className="text-sm font-bold text-slate-700">
+                      <p className="text-sm font-bold text-zinc-700">
                         {student.branch}
                       </p>
                       {student.is_suspended && (
-                        <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-red-600 text-white text-[8px] font-black uppercase rounded shadow-lg ring-2 ring-white">
+                        <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-red-600 text-white text-[8px] font-semibold uppercase rounded shadow-lg ring-2 ring-white">
                           Suspended
                         </span>
                       )}
                     </div>
-                    <div className="p-3 bg-slate-50 rounded-2xl">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">
+                    <div className="p-3 bg-zinc-50 rounded-2xl">
+                      <p className="text-[10px] font-bold text-zinc-400 uppercase mb-1">
                         Year
                       </p>
-                      <p className="text-sm font-bold text-slate-700">
+                      <p className="text-sm font-bold text-zinc-700">
                         {student.year}
                       </p>
                     </div>
@@ -529,25 +529,25 @@ export default function SearchStudents() {
             className="space-y-8"
           >
             {/* Student Header Card */}
-            <div className="bg-white rounded-[2rem] p-8 md:p-12 relative overflow-hidden border-4 border-black shadow-2xl transition-all">
+            <div className="bg-white rounded-2xl p-8 md:p-12 relative overflow-hidden border-4 border-black shadow-2xl transition-all">
               <div className="relative flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
                 <div className="flex flex-col md:flex-row items-center gap-8">
                   <div className="relative">
-                    <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-[2rem] p-1 shadow-xl ring-4 ring-black/5 group overflow-hidden">
+                    <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-2xl p-1 shadow-xl ring-4 ring-black/5 group overflow-hidden">
                       {selectedStudent.profile_url ? (
                         <img
                           src={selectedStudent.profile_url}
-                          className="w-full h-full object-cover rounded-[1.8rem]"
+                          className="w-full h-full object-cover rounded-3xl"
                         />
                       ) : (
-                        <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-900 text-4xl font-black rounded-[1.8rem]">
+                        <div className="w-full h-full bg-zinc-100 flex items-center justify-center text-zinc-900 text-4xl font-semibold rounded-3xl">
                           {selectedStudent.name[0]}
                         </div>
                       )}
                     </div>
                     <div
                       className={cn(
-                        "absolute -bottom-2 -right-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg border-2 border-black bg-white text-black",
+                        "absolute -bottom-2 -right-2 px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] shadow-lg border-2 border-black bg-white text-black",
                         selectedStudent.is_suspended &&
                           "bg-red-600 border-red-900 text-white",
                       )}
@@ -562,23 +562,23 @@ export default function SearchStudents() {
 
                   <div className="text-center md:text-left space-y-4">
                     <div>
-                      <h2 className="text-4xl font-black text-black tracking-tighter uppercase">
+                      <h2 className="text-4xl font-semibold text-black tracking-tighter uppercase">
                         {selectedStudent.name}
                       </h2>
-                      <p className="text-slate-400 font-bold tracking-[0.2em] uppercase text-xs mt-2">
+                      <p className="text-zinc-400 font-bold tracking-[0.14em] uppercase text-xs mt-2">
                         {selectedStudent.username} • {selectedStudent.branch}{" "}
                         {selectedStudent.year}
                       </p>
                     </div>
                     <div className="flex flex-wrap justify-center md:justify-start gap-2">
-                      <span className="px-4 py-2 bg-slate-50 rounded-xl text-black text-xs font-black border border-slate-200 flex items-center gap-2">
+                      <span className="px-4 py-2 bg-zinc-50 rounded-xl text-black text-xs font-semibold border border-zinc-200 flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5" /> ROOM{" "}
                         {selectedStudent.roomno || "N/A"}
                       </span>
                       {getAcademicStatus() && (
                         <span
                           className={cn(
-                            "px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 border-2 border-black",
+                            "px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 border-2 border-black",
                             getAcademicStatus()?.color,
                           )}
                         >
@@ -592,7 +592,7 @@ export default function SearchStudents() {
                 </div>
 
                 {/* Integrated QR Code */}
-                <div className="p-4 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-300">
+                <div className="p-4 bg-zinc-50 rounded-3xl border-2 border-dashed border-zinc-300">
                   <QRCode
                     value={JSON.stringify({
                       id: selectedStudent.id,
@@ -605,7 +605,7 @@ export default function SearchStudents() {
                     size={120}
                     fgColor="#000000"
                   />
-                  <p className="text-[10px] text-center font-black text-slate-400 mt-2 tracking-widest uppercase">
+                  <p className="text-[10px] text-center font-semibold text-zinc-400 mt-2 tracking-[0.14em] uppercase">
                     Scan Identity
                   </p>
                 </div>
@@ -661,22 +661,22 @@ export default function SearchStudents() {
                     selectedStudent.grades.map((g, i) => (
                       <div
                         key={i}
-                        className="p-4 bg-slate-50 rounded-2xl flex justify-between items-center group hover:bg-white border border-transparent hover:border-slate-200 transition-all"
+                        className="p-4 bg-zinc-50 rounded-2xl flex justify-between items-center group hover:bg-white border border-transparent hover:border-zinc-200 transition-all"
                       >
                         <div>
-                          <p className="text-sm font-bold text-slate-900">
+                          <p className="text-sm font-bold text-zinc-900">
                             {g.subject}
                           </p>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase">
+                          <p className="text-[10px] font-bold text-zinc-400 uppercase">
                             {g.semester}
                           </p>
                         </div>
                         <div
                           className={cn(
-                            "w-10 h-10 rounded-xl flex items-center justify-center font-black",
+                            "w-10 h-10 rounded-xl flex items-center justify-center font-semibold",
                             g.grade < 5
                               ? "bg-black text-white"
-                              : "bg-white text-black border border-slate-200 shadow-sm",
+                              : "bg-white text-black border border-zinc-200 shadow-sm",
                           )}
                         >
                           {g.grade}
@@ -684,7 +684,7 @@ export default function SearchStudents() {
                       </div>
                     ))
                   ) : (
-                    <p className="text-slate-400 font-bold italic py-4">
+                    <p className="text-zinc-400 font-bold italic py-4">
                       No academic records found
                     </p>
                   )}
@@ -694,13 +694,13 @@ export default function SearchStudents() {
                     selectedStudent.attendance.map((a, i) => (
                       <div
                         key={i}
-                        className="p-4 bg-slate-50 rounded-2xl space-y-2 border border-transparent hover:border-slate-200 hover:bg-white transition-all"
+                        className="p-4 bg-zinc-50 rounded-2xl space-y-2 border border-transparent hover:border-zinc-200 hover:bg-white transition-all"
                       >
                         <div className="flex justify-between items-center">
-                          <p className="text-sm font-bold text-slate-900">
+                          <p className="text-sm font-bold text-zinc-900">
                             {a.subject}
                           </p>
-                          <span className="text-black font-black text-xs">
+                          <span className="text-black font-semibold text-xs">
                             {(
                               (a.attendedClasses / a.totalClasses) *
                               100
@@ -708,7 +708,7 @@ export default function SearchStudents() {
                             %
                           </span>
                         </div>
-                        <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                        <div className="w-full h-1.5 bg-zinc-200 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-black rounded-full"
                             style={{
@@ -716,13 +716,13 @@ export default function SearchStudents() {
                             }}
                           />
                         </div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
                           {a.attendedClasses} / {a.totalClasses} Lectures
                         </p>
                       </div>
                     ))
                   ) : (
-                    <p className="text-slate-400 font-bold italic py-4">
+                    <p className="text-zinc-400 font-bold italic py-4">
                       No attendance records found
                     </p>
                   )}
@@ -743,7 +743,7 @@ export default function SearchStudents() {
 
                   if (uniqueSemesters.length === 0) {
                     return (
-                      <p className="text-slate-400 font-bold italic py-2 col-span-full">
+                      <p className="text-zinc-400 font-bold italic py-2 col-span-full">
                         No report data generated yet.
                       </p>
                     );
@@ -755,10 +755,10 @@ export default function SearchStudents() {
                     .map((sem: any) => (
                       <div
                         key={sem}
-                        className="p-4 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col gap-3 shadow-lg"
+                        className="p-4 bg-zinc-900 border border-zinc-800 rounded-2xl flex flex-col gap-3 shadow-lg"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="text-white font-black text-sm uppercase tracking-tighter">
+                          <span className="text-white font-semibold text-sm uppercase tracking-tighter">
                             {sem} Report
                           </span>
                           <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
@@ -772,7 +772,7 @@ export default function SearchStudents() {
                                 { studentId: selectedStudent.username },
                               )
                             }
-                            className="flex-1 bg-white text-black py-2 rounded-xl font-bold text-[10px] uppercase flex items-center justify-center gap-1.5 hover:bg-slate-100 transition-all"
+                            className="flex-1 bg-white text-black py-2 rounded-xl font-bold text-[10px] uppercase flex items-center justify-center gap-1.5 hover:bg-zinc-100 transition-all"
                           >
                             <GraduationCap size={12} /> Grade
                           </button>
@@ -798,15 +798,15 @@ export default function SearchStudents() {
               <div className="space-y-6">
                 <div className="flex items-center gap-3 px-4">
                   <History className="w-5 h-5 text-black" />
-                  <h3 className="font-black text-black uppercase tracking-widest text-lg">
+                  <h3 className="font-semibold text-black uppercase tracking-[0.14em] text-lg">
                     Request History
                   </h3>
                 </div>
 
                 {isHistoryLoading ? (
                   <div className="flex flex-col items-center justify-center py-20 gap-4">
-                    <div className="w-8 h-8 border-3 border-slate-200 border-t-black rounded-full animate-spin" />
-                    <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">
+                    <div className="w-8 h-8 border-3 border-zinc-200 border-t-black rounded-full animate-spin" />
+                    <p className="text-zinc-400 font-bold text-xs uppercase tracking-[0.14em]">
                       Compiling history...
                     </p>
                   </div>
@@ -816,7 +816,7 @@ export default function SearchStudents() {
                       {history.map((req, i) => (
                         <div
                           key={i}
-                          className="bg-white p-6 rounded-[2rem] border-2 border-slate-100 shadow-sm hover:border-black transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group"
+                          className="bg-white p-6 rounded-2xl border-2 border-zinc-100 shadow-sm hover:border-black transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group"
                         >
                           <div className="flex items-center gap-6">
                             <div
@@ -825,7 +825,7 @@ export default function SearchStudents() {
                                 req.is_approved
                                   ? "bg-black text-white"
                                   : req.is_rejected
-                                    ? "bg-slate-400 text-white"
+                                    ? "bg-zinc-400 text-white"
                                     : "bg-white border-4 border-black text-black",
                               )}
                             >
@@ -833,7 +833,7 @@ export default function SearchStudents() {
                             </div>
                             <div>
                               <div className="flex items-center gap-3 mb-1">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                                   {req.type}
                                 </span>
                                 <span
@@ -842,11 +842,11 @@ export default function SearchStudents() {
                                     req.is_approved
                                       ? "bg-black"
                                       : req.is_rejected
-                                        ? "bg-slate-400"
+                                        ? "bg-zinc-400"
                                         : "bg-black animate-pulse",
                                   )}
                                 />
-                                <span className="text-xs font-black uppercase tracking-widest">
+                                <span className="text-xs font-semibold uppercase tracking-[0.14em]">
                                   {req.is_approved
                                     ? "Granted"
                                     : req.is_rejected
@@ -857,16 +857,16 @@ export default function SearchStudents() {
                               <p className="font-bold text-black text-lg">
                                 "{req.reason}"
                               </p>
-                              <p className="text-xs font-semibold text-slate-400 mt-1 uppercase tracking-widest">
+                              <p className="text-xs font-semibold text-zinc-400 mt-1 uppercase tracking-[0.14em]">
                                 {new Date(req.requested_time).toLocaleString()}
                               </p>
                             </div>
                           </div>
-                          <div className="w-full md:w-auto p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-end gap-1">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                          <div className="w-full md:w-auto p-4 bg-zinc-50 rounded-2xl border border-zinc-100 flex flex-col items-end gap-1">
+                            <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
                               Gateway Status
                             </p>
-                            <p className="text-sm font-black text-black uppercase tracking-tighter">
+                            <p className="text-sm font-semibold text-black uppercase tracking-tighter">
                               {req.current_level?.replace("_", " ") ||
                                 "Finalized"}
                             </p>
@@ -887,15 +887,15 @@ export default function SearchStudents() {
                     />
                   </div>
                 ) : (
-                  <div className="bg-slate-50 border-4 border-slate-100 border-dashed rounded-[2.5rem] py-20 flex flex-col items-center justify-center text-center gap-4">
-                    <div className="w-16 h-16 bg-white rounded-3xl shadow-sm flex items-center justify-center text-slate-300">
+                  <div className="bg-zinc-50 border-4 border-zinc-100 border-dashed rounded-2xl py-20 flex flex-col items-center justify-center text-center gap-4">
+                    <div className="w-16 h-16 bg-white rounded-3xl shadow-sm flex items-center justify-center text-zinc-300">
                       <History className="w-8 h-8" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-black font-black text-lg uppercase tracking-widest">
+                      <p className="text-black font-semibold text-lg uppercase tracking-[0.14em]">
                         No Request History
                       </p>
-                      <p className="text-slate-400 text-sm font-medium italic">
+                      <p className="text-zinc-400 text-sm font-medium italic">
                         Empty historical record for this student identifier.
                       </p>
                     </div>
@@ -906,14 +906,14 @@ export default function SearchStudents() {
           </motion.div>
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center gap-6">
-            <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center text-slate-200">
+            <div className="w-24 h-24 bg-zinc-50 rounded-full flex items-center justify-center text-zinc-200">
               <Search className="w-12 h-12" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-black text-slate-900 uppercase tracking-widest">
+              <h3 className="text-xl font-semibold text-zinc-900 uppercase tracking-[0.14em]">
                 Ready to search
               </h3>
-              <p className="text-slate-400 max-w-sm font-medium italic">
+              <p className="text-zinc-400 max-w-sm font-medium italic">
                 Use the search bar above to look up specific students or use the
                 filters for advanced discovery.
               </p>

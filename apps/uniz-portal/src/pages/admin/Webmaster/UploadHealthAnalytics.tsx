@@ -126,32 +126,32 @@ export default function UploadHealthAnalytics({
           <div className="space-y-1.5 px-2">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
+              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-[0.14em]">
                 Real-time Stream Active
               </span>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 leading-none">
+            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 leading-none">
               Upload Ecosystem <span className="text-blue-600">Health</span>
             </h2>
-            <p className="text-slate-500 font-medium text-[16px]">
+            <p className="text-zinc-500 font-medium text-[16px]">
               Statistical analysis of record synchronization health.
             </p>
           </div>
 
           <div className="flex gap-4">
-            <div className="bg-white px-5 py-3 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-end">
-              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <div className="bg-white px-5 py-3 rounded-2xl border border-zinc-100 shadow-sm flex flex-col items-end">
+              <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.14em] mb-1">
                 Avg Success
               </span>
-              <span className="text-xl font-black text-emerald-600 leading-none">
+              <span className="text-xl font-semibold text-emerald-600 leading-none">
                 {(avgSuccess || 0).toFixed(1)}%
               </span>
             </div>
-            <div className="bg-slate-950 px-5 py-3 rounded-2xl shadow-xl flex flex-col items-end">
-              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <div className="bg-zinc-950 px-5 py-3 rounded-2xl shadow-xl flex flex-col items-end">
+              <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.14em] mb-1">
                 Total Records
               </span>
-              <span className="text-xl font-black text-white leading-none">
+              <span className="text-xl font-semibold text-white leading-none">
                 {totalSyncs.toLocaleString()}
               </span>
             </div>
@@ -162,18 +162,18 @@ export default function UploadHealthAnalytics({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div
           className={cn(
-            "bg-white rounded-xl border border-slate-100 p-10 shadow-sm transition-all duration-500 relative overflow-hidden",
+            "bg-white rounded-xl border border-zinc-100 p-10 shadow-sm transition-all duration-500 relative overflow-hidden",
             hideHeader ? "lg:col-span-3" : "lg:col-span-3",
           )}
         >
           {/* Top Section with Large Value and Dropdown */}
           <div className="flex justify-between items-start mb-10 relative z-10">
             <div>
-              <p className="text-slate-400 font-bold text-sm mb-2 uppercase tracking-tight">
+              <p className="text-zinc-400 font-bold text-sm mb-2 uppercase tracking-tight">
                 Success Health
               </p>
               <div className="flex items-center gap-4">
-                <h3 className="text-5xl font-black text-slate-900 tracking-tighter">
+                <h3 className="text-5xl font-semibold text-zinc-900 tracking-tighter">
                   {(Number(latest?.success_rate_percent) || 0).toFixed(1)}%
                 </h3>
                 {delta !== 0 && (
@@ -191,16 +191,16 @@ export default function UploadHealthAnalytics({
                       {delta > 0 ? "+" : ""}
                       {delta.toFixed(1)}%
                     </span>
-                    <span className="text-slate-300 font-medium ml-1">
+                    <span className="text-zinc-300 font-medium ml-1">
                       Vs prev
                     </span>
                   </div>
                 )}
               </div>
-              <div className="mt-4 flex items-center gap-6 text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+              <div className="mt-4 flex items-center gap-6 text-[12px] font-bold text-zinc-400 uppercase tracking-wider">
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-500">Total volume:</span>
-                  <span className="text-slate-900">{latest?.total || 0}</span>
+                  <span className="text-zinc-500">Total volume:</span>
+                  <span className="text-zinc-900">{latest?.total || 0}</span>
                 </div>
                 <div className="flex gap-4">
                   <span className="text-blue-500 flex items-center gap-1.5">
@@ -219,7 +219,7 @@ export default function UploadHealthAnalytics({
               <select
                 value={range}
                 onChange={(e) => setRange(Number(e.target.value))}
-                className="appearance-none bg-slate-50 border border-slate-100 rounded-xl px-5 py-2.5 pr-10 text-[11px] font-black uppercase tracking-widest text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/10 cursor-pointer hover:bg-slate-100 transition-all shadow-sm"
+                className="appearance-none bg-zinc-50 border border-zinc-100 rounded-xl px-5 py-2.5 pr-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500/10 cursor-pointer hover:bg-zinc-100 transition-all shadow-sm"
               >
                 <option value={7}>Last 7 Days</option>
                 <option value={15}>Last 15 Days</option>
@@ -227,7 +227,7 @@ export default function UploadHealthAnalytics({
               </select>
               <ChevronDown
                 size={14}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
               />
             </div>
           </div>
@@ -296,7 +296,7 @@ export default function UploadHealthAnalytics({
       </div>
 
       {error && !safeData.length && (
-        <div className="p-6 bg-red-50 border border-red-100 rounded-[2rem] flex items-center gap-4 text-red-900">
+        <div className="p-6 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-4 text-red-900">
           <AlertCircle size={24} className="shrink-0" />
           <p className="text-sm font-bold uppercase tracking-wide">{error}</p>
         </div>

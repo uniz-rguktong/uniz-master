@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { adminLabelClass, adminInputClass } from "./admin/admin-ui";
 import { cn } from "../utils/cn";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -7,7 +8,6 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   error?: string;
   icon?: React.ReactNode;
   labelClassName?: string;
-  // Legacy support
   onchangeFunction?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
@@ -40,14 +40,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full space-y-1.5 group">
         {label && (
-          <label
-            className={cn(
-              "text-xs font-bold text-neutral-500 uppercase tracking-widest block ml-1 mb-1.5",
-              labelClassName,
-            )}
-          >
-            {label}
-          </label>
+          <label className={cn(adminLabelClass, labelClassName)}>{label}</label>
         )}
         <div className="relative">
           {icon && (
@@ -59,13 +52,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             type={finalType}
             className={cn(
-              "flex w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm font-medium text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:bg-white focus:border-black focus:ring-1 focus:ring-black disabled:cursor-not-allowed disabled:opacity-50 transition-all shadow-sm hover:border-neutral-300",
-              error
-                ? "border-red-500 focus:border-red-500 focus:ring-red-500 bg-red-50/50"
-                : "",
+              adminInputClass,
+              error &&
+                "border-rose-300 bg-rose-50/50 focus:border-rose-400 focus:ring-rose-500/10",
+              icon && "pl-10",
+              isPassword && "pr-10",
               className,
-              icon ? "pl-10" : "",
-              isPassword ? "pr-10" : "",
             )}
             placeholder={placeholder}
             onChange={finalOnChange}
@@ -86,9 +78,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {error && (
-          <p className="text-[10px] text-red-600 font-bold uppercase tracking-wider mt-1 ml-1">
-            {error}
-          </p>
+          <p className="text-[11px] text-rose-600 font-medium mt-1">{error}</p>
         )}
       </div>
     );

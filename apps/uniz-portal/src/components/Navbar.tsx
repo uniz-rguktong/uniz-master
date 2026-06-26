@@ -26,12 +26,12 @@ export default function Navbar() {
     (localStorage.getItem("student_token") && user);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-[100] bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-center">
+    <header className="fixed top-0 inset-x-0 z-[100] bg-white/80 backdrop-blur-md border-b border-zinc-100 flex items-center justify-center">
       <div className="w-full max-w-7xl mx-auto flex items-center justify-between h-[72px] px-6">
         {/* Left: Logo - Cal.com style font */}
         <div className="flex items-center gap-10">
           <Link to="/" className="flex items-center gap-2 cursor-pointer group">
-            <span className="text-2xl font-black text-[#111111] tracking-tighter hover:opacity-80 transition-opacity">
+            <span className="text-2xl font-semibold text-[#111111] tracking-tighter hover:opacity-80 transition-opacity">
               uniZ.
             </span>
           </Link>
@@ -52,9 +52,9 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate("/student/profile")}
-                className="flex items-center gap-3 px-4 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-all border border-slate-200/50 shadow-sm group"
+                className="flex items-center gap-3 px-4 py-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 transition-all border border-zinc-200/50 shadow-sm group"
               >
-                <div className="w-7 h-7 rounded-lg bg-navy-900 flex items-center justify-center text-[10px] font-bold text-white overflow-hidden shadow-sm group-hover:scale-110 transition-transform">
+                <div className="w-7 h-7 rounded-lg bg-zinc-900 flex items-center justify-center text-[10px] font-bold text-white overflow-hidden shadow-sm group-hover:scale-110 transition-transform">
                   {user?.profile_url ? (
                     <img
                       src={user.profile_url}
@@ -64,13 +64,13 @@ export default function Navbar() {
                     <UserIcon size={14} />
                   )}
                 </div>
-                <span className="text-[13px] font-bold text-slate-800">
+                <span className="text-[13px] font-bold text-zinc-800">
                   {user?.name?.split(" ")[0]}
                 </span>
               </button>
               <button
                 onClick={logout}
-                className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                className="w-10 h-10 flex items-center justify-center rounded-xl text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-all"
                 title="Sign out"
               >
                 <LogOut size={18} />

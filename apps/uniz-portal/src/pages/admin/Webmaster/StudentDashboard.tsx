@@ -27,6 +27,17 @@ import { BadgeCheck, Loader2 } from "lucide-react";
 import { BackgroundIconCloud } from "../../../components/illustrations/FloatingIllustrations";
 
 import { cn } from "../../../utils/cn";
+import {
+  adminCardClass,
+  adminChipClass,
+  adminPrimaryButtonClass,
+  adminGhostButtonClass,
+  adminDangerButtonClass,
+  adminLabelClass,
+  adminSectionTitleClass,
+  adminNumsClass,
+  adminStatValueClass,
+} from "../../../components/admin/admin-ui";
 
 interface StudentDashboardProps {
   data: any;
@@ -64,7 +75,7 @@ export default function StudentDashboard({
   return (
     <div className="space-y-6 pb-20 font-sans">
       {/* Redesigned Profile Hero (Matches Webmaster Overview) */}
-      <div className="bg-white rounded-[2rem] border border-slate-100 px-4 pt-10 pb-12 flex flex-col items-center justify-center relative overflow-hidden shadow-none animate-in fade-in duration-500">
+      <div className={cn(adminCardClass, "px-4 pt-10 pb-12 flex flex-col items-center justify-center relative overflow-hidden animate-in fade-in duration-500")}>
         {/* Absolute Decorative Icon Cloud */}
         <BackgroundIconCloud />
 
@@ -73,14 +84,14 @@ export default function StudentDashboard({
           <div
             className="relative p-[4px] md:p-[5px] rounded-full"
             style={{
-              background: student.is_suspended ? "#f43f5e" : "#0b2a47",
+              background: student.is_suspended ? "#f43f5e" : "#18181b",
             }}
           >
-            <div className="relative bg-slate-50 p-[3px] rounded-full">
+            <div className="relative bg-zinc-50 p-[3px] rounded-full">
               <div
                 className={cn(
-                  "relative w-[110px] h-[110px] md:w-[130px] md:h-[130px] rounded-full flex justify-center items-center text-white text-[54px] font-medium overflow-hidden shadow-none transition-all duration-500",
-                  student.profile_url ? "bg-slate-50" : "bg-navy-900",
+                  "relative w-[110px] h-[110px] md:w-[130px] md:h-[130px] rounded-full flex justify-center items-center text-white text-[54px] font-medium overflow-hidden transition-all duration-500",
+                  student.profile_url ? "bg-zinc-50" : "bg-zinc-900",
                 )}
               >
                 {student.profile_url ? (
@@ -108,16 +119,16 @@ export default function StudentDashboard({
         {/* Name & Email */}
         <div className="flex flex-col items-center justify-center gap-1 mb-6 mt-1 z-10">
           <div className="flex items-center justify-center gap-2">
-            <h2 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em] text-[#1f2122] leading-none text-center uppercase">
+            <h2 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em] text-zinc-900 leading-none text-center">
               {student.name}
             </h2>
           </div>
-          <p className="text-[#3c4043] font-medium text-[13px] tracking-tight text-center flex items-center justify-center gap-1.5">
+          <p className="text-zinc-500 font-medium text-[13px] tracking-tight text-center flex items-center justify-center gap-1.5">
             {student.email}
             {!student.is_suspended && (
               <BadgeCheck
-                className="w-[15px] h-[15px] text-navy-900"
-                fill="#0b2a47"
+                className="w-[15px] h-[15px] text-zinc-900"
+                fill="#18181b"
                 fillOpacity={0.12}
                 strokeWidth={2.5}
               />
@@ -125,125 +136,87 @@ export default function StudentDashboard({
           </p>
         </div>
 
-        {/* Info Tags */}
-        <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold mb-8 z-10">
-          <span className="text-navy-900 uppercase tracking-widest px-2.5 py-1 bg-navy-50 border border-navy-100 rounded-xl">
-            {student.username}
-          </span>
-          <span className="w-1 h-1 rounded-full bg-slate-300" />
-          <span className="uppercase tracking-wide text-slate-600">
-            {student.batch || "O21"}
-          </span>
-          <span className="w-1 h-1 rounded-full bg-slate-300" />
-          <span className="uppercase tracking-wide text-slate-600">
-            {student.branch}
-          </span>
-          <span className="w-1 h-1 rounded-full bg-slate-300" />
-          <span className="uppercase tracking-wide text-slate-600">
-            {student.year} YEAR
-          </span>
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-8 z-10">
+          <span className={adminChipClass}>{student.username}</span>
+          <span className={adminChipClass}>{student.batch || "O21"}</span>
+          <span className={adminChipClass}>{student.branch}</span>
+          <span className={adminChipClass}>{student.year}</span>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex justify-center gap-3 z-10">
+        <div className="flex flex-wrap justify-center gap-2.5 z-10">
           <button
+            type="button"
             onClick={() =>
               onSuspendToggle?.(student.username, student.is_suspended)
             }
             disabled={isActionLoading}
             className={cn(
-              "flex items-center gap-2 px-6 py-2.5 rounded-xl border font-bold uppercase tracking-widest text-[10px] transition-all group active:scale-95 shadow-sm",
-              student.is_suspended
-                ? "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white"
-                : "bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white",
+              student.is_suspended ? adminPrimaryButtonClass : adminDangerButtonClass,
+              "text-[12px]",
             )}
           >
             {isActionLoading ? (
-              <Zap className="animate-spin w-3.5 h-3.5" />
+              <Loader2 className="animate-spin w-3.5 h-3.5" />
             ) : student.is_suspended ? (
               <Shield className="w-4 h-4" />
             ) : (
               <ShieldAlert className="w-4 h-4" />
             )}
-            {student.is_suspended ? "Restore Access" : "Suspend Access"}
+            {student.is_suspended ? "Restore access" : "Suspend"}
           </button>
 
           <button
+            type="button"
             onClick={() => onResetPassword?.(student.username)}
             disabled={isActionLoading}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-bold uppercase tracking-widest text-[10px] transition-all group active:scale-95 shadow-sm hover:bg-slate-900 hover:text-white hover:border-slate-900"
+            className={adminGhostButtonClass}
           >
             <KeyRound className="w-4 h-4" />
-            Reset Password
+            Reset password
           </button>
 
           <button
+            type="button"
             onClick={() => onEditDetails?.(student)}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-900 bg-slate-900 text-white font-bold uppercase tracking-widest text-[10px] transition-all group active:scale-95 shadow-lg shadow-slate-900/10 hover:bg-slate-800"
+            className={adminPrimaryButtonClass}
           >
             <Edit3 className="w-4 h-4" />
-            Edit Profile
+            Edit profile
           </button>
         </div>
 
-        {/* Structured Info Grid (No Cards) */}
-        <div className="w-full pt-12 border-t border-slate-50">
+        <div className="w-full pt-12 border-t border-zinc-100 mt-8">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-12 gap-x-6">
+            <HeroInfo label="Email" value={student.email} icon={<Mail size={14} />} />
+            <HeroInfo label="Branch" value={student.branch} icon={<Target size={14} />} />
+            <HeroInfo label="Batch" value={student.batch || "O21"} icon={<Zap size={14} />} />
             <HeroInfo
-              label="OFFICIAL EMAIL"
-              value={student.email}
-              icon={<Mail size={14} />}
-            />
-            <HeroInfo
-              label="ACADEMIC BRANCH"
-              value={student.branch}
-              icon={<Target size={14} />}
-            />
-            <HeroInfo
-              label="BATCH"
-              value={student.batch || "O21"}
-              icon={<Zap size={14} />}
-            />
-            <HeroInfo
-              label="ENROLLMENT"
-              value={`${student.year} - ${student.section || "N/A"}`}
+              label="Enrollment"
+              value={`${student.year} · ${student.section || "—"}`}
               icon={<Calendar size={14} />}
             />
             <HeroInfo
-              label="GENDER"
+              label="Gender"
               value={
                 student.gender === "M"
                   ? "Male"
                   : student.gender === "F"
                     ? "Female"
-                    : student.gender || "N/A"
+                    : student.gender || "—"
               }
               icon={<User size={14} />}
             />
-
+            <HeroInfo label="Phone" value={student.phone_number || "—"} icon={<Phone size={14} />} />
+            <HeroInfo label="Blood group" value={student.blood_group || "—"} icon={<Heart size={14} />} />
+            <HeroInfo label="Backlogs" value={String(student.total_backlogs || 0)} icon={<Scale size={14} />} />
             <HeroInfo
-              label="EMERGENCY"
-              value={student.phone_number || "N/A"}
-              icon={<Phone size={14} />}
-            />
-            <HeroInfo
-              label="BLOOD GROUP"
-              value={student.blood_group || "N/A"}
-              icon={<Heart size={14} />}
-            />
-            <HeroInfo
-              label="BACKLOGS"
-              value={student.total_backlogs || 0}
-              icon={<Scale size={14} />}
-            />
-            <HeroInfo
-              label="ACTIVITY"
-              value={student.is_in_campus ? "IN CAMPUS" : "OUTSIDE"}
+              label="Campus"
+              value={student.is_in_campus ? "In campus" : "Outside"}
               icon={<History size={14} />}
             />
             <HeroInfo
-              label="STANDING"
-              value={student.is_suspended ? "RESTRICTED" : "GOOD"}
+              label="Standing"
+              value={student.is_suspended ? "Suspended" : "Active"}
               icon={<Shield size={14} />}
             />
           </div>
@@ -260,7 +233,7 @@ export default function StudentDashboard({
           label="CGPA"
           data={gpaData}
           dataKey="gpa"
-          color="#0b2a47"
+          color="#18181b"
         />
 
         {/* Attendance Graph */}
@@ -271,19 +244,17 @@ export default function StudentDashboard({
           label="LATEST"
           data={attendanceSeries}
           dataKey="percentage"
-          color="#256aa6"
+          color="#52525b"
         />
       </div>
 
       {/* Bottom Intelligence */}
       <div className="flex flex-col md:flex-row gap-4">
         {/* Motivation Quote */}
-        <div className="w-full bg-slate-50 border border-slate-100 p-8 rounded-[2rem] text-center flex flex-col justify-center shadow-none">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">
-            Institutional Motivation
-          </p>
-          <p className="text-base font-black text-slate-600 italic leading-relaxed max-w-2xl mx-auto">
-            "{student.motivation}"
+        <div className={cn(adminCardClass, "p-8 text-center flex flex-col justify-center")}>
+          <p className={cn(adminLabelClass, "mb-3")}>Motivation</p>
+          <p className="text-[15px] font-medium text-zinc-600 italic leading-relaxed max-w-2xl mx-auto">
+            "{student.motivation || "—"}"
           </p>
         </div>
       </div>
@@ -302,13 +273,11 @@ function HeroInfo({
 }) {
   return (
     <div className="flex flex-col items-center gap-2">
-      <div className="flex items-center justify-center gap-1.5 text-slate-400 mb-0.5 opacity-80">
+      <div className="flex items-center justify-center gap-1.5 text-zinc-400 mb-0.5">
         {icon}
-        <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-          {label}
-        </span>
+        <span className={adminLabelClass}>{label}</span>
       </div>
-      <p className="text-[13px] font-bold text-slate-900 tracking-tight leading-none text-center">
+      <p className="text-[13px] font-semibold text-zinc-900 tracking-tight leading-none text-center">
         {value}
       </p>
     </div>
@@ -325,21 +294,15 @@ function GraphCard({
   color,
 }: any) {
   return (
-    <div className="bg-white rounded-[2rem] border border-slate-100 p-8 flex flex-col">
-      <div className="flex items-center justify-between mb-10">
+    <div className={cn(adminCardClass, "p-6 flex flex-col")}>
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h4 className="text-base font-black text-slate-900 leading-none mb-1">
-            {title}
-          </h4>
-          <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">
-            {subtitle}
-          </p>
+          <h4 className={adminSectionTitleClass}>{title}</h4>
+          <p className="text-[11px] text-zinc-400 mt-0.5">{subtitle}</p>
         </div>
         <div className="text-right">
-          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
-            {label}
-          </p>
-          <p className="text-2xl font-black text-slate-900 tracking-tighter">
+          <p className={adminLabelClass}>{label}</p>
+          <p className={cn("text-2xl font-semibold text-zinc-900 mt-1", adminNumsClass)}>
             {value}
           </p>
         </div>
@@ -351,31 +314,26 @@ function GraphCard({
             data={data}
             margin={{ top: 5, right: 20, left: -20, bottom: 5 }}
           >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              vertical={false}
-              stroke="#f1f5f9"
-            />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e4e4e7" />
             <XAxis
               dataKey="name"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#94a3b8", fontSize: 10, fontWeight: 700 }}
+              tick={{ fill: "#a1a1aa", fontSize: 10, fontWeight: 500 }}
               dy={10}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#94a3b8", fontSize: 10, fontWeight: 700 }}
+              tick={{ fill: "#a1a1aa", fontSize: 10, fontWeight: 500 }}
             />
             <Tooltip
               contentStyle={{
                 borderRadius: "12px",
-                border: "1px solid #f1f5f9",
+                border: "1px solid #e4e4e7",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                fontSize: "11px",
-                fontWeight: "900",
-                textTransform: "uppercase",
+                fontSize: "12px",
+                fontWeight: 500,
               }}
               cursor={{ stroke: color, strokeWidth: 1, strokeDasharray: "4 4" }}
             />

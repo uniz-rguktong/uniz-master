@@ -38,12 +38,12 @@ export default function LoginScreen({
 
         <div className="relative z-10 flex flex-1 flex-col justify-end p-12 xl:p-16">
           {heroTitle ? (
-            <h1 className="text-white text-5xl xl:text-6xl font-black leading-[1.05] tracking-[-0.04em] max-w-lg mb-auto pt-4">
+            <h1 className="text-white text-5xl xl:text-6xl font-semibold leading-[1.05] tracking-[-0.04em] max-w-lg mb-auto pt-4">
               {heroTitle}
             </h1>
           ) : (
             <div className="mb-auto pt-4 max-w-md">
-              <p className="text-3xl xl:text-[2.75rem] font-black text-white tracking-[-0.04em] leading-[1.08]">
+              <p className="text-3xl xl:text-[2.75rem] font-semibold text-white tracking-[-0.04em] leading-[1.08]">
                 One login.
                 <span className="block text-white/40 font-light mt-1">
                   Your whole campus.
@@ -88,7 +88,7 @@ export default function LoginScreen({
               transition={{ duration: 0.25 }}
               className="mb-8"
             >
-              <h1 className="text-[1.75rem] sm:text-[2rem] font-black text-zinc-950 tracking-[-0.04em] leading-tight">
+              <h1 className="text-[1.75rem] sm:text-[2rem] font-semibold text-zinc-950 tracking-[-0.04em] leading-tight">
                 {title || (isLogin ? "Sign in" : "Create account")}
               </h1>
               {subtitle && (

@@ -34,6 +34,18 @@ import {
   GET_AVAILABLE_BATCHES,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { cn } from "../../../utils/cn";
+import {
+  adminModalShellClass,
+  adminModalTitleClass,
+  adminModalDescClass,
+  adminLabelClass,
+  adminInputClass,
+  adminSelectClass,
+  adminPrimaryButtonClass,
+  adminGhostButtonClass,
+  adminWarningBannerClass,
+} from "../../../components/admin/admin-ui";
 
 // --- Types ---
 interface Semester {
@@ -340,10 +352,10 @@ export default function UnifiedAcademicManager() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex flex-col gap-1.5 mb-2">
-          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-zinc-900 leading-none">
             Sem Registration
           </h2>
-          <p className="text-slate-500 font-medium text-[15px]">
+          <p className="text-zinc-500 font-medium text-[15px]">
             Master curriculum control and semester lifecycle management.
           </p>
         </div>
@@ -353,13 +365,13 @@ export default function UnifiedAcademicManager() {
               fetchSemesters();
               fetchMasterSubjects();
             }}
-            className="p-3 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-navy-900 transition-all active:scale-95"
+            className="p-3 bg-white border border-zinc-100 rounded-xl text-zinc-400 hover:text-zinc-900 transition-all active:scale-95"
           >
             <RefreshCcw size={20} className={loading ? "animate-spin" : ""} />
           </button>
           <button
             onClick={() => setShowNewSemModal(true)}
-            className="h-12 px-8 bg-navy-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-lg shadow-navy-100/50"
+            className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-semibold text-[10px] uppercase tracking-[0.14em] hover:bg-black transition-all flex items-center gap-3 shadow-lg shadow-zinc-100/50"
           >
             <Zap size={14} /> New Rollout
           </button>
@@ -367,7 +379,7 @@ export default function UnifiedAcademicManager() {
       </div>
 
       {/* Main Tab Navigation */}
-      <div className="flex gap-2 bg-white/50 p-1.5 rounded-xl border border-slate-100 w-fit backdrop-blur-sm">
+      <div className="flex gap-2 bg-white/50 p-1.5 rounded-xl border border-zinc-100 w-fit backdrop-blur-sm">
         {(["catalog", "subjects", "rollout"] as const).map((tabId) => {
           const labels: Record<string, string> = {
             catalog: "Catalog",
@@ -387,11 +399,11 @@ export default function UnifiedAcademicManager() {
               disabled={tabId === "rollout" && !selectedSem}
               onClick={() => setActiveTab(tabId)}
               className={`
-                flex items-center gap-3 px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all
+                flex items-center gap-3 px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-[0.14em] transition-all
                 ${
                   activeTab === tabId
-                    ? "bg-white text-navy-900 border border-slate-100"
-                    : "text-slate-400 hover:text-slate-900 hover:bg-white/80"
+                    ? "bg-white text-zinc-900 border border-zinc-100"
+                    : "text-zinc-400 hover:text-zinc-900 hover:bg-white/80"
                 }
                 ${tabId === "rollout" && !selectedSem ? "opacity-30 cursor-not-allowed" : ""}
               `}
@@ -414,35 +426,35 @@ export default function UnifiedAcademicManager() {
                   setSelectedSem(sem);
                   setActiveTab("rollout");
                 }}
-                className="bg-white rounded-xl border border-slate-100 p-8 transition-all group cursor-pointer overflow-hidden relative"
+                className="bg-white rounded-xl border border-zinc-100 p-8 transition-all group cursor-pointer overflow-hidden relative"
               >
                 <div className="flex justify-between items-start mb-10">
                   <div
-                    className={`p-4 rounded-xl ${sem.status === "REGISTRATION_OPEN" ? "bg-emerald-50 text-emerald-600" : "bg-slate-50 text-slate-400"}`}
+                    className={`p-4 rounded-xl ${sem.status === "REGISTRATION_OPEN" ? "bg-emerald-50 text-emerald-600" : "bg-zinc-50 text-zinc-400"}`}
                   >
                     <Calendar size={28} />
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <span
-                      className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${
+                      className={`px-4 py-1.5 rounded-xl text-[9px] font-semibold uppercase tracking-[0.14em] border ${
                         sem.status === "REGISTRATION_OPEN"
                           ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                          : "bg-slate-50 text-slate-400 border-slate-100"
+                          : "bg-zinc-50 text-zinc-400 border-zinc-100"
                       }`}
                     >
                       {sem.status.replace("_", " ")}
                     </span>
                   </div>
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 tracking-tight group-hover:text-navy-900 transition-colors uppercase">
+                <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight group-hover:text-zinc-900 transition-colors uppercase">
                   {sem.name}
                 </h3>
                 <div className="flex items-center gap-6 mt-6 mb-8">
                   <div>
-                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+                    <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.14em] mb-1">
                       Enrollment
                     </p>
-                    <p className="text-lg font-black text-slate-900">
+                    <p className="text-lg font-semibold text-zinc-900">
                       {sem._count?.registrations || 0}
                     </p>
                   </div>
@@ -458,28 +470,28 @@ export default function UnifiedAcademicManager() {
                     </button>
                   </div>
                 </div>
-                <div className="w-full h-2 bg-slate-50 rounded-full overflow-hidden mt-auto">
+                <div className="w-full h-2 bg-zinc-50 rounded-full overflow-hidden mt-auto">
                   <div
-                    className={`h-full transition-all duration-1000 ${sem.status === "REGISTRATION_OPEN" ? "w-full bg-emerald-500" : "w-1/3 bg-navy-500"}`}
+                    className={`h-full transition-all duration-1000 ${sem.status === "REGISTRATION_OPEN" ? "w-full bg-emerald-500" : "w-1/3 bg-zinc-500"}`}
                   ></div>
                 </div>
               </div>
             ))}
             {semesters.length === 0 && (
-              <div className="col-span-full py-24 bg-white rounded-xl border-dashed border-2 border-slate-100 p-12 text-center animate-in fade-in zoom-in-95 duration-700">
-                <div className="w-24 h-24 bg-navy-50 text-navy-900 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-white shadow-none">
+              <div className="col-span-full py-24 bg-white rounded-xl border-dashed border-2 border-zinc-100 p-12 text-center animate-in fade-in zoom-in-95 duration-700">
+                <div className="w-24 h-24 bg-zinc-50 text-zinc-900 rounded-full flex items-center justify-center mx-auto mb-8 border-4 border-white shadow-none">
                   <BookOpen size={40} strokeWidth={2.5} />
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight italic">
+                <h3 className="text-2xl font-semibold text-zinc-900 mb-3 tracking-tight italic">
                   Relaxation levels are dangerously high.
                 </h3>
-                <p className="text-slate-500 font-medium max-w-md mx-auto mb-10 leading-relaxed">
+                <p className="text-zinc-500 font-medium max-w-md mx-auto mb-10 leading-relaxed">
                   Campus vibes: 100% chill. Students are relaxing… but don't
                   worry, semester registration is loading to take care of that.
                 </p>
                 <button
                   onClick={() => setShowNewSemModal(true)}
-                  className="px-10 py-5 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-black transition-all active:scale-95 shadow-none"
+                  className="px-10 py-5 bg-zinc-900 text-white rounded-xl font-semibold uppercase tracking-[0.14em] text-[10px] hover:bg-black transition-all active:scale-95 shadow-none"
                 >
                   Initiate New Rollout
                 </button>
@@ -490,10 +502,10 @@ export default function UnifiedAcademicManager() {
 
         {activeTab === "subjects" && (
           <div className="space-y-8">
-            <div className="flex flex-wrap gap-4 bg-white p-6 rounded-xl border border-slate-100">
+            <div className="flex flex-wrap gap-4 bg-white p-6 rounded-xl border border-zinc-100">
               <div className="relative flex-1 min-w-[300px]">
                 <Search
-                  className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400"
                   size={18}
                 />
                 <input
@@ -501,13 +513,13 @@ export default function UnifiedAcademicManager() {
                   placeholder="Search master subjects..."
                   value={subSearch}
                   onChange={(e) => setSubSearch(e.target.value)}
-                  className="w-full h-12 pl-14 pr-6 bg-slate-50 rounded-xl outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 font-bold text-slate-900"
+                  className="w-full h-12 pl-14 pr-6 bg-zinc-50 rounded-xl outline-none focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 font-bold text-zinc-900"
                 />
               </div>
               <select
                 value={subDept}
                 onChange={(e) => setSubDept(e.target.value)}
-                className="h-12 px-8 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-600 border-none outline-none appearance-none"
+                className="h-12 px-8 bg-zinc-50 rounded-xl font-bold uppercase tracking-[0.14em] text-[10px] text-zinc-600 border-none outline-none appearance-none"
               >
                 <option value="">All Departments</option>
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((d) => (
@@ -528,7 +540,7 @@ export default function UnifiedAcademicManager() {
                   });
                   setShowSubModal(true);
                 }}
-                className="h-12 px-8 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 border-2 border-white/20 shadow-none"
+                className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-bold uppercase tracking-[0.14em] text-[10px] transition-all flex items-center gap-2 border-2 border-white/20 shadow-none"
               >
                 <PlusCircle size={16} /> Add New Subject
               </button>
@@ -538,21 +550,21 @@ export default function UnifiedAcademicManager() {
               {allSubjects.map((sub, i) => (
                 <div
                   key={i}
-                  className="bg-white border border-slate-100 rounded-xl p-5 group overflow-hidden"
+                  className="bg-white border border-zinc-100 rounded-xl p-5 group overflow-hidden"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 bg-navy-50 rounded-xl text-navy-900 border border-navy-100 transition-all">
+                    <div className="p-3 bg-zinc-50 rounded-xl text-zinc-900 border border-zinc-100 transition-all">
                       <BookText size={20} />
                     </div>
-                    <div className="px-3 py-1 bg-slate-50 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-400">
+                    <div className="px-3 py-1 bg-zinc-50 rounded-xl text-[9px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                       {sub.code}
                     </div>
                   </div>
-                  <h3 className="text-base font-black text-slate-900 leading-tight mb-2">
+                  <h3 className="text-base font-semibold text-zinc-900 leading-tight mb-2">
                     {sub.name}
                   </h3>
-                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-50">
-                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-zinc-50">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                       {sub.department} • {sub.credits} Credits
                     </div>
                     <button
@@ -567,7 +579,7 @@ export default function UnifiedAcademicManager() {
                         });
                         setShowSubModal(true);
                       }}
-                      className="text-slate-300 hover:text-navy-900 transition-colors"
+                      className="text-zinc-300 hover:text-zinc-900 transition-colors"
                     >
                       <Edit3 size={16} />
                     </button>
@@ -580,20 +592,20 @@ export default function UnifiedAcademicManager() {
 
         {activeTab === "rollout" && selectedSem && (
           <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
-            <div className="bg-slate-900 rounded-xl p-10 text-white relative overflow-hidden">
+            <div className="bg-zinc-900 rounded-xl p-10 text-white relative overflow-hidden">
               <div className="relative z-10 flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="px-4 py-1.5 bg-navy-500/20 text-blue-400 rounded-xl text-[10px] font-black uppercase tracking-widest border border-navy-100/30">
+                    <span className="px-4 py-1.5 bg-zinc-500/20 text-blue-400 rounded-xl text-[10px] font-semibold uppercase tracking-[0.14em] border border-zinc-100/30">
                       Active Rollout
                     </span>
-                    <span className="text-slate-500">•</span>
-                    <span className="text-xs font-bold text-slate-400 italic">
+                    <span className="text-zinc-500">•</span>
+                    <span className="text-xs font-bold text-zinc-400 italic">
                       Created{" "}
                       {new Date(selectedSem.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <h2 className="text-5xl font-black tracking-tighter italic">
+                  <h2 className="text-5xl font-semibold tracking-tighter italic">
                     {selectedSem.name}
                   </h2>
                 </div>
@@ -607,7 +619,7 @@ export default function UnifiedAcademicManager() {
                           : "REGISTRATION_OPEN",
                       )
                     }
-                    className={`h-14 px-10 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center gap-3 ${
+                    className={`h-14 px-10 rounded-xl font-semibold text-[10px] uppercase tracking-[0.14em] transition-all flex items-center gap-3 ${
                       selectedSem.status === "REGISTRATION_OPEN"
                         ? "bg-red-50/5 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white"
                         : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-100"
@@ -616,47 +628,47 @@ export default function UnifiedAcademicManager() {
                     {selectedSem.status === "REGISTRATION_OPEN" ? (
                       <>Stop Enrollment</>
                     ) : (
-                      <>Launch Enrollment 🚀</>
+                      <>Launch enrollment</>
                     )}
                   </button>
                   <button
                     onClick={handleGlobalApprove}
-                    className="h-14 px-8 bg-white/10 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white/20 transition-all border border-white/10"
+                    className="h-14 px-8 bg-white/10 text-white rounded-xl font-semibold text-xs uppercase tracking-[0.14em] hover:bg-white/20 transition-all border border-white/10"
                   >
                     Push Progress
                   </button>
                 </div>
               </div>
-              <div className="absolute right-0 top-0 w-64 h-64 bg-navy-900/10 blur-[120px] rounded-full"></div>
+              <div className="absolute right-0 top-0 w-64 h-64 bg-zinc-900/10 blur-[120px] rounded-full"></div>
             </div>
 
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <div className="flex items-center justify-between border-b border-zinc-200 pb-2">
               <div className="flex gap-8">
                 {(["allocations", "registrations"] as const).map((v) => (
                   <button
                     key={v}
                     onClick={() => setRolloutView(v)}
-                    className={`pb-4 text-[13px] font-black uppercase tracking-[0.2em] transition-all relative ${
+                    className={`pb-4 text-[13px] font-semibold uppercase tracking-[0.14em] transition-all relative ${
                       rolloutView === v
-                        ? "text-navy-900"
-                        : "text-slate-400 hover:text-slate-600"
+                        ? "text-zinc-900"
+                        : "text-zinc-400 hover:text-zinc-600"
                     }`}
                   >
                     {v}
                     {rolloutView === v && (
-                      <div className="absolute bottom-0 left-0 w-full h-1 bg-navy-900 rounded-full animate-in fade-in duration-500"></div>
+                      <div className="absolute bottom-0 left-0 w-full h-1 bg-zinc-900 rounded-full animate-in fade-in duration-500"></div>
                     )}
                   </button>
                 ))}
               </div>
 
               <div className="flex gap-3 mb-4">
-                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-slate-100 shadow-none">
-                  <Filter size={14} className="text-slate-400" />
+                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-zinc-100 shadow-none">
+                  <Filter size={14} className="text-zinc-400" />
                   <select
                     value={filterBranch}
                     onChange={(e) => setFilterBranch(e.target.value)}
-                    className="font-black text-[10px] uppercase tracking-widest text-slate-700 outline-none border-none bg-transparent"
+                    className="font-semibold text-[10px] uppercase tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
                   >
                     <option value="all">All Branches</option>
                     {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
@@ -666,12 +678,12 @@ export default function UnifiedAcademicManager() {
                     ))}
                   </select>
                 </div>
-                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-slate-100 shadow-none">
-                  <Users size={14} className="text-slate-400" />
+                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-zinc-100 shadow-none">
+                  <Users size={14} className="text-zinc-400" />
                   <select
                     value={filterYear}
                     onChange={(e) => setFilterYear(e.target.value)}
-                    className="font-black text-[10px] uppercase tracking-widest text-slate-700 outline-none border-none bg-transparent"
+                    className="font-semibold text-[10px] uppercase tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
                   >
                     <option value="all">All Years</option>
                     {["E1", "E2", "E3", "E4"].map((y) => (
@@ -681,12 +693,12 @@ export default function UnifiedAcademicManager() {
                     ))}
                   </select>
                 </div>
-                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-slate-100 shadow-none">
-                  <BookText size={14} className="text-slate-400" />
+                <div className="flex items-center gap-2 bg-white px-5 py-2.5 rounded-xl border border-zinc-100 shadow-none">
+                  <BookText size={14} className="text-zinc-400" />
                   <select
                     value={filterBatch}
                     onChange={(e) => setFilterBatch(e.target.value)}
-                    className="font-black text-[10px] uppercase tracking-widest text-slate-700 outline-none border-none bg-transparent"
+                    className="font-semibold text-[10px] uppercase tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
                   >
                     <option value="all">All Batches</option>
                     {availableBatches.map((b) => (
@@ -699,41 +711,41 @@ export default function UnifiedAcademicManager() {
                 {rolloutView === "allocations" && (
                   <button
                     onClick={() => setShowAddAllocModal(true)}
-                    className="flex items-center gap-2 bg-navy-900 text-white px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-none hover:scale-105 active:scale-95 transition-all"
+                    className="flex items-center gap-2 bg-zinc-900 text-white px-6 py-2.5 rounded-xl font-semibold text-[10px] uppercase tracking-[0.14em] shadow-none hover:scale-105 active:scale-95 transition-all"
                   >
-                    <Plus size={14} /> Add 🎓
+                    <Plus size={14} /> Add subject
                   </button>
                 )}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
+            <div className="bg-white rounded-xl border border-zinc-100 overflow-hidden">
               {rolloutView === "allocations" ? (
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">
+                    <tr className="bg-zinc-50/50 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 border-b border-zinc-100">
                       <th className="px-10 py-6">Course Structure</th>
                       <th className="px-10 py-6">Branch / Year</th>
                       <th className="px-10 py-6">Status</th>
                       <th className="px-10 py-6 text-right">Manage</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-50">
+                  <tbody className="divide-y divide-zinc-50">
                     {rolloutAllocations.map((item) => (
                       <tr
                         key={item.id}
-                        className="group hover:bg-slate-50/50 transition-colors"
+                        className="group hover:bg-zinc-50/50 transition-colors"
                       >
                         <td className="px-10 py-6">
                           <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 group-hover:text-navy-900 group-hover:bg-navy-50 transition-all">
+                            <div className="w-12 h-12 bg-zinc-50 rounded-xl flex items-center justify-center text-zinc-300 group-hover:text-zinc-900 group-hover:bg-zinc-50 transition-all">
                               <BookOpen size={20} />
                             </div>
                             <div>
-                              <p className="font-bold text-slate-900">
+                              <p className="font-bold text-zinc-900">
                                 {item.customName || item.subject.name}
                               </p>
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                              <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
                                 {item.subject.code} •{" "}
                                 {item.customCredits || item.subject.credits}{" "}
                                 Credits
@@ -743,14 +755,14 @@ export default function UnifiedAcademicManager() {
                         </td>
                         <td className="px-10 py-6">
                           <div className="flex items-center gap-2">
-                            <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                            <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-xl text-[9px] font-semibold uppercase tracking-[0.14em]">
                               {item.branch}
                             </span>
-                            <span className="px-3 py-1 bg-navy-50 text-navy-900 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                            <span className="px-3 py-1 bg-zinc-50 text-zinc-900 rounded-xl text-[9px] font-semibold uppercase tracking-[0.14em]">
                               {item.academicYear}
                             </span>
                             {item.batch && (
-                              <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                              <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-semibold uppercase tracking-[0.14em]">
                                 {item.batch}
                               </span>
                             )}
@@ -761,7 +773,7 @@ export default function UnifiedAcademicManager() {
                             <div
                               className={`w-2 h-2 rounded-full ${item.status === "APPROVED" ? "bg-emerald-500 animate-pulse" : "bg-amber-400"}`}
                             ></div>
-                            <span className="text-[11px] font-extrabold uppercase tracking-tight text-slate-600">
+                            <span className="text-[11px] font-extrabold uppercase tracking-tight text-zinc-600">
                               {item.status.replace("_", " ")}
                             </span>
                           </div>
@@ -781,45 +793,45 @@ export default function UnifiedAcademicManager() {
               ) : (
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">
+                    <tr className="bg-zinc-50/50 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 border-b border-zinc-100">
                       <th className="px-10 py-6">Enrolled Student</th>
                       <th className="px-10 py-6">Batch</th>
                       <th className="px-10 py-6">Allocated Course</th>
                       <th className="px-10 py-6">Timestamp</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-50">
+                  <tbody className="divide-y divide-zinc-50">
                     {rolloutRegistrations.map((reg) => (
                       <tr
                         key={reg.id}
-                        className="hover:bg-slate-50 transition-colors"
+                        className="hover:bg-zinc-50 transition-colors"
                       >
                         <td className="px-10 py-6">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center font-black text-slate-400">
+                            <div className="w-10 h-10 bg-zinc-100 rounded-xl flex items-center justify-center font-semibold text-zinc-400">
                               {reg.studentId[0]}
                             </div>
-                            <p className="font-bold text-slate-900 tracking-tight">
+                            <p className="font-bold text-zinc-900 tracking-tight">
                               {reg.studentId}
                             </p>
                           </div>
                         </td>
                         <td className="px-10 py-6">
-                          <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                          <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-xl text-[9px] font-semibold uppercase tracking-[0.14em]">
                             {reg.batch || "N/A"}
                           </span>
                         </td>
                         <td className="px-10 py-6">
                           <div className="space-y-1">
-                            <p className="text-xs font-bold text-slate-800">
+                            <p className="text-xs font-bold text-zinc-800">
                               {reg.subject.name}
                             </p>
-                            <p className="text-[9px] font-black italic text-slate-400">
+                            <p className="text-[9px] font-semibold italic text-zinc-400">
                               {reg.subject.code}
                             </p>
                           </div>
                         </td>
-                        <td className="px-10 py-6 text-xs font-bold text-slate-400">
+                        <td className="px-10 py-6 text-xs font-bold text-zinc-400">
                           {new Date(reg.createdAt).toLocaleString()}
                         </td>
                       </tr>
@@ -833,10 +845,10 @@ export default function UnifiedAcademicManager() {
                 (rolloutView === "registrations" &&
                   rolloutRegistrations.length === 0)) && (
                 <div className="p-32 text-center">
-                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                  <div className="w-20 h-20 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-6 text-zinc-200">
                     <X size={40} />
                   </div>
-                  <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
+                  <p className="text-zinc-400 font-bold uppercase tracking-[0.14em] text-xs">
                     Zero activity detected for these parameters.
                   </p>
                 </div>
@@ -848,50 +860,41 @@ export default function UnifiedAcademicManager() {
 
       {showNewSemModal && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm"
           onClick={() => setShowNewSemModal(false)}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-100 relative"
+            className={cn("w-full max-w-md relative", adminModalShellClass)}
             onClick={(e) => e.stopPropagation()}
           >
             <button
+              type="button"
               onClick={() => setShowNewSemModal(false)}
-              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
             <div className="p-8">
-              <div className="flex flex-col items-center text-center gap-4 mb-8">
-                <div>
-                  <h3 className="text-2xl font-bold text-slate-900 tracking-tight uppercase italic">
-                    Academic Rollout
-                  </h3>
-                  <p className="text-[14px] font-medium text-slate-500 mt-1.5 leading-relaxed">
-                    Initialize a new semester registration event for the campus.
-                  </p>
-                </div>
-              </div>
+              <h3 className={cn(adminModalTitleClass, "mb-1")}>Academic rollout</h3>
+              <p className={cn(adminModalDescClass, "mb-6")}>
+                Initialize a new semester registration event for the campus.
+              </p>
 
-              <div className="space-y-6">
-                <div className="space-y-2.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                    Semester Name
-                  </label>
+              <div className="space-y-5">
+                <div className="space-y-2">
+                  <label className={adminLabelClass}>Semester name</label>
                   <input
                     type="text"
                     value={newSemName}
                     onChange={(e) => setNewSemName(e.target.value)}
-                    className="w-full h-14 px-6 bg-slate-50 border-2 border-transparent focus:border-navy-100 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all shadow-inner"
+                    className={adminInputClass}
                     placeholder="e.g. AY 2024-25 SEM-II"
                   />
                 </div>
 
-                <div className="space-y-3 pt-2">
-                  <div className="flex items-center justify-between px-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      Applicable Branches
-                    </label>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className={adminLabelClass}>Applicable branches</label>
                     <div
                       className="flex items-center gap-2 cursor-pointer group"
                       onClick={() => {
@@ -909,65 +912,68 @@ export default function UnifiedAcademicManager() {
                       }}
                     >
                       <div
-                        className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${allBranchesSelected ? "bg-navy-900 border-navy-900" : "border-slate-300 group-hover:border-navy-500"}`}
+                        className={cn(
+                          "w-4 h-4 rounded border flex items-center justify-center transition-all",
+                          allBranchesSelected
+                            ? "bg-zinc-900 border-zinc-900"
+                            : "border-zinc-300 group-hover:border-zinc-500",
+                        )}
                       >
                         {allBranchesSelected && (
-                          <Check
-                            size={12}
-                            className="text-white"
-                            strokeWidth={4}
-                          />
+                          <Check size={12} className="text-white" strokeWidth={4} />
                         )}
                       </div>
-                      <span className="text-[11px] font-bold text-slate-600 uppercase tracking-tighter">
-                        All Branches
+                      <span className="text-[12px] font-medium text-zinc-600">
+                        All branches
                       </span>
                     </div>
                   </div>
 
                   {!allBranchesSelected && (
-                    <div className="grid grid-cols-3 gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                      {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map(
-                        (b) => (
-                          <button
-                            key={b}
-                            onClick={() =>
-                              setSelectedBranches((prev) =>
-                                prev.includes(b)
-                                  ? prev.filter((x) => x !== b)
-                                  : [...prev, b],
-                              )
-                            }
-                            className={`h-10 rounded-lg font-bold text-[10px] transition-all border ${
-                              selectedBranches.includes(b)
-                                ? "bg-navy-900 text-white border-navy-900 shadow-sm"
-                                : "bg-white text-slate-400 border-slate-200 hover:border-slate-400"
-                            }`}
-                          >
-                            {b}
-                          </button>
-                        ),
-                      )}
+                    <div className="grid grid-cols-3 gap-2">
+                      {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
+                        <button
+                          key={b}
+                          type="button"
+                          onClick={() =>
+                            setSelectedBranches((prev) =>
+                              prev.includes(b)
+                                ? prev.filter((x) => x !== b)
+                                : [...prev, b],
+                            )
+                          }
+                          className={cn(
+                            "h-10 rounded-xl text-[12px] font-semibold border transition-all",
+                            selectedBranches.includes(b)
+                              ? "bg-zinc-900 text-white border-zinc-900"
+                              : "bg-white text-zinc-500 border-zinc-200 hover:border-zinc-300",
+                          )}
+                        >
+                          {b}
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
 
-                <div className="flex gap-3 mt-10">
+                <div className="flex gap-3 pt-2">
                   <button
+                    type="button"
                     onClick={() => setShowNewSemModal(false)}
-                    className="flex-1 py-3.5 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 font-black uppercase tracking-widest text-[10px] transition-all"
+                    className={cn(adminGhostButtonClass, "flex-1")}
                   >
                     Cancel
                   </button>
                   <button
+                    type="button"
                     onClick={handleInitSemester}
                     disabled={
                       loading ||
                       (selectedBranches.length === 0 && !allBranchesSelected)
                     }
-                    className="flex-[2] py-3.5 rounded-xl bg-navy-900 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-lg shadow-navy-100 hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={cn(adminPrimaryButtonClass, "flex-[2]")}
                   >
-                    {loading ? "INITIALIZING..." : "LAUNCH ROLLOUT 🚀"}
+                    {loading ? "Initializing…" : "Launch rollout"}
                   </button>
                 </div>
               </div>
@@ -977,30 +983,27 @@ export default function UnifiedAcademicManager() {
       )}
 
       {showAddAllocModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-          <div className="bg-white rounded-xl w-full max-w-xl p-10 shadow-none animate-in zoom-in-95 duration-300">
-            <div className="flex justify-between items-start mb-10">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4">
+          <div className={cn("w-full max-w-xl p-8 space-y-6", adminModalShellClass)}>
+            <div className="flex justify-between items-start gap-4">
               <div>
-                <h3 className="text-3xl font-black italic tracking-tighter text-slate-900">
-                  Manual Course Allocation
-                </h3>
-                <p className="text-slate-400 text-sm font-bold">
+                <h3 className={adminModalTitleClass}>Manual course allocation</h3>
+                <p className={adminModalDescClass}>
                   Force-add a course to the current rollout context.
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setShowAddAllocModal(false)}
-                className="p-2 bg-slate-50 rounded-full text-slate-400 hover:text-slate-900 transition-all"
+                className="text-zinc-400 hover:text-zinc-900 p-1"
               >
-                <X />
+                <X size={20} />
               </button>
             </div>
 
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                  Search Course Catalog
-                </label>
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <label className={adminLabelClass}>Search course catalog</label>
                 <select
                   value={addAllocData.subjectId}
                   onChange={(e) =>
@@ -1009,9 +1012,9 @@ export default function UnifiedAcademicManager() {
                       subjectId: e.target.value,
                     })
                   }
-                  className="w-full h-16 px-8 bg-slate-50 rounded-xl outline-none font-bold text-slate-900 appearance-none"
+                  className={adminSelectClass}
                 >
-                  <option value="">Select Subject...</option>
+                  <option value="">Select subject…</option>
                   {allSubjects.map((s) => (
                     <option key={s.id} value={s.id}>
                       [{s.code}] {s.name}
@@ -1021,10 +1024,8 @@ export default function UnifiedAcademicManager() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                    Branch Target
-                  </label>
+                <div className="space-y-2">
+                  <label className={adminLabelClass}>Branch target</label>
                   <select
                     value={addAllocData.branch}
                     onChange={(e) =>
@@ -1033,25 +1034,21 @@ export default function UnifiedAcademicManager() {
                         branch: e.target.value,
                       })
                     }
-                    className="w-full h-14 px-6 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-700"
+                    className={adminSelectClass}
                   >
                     {filterBranch === "all" ? (
-                      ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map(
-                        (b) => (
-                          <option key={b} value={b}>
-                            {b}
-                          </option>
-                        ),
-                      )
+                      ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
+                        <option key={b} value={b}>
+                          {b}
+                        </option>
+                      ))
                     ) : (
                       <option value={filterBranch}>{filterBranch}</option>
                     )}
                   </select>
                 </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                    Year Target
-                  </label>
+                <div className="space-y-2">
+                  <label className={adminLabelClass}>Year target</label>
                   <select
                     value={addAllocData.academicYear}
                     onChange={(e) =>
@@ -1060,7 +1057,7 @@ export default function UnifiedAcademicManager() {
                         academicYear: e.target.value,
                       })
                     }
-                    className="w-full h-14 px-6 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-700"
+                    className={adminSelectClass}
                   >
                     {["E1", "E2", "E3", "E4"].map((y) => (
                       <option key={y} value={y}>
@@ -1072,20 +1069,20 @@ export default function UnifiedAcademicManager() {
               </div>
 
               <button
+                type="button"
                 onClick={handleManualAlloc}
                 disabled={loading || !addAllocData.subjectId}
-                className="w-full h-16 bg-slate-900 text-white rounded-xl font-black uppercase tracking-[0.2em] text-xs shadow-none mt-6"
+                className={cn(adminPrimaryButtonClass, "w-full")}
               >
-                Confirm Allocation
+                Confirm allocation
               </button>
             </div>
 
-            <div className="mt-10 p-6 bg-amber-50 rounded-xl border border-amber-100">
-              <p className="text-amber-800 text-[11px] font-bold leading-relaxed">
-                <ShieldCheck size={14} className="inline mr-2" />
-                This will create a new BranchAllocation record for the target
-                semester. Any changes will be visible to students once the
-                enrollment phase is opened.
+            <div className={cn(adminWarningBannerClass, "mt-2")}>
+              <p className="text-[12px] font-medium leading-relaxed">
+                <ShieldCheck size={14} className="inline mr-2 align-text-bottom" />
+                This creates a new BranchAllocation record for the target semester.
+                Changes are visible to students once enrollment opens.
               </p>
             </div>
           </div>
@@ -1093,41 +1090,45 @@ export default function UnifiedAcademicManager() {
       )}
 
       {showSubModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-          <div className="bg-white rounded-xl w-full max-w-xl p-10 shadow-none animate-in zoom-in-95 duration-300 relative">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-3xl font-black italic tracking-tighter text-slate-900">
-                {editingSub ? "Modify Subject" : "Course Architectural Entry"}
-              </h3>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4">
+          <div className={cn("w-full max-w-xl p-8 relative", adminModalShellClass)}>
+            <div className="flex items-start justify-between gap-4 mb-6">
+              <div>
+                <h3 className={adminModalTitleClass}>
+                  {editingSub ? "Modify subject" : "Add subject"}
+                </h3>
+                <p className={adminModalDescClass}>
+                  {editingSub
+                    ? "Update course details in the catalog."
+                    : "Create a new course entry in the catalog."}
+                </p>
+              </div>
               <button
+                type="button"
                 onClick={() => setShowSubModal(false)}
-                className="p-2 hover:bg-slate-50 rounded-full transition-all"
+                className="text-zinc-400 hover:text-zinc-900 p-1"
               >
-                <X />
+                <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleSaveSub} className="space-y-6">
-              <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                  Course Nomenclature
-                </label>
+            <form onSubmit={handleSaveSub} className="space-y-5">
+              <div className="space-y-2">
+                <label className={adminLabelClass}>Course name</label>
                 <input
                   required
                   value={newSub.name}
                   onChange={(e) =>
                     setNewSub({ ...newSub, name: e.target.value })
                   }
-                  className="w-full h-14 px-8 bg-slate-50 rounded-xl outline-none font-bold text-slate-900"
+                  className={adminInputClass}
                   placeholder="e.g. Distributed Systems"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                    Identity Code
-                  </label>
+                <div className="space-y-2">
+                  <label className={adminLabelClass}>Course code</label>
                   <input
                     required
                     value={newSub.code}
@@ -1137,14 +1138,12 @@ export default function UnifiedAcademicManager() {
                         code: e.target.value.toUpperCase(),
                       })
                     }
-                    className="w-full h-14 px-8 bg-slate-50 rounded-xl outline-none font-bold text-slate-900"
+                    className={adminInputClass}
                     placeholder="CS401"
                   />
                 </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                    Unit Credits
-                  </label>
+                <div className="space-y-2">
+                  <label className={adminLabelClass}>Credits</label>
                   <input
                     type="number"
                     value={newSub.credits}
@@ -1154,38 +1153,34 @@ export default function UnifiedAcademicManager() {
                         credits: parseInt(e.target.value),
                       })
                     }
-                    className="w-full h-14 px-8 bg-slate-50 rounded-xl outline-none font-bold text-slate-900"
+                    className={adminInputClass}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                    Ownership Dept
-                  </label>
+                <div className="space-y-2">
+                  <label className={adminLabelClass}>Department</label>
                   <select
                     value={newSub.department}
                     onChange={(e) =>
                       setNewSub({ ...newSub, department: e.target.value })
                     }
-                    className="w-full h-14 px-8 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-700 appearance-none cursor-pointer"
+                    className={adminSelectClass}
                   >
                     {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((d) => (
                       <option key={d}>{d}</option>
                     ))}
                   </select>
                 </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">
-                    Semester Mapping
-                  </label>
+                <div className="space-y-2">
+                  <label className={adminLabelClass}>Semester</label>
                   <select
                     value={newSub.semester}
                     onChange={(e) =>
                       setNewSub({ ...newSub, semester: e.target.value })
                     }
-                    className="w-full h-14 px-8 bg-slate-50 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-700 appearance-none cursor-pointer"
+                    className={adminSelectClass}
                   >
                     {["SEM-1", "SEM-2"].map((s) => (
                       <option key={s}>{s}</option>
@@ -1194,13 +1189,8 @@ export default function UnifiedAcademicManager() {
                 </div>
               </div>
 
-              <button
-                type="submit"
-                className="w-full h-16 bg-navy-900 text-white rounded-xl font-black uppercase tracking-[0.2em] text-xs shadow-none hover:bg-navy-800 transition-all mt-6"
-              >
-                {editingSub
-                  ? "Update Architectural Database"
-                  : "Finalize Course Entry 🎓"}
+              <button type="submit" className={cn(adminPrimaryButtonClass, "w-full mt-2")}>
+                {editingSub ? "Update subject" : "Create subject"}
               </button>
             </form>
           </div>
