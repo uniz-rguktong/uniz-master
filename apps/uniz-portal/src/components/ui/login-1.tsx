@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { UnizLogo } from "@/components/admin/UnizLogo";
 
 interface LoginScreenProps {
   isLogin?: boolean;
@@ -74,9 +75,7 @@ export default function LoginScreen({
             transition={{ duration: 0.4 }}
             className="mb-10"
           >
-            <span className="unifrakturcook-bold text-[2.75rem] sm:text-[3rem] text-zinc-950 tracking-tight leading-none block">
-              uniZ
-            </span>
+            <UnizLogo size="lg" />
           </motion.div>
 
           <AnimatePresence mode="wait">
