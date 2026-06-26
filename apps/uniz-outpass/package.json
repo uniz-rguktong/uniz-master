@@ -22,7 +22,7 @@
   "dependencies": {
     "@prisma/client": "^6.19.2",
     "@uniz/shared": "*",
-    "axios": "^1.13.4",
+    "axios": "^1.18.1",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
