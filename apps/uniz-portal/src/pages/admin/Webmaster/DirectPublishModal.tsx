@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, Mail, Rocket, ShieldCheck, X } from "lucide-react";
-import { apiClient } from "../../api/apiClient";
+import { apiClient } from "../../../api/apiClient";
 import {
   CONFIRM_DIRECT_PUBLISH,
   REQUEST_DIRECT_PUBLISH_CODE,
   RESEND_DIRECT_PUBLISH_CODE,
-} from "../../api/endpoints";
+} from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 import { cn } from "@/utils/cn";
 import {
@@ -17,7 +17,7 @@ import {
   adminModalShellClass,
   adminModalTitleClass,
   adminPrimaryButtonClass,
-} from "./admin-ui";
+} from "../../../components/admin/admin-ui";
 
 type DirectPublishModalProps = {
   semester: { id: string; name: string; status?: string };
