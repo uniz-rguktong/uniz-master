@@ -185,7 +185,10 @@ function resolveHodBranch(user: AuthenticatedRequest["user"]): string {
     .trim()
     .toUpperCase();
   if (fromJwt && fromJwt !== "GENERAL") return fromJwt;
-  return String(user.username.split("_")[1] || "")
+  const uname = String(user.username || "")
+    .replace(/"/g, "")
+    .toLowerCase();
+  return String(uname.split(/[_-]/)[1] || "")
     .trim()
     .toUpperCase();
 }
