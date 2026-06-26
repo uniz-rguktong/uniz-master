@@ -15,6 +15,17 @@ import { useRecoilState } from "recoil";
 import { systemLogsAtom } from "../../../store/atoms";
 
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Activity } from "lucide-react";
+import { SectionHeader } from "../../../components/admin/SectionHeader";
+import {
+  adminPageWrapClass,
+  adminCardClass,
+  adminInputClass,
+  adminSelectClass,
+  adminSegmentWrapClass,
+  adminSegmentInactiveClass,
+} from "../../../components/admin/admin-ui";
+import { cn } from "../../../utils/cn";
 
 export default function SystemLogsSection() {
   const [logsState, setLogsState] = useRecoilState(systemLogsAtom);
@@ -91,121 +102,125 @@ export default function SystemLogsSection() {
   );
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex flex-col gap-1.5">
-          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
-            System & Audit Logs
-          </h2>
-          <p className="text-slate-500 font-medium text-[15px]">
-            Institutional data synchronization and event history across all
-            portals.
-          </p>
-        </div>
+    <div className={cn(adminPageWrapClass, "animate-in fade-in duration-700 pb-20")}>
+      <SectionHeader
+        icon={<Activity size={18} />}
+        eyebrow="Management"
+        title="System & Audit Logs"
+        subtitle="Institutional data synchronization and event history across all portals."
+        actions={
+          <>
+            <div className={adminSegmentWrapClass}>
+              <button
+                onClick={fetchHistory}
+                title="Refresh Logs"
+                className={cn(
+                  adminSegmentInactiveClass,
+                  "px-2.5 py-1.5",
+                  loading && "animate-spin",
+                )}
+              >
+                <RefreshCw size={16} />
+              </button>
+              <button
+                onClick={triggerMaintenance}
+                disabled={isMaintenanceLoading}
+                title="Trigger Maintenance"
+                className={cn(
+                  adminSegmentInactiveClass,
+                  "px-2.5 py-1.5 hover:!text-rose-600",
+                  isMaintenanceLoading && "animate-pulse",
+                )}
+              >
+                <AlertTriangle size={16} />
+              </button>
+            </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/50 backdrop-blur-sm shadow-none">
-            <button
-              onClick={fetchHistory}
-              title="Refresh Logs"
-              className={`p-2.5 text-slate-500 hover:text-navy-900 transition-all ${loading ? "animate-spin" : ""}`}
-            >
-              <RefreshCw size={18} />
-            </button>
-            <button
-              onClick={triggerMaintenance}
-              disabled={isMaintenanceLoading}
-              title="Trigger Maintenance"
-              className={`p-2.5 text-slate-500 hover:text-red-600 transition-all ${isMaintenanceLoading ? "animate-pulse" : ""}`}
-            >
-              <AlertTriangle size={18} />
-            </button>
-          </div>
+            <div className="relative">
+              <Filter
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none z-10"
+                size={13}
+              />
+              <select
+                value={filterType}
+                onChange={(e) => {
+                  setFilterType(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className={cn(adminSelectClass, "pl-9 w-[160px]")}
+              >
+                <option value="ALL">All Assets</option>
+                <option value="STUDENTS">Students</option>
+                <option value="ATTENDANCE">Attendance</option>
+                <option value="GRADES">Grades</option>
+              </select>
+              <ChevronDown
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                size={14}
+              />
+            </div>
 
-          <div className="relative group">
-            <Filter
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors pointer-events-none"
-              size={13}
-            />
-            <select
-              value={filterType}
-              onChange={(e) => {
-                setFilterType(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="pl-10 pr-10 h-11 bg-white border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-[0.1em] outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all w-[160px] shadow-none appearance-none cursor-pointer text-slate-600"
-            >
-              <option value="ALL">All Assets</option>
-              <option value="STUDENTS">Students</option>
-              <option value="ATTENDANCE">Attendance</option>
-              <option value="GRADES">Grades</option>
-            </select>
-            <ChevronDown
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors pointer-events-none"
-              size={14}
-            />
-          </div>
+            <div className="relative">
+              <Search
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"
+                size={15}
+              />
+              <input
+                type="text"
+                placeholder="Search history…"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className={cn(adminInputClass, "pl-10 w-[240px]")}
+              />
+            </div>
+          </>
+        }
+      />
 
-          <div className="relative group">
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors"
-              size={16}
-            />
-            <input
-              type="text"
-              placeholder="Search history..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="pl-11 pr-5 h-12 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all w-[240px] shadow-none placeholder:text-slate-400"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl border border-slate-100 shadow-none overflow-hidden text-slate-900">
+      <div className={cn(adminCardClass, "overflow-hidden")}>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-50">
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+              <tr className="border-b border-zinc-200/70">
+                <th className="px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                   Activity & Resource
                 </th>
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                   Data Metrics
                 </th>
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                   Status
                 </th>
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                   Timestamp
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50/60">
+            <tbody className="divide-y divide-zinc-100">
               {loading ? (
                 Array(itemsPerPage)
                   .fill(0)
                   .map((_, i) => (
-                    <tr key={i} className="border-b border-slate-50/60">
-                      <td className="px-10 py-6">
+                    <tr key={i}>
+                      <td className="px-8 py-5">
                         <div className="space-y-2">
                           <Skeleton className="h-4 w-40" />
                           <Skeleton className="h-3 w-20 opacity-50" />
                         </div>
                       </td>
-                      <td className="px-10 py-6">
+                      <td className="px-8 py-5">
                         <div className="space-y-2">
                           <Skeleton className="h-5 w-12 rounded-lg" />
                           <Skeleton className="h-2 w-16 opacity-50" />
                         </div>
                       </td>
-                      <td className="px-10 py-6">
-                        <Skeleton className="h-7 w-20 rounded-xl" />
+                      <td className="px-8 py-5">
+                        <Skeleton className="h-7 w-20 rounded-full" />
                       </td>
-                      <td className="px-10 py-6">
+                      <td className="px-8 py-5">
                         <div className="space-y-2">
                           <Skeleton className="h-4 w-24" />
                           <Skeleton className="h-2 w-16 opacity-50" />
@@ -232,13 +247,13 @@ export default function SystemLogsSection() {
                   return (
                     <tr
                       key={log.id || idx}
-                      className="hover:bg-slate-50/30 transition-all group"
+                      className="hover:bg-zinc-50/60 transition-colors group"
                     >
-                      <td className="px-10 py-6">
+                      <td className="px-8 py-5">
                         <div className="flex flex-col gap-1.5">
                           <div className="flex items-center gap-2">
                             <p
-                              className="text-sm font-semibold text-slate-800 tracking-tight truncate max-w-[200px]"
+                              className="text-[13px] font-semibold text-zinc-800 tracking-tight truncate max-w-[200px]"
                               title={displayFilename}
                             >
                               {displayFilename || "Automated sync"}
@@ -249,59 +264,61 @@ export default function SystemLogsSection() {
                                 target="_blank"
                                 rel="noreferrer"
                                 title="Download Source File"
-                                className="text-slate-400 hover:text-navy-900 transition-colors bg-white hover:bg-slate-50 p-1.5 rounded-md border border-slate-200"
+                                className="text-zinc-400 hover:text-zinc-900 transition-colors bg-white hover:border-zinc-300 p-1.5 rounded-lg border border-zinc-200"
                               >
                                 <Download size={14} />
                               </a>
                             )}
                           </div>
-                          <span className="px-2 py-0.5 bg-navy-50 text-navy-900 rounded text-[9px] font-bold uppercase tracking-wider w-fit border border-navy-100">
+                          <span className="px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded-full text-[10px] font-medium uppercase tracking-wide w-fit">
                             {log.type || "NONE"}
                           </span>
                         </div>
                       </td>
-                      <td className="px-10 py-6">
+                      <td className="px-8 py-5">
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-2">
-                            <p className="text-sm font-bold text-slate-900">
+                            <p className="text-[14px] font-semibold text-zinc-900 tabular-nums">
                               {log.totalRows || 0}
                             </p>
-                            <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">
+                            <span className="text-[10px] text-zinc-400 font-medium uppercase tracking-[0.12em]">
                               Rows
                             </span>
                           </div>
                           <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1">
-                              <span className="w-1 h-1 rounded-full bg-emerald-500"></span>{" "}
+                            <span className="text-[11px] font-medium text-emerald-600 flex items-center gap-1 tabular-nums">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>{" "}
                               {log.successCount || 0}
                             </span>
-                            <span className="text-[10px] font-bold text-red-400 flex items-center gap-1">
-                              <span className="w-1 h-1 rounded-full bg-red-400"></span>{" "}
+                            <span className="text-[11px] font-medium text-rose-500 flex items-center gap-1 tabular-nums">
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span>{" "}
                               {log.failCount || 0}
                             </span>
                           </div>
                         </div>
                       </td>
-                      <td className="px-10 py-6">
+                      <td className="px-8 py-5">
                         <div className="w-fit">
                           {log.status === "COMPLETED" ? (
-                            <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-100">
-                              <span className="text-[9px] font-bold uppercase tracking-widest">
+                            <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-full border border-zinc-200">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                              <span className="text-[11px] font-medium">
                                 Completed
                               </span>
                             </div>
                           ) : (
-                            <div className="flex items-center gap-1.5 text-navy-900 bg-navy-50 px-3 py-1 rounded-xl border border-navy-100">
-                              <span className="text-[9px] font-bold uppercase tracking-widest">
+                            <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-full border border-zinc-200">
+                              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
+                              <span className="text-[11px] font-medium">
                                 {log.status || "PROCESSING"}
                               </span>
                             </div>
                           )}
                         </div>
                       </td>
-                      <td className="px-10 py-6">
+                      <td className="px-8 py-5">
                         <div className="flex flex-col">
-                          <p className="text-sm font-semibold tracking-tight text-slate-700">
+                          <p className="text-[13px] font-medium tracking-tight text-zinc-700 tabular-nums">
                             {new Date(log.createdAt).toLocaleDateString(
                               "en-GB",
                               {
@@ -311,7 +328,7 @@ export default function SystemLogsSection() {
                               },
                             )}
                           </p>
-                          <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
+                          <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-[0.12em] mt-0.5 tabular-nums">
                             {new Date(log.createdAt).toLocaleTimeString([], {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -324,12 +341,12 @@ export default function SystemLogsSection() {
                 })
               ) : (
                 <tr>
-                  <td colSpan={5} className="p-24 text-center">
-                    <div className="flex flex-col items-center gap-5">
-                      <div className="p-6 bg-slate-50 rounded-xl border border-slate-100 shadow-none text-slate-300">
-                        <AlertCircle size={40} />
+                  <td colSpan={5} className="py-20 text-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 flex items-center justify-center bg-zinc-50 rounded-2xl border border-zinc-200/70 text-zinc-300">
+                        <AlertCircle size={32} strokeWidth={1.5} />
                       </div>
-                      <p className="font-semibold text-slate-400 italic text-sm tracking-tight">
+                      <p className="text-[14px] font-medium text-zinc-500 tracking-tight">
                         No logs found matching your criteria.
                       </p>
                     </div>
@@ -342,10 +359,10 @@ export default function SystemLogsSection() {
 
         {/* Pagination bar */}
         {filteredHistory.length > 0 && (
-          <div className="px-10 py-5 bg-slate-50/30 border-t border-slate-50 flex items-center justify-between">
-            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+          <div className="px-8 py-4 bg-zinc-50/50 border-t border-zinc-200/70 flex items-center justify-between">
+            <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-[0.12em]">
               Showing{" "}
-              <span className="text-slate-900">
+              <span className="text-zinc-900">
                 {Math.min(
                   filteredHistory.length,
                   (currentPage - 1) * itemsPerPage + 1,
@@ -358,7 +375,7 @@ export default function SystemLogsSection() {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="px-4 py-2 border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all disabled:opacity-30 disabled:pointer-events-none"
+                className="h-8 px-3.5 border border-zinc-200 bg-white rounded-lg text-[12px] font-semibold text-zinc-600 hover:text-zinc-900 hover:border-zinc-300 transition-all disabled:opacity-30 disabled:pointer-events-none"
               >
                 Previous
               </button>
@@ -368,7 +385,7 @@ export default function SystemLogsSection() {
                     <button
                       key={num}
                       onClick={() => setCurrentPage(num)}
-                      className={`w-8 h-8 rounded-xl text-[10px] font-bold transition-all ${currentPage === num ? "bg-slate-900 text-white shadow-none" : "text-slate-500 hover:bg-slate-100"}`}
+                      className={`w-8 h-8 rounded-lg text-[12px] font-semibold tabular-nums transition-all ${currentPage === num ? "bg-zinc-900 text-white" : "text-zinc-500 hover:bg-zinc-100"}`}
                     >
                       {num}
                     </button>
@@ -383,7 +400,7 @@ export default function SystemLogsSection() {
                 onClick={() =>
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
-                className="px-4 py-2 border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all disabled:opacity-30 disabled:pointer-events-none"
+                className="h-8 px-3.5 border border-zinc-200 bg-white rounded-lg text-[12px] font-semibold text-zinc-600 hover:text-zinc-900 hover:border-zinc-300 transition-all disabled:opacity-30 disabled:pointer-events-none"
               >
                 Next
               </button>

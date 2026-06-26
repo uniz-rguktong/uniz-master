@@ -11,6 +11,13 @@ import {
 import { toast } from "@/utils/toast-ref";
 import { ADMIN_RESET_PASS } from "../../../api/endpoints";
 import { cn } from "../../../utils/cn";
+import { SectionHeader } from "../../../components/admin/SectionHeader";
+import {
+  adminPageWrapClass,
+  adminCardClass,
+  adminLabelClass,
+  adminPrimaryButtonClass,
+} from "../../../components/admin/admin-ui";
 
 function validateStrength(pwd: string) {
   let score = 0;
@@ -84,21 +91,16 @@ export default function SecuritySection({ username }: { username: string }) {
   };
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
-      {/* Standard Header */}
-      <div className="flex flex-col gap-1.5">
-        <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
-          Security & Authentication
-        </h2>
-        <p className="text-slate-500 font-medium text-[15px]">
-          Update your access credentials to maintain account integrity.
-        </p>
-      </div>
+    <div className={cn(adminPageWrapClass, "animate-in fade-in duration-700 pb-20")}>
+      <SectionHeader
+        icon={<Lock size={18} />}
+        eyebrow="Management"
+        title="Security & Authentication"
+        subtitle="Update your access credentials to maintain account integrity."
+      />
 
-      <div className="bg-white rounded-xl border border-slate-100 shadow-none p-8 space-y-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 rounded-full blur-3xl opacity-50 -mr-24 -mt-24 pointer-events-none" />
-
-        <div className="relative z-10 space-y-6">
+      <div className={cn(adminCardClass, "max-w-lg p-8 space-y-8")}>
+        <div className="space-y-6">
           <PasswordInput
             label="Current Access Key"
             value={oldPw}
@@ -128,14 +130,14 @@ export default function SecuritySection({ username }: { username: string }) {
                           "h-1 w-8 rounded-full transition-all duration-300",
                           step <= strength.score
                             ? strength.barColor
-                            : "bg-slate-100",
+                            : "bg-zinc-100",
                         )}
                       />
                     ))}
                   </div>
                   <span
                     className={cn(
-                      "text-[10px] font-bold uppercase tracking-widest",
+                      "text-[11px] font-medium tracking-tight",
                       strength.textColor,
                     )}
                   >
@@ -155,26 +157,26 @@ export default function SecuritySection({ username }: { username: string }) {
           />
 
           {newPw && confirmPw && (
-            <div className="flex items-center gap-2 px-1 text-[11px] font-bold uppercase tracking-widest">
+            <div className="flex items-center gap-2 px-1 text-[12px] font-medium">
               {newPw === confirmPw ? (
                 <>
                   <CheckCircle size={14} className="text-emerald-500" />
-                  <span className="text-emerald-600">Protocol Validated</span>
+                  <span className="text-emerald-600">Passwords match</span>
                 </>
               ) : (
                 <>
-                  <XCircle size={14} className="text-red-500" />
-                  <span className="text-red-500">Mismatch Detected</span>
+                  <XCircle size={14} className="text-rose-500" />
+                  <span className="text-rose-500">Mismatch detected</span>
                 </>
               )}
             </div>
           )}
 
-          <div className="pt-4 space-y-6">
+          <div className="pt-2 space-y-5">
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="w-full h-12 rounded-xl bg-slate-900 text-white text-[11px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-60 flex items-center justify-center gap-3 shadow-none active:scale-[0.98]"
+              className={cn(adminPrimaryButtonClass, "h-12 w-full")}
             >
               {loading ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -184,11 +186,11 @@ export default function SecuritySection({ username }: { username: string }) {
               Update Credentials
             </button>
 
-            <div className="bg-amber-50/50 rounded-xl p-4 border border-amber-100/50 flex gap-3">
+            <div className="bg-amber-50/60 rounded-xl p-4 border border-amber-100 flex gap-3">
               <AlertTriangle size={16} className="text-amber-500 shrink-0" />
-              <p className="text-[11px] text-amber-700 font-semibold leading-relaxed">
-                System protocol: You will be automatically decommissioned from
-                the current session upon successful update.
+              <p className="text-[12px] text-amber-700 leading-relaxed">
+                You will be automatically signed out of the current session upon
+                a successful password update.
               </p>
             </div>
           </div>
@@ -212,21 +214,19 @@ function PasswordInput({
   onChange: (v: string) => void;
 }) {
   return (
-    <div>
-      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5">
-        {label}
-      </label>
-      <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus-within:border-navy-100 focus-within:bg-white transition-all">
+    <div className="space-y-2">
+      <label className={adminLabelClass}>{label}</label>
+      <div className="flex items-center gap-2 bg-white border border-zinc-200 rounded-xl px-3.5 h-11 focus-within:border-zinc-400 focus-within:ring-2 focus-within:ring-zinc-900/5 transition-all">
         <input
           type={show ? "text" : "password"}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="••••••••"
-          className="flex-1 text-[13px] font-medium text-slate-900 bg-transparent focus:outline-none"
+          className="flex-1 text-[13px] font-medium text-zinc-900 bg-transparent focus:outline-none"
         />
         <button
           onClick={onToggle}
-          className="text-slate-400 hover:text-slate-600 transition-colors"
+          className="text-zinc-400 hover:text-zinc-700 transition-colors"
         >
           {show ? <EyeOff size={14} /> : <Eye size={14} />}
         </button>
