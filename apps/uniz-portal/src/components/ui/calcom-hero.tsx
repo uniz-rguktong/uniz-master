@@ -566,8 +566,8 @@ const FEATURES = [
     title: "One-click PDF",
     desc: "Download polished academic reports for any semester, instantly.",
     illustration: <ReportsIllustration />,
-    accent: "bg-slate-100 text-slate-600 border-slate-200",
-    dot: "bg-slate-400",
+    accent: "bg-zinc-100 text-zinc-600 border-zinc-200",
+    dot: "bg-zinc-400",
   },
 ];
 
@@ -606,7 +606,7 @@ export const CalcomHero = () => {
         <motion.div
           animate={{ x: [0, -40, 0], y: [0, 60, 0], scale: [1, 1.2, 1] }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-gradient-to-tr from-slate-100/50 via-zinc-100/20 to-transparent blur-[140px] opacity-60"
+          className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-gradient-to-tr from-zinc-100/50 via-zinc-100/20 to-transparent blur-[140px] opacity-60"
         />
         <div className="absolute inset-0 opacity-[0.015] grayscale contrast-150 brightness-150 mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       </div>
@@ -695,7 +695,7 @@ export const CalcomHero = () => {
       <div className="max-w-[1280px] mx-auto px-6 pt-24 pb-20 md:pt-32 md:pb-28">
         {/* ── Hero copy ── */}
         <div className="flex flex-col items-center text-center mb-20 md:mb-24">
-          <motion.h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-black text-zinc-950 leading-[1.0] tracking-[-0.05em] mb-6 max-w-6xl">
+          <motion.h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-semibold text-zinc-950 leading-[1.0] tracking-[-0.05em] mb-6 max-w-6xl">
             {"The better way to".split(" ").map((word, i) => (
               <motion.span
                 key={i}
@@ -780,7 +780,7 @@ export const CalcomHero = () => {
                   delay: i * 0.4,
                 },
               }}
-              className="group flex flex-col rounded-[2.5rem] border border-zinc-100/60 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-500 cursor-pointer"
+              className="group flex flex-col rounded-2xl border border-zinc-100/60 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-500 cursor-pointer"
             >
               <div className="w-full bg-zinc-50/40 border-b border-zinc-100/40 p-4 group-hover:bg-transparent transition-colors duration-500 overflow-hidden">
                 <motion.div
@@ -793,14 +793,14 @@ export const CalcomHero = () => {
 
               <div className="flex flex-col gap-2 p-6 pt-5">
                 <div
-                  className={`inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full border text-[9.5px] font-black tracking-widest uppercase transition-colors duration-500 ${f.accent}`}
+                  className={`inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full border text-[9.5px] font-semibold tracking-[0.14em] uppercase transition-colors duration-500 ${f.accent}`}
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full ${f.dot} animate-pulse`}
                   />
                   {f.tag}
                 </div>
-                <h3 className="text-[15px] font-black text-zinc-950 tracking-tight leading-snug">
+                <h3 className="text-[15px] font-semibold text-zinc-950 tracking-tight leading-snug">
                   {f.title}
                 </h3>
                 <p className="text-[12.5px] font-medium text-zinc-500/80 leading-relaxed group-hover:text-zinc-600 transition-colors">

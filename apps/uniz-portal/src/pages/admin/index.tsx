@@ -274,7 +274,7 @@ export default function Admin() {
               </h1>
               <div className="flex items-center gap-1.5 mt-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
+                <p className="text-xs font-bold text-zinc-400 uppercase tracking-[0.14em]">
                   {role.replace("_", " ")} Dashboard
                 </p>
               </div>
@@ -315,7 +315,7 @@ export default function Admin() {
           >
             <div className="flex items-center gap-2 mb-6 ml-1">
               <Zap className="w-5 h-5 text-zinc-950 fill-zinc-950" />
-              <h2 className="text-lg font-black tracking-tight uppercase text-zinc-950">
+              <h2 className="text-lg font-semibold tracking-tight uppercase text-zinc-950">
                 Priority Actions
               </h2>
             </div>
@@ -340,7 +340,7 @@ export default function Admin() {
               >
                 <div className="flex items-center gap-2 mb-6 ml-1 border-b border-zinc-100/80 pb-2">
                   <LayoutGrid className="w-4 h-4 text-zinc-400" />
-                  <h2 className="text-sm font-bold text-zinc-400 uppercase tracking-widest">
+                  <h2 className="text-sm font-bold text-zinc-400 uppercase tracking-[0.14em]">
                     {section.title}
                   </h2>
                 </div>

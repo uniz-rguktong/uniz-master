@@ -38,23 +38,23 @@ const HelpSupport = () => {
   return (
     <div className="max-w-4xl mx-auto pb-20 px-2 lg:px-0">
       <div className="flex flex-col items-start mb-8 text-left">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2 font-display">
+        <h1 className="text-3xl font-bold text-zinc-900 mb-2 font-display">
           Help & Support
         </h1>
-        <p className="text-slate-500 font-medium tracking-tight max-w-sm">
+        <p className="text-zinc-500 font-medium tracking-tight max-w-sm">
           Everything you need to know about the UniZ student portal.
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex justify-start mb-8 p-1.5 bg-slate-100/50 backdrop-blur-sm rounded-2xl w-fit border border-slate-200/50">
+      <div className="flex justify-start mb-8 p-1.5 bg-zinc-100/50 backdrop-blur-sm rounded-2xl w-fit border border-zinc-200/50">
         <button
           onClick={() => setActiveTab("faq")}
           className={cn(
             "px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300",
             activeTab === "faq"
-              ? "bg-white text-navy-900 shadow-sm"
-              : "text-slate-400 hover:text-slate-600",
+              ? "bg-white text-zinc-900 shadow-sm"
+              : "text-zinc-400 hover:text-zinc-600",
           )}
         >
           FAQS
@@ -64,8 +64,8 @@ const HelpSupport = () => {
           className={cn(
             "px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300",
             activeTab === "contact"
-              ? "bg-white text-navy-900 shadow-sm"
-              : "text-slate-400 hover:text-slate-600",
+              ? "bg-white text-zinc-900 shadow-sm"
+              : "text-zinc-400 hover:text-zinc-600",
           )}
         >
           CONTACT US
@@ -90,7 +90,7 @@ const HelpSupport = () => {
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
                   className="w-full px-5 py-4 flex items-center justify-between text-left"
                 >
-                  <span className="font-bold text-slate-900 tracking-tight text-[13px]">
+                  <span className="font-bold text-zinc-900 tracking-tight text-[13px]">
                     {faq.question}
                   </span>
                   <ChevronDown
@@ -105,7 +105,7 @@ const HelpSupport = () => {
                   animate={{ height: openFaq === index ? "auto" : 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="px-5 pb-5 text-[13px] text-slate-600 font-medium leading-relaxed border-t border-slate-100 pt-4">
+                  <div className="px-5 pb-5 text-[13px] text-zinc-600 font-medium leading-relaxed border-t border-zinc-100 pt-4">
                     {faq.answer}
                   </div>
                 </motion.div>
@@ -120,13 +120,13 @@ const HelpSupport = () => {
             exit={{ opacity: 0, x: -20 }}
             className="bg-white/60 backdrop-blur-xl p-12 rounded-3xl border border-white/20 shadow-xl text-center"
           >
-            <div className="w-20 h-20 bg-navy-50 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
-              <MessageCircle className="w-10 h-10 text-navy-900" />
+            <div className="w-20 h-20 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
+              <MessageCircle className="w-10 h-10 text-zinc-900" />
             </div>
-            <h2 className="text-xl font-bold text-slate-900 mb-4 font-display italic">
+            <h2 className="text-xl font-bold text-zinc-900 mb-4 font-display italic">
               Still develop the contact page.....
             </h2>
-            <p className="text-slate-400 font-medium tracking-tight">
+            <p className="text-zinc-400 font-medium tracking-tight">
               We're building a seamless way for you to connect with support.
             </p>
           </motion.div>

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 /** Frosted card shell — matches calcom-hero feature cards */
 export const landingCardClass =
-  "rounded-[2.5rem] border border-zinc-100/60 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-500";
+  "rounded-2xl border border-zinc-100/60 bg-white/60 backdrop-blur-sm overflow-hidden transition-all duration-500";
 
 export const landingCardHoverClass =
   "hover:border-zinc-200 hover:bg-white hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)]";
@@ -86,13 +86,13 @@ export function LandingSectionHeader({
         )}
       >
         <div className="w-1.5 h-1.5 rounded-full bg-zinc-950 animate-pulse" />
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
           {eyebrow}
         </span>
       </div>
       <h2
         className={cn(
-          "text-[clamp(1.85rem,4.5vw,3.25rem)] md:text-[clamp(2.25rem,5vw,3.75rem)] font-black text-zinc-950 tracking-[-0.05em] leading-[1.02] max-w-4xl",
+          "text-[clamp(1.85rem,4.5vw,3.25rem)] md:text-[clamp(2.25rem,5vw,3.75rem)] font-semibold text-zinc-950 tracking-[-0.05em] leading-[1.02] max-w-4xl",
           align === "center" && "max-w-5xl",
         )}
       >
@@ -120,7 +120,7 @@ const PILL_ACCENTS: Record<string, string> = {
   emerald: "bg-emerald-50 text-emerald-700 border-emerald-100",
   amber: "bg-amber-50 text-amber-700 border-amber-100",
   blue: "bg-blue-50 text-blue-700 border-blue-100",
-  slate: "bg-slate-100 text-slate-600 border-slate-200",
+  slate: "bg-zinc-100 text-zinc-600 border-zinc-200",
 };
 
 const PILL_DOTS: Record<string, string> = {
@@ -128,7 +128,7 @@ const PILL_DOTS: Record<string, string> = {
   emerald: "bg-emerald-500",
   amber: "bg-amber-400",
   blue: "bg-blue-500",
-  slate: "bg-slate-400",
+  slate: "bg-zinc-400",
 };
 
 export function LandingPill({
@@ -143,7 +143,7 @@ export function LandingPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[9.5px] font-black tracking-widest uppercase",
+        "inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[9.5px] font-semibold tracking-[0.14em] uppercase",
         PILL_ACCENTS[accent],
         className,
       )}

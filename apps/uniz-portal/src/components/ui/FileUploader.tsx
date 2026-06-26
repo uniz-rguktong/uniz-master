@@ -98,15 +98,15 @@ export function FileUploader({
     <div className="w-full space-y-4 rounded-xl bg-transparent">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h3 className="text-lg font-bold text-slate-900 tracking-tight">
+          <h3 className="text-lg font-bold text-zinc-900 tracking-tight">
             {label}
           </h3>
-          <p className="text-sm text-slate-500 font-medium">{description}</p>
+          <p className="text-sm text-zinc-500 font-medium">{description}</p>
         </div>
         <div className="flex items-center gap-3">
           {isUploading && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-100 animate-in fade-in slide-in-from-right-2">
-              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
+              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-[0.14em]">
                 Uploading {typeof progress === "number" ? `${progress}%` : ""}
               </span>
               <Loader2 className="h-3.5 w-3.5 text-emerald-500 animate-spin" />
@@ -114,7 +114,7 @@ export function FileUploader({
           )}
           {isSuccess && !isUploading && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500 rounded-lg shadow-sm animate-in zoom-in-95">
-              <span className="text-[10px] font-bold text-white uppercase tracking-widest">
+              <span className="text-[10px] font-bold text-white uppercase tracking-[0.14em]">
                 Success
               </span>
               <CheckCircle2 className="h-3.5 w-3.5 text-white" />
@@ -122,7 +122,7 @@ export function FileUploader({
           )}
           {isError && !isUploading && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500 rounded-lg shadow-sm animate-in head-shake">
-              <span className="text-[10px] font-bold text-white uppercase tracking-widest">
+              <span className="text-[10px] font-bold text-white uppercase tracking-[0.14em]">
                 Failed
               </span>
               <X className="h-3.5 w-3.5 text-white" />
@@ -147,25 +147,25 @@ export function FileUploader({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            "flex h-48 cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 transition-all hover:bg-slate-50 hover:border-navy-900",
-            isDragging && "border-navy-900 bg-navy-50/50",
+            "flex h-48 cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-zinc-200 bg-zinc-50/50 transition-all hover:bg-zinc-50 hover:border-zinc-900",
+            isDragging && "border-zinc-900 bg-zinc-50/50",
           )}
         >
-          <div className="rounded-full bg-white p-4 shadow-sm border border-slate-100 transition-transform group-hover:scale-110">
-            <FileUp className="h-6 w-6 text-slate-400" />
+          <div className="rounded-full bg-white p-4 shadow-sm border border-zinc-100 transition-transform group-hover:scale-110">
+            <FileUp className="h-6 w-6 text-zinc-400" />
           </div>
           <div className="text-center">
-            <p className="text-sm font-bold text-slate-900 tracking-tight">
+            <p className="text-sm font-bold text-zinc-900 tracking-tight">
               Click to select
             </p>
-            <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-1">
+            <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.14em] mt-1">
               or drag and drop file here
             </p>
           </div>
         </div>
       ) : (
         <div className="relative">
-          <div className="group relative h-48 overflow-hidden rounded-2xl border border-slate-100 bg-slate-50 flex items-center justify-center">
+          <div className="group relative h-48 overflow-hidden rounded-2xl border border-zinc-100 bg-zinc-50 flex items-center justify-center">
             {isImage && previewUrl ? (
               <img
                 src={previewUrl}
@@ -177,17 +177,17 @@ export function FileUploader({
                 {fileName?.endsWith(".csv") ||
                 fileName?.endsWith(".xlsx") ||
                 fileName?.endsWith(".xls") ? (
-                  <FileSpreadsheet className="h-12 w-12 text-navy-900" />
+                  <FileSpreadsheet className="h-12 w-12 text-zinc-900" />
                 ) : (
-                  <FileText className="h-12 w-12 text-slate-400" />
+                  <FileText className="h-12 w-12 text-zinc-400" />
                 )}
-                <span className="text-sm font-bold text-slate-900 max-w-[200px] truncate">
+                <span className="text-sm font-bold text-zinc-900 max-w-[200px] truncate">
                   {fileName}
                 </span>
               </div>
             )}
 
-            <div className="absolute inset-0 bg-slate-900/40 opacity-0 transition-opacity group-hover:opacity-100 backdrop-blur-[2px]" />
+            <div className="absolute inset-0 bg-zinc-900/40 opacity-0 transition-opacity group-hover:opacity-100 backdrop-blur-[2px]" />
             <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 transition-opacity group-hover:opacity-100">
               <Button
                 size="sm"
@@ -208,11 +208,11 @@ export function FileUploader({
             </div>
           </div>
           {fileName && (
-            <div className="mt-3 flex items-center gap-2 text-[11px] text-slate-400 font-bold uppercase tracking-widest">
+            <div className="mt-3 flex items-center gap-2 text-[11px] text-zinc-400 font-bold uppercase tracking-[0.14em]">
               <span className="truncate">{fileName}</span>
               <button
                 onClick={handleRemove}
-                className="ml-auto rounded-full p-1.5 hover:bg-slate-100 text-red-500 transition-colors"
+                className="ml-auto rounded-full p-1.5 hover:bg-zinc-100 text-red-500 transition-colors"
                 title="Remove file"
               >
                 <X className="h-3.5 w-3.5" />

@@ -63,7 +63,7 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
               <div className="h-11 w-11 absolute left-3 md:left-3 rounded-full bg-zinc-950 flex items-center justify-center shadow-[0_12px_32px_-10px_rgba(0,0,0,0.35)] z-50 text-white ring-4 ring-white/80">
                 <item.icon size={18} strokeWidth={2.2} />
               </div>
-              <h3 className="hidden md:block text-3xl md:text-[2.75rem] md:pl-20 font-black text-zinc-300/70 leading-[1.05] tracking-[-0.04em]">
+              <h3 className="hidden md:block text-3xl md:text-[2.75rem] md:pl-20 font-semibold text-zinc-300/70 leading-[1.05] tracking-[-0.04em]">
                 {item.title}
               </h3>
             </div>
@@ -76,11 +76,11 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
                   className="mb-5"
                 />
 
-                <h3 className="md:hidden block text-2xl mb-3 font-black text-zinc-950 tracking-tight">
+                <h3 className="md:hidden block text-2xl mb-3 font-semibold text-zinc-950 tracking-tight">
                   {item.title}
                 </h3>
 
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-zinc-400 mb-3">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-400 mb-3">
                   {item.subtitle}
                 </p>
 

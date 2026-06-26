@@ -260,7 +260,7 @@ const Home = () => {
               </LandingCTA>
             )}
             {isInstalled && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-xs font-black uppercase tracking-widest border border-emerald-100">
+              <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold uppercase tracking-[0.14em] border border-emerald-100">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm" />
                 Native App Instance Active
               </div>
@@ -443,7 +443,7 @@ const Home = () => {
               <LandingCard className="p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.08)]">
                 <div>
                   <LandingPill label="UniZ" accent="emerald" className="mb-4" />
-                  <h3 className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-black text-zinc-950 tracking-[-0.05em] leading-[1.05] mb-3">
+                  <h3 className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-semibold text-zinc-950 tracking-[-0.05em] leading-[1.05] mb-3">
                     Built by RGUKT students,
                     <span className="text-zinc-400 font-light">
                       {" "}

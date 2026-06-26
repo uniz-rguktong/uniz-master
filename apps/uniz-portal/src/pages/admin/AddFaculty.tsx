@@ -78,17 +78,17 @@ export default function AddFaculty() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-6 md:p-10 flex flex-col items-center">
-      <div className="w-full max-w-2xl bg-white border border-slate-200 shadow-sm rounded-2xl p-8">
-        <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-100">
+    <div className="min-h-screen bg-zinc-50/50 p-6 md:p-10 flex flex-col items-center">
+      <div className="w-full max-w-2xl bg-white border border-zinc-200 shadow-sm rounded-2xl p-8">
+        <div className="flex items-center gap-3 mb-6 pb-6 border-b border-zinc-100">
           <div className="h-12 w-12 rounded-full bg-teal-50 flex items-center justify-center text-teal-600">
             <UserPlus className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">
+            <h1 className="text-xl font-bold text-zinc-900">
               Add Faculty Member
             </h1>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-zinc-500">
               Onboard new teaching staff or HODs
             </p>
           </div>
@@ -137,18 +137,18 @@ export default function AddFaculty() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-sm font-medium text-slate-700 ml-1">
+              <label className="text-sm font-medium text-zinc-700 ml-1">
                 Department
               </label>
               <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">
                   <Building className="w-4 h-4" />
                 </div>
                 <select
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 transition-all appearance-none"
+                  className="w-full pl-10 pr-4 py-2 bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 transition-all appearance-none"
                 >
                   <option value="">Select Department</option>
                   <option value="CSE">CSE</option>
@@ -162,18 +162,18 @@ export default function AddFaculty() {
               </div>
             </div>
             <div className="space-y-1">
-              <label className="text-sm font-medium text-slate-700 ml-1">
+              <label className="text-sm font-medium text-zinc-700 ml-1">
                 Role
               </label>
               <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">
                   <UserPlus className="w-4 h-4" />
                 </div>
                 <select
                   name="role"
                   value={formData.role}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 transition-all appearance-none"
+                  className="w-full pl-10 pr-4 py-2 bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 transition-all appearance-none"
                 >
                   <option value="teacher">Teacher / Faculty</option>
                   <option value="hod">Head of Department (HOD)</option>

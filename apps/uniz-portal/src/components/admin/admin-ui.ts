@@ -106,7 +106,7 @@ export const adminNumsClass = "tabular-nums [font-feature-settings:'tnum']";
 /** Standard section page wrapper — consistent padding + rhythm. */
 export const adminPageWrapClass = "p-6 md:p-8 space-y-8 text-zinc-900";
 
-/** Field label — quiet, restrained (replaces loud font-black labels). */
+/** Field label — quiet, restrained (replaces loud font-semibold labels). */
 export const adminLabelClass =
   "block text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400";
 
@@ -141,3 +141,28 @@ export const adminSegmentActiveClass =
   "px-4 py-1.5 rounded-lg text-[11px] font-semibold tracking-tight bg-white text-zinc-900 shadow-[0_1px_2px_rgba(10,10,10,0.06)] transition-all";
 export const adminSegmentInactiveClass =
   "px-4 py-1.5 rounded-lg text-[11px] font-semibold tracking-tight text-zinc-500 hover:text-zinc-900 transition-all";
+
+/* ── Modal / dialog primitives (match UpdatesSection) ─────────── */
+
+export const adminModalShellClass =
+  "p-0 overflow-hidden bg-white border border-zinc-200 rounded-2xl shadow-xl";
+
+export const adminModalTitleClass =
+  "text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]";
+
+export const adminModalDescClass = "text-[13px] text-zinc-500 leading-relaxed";
+
+export const adminModalCloseClass =
+  "absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10";
+
+export const adminWarningBannerClass = cn(
+  "flex gap-3 p-4 rounded-xl border border-amber-200/70 bg-amber-50/80",
+);
+
+export const adminWarningTitleClass =
+  "text-[12px] font-semibold text-amber-900";
+
+export const adminWarningTextClass = "text-[12px] text-amber-800/90 leading-relaxed";
+
+export const adminDangerInputClass =
+  "w-full h-11 px-3.5 bg-rose-50/60 border border-rose-200 rounded-xl text-[13px] font-medium text-rose-800 placeholder:text-rose-300 focus:outline-none focus:border-rose-300 focus:ring-2 focus:ring-rose-500/10 transition-all";

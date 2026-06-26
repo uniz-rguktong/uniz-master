@@ -49,7 +49,7 @@ import { InlineError } from "../../components/feedback/InlineError";
 // ─────────────────────────────────────────────────────────────────
 function ProfileSkeleton() {
   return (
-    <div className="font-sans text-slate-900 relative">
+    <div className="font-sans text-zinc-900 relative">
       <BackgroundIconCloud />
       <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-2">
         {/* Avatar + name skeleton */}
@@ -60,30 +60,30 @@ function ProfileSkeleton() {
               className="relative p-[4px] rounded-full mb-4 mx-auto w-fit"
               style={{ background: "#e2e8f0" }}
             >
-              <div className="bg-slate-100 p-[3px] rounded-full">
-                <div className="w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-slate-200 rounded-full" />
+              <div className="bg-zinc-100 p-[3px] rounded-full">
+                <div className="w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-zinc-200 rounded-full" />
               </div>
             </div>
             {/* Name */}
             <div className="flex flex-col items-center gap-3">
-              <div className="h-7 w-44 bg-slate-200 rounded-xl" />
-              <div className="h-4 w-56 bg-slate-100 rounded-lg" />
+              <div className="h-7 w-44 bg-zinc-200 rounded-xl" />
+              <div className="h-4 w-56 bg-zinc-100 rounded-lg" />
               <div className="flex items-center gap-2 mt-1">
-                <div className="h-5 w-20 bg-slate-100 rounded" />
-                <div className="w-1 h-1 rounded-full bg-slate-200" />
-                <div className="h-5 w-24 bg-slate-100 rounded" />
+                <div className="h-5 w-20 bg-zinc-100 rounded" />
+                <div className="w-1 h-1 rounded-full bg-zinc-200" />
+                <div className="h-5 w-24 bg-zinc-100 rounded" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Tab bar skeleton */}
-        <div className="border-b border-slate-100 mb-6">
+        <div className="border-b border-zinc-100 mb-6">
           <div className="flex gap-8 animate-pulse">
             {[72, 80, 64, 56].map((w, i) => (
               <div key={i} className="pb-3">
                 <div
-                  className={`h-3 bg-slate-100 rounded-full`}
+                  className={`h-3 bg-zinc-100 rounded-full`}
                   style={{ width: w }}
                 />
               </div>
@@ -98,13 +98,13 @@ function ProfileSkeleton() {
             .map((_, i) => (
               <div
                 key={i}
-                className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm"
+                className="bg-white rounded-2xl border border-zinc-100 p-5 shadow-sm"
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-4 h-4 bg-slate-100 rounded-full" />
-                  <div className="h-2.5 w-20 bg-slate-100 rounded-full" />
+                  <div className="w-4 h-4 bg-zinc-100 rounded-full" />
+                  <div className="h-2.5 w-20 bg-zinc-100 rounded-full" />
                 </div>
-                <div className="h-5 w-28 bg-slate-200 rounded-lg" />
+                <div className="h-5 w-28 bg-zinc-200 rounded-lg" />
               </div>
             ))}
         </div>
@@ -455,20 +455,20 @@ export default function StudentProfilePage() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-slate-900 rounded-[24px] p-6 text-white shadow-xl shadow-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-white/10"
+        className="bg-zinc-900 rounded-2xl p-6 text-white shadow-xl shadow-zinc-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-white/10"
       >
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md text-navy-300">
+          <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md text-zinc-300">
             <Calendar size={24} />
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400">
               Upcoming Examination
             </p>
             <h3 className="text-lg font-bold leading-tight pt-1">
               {upcoming.subjectName}
             </h3>
-            <p className="text-xs text-slate-300 font-medium">
+            <p className="text-xs text-zinc-300 font-medium">
               {upcoming.examName} •{" "}
               {new Date(upcoming.date).toLocaleDateString("en-GB")}
             </p>
@@ -476,14 +476,14 @@ export default function StudentProfilePage() {
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="flex-1 md:flex-none px-5 py-3 bg-white/10 rounded-2xl text-center border border-white/5">
-            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-0.5">
+            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-zinc-400 mb-0.5">
               Hall
             </p>
-            <p className="text-xl font-black">{upcoming.room}</p>
+            <p className="text-xl font-semibold">{upcoming.room}</p>
           </div>
           <button
             onClick={() => setActiveTab("seating")}
-            className="flex-1 md:flex-none px-6 py-4 bg-navy-900 hover:bg-navy-800 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all"
+            className="flex-1 md:flex-none px-6 py-4 bg-zinc-900 hover:bg-zinc-800 rounded-2xl font-bold text-xs uppercase tracking-[0.14em] transition-all"
           >
             View Full Plan
           </button>
@@ -498,7 +498,7 @@ export default function StudentProfilePage() {
 
   if (hasToken && !user?._id && profileError) {
     return (
-      <div className="font-sans text-slate-900 relative">
+      <div className="font-sans text-zinc-900 relative">
         <BackgroundIconCloud />
         <div className="container mx-auto px-4 max-w-5xl relative z-10 pt-12 pb-20">
           <InlineError
@@ -586,7 +586,7 @@ export default function StudentProfilePage() {
   ];
 
   return (
-    <div className="font-sans text-slate-900 relative">
+    <div className="font-sans text-zinc-900 relative">
       {/* Absolute Decorative Icon Cloud (Expansive Backdrop) */}
       <BackgroundIconCloud />
 
@@ -602,7 +602,7 @@ export default function StudentProfilePage() {
                     setIsEditing(false);
                     refetch();
                   }}
-                  className="uniz-primary-btn h-auto px-4 py-1.5 bg-white text-slate-600 border border-slate-200 shadow-sm text-xs"
+                  className="uniz-primary-btn h-auto px-4 py-1.5 bg-white text-zinc-600 border border-zinc-200 shadow-sm text-xs"
                 >
                   Cancel
                 </button>
@@ -630,7 +630,7 @@ export default function StudentProfilePage() {
                 boxShadow: "0 0 0 1px rgba(46, 189, 89, 0.1)",
               }}
             >
-              <div className="relative bg-slate-50 p-[3px] rounded-full">
+              <div className="relative bg-zinc-50 p-[3px] rounded-full">
                 <div className="relative w-[100px] h-[100px] md:w-[124px] md:h-[124px] bg-[#004e43] rounded-full flex justify-center items-center text-white text-[50px] md:text-[60px] font-medium overflow-hidden">
                   {/* Profile image or initial */}
                   {user?.profile_url ? (
@@ -640,11 +640,11 @@ export default function StudentProfilePage() {
                       className="w-full h-full object-cover"
                     />
                   ) : user?.name ? (
-                    <span className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none">
+                    <span className="text-4xl md:text-5xl font-semibold uppercase tracking-tight leading-none">
                       {user?.name?.[0]?.toUpperCase() || "S"}
                     </span>
                   ) : (
-                    <span className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-none">
+                    <span className="text-4xl md:text-5xl font-semibold uppercase tracking-tight leading-none">
                       S
                     </span>
                   )}
@@ -678,7 +678,7 @@ export default function StudentProfilePage() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingImage}
-                className="absolute bottom-[-1px] right-2 w-8 h-8 bg-navy-100 border-[1.5px] border-navy-900 rounded-full flex items-center justify-center text-navy-800 hover:bg-navy-200 transition-all z-20 cursor-pointer shadow-sm hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="absolute bottom-[-1px] right-2 w-8 h-8 bg-zinc-100 border-[1.5px] border-zinc-900 rounded-full flex items-center justify-center text-zinc-800 hover:bg-zinc-200 transition-all z-20 cursor-pointer shadow-sm hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Update Profile Photo"
               >
                 <Camera
@@ -704,7 +704,7 @@ export default function StudentProfilePage() {
                 {!isEditing && (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="absolute -right-8 md:-right-10 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-transparent text-slate-400 hover:bg-slate-100 hover:text-navy-900 transition-all"
+                    className="absolute -right-8 md:-right-10 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-transparent text-zinc-400 hover:bg-zinc-100 hover:text-zinc-900 transition-all"
                     title="Edit Profile"
                   >
                     <Pencil
@@ -726,17 +726,17 @@ export default function StudentProfilePage() {
             </p>
 
             {/* Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] md:text-xs font-medium text-slate-500 mt-1">
-              <span className="text-navy-900 font-bold uppercase tracking-widest px-2 py-1 bg-navy-50 border border-navy-100 rounded">
+            <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] md:text-xs font-medium text-zinc-500 mt-1">
+              <span className="text-zinc-900 font-bold uppercase tracking-[0.14em] px-2 py-1 bg-zinc-50 border border-zinc-100 rounded">
                 {user?.username}
               </span>
-              <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-              <span className="uppercase tracking-wide font-bold text-slate-600">
+              <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
+              <span className="uppercase tracking-wide font-bold text-zinc-600">
                 {user?.branch} • {user?.year}
               </span>
               {user?.has_pending_requests && (
                 <>
-                  <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                  <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
                   <span className="text-amber-600 px-2 py-1 bg-amber-50 border border-amber-100 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 animate-pulse">
                     <Clock className="w-3 h-3" /> PENDING ACTION
                   </span>
@@ -752,14 +752,14 @@ export default function StudentProfilePage() {
                       setIsEditing(false);
                       refetch();
                     }}
-                    className="flex-1 max-w-[140px] py-2.5 bg-white text-slate-600 border border-slate-200 rounded-xl font-bold text-xs shadow-sm"
+                    className="flex-1 max-w-[140px] py-2.5 bg-white text-zinc-600 border border-zinc-200 rounded-xl font-bold text-xs shadow-sm"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex-1 max-w-[140px] py-2.5 bg-navy-900 text-white rounded-xl font-bold text-xs shadow-md shadow-navy-100 flex items-center justify-center gap-2"
+                    className="flex-1 max-w-[140px] py-2.5 bg-zinc-900 text-white rounded-xl font-bold text-xs shadow-md shadow-zinc-100 flex items-center justify-center gap-2"
                   >
                     {isSubmitting && (
                       <Loader2 className="w-3 h-3 animate-spin" />
@@ -776,7 +776,7 @@ export default function StudentProfilePage() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="border-b border-slate-200 mb-6 overflow-x-auto no-scrollbar">
+        <div className="border-b border-zinc-200 mb-6 overflow-x-auto no-scrollbar">
           <div className="flex gap-8 min-w-max">
             {[
               "personal",
@@ -792,15 +792,15 @@ export default function StudentProfilePage() {
                   onClick={() => setActiveTab(tab || "personal")}
                   className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${
                     activeTab === tab
-                      ? "text-navy-900"
-                      : "text-slate-400 hover:text-slate-600"
+                      ? "text-zinc-900"
+                      : "text-zinc-400 hover:text-zinc-600"
                   }`}
                 >
                   {tab}
                   {activeTab === tab && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-navy-900 rounded-t-full"
+                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-zinc-900 rounded-t-full"
                     />
                   )}
                 </button>
@@ -843,8 +843,8 @@ export default function StudentProfilePage() {
               <div className="space-y-10">
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
-                    <div className="h-6 w-1.5 bg-navy-900 rounded-full"></div>
-                    <h3 className="text-[17px] font-semibold tracking-tight text-slate-900">
+                    <div className="h-6 w-1.5 bg-zinc-900 rounded-full"></div>
+                    <h3 className="text-[17px] font-semibold tracking-tight text-zinc-900">
                       Academic Overview
                     </h3>
                   </div>
@@ -873,8 +873,8 @@ export default function StudentProfilePage() {
             {activeTab === "family" && (
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-                    <h3 className="text-[17px] font-semibold tracking-tight text-slate-900">
+                  <div className="flex items-center gap-2 border-b border-zinc-100 pb-2">
+                    <h3 className="text-[17px] font-semibold tracking-tight text-zinc-900">
                       Father's Details
                     </h3>
                   </div>
@@ -914,8 +914,8 @@ export default function StudentProfilePage() {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-                    <h3 className="text-[17px] font-semibold tracking-tight text-slate-900">
+                  <div className="flex items-center gap-2 border-b border-zinc-100 pb-2">
+                    <h3 className="text-[17px] font-semibold tracking-tight text-zinc-900">
                       Mother's Details
                     </h3>
                   </div>
@@ -963,17 +963,17 @@ export default function StudentProfilePage() {
                   <button
                     onClick={() => setRequestType("outing")}
                     disabled={user.has_pending_requests}
-                    className="group relative overflow-hidden bg-white hover:bg-slate-900 rounded-xl p-6 transition-all duration-300 border border-slate-100 hover:border-slate-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md h-[120px] md:h-auto"
+                    className="group relative overflow-hidden bg-white hover:bg-zinc-900 rounded-xl p-6 transition-all duration-300 border border-zinc-100 hover:border-zinc-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md h-[120px] md:h-auto"
                   >
                     <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
-                      <div className="text-navy-900 group-hover:text-white transition-colors duration-300">
+                      <div className="text-zinc-900 group-hover:text-white transition-colors duration-300">
                         <Clock size={22} />
                       </div>
                       <div>
-                        <h3 className="text-[16px] font-bold text-slate-900 group-hover:text-white mb-1 transition-colors leading-none">
+                        <h3 className="text-[16px] font-bold text-zinc-900 group-hover:text-white mb-1 transition-colors leading-none">
                           Request Outing
                         </h3>
-                        <p className="font-medium text-[12px] text-slate-400 group-hover:text-slate-500 transition-colors">
+                        <p className="font-medium text-[12px] text-zinc-400 group-hover:text-zinc-500 transition-colors">
                           Short duration leaves
                         </p>
                       </div>
@@ -982,17 +982,17 @@ export default function StudentProfilePage() {
                   <button
                     onClick={() => setRequestType("outpass")}
                     disabled={user.has_pending_requests}
-                    className="group relative overflow-hidden bg-white hover:bg-slate-900 rounded-xl p-6 transition-all duration-300 border border-slate-100 hover:border-slate-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md h-[120px] md:h-auto"
+                    className="group relative overflow-hidden bg-white hover:bg-zinc-900 rounded-xl p-6 transition-all duration-300 border border-zinc-100 hover:border-zinc-900 text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md h-[120px] md:h-auto"
                   >
                     <div className="relative z-10 flex flex-col items-start h-full justify-between gap-4">
-                      <div className="text-navy-900 group-hover:text-white transition-colors duration-300">
+                      <div className="text-zinc-900 group-hover:text-white transition-colors duration-300">
                         <Calendar size={22} />
                       </div>
                       <div>
-                        <h3 className="text-[16px] font-bold text-slate-900 group-hover:text-white mb-1 transition-colors leading-none">
+                        <h3 className="text-[16px] font-bold text-zinc-900 group-hover:text-white mb-1 transition-colors leading-none">
                           Request Outpass
                         </h3>
-                        <p className="font-medium text-[12px] text-slate-400 group-hover:text-slate-500 transition-colors">
+                        <p className="font-medium text-[12px] text-zinc-400 group-hover:text-zinc-500 transition-colors">
                           Overnight/Multi-day leaves
                         </p>
                       </div>
@@ -1001,17 +1001,17 @@ export default function StudentProfilePage() {
                 </div>
 
                 <div>
-                  <div className="text-slate-900">
+                  <div className="text-zinc-900">
                     <HistoryIcon size={18} />
                   </div>
-                  <h3 className="text-[17px] font-semibold text-slate-900 tracking-tight">
+                  <h3 className="text-[17px] font-semibold text-zinc-900 tracking-tight">
                     Request History Audit
                   </h3>
                 </div>
 
                 <div className="space-y-3">
                   {isHistoryLoading ? (
-                    <div className="text-center py-10 text-slate-300 text-[10px] font-bold uppercase tracking-[0.2em] animate-pulse">
+                    <div className="text-center py-10 text-zinc-300 text-[10px] font-bold uppercase tracking-[0.14em] animate-pulse">
                       Fetching Records...
                     </div>
                   ) : history.length > 0 ? (
@@ -1031,14 +1031,14 @@ export default function StudentProfilePage() {
                       />
                     </>
                   ) : (
-                    <div className="text-center py-10 bg-slate-50/50 rounded-xl border border-slate-100">
-                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 border border-slate-100 shadow-sm">
-                        <HistoryIcon className="w-5 h-5 text-slate-200" />
+                    <div className="text-center py-10 bg-zinc-50/50 rounded-xl border border-zinc-100">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 border border-zinc-100 shadow-sm">
+                        <HistoryIcon className="w-5 h-5 text-zinc-200" />
                       </div>
-                      <p className="text-slate-900 font-semibold text-sm uppercase tracking-wider">
+                      <p className="text-zinc-900 font-semibold text-sm uppercase tracking-wider">
                         No history found
                       </p>
-                      <p className="text-slate-400 text-xs mt-1 font-medium">
+                      <p className="text-zinc-400 text-xs mt-1 font-medium">
                         Your past requests will appear here
                       </p>
                     </div>
@@ -1068,10 +1068,10 @@ export default function StudentProfilePage() {
                     )}
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold capitalize tracking-tight text-slate-900">
+                    <h2 className="text-xl font-semibold capitalize tracking-tight text-zinc-900">
                       New {requestType} Snapshot
                     </h2>
-                    <p className="text-[13px] font-medium text-slate-400">
+                    <p className="text-[13px] font-medium text-zinc-400">
                       Submit your leave authorization details
                     </p>
                   </div>
@@ -1079,11 +1079,11 @@ export default function StudentProfilePage() {
 
                 <form onSubmit={handleRequestSubmit} className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                    <label className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
                       Reason
                     </label>
                     <textarea
-                      className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200 focus:border-navy-100 focus:ring-1 focus:ring-navy-900 focus:outline-none min-h-[120px] font-bold text-[15px] text-slate-900 placeholder:text-slate-300 placeholder:font-normal resize-none transition-all"
+                      className="w-full bg-zinc-50 p-4 rounded-xl border border-zinc-200 focus:border-zinc-100 focus:ring-1 focus:ring-zinc-900 focus:outline-none min-h-[120px] font-bold text-[15px] text-zinc-900 placeholder:text-zinc-300 placeholder:font-normal resize-none transition-all"
                       placeholder="Please explain why you need to leave..."
                       value={requestForm.reason}
                       onChange={(e) =>
@@ -1098,12 +1098,12 @@ export default function StudentProfilePage() {
                   </div>
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                      <label className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
                         From
                       </label>
                       <input
                         type={requestType === "outpass" ? "date" : "time"}
-                        className="w-full bg-slate-50 p-4 rounded-xl border border-slate-100 focus:border-navy-100 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-lg text-slate-900 transition-all"
+                        className="w-full bg-zinc-50 p-4 rounded-xl border border-zinc-100 focus:border-zinc-100 focus:ring-1 focus:ring-zinc-900 focus:outline-none font-semibold text-lg text-zinc-900 transition-all"
                         value={requestForm.from}
                         onChange={(e) =>
                           setRequestForm({
@@ -1115,12 +1115,12 @@ export default function StudentProfilePage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                      <label className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
                         To
                       </label>
                       <input
                         type={requestType === "outpass" ? "date" : "time"}
-                        className="w-full bg-slate-50 p-4 rounded-xl border border-slate-100 focus:border-navy-100 focus:ring-1 focus:ring-navy-900 focus:outline-none font-semibold text-lg text-slate-900 transition-all"
+                        className="w-full bg-zinc-50 p-4 rounded-xl border border-zinc-100 focus:border-zinc-100 focus:ring-1 focus:ring-zinc-900 focus:outline-none font-semibold text-lg text-zinc-900 transition-all"
                         value={requestForm.to}
                         onChange={(e) =>
                           setRequestForm({ ...requestForm, to: e.target.value })
@@ -1133,14 +1133,14 @@ export default function StudentProfilePage() {
                     <button
                       type="button"
                       onClick={() => setRequestType(null)}
-                      className="flex-1 h-[52px] font-bold text-sm text-slate-400 hover:text-slate-600 transition-all"
+                      className="flex-1 h-[52px] font-bold text-sm text-zinc-400 hover:text-zinc-600 transition-all"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={requestLoading}
-                      className="flex-[2] h-[52px] bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all shadow-lg active:scale-[0.98]"
+                      className="flex-[2] h-[52px] bg-zinc-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all shadow-lg active:scale-[0.98]"
                     >
                       {requestLoading ? (
                         <Loader2 className="w-5 h-5 animate-spin mx-auto" />

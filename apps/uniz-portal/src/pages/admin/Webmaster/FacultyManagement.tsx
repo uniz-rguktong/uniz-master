@@ -58,6 +58,9 @@ import {
   adminSegmentWrapClass,
   adminSegmentActiveClass,
   adminSegmentInactiveClass,
+  adminModalShellClass,
+  adminModalTitleClass,
+  adminModalDescClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
 
@@ -703,7 +706,7 @@ export default function FacultyManagement({
                       </select>
                       <ChevronDown
                         size={14}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
                       />
                     </div>
                   </div>
@@ -729,7 +732,7 @@ export default function FacultyManagement({
                       </select>
                       <ChevronDown
                         size={14}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
                       />
                     </div>
                   </div>
@@ -842,15 +845,15 @@ export default function FacultyManagement({
 
               {/* Confirm Dialog */}
               {showDeleteConfirm && (
-                <div className="fixed inset-0 z-[80] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm">
-                  <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-xl border border-zinc-200 mx-4">
+                <div className="fixed inset-0 z-[80] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm p-4">
+                  <div className={cn("max-w-sm w-full p-8", adminModalShellClass)}>
                     <div className="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center mb-5">
                       <AlertTriangle size={24} className="text-rose-500" />
                     </div>
-                    <h3 className="text-[18px] font-semibold tracking-tight text-zinc-900 mb-2">
-                      Confirm Bulk Delete
+                    <h3 className={cn(adminModalTitleClass, "mb-2")}>
+                      Confirm bulk delete
                     </h3>
-                    <p className="text-[13px] text-zinc-500 mb-3">
+                    <p className={cn(adminModalDescClass, "mb-3")}>
                       You are about to permanently delete{" "}
                       <strong className="text-rose-600 font-semibold">
                         {selectedUsernames.size} faculty account
@@ -910,11 +913,11 @@ export default function FacultyManagement({
                       className={`p-3 rounded-xl text-center ${k === "errors" || k === "deleted" ? (k === "deleted" ? "bg-red-50" : "bg-red-50") : k.includes("skip") || k.includes("not") ? "bg-amber-50" : "bg-emerald-50"}`}
                     >
                       <p
-                        className={`text-2xl font-black ${k === "errors" ? "text-red-600" : k.includes("skip") || k.includes("not") ? "text-amber-600" : k === "deleted" ? "text-red-600" : "text-emerald-600"}`}
+                        className={`text-2xl font-semibold ${k === "errors" ? "text-red-600" : k.includes("skip") || k.includes("not") ? "text-amber-600" : k === "deleted" ? "text-red-600" : "text-emerald-600"}`}
                       >
                         {v}
                       </p>
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">
+                      <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-zinc-400 mt-0.5">
                         {k}
                       </p>
                     </div>
@@ -923,14 +926,14 @@ export default function FacultyManagement({
               {bulkResult.results?.filter(
                 (r: any) => r.status === "error" || r.reason,
               ).length > 0 && (
-                <div className="max-h-36 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-1">
+                <div className="max-h-36 overflow-y-auto bg-zinc-50 rounded-xl p-3 space-y-1">
                   {bulkResult.results
                     .filter(
                       (r: any) =>
                         r.status !== "created" && r.status !== "updated",
                     )
                     .map((r: any, i: number) => (
-                      <p key={i} className="text-xs font-mono text-slate-600">
+                      <p key={i} className="text-xs font-mono text-zinc-600">
                         <span
                           className={`font-bold ${r.status === "error" ? "text-red-500" : "text-amber-500"}`}
                         >
@@ -1015,7 +1018,7 @@ export default function FacultyManagement({
                 Array(limit)
                   .fill(0)
                   .map((_, i) => (
-                    <tr key={i} className="border-b border-slate-50/60">
+                    <tr key={i} className="border-b border-zinc-50/60">
                       {mode === "bulk" && (
                         <td className="px-6 py-6">
                           <Skeleton className="w-5 h-5 rounded-lg" />
@@ -1238,7 +1241,7 @@ export default function FacultyManagement({
           }
         }}
       >
-        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl shadow-xl">
+        <AlertDialogContent className={cn("max-w-xl p-0 overflow-hidden", adminModalShellClass)}>
           <div className="relative">
             {/* Close Button */}
             <button
@@ -1286,10 +1289,10 @@ export default function FacultyManagement({
                   onChange={handleImageUpload}
                 />
               </div>
-              <AlertDialogTitle className="text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]">
+              <AlertDialogTitle className={adminModalTitleClass}>
                 {editMode ? "Institutional Update" : "Faculty Onboarding"}
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-[13px] text-zinc-500 leading-relaxed">
+              <AlertDialogDescription className={adminModalDescClass}>
                 {editMode
                   ? "Modify professional credentials and access level."
                   : "Create a new entry in the high-performance registry."}
@@ -1462,11 +1465,11 @@ export default function FacultyManagement({
       {/* ─── Bio View Modal ─── */}
       {showViewModal && selectedFaculty && (
         <div
-          className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xl animate-in fade-in duration-300 cursor-pointer"
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm cursor-pointer"
           onClick={() => setShowViewModal(false)}
         >
           <div
-            className="bg-white w-full max-w-xl rounded-2xl shadow-xl overflow-hidden relative animate-in zoom-in-95 duration-300 border border-zinc-200 cursor-default"
+            className={cn("w-full max-w-xl overflow-hidden relative cursor-default", adminModalShellClass)}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
@@ -1518,12 +1521,12 @@ export default function FacultyManagement({
 
               <div className="flex items-center justify-center gap-6 mt-6 text-zinc-400">
                 <div className="flex items-center gap-2 text-[11px] font-medium">
-                  <Mail size={12} className="text-slate-400" />
+                  <Mail size={12} className="text-zinc-400" />
                   {selectedFaculty.Email}
                 </div>
                 {selectedFaculty.CreatedAt && (
                   <div className="flex items-center gap-2 text-[11px] font-medium">
-                    <Calendar size={12} className="text-slate-400" />
+                    <Calendar size={12} className="text-zinc-400" />
                     Joined{" "}
                     {new Date(selectedFaculty.CreatedAt).toLocaleDateString()}
                   </div>

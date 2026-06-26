@@ -249,7 +249,7 @@ export default function AdminShell({
               <div className="w-12 h-12 bg-zinc-50 rounded-full flex items-center justify-center mb-3">
                 <Search size={20} className="text-zinc-300" />
               </div>
-              <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest px-4">
+              <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-[0.14em] px-4">
                 No operations found
               </p>
             </div>

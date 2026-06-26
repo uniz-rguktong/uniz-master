@@ -19,7 +19,7 @@ const StaticIcon = ({
     animate={{ opacity: 0.22, scale: 1 }}
     transition={{ duration: 1.5, delay, ease: "easeOut" }}
     style={{ left: x, top: y, position: "absolute" }}
-    className="text-navy-900 pointer-events-none"
+    className="text-zinc-900 pointer-events-none"
   >
     <div style={{ width: size, height: size }}>{children}</div>
   </motion.div>

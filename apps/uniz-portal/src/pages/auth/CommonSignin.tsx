@@ -86,7 +86,7 @@ function OtpInput({
 
   return (
     <div className="space-y-2">
-      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] block ml-1">
+      <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] block ml-1">
         Verification Code
       </label>
       <div className="flex gap-2.5 justify-center">
@@ -104,7 +104,7 @@ function OtpInput({
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
-            className="w-12 h-14 text-center text-xl font-black rounded-2xl border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:border-zinc-950 focus:ring-2 focus:ring-zinc-950/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-12 h-14 text-center text-xl font-semibold rounded-2xl border border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:border-zinc-950 focus:ring-2 focus:ring-zinc-950/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.25 }}
@@ -122,7 +122,7 @@ function PasswordStrength({ password }: { password: string }) {
       return {
         score: 0,
         label: "",
-        color: "bg-neutral-200",
+        color: "bg-zinc-200",
         width: "0%",
       };
     let s = 0;
@@ -152,7 +152,7 @@ function PasswordStrength({ password }: { password: string }) {
       animate={{ opacity: 1, height: "auto" }}
       transition={{ duration: 0.3 }}
     >
-      <div className="h-1.5 w-full bg-neutral-100 rounded-full overflow-hidden">
+      <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
         <motion.div
           className={`h-full rounded-full ${color}`}
           initial={{ width: 0 }}
@@ -161,11 +161,11 @@ function PasswordStrength({ password }: { password: string }) {
         />
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
           Password strength
         </span>
         <span
-          className={`text-[10px] font-black uppercase tracking-wider ${
+          className={`text-[10px] font-semibold uppercase tracking-wider ${
             score <= 1
               ? "text-red-500"
               : score <= 2
@@ -878,7 +878,7 @@ export default function Signin({ type }: SigninProps) {
                       }}
                     >
                       <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      <span className="text-[11px] font-black text-emerald-700 uppercase tracking-widest">
+                      <span className="text-[11px] font-semibold text-emerald-700 uppercase tracking-[0.14em]">
                         OTP Verified
                       </span>
                     </motion.div>

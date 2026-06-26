@@ -20,7 +20,7 @@ function StatPill({
       transition={{ delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="flex flex-col"
     >
-      <span className="text-[28px] font-black tracking-[-0.04em] text-zinc-950 leading-none">
+      <span className="text-[28px] font-semibold tracking-[-0.04em] text-zinc-950 leading-none">
         {value}
       </span>
       <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">
@@ -47,12 +47,12 @@ export default function GlobeFeature() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
           </span>
-          <span className="text-[10.5px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+          <span className="text-[10.5px] font-bold uppercase tracking-[0.14em] text-zinc-500">
             Open Source
           </span>
         </motion.div>
 
-        <h2 className="text-[clamp(2.5rem,6vw,4.5rem)] font-black leading-[0.95] tracking-[-0.05em] text-zinc-950 mb-6">
+        <h2 className="text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[0.95] tracking-[-0.05em] text-zinc-950 mb-6">
           <span className="block">
             {line1.map((w, i) => (
               <motion.span

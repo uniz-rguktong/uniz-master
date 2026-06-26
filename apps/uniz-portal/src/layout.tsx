@@ -21,14 +21,14 @@ export function Layout({ children }: LayoutProps) {
     ["/studyspace", "/campushub"].includes(location.pathname);
 
   if (shouldHideNavbar) {
-    return <div className="min-h-screen bg-slate-50/50">{children}</div>;
+    return <div className="min-h-screen bg-zinc-50/50">{children}</div>;
   }
 
   const isHomePage = location.pathname === "/";
 
   return (
     <div
-      className={`min-h-screen flex flex-col ${isHomePage ? "bg-white" : "bg-premium-gradient"} text-slate-900 selection:bg-navy-100 selection:text-navy-900`}
+      className={`min-h-screen flex flex-col ${isHomePage ? "bg-white" : "bg-premium-gradient"} text-zinc-900 selection:bg-zinc-100 selection:text-zinc-900`}
     >
       <Suspense fallback={<LoadingAnim />}>
         <Navbar />
@@ -46,8 +46,8 @@ const LoadingAnim = () => {
   return (
     <div className="flex items-center justify-center h-screen bg-premium-gradient">
       <div className="relative flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-slate-200 rounded-full"></div>
-        <div className="absolute w-12 h-12 border-4 border-navy-900 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-zinc-200 rounded-full"></div>
+        <div className="absolute w-12 h-12 border-4 border-zinc-900 border-t-transparent rounded-full animate-spin"></div>
       </div>
     </div>
   );

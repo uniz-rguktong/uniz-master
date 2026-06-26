@@ -16,19 +16,19 @@ import {
 import { Input } from "./Input";
 
 const StudentCardSkeleton = () => (
-  <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-4 animate-pulse">
+  <div className="bg-white rounded-lg border border-zinc-200 p-5 space-y-4 animate-pulse">
     <div className="flex items-center gap-3">
-      <div className="bg-slate-100 rounded-full h-10 w-10" />
+      <div className="bg-zinc-100 rounded-full h-10 w-10" />
       <div className="flex-1 space-y-2">
-        <div className="bg-slate-100 h-4 w-32 rounded" />
-        <div className="bg-slate-100 h-3 w-20 rounded" />
+        <div className="bg-zinc-100 h-4 w-32 rounded" />
+        <div className="bg-zinc-100 h-3 w-20 rounded" />
       </div>
     </div>
     <div className="space-y-2 py-2">
-      <div className="bg-slate-100 h-3 w-full rounded" />
-      <div className="bg-slate-100 h-3 w-4/5 rounded" />
+      <div className="bg-zinc-100 h-3 w-full rounded" />
+      <div className="bg-zinc-100 h-3 w-4/5 rounded" />
     </div>
-    <div className="h-9 bg-slate-100 rounded w-full" />
+    <div className="h-9 bg-zinc-100 rounded w-full" />
   </div>
 );
 
@@ -95,10 +95,10 @@ export default function UpdateStatus() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">
             Off-Campus Students
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="text-zinc-500 mt-1">
             Manage students currently marked as outside the campus.
           </p>
         </div>
@@ -123,17 +123,17 @@ export default function UpdateStatus() {
           filteredStudents.map((student: any) => (
             <div
               key={student._id}
-              className="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all p-5 flex flex-col h-full"
+              className="bg-white rounded-lg border border-zinc-200 shadow-sm hover:shadow-md transition-all p-5 flex flex-col h-full"
             >
-              <div className="flex items-start gap-4 mb-4 pb-4 border-b border-slate-100">
-                <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
+              <div className="flex items-start gap-4 mb-4 pb-4 border-b border-zinc-100">
+                <div className="h-10 w-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600">
                   <UserCircle2 className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900 leading-tight">
+                  <h3 className="font-semibold text-zinc-900 leading-tight">
                     {student.name}
                   </h3>
-                  <p className="text-sm text-slate-500 font-mono">
+                  <p className="text-sm text-zinc-500 font-mono">
                     {student.username}
                   </p>
                 </div>
@@ -146,26 +146,26 @@ export default function UpdateStatus() {
                   .map((outing: any) => (
                     <div
                       key={outing._id}
-                      className="bg-navy-50 rounded-md p-3 border border-navy-100"
+                      className="bg-zinc-50 rounded-md p-3 border border-zinc-100"
                     >
-                      <div className="flex items-center gap-2 text-xs font-bold text-navy-900 uppercase mb-2">
+                      <div className="flex items-center gap-2 text-xs font-bold text-zinc-900 uppercase mb-2">
                         <Clock className="w-3.5 h-3.5" /> Outing
                       </div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-slate-500">
+                        <span className="text-zinc-500">
                           From:{" "}
-                          <span className="text-slate-900 font-medium">
+                          <span className="text-zinc-900 font-medium">
                             {outing.from_time}
                           </span>
                         </span>
-                        <span className="text-slate-500">
+                        <span className="text-zinc-500">
                           To:{" "}
-                          <span className="text-slate-900 font-medium">
+                          <span className="text-zinc-900 font-medium">
                             {outing.to_time}
                           </span>
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 italic mb-3">
+                      <p className="text-xs text-zinc-500 italic mb-3">
                         "{outing.reason}"
                       </p>
                       <Button
@@ -185,26 +185,26 @@ export default function UpdateStatus() {
                   .map((outpass: any) => (
                     <div
                       key={outpass._id}
-                      className="bg-navy-50 rounded-md p-3 border border-navy-100"
+                      className="bg-zinc-50 rounded-md p-3 border border-zinc-100"
                     >
-                      <div className="flex items-center gap-2 text-xs font-bold text-navy-900 uppercase mb-2">
+                      <div className="flex items-center gap-2 text-xs font-bold text-zinc-900 uppercase mb-2">
                         <CalendarDays className="w-3.5 h-3.5" /> Outpass
                       </div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-slate-500">
+                        <span className="text-zinc-500">
                           From:{" "}
-                          <span className="text-slate-900 font-medium">
+                          <span className="text-zinc-900 font-medium">
                             {outpass.from_day}
                           </span>
                         </span>
-                        <span className="text-slate-500">
+                        <span className="text-zinc-500">
                           To:{" "}
-                          <span className="text-slate-900 font-medium">
+                          <span className="text-zinc-900 font-medium">
                             {outpass.to_day}
                           </span>
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 italic mb-3">
+                      <p className="text-xs text-zinc-500 italic mb-3">
                         "{outpass.reason}"
                       </p>
                       <Button
@@ -219,7 +219,7 @@ export default function UpdateStatus() {
                   ))}
               </div>
 
-              <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between text-xs text-slate-400">
+              <div className="mt-4 pt-4 border-t border-zinc-100 flex justify-between text-xs text-zinc-400">
                 <span>{student.email}</span>
                 <span className="capitalize">{student.gender}</span>
               </div>
@@ -227,13 +227,13 @@ export default function UpdateStatus() {
           ))
         ) : (
           <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
-            <div className="bg-slate-50 p-4 rounded-full mb-4">
-              <RefreshCcw className="w-8 h-8 text-slate-300" />
+            <div className="bg-zinc-50 p-4 rounded-full mb-4">
+              <RefreshCcw className="w-8 h-8 text-zinc-300" />
             </div>
-            <h3 className="text-lg font-medium text-slate-900">
+            <h3 className="text-lg font-medium text-zinc-900">
               No active students outside
             </h3>
-            <p className="text-slate-500 max-w-sm mx-auto mt-1">
+            <p className="text-zinc-500 max-w-sm mx-auto mt-1">
               {searchQuery
                 ? `No results for "${searchQuery}"`
                 : "All students are currently marked as present in campus."}

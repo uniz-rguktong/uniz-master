@@ -210,7 +210,7 @@ export default function ProfilePopup({
           <motion.div
             ref={popupRef}
             style={{ top: position.top, right: position.right }}
-            className="fixed z-[9999] w-[380px] bg-white rounded-xl border border-slate-100 overflow-hidden shadow-none"
+            className="fixed z-[9999] w-[380px] bg-white rounded-xl border border-zinc-100 overflow-hidden shadow-none"
             initial={{ opacity: 0, y: -12, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.97 }}
@@ -225,13 +225,13 @@ export default function ProfilePopup({
             <BackgroundIconCloud className="scale-[1.5]" />
 
             {/* ── Top bar: email (centered) + close ── */}
-            <div className="relative flex items-center justify-center px-5 py-3 border-b border-slate-100">
-              <p className="text-[12.5px] font-semibold text-slate-600 truncate lowercase">
+            <div className="relative flex items-center justify-center px-5 py-3 border-b border-zinc-100">
+              <p className="text-[12.5px] font-semibold text-zinc-600 truncate lowercase">
                 {(profile?.email || `${username}@rguktong.ac.in`).toLowerCase()}
               </p>
               <button
                 onClick={onClose}
-                className="absolute right-3 p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors shadow-none"
+                className="absolute right-3 p-1.5 rounded-xl hover:bg-zinc-100 text-zinc-400 hover:text-zinc-700 transition-colors shadow-none"
               >
                 <X size={15} />
               </button>
@@ -249,7 +249,7 @@ export default function ProfilePopup({
                   }}
                 >
                   <div className="w-full h-full rounded-full bg-white p-[2px]">
-                    <div className="w-full h-full rounded-full overflow-hidden bg-slate-800 flex items-center justify-center shadow-none">
+                    <div className="w-full h-full rounded-full overflow-hidden bg-zinc-800 flex items-center justify-center shadow-none">
                       {loading && !initialPhoto ? (
                         <Loader2
                           size={24}
@@ -262,7 +262,7 @@ export default function ProfilePopup({
                           alt=""
                         />
                       ) : (
-                        <span className="text-xl font-black text-white">
+                        <span className="text-xl font-semibold text-white">
                           {initial}
                         </span>
                       )}
@@ -280,7 +280,7 @@ export default function ProfilePopup({
                 {/* Camera button */}
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0.5 right-0.5 w-7 h-7 bg-slate-700 text-white rounded-full flex items-center justify-center border-2 border-white hover:bg-slate-900 transition-all active:scale-90 shadow-none"
+                  className="absolute bottom-0.5 right-0.5 w-7 h-7 bg-zinc-700 text-white rounded-full flex items-center justify-center border-2 border-white hover:bg-zinc-900 transition-all active:scale-90 shadow-none"
                 >
                   <Camera size={12} />
                 </button>
@@ -294,11 +294,11 @@ export default function ProfilePopup({
               </div>
 
               {/* Hi, Name */}
-              <h2 className="text-[22px] font-semibold text-slate-900 tracking-tight mb-0.5">
+              <h2 className="text-[22px] font-semibold text-zinc-900 tracking-tight mb-0.5">
                 Hi, {firstName}!
               </h2>
               {profile?.role && (
-                <p className="text-[11px] text-slate-400 font-medium mb-4">
+                <p className="text-[11px] text-zinc-400 font-medium mb-4">
                   {profile.role}
                 </p>
               )}
@@ -329,7 +329,7 @@ export default function ProfilePopup({
                         department: profile?.department || "",
                       });
                     }}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 text-slate-500 text-[12px] font-semibold hover:bg-slate-50 transition-all shadow-none"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-zinc-200 text-zinc-500 text-[12px] font-semibold hover:bg-zinc-50 transition-all shadow-none"
                   >
                     <Ban size={12} />
                     Cancel
@@ -338,16 +338,16 @@ export default function ProfilePopup({
               ) : (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 px-6 py-2 rounded-xl border border-slate-200 text-slate-700 text-[13px] font-medium hover:bg-slate-50 hover:border-slate-300 transition-all shadow-none"
+                  className="flex items-center gap-2 px-6 py-2 rounded-xl border border-zinc-200 text-zinc-700 text-[13px] font-medium hover:bg-zinc-50 hover:border-zinc-300 transition-all shadow-none"
                 >
-                  <Pencil size={13} className="text-slate-500" />
+                  <Pencil size={13} className="text-zinc-500" />
                   Edit Profile
                 </button>
               )}
             </div>
 
             {/* ── Divider ── */}
-            <div className="border-t border-slate-100 mx-0" />
+            <div className="border-t border-zinc-100 mx-0" />
 
             {/* ── Profile Details ── */}
             <div className="px-4 py-3 space-y-1">
@@ -358,28 +358,28 @@ export default function ProfilePopup({
               ) : (
                 <>
                   <DetailRow
-                    icon={<User size={14} className="text-slate-500" />}
+                    icon={<User size={14} className="text-zinc-500" />}
                     label="Full Name"
                     value={formData.name || username}
                     editable={isEditing}
                     onChange={(v) => setFormData({ ...formData, name: v })}
                   />
                   <DetailRow
-                    icon={<Mail size={14} className="text-slate-500" />}
+                    icon={<Mail size={14} className="text-zinc-500" />}
                     label="Email"
                     value={formData.email || `${username}@rguktong.ac.in`}
                     editable={isEditing}
                     onChange={(v) => setFormData({ ...formData, email: v })}
                   />
                   <DetailRow
-                    icon={<Phone size={14} className="text-slate-500" />}
+                    icon={<Phone size={14} className="text-zinc-500" />}
                     label="Contact"
                     value={formData.contact || "-"}
                     editable={isEditing}
                     onChange={(v) => setFormData({ ...formData, contact: v })}
                   />
                   <DetailRow
-                    icon={<Briefcase size={14} className="text-slate-500" />}
+                    icon={<Briefcase size={14} className="text-zinc-500" />}
                     label="Designation"
                     value={formData.designation || "Webmaster"}
                     editable={isEditing}
@@ -388,7 +388,7 @@ export default function ProfilePopup({
                     }
                   />
                   <DetailRow
-                    icon={<Building size={14} className="text-slate-500" />}
+                    icon={<Building size={14} className="text-zinc-500" />}
                     label="Department"
                     value={formData.department || "Administration"}
                     editable={isEditing}
@@ -397,7 +397,7 @@ export default function ProfilePopup({
                     }
                   />
                   <DetailRow
-                    icon={<Shield size={14} className="text-slate-500" />}
+                    icon={<Shield size={14} className="text-zinc-500" />}
                     label="Username"
                     value={username}
                     editable={false}
@@ -407,7 +407,7 @@ export default function ProfilePopup({
             </div>
 
             {/* ── Divider ── */}
-            <div className="border-t border-slate-100" />
+            <div className="border-t border-zinc-100" />
 
             {/* ── Sign out ── */}
             <button
@@ -415,12 +415,12 @@ export default function ProfilePopup({
                 onClose();
                 onLogout();
               }}
-              className="w-full flex items-center gap-3 px-5 py-3.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 transition-colors group"
+              className="w-full flex items-center gap-3 px-5 py-3.5 text-[13px] font-semibold text-zinc-700 hover:bg-zinc-50 transition-colors group"
             >
-              <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center group-hover:bg-red-50 transition-colors shadow-none">
+              <div className="w-8 h-8 rounded-xl bg-zinc-100 flex items-center justify-center group-hover:bg-red-50 transition-colors shadow-none">
                 <LogOut
                   size={15}
-                  className="text-slate-500 group-hover:text-red-500 transition-colors"
+                  className="text-zinc-500 group-hover:text-red-500 transition-colors"
                 />
               </div>
               <span className="group-hover:text-red-500 transition-colors">
@@ -450,12 +450,12 @@ function DetailRow({
   onChange?: (v: string) => void;
 }) {
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
-      <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 shadow-none">
+    <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50 transition-colors">
+      <div className="w-8 h-8 rounded-xl bg-zinc-100 flex items-center justify-center shrink-0 shadow-none">
         {icon}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[9.5px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-0.5">
+        <p className="text-[9.5px] font-bold text-zinc-400 uppercase tracking-[0.14em] leading-none mb-0.5">
           {label}
         </p>
         {editable && onChange ? (
@@ -466,7 +466,7 @@ function DetailRow({
             className="text-[13px] font-medium text-zinc-900 bg-transparent border-b border-zinc-100 focus:outline-none w-full"
           />
         ) : (
-          <p className="text-[13px] font-medium text-slate-900 truncate">
+          <p className="text-[13px] font-medium text-zinc-900 truncate">
             {value}
           </p>
         )}

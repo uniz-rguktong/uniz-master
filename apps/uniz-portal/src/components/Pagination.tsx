@@ -21,11 +21,12 @@ export function Pagination({
       className={cn("flex items-center justify-center gap-2 mt-6", className)}
     >
       <button
+        type="button"
         onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
         disabled={currentPage === 1}
-        className="p-2 rounded-xl border border-slate-200 enabled:hover:bg-slate-50 disabled:opacity-50 transition-all duration-200"
+        className="p-2 rounded-xl border border-zinc-200 enabled:hover:bg-zinc-50 disabled:opacity-40 transition-all"
       >
-        <ChevronLeft className="w-4 h-4 text-slate-600" />
+        <ChevronLeft className="w-4 h-4 text-zinc-600" />
       </button>
 
       <div className="flex items-center gap-1.5">
@@ -37,15 +38,16 @@ export function Pagination({
           .map((p, i, arr) => (
             <div key={p} className="flex items-center">
               {i > 0 && arr[i - 1] !== p - 1 && (
-                <span className="px-2 text-slate-300 font-bold">...</span>
+                <span className="px-2 text-zinc-300 font-medium">…</span>
               )}
               <button
+                type="button"
                 onClick={() => onPageChange(p)}
                 className={cn(
-                  "w-9 h-9 rounded-xl text-[13px] font-black transition-all duration-200",
+                  "w-9 h-9 rounded-xl text-[13px] font-semibold transition-all",
                   currentPage === p
-                    ? "bg-navy-900 text-white shadow-lg shadow-navy-100"
-                    : "border border-slate-200 hover:bg-slate-50 text-slate-600",
+                    ? "bg-zinc-900 text-white shadow-[0_1px_2px_rgba(10,10,10,0.16)]"
+                    : "border border-zinc-200 hover:bg-zinc-50 text-zinc-600",
                 )}
               >
                 {p}
@@ -55,11 +57,12 @@ export function Pagination({
       </div>
 
       <button
+        type="button"
         onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-xl border border-slate-200 enabled:hover:bg-slate-50 disabled:opacity-50 transition-all duration-200"
+        className="p-2 rounded-xl border border-zinc-200 enabled:hover:bg-zinc-50 disabled:opacity-40 transition-all"
       >
-        <ChevronRight className="w-4 h-4 text-slate-600" />
+        <ChevronRight className="w-4 h-4 text-zinc-600" />
       </button>
     </div>
   );

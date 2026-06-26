@@ -1,17 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  X,
-  Loader2,
-  Zap,
-  ShieldAlert,
-  ArrowRight,
-  RefreshCcw,
-} from "lucide-react";
+import { Loader2, ShieldAlert, ArrowRight, RefreshCw } from "lucide-react";
 import { ADMIN_STUDENT_PROMOTE } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
-import { cn } from "@/utils/cn";
+import { cn } from "../../../utils/cn";
+import { AdminDialog } from "../../../components/admin/AdminDialog";
+import {
+  adminLabelClass,
+  adminSelectClass,
+  adminPrimaryButtonClass,
+  adminGhostButtonClass,
+  adminWarningBannerClass,
+  adminWarningTitleClass,
+  adminWarningTextClass,
+  adminDangerInputClass,
+} from "../../../components/admin/admin-ui";
 
 interface CohortPromotionModalProps {
   isOpen: boolean;
@@ -31,13 +34,23 @@ export default function CohortPromotionModal({
   const [confirmText, setConfirmText] = useState("");
 
   const years = ["E1", "E2", "E3", "E4", "PASSED_OUT"];
-  const branches = ["ALL", "CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME", "AI&ML"];
+  const branches = [
+    "ALL",
+    "CSE",
+    "ECE",
+    "EEE",
+    "MECH",
+    "CIVIL",
+    "CHEM",
+    "MME",
+    "AI&ML",
+  ];
 
   const handlePromote = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (confirmText !== "PROMOTE") {
-      toast.error("Please type PROMOTE to confirm this destructive operation");
+      toast.error('Type PROMOTE to confirm this action');
       return;
     }
 
@@ -56,152 +69,122 @@ export default function CohortPromotionModal({
 
       const data = await res.json();
       if (data.success) {
-        toast.success(data.message);
+        toast.success(data.message || "Cohort promoted");
         onSuccess();
         onClose();
+        setConfirmText("");
       } else {
-        toast.error(data.message || "Promotion Protocol Failure");
+        toast.error(data.message || "Promotion failed");
       }
-    } catch (err) {
-      toast.error("Network Synchronicity Lost during promotion");
+    } catch {
+      toast.error("Network error during promotion");
     } finally {
       setLoading(false);
     }
   };
 
+  const canSubmit = confirmText === "PROMOTE" && !loading;
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200]"
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, x: "-50%", y: "-40%", filter: "blur(10px)" }}
-            animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%", filter: "blur(0px)" }}
-            exit={{ opacity: 0, scale: 0.9, x: "-50%", y: "-40%", filter: "blur(10px)" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed left-1/2 top-1/2 w-full max-w-2xl bg-white rounded-[3rem] shadow-[0_80px_150px_-30px_rgba(0,0,0,0.3)] z-[201] overflow-hidden flex flex-col p-10"
+    <AdminDialog
+      open={isOpen}
+      onOpenChange={(open) => !open && onClose()}
+      title="Bulk cohort promotion"
+      description="Upgrade the academic year for all students in a branch and origin year."
+      maxWidth="max-w-lg"
+    >
+      <form onSubmit={handlePromote} className="space-y-6">
+        <div className={adminWarningBannerClass}>
+          <ShieldAlert size={18} className="text-amber-600 shrink-0 mt-0.5" />
+          <div>
+            <p className={adminWarningTitleClass}>Destructive operation</p>
+            <p className={adminWarningTextClass}>
+              This updates the year field for every student in the selected branch
+              and origin year. It cannot be undone automatically.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-[1fr,32px,1fr] items-end gap-2">
+          <div className="space-y-2">
+            <label className={adminLabelClass}>From year</label>
+            <select
+              value={fromYear}
+              onChange={(e) => setFromYear(e.target.value)}
+              className={adminSelectClass}
+            >
+              {years.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="h-11 flex items-center justify-center text-zinc-300">
+            <ArrowRight size={16} />
+          </div>
+          <div className="space-y-2">
+            <label className={adminLabelClass}>To year</label>
+            <select
+              value={toYear}
+              onChange={(e) => setToYear(e.target.value)}
+              className={adminSelectClass}
+            >
+              {years.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className={adminLabelClass}>Department</label>
+          <select
+            value={branch}
+            onChange={(e) => setBranch(e.target.value)}
+            className={adminSelectClass}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between mb-10">
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-4 border border-indigo-100">
-                  <Zap size={24} />
-                </div>
-                <h3 className="text-2xl font-black text-slate-900 leading-none tracking-tight uppercase italic">
-                  Cohort <span className="text-indigo-600">Promotion</span> logic
-                </h3>
-                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-3">
-                  Bulk upgrade academic identities for a specific cohort
-                </p>
-              </div>
-              <button
-                onClick={onClose}
-                className="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 flex items-center justify-center text-slate-400 transition-all hover:scale-110 active:scale-95"
-              >
-                <X size={20} />
-              </button>
-            </div>
+            {branches.map((b) => (
+              <option key={b} value={b}>
+                {b === "ALL" ? "All departments" : b}
+              </option>
+            ))}
+          </select>
+        </div>
 
-            {/* Warning Box */}
-            <div className="bg-amber-50 border border-amber-100 p-6 rounded-3xl mb-8 flex gap-5">
-              <div className="w-10 h-10 shrink-0 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600">
-                <ShieldAlert size={20} />
-              </div>
-              <div className="flex flex-col gap-1">
-                <p className="text-[11px] font-black text-amber-900 uppercase tracking-widest">Destructive Operation</p>
-                <p className="text-[11px] font-bold text-amber-700/80 leading-relaxed uppercase tracking-tighter">
-                  This protocol will modify the "Year" field for all students in the selected branch and origin year. This cannot be undone automatically.
-                </p>
-              </div>
-            </div>
+        <div className="space-y-2">
+          <label className={cn(adminLabelClass, "text-rose-500")}>
+            Type PROMOTE to confirm
+          </label>
+          <input
+            type="text"
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value.toUpperCase())}
+            placeholder="PROMOTE"
+            className={adminDangerInputClass}
+          />
+        </div>
 
-            <form onSubmit={handlePromote} className="space-y-8">
-              {/* Promotion Grid */}
-              <div className="grid grid-cols-[1fr,40px,1fr] items-end gap-4">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Origin Year</label>
-                  <select
-                    value={fromYear}
-                    onChange={(e) => setFromYear(e.target.value)}
-                    className="w-full h-14 bg-slate-50 border border-slate-100 rounded-2xl px-6 font-bold text-slate-900 text-[13px] outline-none focus:bg-white focus:border-indigo-300 transition-all appearance-none"
-                  >
-                    {years.map(y => (
-                      <option key={y} value={y}>{y}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="h-14 flex items-center justify-center text-slate-300">
-                  <ArrowRight size={20} />
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Target Year</label>
-                  <select
-                    value={toYear}
-                    onChange={(e) => setToYear(e.target.value)}
-                    className="w-full h-14 bg-slate-50 border border-slate-100 rounded-2xl px-6 font-bold text-slate-900 text-[13px] outline-none focus:bg-white focus:border-indigo-300 transition-all appearance-none"
-                  >
-                    {years.map(y => (
-                      <option key={y} value={y}>{y}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Target Department</label>
-                  <select
-                    value={branch}
-                    onChange={(e) => setBranch(e.target.value)}
-                    className="w-full h-14 bg-slate-50 border border-slate-100 rounded-2xl px-6 font-bold text-slate-900 text-[13px] outline-none focus:bg-white focus:border-indigo-300 transition-all appearance-none"
-                  >
-                    {branches.map(b => (
-                      <option key={b} value={b}>{b === "ALL" ? "All Departments" : b}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] ml-1">Safety Lock: Type "PROMOTE"</label>
-                  <input
-                    type="text"
-                    value={confirmText}
-                    onChange={(e) => setConfirmText(e.target.value)}
-                    placeholder="PROMOTE"
-                    className="w-full h-14 bg-red-50 border border-red-100 rounded-2xl px-6 font-black text-red-600 text-[13px] outline-none placeholder:text-red-300 focus:bg-white transition-all uppercase"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading || confirmText !== "PROMOTE"}
-                className={cn(
-                  "w-full h-16 rounded-[1.5rem] font-black uppercase tracking-[0.3em] text-[11px] transition-all flex items-center justify-center gap-4 active:scale-95",
-                  confirmText === "PROMOTE" 
-                    ? "bg-slate-900 text-white shadow-2xl shadow-indigo-200" 
-                    : "bg-slate-100 text-slate-300 cursor-not-allowed"
-                )}
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin" size={18} />
-                ) : (
-                  <RefreshCcw size={18} />
-                )}
-                Initialize Global Promotion Protocol
-              </button>
-            </form>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+        <div className="flex gap-3 pt-1">
+          <button type="button" onClick={onClose} className={cn(adminGhostButtonClass, "flex-1")}>
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            className={cn(adminPrimaryButtonClass, "flex-[2]")}
+          >
+            {loading ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <RefreshCw size={16} />
+            )}
+            Promote cohort
+          </button>
+        </div>
+      </form>
+    </AdminDialog>
   );
 }

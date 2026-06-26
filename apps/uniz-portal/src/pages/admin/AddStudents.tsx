@@ -136,7 +136,7 @@ export default function AddStudents() {
       <div className="flex flex-col gap-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Add Students</h1>
+            <h1 className="text-2xl font-bold text-zinc-900">Add Students</h1>
             <div className="flex items-center gap-2 mt-1">
               <Button
                 variant="secondary"
@@ -146,7 +146,7 @@ export default function AddStudents() {
               >
                 ← Back
               </Button>
-              <p className="text-slate-500 text-sm">
+              <p className="text-zinc-500 text-sm">
                 Import student records via bulk spreadsheet upload.
               </p>
             </div>
@@ -161,20 +161,20 @@ export default function AddStudents() {
       </div>
 
       {/* Configuration Bar */}
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+          <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">
             Year
           </label>
-          <div className="flex bg-slate-100 p-1 rounded-lg">
+          <div className="flex bg-zinc-100 p-1 rounded-lg">
             {["E1", "E2", "E3", "E4"].map((y) => (
               <button
                 key={y}
                 onClick={() => setYear(y)}
                 className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${
                   year === y
-                    ? "bg-white text-slate-900 shadow-sm"
-                    : "text-slate-500 hover:text-slate-700"
+                    ? "bg-white text-zinc-900 shadow-sm"
+                    : "text-zinc-500 hover:text-zinc-700"
                 }`}
               >
                 {y}
@@ -184,13 +184,13 @@ export default function AddStudents() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+          <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">
             Semester
           </label>
           <select
             value={sem}
             onChange={(e) => setSem(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-navy-900 focus:border-navy-100 block p-2.5"
+            className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm rounded-lg focus:ring-zinc-900 focus:border-zinc-100 block p-2.5"
           >
             <option value="Sem - 1">Semester 1</option>
             <option value="Sem - 2">Semester 2</option>
@@ -198,13 +198,13 @@ export default function AddStudents() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+          <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">
             Branch
           </label>
           <select
             value={branch}
             onChange={(e) => setBranch(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-navy-900 focus:border-navy-100 block p-2.5"
+            className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 text-sm rounded-lg focus:ring-zinc-900 focus:border-zinc-100 block p-2.5"
           >
             {["CSE", "ECE", "EEE", "CIVIL", "MECH"].map((b) => (
               <option key={b} value={b}>
@@ -220,7 +220,7 @@ export default function AddStudents() {
         <div
           className={`
                 border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200
-                ${error ? "border-black border-2 bg-slate-50" : "border-slate-300 hover:border-black hover:bg-slate-50"}
+                ${error ? "border-black border-2 bg-zinc-50" : "border-zinc-300 hover:border-black hover:bg-zinc-50"}
             `}
         >
           <input
@@ -238,10 +238,10 @@ export default function AddStudents() {
               <Upload className="w-8 h-8" />
             </div>
             <div>
-              <p className="text-lg font-semibold text-slate-900">
+              <p className="text-lg font-semibold text-zinc-900">
                 Click to upload spreadsheet
               </p>
-              <p className="text-slate-500 text-sm mt-1">
+              <p className="text-zinc-500 text-sm mt-1">
                 Supports .xlsx, .xls, .csv
               </p>
             </div>
@@ -255,14 +255,14 @@ export default function AddStudents() {
       ) : (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* File Info Bar */}
-          <div className="bg-slate-900 text-white p-4 rounded-xl flex items-center justify-between shadow-lg">
+          <div className="bg-zinc-900 text-white p-4 rounded-xl flex items-center justify-between shadow-lg">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-slate-800 rounded-lg">
+              <div className="p-2 bg-zinc-800 rounded-lg">
                 <FileSpreadsheet className="w-6 h-6 text-green-400" />
               </div>
               <div>
                 <p className="font-semibold">{file?.name}</p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-zinc-400">
                   {rows.length} records found
                 </p>
               </div>
@@ -270,7 +270,7 @@ export default function AddStudents() {
             <div className="flex items-center gap-3">
               <button
                 onClick={clearFile}
-                className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
+                className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
                 title="Remove File"
               >
                 <X className="w-5 h-5" />
@@ -279,9 +279,9 @@ export default function AddStudents() {
           </div>
 
           {/* Table Preview */}
-          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-            <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-              <h3 className="font-semibold text-slate-900">Data Preview</h3>
+          <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
+            <div className="p-4 border-b border-zinc-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+              <h3 className="font-semibold text-zinc-900">Data Preview</h3>
               <div className="w-full sm:w-72">
                 <Input
                   placeholder="Filter records..."
@@ -293,28 +293,28 @@ export default function AddStudents() {
             </div>
             <div className="overflow-x-auto max-h-[500px]">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0 z-10">
+                <thead className="text-xs text-zinc-500 uppercase bg-zinc-50 sticky top-0 z-10">
                   <tr>
                     {headers.map((h, i) => (
                       <th
                         key={i}
-                        className="px-6 py-3 font-semibold border-b border-slate-200"
+                        className="px-6 py-3 font-semibold border-b border-zinc-200"
                       >
                         {h}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-zinc-100">
                   {filteredRows.map((r) => (
                     <tr
                       key={r.id}
-                      className="bg-white hover:bg-slate-50 transition-colors"
+                      className="bg-white hover:bg-zinc-50 transition-colors"
                     >
                       {headers.map((h, i) => (
                         <td
                           key={i}
-                          className="px-6 py-3 whitespace-nowrap text-slate-700"
+                          className="px-6 py-3 whitespace-nowrap text-zinc-700"
                         >
                           {r[h]}
                         </td>
@@ -324,12 +324,12 @@ export default function AddStudents() {
                 </tbody>
               </table>
             </div>
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+            <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex justify-end">
               <Button
                 onClick={handleUpload}
                 isLoading={uploading}
                 disabled={uploading}
-                className="bg-black hover:bg-slate-800 rounded-none border-2 border-black"
+                className="bg-black hover:bg-zinc-800 rounded-none border-2 border-black"
               >
                 <Upload className="w-4 h-4 mr-2" /> Confirm & Upload
               </Button>
@@ -341,13 +341,13 @@ export default function AddStudents() {
       {/* Progress Display */}
       {progress && (
         <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-right-10 duration-500">
-          <div className="bg-white rounded-xl shadow-2xl p-6 border border-slate-100 w-80">
+          <div className="bg-white rounded-xl shadow-2xl p-6 border border-zinc-100 w-80">
             <div className="flex justify-between items-center mb-2">
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-zinc-900">
                 Upload Status
               </span>
               <span
-                className={`text-xs font-black uppercase tracking-widest px-2 py-1 rounded-full ${progress.status === "completed" ? "bg-black text-white" : "bg-slate-200 text-slate-700"}`}
+                className={`text-xs font-semibold uppercase tracking-[0.14em] px-2 py-1 rounded-full ${progress.status === "completed" ? "bg-black text-white" : "bg-zinc-200 text-zinc-700"}`}
               >
                 {progress.status === "completed" ? "Completed" : "Processing"}
               </span>
@@ -361,15 +361,15 @@ export default function AddStudents() {
                 </span>
               </div>
             ) : (
-              <div className="flex items-center gap-3 text-black mb-2 font-black uppercase tracking-widest">
+              <div className="flex items-center gap-3 text-black mb-2 font-semibold uppercase tracking-[0.14em]">
                 <Loader2 className="w-5 h-5 animate-spin" />
                 <span className="text-sm font-medium">Uploading data...</span>
               </div>
             )}
 
-            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all duration-500 ${progress.status === "completed" ? "bg-black" : "bg-slate-400"}`}
+                className={`h-full rounded-full transition-all duration-500 ${progress.status === "completed" ? "bg-black" : "bg-zinc-400"}`}
                 style={{ width: `${progress.percentage}%` }}
               />
             </div>

@@ -78,14 +78,14 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                   className="absolute flex flex-col items-center justify-center gap-2 group"
                   style={{ left: -32, top: -32, width: 64, height: 64 }}
                 >
-                  <div className="flex items-center justify-center w-[52px] h-[52px] rounded-full bg-white text-navy-900 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 group-hover:bg-slate-50 group-active:scale-95 transition-all">
+                  <div className="flex items-center justify-center w-[52px] h-[52px] rounded-full bg-white text-zinc-900 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-zinc-100 group-hover:bg-zinc-50 group-active:scale-95 transition-all">
                     <item.icon size={24} strokeWidth={2.5} />
                   </div>
                   <motion.span
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 + 0.15 }}
-                    className="text-[11px] font-bold text-slate-800 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-3 py-1 rounded-full border border-slate-100 whitespace-nowrap"
+                    className="text-[11px] font-bold text-zinc-800 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-3 py-1 rounded-full border border-zinc-100 whitespace-nowrap"
                   >
                     {item.label}
                   </motion.span>
@@ -159,7 +159,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
                   className={cn(
                     "flex items-center justify-center w-16 h-16 rounded-full shadow-2xl transition-colors duration-500 border-4 border-white",
                     isMoreOpen
-                      ? "bg-navy-900 text-white"
+                      ? "bg-zinc-900 text-white"
                       : "bg-[#0B2A47] text-white",
                   )}
                 >
@@ -228,7 +228,7 @@ const NavItem = ({
       <div
         className={cn(
           "flex items-center justify-center transition-all duration-300",
-          isActive ? "text-navy-900" : "text-slate-400",
+          isActive ? "text-zinc-900" : "text-zinc-400",
         )}
       >
         <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
@@ -236,7 +236,7 @@ const NavItem = ({
       <span
         className={cn(
           "text-[10px] font-bold tracking-tight transition-colors duration-300",
-          isActive ? "text-navy-900" : "text-slate-400 font-medium",
+          isActive ? "text-zinc-900" : "text-zinc-400 font-medium",
         )}
       >
         {item.label}

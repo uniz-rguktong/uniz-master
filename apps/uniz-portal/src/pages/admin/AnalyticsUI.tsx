@@ -106,17 +106,17 @@ export const TrendChart = ({
 }) => {
   const safeData = Array.isArray(data) ? data : [];
   return (
-    <div className="bg-transparent p-10 rounded-xl border border-slate-100 relative overflow-hidden">
+    <div className="bg-transparent p-10 rounded-xl border border-zinc-100 relative overflow-hidden">
       <div className="flex justify-between items-start mb-10 relative z-10">
         <div>
-          <h3 className="text-xl font-black text-slate-900 tracking-tight mb-1">
+          <h3 className="text-xl font-semibold text-zinc-900 tracking-tight mb-1">
             {title}
           </h3>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+          <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
             {subtitle}
           </p>
         </div>
-        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300">
+        <div className="w-10 h-10 bg-zinc-50 rounded-xl flex items-center justify-center text-zinc-300">
           <Clock size={18} />
         </div>
       </div>
@@ -198,12 +198,12 @@ export const DonutChart = ({
   const safeData = Array.isArray(data) ? data : [];
 
   return (
-    <div className="bg-transparent p-10 rounded-xl border border-slate-100 flex flex-col h-full">
+    <div className="bg-transparent p-10 rounded-xl border border-zinc-100 flex flex-col h-full">
       <div className="mb-6">
-        <h3 className="text-xl font-black text-slate-900 tracking-tight mb-1">
+        <h3 className="text-xl font-semibold text-zinc-900 tracking-tight mb-1">
           {title}
         </h3>
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+        <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
           {subtitle}
         </p>
       </div>
@@ -245,10 +245,10 @@ export const DonutChart = ({
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+          <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
             Total
           </p>
-          <p className="text-3xl font-black text-slate-900 tracking-tight">
+          <p className="text-3xl font-semibold text-zinc-900 tracking-tight">
             {safeData.reduce((acc, curr) => acc + (curr.value || 0), 0)}
           </p>
         </div>
@@ -261,7 +261,7 @@ export const DonutChart = ({
               className="w-2 h-2 rounded-full"
               style={{ backgroundColor: COLORS[i % COLORS.length] }}
             />
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
               {item.name}
             </span>
           </div>
@@ -272,40 +272,40 @@ export const DonutChart = ({
 };
 
 export const DonutChartSkeleton = () => (
-  <div className="bg-transparent p-10 rounded-xl border border-slate-100 flex flex-col h-full animate-pulse">
+  <div className="bg-transparent p-10 rounded-xl border border-zinc-100 flex flex-col h-full animate-pulse">
     <div className="mb-6 space-y-2">
-      <div className="w-40 h-6 rounded-lg bg-slate-100" />
-      <div className="w-32 h-3 rounded-md bg-slate-50" />
+      <div className="w-40 h-6 rounded-lg bg-zinc-100" />
+      <div className="w-32 h-3 rounded-md bg-zinc-50" />
     </div>
     <div className="flex-1 min-h-[250px] flex items-center justify-center relative">
-      <div className="w-44 h-44 rounded-full border-[20px] border-slate-50" />
+      <div className="w-44 h-44 rounded-full border-[20px] border-zinc-50" />
       <div className="absolute flex flex-col items-center gap-2">
-        <div className="w-10 h-3 rounded bg-slate-50" />
-        <div className="w-16 h-8 rounded bg-slate-100" />
+        <div className="w-10 h-3 rounded bg-zinc-50" />
+        <div className="w-16 h-8 rounded bg-zinc-100" />
       </div>
     </div>
     <div className="mt-8 space-y-3">
-      <div className="h-8 w-full rounded-xl bg-slate-50" />
-      <div className="h-8 w-full rounded-xl bg-slate-50/50" />
+      <div className="h-8 w-full rounded-xl bg-zinc-50" />
+      <div className="h-8 w-full rounded-xl bg-zinc-50/50" />
     </div>
   </div>
 );
 
 export const AreaChartSkeleton = () => (
-  <div className="w-full bg-white rounded-xl border border-slate-100 p-10 animate-pulse">
+  <div className="w-full bg-white rounded-xl border border-zinc-100 p-10 animate-pulse">
     <div className="flex justify-between items-start mb-10">
       <div className="space-y-3">
-        <div className="w-32 h-4 rounded bg-slate-50" />
-        <div className="w-56 h-12 rounded bg-slate-100" />
-        <div className="w-64 h-4 rounded bg-slate-50" />
+        <div className="w-32 h-4 rounded bg-zinc-50" />
+        <div className="w-56 h-12 rounded bg-zinc-100" />
+        <div className="w-64 h-4 rounded bg-zinc-50" />
       </div>
-      <div className="w-32 h-10 rounded-xl bg-slate-50" />
+      <div className="w-32 h-10 rounded-xl bg-zinc-50" />
     </div>
-    <div className="h-[250px] w-full bg-slate-50/50 rounded-xl border border-dashed border-slate-100 flex items-end px-4 py-4 gap-4">
+    <div className="h-[250px] w-full bg-zinc-50/50 rounded-xl border border-dashed border-zinc-100 flex items-end px-4 py-4 gap-4">
       {[...Array(12)].map((_, i) => (
         <div
           key={i}
-          className="flex-1 bg-slate-100 rounded-t-sm"
+          className="flex-1 bg-zinc-100 rounded-t-sm"
           style={{ height: `${Math.random() * 60 + 20}%`, opacity: 0.5 }}
         />
       ))}
@@ -325,12 +325,12 @@ export const PulseFeed = ({
 }) => {
   const safeActivities = Array.isArray(activities) ? activities : [];
   return (
-    <div className="bg-transparent p-10 rounded-xl border border-slate-100 h-full flex flex-col">
+    <div className="bg-transparent p-10 rounded-xl border border-zinc-100 h-full flex flex-col">
       <div className="flex items-center gap-3 mb-10">
-        <div className="w-10 h-10 bg-slate-950 rounded-xl flex items-center justify-center text-white">
+        <div className="w-10 h-10 bg-zinc-950 rounded-xl flex items-center justify-center text-white">
           <Activity size={18} />
         </div>
-        <h3 className="text-xl font-black text-slate-900 tracking-tight">
+        <h3 className="text-xl font-semibold text-zinc-900 tracking-tight">
           {title}
         </h3>
       </div>
@@ -339,7 +339,7 @@ export const PulseFeed = ({
         {safeActivities.map((act, i) => (
           <div key={i} className="flex gap-5 relative">
             {i !== safeActivities.length - 1 && (
-              <div className="absolute left-6 top-10 bottom-[-20px] w-[2px] bg-slate-50" />
+              <div className="absolute left-6 top-10 bottom-[-20px] w-[2px] bg-zinc-50" />
             )}
             <div
               className={cn(
@@ -360,14 +360,14 @@ export const PulseFeed = ({
               )}
             </div>
             <div className="pt-1 min-w-0">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">
+              <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] leading-none mb-1.5">
                 {act?.time}
               </p>
-              <p className="text-[13px] font-black text-slate-900 leading-tight uppercase tracking-tight">
+              <p className="text-[13px] font-semibold text-zinc-900 leading-tight uppercase tracking-tight">
                 {act?.message}
               </p>
               {act?.detail && (
-                <p className="text-[11px] text-slate-500 font-medium mt-1 truncate">
+                <p className="text-[11px] text-zinc-500 font-medium mt-1 truncate">
                   {act?.detail}
                 </p>
               )}
@@ -395,9 +395,9 @@ export const ComparisonChart = ({
   const safeLines = Array.isArray(lines) ? lines : [];
 
   return (
-    <div className="bg-transparent p-10 rounded-xl border border-slate-100">
+    <div className="bg-transparent p-10 rounded-xl border border-zinc-100">
       <div className="flex justify-between items-center mb-12">
-        <h3 className="text-2xl font-black text-slate-900 tracking-tight">
+        <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight">
           {title}
         </h3>
         <div className="flex gap-6">
@@ -407,7 +407,7 @@ export const ComparisonChart = ({
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: l?.color || "#6366f1" }}
               />
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+              <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-[0.14em]">
                 {l?.label}
               </span>
             </div>
@@ -490,13 +490,13 @@ export const SubjectHeatmap = ({
   const [hoveredItem, setHoveredItem] = useState<any | null>(null);
 
   return (
-    <div className="bg-transparent p-10 rounded-xl border border-slate-100 flex flex-col h-full w-full">
+    <div className="bg-transparent p-10 rounded-xl border border-zinc-100 flex flex-col h-full w-full">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
         <div>
-          <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-1">
+          <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-1">
             {title}
           </h3>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+          <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
             Matrix performance intelligence
           </p>
         </div>
@@ -505,7 +505,7 @@ export const SubjectHeatmap = ({
           <select
             value={selectedBranch}
             onChange={(e) => onBranchChange(e.target.value)}
-            className="appearance-none bg-slate-50 border border-slate-100 rounded-xl px-5 py-2.5 pr-10 text-[11px] font-black uppercase tracking-widest text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/10 cursor-pointer hover:bg-slate-100 transition-all shadow-sm"
+            className="appearance-none bg-zinc-50 border border-zinc-100 rounded-xl px-5 py-2.5 pr-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500/10 cursor-pointer hover:bg-zinc-100 transition-all shadow-sm"
           >
             {branches.map((b) => (
               <option key={b} value={b}>
@@ -515,7 +515,7 @@ export const SubjectHeatmap = ({
           </select>
           <ChevronDown
             size={14}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
           />
         </div>
       </div>
@@ -541,7 +541,7 @@ export const SubjectHeatmap = ({
           </AnimatePresence>
         </div>
 
-        <div className="min-h-[100px] border-t border-slate-50 pt-8 flex items-center justify-between">
+        <div className="min-h-[100px] border-t border-zinc-50 pt-8 flex items-center justify-between">
           <AnimatePresence mode="wait">
             {hoveredItem ? (
               <motion.div
@@ -553,17 +553,17 @@ export const SubjectHeatmap = ({
               >
                 <div
                   className={cn(
-                    "w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white text-lg font-black",
+                    "w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white text-lg font-semibold",
                     getGradeColor(Number(hoveredItem.average_grade)),
                   )}
                 >
                   {Number(hoveredItem.average_grade).toFixed(1)}
                 </div>
                 <div>
-                  <p className="text-xs font-black text-blue-600 uppercase tracking-widest mb-1">
+                  <p className="text-xs font-semibold text-blue-600 uppercase tracking-[0.14em] mb-1">
                     {selectedBranch} • PERFORMANCE
                   </p>
-                  <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight max-w-md">
+                  <h4 className="text-sm font-semibold text-zinc-900 uppercase tracking-tight max-w-md">
                     {hoveredItem.subject_name}
                   </h4>
                 </div>
@@ -573,7 +573,7 @@ export const SubjectHeatmap = ({
                 key="placeholder"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.3em]"
+                className="text-[10px] font-bold text-zinc-300 uppercase tracking-[0.3em]"
               >
                 Hover over a cell to view grade intelligence
               </motion.p>
@@ -582,7 +582,7 @@ export const SubjectHeatmap = ({
 
           <div className="flex items-center gap-4">
             <div className="flex flex-col items-end">
-              <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
+              <span className="text-[9px] font-semibold text-zinc-300 uppercase tracking-[0.14em]">
                 Efficiency Scale
               </span>
               <div className="flex gap-1 mt-1.5">
