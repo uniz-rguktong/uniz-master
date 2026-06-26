@@ -46,6 +46,20 @@ import {
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { SectionHeader } from "../../../components/admin/SectionHeader";
+import {
+  adminPageWrapClass,
+  adminCardClass,
+  adminLabelClass,
+  adminInputClass,
+  adminSelectClass,
+  adminPrimaryButtonClass,
+  adminGhostButtonClass,
+  adminSegmentWrapClass,
+  adminSegmentActiveClass,
+  adminSegmentInactiveClass,
+} from "../../../components/admin/admin-ui";
+import { cn } from "../../../utils/cn";
 
 const ROLES = ["webmaster", "coe", "swo", "dean", "ao", "OTHER"];
 const DEPARTMENTS = [
@@ -479,64 +493,71 @@ export default function FacultyManagement({
   };
 
   return (
-    <div className="p-6 space-y-8 pb-20 text-slate-900">
+    <div className={cn(adminPageWrapClass, "pb-20")}>
       {/* ─── Top bar ─── */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex flex-col gap-1.5">
-          <h2 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
-            Faculty Management
-          </h2>
-          <p className="text-slate-500 font-medium text-[13px]">
-            Strategic management of administrative and teaching assets.
-          </p>
-        </div>
+      <SectionHeader
+        icon={<Users size={18} />}
+        eyebrow="Management"
+        title="Faculty Management"
+        subtitle="Strategic management of administrative and teaching assets."
+        actions={
+          <>
+            <div className={adminSegmentWrapClass}>
+              <button
+                onClick={() => setMode(mode === "single" ? "bulk" : "single")}
+                className={
+                  mode === "bulk"
+                    ? cn(adminSegmentActiveClass, "px-2.5 py-1.5")
+                    : cn(adminSegmentInactiveClass, "px-2.5 py-1.5")
+                }
+                title="Toggle bulk mode"
+              >
+                <Layers size={16} />
+              </button>
+              <button
+                onClick={() => fetchFaculty(true)}
+                className={cn(
+                  adminSegmentInactiveClass,
+                  "px-2.5 py-1.5",
+                  loading && "animate-spin",
+                )}
+                title="Refresh"
+              >
+                <RefreshCw size={16} />
+              </button>
+            </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/60 backdrop-blur-sm">
-            <button
-              onClick={() => setMode(mode === "single" ? "bulk" : "single")}
-              className={`p-2 transition-all rounded-lg ${mode === "bulk" ? "bg-white text-slate-900 border border-slate-200/50 shadow-sm" : "text-slate-500 hover:text-slate-900"}`}
-            >
-              <Layers size={18} />
-            </button>
-            <button
-              onClick={() => fetchFaculty(true)}
-              className={`p-2 text-slate-500 hover:text-slate-900 transition-all ${loading ? "animate-spin" : ""}`}
-            >
-              <RefreshCw size={18} />
-            </button>
-          </div>
+            <div className="relative">
+              <Search
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                size={15}
+              />
+              <input
+                type="text"
+                placeholder="Search registry…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className={cn(adminInputClass, "pl-10 w-[240px]")}
+              />
+            </div>
 
-          <div className="relative group">
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors pointer-events-none"
-              size={14}
-            />
-            <input
-              type="text"
-              placeholder="Search registry..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-11 pr-5 h-11 bg-slate-50 border border-slate-100 rounded-xl text-[13px] font-medium outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 transition-all w-[240px] shadow-none placeholder:text-slate-400"
-            />
-          </div>
-
-          {mode === "single" && (
-            <button
-              onClick={openAdd}
-              className="h-11 px-6 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-black active:scale-95 transition-all flex items-center gap-2.5 shadow-none whitespace-nowrap"
-            >
-              <UserPlus size={16} /> Add Faculty
-            </button>
-          )}
-        </div>
-      </div>
+            {mode === "single" && (
+              <button
+                onClick={openAdd}
+                className={cn(adminPrimaryButtonClass, "whitespace-nowrap")}
+              >
+                <UserPlus size={16} /> Add Faculty
+              </button>
+            )}
+          </>
+        }
+      />
 
       {/* ─── BULK MODE ─── */}
       {mode === "bulk" && (
         <div className="space-y-6">
           {/* Sub-tabs */}
-          <div className="flex gap-2.5 bg-slate-100/80 p-1 rounded-xl w-fit border border-slate-200/60 backdrop-blur-sm">
+          <div className={adminSegmentWrapClass}>
             {(["add", "update", "delete"] as const).map((t) => (
               <button
                 key={t}
@@ -544,13 +565,19 @@ export default function FacultyManagement({
                   setBulkTab(t);
                   setBulkResult(null);
                 }}
-                className={`px-5 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all ${bulkTab === t ? (t === "delete" ? "bg-red-600 text-white" : "bg-white text-slate-900 border border-slate-200/50 shadow-sm") : "text-slate-500 hover:text-slate-900"}`}
+                className={
+                  bulkTab === t
+                    ? t === "delete"
+                      ? cn(adminSegmentActiveClass, "!bg-rose-600 !text-white")
+                      : adminSegmentActiveClass
+                    : adminSegmentInactiveClass
+                }
               >
                 {t === "add"
-                  ? "📥 Bulk Add"
+                  ? "Bulk Add"
                   : t === "update"
-                    ? "✏️ Bulk Update"
-                    : "🗑️ Bulk Delete"}
+                    ? "Bulk Update"
+                    : "Bulk Delete"}
               </button>
             ))}
           </div>
@@ -559,26 +586,25 @@ export default function FacultyManagement({
           {bulkTab === "add" && (
             <div className="w-full space-y-8">
               <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-1">
+                <div className="space-y-1">
+                  <h3 className="text-[16px] font-semibold tracking-tight text-zinc-900">
                     Bulk Import
                   </h3>
-                  <p className="text-[13px] text-slate-500 font-medium">
+                  <p className="text-[13px] text-zinc-500">
                     Automated registry ingestion via protocol-aligned CSV.
                   </p>
                 </div>
                 <button
                   onClick={downloadTemplate}
-                  className="flex items-center gap-2 px-4 py-2 bg-slate-100 border border-slate-200 rounded-xl text-[9px] font-bold uppercase tracking-widest text-slate-600 hover:bg-white hover:text-slate-900 transition-all"
+                  className={adminGhostButtonClass}
                 >
-                  <Download size={14} className="text-slate-500" /> Download
-                  Template
+                  <Download size={14} /> Download Template
                 </button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <div className="rounded-xl border border-slate-900 overflow-hidden bg-transparent p-6">
+                  <div className={cn(adminCardClass, "overflow-hidden border-dashed border-zinc-300 bg-zinc-50/40 p-6")}>
                     <FileUploader
                       onFileSelect={(file: File | null) => {
                         if (file) {
@@ -610,15 +636,13 @@ export default function FacultyManagement({
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <label className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block ml-1">
-                    CSV Preview
-                  </label>
+                <div className="space-y-2">
+                  <label className={adminLabelClass}>CSV Preview</label>
                   <textarea
                     value={csvText}
                     onChange={(e) => setCsvText(e.target.value)}
                     rows={8}
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-xl font-mono text-[10px] outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 transition-all resize-none shadow-none"
+                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-xl font-mono text-[11px] text-zinc-900 outline-none focus:ring-2 focus:ring-zinc-900/5 focus:border-zinc-400 transition-all resize-none"
                     placeholder={`username,name,email,department,designation,role\nktejokiran,K Tejo Kiran,ktejokiran@rguktong.ac.in,CSE,Lecturer,teacher`}
                   />
                 </div>
@@ -627,7 +651,7 @@ export default function FacultyManagement({
               <button
                 onClick={handleBulkAdd}
                 disabled={bulkLoading || !csvText.trim()}
-                className="w-full h-12 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-slate-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.99]"
+                className={cn(adminPrimaryButtonClass, "h-12 w-full")}
               >
                 {bulkLoading ? (
                   <Loader2 className="animate-spin w-4 h-4" />
@@ -642,25 +666,23 @@ export default function FacultyManagement({
           {/* ── Bulk Update ── */}
           {bulkTab === "update" && (
             <div className="space-y-4">
-              <div className="bg-navy-50 border border-navy-100 rounded-xl p-4 flex items-center gap-3">
-                <CheckSquare size={18} className="text-navy-900 shrink-0" />
-                <p className="text-sm text-navy-800 font-semibold">
+              <div className="bg-zinc-50 border border-zinc-200/70 rounded-xl p-4 flex items-center gap-3">
+                <CheckSquare size={18} className="text-zinc-700 shrink-0" />
+                <p className="text-[13px] text-zinc-600">
                   Select faculty from the table below, then pick fields to
                   update.
-                  <span className="font-black ml-1">
+                  <span className="font-semibold text-zinc-900 ml-1">
                     {selectedUsernames.size} selected.
                   </span>
                 </p>
               </div>
-              <div className="bg-white rounded-xl border border-slate-100 p-8 space-y-6">
-                <h3 className="text-xl font-bold text-slate-900">
+              <div className={cn(adminCardClass, "p-8 space-y-6")}>
+                <h3 className="text-[16px] font-semibold tracking-tight text-zinc-900">
                   Fields to Apply to Selected
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      New Role
-                    </label>
+                    <label className={adminLabelClass}>New Role</label>
                     <div className="relative">
                       <select
                         value={bulkUpdateFields.role}
@@ -670,7 +692,7 @@ export default function FacultyManagement({
                             role: e.target.value,
                           }))
                         }
-                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 appearance-none cursor-pointer"
+                        className={adminSelectClass}
                       >
                         <option value="">- No change -</option>
                         {ROLES.map((r) => (
@@ -686,9 +708,7 @@ export default function FacultyManagement({
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      New Department
-                    </label>
+                    <label className={adminLabelClass}>New Department</label>
                     <div className="relative">
                       <select
                         value={bulkUpdateFields.department}
@@ -698,7 +718,7 @@ export default function FacultyManagement({
                             department: e.target.value,
                           }))
                         }
-                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 appearance-none cursor-pointer"
+                        className={adminSelectClass}
                       >
                         <option value="">- No change -</option>
                         {DEPARTMENTS.map((d) => (
@@ -714,9 +734,7 @@ export default function FacultyManagement({
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      New Designation
-                    </label>
+                    <label className={adminLabelClass}>New Designation</label>
                     <input
                       value={bulkUpdateFields.designation}
                       onChange={(e) =>
@@ -726,13 +744,11 @@ export default function FacultyManagement({
                         }))
                       }
                       placeholder="e.g. Senior Lecturer"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all"
+                      className={adminInputClass}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      New Name (Generic)
-                    </label>
+                    <label className={adminLabelClass}>New Name (Generic)</label>
                     <input
                       value={bulkUpdateFields.name}
                       onChange={(e) =>
@@ -742,13 +758,11 @@ export default function FacultyManagement({
                         }))
                       }
                       placeholder="Apply same name to all"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all"
+                      className={adminInputClass}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      New Contact
-                    </label>
+                    <label className={adminLabelClass}>New Contact</label>
                     <input
                       value={bulkUpdateFields.contact}
                       onChange={(e) =>
@@ -758,13 +772,11 @@ export default function FacultyManagement({
                         }))
                       }
                       placeholder="Apply same contact to all"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all"
+                      className={adminInputClass}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      Profile URL
-                    </label>
+                    <label className={adminLabelClass}>Profile URL</label>
                     <input
                       value={bulkUpdateFields.profileUrl}
                       onChange={(e) =>
@@ -774,14 +786,14 @@ export default function FacultyManagement({
                         }))
                       }
                       placeholder="Apply same image to all"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all"
+                      className={adminInputClass}
                     />
                   </div>
                 </div>
                 <button
                   onClick={handleBulkUpdate}
                   disabled={bulkLoading || !selectedUsernames.size}
-                  className="w-full h-12 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-40 active:scale-[0.99]"
+                  className={cn(adminPrimaryButtonClass, "h-12 w-full")}
                 >
                   {bulkLoading ? (
                     <Loader2 className="animate-spin w-4 h-4" />
@@ -797,12 +809,12 @@ export default function FacultyManagement({
           {/* ── Bulk Delete ── */}
           {bulkTab === "delete" && (
             <div className="space-y-4">
-              <div className="bg-red-50 border border-red-100 rounded-xl p-4 flex items-center gap-3">
-                <AlertTriangle size={18} className="text-red-500 shrink-0" />
-                <p className="text-sm text-red-700 font-semibold">
+              <div className="bg-rose-50 border border-rose-100 rounded-xl p-4 flex items-center gap-3">
+                <AlertTriangle size={18} className="text-rose-500 shrink-0" />
+                <p className="text-[13px] text-rose-700">
                   Select rows below then delete. This is{" "}
                   <strong>permanent and cannot be undone.</strong>
-                  <span className="font-black ml-1">
+                  <span className="font-semibold ml-1">
                     {selectedUsernames.size} selected.
                   </span>
                 </p>
@@ -816,7 +828,7 @@ export default function FacultyManagement({
                   setShowDeleteConfirm(true);
                 }}
                 disabled={bulkLoading || !selectedUsernames.size}
-                className="w-full h-12 bg-red-600 text-white rounded-xl font-black uppercase tracking-widest text-[11px] hover:bg-red-700 transition-all flex items-center justify-center gap-2 disabled:opacity-40 shadow-none active:scale-[0.99]"
+                className="w-full h-12 bg-rose-600 text-white rounded-xl font-semibold tracking-tight text-[13px] hover:bg-rose-700 transition-all flex items-center justify-center gap-2 disabled:opacity-40 active:scale-[0.99]"
               >
                 {bulkLoading ? (
                   <Loader2 className="animate-spin w-4 h-4" />
@@ -830,25 +842,25 @@ export default function FacultyManagement({
 
               {/* Confirm Dialog */}
               {showDeleteConfirm && (
-                <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
-                  <div className="bg-white rounded-xl p-8 max-w-sm w-full shadow-none border border-red-100 mx-4">
-                    <div className="w-14 h-14 bg-red-50 rounded-xl flex items-center justify-center mb-5">
-                      <AlertTriangle size={28} className="text-red-500" />
+                <div className="fixed inset-0 z-[80] flex items-center justify-center bg-zinc-900/40 backdrop-blur-sm">
+                  <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-xl border border-zinc-200 mx-4">
+                    <div className="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center mb-5">
+                      <AlertTriangle size={24} className="text-rose-500" />
                     </div>
-                    <h3 className="text-xl font-black text-slate-900 mb-2">
+                    <h3 className="text-[18px] font-semibold tracking-tight text-zinc-900 mb-2">
                       Confirm Bulk Delete
                     </h3>
-                    <p className="text-sm text-slate-500 mb-2">
+                    <p className="text-[13px] text-zinc-500 mb-3">
                       You are about to permanently delete{" "}
-                      <strong className="text-red-600">
+                      <strong className="text-rose-600 font-semibold">
                         {selectedUsernames.size} faculty account
                         {selectedUsernames.size > 1 ? "s" : ""}
                       </strong>
                       .
                     </p>
-                    <div className="max-h-28 overflow-y-auto bg-slate-50 rounded-xl p-3 mb-6">
+                    <div className="max-h-28 overflow-y-auto bg-zinc-50 rounded-xl p-3 mb-6 border border-zinc-200/70">
                       {Array.from(selectedUsernames).map((u) => (
-                        <p key={u} className="text-xs font-mono text-slate-600">
+                        <p key={u} className="text-xs font-mono text-zinc-600">
                           {u}
                         </p>
                       ))}
@@ -856,13 +868,13 @@ export default function FacultyManagement({
                     <div className="flex gap-3">
                       <button
                         onClick={() => setShowDeleteConfirm(false)}
-                        className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-500 font-bold text-xs uppercase tracking-widest hover:bg-slate-50"
+                        className={cn(adminGhostButtonClass, "flex-1")}
                       >
                         Cancel
                       </button>
                       <button
                         onClick={handleBulkDelete}
-                        className="flex-[2] py-3 rounded-xl bg-red-600 text-white font-black text-xs uppercase tracking-widest hover:bg-red-700 transition-all"
+                        className="flex-[2] h-11 rounded-xl bg-rose-600 text-white font-semibold text-[13px] hover:bg-rose-700 transition-all"
                       >
                         Yes, Delete All
                       </button>
@@ -875,16 +887,16 @@ export default function FacultyManagement({
 
           {/* Result summary */}
           {bulkResult && (
-            <div className="bg-white rounded-xl border border-slate-100 shadow-none p-6">
+            <div className={cn(adminCardClass, "p-6")}>
               <div className="flex items-center gap-2 mb-4">
                 <CheckCircle2 size={18} className="text-emerald-500" />
-                <h4 className="font-bold text-slate-900">Operation Result</h4>
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <h4 className="font-semibold tracking-tight text-zinc-900">Operation Result</h4>
+                <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-zinc-400">
                   Total {bulkResult.summary?.total}
                 </span>
                 <button
                   onClick={() => setBulkResult(null)}
-                  className="ml-auto p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-red-500 transition-all"
+                  className="ml-auto p-1.5 hover:bg-zinc-100 rounded-lg text-zinc-400 hover:text-rose-500 transition-all"
                 >
                   <X size={14} />
                 </button>
@@ -935,24 +947,24 @@ export default function FacultyManagement({
       )}
 
       {/* ─── TABLE (shown in both modes) ─── */}
-      <div className="bg-white rounded-xl border border-slate-100 shadow-none overflow-hidden">
+      <div className={cn(adminCardClass, "overflow-hidden")}>
         {meta.totalPages > 1 && (
-          <div className="flex items-center justify-between px-10 py-4 bg-slate-50/30 border-b border-slate-100">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          <div className="flex items-center justify-between px-8 py-4 bg-zinc-50/50 border-b border-zinc-200/70">
+            <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-[0.12em]">
               Page {page} of {meta.totalPages}
             </p>
             <div className="flex gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 disabled:opacity-30 hover:bg-slate-50 text-[9px] font-black uppercase tracking-widest shadow-none"
+                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 text-[12px] font-semibold transition-all"
               >
                 Prev
               </button>
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 disabled:opacity-30 hover:bg-slate-50 text-[9px] font-black uppercase tracking-widest shadow-none"
+                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 text-[12px] font-semibold transition-all"
               >
                 Next
               </button>
@@ -963,42 +975,42 @@ export default function FacultyManagement({
         <div className="relative">
           <table className="w-full text-left border-collapse table-auto">
             <thead>
-              <tr className="border-b border-slate-50">
+              <tr className="border-b border-zinc-200/70">
                 {mode === "bulk" && (
-                  <th className="px-6 py-6 bg-slate-50/20">
+                  <th className="px-6 py-4">
                     <button
                       onClick={toggleAll}
-                      className="text-slate-400 hover:text-slate-700 transition-colors"
+                      className="text-zinc-400 hover:text-zinc-700 transition-colors"
                     >
                       {selectedUsernames.size === faculty.length &&
                       faculty.length > 0 ? (
-                        <CheckSquare size={18} className="text-navy-900" />
+                        <CheckSquare size={18} className="text-zinc-900" />
                       ) : (
                         <Square size={18} />
                       )}
                     </button>
                   </th>
                 )}
-                <th className="px-6 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                   User Details
                 </th>
-                <th className="px-6 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                   Designation
                 </th>
-                <th className="px-6 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                   Role
                 </th>
-                <th className="px-6 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                   Status
                 </th>
                 {mode === "single" && (
-                  <th className="px-6 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20 text-right">
+                  <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 text-right">
                     Actions
                   </th>
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50/60">
+            <tbody className="divide-y divide-zinc-100">
               {loading ? (
                 Array(limit)
                   .fill(0)
@@ -1052,25 +1064,23 @@ export default function FacultyManagement({
                           ? toggleSelect(member.Username)
                           : undefined
                       }
-                      className={`transition-all group ${mode === "bulk" ? "cursor-pointer select-none" : ""} ${isSelected ? "bg-navy-50/60 hover:bg-navy-50" : "hover:bg-slate-50/30"}`}
+                      className={`transition-colors group ${mode === "bulk" ? "cursor-pointer select-none" : ""} ${isSelected ? "bg-zinc-100/70 hover:bg-zinc-100" : "hover:bg-zinc-50/60"}`}
                     >
                       {mode === "bulk" && (
-                        <td className="px-6 py-6">
+                        <td className="px-6 py-5">
                           {isSelected ? (
-                            <CheckSquare size={18} className="text-navy-900" />
+                            <CheckSquare size={18} className="text-zinc-900" />
                           ) : (
                             <Square
                               size={18}
-                              className="text-slate-300 group-hover:text-slate-400"
+                              className="text-zinc-300 group-hover:text-zinc-400"
                             />
                           )}
                         </td>
                       )}
-                      <td className="px-6 py-6">
-                        <div className="flex items-center gap-4">
-                          <div
-                            className={`w-11 h-11 rounded-full text-white flex items-center justify-center font-bold text-sm shadow-none border-2 border-white ring-1 ring-slate-100 overflow-hidden ${isSelected ? "bg-navy-900" : "bg-slate-900"}`}
-                          >
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-3.5">
+                          <div className="w-10 h-10 rounded-full bg-zinc-900 text-white flex items-center justify-center font-semibold text-[13px] overflow-hidden shrink-0">
                             {member.ProfileUrl ? (
                               <img
                                 src={member.ProfileUrl}
@@ -1081,61 +1091,61 @@ export default function FacultyManagement({
                               member.Name?.[0] || member.Username?.[0]
                             )}
                           </div>
-                          <div className="flex flex-col">
-                            <p className="font-bold text-slate-900 tracking-tight leading-none mb-1.5">
+                          <div className="flex flex-col min-w-0">
+                            <p className="font-semibold text-zinc-900 tracking-tight leading-tight mb-0.5">
                               {member.Name}
                             </p>
-                            <div className="flex items-center gap-2">
-                              <Mail size={10} className="text-slate-300" />
-                              <p className="text-[10px] font-medium text-slate-400 leading-none">
+                            <div className="flex items-center gap-1.5">
+                              <Mail size={10} className="text-zinc-300" />
+                              <p className="text-[12px] text-zinc-400 leading-none truncate">
                                 {member.Email}
                               </p>
                             </div>
-                            <p className="text-[9px] font-mono text-slate-300 mt-1">
+                            <p className="text-[10px] font-mono text-zinc-300 mt-1">
                               {member.Username}
                             </p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-6">
-                        <p className="text-xs font-black text-slate-600 uppercase tracking-wide">
+                      <td className="px-6 py-5">
+                        <p className="text-[13px] font-medium text-zinc-700">
                           {member.Designation || "Lecturer"}
                         </p>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                        <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-[0.12em] mt-0.5">
                           {member.Department}
                         </p>
                       </td>
-                      <td className="px-6 py-6">
-                        <span className="px-3 py-1 bg-slate-50 rounded-lg text-slate-500 font-semibold uppercase tracking-widest text-[9px] border border-slate-100">
+                      <td className="px-6 py-5">
+                        <span className="px-2.5 py-1 bg-zinc-50 rounded-full text-zinc-500 font-medium text-[11px] border border-zinc-200">
                           {member.Role?.toUpperCase() || "FACULTY"}
                         </span>
                       </td>
-                      <td className="px-6 py-6">
+                      <td className="px-6 py-5">
                         <div
-                          className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-[9px] font-bold uppercase tracking-widest w-fit ${!member.is_suspended ? "border-emerald-100 text-emerald-600" : "border-red-100 text-red-500"}`}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-medium w-fit ${!member.is_suspended ? "border-zinc-200 bg-zinc-50 text-zinc-700" : "border-rose-100 bg-rose-50 text-rose-600"}`}
                         >
                           <span
-                            className={`w-1.5 h-1.5 rounded-full ${!member.is_suspended ? "bg-emerald-500 animate-pulse" : "bg-red-500"}`}
+                            className={`w-1.5 h-1.5 rounded-full ${!member.is_suspended ? "bg-emerald-500" : "bg-rose-500"}`}
                           ></span>
                           {!member.is_suspended ? "Active" : "Suspended"}
                         </div>
                       </td>
                       {mode === "single" && (
-                        <td className="px-6 py-6">
-                          <div className="flex items-center justify-end gap-2.5">
+                        <td className="px-6 py-5">
+                          <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => {
                                 setSelectedFaculty(member);
                                 setShowViewModal(true);
                               }}
-                              className="p-2.5 bg-slate-100 text-slate-600 rounded-full hover:bg-navy-900 hover:text-white transition-all active:scale-95 shadow-none"
+                              className="h-9 w-9 flex items-center justify-center bg-white border border-zinc-200 text-zinc-500 rounded-xl hover:bg-zinc-900 hover:text-white hover:border-zinc-900 transition-all active:scale-95"
                               title="View Details"
                             >
-                              <Eye size={16} />
+                              <Eye size={15} />
                             </button>
                             <button
                               onClick={() => openEdit(member)}
-                              className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-600 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-slate-200 active:scale-95 transition-all shadow-none"
+                              className="h-9 px-4 bg-white border border-zinc-200 text-zinc-600 rounded-xl text-[12px] font-semibold hover:text-zinc-900 hover:border-zinc-300 active:scale-95 transition-all"
                             >
                               Modify
                             </button>
@@ -1146,16 +1156,16 @@ export default function FacultyManagement({
                                   member.is_suspended,
                                 )
                               }
-                              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-none ${member.is_suspended ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-none" : "bg-slate-900 hover:bg-slate-800 text-white shadow-none"}`}
+                              className="h-9 px-4 rounded-xl text-[12px] font-semibold transition-all active:scale-95 bg-zinc-900 hover:bg-zinc-800 text-white"
                             >
                               {member.is_suspended ? "Reinstate" : "Suspend"}
                             </button>
                             <button
                               onClick={() => handleDelete(member.Username)}
-                              className="p-2.5 bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all active:scale-90 border border-red-100"
+                              className="h-9 w-9 flex items-center justify-center bg-white border border-zinc-200 text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all active:scale-90"
                               title="Delete"
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={15} />
                             </button>
                           </div>
                         </td>
@@ -1167,13 +1177,13 @@ export default function FacultyManagement({
                 <tr>
                   <td
                     colSpan={mode === "bulk" ? 5 : 5}
-                    className="p-24 text-center"
+                    className="py-20 text-center"
                   >
-                    <div className="flex flex-col items-center gap-5">
-                      <div className="p-6 bg-slate-50 rounded-full border border-slate-100 shadow-none">
-                        <Users size={40} className="text-slate-300" />
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 flex items-center justify-center bg-zinc-50 rounded-2xl border border-zinc-200/70">
+                        <Users size={32} strokeWidth={1.5} className="text-zinc-300" />
                       </div>
-                      <p className="font-semibold text-slate-400 italic text-sm">
+                      <p className="text-[14px] font-medium text-zinc-500 tracking-tight">
                         No staff members matching your criteria.
                       </p>
                     </div>
@@ -1185,15 +1195,15 @@ export default function FacultyManagement({
         </div>
 
         {meta.totalPages > 1 && (
-          <div className="flex items-center justify-between px-10 py-6 bg-slate-50/50 border-t border-slate-100">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          <div className="flex items-center justify-between px-8 py-4 bg-zinc-50/50 border-t border-zinc-200/70">
+            <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-[0.12em]">
               Page {page} of {meta.totalPages} • Total {meta.total} staff
             </p>
             <div className="flex items-center gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 hover:bg-slate-50 shadow-none"
+                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 transition-all"
               >
                 Previous
               </button>
@@ -1202,7 +1212,7 @@ export default function FacultyManagement({
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-bold transition-all ${page === i + 1 ? "bg-navy-900 text-white shadow-none" : "bg-white border border-slate-200 text-slate-400 hover:border-navy-100 hover:text-navy-900"}`}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-[12px] font-semibold tabular-nums transition-all ${page === i + 1 ? "bg-zinc-900 text-white" : "bg-white border border-zinc-200 text-zinc-400 hover:border-zinc-300 hover:text-zinc-900"}`}
                   >
                     {i + 1}
                   </button>
@@ -1211,7 +1221,7 @@ export default function FacultyManagement({
               <button
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 disabled:opacity-30 hover:bg-slate-50 shadow-none"
+                className="h-8 px-3.5 bg-white border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 disabled:opacity-30 hover:text-zinc-900 hover:border-zinc-300 transition-all"
               >
                 Next
               </button>
@@ -1228,45 +1238,43 @@ export default function FacultyManagement({
           }
         }}
       >
-        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-slate-100 rounded-2xl shadow-2xl">
+        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl shadow-xl">
           <div className="relative">
             {/* Close Button */}
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
 
             <AlertDialogHeader className="p-8 pb-4 flex flex-col items-center text-center gap-2">
-              <div className="relative mb-4 group">
-                <div className="p-1 bg-white ring-4 ring-navy-50 rounded-full shadow-sm">
-                  <div className="w-24 h-24 rounded-full bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden relative">
-                    {formData.profileUrl ? (
-                      <img
-                        src={formData.profileUrl}
-                        alt="Preview"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex flex-col items-center text-slate-300">
-                        <Users size={32} />
-                        <span className="text-[8px] font-black uppercase tracking-tighter mt-1">
-                          No Photo
-                        </span>
-                      </div>
-                    )}
-                    {isUploading && (
-                      <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
-                        <Loader2 className="animate-spin text-navy-900 w-5 h-5" />
-                      </div>
-                    )}
-                  </div>
+              <div className="relative mb-3 group">
+                <div className="w-24 h-24 rounded-full bg-zinc-50 border border-dashed border-zinc-300 flex items-center justify-center overflow-hidden relative">
+                  {formData.profileUrl ? (
+                    <img
+                      src={formData.profileUrl}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center text-zinc-300">
+                      <Users size={28} />
+                      <span className="text-[9px] font-medium uppercase tracking-tight mt-1">
+                        No Photo
+                      </span>
+                    </div>
+                  )}
+                  {isUploading && (
+                    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
+                      <Loader2 className="animate-spin text-zinc-900 w-5 h-5" />
+                    </div>
+                  )}
                 </div>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0 right-0 w-8 h-8 bg-navy-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-black transition-all active:scale-90 border-2 border-white z-10"
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center shadow-sm hover:bg-zinc-800 transition-all active:scale-90 border-2 border-white z-10"
                 >
                   <Camera size={14} />
                 </button>
@@ -1278,10 +1286,10 @@ export default function FacultyManagement({
                   onChange={handleImageUpload}
                 />
               </div>
-              <AlertDialogTitle className="text-2xl font-black text-slate-900 tracking-tight uppercase italic">
+              <AlertDialogTitle className="text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]">
                 {editMode ? "Institutional Update" : "Faculty Onboarding"}
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-[14px] font-medium text-slate-500 mt-1 leading-relaxed">
+              <AlertDialogDescription className="text-[13px] text-zinc-500 leading-relaxed">
                 {editMode
                   ? "Modify professional credentials and access level."
                   : "Create a new entry in the high-performance registry."}
@@ -1292,7 +1300,7 @@ export default function FacultyManagement({
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                    <label className={adminLabelClass}>
                       Personnel ID / Username
                     </label>
                     <input
@@ -1305,30 +1313,26 @@ export default function FacultyManagement({
                           username: e.target.value.toLowerCase(),
                         })
                       }
-                      className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all disabled:opacity-50"
+                    className={adminInputClass}
                       placeholder="e.g. jdoe"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                      Legal Full Name
-                    </label>
+                    <label className={adminLabelClass}>Legal Full Name</label>
                     <input
                       required
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all"
+                      className={adminInputClass}
                       placeholder="e.g. Dr. John Wick"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                    University Email
-                  </label>
+                  <label className={adminLabelClass}>University Email</label>
                   <input
                     required
                     type="email"
@@ -1337,7 +1341,7 @@ export default function FacultyManagement({
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
                     }
-                    className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all disabled:opacity-50"
+                    className={adminInputClass}
                     placeholder="personnel@rguktong.ac.in"
                   />
                 </div>
@@ -1345,9 +1349,7 @@ export default function FacultyManagement({
                 <div className="grid grid-cols-2 gap-4">
                   {!deptRestrict && (
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                        Department
-                      </label>
+                      <label className={adminLabelClass}>Department</label>
                       <select
                         value={formData.department}
                         onChange={(e) =>
@@ -1356,7 +1358,7 @@ export default function FacultyManagement({
                             department: e.target.value,
                           })
                         }
-                        className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
+                        className={adminSelectClass}
                       >
                         {DEPARTMENTS.map((d) => (
                           <option key={d} value={d}>
@@ -1367,9 +1369,7 @@ export default function FacultyManagement({
                     </div>
                   )}
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                      System Privileges
-                    </label>
+                    <label className={adminLabelClass}>System Privileges</label>
                     <div className="flex flex-col gap-2">
                       <select
                         value={
@@ -1384,7 +1384,7 @@ export default function FacultyManagement({
                             role: val === "OTHER" ? "" : val,
                           });
                         }}
-                        className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
+                        className={adminSelectClass}
                       >
                         {ROLES.map((r) => (
                           <option key={r} value={r}>
@@ -1403,7 +1403,7 @@ export default function FacultyManagement({
                               role: e.target.value.toLowerCase(),
                             })
                           }
-                          className="w-full h-10 px-4 bg-white border-2 border-slate-100 focus:border-navy-900 rounded-xl outline-none font-bold text-slate-900 transition-all text-xs"
+                          className={cn(adminInputClass, "h-10 text-xs")}
                           placeholder="Type custom role (e.g. registrar)"
                         />
                       )}
@@ -1412,7 +1412,7 @@ export default function FacultyManagement({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                  <label className={adminLabelClass}>
                     Professional Designation
                   </label>
                   <input
@@ -1421,25 +1421,25 @@ export default function FacultyManagement({
                     onChange={(e) =>
                       setFormData({ ...formData, designation: e.target.value })
                     }
-                    className="w-full h-12 px-5 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all"
+                    className={adminInputClass}
                     placeholder="e.g. Senior Lecturer / Head of Dept"
                   />
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 py-3.5 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 font-black uppercase tracking-widest text-[10px] transition-all"
+                  className={cn(adminGhostButtonClass, "flex-1")}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-[2] py-3.5 rounded-xl bg-navy-900 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-lg shadow-navy-100 hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className={cn(adminPrimaryButtonClass, "flex-[2]")}
                 >
                   {isSubmitting ? (
                     <Loader2 className="animate-spin w-4 h-4" />
@@ -1449,10 +1449,10 @@ export default function FacultyManagement({
                     <UserPlus size={16} />
                   )}
                   {isSubmitting
-                    ? "PROCESSING..."
+                    ? "Processing…"
                     : editMode
-                      ? "UPDATE REGISTRY"
-                      : "ONBOARD FACULTY"}
+                      ? "Update Registry"
+                      : "Onboard Faculty"}
                 </button>
               </div>
             </form>
@@ -1466,59 +1466,57 @@ export default function FacultyManagement({
           onClick={() => setShowViewModal(false)}
         >
           <div
-            className="bg-white w-full max-w-xl rounded-xl shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-300 border border-white/20 cursor-default"
+            className="bg-white w-full max-w-xl rounded-2xl shadow-xl overflow-hidden relative animate-in zoom-in-95 duration-300 border border-zinc-200 cursor-default"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
             <button
               onClick={() => setShowViewModal(false)}
-              className="absolute top-8 right-8 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
+              className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
 
             {/* Centralized Header */}
             <div className="p-10 pb-4 flex flex-col items-center text-center">
-              <div className="relative mb-6 group">
-                <div className="p-1 bg-white ring-4 ring-navy-50 rounded-full shadow-sm">
-                  <div className="w-24 h-24 rounded-full bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden">
-                    {selectedFaculty.ProfileUrl ? (
-                      <img
-                        src={selectedFaculty.ProfileUrl}
-                        alt={selectedFaculty.Name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex flex-col items-center text-slate-200">
-                        <Users size={32} />
-                        <span className="text-[8px] font-black uppercase tracking-tighter mt-1">
-                          No Photo
-                        </span>
-                      </div>
-                    )}
-                  </div>
+              <div className="relative mb-5 group">
+                <div className="w-24 h-24 rounded-full bg-zinc-50 border border-dashed border-zinc-300 flex items-center justify-center overflow-hidden">
+                  {selectedFaculty.ProfileUrl ? (
+                    <img
+                      src={selectedFaculty.ProfileUrl}
+                      alt={selectedFaculty.Name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center text-zinc-300">
+                      <Users size={28} />
+                      <span className="text-[9px] font-medium uppercase tracking-tight mt-1">
+                        No Photo
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <h3 className="text-3xl font-black text-slate-900 tracking-tight uppercase italic leading-none mb-3">
+              <h3 className="text-[24px] font-semibold text-zinc-900 tracking-[-0.01em] leading-none mb-3">
                 {selectedFaculty.Name}
               </h3>
 
-              <div className="flex flex-col items-center gap-2">
-                <p className="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">
+              <div className="flex flex-col items-center gap-2.5">
+                <p className="text-zinc-400 font-medium uppercase tracking-[0.14em] text-[10px]">
                   {selectedFaculty.Designation || "Faculty Member"}
                 </p>
-                <div className="flex items-center gap-3">
-                  <span className="px-3 py-1 bg-slate-100 rounded-full text-[9px] font-black uppercase tracking-widest text-slate-500 border border-slate-200">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 bg-zinc-50 rounded-full text-[11px] font-medium text-zinc-500 border border-zinc-200">
                     {selectedFaculty.Department} Department
                   </span>
-                  <span className="px-3 py-1 bg-emerald-50 rounded-full text-[9px] font-black uppercase tracking-widest text-emerald-600 border border-emerald-100">
+                  <span className="px-2.5 py-1 bg-zinc-900 rounded-full text-[11px] font-medium text-white">
                     {selectedFaculty.Role?.toUpperCase() || "FACULTY"}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-center gap-6 mt-6 text-slate-400">
+              <div className="flex items-center justify-center gap-6 mt-6 text-zinc-400">
                 <div className="flex items-center gap-2 text-[11px] font-medium">
                   <Mail size={12} className="text-slate-400" />
                   {selectedFaculty.Email}
@@ -1534,11 +1532,11 @@ export default function FacultyManagement({
             </div>
 
             {/* Bio Content Area */}
-            <div className="px-10 py-6 max-h-[50vh] overflow-y-auto bg-slate-50/30">
+            <div className="px-10 py-6 max-h-[50vh] overflow-y-auto bg-zinc-50/40 border-t border-zinc-200/70">
               <div className="space-y-6">
                 <div className="flex items-center gap-2.5 mb-2">
-                  <BookOpen size={16} className="text-slate-400" />
-                  <h4 className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-400">
+                  <BookOpen size={16} className="text-zinc-400" />
+                  <h4 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-400">
                     Professional Biography
                   </h4>
                 </div>
@@ -1553,9 +1551,9 @@ export default function FacultyManagement({
                         return (
                           <div
                             key={key}
-                            className="bg-white p-6 rounded-xl border border-slate-100/60 shadow-none hover:border-slate-300 transition-colors"
+                            className="bg-white p-5 rounded-xl border border-zinc-200/70 hover:border-zinc-300 transition-colors"
                           >
-                            <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 block mb-3">
+                            <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 block mb-3">
                               {key.replace(/_/g, " ")}
                             </label>
                             {Array.isArray(val) ? (
@@ -1563,15 +1561,15 @@ export default function FacultyManagement({
                                 {val.map((item: string, i: number) => (
                                   <li
                                     key={i}
-                                    className="text-[13px] text-slate-600 font-medium flex items-start gap-3 leading-relaxed"
+                                    className="text-[13px] text-zinc-600 flex items-start gap-3 leading-relaxed"
                                   >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-slate-200 mt-2 shrink-0 group-hover:bg-slate-900 transition-colors" />
+                                    <span className="w-1.5 h-1.5 rounded-full bg-zinc-300 mt-2 shrink-0" />
                                     {item}
                                   </li>
                                 ))}
                               </ul>
                             ) : (
-                              <p className="text-[13px] text-slate-600 font-medium leading-relaxed">
+                              <p className="text-[13px] text-zinc-600 leading-relaxed">
                                 {val}
                               </p>
                             )}
@@ -1581,12 +1579,12 @@ export default function FacultyManagement({
                     )}
                   </div>
                 ) : (
-                  <div className="text-center py-12 bg-white rounded-xl border border-slate-100 border-dashed">
+                  <div className="text-center py-12 bg-white rounded-xl border border-zinc-200 border-dashed">
                     <BookOpen
-                      size={32}
-                      className="mx-auto text-slate-100 mb-4"
+                      size={28}
+                      className="mx-auto text-zinc-200 mb-3"
                     />
-                    <p className="text-slate-400 font-bold italic text-[12px]">
+                    <p className="text-zinc-400 text-[13px]">
                       No biographical data available for this member.
                     </p>
                   </div>
@@ -1595,10 +1593,10 @@ export default function FacultyManagement({
             </div>
 
             {/* Modal Footer */}
-            <div className="p-10 bg-white border-t border-slate-50 flex justify-end gap-3">
+            <div className="p-6 bg-white border-t border-zinc-200/70 flex justify-end gap-3">
               <button
                 onClick={() => setShowViewModal(false)}
-                className="px-10 py-4 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-black transition-all active:scale-95 shadow-xl shadow-slate-100"
+                className={adminPrimaryButtonClass}
               >
                 Close Profile
               </button>

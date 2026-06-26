@@ -100,3 +100,44 @@ export const adminChipClass =
 
 /** Tabular numbers helper. */
 export const adminNumsClass = "tabular-nums [font-feature-settings:'tnum']";
+
+/* ── Layout + form primitives (shared across every section) ───── */
+
+/** Standard section page wrapper — consistent padding + rhythm. */
+export const adminPageWrapClass = "p-6 md:p-8 space-y-8 text-zinc-900";
+
+/** Field label — quiet, restrained (replaces loud font-black labels). */
+export const adminLabelClass =
+  "block text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400";
+
+/** Text input. */
+export const adminInputClass =
+  "w-full h-11 px-3.5 bg-white border border-zinc-200 rounded-xl text-[13px] font-medium text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5 transition-all";
+
+/** Select (pair with a ChevronDown overlay). */
+export const adminSelectClass =
+  "w-full h-11 pl-3.5 pr-10 bg-white border border-zinc-200 rounded-xl text-[12px] font-semibold tracking-tight text-zinc-900 appearance-none cursor-pointer focus:outline-none focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5 transition-all disabled:opacity-50";
+
+/** Textarea. */
+export const adminTextareaClass =
+  "w-full px-3.5 py-3 bg-white border border-zinc-200 rounded-xl text-[13px] font-medium text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5 transition-all resize-none";
+
+/** Primary (ink) button. */
+export const adminPrimaryButtonClass =
+  "inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl bg-zinc-900 text-white text-[12px] font-semibold tracking-tight shadow-[0_1px_2px_rgba(10,10,10,0.16)] hover:bg-zinc-800 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed";
+
+/** Secondary (paper) button. */
+export const adminGhostButtonClass =
+  "inline-flex items-center justify-center gap-2 h-11 px-4 rounded-xl bg-white border border-zinc-200 text-zinc-600 text-[12px] font-semibold hover:text-zinc-900 hover:border-zinc-300 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed";
+
+/** Destructive (subtle) button. */
+export const adminDangerButtonClass =
+  "inline-flex items-center justify-center gap-2 h-11 px-4 rounded-xl bg-white border border-zinc-200 text-zinc-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 text-[12px] font-semibold active:scale-[0.98] transition-all";
+
+/** Segmented control wrapper + segment states. */
+export const adminSegmentWrapClass =
+  "inline-flex items-center gap-1 p-1 rounded-xl bg-zinc-100 border border-zinc-200/70";
+export const adminSegmentActiveClass =
+  "px-4 py-1.5 rounded-lg text-[11px] font-semibold tracking-tight bg-white text-zinc-900 shadow-[0_1px_2px_rgba(10,10,10,0.06)] transition-all";
+export const adminSegmentInactiveClass =
+  "px-4 py-1.5 rounded-lg text-[11px] font-semibold tracking-tight text-zinc-500 hover:text-zinc-900 transition-all";
