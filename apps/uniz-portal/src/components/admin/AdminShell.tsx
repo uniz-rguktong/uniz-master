@@ -12,7 +12,6 @@ import {
   adminSidebarClosedWidth,
   adminSidebarToggleClass,
   adminNavGroupLabelClass,
-  adminNavActiveClass,
   adminNavInactiveClass,
   adminNavIconActiveClass,
   adminNavIconInactiveClass,
@@ -241,8 +240,8 @@ export default function AdminShell({
         <nav
           className={cn(
             "flex-1 overflow-y-auto custom-sidebar-scroll",
-            isSidebarOpen ? "px-4" : "px-3",
-            navSpacing === "default" ? "py-4 space-y-7" : "py-2 space-y-6",
+            isSidebarOpen ? "px-3" : "px-3",
+            navSpacing === "default" ? "py-4 space-y-5" : "py-2 space-y-4",
           )}
         >
           {filteredGroups.length === 0 && searchQuery ? (
@@ -258,7 +257,7 @@ export default function AdminShell({
             filteredGroups.map((group, gIdx) => (
               <div
                 key={gIdx}
-                className={navSpacing === "default" ? "space-y-2" : "space-y-1.5"}
+                className={navSpacing === "default" ? "space-y-1" : "space-y-0.5"}
               >
                 {group.group && isSidebarOpen && (
                   <h4 className={adminNavGroupLabelClass}>{group.group}</h4>
@@ -273,9 +272,9 @@ export default function AdminShell({
                       onClick={() => onTabChange(item.id)}
                       title={!isSidebarOpen ? item.label : ""}
                       className={cn(
-                        "w-full flex items-center py-3 rounded-xl text-left transition-all duration-200 group relative",
+                        "w-full flex items-center py-2.5 rounded-lg text-left transition-colors duration-150 group relative",
                         isSidebarOpen
-                          ? "space-x-3.5 px-4"
+                          ? "space-x-3 px-3"
                           : "justify-center px-0",
                         isActive ? "text-white" : adminNavInactiveClass,
                       )}
@@ -283,13 +282,15 @@ export default function AdminShell({
                       {isActive && (
                         <motion.div
                           layoutId="adminActiveTabGlow"
-                          className="absolute inset-0 bg-zinc-950 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+                          className="absolute inset-0 bg-zinc-900 rounded-lg shadow-[0_1px_2px_rgba(10,10,10,0.16)]"
                           initial={false}
+                          transition={{ type: "spring", stiffness: 420, damping: 38 }}
                         />
                       )}
-                      <div className="flex items-center justify-center min-w-[22px] relative z-10">
+                      <div className="flex items-center justify-center min-w-[20px] relative z-10">
                         <Icon
-                          size={20}
+                          size={18}
+                          strokeWidth={2}
                           className={cn(
                             "shrink-0 transition-colors",
                             isActive
@@ -301,8 +302,8 @@ export default function AdminShell({
                       {isSidebarOpen && (
                         <span
                           className={cn(
-                            "relative z-10 text-[13.5px] whitespace-nowrap tracking-tight leading-none",
-                            isActive ? "font-bold" : "font-semibold",
+                            "relative z-10 text-[13px] whitespace-nowrap tracking-[-0.01em] leading-none",
+                            isActive ? "font-semibold" : "font-medium",
                           )}
                         >
                           {item.label}
@@ -315,24 +316,25 @@ export default function AdminShell({
             ))
           )}
 
-          <div className="pt-4 border-t border-zinc-100/80">
+          <div className="pt-3 mt-1 border-t border-zinc-200/60">
             <button
               onClick={onLogout}
-              title={!isSidebarOpen ? "LOGOUT" : ""}
+              title={!isSidebarOpen ? "Logout" : ""}
               className={cn(
-                "w-full flex items-center py-3 rounded-xl text-left transition-all duration-200 group hover:bg-red-50 hover:text-red-500 text-zinc-500",
-                isSidebarOpen ? "space-x-3.5 px-4" : "justify-center px-0",
+                "w-full flex items-center py-2.5 rounded-lg text-left transition-colors duration-150 group hover:bg-rose-50 hover:text-rose-600 text-zinc-500",
+                isSidebarOpen ? "space-x-3 px-3" : "justify-center px-0",
               )}
             >
-              <div className="flex items-center justify-center min-w-[22px]">
+              <div className="flex items-center justify-center min-w-[20px]">
                 <LogOut
-                  size={20}
-                  className="text-zinc-400 group-hover:text-red-500 transition-colors"
+                  size={18}
+                  strokeWidth={2}
+                  className="text-zinc-400 group-hover:text-rose-600 transition-colors"
                 />
               </div>
               {isSidebarOpen && (
-                <span className="text-[13.5px] font-semibold whitespace-nowrap tracking-tight leading-none">
-                  LOGOUT
+                <span className="text-[13px] font-medium whitespace-nowrap tracking-[-0.01em] leading-none">
+                  Logout
                 </span>
               )}
             </button>
@@ -417,12 +419,12 @@ export default function AdminShell({
               </h1>
             )}
           </div>
-          <div className="flex items-center gap-4 ml-auto">
-            <div className="text-right hidden sm:block">
-              <p className="text-[15px] font-bold text-zinc-900 leading-tight tracking-tight">
+          <div className="flex items-center gap-3.5 ml-auto">
+            <div className="text-right hidden sm:block leading-tight">
+              <p className="text-[13.5px] font-semibold text-zinc-900 tracking-[-0.01em]">
                 {profileName || username}
               </p>
-              <p className="text-[11px] text-zinc-400 font-bold mt-0.5 lowercase tracking-tight">
+              <p className="text-[11px] text-zinc-400 font-medium mt-0.5 lowercase">
                 {headerSubtitle ||
                   profileEmail ||
                   `${username}@rguktong.ac.in`}

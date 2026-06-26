@@ -19,7 +19,6 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  Check,
   ChevronDown,
   type LucideIcon,
 } from "lucide-react";
@@ -33,43 +32,40 @@ export const KPICard = ({
   value,
   icon: Icon,
   badge = "Active",
-  iconColor = "text-slate-900",
-  iconBg = "bg-slate-50",
+  iconColor = "text-zinc-400",
 }: {
   title: string;
   value: string | number;
   icon: LucideIcon;
   badge?: string;
   iconColor?: string;
+  /** Retained for API compatibility — visuals are now monochrome. */
   iconBg?: string;
 }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-transparent p-10 rounded-xl border border-slate-100 flex flex-col gap-4"
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      className="group rounded-2xl border border-zinc-200/70 bg-white p-5 flex flex-col gap-5 shadow-[0_1px_2px_rgba(10,10,10,0.03)] transition-all duration-200 hover:border-zinc-300"
     >
       <div className="flex items-start justify-between">
-        <div
-          className={cn(
-            "w-10 h-10 rounded-xl flex items-center justify-center",
-            iconBg,
-            iconColor,
-          )}
-        >
-          <Icon size={18} />
+        <div className="w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center ring-1 ring-inset ring-zinc-900/5 transition-colors group-hover:bg-zinc-900 group-hover:text-white">
+          <Icon size={17} strokeWidth={2} className="text-zinc-500 transition-colors group-hover:text-white" />
         </div>
-        <div className="px-3 py-1 bg-slate-50 border border-slate-100/50 rounded-full flex items-center gap-1.5 translate-y-[-2px]">
-          <Check size={10} className="text-slate-400" />
-          <span className="text-[10px] font-bold text-slate-500">{badge}</span>
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5">
+          <span className={cn("w-1.5 h-1.5 rounded-full bg-current", iconColor)} />
+          <span className="text-[10px] font-medium text-zinc-500 tracking-tight">
+            {badge}
+          </span>
         </div>
       </div>
 
       <div className="space-y-1">
-        <p className="text-2xl font-bold text-slate-900 tracking-tight leading-none">
+        <p className="text-[28px] font-semibold text-zinc-900 tracking-[-0.02em] leading-none tabular-nums">
           {value}
         </p>
-        <p className="text-[12px] font-semibold text-slate-400 tracking-tight">
+        <p className="text-[12.5px] font-medium text-zinc-500 tracking-tight">
           {title}
         </p>
       </div>
@@ -78,14 +74,14 @@ export const KPICard = ({
 };
 
 export const KPICardSkeleton = () => (
-  <div className="bg-transparent p-10 rounded-xl border border-slate-100 flex flex-col gap-4 animate-pulse">
+  <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 flex flex-col gap-5 shadow-[0_1px_2px_rgba(10,10,10,0.03)] animate-pulse">
     <div className="flex items-start justify-between">
-      <div className="w-10 h-10 rounded-xl bg-slate-100" />
-      <div className="w-16 h-5 rounded-full bg-slate-50" />
+      <div className="w-9 h-9 rounded-xl bg-zinc-100" />
+      <div className="w-16 h-5 rounded-full bg-zinc-50" />
     </div>
-    <div className="space-y-3">
-      <div className="w-24 h-8 rounded-lg bg-slate-100" />
-      <div className="w-32 h-4 rounded-md bg-slate-50" />
+    <div className="space-y-2.5">
+      <div className="w-20 h-7 rounded-lg bg-zinc-100" />
+      <div className="w-28 h-3.5 rounded-md bg-zinc-50" />
     </div>
   </div>
 );
