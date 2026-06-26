@@ -1,16 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   BookOpen,
-  Plus,
   Loader2,
   CheckCircle2,
   ShieldCheck,
-  AlertCircle,
-  CreditCard,
-  Coffee,
-  Sparkles,
   Hash,
+  Circle,
 } from "lucide-react";
 import {
   GET_AVAILABLE_SUBJECTS,
@@ -18,6 +14,121 @@ import {
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 import { apiClient } from "../../../api/apiClient";
+import { cn } from "@/lib/utils";
+import {
+  adminCardClass,
+  adminCardHoverClass,
+  adminChipClass,
+  adminEyebrowClass,
+  adminLabelClass,
+  adminPrimaryButtonClass,
+  adminSectionTitleClass,
+  adminStatValueClass,
+  adminWarningBannerClass,
+  adminWarningTextClass,
+  adminWarningTitleClass,
+} from "@/components/admin/admin-ui";
+
+type ElectiveGroupMeta = {
+  id: string;
+  groupCode?: string;
+  groupName?: string;
+  selectionLimit?: number;
+};
+
+type AllocRow = {
+  subjectId: string;
+  subject?: { id: string; code: string; name: string; credits: number };
+  customName?: string;
+  customCredits?: number;
+  isMandatory?: boolean;
+  electiveGroupId?: string;
+  electiveGroupName?: string;
+  electiveLimit?: number;
+  faculty?: { name: string };
+};
+
+function subjectIdOf(sub: AllocRow) {
+  return sub.subject?.id || sub.subjectId;
+}
+
+function SubjectOption({
+  sub,
+  selected,
+  locked,
+  onSelect,
+}: {
+  sub: AllocRow;
+  selected: boolean;
+  locked?: boolean;
+  onSelect: () => void;
+}) {
+  const credits = sub.customCredits ?? sub.subject?.credits ?? 0;
+  const name = sub.customName || sub.subject?.name || "Subject";
+  const code = sub.subject?.code || "";
+
+  return (
+    <button
+      type="button"
+      disabled={locked}
+      onClick={onSelect}
+      className={cn(
+        adminCardClass,
+        "relative w-full p-4 text-left flex items-start gap-3.5 transition-all duration-200",
+        !locked && adminCardHoverClass,
+        selected
+          ? "border-zinc-900 bg-white shadow-[0_2px_12px_-4px_rgba(10,10,10,0.12)]"
+          : locked
+            ? "border-zinc-200 bg-zinc-50/50"
+            : "border-zinc-200/80 opacity-90 hover:opacity-100",
+      )}
+    >
+      <div
+        className={cn(
+          "shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
+          selected ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-500",
+        )}
+      >
+        <BookOpen size={18} strokeWidth={2} />
+      </div>
+
+      <div className="flex-1 min-w-0 space-y-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[10px] font-semibold text-zinc-400 tracking-wide">
+            {code}
+          </span>
+          {sub.isMandatory && (
+            <span className="rounded-md border border-rose-100 bg-rose-50 px-1.5 py-0.5 text-[9px] font-semibold text-rose-600">
+              Mandatory
+            </span>
+          )}
+          <span className="ml-auto rounded-md border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-600 tabular-nums">
+            {credits} cr
+          </span>
+        </div>
+        <p
+          className={cn(
+            "text-[14px] font-semibold leading-snug tracking-tight",
+            selected ? "text-zinc-900" : "text-zinc-600",
+          )}
+        >
+          {name}
+        </p>
+        {sub.faculty?.name && (
+          <p className="text-[11px] text-zinc-400">{sub.faculty.name}</p>
+        )}
+      </div>
+
+      <div className="shrink-0 pt-1">
+        {selected ? (
+          <CheckCircle2 size={18} className="text-zinc-900" strokeWidth={2.5} />
+        ) : (
+          <Circle size={18} className="text-zinc-300" strokeWidth={2} />
+        )}
+      </div>
+    </button>
+  );
+}
 
 export default function CourseRegistration({
   branch = "",
@@ -28,7 +139,10 @@ export default function CourseRegistration({
   year?: string;
   onComplete: () => void;
 }) {
-  const [available, setAvailable] = useState<any[]>([]);
+  const [available, setAvailable] = useState<AllocRow[]>([]);
+  const [electiveGroupsMeta, setElectiveGroupsMeta] = useState<ElectiveGroupMeta[]>(
+    [],
+  );
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -46,12 +160,12 @@ export default function CourseRegistration({
         false,
       );
       if (data) {
-        const subs = data.subjects || [];
+        const subs: AllocRow[] = data.subjects || [];
         setAvailable(subs);
-        // Auto-select mandatory subjects
+        setElectiveGroupsMeta(data.electiveGroups || []);
         const mandatoryIds = subs
-          .filter((s: any) => s.isMandatory)
-          .map((s: any) => s.subjectId);
+          .filter((s) => s.isMandatory)
+          .map((s) => subjectIdOf(s));
         setSelectedIds(mandatoryIds);
         setAlreadyRegistered(data.alreadyRegistered || false);
         setIsOpen(data.isOpen ?? true);
@@ -68,61 +182,85 @@ export default function CourseRegistration({
     fetchAvailable();
   }, []);
 
+  const { coreSubjects, electiveGroups } = useMemo(() => {
+    const core: AllocRow[] = [];
+    const map = new Map<
+      string,
+      { id: string; name: string; limit: number; items: AllocRow[] }
+    >();
+
+    for (const sub of available) {
+      const gid = (sub.electiveGroupId || "").trim();
+      if (sub.isMandatory || !gid) {
+        core.push(sub);
+        continue;
+      }
+      if (!map.has(gid)) {
+        const meta = electiveGroupsMeta.find(
+          (g) => g.groupCode === gid || g.id === gid,
+        );
+        map.set(gid, {
+          id: gid,
+          name: sub.electiveGroupName || meta?.groupName || "Elective group",
+          limit: sub.electiveLimit || meta?.selectionLimit || 1,
+          items: [],
+        });
+      }
+      map.get(gid)!.items.push(sub);
+    }
+
+    return {
+      coreSubjects: core,
+      electiveGroups: [...map.values()],
+    };
+  }, [available, electiveGroupsMeta]);
+
   const toggleSubject = (id: string, groupId?: string, limit?: number) => {
-    const sub = available.find((s) => s.subjectId === id);
-    if (sub?.isMandatory) return; // Cannot toggle mandatory
+    const sub = available.find((s) => subjectIdOf(s) === id);
+    if (sub?.isMandatory) return;
 
     setSelectedIds((prev) => {
       const isSelected = prev.includes(id);
-      if (isSelected) {
-        return prev.filter((i) => i !== id);
-      } else {
-        if (groupId && groupId.trim() !== "" && limit) {
-          // Check how many are already selected in this group
-          const groupSubs = available
-            .filter((s) => s.electiveGroupId === groupId)
-            .map((s) => s.subjectId);
-          const selectedInGroup = prev.filter((i) => groupSubs.includes(i));
-          if (selectedInGroup.length >= limit) {
-            if (limit === 1 && selectedInGroup.length === 1) {
-              // Auto-swap for single choice electives
-              return [...prev.filter((i) => !groupSubs.includes(i)), id];
-            }
-            toast.warning(
-              `You can only select ${limit} course(s) from this elective group.`,
-            );
-            return prev;
+      if (isSelected) return prev.filter((i) => i !== id);
+
+      if (groupId && groupId.trim() !== "" && limit) {
+        const groupSubs = available
+          .filter((s) => s.electiveGroupId === groupId)
+          .map((s) => subjectIdOf(s));
+        const selectedInGroup = prev.filter((i) => groupSubs.includes(i));
+        if (selectedInGroup.length >= limit) {
+          if (limit === 1 && selectedInGroup.length === 1) {
+            return [...prev.filter((i) => !groupSubs.includes(i)), id];
           }
+          toast.warning(
+            `You can only select ${limit} course(s) from this group.`,
+          );
+          return prev;
         }
-        return [...prev, id];
       }
+      return [...prev, id];
     });
   };
 
   const handleRegister = async () => {
-    // Validate elective group requirements
-    const groups: Record<
-      string,
-      { limit: number; selected: number; name: string }
-    > = {};
+    const groups: Record<string, { limit: number; selected: number; name: string }> =
+      {};
     available.forEach((s) => {
-      if (s.electiveGroupId && s.electiveGroupId.trim() !== "") {
-        if (!groups[s.electiveGroupId]) {
-          groups[s.electiveGroupId] = {
-            limit: s.electiveLimit || 1,
-            selected: 0,
-            name: s.electiveGroupId,
-          };
-        }
-        if (selectedIds.includes(s.subjectId)) {
-          groups[s.electiveGroupId].selected++;
-        }
+      const gid = (s.electiveGroupId || "").trim();
+      if (!gid) return;
+      if (!groups[gid]) {
+        groups[gid] = {
+          limit: s.electiveLimit || 1,
+          selected: 0,
+          name: s.electiveGroupName || gid,
+        };
       }
+      if (selectedIds.includes(subjectIdOf(s))) groups[gid].selected++;
     });
 
     for (const g of Object.values(groups)) {
       if (g.selected < g.limit) {
-        toast.error(`Please select ${g.limit} course(s) from ${g.name} group.`);
+        toast.error(`Please select ${g.limit} from ${g.name}.`);
         return;
       }
     }
@@ -131,13 +269,14 @@ export default function CourseRegistration({
       toast.warning("Please select at least one subject");
       return;
     }
+
     setSubmitting(true);
     try {
       const res = await apiClient<any>(REGISTER_SUBJECTS, {
         method: "POST",
         body: JSON.stringify({ subjectIds: selectedIds }),
       });
-      toast.success("Successfully registered for subjects!");
+      toast.success("Registration submitted successfully");
       setConfirmation(res?.confirmation || { semester: semesterName });
     } catch (error: any) {
       toast.error(error.message || "Registration failed");
@@ -147,16 +286,14 @@ export default function CourseRegistration({
   };
 
   const totalCredits = available
-    .filter((s) => selectedIds.includes(s.subjectId))
+    .filter((s) => selectedIds.includes(subjectIdOf(s)))
     .reduce((acc, s) => acc + (s.customCredits || s.subject?.credits || 0), 0);
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <Loader2 className="animate-spin text-zinc-900" size={40} />
-        <p className="text-zinc-400 font-semibold tracking-[0.14em] text-[10px]">
-          Fetching available courses...
-        </p>
+      <div className="flex flex-col items-center justify-center py-24 gap-3">
+        <Loader2 className="animate-spin text-zinc-400" size={32} />
+        <p className={adminLabelClass}>Loading course list…</p>
       </div>
     );
   }
@@ -166,66 +303,54 @@ export default function CourseRegistration({
       .slice(0, 8)
       .toUpperCase();
     return (
-      <div className="max-w-2xl mx-auto animate-in fade-in zoom-in-95 duration-500">
-        <div className="rounded-3xl bg-gradient-to-br from-emerald-600 to-emerald-500 p-10 text-white text-center shadow-2xl shadow-emerald-200/50 relative overflow-hidden">
-          <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-white/15 blur-2xl" />
-          <div className="relative">
-            <div className="w-20 h-20 mx-auto rounded-3xl bg-white/15 backdrop-blur-md flex items-center justify-center mb-6">
-              <CheckCircle2 size={42} />
-            </div>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/15 rounded-full text-[10px] font-semibold tracking-[0.14em] mb-4">
-              <Sparkles size={12} /> Registration Confirmed
-            </div>
-            <h2 className="text-3xl font-semibold tracking-tight mb-2">
-              You're all set!
-            </h2>
-            <p className="text-white/80 font-medium max-w-sm mx-auto">
-              Your subjects for{" "}
-              <strong>{confirmation.semester || semesterName}</strong> have been
-              recorded.
-            </p>
-            {regId && (
-              <div className="inline-flex items-center gap-2 mt-5 px-4 py-2 bg-white/15 rounded-2xl font-semibold tracking-[0.14em] text-sm">
-                <Hash size={14} /> {regId}
-              </div>
-            )}
+      <div className="max-w-xl mx-auto space-y-6 animate-in fade-in duration-500">
+        <div className={cn(adminCardClass, "p-8 text-center")}>
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-zinc-900 text-white flex items-center justify-center mb-5">
+            <CheckCircle2 size={28} />
           </div>
-        </div>
-
-        {Array.isArray(confirmation.subjects) &&
-          confirmation.subjects.length > 0 && (
-            <div className="mt-6 rounded-3xl border border-zinc-100 bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-semibold tracking-[0.14em] text-zinc-500">
-                  Registered Subjects
-                </h3>
-                <span className="text-xs font-semibold text-zinc-900">
-                  {confirmation.totalCredits || 0} credits
-                </span>
-              </div>
-              <div className="space-y-1.5">
-                {confirmation.subjects.map((s: any, i: number) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between text-sm py-1.5 border-b border-zinc-50 last:border-0"
-                  >
-                    <span className="font-bold text-zinc-700 truncate">
-                      {s.code} · {s.name}
-                    </span>
-                    <span className="text-[11px] font-semibold text-zinc-400 shrink-0 ml-3">
-                      {s.credits}C
-                    </span>
-                  </div>
-                ))}
-              </div>
+          <span className={adminChipClass}>Registration confirmed</span>
+          <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 mt-4">
+            You&apos;re enrolled
+          </h2>
+          <p className="text-sm text-zinc-500 mt-2 max-w-sm mx-auto">
+            Subjects for <strong>{confirmation.semester || semesterName}</strong>{" "}
+            are saved.
+          </p>
+          {regId && (
+            <div className="inline-flex items-center gap-2 mt-4 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs font-semibold text-zinc-600">
+              <Hash size={13} /> {regId}
             </div>
           )}
+        </div>
 
-        <button
-          onClick={onComplete}
-          className="w-full mt-6 bg-zinc-900 text-white h-16 rounded-3xl font-semibold tracking-[0.14em] text-xs hover:bg-zinc-800 transition-all"
-        >
-          View My Subjects
+        {Array.isArray(confirmation.subjects) && confirmation.subjects.length > 0 && (
+          <div className={cn(adminCardClass, "p-5")}>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className={adminSectionTitleClass}>Registered subjects</h3>
+              <span className={adminChipClass}>
+                {confirmation.totalCredits || 0} credits
+              </span>
+            </div>
+            <ul className="divide-y divide-zinc-100">
+              {confirmation.subjects.map((s: any, i: number) => (
+                <li
+                  key={i}
+                  className="flex items-center justify-between py-2.5 text-sm"
+                >
+                  <span className="font-medium text-zinc-800 truncate pr-3">
+                    {s.code} · {s.name}
+                  </span>
+                  <span className="text-[11px] font-semibold text-zinc-400 tabular-nums shrink-0">
+                    {s.credits} cr
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <button type="button" onClick={onComplete} className={cn(adminPrimaryButtonClass, "w-full")}>
+          View my subjects
         </button>
       </div>
     );
@@ -233,22 +358,20 @@ export default function CourseRegistration({
 
   if (alreadyRegistered) {
     return (
-      <div className="bg-emerald-50 rounded-3xl p-12 text-center border-2 border-emerald-100 max-w-2xl mx-auto shadow-xl">
-        <div className="w-20 h-20 bg-emerald-100 rounded-3xl flex items-center justify-center text-emerald-600 mx-auto mb-6">
-          <CheckCircle2 size={40} />
+      <div className={cn(adminCardClass, "max-w-xl mx-auto p-10 text-center")}>
+        <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-5">
+          <CheckCircle2 size={28} />
         </div>
-        <h3 className="text-2xl font-semibold text-emerald-900 mb-2">
-          Registration Already Completed
-        </h3>
-        <p className="text-emerald-700 font-medium font-outfit mb-8 leading-relaxed px-10">
-          You have already registered for subjects this semester. Your details
-          have been successfully recorded and are currently being processed.
+        <h3 className="text-xl font-semibold text-zinc-900">Already registered</h3>
+        <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
+          Your subjects for this semester are on record. View them in My Subjects.
         </p>
         <button
+          type="button"
           onClick={onComplete}
-          className="px-8 py-4 bg-emerald-600 text-white rounded-2xl font-bold shadow-lg"
+          className={cn(adminPrimaryButtonClass, "mt-6")}
         >
-          View Registered Subjects
+          View registered subjects
         </button>
       </div>
     );
@@ -256,17 +379,14 @@ export default function CourseRegistration({
 
   if (!isOpen) {
     return (
-      <div className="bg-white rounded-3xl p-12 text-center border-2 border-dashed border-zinc-100 max-w-2xl mx-auto shadow-xl">
-        <div className="w-20 h-20 bg-zinc-50 rounded-3xl flex items-center justify-center text-zinc-900 mx-auto mb-6">
-          <ShieldCheck size={40} />
+      <div className={cn(adminCardClass, "max-w-xl mx-auto p-10 text-center border-dashed")}>
+        <div className="w-14 h-14 mx-auto rounded-2xl bg-zinc-100 text-zinc-500 flex items-center justify-center mb-5">
+          <ShieldCheck size={28} />
         </div>
-        <h3 className="text-2xl font-semibold text-zinc-900 mb-2">
-          Registration Pending
-        </h3>
-        <p className="text-zinc-500 font-medium font-outfit mb-8 leading-relaxed px-10">
-          The semester <strong>{semesterName}</strong> is currently being
-          reviewed. Registration will open once the department approves the
-          course list.
+        <h3 className="text-xl font-semibold text-zinc-900">Registration not open yet</h3>
+        <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
+          <strong>{semesterName}</strong> is still under review. You can register once
+          your department opens the window.
         </p>
       </div>
     );
@@ -274,173 +394,146 @@ export default function CourseRegistration({
 
   if (available.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 px-4 text-center max-w-md mx-auto animate-in fade-in duration-700">
-        <div className="w-20 h-20 bg-zinc-50 rounded-full flex items-center justify-center text-zinc-400 mb-6 border border-zinc-100 shadow-sm">
-          <Coffee size={32} strokeWidth={1.5} />
-        </div>
-        <h3 className="text-2xl font-bold tracking-tight text-zinc-900 mb-2.5">
-          Semester Not Started
-        </h3>
-        <p className="text-[14px] text-zinc-500 font-medium leading-relaxed">
-          The registration window is currently closed. Kick back, relax, and
-          enjoy your break. We'll alert you the moment your new courses are
-          ready!
+      <div className={cn(adminCardClass, "max-w-xl mx-auto p-10 text-center")}>
+        <h3 className="text-xl font-semibold text-zinc-900">No courses available</h3>
+        <p className="text-sm text-zinc-500 mt-2">
+          Registration is closed or your branch has no subjects listed yet.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
-      <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-3xl p-10 text-white relative overflow-hidden shadow-2xl">
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full border border-white/20 text-[10px] font-semibold tracking-[0.14em] backdrop-blur-md">
-              <ShieldCheck size={14} /> Open Enrollment Phase
-            </div>
-            <h2 className="text-4xl font-semibold tracking-tight leading-tight italic">
-              Semester Subject <br />
-              Registration
+    <div className="max-w-3xl mx-auto space-y-8 pb-16 animate-in fade-in duration-500">
+      {/* Hero */}
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 text-white p-6 md:p-8 shadow-[0_8px_30px_-12px_rgba(10,10,10,0.35)]">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-semibold tracking-wide text-white/90">
+              <ShieldCheck size={12} /> Open enrollment
+            </span>
+            <h2 className="text-2xl md:text-[28px] font-semibold tracking-tight leading-tight">
+              Semester subject registration
             </h2>
-            <p className="text-zinc-100 font-medium max-w-sm font-outfit leading-relaxed opacity-90">
-              Select the core and elective subjects for your current branch to
-              finalize your academic session enrollment.
+            <p className="text-sm text-zinc-300 max-w-md leading-relaxed">
+              Core subjects are pre-selected. Pick your electives — one option per
+              group where shown.
             </p>
           </div>
-
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 shrink-0">
             <div className="text-right">
-              <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-200 mb-1">
-                Total Selected Credits
-              </p>
-              <h3 className="text-5xl font-semibold text-white italic">
+              <p className={cn(adminLabelClass, "text-zinc-400")}>Credits</p>
+              <p className={cn(adminStatValueClass, "text-white text-3xl")}>
                 {totalCredits}
-              </h3>
-            </div>
-            <div className="h-16 w-[1px] bg-white/20" />
-            <div className="text-right">
-              <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-200 mb-1">
-                Subjects Selected
               </p>
-              <h3 className="text-5xl font-semibold text-white italic">
+            </div>
+            <div className="h-10 w-px bg-white/15" />
+            <div className="text-right">
+              <p className={cn(adminLabelClass, "text-zinc-400")}>Subjects</p>
+              <p className={cn(adminStatValueClass, "text-white text-3xl")}>
                 {selectedIds.length}
-              </h3>
+              </p>
             </div>
           </div>
         </div>
-
-        {/* Glossy background element */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {available.map((sub) => {
-          const isSelected = selectedIds.includes(
-            sub.subject?.id || sub.subjectId,
-          );
-          return (
-            <button
-              key={sub.subject?.id || sub.subjectId}
-              onClick={() =>
-                toggleSubject(
-                  sub.subject?.id || sub.subjectId,
-                  sub.electiveGroupId,
-                  sub.electiveLimit,
-                )
-              }
-              className={`p-6 rounded-3xl border-2 transition-all flex items-start gap-4 text-left group overflow-hidden relative ${
-                isSelected
-                  ? "bg-white border-zinc-900 shadow-xl shadow-zinc-50"
-                  : "bg-white border-zinc-50 hover:border-zinc-200"
-              }`}
-            >
-              <div
-                className={`p-4 rounded-xl transition-all ${
-                  isSelected
-                    ? "bg-zinc-900 text-white"
-                    : "bg-zinc-50 text-zinc-400 group-hover:bg-zinc-100 group-hover:text-zinc-600"
-                }`}
-              >
-                <BookOpen size={24} />
-              </div>
+      {/* Core subjects */}
+      {coreSubjects.length > 0 && (
+        <section className="space-y-3">
+          <div>
+            <p className={adminEyebrowClass}>Core</p>
+            <h3 className={adminSectionTitleClass}>Mandatory subjects</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {coreSubjects.map((sub) => {
+              const id = subjectIdOf(sub);
+              return (
+                <SubjectOption
+                  key={id}
+                  sub={sub}
+                  selected={selectedIds.includes(id)}
+                  locked
+                  onSelect={() => {}}
+                />
+              );
+            })}
+          </div>
+        </section>
+      )}
 
-              <div className="flex-1 space-y-1.5 min-w-0">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`text-[10px] font-semibold tracking-[0.14em] transition-colors ${
-                        isSelected ? "text-zinc-900" : "text-zinc-300"
-                      }`}
-                    >
-                      {sub.subject?.code}
-                    </span>
-                    {sub.isMandatory && (
-                      <span className="px-2 py-0.5 bg-red-50 text-red-600 rounded-md text-[8px] font-semibold tracking-tighter border border-red-100">
-                        Mandatory
-                      </span>
-                    )}
-                    {sub.electiveGroupId && (
-                      <span className="px-2 py-0.5 bg-zinc-50 text-zinc-900 rounded-md text-[8px] font-semibold tracking-tighter border border-zinc-100">
-                        Group: {sub.electiveGroupId}
-                      </span>
-                    )}
-                  </div>
-                  <div
-                    className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${
-                      isSelected
-                        ? "bg-amber-50 text-amber-600 border-amber-100"
-                        : "bg-zinc-50 text-zinc-400 border-zinc-100"
-                    }`}
-                  >
-                    <CreditCard size={10} />
-                    <span className="text-[10px] font-semibold">
-                      {sub.customCredits || sub.subject?.credits}C
-                    </span>
-                  </div>
-                </div>
-                <h4
-                  className={`text-lg font-semibold tracking-tight leading-tight truncate transition-colors ${
-                    isSelected ? "text-zinc-900" : "text-zinc-400"
-                  }`}
-                >
-                  {sub.customName || sub.subject?.name}
-                </h4>
-                {sub.faculty && (
-                  <p className="text-[10px] text-zinc-400 font-bold italic">
-                    By {sub.faculty.name}
-                  </p>
-                )}
-              </div>
+      {/* Elective groups — pick 1 of N */}
+      {electiveGroups.map((group) => {
+        const pickLabel =
+          group.limit === 1 && group.items.length === 2
+            ? "Choose 1 of 2"
+            : `Choose ${group.limit} of ${group.items.length}`;
 
-              {isSelected && (
-                <div className="absolute -top-10 -right-10 w-24 h-24 bg-zinc-900/5 rounded-full flex items-end justify-start p-6">
-                  <CheckCircle2 className="text-zinc-900" size={24} />
-                </div>
+        return (
+          <section key={group.id} className="space-y-3">
+            <div className="flex flex-wrap items-end justify-between gap-2">
+              <div>
+                <p className={adminEyebrowClass}>Elective</p>
+                <h3 className={adminSectionTitleClass}>{group.name}</h3>
+              </div>
+              <span className={adminChipClass}>{pickLabel}</span>
+            </div>
+
+            <div
+              className={cn(
+                "grid gap-3",
+                group.items.length === 2
+                  ? "grid-cols-1 md:grid-cols-2"
+                  : "grid-cols-1 sm:grid-cols-2",
               )}
-            </button>
-          );
-        })}
-      </div>
+            >
+              {group.items.map((sub, idx) => {
+                const id = subjectIdOf(sub);
+                const selected = selectedIds.includes(id);
+                return (
+                  <div key={id} className="relative">
+                    {group.items.length === 2 && idx === 0 && (
+                      <span className="hidden md:flex absolute top-1/2 -right-3 z-10 -translate-y-1/2 w-6 h-6 rounded-full border border-zinc-200 bg-[#fafafa] text-[9px] font-bold text-zinc-400 items-center justify-center">
+                        or
+                      </span>
+                    )}
+                    <SubjectOption
+                      sub={sub}
+                      selected={selected}
+                      onSelect={() =>
+                        toggleSubject(id, group.id, group.limit)
+                      }
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
 
-      <div className="flex flex-col items-center pt-8 border-t border-zinc-100 gap-6">
-        <div className="flex items-center gap-3 text-zinc-400">
-          <AlertCircle size={16} />
-          <p className="text-xs font-bold font-outfit">
-            Double check your selections. You cannot change your registration
-            after submission.
-          </p>
+      {/* Submit */}
+      <div className="space-y-4 pt-2 border-t border-zinc-200/70">
+        <div className={adminWarningBannerClass}>
+          <ShieldCheck size={16} className="text-amber-600 shrink-0 mt-0.5" />
+          <div>
+            <p className={adminWarningTitleClass}>Final submission</p>
+            <p className={adminWarningTextClass}>
+              Review your selections carefully. Registration cannot be changed after
+              you confirm.
+            </p>
+          </div>
         </div>
         <button
+          type="button"
           disabled={submitting || selectedIds.length === 0}
           onClick={handleRegister}
-          className="w-full max-w-md bg-zinc-900 text-white h-20 rounded-3xl font-semibold tracking-[0.14em] text-xs flex items-center justify-center gap-3 hover:bg-zinc-800 hover:shadow-2xl hover:-translate-y-1 transition-all disabled:opacity-20 active:translate-y-0 active:scale-95 shadow-xl"
+          className={cn(adminPrimaryButtonClass, "w-full h-12")}
         >
           {submitting ? (
-            <Loader2 className="animate-spin w-6 h-6" />
+            <Loader2 className="animate-spin w-5 h-5" />
           ) : (
-            <>
-              Confirm & Submit Registration <Plus size={18} />
-            </>
+            "Confirm registration"
           )}
         </button>
       </div>
