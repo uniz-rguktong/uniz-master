@@ -126,6 +126,7 @@ export const ADMIN_UPDATE_STUDENT = (id: string) =>
   `${BASE_URL}/profile/admin/student/${id}`;
 export const ADMIN_DELETE_STUDENT = (id: string) =>
   `${BASE_URL}/profile/admin/student/${id}`;
+export const ADMIN_BULK_DELETE_STUDENTS = `${BASE_URL}/profile/admin/student/bulk-delete`;
 export const ADMIN_STUDENT_CREATE = `${BASE_URL}/profile/admin/student/create`;
 export const ADMIN_STUDENT_PROMOTE = `${BASE_URL}/profile/admin/student/promote`;
 

@@ -123,7 +123,7 @@ export default function SeatingArrangement() {
       <div className="flex flex-col gap-1.5 px-1">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-50 text-zinc-800 rounded-full border border-zinc-100 mb-2 w-fit">
           <span className="w-1.5 h-1.5 rounded-full bg-zinc-900 animate-pulse"></span>
-          <span className="text-[10px] font-bold uppercase tracking-[0.14em]">
+          <span className="text-[10px] font-bold tracking-[0.14em]">
             {semester?.name}
           </span>
         </div>
@@ -155,7 +155,7 @@ export default function SeatingArrangement() {
                     <Calendar size={20} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400 mb-0.5">
+                    <p className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 mb-0.5">
                       {item.examName} - {item.subjectCode}
                     </p>
                     <h3 className="text-lg font-bold text-zinc-900 leading-tight">
@@ -186,7 +186,7 @@ export default function SeatingArrangement() {
 
               <div className="flex items-center gap-3 w-full lg:w-auto">
                 <div className="flex-1 lg:flex-none bg-zinc-50 border border-zinc-100 p-5 rounded-3xl min-w-[140px] text-center group-hover:bg-zinc-900 group-hover:border-zinc-800 transition-all duration-300">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-900 group-hover:text-zinc-100 mb-2">
+                  <p className="text-[10px] font-bold tracking-[0.14em] text-zinc-900 group-hover:text-zinc-100 mb-2">
                     Hall / Room
                   </p>
                   <p className="text-2xl font-semibold text-zinc-900 group-hover:text-white leading-none tracking-tight">
@@ -194,7 +194,7 @@ export default function SeatingArrangement() {
                   </p>
                 </div>
                 <div className="flex-1 lg:flex-none bg-emerald-50 border border-emerald-100 p-5 rounded-3xl min-w-[140px] text-center group-hover:bg-emerald-600 group-hover:border-emerald-700 transition-all duration-300">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-600 group-hover:text-emerald-100 mb-2">
+                  <p className="text-[10px] font-bold tracking-[0.14em] text-emerald-600 group-hover:text-emerald-100 mb-2">
                     Seat No.
                   </p>
                   <p className="text-2xl font-semibold text-emerald-900 group-hover:text-white leading-none tracking-tight">

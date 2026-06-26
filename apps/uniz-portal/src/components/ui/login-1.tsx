@@ -55,7 +55,7 @@ export default function LoginScreen({
 
           {bottomText && (
             <motion.p
-              className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/40"
+              className="text-[10px] font-semibold tracking-[0.3em] text-white/40"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.5 }}

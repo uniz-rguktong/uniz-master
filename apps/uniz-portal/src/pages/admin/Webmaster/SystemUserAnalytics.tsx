@@ -6,6 +6,7 @@ import { DonutChart } from "../../../components/ui/donut-chart";
 import { Card } from "../../../components/ui/card";
 import UploadHealthAnalytics from "./UploadHealthAnalytics";
 import { motion, AnimatePresence } from "framer-motion";
+import { formatDisplayText } from "@/utils/displayText";
 import { cn } from "../../../utils/cn";
 
 import { useRecoilState } from "recoil";
@@ -78,15 +79,15 @@ export default function SystemUserAnalytics() {
 
     // Group by role name and aggregate values
     const grouped = data.reduce((acc: Record<string, any>, curr) => {
-      const role = (curr.role || "unknown").toUpperCase();
-      if (!acc[role]) {
-        acc[role] = {
-          label: role,
+      const roleKey = (curr.role || "unknown").toUpperCase();
+      if (!acc[roleKey]) {
+        acc[roleKey] = {
+          label: formatDisplayText(roleKey),
           value: 0,
-          color: colors[role] || "hsl(0 0% 63.9%)",
+          color: colors[roleKey] || "hsl(0 0% 63.9%)",
         };
       }
-      acc[role].value +=
+      acc[roleKey].value +=
         (Number(curr.Active) || 0) + (Number(curr.Disabled) || 0);
       return acc;
     }, {});
@@ -199,7 +200,7 @@ export default function SystemUserAnalytics() {
               <h2 className="text-[15px] font-semibold text-zinc-900 tracking-[-0.01em]">
                 User Demographics
               </h2>
-              <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-[0.14em]">
+              <p className="text-[11px] font-medium text-zinc-400 tracking-[0.14em]">
                 Distribution by Role
               </p>
             </div>
@@ -223,7 +224,7 @@ export default function SystemUserAnalytics() {
                       transition={{ duration: 0.2, ease: "circOut" }}
                       className="flex flex-col items-center justify-center text-center"
                     >
-                      <p className="text-zinc-400 text-[10px] font-medium uppercase tracking-[0.12em] mb-1 max-w-[120px] truncate">
+                      <p className="text-zinc-400 text-[10px] font-medium tracking-[0.12em] mb-1 max-w-[120px] truncate">
                         {displayLabel}
                       </p>
                       <p className="text-[32px] font-semibold text-zinc-900 leading-none tracking-[-0.03em] tabular-nums">

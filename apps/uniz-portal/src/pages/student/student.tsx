@@ -462,7 +462,7 @@ export default function StudentProfilePage() {
             <Calendar size={24} />
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400">
+            <p className="text-[10px] font-bold tracking-[0.14em] text-zinc-400">
               Upcoming Examination
             </p>
             <h3 className="text-lg font-bold leading-tight pt-1">
@@ -476,14 +476,14 @@ export default function StudentProfilePage() {
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="flex-1 md:flex-none px-5 py-3 bg-white/10 rounded-2xl text-center border border-white/5">
-            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-zinc-400 mb-0.5">
+            <p className="text-[9px] font-bold tracking-[0.14em] text-zinc-400 mb-0.5">
               Hall
             </p>
             <p className="text-xl font-semibold">{upcoming.room}</p>
           </div>
           <button
             onClick={() => setActiveTab("seating")}
-            className="flex-1 md:flex-none px-6 py-4 bg-zinc-900 hover:bg-zinc-800 rounded-2xl font-bold text-xs uppercase tracking-[0.14em] transition-all"
+            className="flex-1 md:flex-none px-6 py-4 bg-zinc-900 hover:bg-zinc-800 rounded-2xl font-bold text-xs tracking-[0.14em] transition-all"
           >
             View Full Plan
           </button>
@@ -640,11 +640,11 @@ export default function StudentProfilePage() {
                       className="w-full h-full object-cover"
                     />
                   ) : user?.name ? (
-                    <span className="text-4xl md:text-5xl font-semibold uppercase tracking-tight leading-none">
+                    <span className="text-4xl md:text-5xl font-semibold tracking-tight leading-none">
                       {user?.name?.[0]?.toUpperCase() || "S"}
                     </span>
                   ) : (
-                    <span className="text-4xl md:text-5xl font-semibold uppercase tracking-tight leading-none">
+                    <span className="text-4xl md:text-5xl font-semibold tracking-tight leading-none">
                       S
                     </span>
                   )}
@@ -727,18 +727,18 @@ export default function StudentProfilePage() {
 
             {/* Badges */}
             <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] md:text-xs font-medium text-zinc-500 mt-1">
-              <span className="text-zinc-900 font-bold uppercase tracking-[0.14em] px-2 py-1 bg-zinc-50 border border-zinc-100 rounded">
+              <span className="text-zinc-900 font-bold tracking-[0.14em] px-2 py-1 bg-zinc-50 border border-zinc-100 rounded">
                 {user?.username}
               </span>
               <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
-              <span className="uppercase tracking-wide font-bold text-zinc-600">
+              <span className="tracking-wide font-bold text-zinc-600">
                 {user?.branch} • {user?.year}
               </span>
               {user?.has_pending_requests && (
                 <>
                   <span className="w-1 h-1 rounded-full bg-zinc-300"></span>
-                  <span className="text-amber-600 px-2 py-1 bg-amber-50 border border-amber-100 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 animate-pulse">
-                    <Clock className="w-3 h-3" /> PENDING ACTION
+                  <span className="text-amber-600 px-2 py-1 bg-amber-50 border border-amber-100 rounded text-[10px] font-bold tracking-wider flex items-center gap-1.5 animate-pulse">
+                    <Clock className="w-3 h-3" /> Pending action
                   </span>
                 </>
               )}
@@ -767,7 +767,7 @@ export default function StudentProfilePage() {
                     Save Changes
                   </button>
                 </div>
-                <p className="text-[10px] font-bold text-red-500 text-center uppercase tracking-wider">
+                <p className="text-[10px] font-bold text-red-500 text-center tracking-wider">
                   Update the details below and click save changes
                 </p>
               </div>
@@ -790,7 +790,7 @@ export default function StudentProfilePage() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab || "personal")}
-                  className={`pb-3 relative text-[11px] font-bold uppercase tracking-[0.15em] transition-all ${
+                  className={`pb-3 relative text-[11px] font-bold tracking-[0.15em] transition-all ${
                     activeTab === tab
                       ? "text-zinc-900"
                       : "text-zinc-400 hover:text-zinc-600"
@@ -1011,7 +1011,7 @@ export default function StudentProfilePage() {
 
                 <div className="space-y-3">
                   {isHistoryLoading ? (
-                    <div className="text-center py-10 text-zinc-300 text-[10px] font-bold uppercase tracking-[0.14em] animate-pulse">
+                    <div className="text-center py-10 text-zinc-300 text-[10px] font-bold tracking-[0.14em] animate-pulse">
                       Fetching Records...
                     </div>
                   ) : history.length > 0 ? (
@@ -1035,7 +1035,7 @@ export default function StudentProfilePage() {
                       <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-3 border border-zinc-100 shadow-sm">
                         <HistoryIcon className="w-5 h-5 text-zinc-200" />
                       </div>
-                      <p className="text-zinc-900 font-semibold text-sm uppercase tracking-wider">
+                      <p className="text-zinc-900 font-semibold text-sm tracking-wider">
                         No history found
                       </p>
                       <p className="text-zinc-400 text-xs mt-1 font-medium">
@@ -1079,7 +1079,7 @@ export default function StudentProfilePage() {
 
                 <form onSubmit={handleRequestSubmit} className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                    <label className="text-xs font-bold tracking-[0.14em] text-zinc-400 ml-1">
                       Reason
                     </label>
                     <textarea
@@ -1098,7 +1098,7 @@ export default function StudentProfilePage() {
                   </div>
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                      <label className="text-xs font-bold tracking-[0.14em] text-zinc-400 ml-1">
                         From
                       </label>
                       <input
@@ -1115,7 +1115,7 @@ export default function StudentProfilePage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                      <label className="text-xs font-bold tracking-[0.14em] text-zinc-400 ml-1">
                         To
                       </label>
                       <input

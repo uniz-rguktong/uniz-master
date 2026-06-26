@@ -35,6 +35,7 @@ import {
   BULK_DELETE_FACULTY,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { formatRoleLabel } from "@/utils/displayText";
 import { FileUploader } from "../../../components/ui/FileUploader";
 import { useRecoilState } from "recoil";
 import { facultyAtom } from "../../../store/atoms";
@@ -62,7 +63,7 @@ import {
   adminModalTitleClass,
   adminModalDescClass,
 } from "../../../components/admin/admin-ui";
-import { cn } from "../../../utils/cn";
+import { formatRoleLabel } from "@/utils/displayText";
 
 const ROLES = ["webmaster", "coe", "swo", "dean", "ao", "OTHER"];
 const DEPARTMENTS = [
@@ -260,7 +261,7 @@ export default function FacultyManagement({
 
   const handleDelete = async (username: string) => {
     if (
-      !window.confirm(`PERMANENTLY DELETE ${username}? This cannot be undone.`)
+      !window.confirm(`Permanently delete ${username}? This cannot be undone.`)
     )
       return;
     try {
@@ -894,7 +895,7 @@ export default function FacultyManagement({
               <div className="flex items-center gap-2 mb-4">
                 <CheckCircle2 size={18} className="text-emerald-500" />
                 <h4 className="font-semibold tracking-tight text-zinc-900">Operation Result</h4>
-                <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-zinc-400">
+                <span className="text-[11px] font-medium tracking-[0.12em] text-zinc-400">
                   Total {bulkResult.summary?.total}
                 </span>
                 <button
@@ -917,7 +918,7 @@ export default function FacultyManagement({
                       >
                         {v}
                       </p>
-                      <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-zinc-400 mt-0.5">
+                      <p className="text-[9px] font-bold tracking-[0.14em] text-zinc-400 mt-0.5">
                         {k}
                       </p>
                     </div>
@@ -953,7 +954,7 @@ export default function FacultyManagement({
       <div className={cn(adminCardClass, "overflow-hidden")}>
         {meta.totalPages > 1 && (
           <div className="flex items-center justify-between px-8 py-4 bg-zinc-50/50 border-b border-zinc-200/70">
-            <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-[0.12em]">
+            <p className="text-[11px] font-medium text-zinc-400 tracking-[0.12em]">
               Page {page} of {meta.totalPages}
             </p>
             <div className="flex gap-2">
@@ -994,20 +995,20 @@ export default function FacultyManagement({
                     </button>
                   </th>
                 )}
-                <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
                   User Details
                 </th>
-                <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
                   Designation
                 </th>
-                <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
                   Role
                 </th>
-                <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
                   Status
                 </th>
                 {mode === "single" && (
-                  <th className="px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 text-right">
+                  <th className="px-6 py-4 text-[10px] font-semibold tracking-[0.14em] text-zinc-400 text-right">
                     Actions
                   </th>
                 )}
@@ -1114,13 +1115,13 @@ export default function FacultyManagement({
                         <p className="text-[13px] font-medium text-zinc-700">
                           {member.Designation || "Lecturer"}
                         </p>
-                        <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-[0.12em] mt-0.5">
+                        <p className="text-[10px] font-medium text-zinc-400 tracking-[0.12em] mt-0.5">
                           {member.Department}
                         </p>
                       </td>
                       <td className="px-6 py-5">
                         <span className="px-2.5 py-1 bg-zinc-50 rounded-full text-zinc-500 font-medium text-[11px] border border-zinc-200">
-                          {member.Role?.toUpperCase() || "FACULTY"}
+                          {member.Role ? formatRoleLabel(member.Role) : "Faculty"}
                         </span>
                       </td>
                       <td className="px-6 py-5">
@@ -1199,7 +1200,7 @@ export default function FacultyManagement({
 
         {meta.totalPages > 1 && (
           <div className="flex items-center justify-between px-8 py-4 bg-zinc-50/50 border-t border-zinc-200/70">
-            <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-[0.12em]">
+            <p className="text-[11px] font-medium text-zinc-400 tracking-[0.12em]">
               Page {page} of {meta.totalPages} • Total {meta.total} staff
             </p>
             <div className="flex items-center gap-2">
@@ -1263,7 +1264,7 @@ export default function FacultyManagement({
                   ) : (
                     <div className="flex flex-col items-center text-zinc-300">
                       <Users size={28} />
-                      <span className="text-[9px] font-medium uppercase tracking-tight mt-1">
+                      <span className="text-[9px] font-medium tracking-tight mt-1">
                         No Photo
                       </span>
                     </div>
@@ -1391,7 +1392,7 @@ export default function FacultyManagement({
                       >
                         {ROLES.map((r) => (
                           <option key={r} value={r}>
-                            {r === "OTHER" ? "OTHER (CUSTOM)" : r.toUpperCase()}
+                            {r === "OTHER" ? "Other (custom)" : formatRoleLabel(r)}
                           </option>
                         ))}
                       </select>
@@ -1493,7 +1494,7 @@ export default function FacultyManagement({
                   ) : (
                     <div className="flex flex-col items-center text-zinc-300">
                       <Users size={28} />
-                      <span className="text-[9px] font-medium uppercase tracking-tight mt-1">
+                      <span className="text-[9px] font-medium tracking-tight mt-1">
                         No Photo
                       </span>
                     </div>
@@ -1506,7 +1507,7 @@ export default function FacultyManagement({
               </h3>
 
               <div className="flex flex-col items-center gap-2.5">
-                <p className="text-zinc-400 font-medium uppercase tracking-[0.14em] text-[10px]">
+                <p className="text-zinc-400 font-medium tracking-[0.14em] text-[10px]">
                   {selectedFaculty.Designation || "Faculty Member"}
                 </p>
                 <div className="flex items-center gap-2">
@@ -1514,7 +1515,7 @@ export default function FacultyManagement({
                     {selectedFaculty.Department} Department
                   </span>
                   <span className="px-2.5 py-1 bg-zinc-900 rounded-full text-[11px] font-medium text-white">
-                    {selectedFaculty.Role?.toUpperCase() || "FACULTY"}
+                    {selectedFaculty.Role ? formatRoleLabel(selectedFaculty.Role) : "Faculty"}
                   </span>
                 </div>
               </div>
@@ -1539,7 +1540,7 @@ export default function FacultyManagement({
               <div className="space-y-6">
                 <div className="flex items-center gap-2.5 mb-2">
                   <BookOpen size={16} className="text-zinc-400" />
-                  <h4 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-400">
+                  <h4 className="text-[10px] font-semibold tracking-[0.18em] text-zinc-400">
                     Professional Biography
                   </h4>
                 </div>
@@ -1556,7 +1557,7 @@ export default function FacultyManagement({
                             key={key}
                             className="bg-white p-5 rounded-xl border border-zinc-200/70 hover:border-zinc-300 transition-colors"
                           >
-                            <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 block mb-3">
+                            <label className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 block mb-3">
                               {key.replace(/_/g, " ")}
                             </label>
                             {Array.isArray(val) ? (

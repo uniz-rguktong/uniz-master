@@ -112,7 +112,7 @@ export default function GrievanceList() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-zinc-900 font-bold text-[10px] uppercase tracking-[0.14em] mb-3 bg-zinc-50 w-fit px-3 py-1 rounded-full border border-zinc-100/50">
+          <div className="flex items-center gap-2 text-zinc-900 font-bold text-[10px] tracking-[0.14em] mb-3 bg-zinc-50 w-fit px-3 py-1 rounded-full border border-zinc-100/50">
             <ShieldCheck size={12} />
             Resolution Control
           </div>
@@ -128,7 +128,7 @@ export default function GrievanceList() {
         <div className="flex items-center gap-3">
           <button
             onClick={fetchGrievances}
-            className="px-5 py-2.5 bg-white border border-zinc-200 text-zinc-600 rounded-xl font-bold text-xs uppercase tracking-[0.14em] hover:bg-zinc-50 transition-all shadow-sm flex items-center gap-2"
+            className="px-5 py-2.5 bg-white border border-zinc-200 text-zinc-600 rounded-xl font-bold text-xs tracking-[0.14em] hover:bg-zinc-50 transition-all shadow-sm flex items-center gap-2"
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
             Sync Records
@@ -137,7 +137,7 @@ export default function GrievanceList() {
           <button
             onClick={handleDeleteAll}
             disabled={grievances.length === 0}
-            className="px-5 py-2.5 bg-red-50 border border-red-100 text-red-600 rounded-xl font-bold text-xs uppercase tracking-[0.14em] hover:bg-red-200 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2.5 bg-red-50 border border-red-100 text-red-600 rounded-xl font-bold text-xs tracking-[0.14em] hover:bg-red-200 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Trash2 size={14} />
             Clear all
@@ -156,7 +156,7 @@ export default function GrievanceList() {
               {grievances.length}
             </span>
           </div>
-          <p className="text-zinc-400 font-semibold text-[10px] uppercase tracking-[0.14em]">
+          <p className="text-zinc-400 font-semibold text-[10px] tracking-[0.14em]">
             Total Reports
           </p>
         </div>
@@ -170,7 +170,7 @@ export default function GrievanceList() {
               {grievances.filter((g) => g.status === "Pending").length}
             </span>
           </div>
-          <p className="text-zinc-400 font-semibold text-[10px] uppercase tracking-[0.14em]">
+          <p className="text-zinc-400 font-semibold text-[10px] tracking-[0.14em]">
             Active Tickets
           </p>
         </div>
@@ -184,7 +184,7 @@ export default function GrievanceList() {
               {grievances.filter((g) => g.status === "Resolved").length}
             </span>
           </div>
-          <p className="text-zinc-400 font-semibold text-[10px] uppercase tracking-[0.14em]">
+          <p className="text-zinc-400 font-semibold text-[10px] tracking-[0.14em]">
             Resolved Actions
           </p>
         </div>
@@ -213,7 +213,7 @@ export default function GrievanceList() {
               <button
                 key={cat}
                 onClick={() => setFilterCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider whitespace-nowrap transition-all ${
+                className={`px-4 py-2 rounded-xl text-[11px] font-bold tracking-wider whitespace-nowrap transition-all ${
                   filterCategory === cat
                     ? "bg-zinc-900 text-white shadow-md"
                     : "bg-zinc-50 text-zinc-500 hover:bg-zinc-100"
@@ -231,7 +231,7 @@ export default function GrievanceList() {
         {loading ? (
           <div className="flex flex-col items-center justify-center h-[400px] text-zinc-300 gap-4">
             <RefreshCw className="animate-spin" size={32} />
-            <p className="font-bold uppercase tracking-[0.3em] text-[10px]">
+            <p className="font-bold tracking-[0.3em] text-[10px]">
               Accessing Database...
             </p>
           </div>
@@ -240,19 +240,19 @@ export default function GrievanceList() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-zinc-50/50 border-b border-zinc-100">
-                  <th className="px-8 py-5 text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+                  <th className="px-8 py-5 text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
                     Student Context
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+                  <th className="px-6 py-5 text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
                     Classification
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+                  <th className="px-6 py-5 text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
                     Statement
                   </th>
-                  <th className="px-6 py-5 text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+                  <th className="px-6 py-5 text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
                     Temporal Log
                   </th>
-                  <th className="px-8 py-5 text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] text-right">
+                  <th className="px-8 py-5 text-[10px] font-semibold text-zinc-400 tracking-[0.14em] text-right">
                     Action
                   </th>
                 </tr>
@@ -278,7 +278,7 @@ export default function GrievanceList() {
                           >
                             {g.isAnonymous ? "Anonymous" : g.username}
                           </p>
-                          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.14em] mt-1.5 flex items-center gap-1">
+                          <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mt-1.5 flex items-center gap-1">
                             {g.isAnonymous ? (
                               <ShieldCheck size={10} />
                             ) : (
@@ -292,7 +292,7 @@ export default function GrievanceList() {
                       </div>
                     </td>
                     <td className="px-6 py-6">
-                      <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-lg font-bold text-[10px] uppercase tracking-[0.14em] whitespace-nowrap">
+                      <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-lg font-bold text-[10px] tracking-[0.14em] whitespace-nowrap">
                         {g.category}
                       </span>
                     </td>
@@ -306,7 +306,7 @@ export default function GrievanceList() {
                         <span className="text-[13px] font-bold text-zinc-700 leading-none">
                           {new Date(g.createdAt).toLocaleDateString()}
                         </span>
-                        <span className="text-[10px] font-bold text-zinc-400 mt-1 uppercase tracking-tighter">
+                        <span className="text-[10px] font-bold text-zinc-400 mt-1 tracking-tighter">
                           {new Date(g.createdAt).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",

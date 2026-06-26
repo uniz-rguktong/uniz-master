@@ -106,7 +106,7 @@ export function ModernSidebar({
                 <span className="font-bold text-zinc-900 text-lg tracking-tight">
                   uniZ
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.14em] text-zinc-500 font-semibold">
+                <span className="text-[10px] tracking-[0.14em] text-zinc-500 font-semibold">
                   Student Portal
                 </span>
               </div>
@@ -249,7 +249,7 @@ export function ModernSidebar({
                   <p className="text-sm font-bold text-zinc-800 truncate">
                     {userData?.name || "Student"}
                   </p>
-                  <p className="text-[11px] text-zinc-500 font-medium truncate uppercase tracking-wider">
+                  <p className="text-[11px] text-zinc-500 font-medium truncate tracking-wider">
                     Member
                   </p>
                 </div>

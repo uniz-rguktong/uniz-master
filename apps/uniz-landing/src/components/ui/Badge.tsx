@@ -12,7 +12,7 @@ const badgeVariants = cva(
         secondary:
           "border-transparent bg-slate-900 text-white hover:bg-slate-800",
         pill: 
-          "border-transparent bg-indigo-100 text-indigo-700 uppercase tracking-widest",
+          "border-transparent bg-indigo-100 text-indigo-700 tracking-widest",
         date: 
           "border-transparent bg-sky-600 text-white", // specific to premium date badges
         outline: "text-slate-900 border-slate-200",
@@ -20,7 +20,7 @@ const badgeVariants = cva(
       size: {
         default: "px-3 py-1 text-sm",
         sm: "px-2.5 py-0.5 text-xs",
-        lg: "px-4 py-1.5 text-base tracking-widest uppercase",
+        lg: "px-4 py-1.5 text-base tracking-widest ",
       }
     },
     defaultVariants: {

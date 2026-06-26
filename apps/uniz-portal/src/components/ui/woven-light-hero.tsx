@@ -59,7 +59,7 @@ export const WovenLightHero = () => {
           className="mb-12 inline-flex items-center gap-2 border-b border-zinc-100 pb-1"
         >
           <div className="w-1 h-1 rounded-full bg-blue-500" />
-          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.3em]">
+          <span className="text-[10px] font-bold text-zinc-400 tracking-[0.3em]">
             Centralized Academic Portal
           </span>
         </motion.div>

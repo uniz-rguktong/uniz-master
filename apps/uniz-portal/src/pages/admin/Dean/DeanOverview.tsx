@@ -375,7 +375,7 @@ export default function DeanOverview({ username }: { username: string }) {
 
         {/* Name & Role Section */}
         <div className="flex items-center justify-center gap-2 mb-2">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-zinc-900 uppercase">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-zinc-900 ">
             {profileLoading ? "---" : displayName}
           </h1>
         </div>
@@ -394,11 +394,11 @@ export default function DeanOverview({ username }: { username: string }) {
         {/* Info Tags */}
         {!profileLoading && (
           <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-bold mb-6">
-            <span className="text-zinc-900 uppercase tracking-[0.14em] px-2.5 py-1 bg-zinc-50 border border-zinc-100 rounded-xl">
+            <span className="text-zinc-900 tracking-[0.14em] px-2.5 py-1 bg-zinc-50 border border-zinc-100 rounded-xl">
               {username}
             </span>
             <span className="w-1 h-1 rounded-full bg-zinc-200" />
-            <span className="uppercase tracking-wide text-zinc-400">
+            <span className="tracking-wide text-zinc-400">
               Dean Portal
             </span>
           </div>
@@ -408,7 +408,7 @@ export default function DeanOverview({ username }: { username: string }) {
         {!isEditing && !profileLoading && (
           <button
             onClick={() => setIsEditing(true)}
-            className="px-6 py-2 rounded-xl border border-zinc-200 text-zinc-500 font-bold uppercase tracking-[0.14em] text-[10px] hover:bg-zinc-50 transition-all active:scale-95"
+            className="px-6 py-2 rounded-xl border border-zinc-200 text-zinc-500 font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-50 transition-all active:scale-95"
           >
             Edit Profile
           </button>
@@ -437,7 +437,7 @@ export default function DeanOverview({ username }: { username: string }) {
                     <Icon size={16} className="text-zinc-400" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[9px] font-semibold text-zinc-400 uppercase tracking-[0.14em] mb-0.5">
+                    <p className="text-[9px] font-semibold text-zinc-400 tracking-[0.14em] mb-0.5">
                       {label}
                     </p>
                     <input
@@ -456,7 +456,7 @@ export default function DeanOverview({ username }: { username: string }) {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex-1 py-3.5 rounded-2xl bg-zinc-900 text-white text-[11px] font-semibold uppercase tracking-[0.14em] flex items-center justify-center gap-2 hover:bg-black transition-all disabled:opacity-50"
+                  className="flex-1 py-3.5 rounded-2xl bg-zinc-900 text-white text-[11px] font-semibold tracking-[0.14em] flex items-center justify-center gap-2 hover:bg-black transition-all disabled:opacity-50"
                 >
                   {isSaving ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -467,7 +467,7 @@ export default function DeanOverview({ username }: { username: string }) {
                 </button>
                 <button
                   onClick={() => setIsEditing(false)}
-                  className="px-8 py-3.5 rounded-2xl border border-zinc-200 text-zinc-400 text-[11px] font-semibold uppercase tracking-[0.14em] hover:bg-zinc-50 transition-all"
+                  className="px-8 py-3.5 rounded-2xl border border-zinc-200 text-zinc-400 text-[11px] font-semibold tracking-[0.14em] hover:bg-zinc-50 transition-all"
                 >
                   Cancel
                 </button>
@@ -511,7 +511,7 @@ export default function DeanOverview({ username }: { username: string }) {
           <h2 className="text-2xl font-semibold text-zinc-900 tracking-tight">
             Campus Occupancy Intelligence
           </h2>
-          <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.4em]">
+          <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.4em]">
             Real-time resident distribution
           </p>
         </div>
@@ -533,7 +533,7 @@ export default function DeanOverview({ username }: { username: string }) {
                     exit={{ opacity: 0, scale: 0.9 }}
                     className="flex flex-col items-center justify-center text-center"
                   >
-                    <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] mb-1">
+                    <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] mb-1">
                       {hoveredOccupancy || "Total Population"}
                     </p>
                     <p className="text-5xl font-semibold text-zinc-900 tracking-tighter">
@@ -582,7 +582,7 @@ export default function DeanOverview({ username }: { username: string }) {
                   />
                   <span
                     className={cn(
-                      "text-xs font-semibold uppercase tracking-[0.14em]",
+                      "text-xs font-semibold tracking-[0.14em]",
                       hoveredOccupancy === segment.label
                         ? "text-white"
                         : "text-zinc-600",

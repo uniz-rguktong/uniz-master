@@ -117,7 +117,7 @@ function CampusCard({
       {/* ── Content Side ── */}
       <div className="flex-1 bg-white p-10 md:p-14 flex flex-col justify-center">
         <span
-          className={`inline-flex items-center self-start px-3 py-1 text-xs font-bold uppercase tracking-widest rounded-full border mb-5 ${area.badgeBg}`}
+          className={`inline-flex items-center self-start px-3 py-1 text-xs font-bold tracking-widest rounded-full border mb-5 ${area.badgeBg}`}
         >
           {area.badge}
         </span>

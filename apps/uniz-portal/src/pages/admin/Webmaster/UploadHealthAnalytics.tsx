@@ -126,7 +126,7 @@ export default function UploadHealthAnalytics({
           <div className="space-y-1.5 px-2">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-[0.14em]">
+              <span className="text-[10px] font-bold text-emerald-600 tracking-[0.14em]">
                 Real-time Stream Active
               </span>
             </div>
@@ -140,7 +140,7 @@ export default function UploadHealthAnalytics({
 
           <div className="flex gap-4">
             <div className="bg-white px-5 py-3 rounded-2xl border border-zinc-100 shadow-sm flex flex-col items-end">
-              <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.14em] mb-1">
+              <span className="text-[9px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
                 Avg Success
               </span>
               <span className="text-xl font-semibold text-emerald-600 leading-none">
@@ -148,7 +148,7 @@ export default function UploadHealthAnalytics({
               </span>
             </div>
             <div className="bg-zinc-950 px-5 py-3 rounded-2xl shadow-xl flex flex-col items-end">
-              <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.14em] mb-1">
+              <span className="text-[9px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
                 Total Records
               </span>
               <span className="text-xl font-semibold text-white leading-none">
@@ -169,7 +169,7 @@ export default function UploadHealthAnalytics({
           {/* Top Section with Large Value and Dropdown */}
           <div className="flex justify-between items-start mb-10 relative z-10">
             <div>
-              <p className="text-zinc-400 font-bold text-sm mb-2 uppercase tracking-tight">
+              <p className="text-zinc-400 font-bold text-sm mb-2 tracking-tight">
                 Success Health
               </p>
               <div className="flex items-center gap-4">
@@ -197,7 +197,7 @@ export default function UploadHealthAnalytics({
                   </div>
                 )}
               </div>
-              <div className="mt-4 flex items-center gap-6 text-[12px] font-bold text-zinc-400 uppercase tracking-wider">
+              <div className="mt-4 flex items-center gap-6 text-[12px] font-bold text-zinc-400 tracking-wider">
                 <div className="flex items-center gap-2">
                   <span className="text-zinc-500">Total volume:</span>
                   <span className="text-zinc-900">{latest?.total || 0}</span>
@@ -219,7 +219,7 @@ export default function UploadHealthAnalytics({
               <select
                 value={range}
                 onChange={(e) => setRange(Number(e.target.value))}
-                className="appearance-none bg-zinc-50 border border-zinc-100 rounded-xl px-5 py-2.5 pr-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500/10 cursor-pointer hover:bg-zinc-100 transition-all shadow-sm"
+                className="appearance-none bg-zinc-50 border border-zinc-100 rounded-xl px-5 py-2.5 pr-10 text-[11px] font-semibold tracking-[0.14em] text-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500/10 cursor-pointer hover:bg-zinc-100 transition-all shadow-sm"
               >
                 <option value={7}>Last 7 Days</option>
                 <option value={15}>Last 15 Days</option>
@@ -269,7 +269,7 @@ export default function UploadHealthAnalytics({
                     boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
                     fontSize: "11px",
                     fontWeight: "900",
-                    textTransform: "uppercase",
+                    textTransform: "",
                     padding: "12px 20px",
                   }}
                 />
@@ -298,7 +298,7 @@ export default function UploadHealthAnalytics({
       {error && !safeData.length && (
         <div className="p-6 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-4 text-red-900">
           <AlertCircle size={24} className="shrink-0" />
-          <p className="text-sm font-bold uppercase tracking-wide">{error}</p>
+          <p className="text-sm font-bold tracking-wide">{error}</p>
         </div>
       )}
     </div>

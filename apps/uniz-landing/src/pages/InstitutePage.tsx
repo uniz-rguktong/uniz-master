@@ -40,7 +40,7 @@ function AboutRguktPage({ data }: { data: InstituteData }) {
           style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
         />
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] uppercase text-amber-400 bg-amber-400/10 border border-amber-400/30 rounded-full">
+          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] text-amber-400 bg-amber-400/10 border border-amber-400/30 rounded-full">
             Rajiv Gandhi University of Knowledge Technologies
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-6">
@@ -64,7 +64,7 @@ function AboutRguktPage({ data }: { data: InstituteData }) {
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-2xl shadow-md border border-slate-100 px-6 py-5 text-center">
               <div className="text-2xl font-extrabold text-[#000035]">{stat.value}</div>
-              <div className="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-1">{stat.label}</div>
+              <div className="text-xs font-semibold text-slate-500 tracking-widest mt-1">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -115,7 +115,7 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
           style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #800000 0%, transparent 60%), radial-gradient(circle at 80% 50%, #4f46e5 0%, transparent 60%)" }}
         />
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] uppercase text-[#800000] bg-[#800000]/10 border border-[#800000]/30 rounded-full">
+          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] text-[#800000] bg-[#800000]/10 border border-[#800000]/30 rounded-full">
             Rajiv Gandhi University of Knowledge Technologies
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
@@ -152,7 +152,7 @@ function GovCouncilPage({ data }: { data: InstituteData }) {
               )}
             </div>
             <div className="flex-1 p-8 md:p-10 flex flex-col justify-center">
-              <span className="inline-block mb-3 px-3 py-1 text-[11px] font-bold tracking-widest uppercase text-[#800000] bg-[#800000]/8 border border-[#800000]/20 rounded-full w-fit">
+              <span className="inline-block mb-3 px-3 py-1 text-[11px] font-bold tracking-widest text-[#800000] bg-[#800000]/8 border border-[#800000]/20 rounded-full w-fit">
                 Chairman · Member-Convener
               </span>
               <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">{chair.name}</h2>
@@ -256,7 +256,7 @@ function GenericInstitutePage({ data, displayName, pageName }: { data: Institute
           style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
         />
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <span className={`inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] uppercase ${accent.pill} ${accent.pillBg} border ${accent.pillBorder} rounded-full`}>
+          <span className={`inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] ${accent.pill} ${accent.pillBg} border ${accent.pillBorder} rounded-full`}>
             RGUKT Ongole Campus
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
@@ -394,7 +394,7 @@ export function InstitutePage() {
       <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#000035] border-t-transparent"></div>
-          <p className="text-slate-600 font-semibold uppercase tracking-widest text-sm animate-pulse">Loading {displayName}...</p>
+          <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">Loading {displayName}...</p>
         </div>
       </div>
     );

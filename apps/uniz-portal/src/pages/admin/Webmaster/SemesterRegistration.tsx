@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { formatStatus } from "@/utils/displayText";
 import React, { useState, useEffect } from "react";
 import {
   Calendar,
@@ -155,7 +156,7 @@ export default function SemesterRegistration() {
         </div>
         <button
           onClick={() => setShowInitModal(true)}
-          className="bg-zinc-900 text-white px-8 py-4 rounded-xl font-semibold uppercase tracking-[0.14em] text-xs flex items-center gap-2.5 hover:bg-zinc-800 hover:-translate-y-1 transition-all shadow-none active:scale-95 active:translate-y-0"
+          className="bg-zinc-900 text-white px-8 py-4 rounded-xl font-semibold tracking-[0.14em] text-xs flex items-center gap-2.5 hover:bg-zinc-800 hover:-translate-y-1 transition-all shadow-none active:scale-95 active:translate-y-0"
         >
           <Plus size={18} /> Initialize New Semester
         </button>
@@ -164,7 +165,7 @@ export default function SemesterRegistration() {
       {loading ? (
         <div className="flex flex-col items-center justify-center h-64 gap-4">
           <Spinner size="lg" />
-          <p className="text-zinc-400 font-semibold uppercase tracking-[0.14em] text-xs">
+          <p className="text-zinc-400 font-semibold tracking-[0.14em] text-xs">
             Loading Workflows...
           </p>
         </div>
@@ -188,9 +189,9 @@ export default function SemesterRegistration() {
                     </h3>
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-3 py-1 rounded-xl text-[10px] font-semibold uppercase tracking-[0.14em] border ${getStatusColor(sem.status)}`}
+                        className={`px-3 py-1 rounded-xl text-[10px] font-semibold tracking-[0.14em] border ${getStatusColor(sem.status)}`}
                       >
-                        {sem.status.replace("_", " ")}
+                        {formatStatus(sem.status)}
                       </span>
                       <span className="text-zinc-300 font-bold">•</span>
                       <p className="text-xs font-bold text-zinc-400 font-outfit tracking-wide">
@@ -212,7 +213,7 @@ export default function SemesterRegistration() {
                       onClick={() =>
                         handleStatusUpdate(sem.id, "REGISTRATION_OPEN")
                       }
-                      className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-[10px] font-semibold uppercase tracking-[0.14em] flex items-center gap-2 hover:bg-zinc-800 transition-all shadow-none"
+                      className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-[10px] font-semibold tracking-[0.14em] flex items-center gap-2 hover:bg-zinc-800 transition-all shadow-none"
                     >
                       <Play size={14} fill="currentColor" /> Open Registration
                     </button>
@@ -221,7 +222,7 @@ export default function SemesterRegistration() {
                     sem.status === "REGISTRATION_OPEN") && (
                     <button
                       onClick={() => handleStatusUpdate(sem.id, "ONGOING")}
-                      className="px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-semibold uppercase tracking-[0.14em] flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-none"
+                      className="px-6 py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-semibold tracking-[0.14em] flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-none"
                     >
                       <RotateCcw size={14} /> Start Classes
                     </button>
@@ -229,7 +230,7 @@ export default function SemesterRegistration() {
                   {sem.status === "ONGOING" && (
                     <button
                       onClick={() => handleStatusUpdate(sem.id, "COMPLETED")}
-                      className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-[10px] font-semibold uppercase tracking-[0.14em] flex items-center gap-2 hover:bg-zinc-800 transition-all shadow-none"
+                      className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-[10px] font-semibold tracking-[0.14em] flex items-center gap-2 hover:bg-zinc-800 transition-all shadow-none"
                     >
                       <CheckCircle2 size={14} /> Close Semester
                     </button>
@@ -247,7 +248,7 @@ export default function SemesterRegistration() {
 
                   <div className="flex items-center gap-3">
                     <div className="flex flex-col items-end">
-                      <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+                      <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
                         Active Branches
                       </p>
                       <div className="flex -space-x-2 mt-1">
@@ -288,7 +289,7 @@ export default function SemesterRegistration() {
           </p>
           <button
             onClick={() => setShowInitModal(true)}
-            className="bg-zinc-900 text-white px-8 py-3.5 rounded-xl font-semibold uppercase tracking-[0.14em] text-[10px] hover:bg-zinc-800 transition-all shadow-none"
+            className="bg-zinc-900 text-white px-8 py-3.5 rounded-xl font-semibold tracking-[0.14em] text-[10px] hover:bg-zinc-800 transition-all shadow-none"
           >
             Start Initialization
           </button>

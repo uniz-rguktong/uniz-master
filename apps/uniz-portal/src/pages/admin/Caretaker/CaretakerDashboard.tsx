@@ -65,7 +65,7 @@ export default function CaretakerDashboard() {
         Ongole
       </span>
       <span
-        className={`text-[10px] uppercase tracking-[0.14em] ${isMale ? "text-zinc-700/80" : "text-pink-600/80"} font-semibold mt-1.5 px-0.5`}
+        className={`text-[10px] tracking-[0.14em] ${isMale ? "text-zinc-700/80" : "text-pink-600/80"} font-semibold mt-1.5 px-0.5`}
       >
         {portalLabel}
       </span>
@@ -90,7 +90,7 @@ export default function CaretakerDashboard() {
                     className={`w-1.5 h-1.5 rounded-full ${isMale ? "bg-blue-400" : "bg-pink-400"} animate-pulse`}
                   />
                   <span
-                    className={`text-[8px] font-bold uppercase tracking-[0.14em] ${isMale ? "text-blue-400" : "text-pink-400"}`}
+                    className={`text-[8px] font-bold tracking-[0.14em] ${isMale ? "text-blue-400" : "text-pink-400"}`}
                   >
                     {systemLabel}
                   </span>
@@ -124,7 +124,7 @@ export default function CaretakerDashboard() {
                     <h3 className="font-bold text-zinc-900 text-[14px] mb-1 leading-tight">
                       {item.label}
                     </h3>
-                    <p className="text-[8px] text-zinc-400 uppercase tracking-[0.14em] font-semibold opacity-60 group-hover:text-zinc-700 transition-colors">
+                    <p className="text-[8px] text-zinc-400 tracking-[0.14em] font-semibold opacity-60 group-hover:text-zinc-700 transition-colors">
                       Initialize Module
                     </p>
                   </div>

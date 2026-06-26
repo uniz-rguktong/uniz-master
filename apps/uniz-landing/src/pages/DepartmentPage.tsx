@@ -120,7 +120,7 @@ function FacultyCard({ faculty, onOpen }: { faculty: FacultyMember; onOpen: () =
           <div className="mt-3 pt-3 border-t border-slate-100">
             <button
               onClick={onOpen}
-              className="inline-flex items-center gap-1 text-[12px] font-bold text-[#000035] hover:text-[#800000] transition-colors uppercase tracking-wide"
+              className="inline-flex items-center gap-1 text-[12px] font-bold text-[#000035] hover:text-[#800000] transition-colors tracking-wide"
             >
               View Profile <ChevronRight className="w-3.5 h-3.5" />
             </button>
@@ -158,7 +158,7 @@ export function DepartmentPage() {
       <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#000035] border-t-transparent" />
-          <p className="text-slate-600 font-semibold uppercase tracking-widest text-sm animate-pulse">
+          <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">
             Loading {deptName}...
           </p>
         </div>
@@ -182,7 +182,7 @@ export function DepartmentPage() {
           style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
         />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <span className="inline-block px-5 py-2 mb-5 text-xs font-bold tracking-[0.2em] uppercase text-[#800000] bg-[#800000]/10 border border-[#800000]/30 rounded-full">
+          <span className="inline-block px-5 py-2 mb-5 text-xs font-bold tracking-[0.2em] text-[#800000] bg-[#800000]/10 border border-[#800000]/30 rounded-full">
             RGUKT Ongole · {code}
           </span>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
@@ -209,7 +209,7 @@ export function DepartmentPage() {
           </div>
         ) : (
           <>
-            <h2 className="text-lg font-extrabold text-slate-900 mb-6 tracking-tight flex items-center gap-2 uppercase">
+            <h2 className="text-lg font-extrabold text-slate-900 mb-6 tracking-tight flex items-center gap-2 ">
               <span className="w-1 h-5 bg-[#800000] rounded-full inline-block" />
               Faculties
             </h2>

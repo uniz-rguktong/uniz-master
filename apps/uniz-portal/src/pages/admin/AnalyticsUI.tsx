@@ -112,7 +112,7 @@ export const TrendChart = ({
           <h3 className="text-xl font-semibold text-zinc-900 tracking-tight mb-1">
             {title}
           </h3>
-          <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+          <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
             {subtitle}
           </p>
         </div>
@@ -163,7 +163,7 @@ export const TrendChart = ({
                 boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
                 fontSize: "11px",
                 fontWeight: "800",
-                textTransform: "uppercase",
+                textTransform: "",
               }}
             />
             <Area
@@ -203,7 +203,7 @@ export const DonutChart = ({
         <h3 className="text-xl font-semibold text-zinc-900 tracking-tight mb-1">
           {title}
         </h3>
-        <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+        <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
           {subtitle}
         </p>
       </div>
@@ -245,7 +245,7 @@ export const DonutChart = ({
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+          <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
             Total
           </p>
           <p className="text-3xl font-semibold text-zinc-900 tracking-tight">
@@ -261,7 +261,7 @@ export const DonutChart = ({
               className="w-2 h-2 rounded-full"
               style={{ backgroundColor: COLORS[i % COLORS.length] }}
             />
-            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-zinc-500 tracking-wider">
               {item.name}
             </span>
           </div>
@@ -360,10 +360,10 @@ export const PulseFeed = ({
               )}
             </div>
             <div className="pt-1 min-w-0">
-              <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] leading-none mb-1.5">
+              <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] leading-none mb-1.5">
                 {act?.time}
               </p>
-              <p className="text-[13px] font-semibold text-zinc-900 leading-tight uppercase tracking-tight">
+              <p className="text-[13px] font-semibold text-zinc-900 leading-tight tracking-tight">
                 {act?.message}
               </p>
               {act?.detail && (
@@ -407,7 +407,7 @@ export const ComparisonChart = ({
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: l?.color || "#6366f1" }}
               />
-              <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-[0.14em]">
+              <span className="text-[11px] font-bold text-zinc-400 tracking-[0.14em]">
                 {l?.label}
               </span>
             </div>
@@ -496,7 +496,7 @@ export const SubjectHeatmap = ({
           <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-1">
             {title}
           </h3>
-          <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+          <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
             Matrix performance intelligence
           </p>
         </div>
@@ -505,7 +505,7 @@ export const SubjectHeatmap = ({
           <select
             value={selectedBranch}
             onChange={(e) => onBranchChange(e.target.value)}
-            className="appearance-none bg-zinc-50 border border-zinc-100 rounded-xl px-5 py-2.5 pr-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500/10 cursor-pointer hover:bg-zinc-100 transition-all shadow-sm"
+            className="appearance-none bg-zinc-50 border border-zinc-100 rounded-xl px-5 py-2.5 pr-10 text-[11px] font-semibold tracking-[0.14em] text-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500/10 cursor-pointer hover:bg-zinc-100 transition-all shadow-sm"
           >
             {branches.map((b) => (
               <option key={b} value={b}>
@@ -560,10 +560,10 @@ export const SubjectHeatmap = ({
                   {Number(hoveredItem.average_grade).toFixed(1)}
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-blue-600 uppercase tracking-[0.14em] mb-1">
+                  <p className="text-xs font-semibold text-blue-600 tracking-[0.14em] mb-1">
                     {selectedBranch} • PERFORMANCE
                   </p>
-                  <h4 className="text-sm font-semibold text-zinc-900 uppercase tracking-tight max-w-md">
+                  <h4 className="text-sm font-semibold text-zinc-900 tracking-tight max-w-md">
                     {hoveredItem.subject_name}
                   </h4>
                 </div>
@@ -573,7 +573,7 @@ export const SubjectHeatmap = ({
                 key="placeholder"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-[10px] font-bold text-zinc-300 uppercase tracking-[0.3em]"
+                className="text-[10px] font-bold text-zinc-300 tracking-[0.3em]"
               >
                 Hover over a cell to view grade intelligence
               </motion.p>
@@ -582,7 +582,7 @@ export const SubjectHeatmap = ({
 
           <div className="flex items-center gap-4">
             <div className="flex flex-col items-end">
-              <span className="text-[9px] font-semibold text-zinc-300 uppercase tracking-[0.14em]">
+              <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
                 Efficiency Scale
               </span>
               <div className="flex gap-1 mt-1.5">

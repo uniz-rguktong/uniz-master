@@ -1,3 +1,4 @@
+import { formatStatus } from "@/utils/displayText";
 import { useState, useEffect } from "react";
 import { apiClient } from "../../api/apiClient";
 import { GET_SEMESTER_OVERVIEW } from "../../api/endpoints";
@@ -28,7 +29,7 @@ export default function CurrentSemester() {
       <div className="flex h-[60vh] items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 border-4 border-zinc-900 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-zinc-400 font-bold text-xs uppercase tracking-[0.14em]">
+          <p className="text-zinc-400 font-bold text-xs tracking-[0.14em]">
             Loading Semester Data...
           </p>
         </div>
@@ -61,8 +62,8 @@ export default function CurrentSemester() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-semibold uppercase tracking-[0.14em] rounded-full">
-              {semester.status.replace("_", " ")}
+            <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-semibold tracking-[0.14em] rounded-full">
+              {formatStatus(semester.status)}
             </span>
           </div>
           <h1 className="text-4xl font-semibold tracking-tight text-zinc-900 leading-none">
@@ -75,7 +76,7 @@ export default function CurrentSemester() {
 
         <div className="flex items-center gap-4">
           <div className="md:bg-white p-4 px-6 md:rounded-2xl md:border md:border-zinc-100 md:shadow-sm bg-transparent flex flex-col items-center">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.14em]">
+            <span className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
               Subjects
             </span>
             <span className="text-2xl font-semibold text-zinc-900">
@@ -83,7 +84,7 @@ export default function CurrentSemester() {
             </span>
           </div>
           <div className="md:bg-white p-4 px-6 md:rounded-2xl md:border md:border-zinc-100 md:shadow-sm bg-transparent flex flex-col items-center">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.14em]">
+            <span className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
               Total Credits
             </span>
             <span className="text-2xl font-semibold text-zinc-900">
@@ -109,7 +110,7 @@ export default function CurrentSemester() {
                 <Book className="w-6 h-6" />
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] leading-none mb-1">
+                <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] leading-none mb-1">
                   Credits
                 </span>
                 <span className="text-lg font-semibold text-zinc-900 leading-none">
@@ -130,7 +131,7 @@ export default function CurrentSemester() {
             <div className="mt-6 flex items-center justify-between border-t border-zinc-50 pt-4">
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.14em]">
+                <span className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
                   Verified Registration
                 </span>
               </div>

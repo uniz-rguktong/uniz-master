@@ -76,7 +76,7 @@ export function Header() {
             <span className="font-extrabold text-[#113255] tracking-tight leading-none text-xl md:text-[22px] whitespace-nowrap">
               RGUKT
             </span>
-            <span className="text-[11px] md:text-[12px] font-bold text-[#800000] tracking-[0.08em] whitespace-nowrap uppercase">
+            <span className="text-[11px] md:text-[12px] font-bold text-[#800000] tracking-[0.08em] whitespace-nowrap ">
               Ongole Campus
             </span>
           </div>
@@ -205,7 +205,7 @@ export function Header() {
                   >
                     <div>
                       <span className="block text-slate-800 font-semibold group-hover:text-[#800000] transition-colors">{item.title}</span>
-                      <span className="block text-xs font-semibold tracking-wider uppercase text-slate-400 mt-0.5">{item.category}</span>
+                      <span className="block text-xs font-semibold tracking-wider text-slate-400 mt-0.5">{item.category}</span>
                     </div>
                     <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-[#800000] transform -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 hidden sm:block" />
                   </button>

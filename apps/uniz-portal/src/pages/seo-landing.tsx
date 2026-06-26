@@ -153,7 +153,7 @@ export default function SEOLanding() {
             <div className="overflow-x-auto mt-6">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-zinc-100 text-zinc-400 font-bold uppercase text-xs tracking-wider">
+                  <tr className="border-b border-zinc-100 text-zinc-400 font-bold text-xs tracking-wider">
                     <th className="py-3">Feature</th>
                     <th className="py-3">Traditional Tools</th>
                     <th className="py-3 text-zinc-900">UniZ</th>
@@ -243,7 +243,7 @@ export default function SEOLanding() {
           </p>
         </div>
         <div>
-          <h4 className="font-bold mb-4 text-sm uppercase tracking-[0.14em] text-zinc-900">
+          <h4 className="font-bold mb-4 text-sm tracking-[0.14em] text-zinc-900">
             Platforms
           </h4>
           <ul className="space-y-3 text-sm font-medium text-zinc-500">
@@ -271,7 +271,7 @@ export default function SEOLanding() {
           </ul>
         </div>
         <div>
-          <h4 className="font-bold mb-4 text-sm uppercase tracking-[0.14em] text-zinc-900">
+          <h4 className="font-bold mb-4 text-sm tracking-[0.14em] text-zinc-900">
             Resources
           </h4>
           <ul className="space-y-3 text-sm font-medium text-zinc-500">

@@ -154,7 +154,7 @@ export default function CourseRegistration({
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <Loader2 className="animate-spin text-zinc-900" size={40} />
-        <p className="text-zinc-400 font-semibold uppercase tracking-[0.14em] text-[10px]">
+        <p className="text-zinc-400 font-semibold tracking-[0.14em] text-[10px]">
           Fetching available courses...
         </p>
       </div>
@@ -173,7 +173,7 @@ export default function CourseRegistration({
             <div className="w-20 h-20 mx-auto rounded-3xl bg-white/15 backdrop-blur-md flex items-center justify-center mb-6">
               <CheckCircle2 size={42} />
             </div>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/15 rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/15 rounded-full text-[10px] font-semibold tracking-[0.14em] mb-4">
               <Sparkles size={12} /> Registration Confirmed
             </div>
             <h2 className="text-3xl font-semibold tracking-tight mb-2">
@@ -196,7 +196,7 @@ export default function CourseRegistration({
           confirmation.subjects.length > 0 && (
             <div className="mt-6 rounded-3xl border border-zinc-100 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                <h3 className="text-xs font-semibold tracking-[0.14em] text-zinc-500">
                   Registered Subjects
                 </h3>
                 <span className="text-xs font-semibold text-zinc-900">
@@ -223,7 +223,7 @@ export default function CourseRegistration({
 
         <button
           onClick={onComplete}
-          className="w-full mt-6 bg-zinc-900 text-white h-16 rounded-3xl font-semibold uppercase tracking-[0.14em] text-xs hover:bg-zinc-800 transition-all"
+          className="w-full mt-6 bg-zinc-900 text-white h-16 rounded-3xl font-semibold tracking-[0.14em] text-xs hover:bg-zinc-800 transition-all"
         >
           View My Subjects
         </button>
@@ -295,7 +295,7 @@ export default function CourseRegistration({
       <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-3xl p-10 text-white relative overflow-hidden shadow-2xl">
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full border border-white/20 text-[10px] font-semibold uppercase tracking-[0.14em] backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full border border-white/20 text-[10px] font-semibold tracking-[0.14em] backdrop-blur-md">
               <ShieldCheck size={14} /> Open Enrollment Phase
             </div>
             <h2 className="text-4xl font-semibold tracking-tight leading-tight italic">
@@ -310,7 +310,7 @@ export default function CourseRegistration({
 
           <div className="flex items-center gap-6">
             <div className="text-right">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-200 mb-1">
+              <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-200 mb-1">
                 Total Selected Credits
               </p>
               <h3 className="text-5xl font-semibold text-white italic">
@@ -319,7 +319,7 @@ export default function CourseRegistration({
             </div>
             <div className="h-16 w-[1px] bg-white/20" />
             <div className="text-right">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-200 mb-1">
+              <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-200 mb-1">
                 Subjects Selected
               </p>
               <h3 className="text-5xl font-semibold text-white italic">
@@ -368,19 +368,19 @@ export default function CourseRegistration({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`text-[10px] font-semibold uppercase tracking-[0.14em] transition-colors ${
+                      className={`text-[10px] font-semibold tracking-[0.14em] transition-colors ${
                         isSelected ? "text-zinc-900" : "text-zinc-300"
                       }`}
                     >
                       {sub.subject?.code}
                     </span>
                     {sub.isMandatory && (
-                      <span className="px-2 py-0.5 bg-red-50 text-red-600 rounded-md text-[8px] font-semibold uppercase tracking-tighter border border-red-100">
+                      <span className="px-2 py-0.5 bg-red-50 text-red-600 rounded-md text-[8px] font-semibold tracking-tighter border border-red-100">
                         Mandatory
                       </span>
                     )}
                     {sub.electiveGroupId && (
-                      <span className="px-2 py-0.5 bg-zinc-50 text-zinc-900 rounded-md text-[8px] font-semibold uppercase tracking-tighter border border-zinc-100">
+                      <span className="px-2 py-0.5 bg-zinc-50 text-zinc-900 rounded-md text-[8px] font-semibold tracking-tighter border border-zinc-100">
                         Group: {sub.electiveGroupId}
                       </span>
                     )}
@@ -433,7 +433,7 @@ export default function CourseRegistration({
         <button
           disabled={submitting || selectedIds.length === 0}
           onClick={handleRegister}
-          className="w-full max-w-md bg-zinc-900 text-white h-20 rounded-3xl font-semibold uppercase tracking-[0.14em] text-xs flex items-center justify-center gap-3 hover:bg-zinc-800 hover:shadow-2xl hover:-translate-y-1 transition-all disabled:opacity-20 active:translate-y-0 active:scale-95 shadow-xl"
+          className="w-full max-w-md bg-zinc-900 text-white h-20 rounded-3xl font-semibold tracking-[0.14em] text-xs flex items-center justify-center gap-3 hover:bg-zinc-800 hover:shadow-2xl hover:-translate-y-1 transition-all disabled:opacity-20 active:translate-y-0 active:scale-95 shadow-xl"
         >
           {submitting ? (
             <Loader2 className="animate-spin w-6 h-6" />

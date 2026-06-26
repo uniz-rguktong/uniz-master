@@ -14,6 +14,7 @@ import {
   updateFacultyProfile,
   deleteFacultyProfile,
   deleteStudentProfile,
+  bulkDeleteStudents,
   getTargetingData,
   updateFacultyProfileSelf,
   updateAdminProfile,
@@ -232,6 +233,7 @@ router.put(
   validateRequest(AdminUpdateStudentSchema),
   adminUpdateStudentProfile,
 );
+router.delete("/admin/student/bulk-delete", authMiddleware, bulkDeleteStudents);
 router.delete("/admin/student/:username", authMiddleware, deleteStudentProfile);
 router.post("/student/search", authMiddleware, searchStudents);
 router.put(

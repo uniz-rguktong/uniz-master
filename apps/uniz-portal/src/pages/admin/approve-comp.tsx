@@ -22,6 +22,7 @@ import {
 import { toast } from "@/utils/toast-ref";
 import { CheckCircle, Search, Ban, Forward, Inbox } from "lucide-react";
 import { Input } from "../../components/Input";
+import { formatDisplayText } from "@/utils/displayText";
 import { cn } from "../../utils/cn";
 
 type ApproveProps = {
@@ -203,7 +204,7 @@ export default function ApproveComp({ type }: ApproveProps) {
                 <div className="flex flex-col items-end gap-2">
                   <div
                     className={cn(
-                      "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border",
+                      "px-3 py-1 rounded-full text-xs font-bold tracking-wide border",
                       request.is_approved
                         ? "bg-emerald-100 text-emerald-800 border-emerald-200"
                         : request.is_rejected
@@ -222,7 +223,7 @@ export default function ApproveComp({ type }: ApproveProps) {
                     request.current_level && (
                       <span className="flex items-center gap-1 text-xs font-semibold text-zinc-900 bg-zinc-50 px-2 py-0.5 rounded border border-zinc-100">
                         <Forward className="w-3 h-3" />{" "}
-                        {request.current_level.toUpperCase()}
+                        {formatDisplayText(request.current_level)}
                       </span>
                     )}
                 </div>
@@ -230,7 +231,7 @@ export default function ApproveComp({ type }: ApproveProps) {
 
               <div className="space-y-5 flex-1">
                 <div className="bg-zinc-50 rounded-lg p-4 border border-zinc-100">
-                  <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
+                  <h4 className="text-xs font-semibold text-zinc-400 tracking-wider mb-2">
                     Reason
                   </h4>
                   <p className="text-zinc-700 text-sm leading-relaxed font-medium">
@@ -240,7 +241,7 @@ export default function ApproveComp({ type }: ApproveProps) {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-zinc-400 uppercase font-semibold mb-1">
+                    <p className="text-xs text-zinc-400 font-semibold mb-1">
                       From
                     </p>
                     <p className="text-zinc-900 font-medium">
@@ -248,7 +249,7 @@ export default function ApproveComp({ type }: ApproveProps) {
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-zinc-400 uppercase font-semibold mb-1">
+                    <p className="text-xs text-zinc-400 font-semibold mb-1">
                       To
                     </p>
                     <p className="text-zinc-900 font-medium">
@@ -259,7 +260,7 @@ export default function ApproveComp({ type }: ApproveProps) {
 
                 <div className="flex justify-between items-center text-sm pt-2">
                   <div>
-                    <span className="text-zinc-400 text-xs uppercase font-semibold">
+                    <span className="text-zinc-400 text-xs font-semibold">
                       Duration
                     </span>{" "}
                     <br />
@@ -275,7 +276,7 @@ export default function ApproveComp({ type }: ApproveProps) {
                     </span>
                   </div>
                   <div className="text-right">
-                    <span className="text-zinc-400 text-xs uppercase font-semibold">
+                    <span className="text-zinc-400 text-xs font-semibold">
                       Submitted
                     </span>{" "}
                     <br />

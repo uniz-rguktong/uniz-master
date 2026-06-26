@@ -104,7 +104,7 @@ export default function StudentDashboard({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="uppercase tracking-tighter">
+                  <span className="tracking-tighter">
                     {(student.name || "S")[0]}
                   </span>
                 )}
@@ -260,7 +260,7 @@ export default function StudentDashboard({
           title="Attendance Trends"
           subtitle="Percentage of sessions logged"
           value={`${(Object.values(student.attendance_summary || {})[0] as any)?.percentage || 0}%`}
-          label="LATEST"
+          label="Latest"
           data={attendanceSeries}
           dataKey="percentage"
           color="#52525b"

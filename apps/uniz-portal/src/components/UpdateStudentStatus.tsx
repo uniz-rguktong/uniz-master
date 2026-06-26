@@ -148,7 +148,7 @@ export default function UpdateStatus() {
                       key={outing._id}
                       className="bg-zinc-50 rounded-md p-3 border border-zinc-100"
                     >
-                      <div className="flex items-center gap-2 text-xs font-bold text-zinc-900 uppercase mb-2">
+                      <div className="flex items-center gap-2 text-xs font-bold text-zinc-900 mb-2">
                         <Clock className="w-3.5 h-3.5" /> Outing
                       </div>
                       <div className="flex justify-between text-sm mb-1">
@@ -187,7 +187,7 @@ export default function UpdateStatus() {
                       key={outpass._id}
                       className="bg-zinc-50 rounded-md p-3 border border-zinc-100"
                     >
-                      <div className="flex items-center gap-2 text-xs font-bold text-zinc-900 uppercase mb-2">
+                      <div className="flex items-center gap-2 text-xs font-bold text-zinc-900 mb-2">
                         <CalendarDays className="w-3.5 h-3.5" /> Outpass
                       </div>
                       <div className="flex justify-between text-sm mb-1">

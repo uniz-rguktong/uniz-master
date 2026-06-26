@@ -51,7 +51,7 @@ function HeroBanner({ meta }: { meta: typeof PAGE_META[string] }) {
         style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
       />
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <span className={`inline-flex items-center gap-2 px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] uppercase ${meta.pill} ${meta.pillBg} border ${meta.pillBorder} rounded-full`}>
+        <span className={`inline-flex items-center gap-2 px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] ${meta.pill} ${meta.pillBg} border ${meta.pillBorder} rounded-full`}>
           {meta.icon}
           RGUKT Ongole · Academics
         </span>
@@ -210,7 +210,7 @@ export function AcademicsPage() {
       <div className="flex min-h-[50vh] w-full items-center justify-center bg-white cursor-wait">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#000035] border-t-transparent" />
-          <p className="text-slate-600 font-semibold uppercase tracking-widest text-sm animate-pulse">
+          <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">
             Loading {meta.displayName}...
           </p>
         </div>

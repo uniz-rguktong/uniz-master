@@ -24,7 +24,7 @@ export const adminSidebarToggleClass =
 
 /** Group label — small, quiet, wide tracking (no heavy weight). */
 export const adminNavGroupLabelClass =
-  "px-3 mb-1.5 text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]";
+  "px-3 mb-1.5 text-[10px] font-semibold text-zinc-400 tracking-[0.02em]";
 
 /** Active nav — ink fill, paper text, whisper-soft shadow. */
 export const adminNavActiveClass =
@@ -67,7 +67,7 @@ export const adminHubCardClass = cn(adminCardClass, adminCardHoverClass);
 
 /** Eyebrow / kicker — quiet uppercase label above a heading. */
 export const adminEyebrowClass =
-  "inline-flex items-center gap-1.5 text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.16em]";
+  "inline-flex items-center gap-1.5 text-[10px] font-semibold text-zinc-400 tracking-[0.02em]";
 
 /** Page / section title — tight, medium weight, no shout. */
 export const adminTitleClass =
@@ -108,7 +108,7 @@ export const adminPageWrapClass = "p-6 md:p-8 space-y-8 text-zinc-900";
 
 /** Field label — quiet, restrained (replaces loud font-semibold labels). */
 export const adminLabelClass =
-  "block text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400";
+  "block text-[10px] font-semibold tracking-[0.02em] text-zinc-400";
 
 /** Text input. */
 export const adminInputClass =

@@ -232,13 +232,13 @@ export default function GradesSection() {
       <div className="flex flex-wrap gap-2.5 bg-zinc-100/80 p-1 rounded-xl w-fit border border-zinc-200/60 backdrop-blur-sm">
         <button
           onClick={() => setSubTab("bulk")}
-          className={`px-6 py-2 rounded-lg font-bold uppercase tracking-[0.14em] text-[9px] transition-all flex items-center gap-2 ${subTab === "bulk" ? "bg-white text-zinc-900 border border-zinc-200/50 shadow-sm" : "text-zinc-500 hover:text-zinc-900"}`}
+          className={`px-6 py-2 rounded-lg font-bold tracking-[0.14em] text-[9px] transition-all flex items-center gap-2 ${subTab === "bulk" ? "bg-white text-zinc-900 border border-zinc-200/50 shadow-sm" : "text-zinc-500 hover:text-zinc-900"}`}
         >
           <Zap size={14} /> Resource Ingestion
         </button>
         <button
           onClick={() => setSubTab("batch")}
-          className={`px-6 py-2 rounded-lg font-bold uppercase tracking-[0.14em] text-[9px] transition-all flex items-center gap-2 ${subTab === "batch" ? "bg-white text-zinc-900 border border-zinc-200/50 shadow-sm" : "text-zinc-500 hover:text-zinc-900"}`}
+          className={`px-6 py-2 rounded-lg font-bold tracking-[0.14em] text-[9px] transition-all flex items-center gap-2 ${subTab === "batch" ? "bg-white text-zinc-900 border border-zinc-200/50 shadow-sm" : "text-zinc-500 hover:text-zinc-900"}`}
         >
           <Search size={14} /> Batch Grades
         </button>
@@ -278,7 +278,7 @@ export default function GradesSection() {
                     <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight leading-none mb-2">
                       Template Generator
                     </h3>
-                    <p className="text-zinc-400 text-[10px] font-semibold uppercase tracking-[0.14em]">
+                    <p className="text-zinc-400 text-[10px] font-semibold tracking-[0.14em]">
                       Provision specialized Excel sheets
                     </p>
                   </div>
@@ -286,7 +286,7 @@ export default function GradesSection() {
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                    <label className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 ml-1">
                       Branch
                     </label>
                     <select
@@ -297,7 +297,7 @@ export default function GradesSection() {
                           branch: e.target.value,
                         })
                       }
-                      className="w-full h-14 px-6 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-[0.14em] text-zinc-600 appearance-none"
+                      className="w-full h-14 px-6 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs tracking-[0.14em] text-zinc-600 appearance-none"
                     >
                       <option>CSE</option>
                       <option>ECE</option>
@@ -309,7 +309,7 @@ export default function GradesSection() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                    <label className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 ml-1">
                       Academic Year
                     </label>
                     <select
@@ -320,7 +320,7 @@ export default function GradesSection() {
                           year: e.target.value,
                         })
                       }
-                      className="w-full h-14 px-6 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-[0.14em] text-zinc-600 appearance-none"
+                      className="w-full h-14 px-6 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs tracking-[0.14em] text-zinc-600 appearance-none"
                     >
                       <option>E1</option>
                       <option>E2</option>
@@ -329,7 +329,7 @@ export default function GradesSection() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                    <label className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 ml-1">
                       Semester
                     </label>
                     <select
@@ -340,7 +340,7 @@ export default function GradesSection() {
                           semesterId: e.target.value,
                         })
                       }
-                      className="w-full h-14 px-6 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-[0.14em] text-zinc-600 appearance-none"
+                      className="w-full h-14 px-6 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs tracking-[0.14em] text-zinc-600 appearance-none"
                     >
                       {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                         <option key={s} value={`SEM-${s}`}>
@@ -350,7 +350,7 @@ export default function GradesSection() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                    <label className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 ml-1">
                       Subject (Optional)
                     </label>
                     <select
@@ -361,7 +361,7 @@ export default function GradesSection() {
                           subjectCode: e.target.value,
                         })
                       }
-                      className="w-full h-14 px-6 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-[0.14em] text-zinc-600 appearance-none"
+                      className="w-full h-14 px-6 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs tracking-[0.14em] text-zinc-600 appearance-none"
                     >
                       <option value="">All Subjects</option>
                       {templateSubjects.map((s) => (
@@ -372,12 +372,12 @@ export default function GradesSection() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                    <label className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 ml-1">
                       Batch (e.g. O21)
                     </label>
                     <input
                       type="text"
-                      placeholder="OPTIONAL"
+                      placeholder="Optional"
                       value={templateFilters.batch}
                       onChange={(e) =>
                         setTemplateFilters({
@@ -385,7 +385,7 @@ export default function GradesSection() {
                           batch: e.target.value,
                         })
                       }
-                      className="w-full h-14 px-6 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs uppercase tracking-[0.14em] text-zinc-600 shadow-none"
+                      className="w-full h-14 px-6 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 outline-none transition-all font-bold text-xs tracking-[0.14em] text-zinc-600 shadow-none"
                     />
                   </div>
                 </div>
@@ -403,7 +403,7 @@ export default function GradesSection() {
                 <button
                   onClick={handleDownloadTemplate}
                   disabled={loading}
-                  className="w-full bg-zinc-900 text-white h-16 rounded-xl font-semibold uppercase tracking-[0.14em] text-xs hover:bg-zinc-800 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50"
+                  className="w-full bg-zinc-900 text-white h-16 rounded-xl font-semibold tracking-[0.14em] text-xs hover:bg-zinc-800 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50"
                 >
                   {loading ? (
                     <Spinner size="sm" className="brightness-200" />
@@ -442,10 +442,10 @@ export default function GradesSection() {
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between px-1">
-                    <h4 className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.14em]">
+                    <h4 className="text-[9px] font-bold text-zinc-400 tracking-[0.14em]">
                       Ingestion Protocol
                     </h4>
-                    <span className="text-[9px] font-bold text-zinc-900 uppercase tracking-[0.14em] flex items-center gap-1.5">
+                    <span className="text-[9px] font-bold text-zinc-900 tracking-[0.14em] flex items-center gap-1.5">
                       <Zap size={10} /> Live Validation
                     </span>
                   </div>
@@ -477,7 +477,7 @@ export default function GradesSection() {
                 <button
                   onClick={handleFileUpload}
                   disabled={!uploadFile || uploading}
-                  className="w-full h-12 bg-zinc-900 text-white rounded-xl font-bold uppercase tracking-[0.14em] text-[10px] hover:bg-zinc-800 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50"
+                  className="w-full h-12 bg-zinc-900 text-white rounded-xl font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50"
                 >
                   {uploading ? (
                     <Spinner size="sm" className="brightness-200" />
@@ -495,7 +495,7 @@ export default function GradesSection() {
               <div className="bg-white rounded-xl border border-zinc-100 p-8 flex flex-col md:flex-row items-center gap-6">
                 <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-6 w-full text-zinc-900 font-semibold text-sm">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                    <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
                       Branch
                     </label>
                     <div className="relative group">
@@ -507,7 +507,7 @@ export default function GradesSection() {
                             branch: e.target.value,
                           })
                         }
-                        className="w-full h-11 pl-5 pr-10 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-all font-bold text-[11px] uppercase tracking-[0.14em] text-zinc-600 cursor-pointer appearance-none"
+                        className="w-full h-11 pl-5 pr-10 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-all font-bold text-[11px] tracking-[0.14em] text-zinc-600 cursor-pointer appearance-none"
                       >
                         <option>CSE</option>
                         <option>ECE</option>
@@ -524,7 +524,7 @@ export default function GradesSection() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                    <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
                       Academic Year
                     </label>
                     <div className="relative group">
@@ -536,7 +536,7 @@ export default function GradesSection() {
                             year: e.target.value,
                           })
                         }
-                        className="w-full h-11 pl-5 pr-10 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-all font-bold text-[11px] uppercase tracking-[0.14em] text-zinc-600 cursor-pointer appearance-none"
+                        className="w-full h-11 pl-5 pr-10 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-all font-bold text-[11px] tracking-[0.14em] text-zinc-600 cursor-pointer appearance-none"
                       >
                         <option>E1</option>
                         <option>E2</option>
@@ -550,7 +550,7 @@ export default function GradesSection() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                    <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
                       Semester
                     </label>
                     <div className="relative group">
@@ -562,7 +562,7 @@ export default function GradesSection() {
                             semesterId: e.target.value,
                           })
                         }
-                        className="w-full h-11 pl-5 pr-10 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-all font-bold text-[11px] uppercase tracking-[0.14em] text-zinc-600 cursor-pointer appearance-none"
+                        className="w-full h-11 pl-5 pr-10 bg-zinc-50 border border-zinc-100 rounded-xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-all font-bold text-[11px] tracking-[0.14em] text-zinc-600 cursor-pointer appearance-none"
                       >
                         {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                           <option key={s}>SEM-{s}</option>
@@ -575,7 +575,7 @@ export default function GradesSection() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                    <label className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 ml-1">
                       Target
                     </label>
                     <div
@@ -594,7 +594,7 @@ export default function GradesSection() {
                           className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${batchFilters.failedOnly ? "right-1" : "left-1"}`}
                         />
                       </div>
-                      <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                      <span className="text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
                         Remedial Only
                       </span>
                     </div>
@@ -603,7 +603,7 @@ export default function GradesSection() {
                 <button
                   onClick={() => fetchBatchGrades()}
                   disabled={loading}
-                  className="h-11 px-8 bg-zinc-900 text-white rounded-xl font-bold uppercase tracking-[0.14em] text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2.5"
+                  className="h-11 px-8 bg-zinc-900 text-white rounded-xl font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2.5"
                 >
                   {loading ? (
                     <Spinner size="sm" className="brightness-200" />
@@ -674,7 +674,7 @@ export default function GradesSection() {
                                 <stat.icon size={24} />
                               </div>
                               <div>
-                                <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.25em] leading-none mb-2.5">
+                                <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.25em] leading-none mb-2.5">
                                   {stat.label}
                                 </p>
                                 <p className="text-3xl font-semibold text-zinc-900 leading-none tracking-tighter">
@@ -688,7 +688,7 @@ export default function GradesSection() {
                         <div className="lg:col-span-2 bg-white rounded-xl border border-zinc-100 p-10 transition-all space-y-10">
                           <div className="flex justify-between items-start">
                             <div className="space-y-1.5">
-                              <h4 className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.25em] leading-none">
+                              <h4 className="text-[10px] font-semibold text-zinc-400 tracking-[0.25em] leading-none">
                                 Spread Spectrum
                               </h4>
                               <p className="text-xl font-semibold text-zinc-900 tracking-tight">
@@ -739,7 +739,7 @@ export default function GradesSection() {
                                     fontWeight: 900,
                                     color: "#0f172a",
                                     fontSize: "14px",
-                                    textTransform: "uppercase",
+                                    textTransform: "",
                                   }}
                                 />
                                 <Bar
@@ -757,7 +757,7 @@ export default function GradesSection() {
                         <div className="bg-white rounded-xl border border-zinc-100 p-10 transition-all space-y-10 flex flex-col">
                           <div className="flex justify-between items-start">
                             <div className="space-y-1.5">
-                              <h4 className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.25em] leading-none">
+                              <h4 className="text-[10px] font-semibold text-zinc-400 tracking-[0.25em] leading-none">
                                 Status Ratio
                               </h4>
                               <p className="text-xl font-semibold text-zinc-900 tracking-tight">
@@ -805,14 +805,14 @@ export default function GradesSection() {
                                     paddingTop: "40px",
                                     fontSize: "11px",
                                     fontWeight: 900,
-                                    textTransform: "uppercase",
+                                    textTransform: "",
                                     letterSpacing: "0.2em",
                                   }}
                                 />
                               </PieChart>
                             </ResponsiveContainer>
                             <div className="absolute top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none mt-[-10px]">
-                              <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.3em] leading-none mb-3 opacity-70">
+                              <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.3em] leading-none mb-3 opacity-70">
                                 Passing
                               </p>
                               <p className="text-4xl font-semibold text-zinc-900 leading-none tracking-tighter">
@@ -826,7 +826,7 @@ export default function GradesSection() {
                       <div className="space-y-6">
                         <div className="flex items-center gap-3 ml-6">
                           <div className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
-                          <h4 className="font-semibold text-zinc-900 uppercase tracking-[0.3em] text-[10px]">
+                          <h4 className="font-semibold text-zinc-900 tracking-[0.3em] text-[10px]">
                             Detailed Cryptographic Trace
                           </h4>
                         </div>
@@ -834,16 +834,16 @@ export default function GradesSection() {
                           <table className="w-full text-left">
                             <thead>
                               <tr className="bg-zinc-50 border-b border-zinc-100">
-                                <th className="px-10 py-7 text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-400 leading-none">
+                                <th className="px-10 py-7 text-[10px] font-semibold tracking-[0.3em] text-zinc-400 leading-none">
                                   Identity Token
                                 </th>
-                                <th className="px-10 py-7 text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-400 leading-none">
+                                <th className="px-10 py-7 text-[10px] font-semibold tracking-[0.3em] text-zinc-400 leading-none">
                                   Curriculum ID
                                 </th>
-                                <th className="px-10 py-7 text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-400 leading-none">
+                                <th className="px-10 py-7 text-[10px] font-semibold tracking-[0.3em] text-zinc-400 leading-none">
                                   Term phase
                                 </th>
-                                <th className="px-10 py-7 text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-400 text-right leading-none">
+                                <th className="px-10 py-7 text-[10px] font-semibold tracking-[0.3em] text-zinc-400 text-right leading-none">
                                   Metric Value
                                 </th>
                               </tr>
@@ -863,7 +863,7 @@ export default function GradesSection() {
                                       {grade.subjectId}
                                     </td>
                                     <td className="px-10 py-7">
-                                      <span className="px-4 py-1.5 bg-zinc-100 rounded-full text-[10px] font-semibold text-zinc-500 uppercase tracking-[0.15em] border border-zinc-200/50">
+                                      <span className="px-4 py-1.5 bg-zinc-100 rounded-full text-[10px] font-semibold text-zinc-500 tracking-[0.15em] border border-zinc-200/50">
                                         {grade.semesterId}
                                       </span>
                                     </td>

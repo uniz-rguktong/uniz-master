@@ -71,7 +71,7 @@ export function UnizLogo({
         </p>
         <p
           className={cn(
-            "font-semibold uppercase tracking-[0.2em] text-zinc-400",
+            "font-semibold tracking-[0.2em] text-zinc-400",
             large ? "mt-1.5 text-[10px]" : "mt-1 text-[9px]",
           )}
         >

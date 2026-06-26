@@ -1,3 +1,4 @@
+import { formatStatus, formatDisplayText } from "@/utils/displayText";
 import { useState, useEffect } from "react";
 import {
   Plus,
@@ -377,7 +378,7 @@ export default function SemesterRegistrationSection({
                     <Clock size={28} />
                   </div>
                   <span
-                    className={`px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-[0.14em] border ${
+                    className={`px-4 py-1.5 rounded-full text-[9px] font-semibold tracking-[0.14em] border ${
                       sem.status === "REGISTRATION_OPEN"
                         ? "bg-emerald-50 text-emerald-600 border-emerald-100"
                         : sem.status === "DEAN_REVIEW"
@@ -385,17 +386,17 @@ export default function SemesterRegistrationSection({
                           : "bg-zinc-50 text-zinc-400 border-zinc-100"
                     }`}
                   >
-                    {sem.status.replace("_", " ")}
+                    {formatStatus(sem.status)}
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-4 group-hover:text-zinc-900 transition-colors uppercase">
+                <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight mb-4 group-hover:text-zinc-900 transition-colors ">
                   {sem.name}
                 </h3>
 
                 <div className="flex items-center gap-6 mb-10">
                   <div>
-                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.14em] mb-1">
+                    <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
                       Registrations
                     </p>
                     <p className="text-xl font-semibold text-zinc-900">
@@ -403,7 +404,7 @@ export default function SemesterRegistrationSection({
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.14em] mb-1">
+                    <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
                       Created
                     </p>
                     <p className="text-sm font-bold text-zinc-600">
@@ -480,8 +481,8 @@ export default function SemesterRegistrationSection({
                   <ChevronRight className="rotate-180" size={24} />
                 </button>
                 <div>
-                  <p className="text-[10px] font-bold text-zinc-900 uppercase tracking-[0.14em] mb-1 opacity-70">
-                    Rollout Review • {branchFilter.toUpperCase()}
+                  <p className="text-[10px] font-bold text-zinc-900 tracking-[0.14em] mb-1 opacity-70">
+                    Rollout Review • {branchFilter === "all" ? "All" : formatDisplayText(branchFilter)}
                   </p>
                   <h1 className="text-3xl font-semibold text-zinc-900 tracking-tight">
                     {selectedSem.name}
@@ -549,7 +550,7 @@ export default function SemesterRegistrationSection({
                 <select
                   value={yearFilter}
                   onChange={(e) => setYearFilter(e.target.value)}
-                  className="bg-white border border-zinc-100 rounded-full px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500"
+                  className="bg-white border border-zinc-100 rounded-full px-4 py-2 text-[10px] font-semibold tracking-[0.14em] text-zinc-500"
                 >
                   <option value="all">Every Year</option>
                   {["E1", "E2", "E3", "E4"].map((y) => (
@@ -562,7 +563,7 @@ export default function SemesterRegistrationSection({
                   <select
                     value={branchFilter}
                     onChange={(e) => setBranchFilter(e.target.value)}
-                    className="bg-white border border-zinc-100 rounded-full px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500"
+                    className="bg-white border border-zinc-100 rounded-full px-4 py-2 text-[10px] font-semibold tracking-[0.14em] text-zinc-500"
                   >
                     <option value="all">Every Branch</option>
                     {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM"].map((b) => (
@@ -579,7 +580,7 @@ export default function SemesterRegistrationSection({
               <div className="bg-white rounded-xl border border-zinc-100 overflow-hidden shadow-none">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="border-b border-zinc-50 bg-zinc-50/30 font-semibold uppercase tracking-[0.14em] text-[10px] text-zinc-400">
+                    <tr className="border-b border-zinc-50 bg-zinc-50/30 font-semibold tracking-[0.14em] text-[10px] text-zinc-400">
                       <th className="px-8 py-6">Subject</th>
                       <th className="px-8 py-6 text-right">Actions</th>
                     </tr>
@@ -632,7 +633,7 @@ export default function SemesterRegistrationSection({
               <div className="bg-white rounded-xl border border-zinc-100 overflow-hidden">
                 <table className="w-full text-left font-bold">
                   <thead>
-                    <tr className="border-b border-zinc-50 bg-zinc-50/30 text-[10px] text-zinc-400 uppercase tracking-[0.14em]">
+                    <tr className="border-b border-zinc-50 bg-zinc-50/30 text-[10px] text-zinc-400 tracking-[0.14em]">
                       <th className="px-8 py-6">Student</th>
                       <th className="px-8 py-6">Subject</th>
                       <th className="px-8 py-6">Status</th>

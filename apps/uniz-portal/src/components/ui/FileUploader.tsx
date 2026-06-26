@@ -106,7 +106,7 @@ export function FileUploader({
         <div className="flex items-center gap-3">
           {isUploading && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-100 animate-in fade-in slide-in-from-right-2">
-              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-[0.14em]">
+              <span className="text-[10px] font-bold text-emerald-600 tracking-[0.14em]">
                 Uploading {typeof progress === "number" ? `${progress}%` : ""}
               </span>
               <Loader2 className="h-3.5 w-3.5 text-emerald-500 animate-spin" />
@@ -114,7 +114,7 @@ export function FileUploader({
           )}
           {isSuccess && !isUploading && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500 rounded-lg shadow-sm animate-in zoom-in-95">
-              <span className="text-[10px] font-bold text-white uppercase tracking-[0.14em]">
+              <span className="text-[10px] font-bold text-white tracking-[0.14em]">
                 Success
               </span>
               <CheckCircle2 className="h-3.5 w-3.5 text-white" />
@@ -122,7 +122,7 @@ export function FileUploader({
           )}
           {isError && !isUploading && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500 rounded-lg shadow-sm animate-in head-shake">
-              <span className="text-[10px] font-bold text-white uppercase tracking-[0.14em]">
+              <span className="text-[10px] font-bold text-white tracking-[0.14em]">
                 Failed
               </span>
               <X className="h-3.5 w-3.5 text-white" />
@@ -158,7 +158,7 @@ export function FileUploader({
             <p className="text-sm font-bold text-zinc-900 tracking-tight">
               Click to select
             </p>
-            <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-[0.14em] mt-1">
+            <p className="text-[11px] text-zinc-400 font-bold tracking-[0.14em] mt-1">
               or drag and drop file here
             </p>
           </div>
@@ -208,7 +208,7 @@ export function FileUploader({
             </div>
           </div>
           {fileName && (
-            <div className="mt-3 flex items-center gap-2 text-[11px] text-zinc-400 font-bold uppercase tracking-[0.14em]">
+            <div className="mt-3 flex items-center gap-2 text-[11px] text-zinc-400 font-bold tracking-[0.14em]">
               <span className="truncate">{fileName}</span>
               <button
                 onClick={handleRemove}

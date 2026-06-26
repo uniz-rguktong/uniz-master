@@ -253,7 +253,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 onChange={(e) => setBranch(e.target.value)}
                 className={adminSelectClass}
               >
-                <option value="ALL">ALL BRANCHES</option>
+                <option value="ALL">All branches</option>
                 {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
                   (b) => (
                     <option key={b} value={b}>
@@ -277,7 +277,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 onChange={(e) => setYear(e.target.value)}
                 className={adminSelectClass}
               >
-                <option value="ALL">ALL YEARS</option>
+                <option value="ALL">All years</option>
                 {["E1", "E2", "E3", "E4"].map((y) => (
                   <option key={y} value={y}>
                     {y}
@@ -320,7 +320,7 @@ export default function UploadSection({ type }: { type: UploadType }) {
                 onChange={(e) => setBatch(e.target.value)}
                 className={adminSelectClass}
               >
-                <option value="ALL">ALL BATCHES</option>
+                <option value="ALL">All batches</option>
                 {availableBatches.map((b) => (
                   <option key={b} value={b}>
                     {b}

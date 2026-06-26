@@ -117,7 +117,7 @@ export const InstallPWA = () => {
                 <h3 className="unifrakturcook-bold text-xl text-zinc-800 tracking-tight leading-none">
                   uniZ
                 </h3>
-                <span className="text-[9px] font-bold text-zinc-900 bg-zinc-50 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                <span className="text-[9px] font-bold text-zinc-900 bg-zinc-50 px-1.5 py-0.5 rounded tracking-wider">
                   App
                 </span>
               </div>

@@ -118,7 +118,7 @@ const AttendanceIllustration = () => (
       fontWeight="800"
       fontFamily="system-ui"
     >
-      ACTIVE
+      Active
     </text>
 
     {/* Bar rows with internal motion */}
@@ -276,7 +276,7 @@ const GradeIllustration = () => (
       {[
         { val: "9.24", lab: "SGPA", highlight: true },
         { val: "8.98", lab: "CGPA", highlight: false },
-        { val: "#04", lab: "RANK", highlight: false },
+        { val: "#04", lab: "Rank", highlight: false },
       ].map((m, i) => (
         <g key={i} transform={`translate(${i * 68}, 0)`}>
           <rect
@@ -793,7 +793,7 @@ export const CalcomHero = () => {
 
               <div className="flex flex-col gap-2 p-6 pt-5">
                 <div
-                  className={`inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full border text-[9.5px] font-semibold tracking-[0.14em] uppercase transition-colors duration-500 ${f.accent}`}
+                  className={`inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full border text-[9.5px] font-semibold tracking-[0.14em] transition-colors duration-500 ${f.accent}`}
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full ${f.dot} animate-pulse`}

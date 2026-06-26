@@ -226,7 +226,7 @@ export function NotificationPanel() {
                   <span className="text-lg font-semibold leading-none">
                     {item.date.split("-")[0]}
                   </span>
-                  <span className="text-[10px] font-bold uppercase">
+                  <span className="text-[10px] font-bold ">
                     {new Date(
                       item.date.split("-").reverse().join("-"),
                     ).toLocaleString("default", { month: "short" })}
@@ -239,7 +239,7 @@ export function NotificationPanel() {
                   <h4 className="font-bold text-zinc-800 group-hover:text-zinc-900 transition-colors line-clamp-2 leading-tight mb-2">
                     {item.title}
                   </h4>
-                  <div className="flex items-center gap-2 text-xs text-zinc-400 font-bold uppercase tracking-wider">
+                  <div className="flex items-center gap-2 text-xs text-zinc-400 font-bold tracking-wider">
                     <span>Read More</span>
                     <ChevronRight
                       size={12}
@@ -278,7 +278,7 @@ export function NotificationPanel() {
           <button
             onClick={() => setActiveTab("tenders")}
             className={cn(
-              "flex-1 py-3 text-sm font-bold uppercase tracking-wider transition-colors border-b-2",
+              "flex-1 py-3 text-sm font-bold tracking-wider transition-colors border-b-2",
               activeTab === "tenders"
                 ? "border-zinc-900 text-zinc-900 bg-zinc-900/5"
                 : "border-transparent text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50",
@@ -290,7 +290,7 @@ export function NotificationPanel() {
           <button
             onClick={() => setActiveTab("careers")}
             className={cn(
-              "flex-1 py-3 text-sm font-bold uppercase tracking-wider transition-colors border-b-2",
+              "flex-1 py-3 text-sm font-bold tracking-wider transition-colors border-b-2",
               activeTab === "careers"
                 ? "border-zinc-900 text-zinc-900 bg-zinc-50"
                 : "border-transparent text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50",

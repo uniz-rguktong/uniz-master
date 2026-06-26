@@ -71,7 +71,7 @@ export function HeroAndTitle({
         `}</style>
         {/* Left 'Notifications' Block */}
         <div className="relative z-20 flex items-center justify-center bg-[#800000] text-white px-4 sm:px-8 h-full shadow-[2px_0_8px_rgba(0,0,0,0.15)]">
-          <span className="text-[13px] sm:text-[15px] font-bold tracking-wider uppercase">
+          <span className="text-[13px] sm:text-[15px] font-bold tracking-wider ">
             Announcements
           </span>
         </div>
@@ -92,7 +92,7 @@ export function HeroAndTitle({
                 className="group inline-flex items-center transition-colors duration-300"
               >
                 {/* Prefix NEW */}
-                <span className="text-[12px] sm:text-[13px] tracking-widest font-black uppercase rgb-animate mr-2">
+                <span className="text-[12px] sm:text-[13px] tracking-widest font-black rgb-animate mr-2">
                   NEW
                 </span>
 
@@ -101,7 +101,7 @@ export function HeroAndTitle({
                 </span>
 
                 {/* Suffix NEW */}
-                <span className="text-[12px] sm:text-[13px] tracking-widest font-black uppercase rgb-animate ml-2">
+                <span className="text-[12px] sm:text-[13px] tracking-widest font-black rgb-animate ml-2">
                   NEW
                 </span>
               </a>

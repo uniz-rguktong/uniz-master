@@ -98,7 +98,7 @@ export function Stats({ stats }: { stats: readonly any[] }) {
                   <div className="w-8 h-px bg-white/20 mb-3 group-hover:w-12 group-hover:bg-amber-400 transition-all duration-300" />
 
                   {/* Label */}
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 group-hover:text-white/80 transition-colors duration-300 leading-relaxed">
+                  <p className="text-[10px] font-bold tracking-widest text-white/50 group-hover:text-white/80 transition-colors duration-300 leading-relaxed">
                     {stat.label}
                   </p>
                 </div>
