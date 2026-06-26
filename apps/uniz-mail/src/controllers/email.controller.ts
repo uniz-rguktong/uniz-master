@@ -14,6 +14,7 @@ import {
   sendProfileUpdateNotification,
   sendAttendanceReportEmail,
   sendGrievanceSubmissionNotification,
+  sendGrievanceResolvedNotification,
 } from "../services/email.service";
 
 export const sendEmail = async (req: Request, res: Response) => {
@@ -128,6 +129,13 @@ export const sendEmail = async (req: Request, res: Response) => {
           to,
           data.category,
           data.ticketId,
+        );
+        break;
+      case "grievance_resolved":
+        success = await sendGrievanceResolvedNotification(
+          to,
+          data.studentName,
+          data.category,
         );
         break;
       default:
