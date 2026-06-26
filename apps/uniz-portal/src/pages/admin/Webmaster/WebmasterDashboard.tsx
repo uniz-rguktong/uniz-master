@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   Users,
   GraduationCap,
@@ -21,6 +21,7 @@ import SecuritySection from "./SecuritySection";
 import WebmasterOverview from "./WebmasterOverview";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
+import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
 import StudentDetails from "./StudentDetails";
 import FacultyManagement from "./FacultyManagement";
 import UploadSection from "./UploadSection";
@@ -33,26 +34,6 @@ import SystemLogsSection from "./SystemLogsSection";
 
 export default function WebmasterDashboard() {
   useIsAuth();
-  const [activeTab, setActiveTab] = useState<
-    | "dashboard"
-    | "student"
-    | "student_bulk"
-    | "academic_mgmt"
-    | "attendance"
-    | "grades"
-    | "banners"
-    | "updates"
-    | "push_alerts"
-    | "faculty_mgmt"
-    | "system_logs"
-    | "subjects"
-    | "semester_registration"
-    | "security"
-    | "grievances"
-    | "outpass"
-    | "outings"
-    | "website_updates"
-  >("dashboard");
 
   const username = (localStorage.getItem("username") || "Webmaster").replace(
     /"/g,
@@ -62,6 +43,36 @@ export default function WebmasterDashboard() {
   const role = (localStorage.getItem("role") || "webmaster")
     .toLowerCase()
     .replace(/"/g, "");
+
+  const allowedTabs = useMemo(
+    () =>
+      [
+        "dashboard",
+        "student",
+        ...(role === "webmaster" || role === "coe" ? ["student_bulk"] : []),
+        ...(role === "swo"
+          ? ["grievances", "outpass", "outings"]
+          : []),
+        ...(role === "webmaster" || role === "coe"
+          ? [
+              "attendance",
+              "grades",
+              "subjects",
+              "semester_registration",
+              "faculty_mgmt",
+              "system_logs",
+            ]
+          : []),
+        "banners",
+        "updates",
+        "website_updates",
+        "push_alerts",
+        "security",
+      ] as const,
+    [role],
+  );
+
+  const { activeTab, setActiveTab } = useAdminSectionRoute(allowedTabs);
 
   const navGroups = [
     {
@@ -209,7 +220,7 @@ export default function WebmasterDashboard() {
     <AdminShell
       navGroups={navGroups}
       activeTab={activeTab}
-      onTabChange={(id) => setActiveTab(id as any)}
+      onTabChange={(id) => setActiveTab(id)}
       onLogout={logout}
       username={username}
       collapseBranding="hide"

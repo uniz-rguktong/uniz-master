@@ -399,15 +399,7 @@ export default function App() {
             }
           />
 
-          {/* Admin Protected Routes */}
-          <Route
-            path="/admin"
-            element={
-              <PageTransition>
-                <Admin />
-              </PageTransition>
-            }
-          />
+          {/* Admin Protected Routes — legacy pages first, then shell catch-all */}
           <Route
             path="/admin/addstudents"
             element={
@@ -527,6 +519,16 @@ export default function App() {
             element={
               <PageTransition>
                 <AddFaculty />
+              </PageTransition>
+            }
+          />
+
+          {/* Admin shell sections (webmaster, dean, director, etc.) */}
+          <Route
+            path="/admin/*"
+            element={
+              <PageTransition>
+                <Admin />
               </PageTransition>
             }
           />

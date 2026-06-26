@@ -14,11 +14,11 @@ import {
   REQUEST_OTP_EMAIL_ENDPOINT,
 } from "../../api/endpoints";
 import { apiClient } from "../../api/apiClient";
+import { parseJwt } from "../../utils/security";
 import {
   User,
   Lock,
   ArrowLeft,
-  ChevronLeft,
   CheckCircle2,
 } from "lucide-react";
 import LoginScreen from "../../components/ui/login-1";
@@ -184,17 +184,17 @@ function PasswordStrength({ password }: { password: string }) {
 
 // ─── Shared login styles ──────────────────────────────────────
 const loginLabelClass =
-  "text-[13px] font-medium text-zinc-500 normal-case tracking-normal mb-2";
+  "text-[12px] font-medium text-zinc-600 normal-case tracking-normal mb-1.5";
 
 const loginInputClass =
-  "!h-11 !rounded-lg !border-zinc-200 !bg-white !text-[15px] !font-normal placeholder:!text-zinc-300 focus:!border-zinc-950 focus:!ring-1 focus:!ring-zinc-950/20 !shadow-none hover:!border-zinc-300 transition-colors";
+  "login-field !h-11 !rounded-xl !border-zinc-200 !bg-zinc-50/50 !text-[15px] !font-normal placeholder:!text-zinc-400 focus:!bg-white focus:!border-zinc-900 focus:!ring-2 focus:!ring-zinc-900/5 !shadow-none hover:!border-zinc-300 transition-all";
 
 const loginInputWithIconClass = `${loginInputClass} !pl-10 !pr-3.5`;
 
 const loginInputPasswordClass = `${loginInputClass} !pl-10 !pr-10`;
 
 const loginBtnClass =
-  "!rounded-lg w-full h-11 bg-zinc-950 hover:bg-zinc-800 text-white text-[15px] font-semibold disabled:opacity-40 disabled:cursor-not-allowed relative overflow-hidden group transition-colors duration-200 !hover:translate-y-0";
+  "!rounded-xl w-full h-11 bg-zinc-950 hover:bg-zinc-800 text-white text-[15px] font-semibold disabled:opacity-40 disabled:cursor-not-allowed relative overflow-hidden group transition-all duration-200 !hover:translate-y-0 shadow-[0_1px_2px_rgba(10,10,10,0.12)]";
 
 const loginBtnShimmer =
   "pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]";
@@ -237,7 +237,7 @@ function TurnstileWidget({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center relative min-h-[68px] py-1">
+    <div className="flex flex-col items-center justify-center relative min-h-[72px] rounded-xl border border-zinc-100 bg-zinc-50/60 px-3 py-2.5">
       <AnimatePresence>
         {!isTurnstileLoaded && (
           <motion.div
@@ -435,7 +435,11 @@ export default function Signin({ type }: SigninProps) {
         localStorage.removeItem("faculty_token");
         localStorage.setItem("admin_token", token);
         localStorage.setItem("username", username.trim());
-        localStorage.setItem("admin_role", (data as any).role || "admin");
+        const jwtRole = token ? parseJwt(token)?.role : null;
+        localStorage.setItem(
+          "admin_role",
+          (jwtRole || (data as any).role || "admin").toLowerCase(),
+        );
 
         setAuth({ is_authenticated: true, type: "admin" });
         setAdmin(username.trim());
@@ -677,18 +681,10 @@ export default function Signin({ type }: SigninProps) {
         : "New password";
 
   return (
-    <div className="min-h-screen bg-white relative">
-      <Button
-        variant="ghost"
-        className="absolute top-5 left-4 md:top-7 md:left-7 z-50 flex items-center gap-1 text-zinc-400 hover:text-zinc-950 !rounded-lg px-3 py-2 text-sm font-medium transition-colors !hover:translate-y-0"
-        onClick={() => navigate("/")}
-      >
-        <ChevronLeft className="w-4 h-4" />
-        <span className="hidden sm:inline">Back</span>
-      </Button>
-
+    <div className="min-h-screen bg-[#fafafa]">
       <LoginScreen
         isLogin={step === "signin"}
+        onBack={() => navigate("/")}
         title={stepTitle}
         subtitle={stepSubtitle}
         heroTitle={undefined}
@@ -696,10 +692,10 @@ export default function Signin({ type }: SigninProps) {
         role={type}
         stepKey={step}
       >
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* ─── Sign In Step ─────────────────────────── */}
           {step === "signin" && (
-            <div className="space-y-5">
+            <div className="space-y-4">
               <Input
                 label={
                   type === "student"
@@ -725,7 +721,7 @@ export default function Signin({ type }: SigninProps) {
                 autoComplete="username"
                 className={loginInputWithIconClass}
               />
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Input
                   label="Password"
                   labelClassName={loginLabelClass}
@@ -737,10 +733,10 @@ export default function Signin({ type }: SigninProps) {
                   autoComplete="current-password"
                   className={loginInputPasswordClass}
                 />
-                <div className="flex justify-end">
+                <div className="flex justify-end pt-1">
                   <button
                     type="button"
-                    className="text-[13px] text-zinc-400 hover:text-zinc-950 font-medium transition-colors"
+                    className="text-[12px] text-zinc-500 hover:text-zinc-900 font-medium transition-colors"
                     onClick={() => setStep("forgot")}
                   >
                     Forgot password?
@@ -771,7 +767,7 @@ export default function Signin({ type }: SigninProps) {
 
           {/* ─── Forgot Password Step ─────────────────── */}
           {step === "forgot" && (
-            <div className="space-y-5">
+            <div className="space-y-4">
               <Input
                 label="University ID"
                 labelClassName={loginLabelClass}
@@ -819,7 +815,7 @@ export default function Signin({ type }: SigninProps) {
 
           {/* ─── Verify OTP / Reset Password Step ─────── */}
           {step === "verifyOtp" && (
-            <div className="space-y-5">
+            <div className="space-y-4">
               <OtpInput
                 value={otp}
                 onChange={setOtp}

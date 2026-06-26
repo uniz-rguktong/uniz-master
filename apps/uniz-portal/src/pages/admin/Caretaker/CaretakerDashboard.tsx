@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   CheckCircle2,
   RefreshCcw,
@@ -9,14 +9,24 @@ import AdminShell from "@/components/admin/AdminShell";
 import { adminHubCardClass } from "@/components/admin/admin-ui";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
+import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
 import ApproveComp from "../approve-comp";
 import UpdateStatus from "../../../components/UpdateStudentStatus";
 
 export default function CaretakerDashboard() {
   useIsAuth();
-  const [activeTab, setActiveTab] = useState<
-    "dashboard" | "approve_outing" | "approve_outpass" | "status_update"
-  >("dashboard");
+
+  const allowedTabs = useMemo(
+    () =>
+      [
+        "dashboard",
+        "approve_outing",
+        "approve_outpass",
+        "status_update",
+      ] as const,
+    [],
+  );
+  const { activeTab, setActiveTab } = useAdminSectionRoute(allowedTabs);
 
   const username = (localStorage.getItem("username") || "Caretaker").replace(
     /"/g,
@@ -114,7 +124,7 @@ export default function CaretakerDashboard() {
               {navItems.slice(1).map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => setActiveTab(item.id as any)}
+                  onClick={() => setActiveTab(item.id)}
                   className={`${adminHubCardClass} p-5 text-left group flex flex-col justify-between min-h-[150px]`}
                 >
                   <div className="p-3.5 rounded-2xl bg-zinc-50 text-zinc-400 mb-4 inline-block transition-all duration-300">
@@ -140,7 +150,7 @@ export default function CaretakerDashboard() {
     <AdminShell
       navGroups={navGroups}
       activeTab={activeTab}
-      onTabChange={(id) => setActiveTab(id as any)}
+      onTabChange={(id) => setActiveTab(id)}
       onLogout={logout}
       username={username}
       roleLabel={portalLabel}

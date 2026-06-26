@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   Users,
   LayoutDashboard,
@@ -13,6 +13,7 @@ import SecuritySection from "../Webmaster/SecuritySection";
 import WebmasterOverview from "../Webmaster/WebmasterOverview";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
+import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
 import StudentDetails from "../Webmaster/StudentDetails";
 import FacultyManagement from "../Webmaster/FacultyManagement";
 import UploadSection from "../Webmaster/UploadSection";
@@ -28,29 +29,36 @@ import RoleManagement from "../RoleManagement";
 
 export default function DirectorDashboard() {
   useIsAuth();
-  const [activeTab, setActiveTab] = useState<
-    | "dashboard"
-    | "student"
-    | "student_bulk"
-    | "academic_mgmt"
-    | "attendance"
-    | "grades"
-    | "banners"
-    | "updates"
-    | "push_alerts"
-    | "faculty_mgmt"
-    | "system_logs"
-    | "exam_seating"
-    | "security"
-    | "roles"
-    | "subjects"
-    | "status_update"
-  >("dashboard");
 
   const username = (localStorage.getItem("username") || "Director").replace(
     /"/g,
     "",
   );
+
+  const allowedTabs = useMemo(
+    () =>
+      [
+        "dashboard",
+        "student",
+        "student_bulk",
+        "academic_mgmt",
+        "attendance",
+        "grades",
+        "banners",
+        "updates",
+        "push_alerts",
+        "faculty_mgmt",
+        "system_logs",
+        "exam_seating",
+        "security",
+        "roles",
+        "subjects",
+        "status_update",
+      ] as const,
+    [],
+  );
+
+  const { activeTab, setActiveTab } = useAdminSectionRoute(allowedTabs);
 
   const navGroups = [
     {
@@ -124,7 +132,7 @@ export default function DirectorDashboard() {
     <AdminShell
       navGroups={navGroups}
       activeTab={activeTab}
-      onTabChange={(id) => setActiveTab(id as any)}
+      onTabChange={(id) => setActiveTab(id)}
       onLogout={logout}
       username={username}
       enableNavSearch

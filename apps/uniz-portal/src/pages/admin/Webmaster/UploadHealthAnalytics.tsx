@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { TrendingUp, AlertCircle, ChevronDown } from "lucide-react";
 import { cn } from "../../../utils/cn";
-import { ANALYTICS_UPLOAD_HEALTH, ANALYTICS_KEY } from "../../../api/endpoints";
+import { ANALYTICS_UPLOAD_HEALTH, getAnalyticsHeaders } from "../../../api/endpoints";
 
 import { useRecoilState } from "recoil";
 import { uploadHealthAnalyticsAtom } from "../../../store/atoms";
@@ -43,16 +43,8 @@ export default function UploadHealthAnalytics({
 
       try {
         if (!cachedData.fetched) setLoading(true);
-        const token =
-          localStorage.getItem("admin_token") ||
-          localStorage.getItem("faculty_token") ||
-          localStorage.getItem("student_token");
         const res = await fetch(ANALYTICS_UPLOAD_HEALTH, {
-          headers: {
-            "x-api-key": ANALYTICS_KEY,
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          headers: getAnalyticsHeaders(),
         });
         if (!res.ok) throw new Error("Unauthorized or API down");
         const json = await res.json();

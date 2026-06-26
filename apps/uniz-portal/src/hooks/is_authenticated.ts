@@ -37,19 +37,22 @@ export function useIsAuth() {
       if (!stored) return null;
       try {
         const parsed = JSON.parse(stored);
-        return typeof parsed === "string" ? parsed : stored;
-      } catch (e) {
-        return stored;
+        return typeof parsed === "string" ? parsed : stored.replace(/^"|"$/g, "");
+      } catch {
+        return stored.replace(/^"|"$/g, "");
       }
+    };
+
+    const authRedirectTarget = () => {
+      if (location.pathname.startsWith("/admin")) return "/admin/signin";
+      if (location.pathname.startsWith("/student")) return "/student/signin";
+      return "/";
     };
 
     const navigate = navigateRef.current;
     const setAuthFn = setAuthRef.current;
     const currentIsAuth = isAuthRef.current;
 
-    const studentToken = getSafeToken("student_token");
-    const adminToken = getSafeToken("admin_token");
-    const storedUsername = getSafeToken("username");
     const publicPaths = [
       "/",
       "/login",
@@ -66,9 +69,13 @@ export function useIsAuth() {
       setAuthFn({ is_authenticated: false, type: "" });
       if (wasAuth || !publicPaths.includes(location.pathname)) {
         toast.error(`Security Alert: ${reason}`);
-        navigate("/");
+        navigate(authRedirectTarget());
       }
     };
+
+    const studentToken = getSafeToken("student_token");
+    const adminToken = getSafeToken("admin_token");
+    const storedUsername = getSafeToken("username");
 
     if (
       adminToken === "MALFORMED" ||
@@ -102,15 +109,17 @@ export function useIsAuth() {
         "coe",
       ];
       const storedRole = localStorage.getItem("admin_role")?.replace(/"/g, "");
+      const jwtRole = decoded?.role?.toLowerCase();
+      const localRole = storedRole?.toLowerCase();
 
-      // CRITICAL SECURITY CHECK: Prevent LocalStorage tampering (Privilege Escalation)
-      if (decoded?.role && storedRole && decoded.role !== storedRole) {
-        return logoutAndRedirect(
-          "Security Alert: Role mismatch detected (Identity Integrity)",
-        );
+      // Keep localStorage role aligned with the signed JWT (case-insensitive).
+      if (jwtRole && localRole && jwtRole !== localRole) {
+        localStorage.setItem("admin_role", jwtRole);
+      } else if (jwtRole && !localRole) {
+        localStorage.setItem("admin_role", jwtRole);
       }
 
-      const roleToVerify = decoded?.role || storedRole || "admin";
+      const roleToVerify = jwtRole || localRole || "admin";
 
       if (!validAdminRoles.includes(roleToVerify)) {
         return logoutAndRedirect("Access violation: Invalid Role");
@@ -163,9 +172,9 @@ export function useIsAuth() {
         navigate("/student");
       }
     } else {
-      // No tokens
+      // No tokens — send protected routes to the right sign-in, not always home.
       if (!publicPaths.includes(location.pathname)) {
-        navigate("/");
+        navigate(authRedirectTarget());
       }
     }
     // Only re-run when the URL changes - NOT on every isAuth/setAuth change.

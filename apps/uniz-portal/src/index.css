@@ -86,6 +86,19 @@
 }
 
 @layer components {
+  .login-field:-webkit-autofill,
+  .login-field:-webkit-autofill:hover,
+  .login-field:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #fafafa inset !important;
+    -webkit-text-fill-color: #18181b !important;
+    caret-color: #18181b;
+    transition: background-color 9999s ease-out 0s;
+  }
+
+  .login-field:focus:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  }
+
   .uniz-primary-btn {
     @apply h-10 flex items-center justify-center font-medium text-sm rounded-full transition-all duration-200;
     @apply bg-zinc-900 text-white shadow-none ring-offset-2;
