@@ -387,6 +387,8 @@ export const exportStudentsSelective = async (
       "isSuspended",
       "category",
       "campus",
+      "cgpa",
+      "totalBacklogs",
       "createdAt",
     ];
     let exportFields = fields

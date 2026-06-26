@@ -1,4 +1,11 @@
 import { AlertCircle } from "lucide-react";
+import {
+  adminPrimaryButtonClass,
+  adminGhostButtonClass,
+  adminCardClass,
+  adminModalTitleClass,
+} from "./admin/admin-ui";
+import { cn } from "../utils/cn";
 
 interface ConfirmModalProps {
   open: boolean;
@@ -16,40 +23,38 @@ export function ConfirmModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200"
+        className={cn(adminCardClass, "w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200")}
         role="dialog"
         aria-modal="true"
       >
         <div className="p-6">
           <div className="flex flex-col items-center text-center gap-4">
-            <div className="p-3 rounded-full text-red-600">
-              <AlertCircle size={28} />
+            <div className="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100">
+              <AlertCircle size={24} />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                Confirm Action
+              <h3 className={cn(adminModalTitleClass, "text-center")}>
+                Confirm action
               </h3>
-              <p className="text-[14px] font-medium text-slate-500 mt-1.5 leading-relaxed">
+              <p className="text-[13px] font-medium text-zinc-500 mt-2 leading-relaxed">
                 {message}
               </p>
             </div>
           </div>
 
           <div className="flex gap-3 mt-8">
-            <button
-              onClick={onClose}
-              className=" border-2 flex-1 py-2.5 rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold"
-            >
+            <button type="button" onClick={onClose} className={cn(adminGhostButtonClass, "flex-1")}>
               Cancel
             </button>
             <button
+              type="button"
               onClick={() => {
                 onConfirm();
                 onClose();
               }}
-              className="flex-1 py-2.5 rounded-xl bg-navy-900 text-white font-bold shadow-md shadow-navy-100"
+              className={cn(adminPrimaryButtonClass, "flex-1")}
             >
               Confirm
             </button>

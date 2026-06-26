@@ -108,20 +108,20 @@ export const InstallPWA = () => {
             initial={{ width: "100%" }}
             animate={{ width: "0%" }}
             transition={{ duration: 5, ease: "linear" }}
-            className="absolute top-0 left-0 h-[2px] bg-navy-900/40"
+            className="absolute top-0 left-0 h-[2px] bg-zinc-900/40"
           />
 
           <div className="flex items-center justify-between gap-4">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-0.5">
-                <h3 className="unifrakturcook-bold text-xl text-slate-800 tracking-tight leading-none">
+                <h3 className="unifrakturcook-bold text-xl text-zinc-800 tracking-tight leading-none">
                   uniZ
                 </h3>
-                <span className="text-[9px] font-bold text-navy-900 bg-navy-50 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                <span className="text-[9px] font-bold text-zinc-900 bg-zinc-50 px-1.5 py-0.5 rounded uppercase tracking-wider">
                   App
                 </span>
               </div>
-              <h4 className="text-slate-900 font-bold text-[13px] truncate">
+              <h4 className="text-zinc-900 font-bold text-[13px] truncate">
                 Install app to enjoy full services.
               </h4>
             </div>
@@ -129,14 +129,14 @@ export const InstallPWA = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleInstallClick}
-                className="bg-slate-900 hover:bg-black text-white px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+                className="bg-zinc-900 hover:bg-black text-white px-3 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
               >
                 <Download size={13} />
                 Install
               </button>
               <button
                 onClick={handleDismiss}
-                className="p-1 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                className="p-1 rounded-md hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 transition-colors"
               >
                 <X size={16} />
               </button>
@@ -144,8 +144,8 @@ export const InstallPWA = () => {
           </div>
 
           {isIOS && (
-            <div className="mt-3 pt-2 border-t border-slate-100 flex items-center gap-1.5 text-[9px] text-slate-400 font-medium italic">
-              <Share size={10} className="text-navy-900" />
+            <div className="mt-3 pt-2 border-t border-zinc-100 flex items-center gap-1.5 text-[9px] text-zinc-400 font-medium italic">
+              <Share size={10} className="text-zinc-900" />
               <span>Safari: Tap 'Share' then 'Add to Home Screen'</span>
             </div>
           )}

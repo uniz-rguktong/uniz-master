@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   Loader2,
   ChevronRight,
   ChevronDown,
-  Shield,
-  KeyRound,
   Lock,
   UserPlus,
   RefreshCw,
+  Download,
+  X,
+  FileSpreadsheet,
 } from "lucide-react";
 import StudentPerformanceModal from "./StudentPerformanceModal";
 import StudentDashboard from "./StudentDashboard";
@@ -18,91 +19,130 @@ import StudentEditModal from "./StudentEditModal";
 import CohortPromotionModal from "./CohortPromotionModal";
 import { Pagination } from "../../../components/Pagination";
 import { cn } from "../../../utils/cn";
-
+import { SectionHeader } from "../../../components/admin/SectionHeader";
+import { AdminDialog } from "../../../components/admin/AdminDialog";
+import {
+  adminPageWrapClass,
+  adminCardClass,
+  adminLabelClass,
+  adminInputClass,
+  adminSelectClass,
+  adminPrimaryButtonClass,
+  adminGhostButtonClass,
+  adminChipClass,
+  adminNumsClass,
+} from "../../../components/admin/admin-ui";
 import {
   ADMIN_VIEW_STUDENT,
   SEARCH_STUDENTS,
   ADMIN_SUSPEND_STUDENT,
   ADMIN_GLOBAL_RESET_PASS,
   GET_AVAILABLE_BATCHES,
+  ADMIN_STUDENT_EXPORT,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 
-function StudentTableSkeleton() {
+const PAGE_SIZE = 25;
+
+const EXPORT_FIELDS =
+  "username,name,email,gender,phone,fatherName,motherName,fatherOccupation,motherOccupation,fatherEmail,motherEmail,fatherAddress,motherAddress,bloodGroup,dateOfBirth,year,semester,branch,section,batch,roomno,isPresentInCampus,isApplicationPending,isSuspended,category,campus,cgpa,totalBacklogs";
+
+type StudentRow = Record<string, any> & {
+  username: string;
+  attendance_pct?: number | null;
+};
+
+function avgAttendance(summary: Record<string, { percentage?: number }> | undefined) {
+  if (!summary || typeof summary !== "object") return null;
+  const vals = Object.values(summary)
+    .map((s) => s?.percentage)
+    .filter((v): v is number => typeof v === "number");
+  if (!vals.length) return null;
+  return Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10;
+}
+
+function TableSkeleton() {
   return (
-    <div className="w-full animate-pulse px-2">
-      <div className="flex items-center justify-between px-2 mb-6">
-        <div className="h-3 w-48 bg-slate-100 rounded-full"></div>
-      </div>
-      <div className="bg-white rounded-[2rem] border-2 border-slate-50 overflow-hidden mb-10 shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-50 bg-slate-50/30">
-                {["Student", "Credentials", "Status", "Contact"].map((h) => (
-                  <th key={h} className="px-8 py-6">
-                    <div className="h-2 w-16 bg-slate-100 rounded-full"></div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50/50">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((row) => (
-                <tr key={row}>
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-11 h-11 rounded-full bg-slate-50 shrink-0 border border-slate-100"></div>
-                      <div className="space-y-2">
-                        <div className="h-3.5 w-32 bg-slate-100 rounded-full"></div>
-                        <div className="h-2.5 w-20 bg-slate-50 rounded-full"></div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="flex gap-2">
-                      <div className="h-5 w-12 bg-slate-50 rounded-lg border border-slate-100"></div>
-                      <div className="h-5 w-12 bg-slate-50 rounded-lg border border-slate-100"></div>
-                    </div>
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="h-6 w-20 bg-slate-50 rounded-full border border-slate-100"></div>
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="h-3 w-40 bg-slate-100 rounded-full opacity-60"></div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <div className={cn(adminCardClass, "overflow-hidden animate-pulse")}>
+      <div className="h-10 bg-zinc-50 border-b border-zinc-200" />
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className="h-11 border-b border-zinc-100 flex gap-4 px-4 items-center">
+          <div className="h-3 w-16 bg-zinc-100 rounded" />
+          <div className="h-3 w-32 bg-zinc-100 rounded" />
+          <div className="h-3 w-24 bg-zinc-100 rounded flex-1" />
         </div>
-      </div>
+      ))}
     </div>
   );
 }
 
-export default function StudentDetails() {
-  const [searchMode, setSearchMode] = useState<
-    "id" | "filter" | "intelligence"
-  >("id");
-  const [studentId, setStudentId] = useState("O210008");
-  const [loading, setLoading] = useState(false);
+const COLUMNS: { key: string; label: string; className?: string }[] = [
+  { key: "row", label: "#", className: "w-12 text-center" },
+  { key: "username", label: "Student ID", className: "min-w-[100px]" },
+  { key: "name", label: "Name", className: "min-w-[160px]" },
+  { key: "email", label: "Email", className: "min-w-[200px]" },
+  { key: "branch", label: "Branch", className: "w-20" },
+  { key: "year", label: "Year", className: "w-16" },
+  { key: "batch", label: "Batch", className: "w-16" },
+  { key: "section", label: "Sec", className: "w-14" },
+  { key: "cgpa", label: "CGPA", className: "w-16 text-right" },
+  { key: "total_backlogs", label: "BL", className: "w-12 text-center" },
+  { key: "attendance_pct", label: "Att %", className: "w-16 text-right" },
+  { key: "phone_number", label: "Phone", className: "min-w-[110px]" },
+  { key: "gender", label: "Gender", className: "w-16" },
+  { key: "blood_group", label: "Blood", className: "w-14" },
+  { key: "roomno", label: "Room", className: "w-16" },
+  { key: "is_in_campus", label: "Campus", className: "w-20" },
+  { key: "is_suspended", label: "Status", className: "w-20" },
+];
 
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [selectedStudentFullData, setSelectedStudentFullData] =
-    useState<any>(null);
+function cellValue(row: StudentRow, key: string, rowIndex: number) {
+  switch (key) {
+    case "row":
+      return rowIndex;
+    case "cgpa":
+      return row.cgpa != null ? Number(row.cgpa).toFixed(2) : "—";
+    case "total_backlogs":
+      return row.total_backlogs ?? 0;
+    case "attendance_pct":
+      if (row.attendance_pct === undefined) return "…";
+      return row.attendance_pct != null ? `${row.attendance_pct}%` : "—";
+    case "is_in_campus":
+      return row.is_in_campus ? "In" : "Out";
+    case "is_suspended":
+      return row.is_suspended ? "Suspended" : "Active";
+    case "gender":
+    case "blood_group":
+    case "section":
+    case "roomno":
+      return row[key] || "—";
+    default:
+      return row[key] ?? "—";
+  }
+}
+
+export default function StudentDetails() {
+  const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [enriching, setEnriching] = useState(false);
+
+  const [rows, setRows] = useState<StudentRow[]>([]);
+  const [selectedRow, setSelectedRow] = useState<StudentRow | null>(null);
+  const [detailData, setDetailData] = useState<any>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
 
-  // Recommendations State
   const [recommendations, setRecommendations] = useState<any[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Filter Search State
-  const [branch, setBranch] = useState("CSE");
-  const [year, setYear] = useState("E3");
+  const [branch, setBranch] = useState("ALL");
+  const [year, setYear] = useState("ALL");
   const [batch, setBatch] = useState("ALL");
   const [intelligenceFilters, setIntelligenceFilters] = useState({
-    hasRemedials: "all", // "all" | "active" | "cleared"
+    hasRemedials: "all",
     minCgpa: "",
     maxCgpa: "",
     isPresentInCampus: "ALL",
@@ -120,53 +160,122 @@ export default function StudentDetails() {
   const [promotionModalOpen, setPromotionModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<any>(null);
 
-  useEffect(() => {
-    if (searchMode === "id") {
-      fetchStudentById("O210008");
-    } else if (searchMode === "filter" || searchMode === "intelligence") {
-      handleSearchByFilter(1);
-    }
-  }, [searchMode]);
+  const [performanceModalOpen, setPerformanceModalOpen] = useState(false);
+  const [selectedStudentName, setSelectedStudentName] = useState("");
+  const [selectedStudentId, setSelectedStudentId] = useState("");
+  const [performanceData, setPerformanceData] = useState<any>(null);
 
-  // Debounced Recommendations
+  const [resetModalOpen, setResetModalOpen] = useState(false);
+  const [resetTargetUser, setResetTargetUser] = useState("");
+  const [resetPasswordValue, setResetPasswordValue] = useState("");
+
+  const authHeaders = () => ({
+    Authorization: `Bearer ${(localStorage.getItem("admin_token") || "").replace(/"/g, "")}`,
+    "Content-Type": "application/json",
+  });
+
+  const enrichAttendance = useCallback(async (students: StudentRow[]) => {
+    if (!students.length) return;
+    setEnriching(true);
+    const token = localStorage.getItem("admin_token");
+    const results = await Promise.all(
+      students.map(async (s) => {
+        try {
+          const res = await fetch(ADMIN_VIEW_STUDENT(s.username), {
+            headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
+          });
+          const data = await res.json();
+          if (data.success && data.student) {
+            return {
+              ...s,
+              attendance_pct: avgAttendance(data.student.attendance_summary),
+              cgpa: data.student.cgpa ?? s.cgpa,
+              total_backlogs: data.student.total_backlogs ?? s.total_backlogs,
+            };
+          }
+        } catch {
+          /* keep row */
+        }
+        return { ...s, attendance_pct: null };
+      }),
+    );
+    setRows(results);
+    setEnriching(false);
+  }, []);
+
+  const fetchStudents = async (
+    page = 1,
+    overrides?: { query?: string },
+  ) => {
+    const q = overrides?.query ?? query;
+    setLoading(true);
+    setSelectedRow(null);
+    setDrawerOpen(false);
+    try {
+      const res = await fetch(SEARCH_STUDENTS, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({
+          username: q.trim() || undefined,
+          branch,
+          year,
+          batch,
+          ...intelligenceFilters,
+          page,
+          limit: PAGE_SIZE,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const list: StudentRow[] = data.students || [];
+        setRows(list);
+        if (data.pagination) setPagination(data.pagination);
+        if (list.length === 0) toast.info("No students match these filters");
+        else enrichAttendance(list);
+      } else {
+        toast.error(data.msg || data.message || "Search failed");
+        setRows([]);
+      }
+    } catch {
+      toast.error("Error loading students");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (!studentId || studentId.length < 3) {
+    fetchBatches();
+    fetchStudents(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!query || query.length < 3) {
       setRecommendations([]);
       return;
     }
-
     setIsTyping(true);
-    const delayDebounceFn = setTimeout(async () => {
-      const token = localStorage.getItem("admin_token");
+    const t = setTimeout(async () => {
       try {
         const res = await fetch(SEARCH_STUDENTS, {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username: studentId, limit: 5 }),
+          headers: authHeaders(),
+          body: JSON.stringify({ username: query, limit: 6 }),
         });
         const data = await res.json();
-        if (data.success) {
-          setRecommendations(data.students || []);
-        }
-      } catch (e) {
+        if (data.success) setRecommendations(data.students || []);
+      } catch {
+        /* ignore */
       } finally {
         setIsTyping(false);
       }
-    }, 400);
+    }, 350);
+    return () => clearTimeout(t);
+  }, [query]);
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [studentId]);
-
-  // Click outside to close dropdown
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setRecommendations([]);
       }
     };
@@ -174,149 +283,93 @@ export default function StudentDetails() {
     return () => window.removeEventListener("mousedown", handleClick);
   }, []);
 
-  useEffect(() => {
-    fetchBatches();
-  }, []);
-
   const fetchBatches = async () => {
     try {
-      const token = localStorage.getItem("admin_token");
       const res = await fetch(GET_AVAILABLE_BATCHES, {
-        headers: { Authorization: `Bearer ${(token || "").replace(/"/g, "")}` },
+        headers: { Authorization: authHeaders().Authorization },
       });
       const data = await res.json();
-      if (data.success) {
-        setAvailableBatches(data.batches || []);
-      }
-    } catch (e) {}
-  };
-
-  const fetchStudentById = async (idToFetch?: string) => {
-    const id = idToFetch || studentId.trim().toUpperCase();
-    if (!id) return;
-
-    setLoading(true);
-    setSelectedStudentFullData(null);
-    setSearchResults([]);
-
-    const token = localStorage.getItem("admin_token");
-
-    try {
-      const res = await fetch(ADMIN_VIEW_STUDENT(id), {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-        },
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        setSelectedStudentFullData(data.student);
-      } else {
-        toast.error(data.msg || "Student not found");
-      }
-    } catch (error) {
-      toast.error("Failed to fetch student details");
-    } finally {
-      setLoading(false);
+      if (data.success) setAvailableBatches(data.batches || []);
+    } catch {
+      /* ignore */
     }
   };
 
-  const handleSearchByFilter = async (page = 1) => {
-    setLoading(true);
-    setSelectedStudentFullData(null);
-    const token = localStorage.getItem("admin_token");
+  const openDetail = async (row: StudentRow) => {
+    setSelectedRow(row);
+    setDrawerOpen(true);
+    setDetailLoading(true);
+    setDetailData(null);
     try {
-      const res = await fetch(SEARCH_STUDENTS, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          branch,
-          year,
-          batch,
-          ...(searchMode === "intelligence" ? intelligenceFilters : {}),
-          page,
-          limit: 25,
-        }),
+      const res = await fetch(ADMIN_VIEW_STUDENT(row.username), {
+        headers: { Authorization: authHeaders().Authorization },
       });
       const data = await res.json();
-      if (data.success) {
-        setSearchResults(data.students || []);
-        if (data.pagination) {
-          setPagination(data.pagination);
-        }
-        if (data.students?.length === 0) toast.info("No students found");
-      } else {
-        toast.error(data.msg || "Search failed");
-      }
-    } catch (error) {
-      toast.error("Error searching students");
+      if (data.success) setDetailData(data.student);
+      else toast.error(data.msg || "Could not load student");
+    } catch {
+      toast.error("Failed to load student details");
     } finally {
-      setLoading(false);
+      setDetailLoading(false);
     }
   };
 
-  const handleToggleSuspension = async (
-    username: string,
-    currentSuspendedStatus: boolean,
-  ) => {
-    if (
-      !window.confirm(
-        `${currentSuspendedStatus ? "Restore" : "Suspend"} access for ${username}?`,
-      )
-    )
-      return;
+  const handleExport = async () => {
+    setExporting(true);
+    const url = ADMIN_STUDENT_EXPORT(
+      branch === "ALL" ? undefined : branch,
+      year === "ALL" ? undefined : year,
+      EXPORT_FIELDS,
+      batch === "ALL" ? undefined : batch,
+    );
+    try {
+      const res = await fetch(url, {
+        headers: { Authorization: authHeaders().Authorization },
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Export failed");
+      }
+      const blob = await res.blob();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `students_${branch}_${year}_${batch}_${Date.now()}.xlsx`;
+      a.click();
+      toast.success("Excel export downloaded");
+    } catch (e: any) {
+      toast.error(e.message || "Export failed");
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleToggleSuspension = async (username: string, current: boolean) => {
+    if (!window.confirm(`${current ? "Restore" : "Suspend"} access for ${username}?`)) return;
     setIsActionLoading(username + "_suspend");
-    const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(ADMIN_SUSPEND_STUDENT(username), {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          suspended: !currentSuspendedStatus,
-        }),
+        headers: authHeaders(),
+        body: JSON.stringify({ suspended: !current }),
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(`Account status updated`);
-        setSearchResults((prev) =>
+        toast.success("Account status updated");
+        setRows((prev) =>
           prev.map((s) =>
-            s.username === username
-              ? { ...s, is_suspended: !currentSuspendedStatus }
-              : s,
+            s.username === username ? { ...s, is_suspended: !current } : s,
           ),
         );
-        if (selectedStudentFullData?.username === username) {
-          setSelectedStudentFullData((prev: any) => ({
-            ...prev,
-            is_suspended: !currentSuspendedStatus,
-          }));
+        if (detailData?.username === username) {
+          setDetailData((p: any) => ({ ...p, is_suspended: !current }));
         }
-      } else {
-        toast.error(data.msg || "Action failed");
-      }
-    } catch (error) {
-      toast.error("Error updating suspension status");
+      } else toast.error(data.msg || "Action failed");
+    } catch {
+      toast.error("Error updating suspension");
     } finally {
       setIsActionLoading(null);
     }
   };
-
-  const [performanceModalOpen, setPerformanceModalOpen] = useState(false);
-  const [selectedStudentName, setSelectedStudentName] = useState("");
-  const [selectedStudentId, setSelectedStudentId] = useState("");
-  const [performanceData, setPerformanceData] = useState<any>(null);
-
-  // Reset Password Modal State
-  const [resetModalOpen, setResetModalOpen] = useState(false);
-  const [resetTargetUser, setResetTargetUser] = useState("");
-  const [resetPasswordValue, setResetPasswordValue] = useState("");
 
   const handleGlobalResetPassword = (username: string) => {
     setResetTargetUser(username);
@@ -329,16 +382,11 @@ export default function StudentDetails() {
       toast.error("Password cannot be empty");
       return;
     }
-
     setIsActionLoading(resetTargetUser + "_reset");
-    const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(ADMIN_GLOBAL_RESET_PASS, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-          "Content-Type": "application/json",
-        },
+        headers: authHeaders(),
         body: JSON.stringify({
           targetUsername: resetTargetUser,
           newPassword: resetPasswordValue,
@@ -346,596 +394,410 @@ export default function StudentDetails() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(`Password reset successful for ${resetTargetUser}`);
+        toast.success(`Password reset for ${resetTargetUser}`);
         setResetModalOpen(false);
-      } else {
-        toast.error(data.msg || "Reset failed");
-      }
-    } catch (error) {
+      } else toast.error(data.msg || "Reset failed");
+    } catch {
       toast.error("Error resetting password");
     } finally {
       setIsActionLoading(null);
     }
   };
 
-  const handleOpenPerformance = async (std: any) => {
+  const handleOpenPerformance = async (std: StudentRow) => {
     setSelectedStudentName(std.name);
     setSelectedStudentId(std.username);
-
     setLoading(true);
-    const token = localStorage.getItem("admin_token");
     try {
       const res = await fetch(ADMIN_VIEW_STUDENT(std.username), {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
-        },
+        headers: { Authorization: authHeaders().Authorization },
       });
-
       const data = await res.json();
       if (data.success && data.student) {
         setPerformanceData(data.student);
         setPerformanceModalOpen(true);
-      } else {
-        toast.error(data.msg || "Failed to fetch performance records");
-      }
-    } catch (error) {
-      toast.error("Error retrieving student performance");
+      } else toast.error(data.msg || "Failed to fetch records");
+    } catch {
+      toast.error("Error retrieving performance");
     } finally {
       setLoading(false);
     }
   };
 
+  const rangeStart = rows.length ? (pagination.page - 1) * PAGE_SIZE + 1 : 0;
+  const rangeEnd = Math.min(pagination.page * PAGE_SIZE, pagination.total);
+
   return (
-    <div className="p-6 space-y-6 pb-20 text-slate-900">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex flex-col gap-1.5">
-          <h2 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
-            Student Intelligence
-          </h2>
-          <p className="text-slate-500 font-medium text-[13px]">
-            Manage individual identities or explore batch-wide cohorts.
-          </p>
-        </div>
-
-        <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/60 backdrop-blur-sm shadow-none">
-          <button
-            onClick={() => {
-              setSearchMode("id");
-              setSearchResults([]);
-              setSelectedStudentFullData(null);
-            }}
-            className={cn(
-              "flex items-center gap-2 px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-[9px] transition-all",
-              searchMode === "id"
-                ? "bg-white text-slate-900 shadow-none border border-slate-200/50"
-                : "text-slate-500 hover:text-slate-900",
-            )}
-          >
-            Individual Search
-          </button>
-          <button
-            onClick={() => {
-              setSearchMode("intelligence");
-              setSearchResults([]);
-              setSelectedStudentFullData(null);
-            }}
-            className={cn(
-              "flex items-center gap-2 px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-[9px] transition-all",
-              searchMode === "intelligence"
-                ? "bg-white text-slate-900 shadow-none border border-slate-200/50"
-                : "text-slate-500 hover:text-slate-900",
-            )}
-          >
-            Intelligence Filter
-          </button>
-        </div>
-
-        <div className="flex gap-3">
-          <button
-            onClick={() => setPromotionModalOpen(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold uppercase tracking-widest text-[9px] transition-all hover:bg-slate-50 active:scale-95"
-          >
-            <RefreshCw size={14} className="text-slate-400" />
-            Bulk Promote
-          </button>
-          <button
-            onClick={() => {
-              setEditingStudent(null);
-              setEditModalOpen(true);
-            }}
-            className="flex items-center gap-2 px-6 py-3 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[9px] transition-all hover:bg-navy-800 shadow-lg shadow-navy-900/20 active:scale-95"
-          >
-            <UserPlus size={14} className="text-white/80" />
-            Add Individual Student
-          </button>
-        </div>
-      </div>
-
-      <div className="w-full animate-in fade-in slide-in-from-top-4 duration-1000">
-        <div className="flex flex-col md:flex-row gap-4">
-          {searchMode === "id" ? (
-            <div className="flex-1 flex flex-col sm:flex-row gap-3">
-              <div className="flex-1 relative group" ref={dropdownRef}>
-                <Search
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors"
-                  size={16}
-                />
-                <input
-                  type="text"
-                  placeholder="Enter Student ID (e.g. O210001)..."
-                  value={studentId}
-                  onChange={(e) => setStudentId(e.target.value.toUpperCase())}
-                  className="w-full h-11 pl-11 pr-11 bg-slate-100/50 border border-slate-200/60 rounded-xl font-bold text-slate-900 text-[13px] outline-none focus:bg-white focus:border-navy-400 focus:ring-4 focus:ring-navy-900/5 transition-all placeholder:text-slate-400 tracking-wider shadow-none"
-                  onKeyDown={(e) => e.key === "Enter" && fetchStudentById()}
-                  onFocus={() =>
-                    studentId.length >= 3 &&
-                    setRecommendations([...recommendations])
-                  }
-                />
-                {isTyping && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <Loader2 size={12} className="animate-spin text-slate-400" />
-                  </div>
-                )}
-
-                <AnimatePresence>
-                  {recommendations.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.1)] overflow-hidden"
-                    >
-                      <div className="p-2 space-y-1">
-                        {recommendations.map((rec) => (
-                          <button
-                            key={rec.username}
-                            onClick={() => {
-                              setStudentId(rec.username);
-                              setRecommendations([]);
-                              fetchStudentById(rec.username);
-                            }}
-                            className="w-full flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl transition-all text-left group/result"
-                          >
-                            <div className="w-8 h-8 rounded-full bg-navy-900 flex items-center justify-center text-[10px] font-black text-white shrink-0">
-                              {rec.name?.[0]?.toUpperCase() || "U"}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-[12px] font-bold text-slate-900 truncate leading-tight">
-                                {rec.name}
-                              </p>
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                {rec.username} • {rec.branch}
-                              </p>
-                            </div>
-                            <ChevronRight
-                              size={14}
-                              className="text-slate-300 group-hover/result:text-navy-900 group-hover/result:translate-x-1 transition-all"
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              <button
-                onClick={() => fetchStudentById()}
-                disabled={loading || !studentId.trim()}
-                className="shrink-0 h-11 px-7 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[9px] hover:bg-navy-800 transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 active:scale-[0.98]"
-              >
-                {loading ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  <Search size={16} />
-                )}
-                Search
-              </button>
-            </div>
-          ) : (
-            <div className="flex-1 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                <div className="relative">
-                  <select
-                    value={branch}
-                    onChange={(e) => setBranch(e.target.value)}
-                    className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
-                  >
-                    <option value="ALL">All Branches</option>
-                    {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
-                      (b) => (
-                        <option key={b}>{b}</option>
-                      ),
-                    )}
-                  </select>
-                  <ChevronDown
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                    size={14}
-                  />
-                </div>
-                <div className="relative">
-                  <select
-                    value={year}
-                    onChange={(e) => setYear(e.target.value)}
-                    className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
-                  >
-                    <option value="ALL">All Years</option>
-                    {["E1", "E2", "E3", "E4"].map((y) => (
-                      <option key={y}>{y}</option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                    size={14}
-                  />
-                </div>
-                <div className="relative">
-                  <select
-                    value={batch}
-                    onChange={(e) => setBatch(e.target.value)}
-                    className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
-                  >
-                    <option value="ALL">All Batches</option>
-                    {availableBatches.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                    size={14}
-                  />
-                </div>
-
-                {searchMode === "intelligence" && (
-                  <>
-                    <div className="relative">
-                      <select
-                        value={intelligenceFilters.hasRemedials}
-                        onChange={(e) =>
-                          setIntelligenceFilters({
-                            ...intelligenceFilters,
-                            hasRemedials: e.target.value,
-                          })
-                        }
-                        className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl font-black text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all uppercase tracking-widest appearance-none shadow-none"
-                      >
-                        <option value="all">Remedials: All</option>
-                        <option value="cleared">Cleared Subjects</option>
-                        <option value="active">Active Remedials</option>
-                      </select>
-                      <ChevronDown
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                        size={14}
-                      />
-                    </div>
-                    <div className="flex gap-2 min-w-[200px]">
-                      <input
-                        type="number"
-                        placeholder="MIN CGPA"
-                        step="0.01"
-                        value={intelligenceFilters.minCgpa}
-                        onChange={(e) =>
-                          setIntelligenceFilters({
-                            ...intelligenceFilters,
-                            minCgpa: e.target.value,
-                          })
-                        }
-                        className="w-1/2 h-11 px-4 bg-slate-100/50 border border-slate-200/60 rounded-xl font-bold text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 transition-all uppercase tracking-tighter"
-                      />
-                      <input
-                        type="number"
-                        placeholder="MAX CGPA"
-                        step="0.01"
-                        value={intelligenceFilters.maxCgpa}
-                        onChange={(e) =>
-                          setIntelligenceFilters({
-                            ...intelligenceFilters,
-                            maxCgpa: e.target.value,
-                          })
-                        }
-                        className="w-1/2 h-11 px-4 bg-slate-100/50 border border-slate-200/60 rounded-xl font-bold text-slate-900 text-[10px] outline-none focus:bg-white focus:border-slate-400 transition-all uppercase tracking-tighter"
-                      />
-                    </div>
-                  </>
-                )}
-
-                <button
-                  onClick={() => handleSearchByFilter(1)}
-                  disabled={loading}
-                  className="px-6 h-11 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[9px] shadow-none hover:bg-slate-800 transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 active:scale-[0.98]"
-                >
-                  {loading ? (
-                    <Loader2 size={16} className="animate-spin" />
-                  ) : (
-                    <Search size={16} />
-                  )}
-                  Intelligence Map
-                </button>
-              </div>
-
-              {searchMode === "intelligence" && (
-                <div className="flex gap-4 items-center px-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                      Presence
-                    </span>
-                    <select
-                      value={intelligenceFilters.isPresentInCampus}
-                      onChange={(e) =>
-                        setIntelligenceFilters({
-                          ...intelligenceFilters,
-                          isPresentInCampus: e.target.value,
-                        })
-                      }
-                      className="bg-transparent border-none text-[10px] font-black text-slate-900 uppercase tracking-widest focus:ring-0 cursor-pointer"
-                    >
-                      <option value="ALL">Any</option>
-                      <option value="true">In Campus</option>
-                      <option value="false">Outside</option>
-                    </select>
-                  </div>
-                  <div className="w-px h-3 bg-slate-200 mx-2" />
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                      Status
-                    </span>
-                    <select
-                      value={intelligenceFilters.isSuspended}
-                      onChange={(e) =>
-                        setIntelligenceFilters({
-                          ...intelligenceFilters,
-                          isSuspended: e.target.value,
-                        })
-                      }
-                      className="bg-transparent border-none text-[10px] font-black text-slate-900 uppercase tracking-widest focus:ring-0 cursor-pointer"
-                    >
-                      <option value="ALL">Any</option>
-                      <option value="false">Active Only</option>
-                      <option value="true">Suspended Only</option>
-                    </select>
-                  </div>
-                </div>
+    <div className={cn(adminPageWrapClass, "pb-24")}>
+      <SectionHeader
+        icon={<FileSpreadsheet size={18} />}
+        eyebrow="Students"
+        title="Student Details"
+        subtitle="Spreadsheet view with attendance, grades, and full profile data. 25 students per page."
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={() => setPromotionModalOpen(true)}
+              className={adminGhostButtonClass}
+            >
+              <RefreshCw size={14} /> Bulk Promote
+            </button>
+            <button
+              type="button"
+              onClick={handleExport}
+              disabled={exporting}
+              className={adminGhostButtonClass}
+            >
+              {exporting ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Download size={14} />
               )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="w-full mt-8">
-        {loading ? (
-          <div className="space-y-6">
-            <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] animate-pulse">
-              Pulling encrypted cloud records...
-            </p>
-            <StudentTableSkeleton />
-          </div>
-        ) : selectedStudentFullData ? (
-          <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            <StudentDashboard
-              data={selectedStudentFullData}
-              onSuspendToggle={(username, status) => {
-                handleToggleSuspension(username, status);
-              }}
-              onResetPassword={(username) => {
-                handleGlobalResetPassword(username);
-              }}
-              onEditDetails={(std: any) => {
-                setEditingStudent(std);
+              Export Excel
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEditingStudent(null);
                 setEditModalOpen(true);
               }}
-              isActionLoading={
-                isActionLoading ===
-                  selectedStudentFullData.username + "_suspend" ||
-                isActionLoading === selectedStudentFullData.username + "_reset"
-              }
+              className={adminPrimaryButtonClass}
+            >
+              <UserPlus size={14} /> Add Student
+            </button>
+          </>
+        }
+      />
+
+      {/* Filters */}
+      <div className={cn(adminCardClass, "p-5 space-y-4")}>
+        <div className="flex flex-col lg:flex-row gap-3">
+          <div className="flex-1 relative" ref={dropdownRef}>
+            <Search
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"
+              size={16}
             />
-          </div>
-        ) : searchResults.length > 0 ? (
-          <div className="space-y-8">
-            <div className="bg-white border-2 border-slate-50 rounded-[2.5rem] overflow-hidden shadow-sm">
-              <div className="overflow-x-auto">
-                <table
-                  className={cn(
-                    "w-full text-left border-collapse",
-                    searchMode === "intelligence" &&
-                      "table-fixed min-w-[1200px]",
-                  )}
+            <input
+              type="text"
+              placeholder="Search by Student ID or name…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value.toUpperCase())}
+              onKeyDown={(e) => e.key === "Enter" && fetchStudents(1)}
+              className={cn(adminInputClass, "pl-10")}
+            />
+            {isTyping && (
+              <Loader2
+                size={14}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-zinc-400"
+              />
+            )}
+            <AnimatePresence>
+              {recommendations.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  className="absolute z-50 left-0 right-0 mt-1 bg-white border border-zinc-200 rounded-xl shadow-lg overflow-hidden"
                 >
-                  <thead>
-                    <tr className="border-b border-slate-50 bg-slate-50/30">
-                      <th
-                        className={cn(
-                          "px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400",
-                          searchMode === "intelligence" ? "w-[250px]" : "",
-                        )}
-                      >
-                        Student Identity
-                      </th>
-                      <th className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
-                        Credentials
-                      </th>
-                      {searchMode === "intelligence" && (
-                        <>
-                          <th className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 text-center">
-                            CGPA
-                          </th>
-                          <th className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 text-center">
-                            Backlogs
-                          </th>
-                        </>
-                      )}
-                      <th className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
-                        Status
-                      </th>
-                      <th className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
-                        Contact Pool
-                      </th>
-                      <th className="px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 text-right">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-50/50">
-                    {searchResults.map((std) => (
-                      <tr
-                        key={std.username}
-                        onClick={() => handleOpenPerformance(std)}
-                        className="group hover:bg-slate-50/50 transition-all cursor-pointer"
-                      >
-                        <td className="px-8 py-5">
-                          <div className="flex items-center gap-4">
-                            <div
-                              className={cn(
-                                "w-11 h-11 rounded-full flex items-center justify-center text-white text-[12px] font-black border border-white shadow-sm overflow-hidden shrink-0",
-                                std.profile_url
-                                  ? "bg-slate-50"
-                                  : "bg-navy-900",
-                              )}
-                            >
-                              {std.profile_url ? (
-                                <img
-                                  src={std.profile_url}
-                                  alt=""
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                (std.name?.[0] || "U").toUpperCase()
-                              )}
-                            </div>
-                            <div className="flex flex-col min-w-0">
-                              <p className="font-bold text-slate-900 tracking-tight leading-none truncate uppercase">
-                                {std.name}
-                              </p>
-                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 opacity-70 truncate">
-                                {std.username}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
+                  {recommendations.map((rec) => (
+                    <button
+                      key={rec.username}
+                      type="button"
+                      onClick={() => {
+                        setQuery(rec.username);
+                        setRecommendations([]);
+                        fetchStudents(1, { query: rec.username });
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 text-left text-[13px]"
+                    >
+                      <span className="font-semibold text-zinc-900">{rec.username}</span>
+                      <span className="text-zinc-500 truncate">{rec.name}</span>
+                      <span className="ml-auto text-zinc-400 text-[11px]">{rec.branch}</span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          <button
+            type="button"
+            onClick={() => fetchStudents(1)}
+            disabled={loading}
+            className={adminPrimaryButtonClass}
+          >
+            {loading ? <Loader2 size={14} className="animate-spin" /> : <Search size={14} />}
+            Search
+          </button>
+        </div>
 
-                        <td className="px-8 py-5">
-                          <div className="flex items-center gap-2">
-                            <span className="px-2.5 py-1 bg-slate-100 text-slate-900 rounded-lg text-[10px] font-black uppercase tracking-widest border border-slate-200/50">
-                              {std.branch}
-                            </span>
-                            <span className="px-2.5 py-1 bg-navy-50 text-navy-900 rounded-lg text-[10px] font-black uppercase tracking-widest border border-navy-100">
-                              {std.year || "E1"}
-                            </span>
-                          </div>
-                        </td>
-
-                        {searchMode === "intelligence" && (
-                          <>
-                            <td className="px-8 py-5 text-center">
-                              <span
-                                className={cn(
-                                  "text-[13px] font-black tracking-tighter",
-                                  (std.cgpa || 0) >= 8
-                                    ? "text-navy-900"
-                                    : (std.cgpa || 0) >= 6
-                                      ? "text-navy-500"
-                                      : "text-slate-400",
-                                )}
-                              >
-                                {std.cgpa?.toFixed(2) || "0.00"}
-                              </span>
-                            </td>
-                            <td className="px-8 py-5 text-center">
-                              <span
-                                className={cn(
-                                  "px-2 py-0.5 rounded-full text-[10px] font-black",
-                                  (std.total_backlogs || 0) > 0
-                                    ? "bg-rose-50 text-rose-600 border border-rose-100"
-                                    : "bg-emerald-50 text-emerald-600 border border-emerald-100",
-                                )}
-                              >
-                                {std.total_backlogs || 0}
-                              </span>
-                            </td>
-                          </>
-                        )}
-
-                        <td className="px-8 py-5">
-                          <div
-                            className={cn(
-                              "flex items-center gap-2 px-3 py-1 rounded-xl border w-fit font-bold uppercase tracking-widest text-[9px]",
-                              std.is_suspended
-                                ? "bg-rose-50 border-rose-100 text-rose-500"
-                                : "bg-emerald-50 border-emerald-100 text-emerald-500",
-                            )}
-                          >
-                            <div
-                              className={cn(
-                                "w-1 h-1 rounded-full",
-                                std.is_suspended
-                                  ? "bg-rose-500"
-                                  : "bg-emerald-500 animate-pulse",
-                              )}
-                            />
-                            {std.is_suspended ? "Restricted" : "Active"}
-                          </div>
-                        </td>
-
-                        <td className="px-8 py-5">
-                          <div className="flex flex-col">
-                            <p className="text-[11px] font-bold text-slate-900 tracking-tight">
-                              {std.email}
-                            </p>
-                            <p className="text-[10px] font-bold text-slate-400 lowercase opacity-60">
-                              {std.is_in_campus ? "In Campus" : "Outside"}
-                            </p>
-                          </div>
-                        </td>
-
-                        <td className="px-8 py-5">
-                          <div className="flex justify-end pr-2">
-                            <div className="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200/50 flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all shadow-sm">
-                              <ChevronRight size={14} />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
+          {[
+            {
+              label: "Branch",
+              value: branch,
+              onChange: setBranch,
+              options: ["ALL", "CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"],
+            },
+            {
+              label: "Year",
+              value: year,
+              onChange: setYear,
+              options: ["ALL", "E1", "E2", "E3", "E4"],
+            },
+            {
+              label: "Batch",
+              value: batch,
+              onChange: setBatch,
+              options: ["ALL", ...availableBatches],
+            },
+            {
+              label: "Remedials",
+              value: intelligenceFilters.hasRemedials,
+              onChange: (v: string) =>
+                setIntelligenceFilters((f) => ({ ...f, hasRemedials: v })),
+              options: [
+                { v: "all", l: "All" },
+                { v: "active", l: "Active BL" },
+                { v: "cleared", l: "Cleared" },
+              ],
+            },
+            {
+              label: "Campus",
+              value: intelligenceFilters.isPresentInCampus,
+              onChange: (v: string) =>
+                setIntelligenceFilters((f) => ({ ...f, isPresentInCampus: v })),
+              options: [
+                { v: "ALL", l: "Any" },
+                { v: "true", l: "In" },
+                { v: "false", l: "Out" },
+              ],
+            },
+            {
+              label: "Status",
+              value: intelligenceFilters.isSuspended,
+              onChange: (v: string) =>
+                setIntelligenceFilters((f) => ({ ...f, isSuspended: v })),
+              options: [
+                { v: "ALL", l: "Any" },
+                { v: "false", l: "Active" },
+                { v: "true", l: "Suspended" },
+              ],
+            },
+          ].map((f) => (
+            <div key={f.label} className="space-y-1">
+              <span className={adminLabelClass}>{f.label}</span>
+              <div className="relative">
+                <select
+                  value={f.value}
+                  onChange={(e) => f.onChange(e.target.value)}
+                  className={cn(adminSelectClass, "h-9 text-[11px]")}
+                >
+                  {(f.options as any[]).map((o) =>
+                    typeof o === "string" ? (
+                      <option key={o} value={o}>
+                        {o}
+                      </option>
+                    ) : (
+                      <option key={o.v} value={o.v}>
+                        {o.l}
+                      </option>
+                    ),
+                  )}
+                </select>
+                <ChevronDown
+                  size={12}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+                />
               </div>
             </div>
-            <Pagination
-              currentPage={pagination.page}
-              totalPages={pagination.totalPages}
-              onPageChange={(p) => handleSearchByFilter(p)}
-              className="mt-8"
+          ))}
+          <div className="space-y-1">
+            <span className={adminLabelClass}>Min CGPA</span>
+            <input
+              type="number"
+              step="0.01"
+              placeholder="0"
+              value={intelligenceFilters.minCgpa}
+              onChange={(e) =>
+                setIntelligenceFilters((f) => ({ ...f, minCgpa: e.target.value }))
+              }
+              className={cn(adminInputClass, "h-9 text-[11px]")}
             />
           </div>
-        ) : (
-          <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 max-w-2xl mx-auto py-20 text-center space-y-8">
-            <div className="relative inline-block">
-              <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto border-2 border-dashed border-slate-200">
-                <Search size={32} className="text-slate-300" />
-              </div>
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full border border-slate-100 flex items-center justify-center text-navy-900 shadow-sm">
-                <Shield size={14} />
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="text-xl font-black text-slate-900 tracking-tight lowercase first-letter:uppercase">
-                Ready for <span className="text-navy-900">analysis</span>
-              </h4>
-              <p className="text-slate-400 font-medium text-[15px] leading-relaxed">
-                Enter a student ID or use filters to fetch student records from
-                the centralized university Database.
-              </p>
-            </div>
+          <div className="space-y-1">
+            <span className={adminLabelClass}>Max CGPA</span>
+            <input
+              type="number"
+              step="0.01"
+              placeholder="10"
+              value={intelligenceFilters.maxCgpa}
+              onChange={(e) =>
+                setIntelligenceFilters((f) => ({ ...f, maxCgpa: e.target.value }))
+              }
+              className={cn(adminInputClass, "h-9 text-[11px]")}
+            />
           </div>
-        )}
+        </div>
       </div>
+
+      {/* Sheet toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className={adminChipClass}>
+            {pagination.total.toLocaleString()} students
+          </span>
+          {rows.length > 0 && (
+            <span className="text-[12px] text-zinc-500 font-medium">
+              Showing {rangeStart}–{rangeEnd}
+              {enriching && (
+                <span className="ml-2 text-zinc-400 inline-flex items-center gap-1">
+                  <Loader2 size={11} className="animate-spin" /> loading attendance…
+                </span>
+              )}
+            </span>
+          )}
+        </div>
+        <p className="text-[11px] text-zinc-400">
+          Click a row for full profile · Double-click for grades & attendance charts
+        </p>
+      </div>
+
+      {/* Spreadsheet */}
+      {loading ? (
+        <TableSkeleton />
+      ) : rows.length === 0 ? (
+        <div className={cn(adminCardClass, "py-16 text-center")}>
+          <FileSpreadsheet className="w-10 h-10 text-zinc-300 mx-auto mb-3" />
+          <p className="text-sm font-medium text-zinc-600">No students to display</p>
+          <p className="text-[12px] text-zinc-400 mt-1">Adjust filters or search by ID</p>
+        </div>
+      ) : (
+        <div className={cn(adminCardClass, "overflow-hidden")}>
+          <div className="overflow-x-auto custom-sidebar-scroll">
+            <table className="w-full border-collapse text-[12px] min-w-[1400px]">
+              <thead>
+                <tr className="bg-zinc-50 border-b border-zinc-200">
+                  {COLUMNS.map((col) => (
+                    <th
+                      key={col.key}
+                      className={cn(
+                        "px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wide text-zinc-500 whitespace-nowrap border-r border-zinc-100 last:border-r-0",
+                        col.className,
+                      )}
+                    >
+                      {col.label}
+                    </th>
+                  ))}
+                  <th className="w-10 px-2 py-2.5 border-l border-zinc-100" />
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, idx) => (
+                  <tr
+                    key={row.username}
+                    onClick={() => openDetail(row)}
+                    onDoubleClick={() => handleOpenPerformance(row)}
+                    className={cn(
+                      "border-b border-zinc-100 cursor-pointer transition-colors",
+                      selectedRow?.username === row.username
+                        ? "bg-zinc-100/80"
+                        : "hover:bg-zinc-50/80",
+                      idx % 2 === 0 ? "bg-white" : "bg-zinc-50/30",
+                    )}
+                  >
+                    {COLUMNS.map((col) => (
+                      <td
+                        key={col.key}
+                        className={cn(
+                          "px-3 py-2 text-zinc-800 whitespace-nowrap border-r border-zinc-50 last:border-r-0 font-medium",
+                          col.key === "username" && "font-semibold text-zinc-900 tabular-nums",
+                          col.key === "email" && "text-zinc-500 text-[11px]",
+                          col.key === "cgpa" && adminNumsClass,
+                          col.key === "attendance_pct" && adminNumsClass,
+                          col.className,
+                        )}
+                      >
+                        {cellValue(row, col.key, rangeStart + idx)}
+                      </td>
+                    ))}
+                    <td className="px-2 py-2 border-l border-zinc-50 text-zinc-300">
+                      <ChevronRight size={14} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      <Pagination
+        currentPage={pagination.page}
+        totalPages={pagination.totalPages}
+        onPageChange={(p) => fetchStudents(p)}
+      />
+
+      {/* Detail drawer */}
+      <AnimatePresence>
+        {drawerOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] bg-zinc-900/30 backdrop-blur-sm"
+              onClick={() => setDrawerOpen(false)}
+            />
+            <motion.aside
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 32, stiffness: 320 }}
+              className="fixed right-0 top-0 z-[101] h-full w-full max-w-2xl bg-[#fafafa] shadow-2xl overflow-y-auto custom-sidebar-scroll"
+            >
+              <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b border-zinc-200/70">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-400">
+                    Student profile
+                  </p>
+                  <p className="text-lg font-semibold text-zinc-900">
+                    {selectedRow?.name || selectedRow?.username}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDrawerOpen(false)}
+                  className={cn(adminGhostButtonClass, "w-10 h-10 px-0")}
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="p-4">
+                {detailLoading ? (
+                  <div className="flex items-center justify-center py-20">
+                    <Loader2 className="animate-spin text-zinc-400" size={28} />
+                  </div>
+                ) : detailData ? (
+                  <StudentDashboard
+                    data={detailData}
+                    onSuspendToggle={handleToggleSuspension}
+                    onResetPassword={handleGlobalResetPassword}
+                    onEditDetails={(std) => {
+                      setEditingStudent(std);
+                      setEditModalOpen(true);
+                    }}
+                    isActionLoading={
+                      isActionLoading === detailData.username + "_suspend" ||
+                      isActionLoading === detailData.username + "_reset"
+                    }
+                  />
+                ) : null}
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
       {performanceModalOpen && (
         <StudentPerformanceModal
@@ -947,91 +809,52 @@ export default function StudentDetails() {
         />
       )}
 
-      {/* Reset Password Modal */}
-      {resetModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-navy-900/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100 p-10">
-            <div className="flex flex-col items-center text-center gap-6">
-              <div className="w-20 h-20 rounded-3xl bg-navy-900 flex items-center justify-center text-white shadow-[0_20px_40px_rgba(15,23,42,0.2)]">
-                <KeyRound size={36} />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-2xl font-black text-slate-900 tracking-tight">
-                  Credentials Reset
-                </h3>
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                  Target Identity:{" "}
-                  <span className="text-navy-900">{resetTargetUser}</span>
-                </p>
-              </div>
-
-              <div className="w-full space-y-3 pt-4">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 text-left block ml-4">
-                  Temporary Key
-                </label>
-                <div className="relative group">
-                  <Lock
-                    className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors"
-                    size={18}
-                  />
-                  <input
-                    type="text"
-                    value={resetPasswordValue}
-                    onChange={(e) => setResetPasswordValue(e.target.value)}
-                    className="w-full h-14 pl-14 pr-4 bg-slate-50 border border-slate-100 rounded-2xl text-[15px] font-bold text-slate-900 outline-none focus:bg-white focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all tracking-wider"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-4 w-full mt-6">
-                <button
-                  onClick={() => setResetModalOpen(false)}
-                  className="flex-1 h-14 rounded-2xl bg-white border border-slate-100 text-slate-500 hover:bg-slate-50 font-bold text-[11px] uppercase tracking-widest transition-all active:scale-95 shadow-sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmResetPassword}
-                  className="flex-1 h-14 rounded-2xl bg-navy-900 text-white font-bold text-[11px] uppercase tracking-widest shadow-xl shadow-navy-200 transition-all hover:bg-navy-800 active:scale-95 flex items-center justify-center gap-2"
-                >
-                  Apply Key
-                </button>
-              </div>
-            </div>
+      <AdminDialog
+        open={resetModalOpen}
+        onOpenChange={setResetModalOpen}
+        title="Reset password"
+        description={resetTargetUser}
+        maxWidth="max-w-md"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setResetModalOpen(false)}
+              className={adminGhostButtonClass}
+            >
+              Cancel
+            </button>
+            <button type="button" onClick={confirmResetPassword} className={adminPrimaryButtonClass}>
+              Apply
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-2">
+          <label className={adminLabelClass}>Temporary password</label>
+          <div className="relative">
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" size={16} />
+            <input
+              type="text"
+              value={resetPasswordValue}
+              onChange={(e) => setResetPasswordValue(e.target.value)}
+              className={cn(adminInputClass, "pl-10")}
+            />
           </div>
         </div>
-      )}
-
-      <StudentPerformanceModal
-        isOpen={performanceModalOpen}
-        onClose={() => setPerformanceModalOpen(false)}
-        studentName={selectedStudentName}
-        studentId={selectedStudentId}
-        data={performanceData}
-      />
+      </AdminDialog>
 
       <StudentEditModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         student={editingStudent}
-        onSuccess={(updatedStudent) => {
-          const targetId = updatedStudent?.username || editingStudent?.username;
-          if (searchMode === "id") {
-            if (targetId) fetchStudentById(targetId);
-          } else if (searchMode === "filter" || searchMode === "intelligence") {
-            handleSearchByFilter(pagination.page);
-          }
-        }}
+        onSuccess={() => fetchStudents(pagination.page)}
       />
 
       <CohortPromotionModal
         isOpen={promotionModalOpen}
         onClose={() => setPromotionModalOpen(false)}
-        onSuccess={() => {
-          if (searchMode === "filter" || searchMode === "intelligence") {
-            handleSearchByFilter(pagination.page);
-          }
-        }}
+        onSuccess={() => fetchStudents(pagination.page)}
       />
     </div>
   );

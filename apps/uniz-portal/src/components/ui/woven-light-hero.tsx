@@ -56,10 +56,10 @@ export const WovenLightHero = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 1.5 }}
-          className="mb-12 inline-flex items-center gap-2 border-b border-slate-100 pb-1"
+          className="mb-12 inline-flex items-center gap-2 border-b border-zinc-100 pb-1"
         >
           <div className="w-1 h-1 rounded-full bg-blue-500" />
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">
+          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.3em]">
             Centralized Academic Portal
           </span>
         </motion.div>
@@ -127,7 +127,7 @@ export const WovenLightHero = () => {
             <span className="text-blue-600/90 italic">Mobility.</span>
           </h1>
 
-          <p className="mx-auto mb-12 max-w-lg text-sm md:text-base text-slate-500 font-medium leading-relaxed tracking-tight">
+          <p className="mx-auto mb-12 max-w-lg text-sm md:text-base text-zinc-500 font-medium leading-relaxed tracking-tight">
             An interactive tapestry of university governance,
             <br />
             crafted with precision and digital transparency.
@@ -153,7 +153,7 @@ export const WovenLightHero = () => {
         transition={{ delay: 6, duration: 2, repeat: Infinity }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-20"
       >
-        <ArrowDown className="h-5 w-5 text-slate-400" />
+        <ArrowDown className="h-5 w-5 text-zinc-400" />
       </motion.div>
     </div>
   );

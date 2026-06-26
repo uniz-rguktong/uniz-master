@@ -153,8 +153,8 @@ export default function CourseRegistration({
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <Loader2 className="animate-spin text-navy-900" size={40} />
-        <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">
+        <Loader2 className="animate-spin text-zinc-900" size={40} />
+        <p className="text-zinc-400 font-semibold uppercase tracking-[0.14em] text-[10px]">
           Fetching available courses...
         </p>
       </div>
@@ -167,16 +167,16 @@ export default function CourseRegistration({
       .toUpperCase();
     return (
       <div className="max-w-2xl mx-auto animate-in fade-in zoom-in-95 duration-500">
-        <div className="rounded-[40px] bg-gradient-to-br from-emerald-600 to-emerald-500 p-10 text-white text-center shadow-2xl shadow-emerald-200/50 relative overflow-hidden">
+        <div className="rounded-3xl bg-gradient-to-br from-emerald-600 to-emerald-500 p-10 text-white text-center shadow-2xl shadow-emerald-200/50 relative overflow-hidden">
           <div className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-white/15 blur-2xl" />
           <div className="relative">
             <div className="w-20 h-20 mx-auto rounded-3xl bg-white/15 backdrop-blur-md flex items-center justify-center mb-6">
               <CheckCircle2 size={42} />
             </div>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/15 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/15 rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] mb-4">
               <Sparkles size={12} /> Registration Confirmed
             </div>
-            <h2 className="text-3xl font-black tracking-tight mb-2">
+            <h2 className="text-3xl font-semibold tracking-tight mb-2">
               You're all set!
             </h2>
             <p className="text-white/80 font-medium max-w-sm mx-auto">
@@ -185,7 +185,7 @@ export default function CourseRegistration({
               recorded.
             </p>
             {regId && (
-              <div className="inline-flex items-center gap-2 mt-5 px-4 py-2 bg-white/15 rounded-2xl font-black tracking-widest text-sm">
+              <div className="inline-flex items-center gap-2 mt-5 px-4 py-2 bg-white/15 rounded-2xl font-semibold tracking-[0.14em] text-sm">
                 <Hash size={14} /> {regId}
               </div>
             )}
@@ -194,12 +194,12 @@ export default function CourseRegistration({
 
         {Array.isArray(confirmation.subjects) &&
           confirmation.subjects.length > 0 && (
-            <div className="mt-6 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+            <div className="mt-6 rounded-3xl border border-zinc-100 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-black uppercase tracking-widest text-slate-500">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
                   Registered Subjects
                 </h3>
-                <span className="text-xs font-black text-navy-900">
+                <span className="text-xs font-semibold text-zinc-900">
                   {confirmation.totalCredits || 0} credits
                 </span>
               </div>
@@ -207,12 +207,12 @@ export default function CourseRegistration({
                 {confirmation.subjects.map((s: any, i: number) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between text-sm py-1.5 border-b border-slate-50 last:border-0"
+                    className="flex items-center justify-between text-sm py-1.5 border-b border-zinc-50 last:border-0"
                   >
-                    <span className="font-bold text-slate-700 truncate">
+                    <span className="font-bold text-zinc-700 truncate">
                       {s.code} · {s.name}
                     </span>
-                    <span className="text-[11px] font-black text-slate-400 shrink-0 ml-3">
+                    <span className="text-[11px] font-semibold text-zinc-400 shrink-0 ml-3">
                       {s.credits}C
                     </span>
                   </div>
@@ -223,7 +223,7 @@ export default function CourseRegistration({
 
         <button
           onClick={onComplete}
-          className="w-full mt-6 bg-navy-900 text-white h-16 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-navy-800 transition-all"
+          className="w-full mt-6 bg-zinc-900 text-white h-16 rounded-3xl font-semibold uppercase tracking-[0.14em] text-xs hover:bg-zinc-800 transition-all"
         >
           View My Subjects
         </button>
@@ -233,11 +233,11 @@ export default function CourseRegistration({
 
   if (alreadyRegistered) {
     return (
-      <div className="bg-emerald-50 rounded-[40px] p-12 text-center border-2 border-emerald-100 max-w-2xl mx-auto shadow-xl">
+      <div className="bg-emerald-50 rounded-3xl p-12 text-center border-2 border-emerald-100 max-w-2xl mx-auto shadow-xl">
         <div className="w-20 h-20 bg-emerald-100 rounded-3xl flex items-center justify-center text-emerald-600 mx-auto mb-6">
           <CheckCircle2 size={40} />
         </div>
-        <h3 className="text-2xl font-black text-emerald-900 mb-2">
+        <h3 className="text-2xl font-semibold text-emerald-900 mb-2">
           Registration Already Completed
         </h3>
         <p className="text-emerald-700 font-medium font-outfit mb-8 leading-relaxed px-10">
@@ -246,7 +246,7 @@ export default function CourseRegistration({
         </p>
         <button
           onClick={onComplete}
-          className="px-8 py-4 bg-emerald-600 text-white rounded-[20px] font-bold shadow-lg"
+          className="px-8 py-4 bg-emerald-600 text-white rounded-2xl font-bold shadow-lg"
         >
           View Registered Subjects
         </button>
@@ -256,14 +256,14 @@ export default function CourseRegistration({
 
   if (!isOpen) {
     return (
-      <div className="bg-white rounded-[40px] p-12 text-center border-2 border-dashed border-slate-100 max-w-2xl mx-auto shadow-xl">
-        <div className="w-20 h-20 bg-navy-50 rounded-3xl flex items-center justify-center text-navy-900 mx-auto mb-6">
+      <div className="bg-white rounded-3xl p-12 text-center border-2 border-dashed border-zinc-100 max-w-2xl mx-auto shadow-xl">
+        <div className="w-20 h-20 bg-zinc-50 rounded-3xl flex items-center justify-center text-zinc-900 mx-auto mb-6">
           <ShieldCheck size={40} />
         </div>
-        <h3 className="text-2xl font-black text-slate-900 mb-2">
+        <h3 className="text-2xl font-semibold text-zinc-900 mb-2">
           Registration Pending
         </h3>
-        <p className="text-slate-500 font-medium font-outfit mb-8 leading-relaxed px-10">
+        <p className="text-zinc-500 font-medium font-outfit mb-8 leading-relaxed px-10">
           The semester <strong>{semesterName}</strong> is currently being
           reviewed. Registration will open once the department approves the
           course list.
@@ -275,13 +275,13 @@ export default function CourseRegistration({
   if (available.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 px-4 text-center max-w-md mx-auto animate-in fade-in duration-700">
-        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-400 mb-6 border border-slate-100 shadow-sm">
+        <div className="w-20 h-20 bg-zinc-50 rounded-full flex items-center justify-center text-zinc-400 mb-6 border border-zinc-100 shadow-sm">
           <Coffee size={32} strokeWidth={1.5} />
         </div>
-        <h3 className="text-2xl font-bold tracking-tight text-slate-900 mb-2.5">
+        <h3 className="text-2xl font-bold tracking-tight text-zinc-900 mb-2.5">
           Semester Not Started
         </h3>
-        <p className="text-[14px] text-slate-500 font-medium leading-relaxed">
+        <p className="text-[14px] text-zinc-500 font-medium leading-relaxed">
           The registration window is currently closed. Kick back, relax, and
           enjoy your break. We'll alert you the moment your new courses are
           ready!
@@ -292,17 +292,17 @@ export default function CourseRegistration({
 
   return (
     <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
-      <div className="bg-gradient-to-br from-navy-900 to-navy-800 rounded-[40px] p-10 text-white relative overflow-hidden shadow-2xl">
+      <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-3xl p-10 text-white relative overflow-hidden shadow-2xl">
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full border border-white/20 text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full border border-white/20 text-[10px] font-semibold uppercase tracking-[0.14em] backdrop-blur-md">
               <ShieldCheck size={14} /> Open Enrollment Phase
             </div>
-            <h2 className="text-4xl font-black tracking-tight leading-tight italic">
+            <h2 className="text-4xl font-semibold tracking-tight leading-tight italic">
               Semester Subject <br />
               Registration
             </h2>
-            <p className="text-navy-100 font-medium max-w-sm font-outfit leading-relaxed opacity-90">
+            <p className="text-zinc-100 font-medium max-w-sm font-outfit leading-relaxed opacity-90">
               Select the core and elective subjects for your current branch to
               finalize your academic session enrollment.
             </p>
@@ -310,19 +310,19 @@ export default function CourseRegistration({
 
           <div className="flex items-center gap-6">
             <div className="text-right">
-              <p className="text-[10px] font-black uppercase tracking-widest text-navy-200 mb-1">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-200 mb-1">
                 Total Selected Credits
               </p>
-              <h3 className="text-5xl font-black text-white italic">
+              <h3 className="text-5xl font-semibold text-white italic">
                 {totalCredits}
               </h3>
             </div>
             <div className="h-16 w-[1px] bg-white/20" />
             <div className="text-right">
-              <p className="text-[10px] font-black uppercase tracking-widest text-navy-200 mb-1">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-200 mb-1">
                 Subjects Selected
               </p>
-              <h3 className="text-5xl font-black text-white italic">
+              <h3 className="text-5xl font-semibold text-white italic">
                 {selectedIds.length}
               </h3>
             </div>
@@ -348,17 +348,17 @@ export default function CourseRegistration({
                   sub.electiveLimit,
                 )
               }
-              className={`p-6 rounded-[32px] border-2 transition-all flex items-start gap-4 text-left group overflow-hidden relative ${
+              className={`p-6 rounded-3xl border-2 transition-all flex items-start gap-4 text-left group overflow-hidden relative ${
                 isSelected
-                  ? "bg-white border-navy-900 shadow-xl shadow-navy-50"
-                  : "bg-white border-slate-50 hover:border-slate-200"
+                  ? "bg-white border-zinc-900 shadow-xl shadow-zinc-50"
+                  : "bg-white border-zinc-50 hover:border-zinc-200"
               }`}
             >
               <div
                 className={`p-4 rounded-xl transition-all ${
                   isSelected
-                    ? "bg-navy-900 text-white"
-                    : "bg-slate-50 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-600"
+                    ? "bg-zinc-900 text-white"
+                    : "bg-zinc-50 text-zinc-400 group-hover:bg-zinc-100 group-hover:text-zinc-600"
                 }`}
               >
                 <BookOpen size={24} />
@@ -368,19 +368,19 @@ export default function CourseRegistration({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
-                        isSelected ? "text-navy-900" : "text-slate-300"
+                      className={`text-[10px] font-semibold uppercase tracking-[0.14em] transition-colors ${
+                        isSelected ? "text-zinc-900" : "text-zinc-300"
                       }`}
                     >
                       {sub.subject?.code}
                     </span>
                     {sub.isMandatory && (
-                      <span className="px-2 py-0.5 bg-red-50 text-red-600 rounded-md text-[8px] font-black uppercase tracking-tighter border border-red-100">
+                      <span className="px-2 py-0.5 bg-red-50 text-red-600 rounded-md text-[8px] font-semibold uppercase tracking-tighter border border-red-100">
                         Mandatory
                       </span>
                     )}
                     {sub.electiveGroupId && (
-                      <span className="px-2 py-0.5 bg-navy-50 text-navy-900 rounded-md text-[8px] font-black uppercase tracking-tighter border border-navy-100">
+                      <span className="px-2 py-0.5 bg-zinc-50 text-zinc-900 rounded-md text-[8px] font-semibold uppercase tracking-tighter border border-zinc-100">
                         Group: {sub.electiveGroupId}
                       </span>
                     )}
@@ -389,32 +389,32 @@ export default function CourseRegistration({
                     className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${
                       isSelected
                         ? "bg-amber-50 text-amber-600 border-amber-100"
-                        : "bg-slate-50 text-slate-400 border-slate-100"
+                        : "bg-zinc-50 text-zinc-400 border-zinc-100"
                     }`}
                   >
                     <CreditCard size={10} />
-                    <span className="text-[10px] font-black">
+                    <span className="text-[10px] font-semibold">
                       {sub.customCredits || sub.subject?.credits}C
                     </span>
                   </div>
                 </div>
                 <h4
-                  className={`text-lg font-black tracking-tight leading-tight truncate transition-colors ${
-                    isSelected ? "text-slate-900" : "text-slate-400"
+                  className={`text-lg font-semibold tracking-tight leading-tight truncate transition-colors ${
+                    isSelected ? "text-zinc-900" : "text-zinc-400"
                   }`}
                 >
                   {sub.customName || sub.subject?.name}
                 </h4>
                 {sub.faculty && (
-                  <p className="text-[10px] text-slate-400 font-bold italic">
+                  <p className="text-[10px] text-zinc-400 font-bold italic">
                     By {sub.faculty.name}
                   </p>
                 )}
               </div>
 
               {isSelected && (
-                <div className="absolute -top-10 -right-10 w-24 h-24 bg-navy-900/5 rounded-full flex items-end justify-start p-6">
-                  <CheckCircle2 className="text-navy-900" size={24} />
+                <div className="absolute -top-10 -right-10 w-24 h-24 bg-zinc-900/5 rounded-full flex items-end justify-start p-6">
+                  <CheckCircle2 className="text-zinc-900" size={24} />
                 </div>
               )}
             </button>
@@ -422,8 +422,8 @@ export default function CourseRegistration({
         })}
       </div>
 
-      <div className="flex flex-col items-center pt-8 border-t border-slate-100 gap-6">
-        <div className="flex items-center gap-3 text-slate-400">
+      <div className="flex flex-col items-center pt-8 border-t border-zinc-100 gap-6">
+        <div className="flex items-center gap-3 text-zinc-400">
           <AlertCircle size={16} />
           <p className="text-xs font-bold font-outfit">
             Double check your selections. You cannot change your registration
@@ -433,7 +433,7 @@ export default function CourseRegistration({
         <button
           disabled={submitting || selectedIds.length === 0}
           onClick={handleRegister}
-          className="w-full max-w-md bg-navy-900 text-white h-20 rounded-[32px] font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-navy-800 hover:shadow-2xl hover:-translate-y-1 transition-all disabled:opacity-20 active:translate-y-0 active:scale-95 shadow-xl"
+          className="w-full max-w-md bg-zinc-900 text-white h-20 rounded-3xl font-semibold uppercase tracking-[0.14em] text-xs flex items-center justify-center gap-3 hover:bg-zinc-800 hover:shadow-2xl hover:-translate-y-1 transition-all disabled:opacity-20 active:translate-y-0 active:scale-95 shadow-xl"
         >
           {submitting ? (
             <Loader2 className="animate-spin w-6 h-6" />

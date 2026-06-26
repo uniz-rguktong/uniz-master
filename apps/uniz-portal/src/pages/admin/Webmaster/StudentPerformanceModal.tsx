@@ -3,8 +3,8 @@ import {
   GraduationCap,
   TrendingUp,
   Clock,
-  CheckCircle2,
   AlertCircle,
+  CheckCircle2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import {
@@ -14,6 +14,16 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
+import {
+  adminModalShellClass,
+  adminModalTitleClass,
+  adminModalDescClass,
+  adminModalCloseClass,
+  adminCardClass,
+  adminChipClass,
+  adminSectionTitleClass,
+  adminNumsClass,
+} from "@/components/admin/admin-ui";
 import { cn } from "@/utils/cn";
 
 interface Grade {
@@ -77,189 +87,154 @@ export default function StudentPerformanceModal({
   studentId,
   data,
 }: StudentPerformanceModalProps) {
-  if (!isOpen) return null;
+  if (!isOpen || !data) return null;
 
   const overallAttendance = (
-    Object.values(data.attendance_summary).reduce(
+    Object.values(data.attendance_summary || {}).reduce(
       (acc, curr) => acc + curr.percentage,
       0,
-    ) / (Object.keys(data.attendance_summary).length || 1)
+    ) / (Object.keys(data.attendance_summary || {}).length || 1)
   ).toFixed(1);
 
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent className="max-w-4xl p-0 overflow-hidden bg-white border-slate-100 rounded-[2.5rem] shadow-2xl flex flex-col font-sans">
+      <AlertDialogContent
+        className={cn("max-w-4xl", adminModalShellClass)}
+      >
         <div className="relative flex flex-col max-h-[90vh]">
-          {/* Close Button */}
           <button
+            type="button"
             onClick={onClose}
-            className="absolute top-6 right-8 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
+            className={adminModalCloseClass}
           >
             <X size={20} />
           </button>
 
-          <AlertDialogHeader className="p-10 pb-4 flex flex-col items-center text-center">
-            <div className="relative mb-6">
-              <div className="p-1 bg-white ring-4 ring-navy-50 rounded-full shadow-sm">
-                <div className="w-20 h-20 rounded-full bg-slate-900 flex items-center justify-center text-white shadow-none border-2 border-white ring-1 ring-slate-100">
-                  <GraduationCap size={32} />
-                </div>
+          <AlertDialogHeader className="p-8 pb-4 flex flex-col items-start text-left gap-3 border-b border-zinc-200/70">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-zinc-900 text-white flex items-center justify-center">
+                <GraduationCap size={22} />
+              </div>
+              <div>
+                <AlertDialogTitle className={adminModalTitleClass}>
+                  {studentName}
+                </AlertDialogTitle>
+                <AlertDialogDescription className={adminModalDescClass}>
+                  Student ID: <span className="font-medium text-zinc-700">{studentId}</span>
+                </AlertDialogDescription>
               </div>
             </div>
-
-            <AlertDialogTitle className="text-3xl font-black text-slate-900 tracking-tight uppercase italic leading-none mb-2">
-              {studentName}
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">
-              Student ID: <span className="text-slate-900">{studentId}</span>
-            </AlertDialogDescription>
-
-            <div className="flex items-center justify-center gap-4 mt-6">
-              <span className="px-4 py-1.5 bg-slate-100 rounded-full text-[9px] font-black uppercase tracking-widest text-slate-600 border border-slate-200">
-                Academic Session 2025-26
-              </span>
-              <span className="px-4 py-1.5 bg-emerald-50 rounded-full text-[9px] font-black uppercase tracking-widest text-emerald-600 border border-emerald-100">
-                Records Synchronized
+            <div className="flex flex-wrap gap-2">
+              <span className={adminChipClass}>Academic record</span>
+              <span className={cn(adminChipClass, "text-emerald-600 border-emerald-200 bg-emerald-50")}>
+                Synchronized
               </span>
             </div>
           </AlertDialogHeader>
 
-          <div className="flex-1 overflow-y-auto p-10 pt-6 space-y-10 custom-scrollbar">
-            {/* Summary Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-sidebar-scroll">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <StatCard
-                icon={<TrendingUp size={18} className="text-navy-900" />}
-                label="Cumulative GPA"
-                value={data.cgpa.toFixed(2)}
-                subValue="Institutional Average: 7.8"
-                color="blue"
+                icon={<TrendingUp size={16} className="text-zinc-700" />}
+                label="CGPA"
+                value={data.cgpa?.toFixed(2) ?? "0.00"}
+                subValue="Cumulative"
               />
               <StatCard
-                icon={<Clock size={18} className="text-emerald-600" />}
-                label="Overall Attendance"
+                icon={<Clock size={16} className="text-emerald-600" />}
+                label="Attendance"
                 value={`${overallAttendance}%`}
-                subValue="Mandatory Min: 75%"
-                color="emerald"
+                subValue="Average across semesters"
               />
               <StatCard
                 icon={
                   <AlertCircle
-                    size={18}
-                    className={
-                      data.total_backlogs > 0
-                        ? "text-red-500"
-                        : "text-slate-400"
-                    }
+                    size={16}
+                    className={data.total_backlogs > 0 ? "text-rose-500" : "text-zinc-400"}
                   />
                 }
-                label="Active Backlogs"
-                value={data.total_backlogs.toString()}
-                subValue={
-                  data.total_backlogs === 0
-                    ? "Perfect Record"
-                    : "Requires Attention"
-                }
-                color={data.total_backlogs > 0 ? "red" : "slate"}
+                label="Backlogs"
+                value={String(data.total_backlogs ?? 0)}
+                subValue={data.total_backlogs === 0 ? "Clear" : "Needs attention"}
               />
             </div>
 
-            {/* Motivation Alert */}
-            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 flex gap-4 items-center">
-              <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0 shadow-sm">
-                <CheckCircle2 size={18} className="text-navy-900" />
+            {data.motivation && (
+              <div className={cn(adminCardClass, "p-4 flex gap-3 items-start")}>
+                <CheckCircle2 size={16} className="text-zinc-500 shrink-0 mt-0.5" />
+                <p className="text-[13px] text-zinc-600 leading-relaxed italic">
+                  {data.motivation}
+                </p>
               </div>
-              <p className="text-[13px] font-bold text-slate-600 italic leading-relaxed">
-                "{data.motivation}"
-              </p>
-            </div>
+            )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-              {/* Grades Section */}
-              <div className="space-y-5">
-                <div className="flex items-center justify-between px-2">
-                  <h4 className="font-black text-slate-900 uppercase tracking-widest text-[10px]">
-                    Recent Results
-                  </h4>
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                    Grading Cycle 25-26
-                  </span>
-                </div>
-                <div className="space-y-3">
-                  {data.grades.slice(0, 6).map((grade) => (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="space-y-3">
+                <h4 className={adminSectionTitleClass}>Recent grades</h4>
+                <div className="space-y-2">
+                  {(data.grades || []).slice(0, 6).map((grade) => (
                     <div
                       key={grade.id}
-                      className="p-4 rounded-2xl border border-slate-100 bg-white flex items-center justify-between hover:border-slate-300 transition-all group cursor-default shadow-sm hover:shadow-md"
+                      className={cn(
+                        adminCardClass,
+                        "p-4 flex items-center justify-between",
+                      )}
                     >
-                      <div className="flex flex-col gap-1">
-                        <p className="font-black text-slate-900 text-[12px] uppercase">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-zinc-900 text-[13px] truncate">
                           {grade.subject.name}
                         </p>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                          {grade.subject.code} • {grade.semesterId}
+                        <p className="text-[11px] text-zinc-400 mt-0.5">
+                          {grade.subject.code} · {grade.semesterId}
                         </p>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 shrink-0">
                         {grade.isRemedial && (
-                          <span className="px-2.5 py-1 bg-red-50 text-red-500 rounded-lg text-[8px] font-black uppercase tracking-widest border border-red-100">
+                          <span className="text-[10px] font-medium text-rose-600 bg-rose-50 border border-rose-100 px-2 py-0.5 rounded-full">
                             Remedial
                           </span>
                         )}
-                        <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-[14px]">
+                        <span className={cn("text-sm font-semibold text-zinc-900", adminNumsClass)}>
                           {grade.grade}
-                        </div>
+                        </span>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Attendance Section */}
-              <div className="space-y-5">
-                <div className="flex items-center justify-between px-2">
-                  <h4 className="font-black text-slate-900 uppercase tracking-widest text-[10px]">
-                    Attendance Metrics
-                  </h4>
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                    Active Semesters
-                  </span>
-                </div>
-                <div className="space-y-3">
-                  {data.attendance.slice(0, 6).map((att) => (
-                    <div
-                      key={att.id}
-                      className="p-5 rounded-2xl border border-slate-100 bg-white shadow-sm space-y-4"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex flex-col gap-1">
-                          <p className="font-black text-slate-800 text-[12px] uppercase">
+              <div className="space-y-3">
+                <h4 className={adminSectionTitleClass}>Attendance by subject</h4>
+                <div className="space-y-2">
+                  {(data.attendance || []).slice(0, 6).map((att) => (
+                    <div key={att.id} className={cn(adminCardClass, "p-4 space-y-3")}>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-zinc-900 text-[13px] truncate">
                             {att.subject.name}
                           </p>
-                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                            {att.attendedClasses}/{att.totalClasses} Sessions
-                            logged
+                          <p className="text-[11px] text-zinc-400">
+                            {att.attendedClasses}/{att.totalClasses} classes
                           </p>
                         </div>
                         <span
                           className={cn(
-                            "text-[13px] font-black tracking-tighter",
-                            att.percentage >= 75
-                              ? "text-emerald-600"
-                              : "text-red-500",
+                            "text-[13px] font-semibold shrink-0",
+                            adminNumsClass,
+                            att.percentage >= 75 ? "text-emerald-600" : "text-rose-500",
                           )}
                         >
                           {att.percentage}%
                         </span>
                       </div>
-                      <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${att.percentage}%` }}
-                          transition={{ duration: 1, ease: "easeOut" }}
+                          transition={{ duration: 0.6, ease: "easeOut" }}
                           className={cn(
                             "h-full rounded-full",
-                            att.percentage >= 75
-                              ? "bg-emerald-500"
-                              : "bg-red-500",
+                            att.percentage >= 75 ? "bg-emerald-500" : "bg-rose-500",
                           )}
                         />
                       </div>
@@ -269,42 +244,27 @@ export default function StudentPerformanceModal({
               </div>
             </div>
 
-            {/* Semester GPA Stats */}
-            <div className="space-y-5 pt-4">
-              <h4 className="font-black text-slate-900 uppercase tracking-widest text-[10px] px-2">
-                Chronological Semester Performance
-              </h4>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {Object.entries(data.gpa_stats).map(([sem, stats]) => (
-                  <div
-                    key={sem}
-                    className="p-5 rounded-2xl bg-white border border-slate-100 flex flex-col gap-2 shadow-sm hover:border-slate-300 transition-all"
-                  >
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                      {sem}
-                    </p>
-                    <div className="flex items-center justify-between mt-1">
-                      <p className="text-2xl font-black text-slate-900 tracking-tighter">
+            {Object.keys(data.gpa_stats || {}).length > 0 && (
+              <div className="space-y-3">
+                <h4 className={adminSectionTitleClass}>Semester GPA</h4>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                  {Object.entries(data.gpa_stats).map(([sem, stats]) => (
+                    <div key={sem} className={cn(adminCardClass, "p-4")}>
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-400">
+                        {sem}
+                      </p>
+                      <p className={cn("text-2xl font-semibold text-zinc-900 mt-1", adminNumsClass)}>
                         {stats.gpa}
                       </p>
-                      <span className="text-[8px] font-black uppercase text-emerald-600 tracking-widest bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-lg">
-                        Pass
-                      </span>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Footer */}
-          <div className="px-10 py-6 border-t border-slate-50 flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-slate-400 bg-slate-50/50">
-            <span className="flex items-center gap-2">
-              Academic Record Verified by University Registrar
-            </span>
-            <span className="text-slate-300 uppercase italic">
-              Confidential • Internal Only
-            </span>
+          <div className="px-8 py-4 border-t border-zinc-200/70 text-[11px] text-zinc-400 font-medium bg-zinc-50/50">
+            Academic record · internal use only
           </div>
         </div>
       </AlertDialogContent>
@@ -317,43 +277,27 @@ function StatCard({
   label,
   value,
   subValue,
-  color,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
   subValue: string;
-  color: string;
 }) {
-  const colors: Record<string, string> = {
-    blue: "bg-slate-50 border-slate-100",
-    emerald: "bg-emerald-50 border-emerald-100",
-    red: "bg-rose-50 border-rose-100",
-    slate: "bg-slate-50 border-slate-100",
-  };
-
   return (
-    <div
-      className={cn(
-        "p-6 rounded-2xl border flex flex-col gap-4 shadow-sm",
-        colors[color],
-      )}
-    >
+    <div className={cn(adminCardClass, "p-5 flex flex-col gap-3")}>
       <div className="flex items-center justify-between">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
           {label}
         </p>
-        <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center border border-slate-50">
+        <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center">
           {icon}
         </div>
       </div>
-      <div className="flex flex-col gap-0.5">
-        <p className="text-3xl font-black text-slate-900 tracking-tighter">
+      <div>
+        <p className={cn("text-2xl font-semibold text-zinc-900", adminNumsClass)}>
           {value}
         </p>
-        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest opacity-80">
-          {subValue}
-        </p>
+        <p className="text-[11px] text-zinc-400 mt-0.5">{subValue}</p>
       </div>
     </div>
   );

@@ -27,6 +27,9 @@ import {
   adminInputClass,
   adminSelectClass,
   adminPrimaryButtonClass,
+  adminModalShellClass,
+  adminModalTitleClass,
+  adminModalDescClass,
 } from "../../components/admin/admin-ui";
 import { cn } from "../../utils/cn";
 
@@ -404,23 +407,23 @@ export default function CurriculumManager() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-zinc-900/40 backdrop-blur-sm"
             />
 
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl border border-zinc-200 overflow-hidden"
+              className={cn("relative w-full max-w-lg overflow-hidden", adminModalShellClass)}
             >
               <div className="p-8">
                 <div className="flex justify-between items-start mb-7">
                   <div className="space-y-1.5">
-                    <h2 className="text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]">
-                      {editingSubject ? "Edit Subject" : "Create Subject"}
+                    <h2 className={adminModalTitleClass}>
+                      {editingSubject ? "Edit subject" : "Create subject"}
                     </h2>
-                    <p className="text-zinc-500 text-[13px]">
-                      Define metadata for the curriculum entry
+                    <p className={adminModalDescClass}>
+                      Define metadata for the curriculum entry.
                     </p>
                   </div>
                   <button

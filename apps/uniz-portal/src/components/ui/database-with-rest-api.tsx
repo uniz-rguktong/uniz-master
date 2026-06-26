@@ -270,19 +270,19 @@ const DatabaseWithRestApi = ({
       {/* Main Box */}
       <div className="absolute bottom-10 flex w-full flex-col items-center px-4 sm:px-10">
         {/* bottom shadow */}
-        <div className="absolute -bottom-2 h-[100px] w-full max-w-[95%] rounded-[3rem] bg-zinc-950/10 scale-95" />
+        <div className="absolute -bottom-2 h-[100px] w-full max-w-[95%] rounded-3xl bg-zinc-950/10 scale-95" />
         {/* box title */}
         <div className="absolute top-0 -translate-y-1/2 z-20 flex items-center justify-center rounded-lg border border-zinc-200 bg-white px-3 py-1.5 shadow-sm sm:top-auto sm:translate-y-0 sm:-top-4 sm:py-2">
           <span className="text-[12px] font-bold text-zinc-800">{title}</span>
         </div>
         {/* box outter circle */}
-        <div className="absolute -bottom-12 z-30 grid h-[100px] w-[100px] place-items-center rounded-full border border-zinc-200 bg-white shadow-md text-zinc-950 font-black group cursor-pointer">
+        <div className="absolute -bottom-12 z-30 grid h-[100px] w-[100px] place-items-center rounded-full border border-zinc-200 bg-white shadow-md text-zinc-950 font-semibold group cursor-pointer">
           <span className="unifrakturcook-bold text-[3rem] text-zinc-900 tracking-tight leading-none group-hover:scale-110 transition-transform duration-300">
             uniZ
           </span>
         </div>
         {/* box content */}
-        <div className="relative z-10 flex h-[160px] sm:h-[250px] w-full items-center justify-center overflow-hidden rounded-[2rem] border border-zinc-200 bg-white shadow-xl shadow-slate-200/50">
+        <div className="relative z-10 flex h-[160px] sm:h-[250px] w-full items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl shadow-zinc-200/50">
           {/* Floating Badges */}
           <motion.div
             className="absolute top-8 left-8 sm:top-6 sm:left-12 z-20 h-7 sm:h-9 rounded-full bg-zinc-50 px-3 sm:px-4 text-[11px] sm:text-sm font-semibold text-zinc-700 border border-zinc-200 flex items-center gap-2 shadow-sm cursor-pointer hover:bg-zinc-100"

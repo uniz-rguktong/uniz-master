@@ -124,8 +124,8 @@ export default function RequestManagement({ type }: RequestManagementProps) {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center p-20 space-y-4">
-        <Loader2 className="w-10 h-10 text-navy-900 animate-spin" />
-        <p className="text-slate-500 font-medium">
+        <Loader2 className="w-10 h-10 text-zinc-900 animate-spin" />
+        <p className="text-zinc-500 font-medium">
           Fetching pending applications...
         </p>
       </div>
@@ -137,21 +137,21 @@ export default function RequestManagement({ type }: RequestManagementProps) {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-navy-900 font-bold text-[10px] uppercase tracking-[0.2em]">
+          <div className="flex items-center gap-2 text-zinc-900 font-bold text-[10px] uppercase tracking-[0.14em]">
             <TrendingUp size={14} />
             Live Queue
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 capitalize">
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 capitalize">
             {type} Management
           </h1>
-          <p className="text-slate-500 font-medium">
+          <p className="text-zinc-500 font-medium">
             Review and process pending {type} requests for the student body.
           </p>
         </div>
 
         <div className="relative group w-full md:w-96">
           <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-zinc-900 transition-colors"
             size={18}
           />
           <input
@@ -159,19 +159,19 @@ export default function RequestManagement({ type }: RequestManagementProps) {
             placeholder="Search Student ID or Name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 outline-none transition-all font-medium text-slate-900 shadow-sm"
+            className="w-full h-12 pl-12 pr-4 bg-white border border-zinc-200 rounded-2xl focus:ring-4 focus:ring-zinc-900/5 focus:border-zinc-100 outline-none transition-all font-medium text-zinc-900 shadow-sm"
           />
         </div>
       </div>
 
       {filteredRequests.length === 0 ? (
-        <div className="bg-white rounded-[32px] border border-slate-100 p-24 flex flex-col items-center justify-center text-center space-y-6 shadow-sm border-dashed min-h-[400px]">
-          <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-200">
+        <div className="bg-white rounded-3xl border border-zinc-100 p-24 flex flex-col items-center justify-center text-center space-y-6 shadow-sm border-dashed min-h-[400px]">
+          <div className="w-20 h-20 bg-zinc-50 rounded-3xl flex items-center justify-center text-zinc-200">
             <Inbox size={40} strokeWidth={1.5} />
           </div>
           <div className="space-y-2">
-            <p className="text-xl font-bold text-slate-900">All clear!</p>
-            <p className="text-slate-400 font-medium max-w-sm mx-auto leading-relaxed">
+            <p className="text-xl font-bold text-zinc-900">All clear!</p>
+            <p className="text-zinc-400 font-medium max-w-sm mx-auto leading-relaxed">
               No pending {type} requests found. New applications will appear
               here in real-time.
             </p>
@@ -182,38 +182,38 @@ export default function RequestManagement({ type }: RequestManagementProps) {
           {filteredRequests.map((request) => (
             <div
               key={request._id}
-              className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm hover:shadow-xl hover:translate-y-[-2px] transition-all group flex flex-col h-full"
+              className="bg-white rounded-3xl border border-zinc-100 p-8 shadow-sm hover:shadow-xl hover:translate-y-[-2px] transition-all group flex flex-col h-full"
             >
               {/* Card Top: Identity & Status */}
               <div className="flex items-start justify-between mb-8">
                 <div className="flex items-center gap-5">
-                  <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-2xl border-4 border-white shadow-sm ring-1 ring-slate-100">
+                  <div className="w-16 h-16 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 font-bold text-2xl border-4 border-white shadow-sm ring-1 ring-zinc-100">
                     {request.username?.[0]?.toUpperCase()}
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 text-xl tracking-tight leading-none mb-2">
+                    <h3 className="font-bold text-zinc-900 text-xl tracking-tight leading-none mb-2">
                       {request.username}
                     </h3>
-                    <p className="text-[12px] text-navy-900 font-black uppercase tracking-widest">
+                    <p className="text-[12px] text-zinc-900 font-semibold uppercase tracking-[0.14em]">
                       {request.studentId || "NO ID"}
                     </p>
                   </div>
                 </div>
-                <div className="bg-amber-50 text-amber-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.1em] border border-amber-100">
+                <div className="bg-amber-50 text-amber-600 px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.1em] border border-amber-100">
                   PENDING
                 </div>
               </div>
 
               {/* Content Divider */}
-              <div className="h-px bg-slate-50 w-full mb-8" />
+              <div className="h-px bg-zinc-50 w-full mb-8" />
 
               <div className="flex-1 space-y-6">
                 {/* Reason Section */}
-                <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-3">
+                <div className="bg-zinc-50/50 rounded-2xl p-6 border border-zinc-100">
+                  <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] block mb-3">
                     Reason
                   </span>
-                  <p className="text-slate-700 font-semibold text-[15px] leading-relaxed italic">
+                  <p className="text-zinc-700 font-semibold text-[15px] leading-relaxed italic">
                     "{request.reason || "No reason specified."}"
                   </p>
                 </div>
@@ -221,22 +221,22 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 {/* Time Grid */}
                 <div className="grid grid-cols-2 gap-6 pb-2">
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block">
+                    <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] block">
                       From
                     </span>
                     <p
-                      className="text-slate-900 font-bold text-[13px] truncate"
+                      className="text-zinc-900 font-bold text-[13px] truncate"
                       title={request.from_time || request.from_day}
                     >
                       {request.from_time || request.from_day}
                     </p>
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block">
+                    <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] block">
                       To
                     </span>
                     <p
-                      className="text-slate-900 font-bold text-[13px] truncate"
+                      className="text-zinc-900 font-bold text-[13px] truncate"
                       title={request.to_time || request.to_day}
                     >
                       {request.to_time || request.to_day}
@@ -246,18 +246,18 @@ export default function RequestManagement({ type }: RequestManagementProps) {
 
                 <div className="grid grid-cols-2 gap-6 pb-2">
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block">
+                    <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] block">
                       Duration
                     </span>
-                    <p className="text-slate-900 font-bold text-[13px]">
+                    <p className="text-zinc-900 font-bold text-[13px]">
                       {request.duration || "0 seconds"}
                     </p>
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block text-right">
+                    <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] block text-right">
                       Submitted
                     </span>
-                    <p className="text-slate-900 font-bold text-[13px] text-right truncate">
+                    <p className="text-zinc-900 font-bold text-[13px] text-right truncate">
                       {request.requested_time}
                     </p>
                   </div>
@@ -265,14 +265,14 @@ export default function RequestManagement({ type }: RequestManagementProps) {
               </div>
 
               {/* Divider before actions */}
-              <div className="h-px bg-slate-50 w-full my-8" />
+              <div className="h-px bg-zinc-50 w-full my-8" />
 
               {/* Action Buttons */}
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={() => handleAction("approve", request._id)}
                   disabled={!!actionLoading}
-                  className="h-12 bg-[#1a1f2e] text-white rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-[#252c41] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-200"
+                  className="h-12 bg-[#1a1f2e] text-white rounded-2xl font-bold uppercase tracking-[0.14em] text-[10px] hover:bg-[#252c41] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-zinc-200"
                 >
                   {actionLoading === request._id ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -284,7 +284,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 <button
                   onClick={() => handleAction("reject", request._id)}
                   disabled={!!actionLoading}
-                  className="h-12 bg-black text-white rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="h-12 bg-black text-white rounded-2xl font-bold uppercase tracking-[0.14em] text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                   {actionLoading === request._id ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -296,7 +296,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 <button
                   onClick={() => handleAction("forward", request._id)}
                   disabled={!!actionLoading}
-                  className="h-12 bg-slate-50 text-slate-900 border border-slate-100 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="h-12 bg-zinc-50 text-zinc-900 border border-zinc-100 rounded-2xl font-bold uppercase tracking-[0.14em] text-[10px] hover:bg-zinc-100 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                   {actionLoading === request._id ? (
                     <Loader2 size={16} className="animate-spin" />

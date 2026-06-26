@@ -62,7 +62,7 @@ interface MainContent {
 }
 
 const ContentSkeleton = () => (
-  <div className="flex h-screen items-center justify-center text-neutral-400 font-bold uppercase tracking-widest text-sm animate-pulse">
+  <div className="flex h-screen items-center justify-center text-zinc-400 font-bold uppercase tracking-[0.14em] text-sm animate-pulse">
     Loading...
   </div>
 );
@@ -134,8 +134,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student",
       content: "dashboard",
       icon: Home,
-      activeColor: "text-navy-900",
-      hoverColor: "hover:text-navy-900",
+      activeColor: "text-zinc-900",
+      hoverColor: "hover:text-zinc-900",
     },
     ...(enableOutingsAndOutpasses
       ? [
@@ -165,8 +165,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student/registration",
       content: "registration",
       icon: ClipboardCheck,
-      activeColor: "text-navy-900",
-      hoverColor: "hover:text-navy-900",
+      activeColor: "text-zinc-900",
+      hoverColor: "hover:text-zinc-900",
     },
     {
       id: "gradehub",
@@ -184,8 +184,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student/attendance",
       content: "attendance",
       icon: CalendarCheck,
-      activeColor: "text-navy-900",
-      hoverColor: "hover:text-navy-900",
+      activeColor: "text-zinc-900",
+      hoverColor: "hover:text-zinc-900",
     },
     {
       id: "resetpassword",
@@ -193,8 +193,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student/resetpassword",
       content: "resetpassword",
       icon: Lock,
-      activeColor: "text-slate-600",
-      hoverColor: "hover:text-slate-600",
+      activeColor: "text-zinc-600",
+      hoverColor: "hover:text-zinc-600",
     },
 
     {
@@ -212,8 +212,8 @@ export default function Sidebar({ content }: MainContent) {
       href: "/student/help",
       content: "help",
       icon: HelpCircle,
-      activeColor: "text-navy-900",
-      hoverColor: "hover:text-navy-900",
+      activeColor: "text-zinc-900",
+      hoverColor: "hover:text-zinc-900",
     },
   ];
 
@@ -303,7 +303,7 @@ export default function Sidebar({ content }: MainContent) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-premium-gradient text-slate-900 selection:bg-navy-100 selection:text-navy-900">
+    <div className="flex flex-col min-h-screen bg-premium-gradient text-zinc-900 selection:bg-zinc-100 selection:text-zinc-900">
       <AnimatePresence>
         {showNotice && (
           <motion.div
@@ -330,7 +330,7 @@ export default function Sidebar({ content }: MainContent) {
         <div className="hidden md:flex fixed left-6 top-1/2 -translate-y-1/2 z-50">
           <Dock
             items={dockItems}
-            className="shadow-[0_8px_30px_rgb(0,0,0,0.06)] border-slate-100"
+            className="shadow-[0_8px_30px_rgb(0,0,0,0.06)] border-zinc-100"
           />
         </div>
 
@@ -344,13 +344,13 @@ export default function Sidebar({ content }: MainContent) {
             className={`md:hidden sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16 transition-all duration-300 ${isScrolled ? "bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm" : "bg-transparent border-transparent"}`}
           >
             <h1
-              className={`unifrakturcook-bold text-3xl tracking-tighter transition-colors duration-300 ${isScrolled ? "text-slate-900" : "text-slate-800"}`}
+              className={`unifrakturcook-bold text-3xl tracking-tighter transition-colors duration-300 ${isScrolled ? "text-zinc-900" : "text-zinc-800"}`}
             >
               uniZ
             </h1>
             <button
               onClick={() => setShowConfirm(true)}
-              className={`p-2 transition-all font-sans ${isScrolled ? "text-slate-400 active:text-red-500" : "text-slate-500 active:text-red-600"}`}
+              className={`p-2 transition-all font-sans ${isScrolled ? "text-zinc-400 active:text-red-500" : "text-zinc-500 active:text-red-600"}`}
             >
               <LogOut size={22} />
             </button>
@@ -362,7 +362,7 @@ export default function Sidebar({ content }: MainContent) {
           >
             {/* Left: App Branding */}
             <div className="flex items-center gap-4">
-              <h1 className="unifrakturcook-bold text-3xl text-slate-800 tracking-tight">
+              <h1 className="unifrakturcook-bold text-3xl text-zinc-800 tracking-tight">
                 uniZ
               </h1>
             </div>
@@ -370,14 +370,14 @@ export default function Sidebar({ content }: MainContent) {
             {/* Right: Profile */}
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-[14px] font-bold text-slate-900 leading-none">
+                <p className="text-[14px] font-bold text-zinc-900 leading-none">
                   {userData?.name || "Student User"}
                 </p>
-                <p className="text-[11px] font-semibold text-slate-400 mt-1 lowercase tracking-tight">
+                <p className="text-[11px] font-semibold text-zinc-400 mt-1 lowercase tracking-tight">
                   {userData?.email || "N/A"}
                 </p>
               </div>
-              <div className="w-11 h-11 rounded-full ring-2 ring-navy-50 border-2 border-white overflow-hidden shadow-sm">
+              <div className="w-11 h-11 rounded-full ring-2 ring-zinc-50 border-2 border-white overflow-hidden shadow-sm">
                 {userData?.profile_url ? (
                   <img
                     src={userData.profile_url}
@@ -385,14 +385,14 @@ export default function Sidebar({ content }: MainContent) {
                     alt=""
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-navy-900 text-white font-bold text-xs">
+                  <div className="w-full h-full flex items-center justify-center bg-zinc-900 text-white font-bold text-xs">
                     {userData?.name?.charAt(0) || "S"}
                   </div>
                 )}
               </div>
               <button
                 onClick={() => setShowConfirm(true)}
-                className="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full border border-slate-100 transition-all ml-2"
+                className="w-10 h-10 flex items-center justify-center bg-zinc-50 text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded-full border border-zinc-100 transition-all ml-2"
               >
                 <LogOut size={18} />
               </button>
@@ -405,7 +405,7 @@ export default function Sidebar({ content }: MainContent) {
               <div className="md:hidden mb-6">
                 <button
                   onClick={() => navigate("/student")}
-                  className="flex items-center gap-1 text-slate-500 font-bold text-[10px] uppercase tracking-widest py-2"
+                  className="flex items-center gap-1 text-zinc-500 font-bold text-[10px] uppercase tracking-[0.14em] py-2"
                 >
                   <ChevronLeft size={20} strokeWidth={3} />
                 </button>

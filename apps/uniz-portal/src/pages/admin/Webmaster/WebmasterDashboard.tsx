@@ -145,17 +145,17 @@ export default function WebmasterDashboard() {
         <div className="absolute inset-0 bg-zinc-950/5 group-hover:scale-110 transition-transform duration-500" />
         <Activity className="w-8 h-8 text-zinc-200 group-hover:text-zinc-950 transition-colors" />
       </div>
-      <h3 className="text-2xl font-black text-zinc-900 tracking-tight leading-none mb-4 italic uppercase">
+      <h3 className="text-2xl font-semibold text-zinc-900 tracking-tight leading-none mb-4">
         {title} System Initialization
       </h3>
-      <p className="text-zinc-400 font-bold max-w-sm mx-auto leading-relaxed text-sm uppercase tracking-widest opacity-60">
+      <p className="text-zinc-400 font-bold max-w-sm mx-auto leading-relaxed text-sm uppercase tracking-[0.14em] opacity-60">
         Automated {title.toLowerCase()} workflows are currently in deployment.
         <br />
         Please coordinate via manual channels for urgent actions.
       </p>
       <div className="mt-8 flex items-center gap-2 px-4 py-2 bg-zinc-50 rounded-full border border-zinc-100">
         <span className="w-2 h-2 rounded-full bg-zinc-950 animate-pulse" />
-        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+        <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
           Mirroring Student Experience Platform
         </span>
       </div>
