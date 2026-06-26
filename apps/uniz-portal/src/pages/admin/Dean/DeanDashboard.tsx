@@ -7,9 +7,7 @@ import {
   Bell,
   Smartphone,
   Layout,
-  BookOpen,
   CalendarClock,
-  ClipboardList,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useIsAuth } from "../../../hooks/is_authenticated";
@@ -46,14 +44,7 @@ export default function DeanDashboard() {
   const allowedTabs = useMemo(
     () =>
       isHod
-        ? ([
-            "dashboard",
-            "student",
-            "subjects",
-            "attendance",
-            "grades",
-            "semester_review",
-          ] as const)
+        ? (["dashboard", "student", "semester_review"] as const)
         : ([
             "dashboard",
             "student",
@@ -94,9 +85,6 @@ export default function DeanDashboard() {
         {
           group: "Academic",
           items: [
-            { id: "subjects", label: "Subjects", icon: BookOpen },
-            { id: "attendance", label: "Attendance", icon: ClipboardList },
-            { id: "grades", label: "Grades", icon: ClipboardList },
             {
               id: "semester_review",
               label: "Semester Approvals",
