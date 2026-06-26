@@ -85,7 +85,7 @@ export default function Grievance() {
               <div className="space-y-3 md:space-y-6">
                 {/* Category */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500 mb-1.5 block">
+                  <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
                     Category
                   </label>
                   <div className="relative group">
@@ -120,7 +120,7 @@ export default function Grievance() {
 
                 {/* Description */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500 mb-1.5 block">
+                  <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-500 mb-1.5 block">
                     Description
                   </label>
                   <textarea
@@ -164,7 +164,7 @@ export default function Grievance() {
             {/* Info Section - Hidden on Mobile */}
             <div className="hidden md:flex md:w-1/3 bg-zinc-50/30 p-8 flex-col justify-between">
               <div>
-                <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.14em] mb-6 flex items-center gap-2">
+                <h3 className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mb-6 flex items-center gap-2">
                   Official Guidelines
                 </h3>
 

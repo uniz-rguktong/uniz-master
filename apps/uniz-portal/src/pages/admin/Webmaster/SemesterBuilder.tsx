@@ -330,7 +330,7 @@ function SemesterCard({
           </p>
         </div>
         <span
-          className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-semibold uppercase tracking-[0.14em] border ${meta.tone}`}
+          className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-semibold tracking-[0.14em] border ${meta.tone}`}
         >
           <span className={`w-1.5 h-1.5 rounded-full ${meta.dot}`} />
           {meta.label}
@@ -339,7 +339,7 @@ function SemesterCard({
 
       <div className="relative grid grid-cols-2 gap-3 mb-6">
         <div className="rounded-2xl bg-zinc-50 px-4 py-3">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+          <p className="text-[9px] font-semibold tracking-[0.14em] text-zinc-400">
             Registrations
           </p>
           <p className="text-xl font-semibold text-zinc-900">
@@ -347,7 +347,7 @@ function SemesterCard({
           </p>
         </div>
         <div className="rounded-2xl bg-zinc-50 px-4 py-3">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+          <p className="text-[9px] font-semibold tracking-[0.14em] text-zinc-400">
             Reg. Window
           </p>
           <p className="text-sm font-semibold text-zinc-900">
@@ -817,7 +817,7 @@ function DetailsStep(p: any) {
       </div>
 
       <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 space-y-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-900 flex items-center gap-2">
+        <p className="text-xs font-semibold tracking-[0.14em] text-zinc-900 flex items-center gap-2">
           <Clock size={14} /> Registration Window
         </p>
         <div className="grid grid-cols-2 gap-4">
@@ -843,7 +843,7 @@ function DetailsStep(p: any) {
       </div>
 
       <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 space-y-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-900 flex items-center gap-2">
+        <p className="text-xs font-semibold tracking-[0.14em] text-zinc-900 flex items-center gap-2">
           <CalendarClock size={14} /> Semester Dates
         </p>
         <div className="grid grid-cols-2 gap-4">
@@ -983,7 +983,7 @@ function SubjectsStep({
       <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 space-y-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-900 inline-flex items-center gap-2">
+            <p className="text-xs font-semibold tracking-[0.14em] text-zinc-900 inline-flex items-center gap-2">
               <Library size={14} /> Pick from Subject Catalog
             </p>
             <p className="text-[11px] text-zinc-400 font-medium mt-1">
@@ -991,7 +991,7 @@ function SubjectsStep({
               {catalogSemester ? ` Filtered for ${catalogSemester}.` : ""}
             </p>
           </div>
-          <span className="shrink-0 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-semibold uppercase tracking-wider">
+          <span className="shrink-0 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-semibold tracking-wider">
             {subjects.length} on list
           </span>
         </div>
@@ -1108,7 +1108,7 @@ function SubjectsStep({
                         electiveGroupCode: pickIsElective ? pickGroup : "",
                       })
                     }
-                    className={`shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg text-[10px] font-semibold uppercase tracking-wider transition-all ${
+                    className={`shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg text-[10px] font-semibold tracking-wider transition-all ${
                       added
                         ? "bg-emerald-50 text-emerald-600 cursor-default"
                         : "bg-zinc-900 text-white hover:bg-zinc-800"
@@ -1134,7 +1134,7 @@ function SubjectsStep({
       {/* Term list */}
       {subjects.length > 0 && (
         <div className="space-y-2.5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-400">
+          <p className="text-[10px] font-semibold tracking-[0.18em] text-zinc-400">
             This semester ({subjects.length})
           </p>
           {subjects.map((s: SubjectDraft) => (
@@ -1162,7 +1162,7 @@ function SubjectsStep({
           onClick={() => setShowCustomForm((v) => !v)}
           className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-zinc-50 transition-colors"
         >
-          <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
+          <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-zinc-500">
             <PenLine size={14} />
             New subject not in catalog?
           </span>
@@ -1307,7 +1307,7 @@ function SubjectRow({ s, onRemove }: { s: SubjectDraft; onRemove: () => void }) 
         </p>
       </div>
       <span
-        className={`shrink-0 px-2.5 py-1 rounded-lg text-[8px] font-semibold uppercase tracking-[0.14em] border ${typeMeta[s.subjectType] || typeMeta.CORE}`}
+        className={`shrink-0 px-2.5 py-1 rounded-lg text-[8px] font-semibold tracking-[0.14em] border ${typeMeta[s.subjectType] || typeMeta.CORE}`}
       >
         {s.subjectType.replace("_", " ")}
       </span>
@@ -1334,7 +1334,7 @@ function ElectivesStep({ groups, setGroups, gDraft, setGDraft, addGroup }: any) 
       </div>
 
       <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 space-y-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-900">
+        <p className="text-xs font-semibold tracking-[0.14em] text-zinc-900">
           Add Elective Group
         </p>
         <div className="grid grid-cols-2 gap-3">
@@ -1457,7 +1457,7 @@ function ReviewStep({
   return (
     <div className="space-y-5">
       <div className="rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 text-white p-6">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/60 mb-1">
+        <p className="text-[10px] font-semibold tracking-[0.14em] text-white/60 mb-1">
           {program} {batch ? `· Batch ${batch}` : ""}{" "}
           {academicYear ? `· ${academicYear}` : ""}
         </p>
@@ -1476,7 +1476,7 @@ function ReviewStep({
 
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-2xl border border-zinc-200/70 bg-white p-4">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-zinc-400 mb-1">
+          <p className="text-[9px] font-semibold tracking-[0.14em] text-zinc-400 mb-1">
             Registration Opens
           </p>
           <p className="text-sm font-semibold text-zinc-800">
@@ -1484,7 +1484,7 @@ function ReviewStep({
           </p>
         </div>
         <div className="rounded-2xl border border-zinc-200/70 bg-white p-4">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-zinc-400 mb-1">
+          <p className="text-[9px] font-semibold tracking-[0.14em] text-zinc-400 mb-1">
             Registration Closes
           </p>
           <p className="text-sm font-semibold text-zinc-800">
@@ -1515,7 +1515,7 @@ function ReviewList({ title, items }: { title: string; items: SubjectDraft[] }) 
   if (items.length === 0) return null;
   return (
     <div className="rounded-2xl border border-zinc-200/70 bg-white p-4">
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 mb-3">
+      <p className="text-xs font-semibold tracking-[0.14em] text-zinc-500 mb-3">
         {title}
       </p>
       <div className="space-y-1.5">

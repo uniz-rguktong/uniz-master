@@ -84,7 +84,7 @@ export function FacultyProfilePage() {
       <div className="flex min-h-[50vh] w-full items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#000035] border-t-transparent" />
-          <p className="text-slate-600 font-semibold uppercase tracking-widest text-sm animate-pulse">Loading Profile...</p>
+          <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">Loading Profile...</p>
         </div>
       </div>
     );
@@ -121,7 +121,7 @@ export function FacultyProfilePage() {
             <ArrowLeft className="w-4 h-4" />
             Back to {deptName}
           </button>
-          <span className="hidden sm:inline-block px-3 py-1 text-[10px] font-bold tracking-[0.2em] uppercase text-[#800000] bg-[#800000]/5 border border-[#800000]/10 rounded-full">
+          <span className="hidden sm:inline-block px-3 py-1 text-[10px] font-bold tracking-[0.2em] text-[#800000] bg-[#800000]/5 border border-[#800000]/10 rounded-full">
             RGUKT Ongole · {code}
           </span>
         </div>
@@ -165,7 +165,7 @@ export function FacultyProfilePage() {
                     <FlaskConical className="w-4 h-4 text-slate-500" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-0.5">Specialization</p>
+                    <p className="text-xs font-bold tracking-widest text-slate-400 mb-0.5">Specialization</p>
                     <p className="text-slate-700 text-sm leading-relaxed">{specialization}</p>
                   </div>
                 </div>
@@ -177,7 +177,7 @@ export function FacultyProfilePage() {
                     <Briefcase className="w-4 h-4 text-slate-500" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-0.5">Experience</p>
+                    <p className="text-xs font-bold tracking-widest text-slate-400 mb-0.5">Experience</p>
                     <p className="text-slate-700 text-sm">{experience} {experience.toLowerCase().includes('year') ? '' : 'years overall experience'}</p>
                   </div>
                 </div>
@@ -188,7 +188,7 @@ export function FacultyProfilePage() {
                   <Mail className="w-4 h-4 text-[#800000]" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-0.5">Contact</p>
+                  <p className="text-xs font-bold tracking-widest text-slate-400 mb-0.5">Contact</p>
                   <a href={`mailto:${faculty.email}`} className="text-[#800000] text-sm font-semibold hover:underline">
                     {faculty.email}
                   </a>
@@ -207,7 +207,7 @@ export function FacultyProfilePage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
               {entries.map(({ key, items }) => (
                 <div key={key}>
-                  <h3 className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-widest text-[#000035] mb-3 border-b border-slate-100 pb-2">
+                  <h3 className="flex items-center gap-2 text-[11px] font-extrabold tracking-widest text-[#000035] mb-3 border-b border-slate-100 pb-2">
                     <span className="text-[#800000]/60">
                       {SECTION_ICONS[key] ?? <FileText className="w-4 h-4" />}
                     </span>

@@ -204,7 +204,7 @@ export default function Resetpassword() {
               <div className="space-y-4 md:space-y-6">
                 {/* Current Password */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-500 mb-2 block ml-1">
+                  <label className="text-xs font-bold tracking-[0.14em] text-zinc-500 mb-2 block ml-1">
                     Current Password
                   </label>
                   <div className="relative group">
@@ -219,7 +219,7 @@ export default function Resetpassword() {
 
                 {/* New Password */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-500 mb-2 block ml-1">
+                  <label className="text-xs font-bold tracking-[0.14em] text-zinc-500 mb-2 block ml-1">
                     New Password
                   </label>
                   <div className="relative group">
@@ -242,7 +242,7 @@ export default function Resetpassword() {
                           ></div>
                         </div>
                         <span
-                          className={`text-xs font-bold uppercase tracking-wider w-20 text-right ${
+                          className={`text-xs font-bold tracking-wider w-20 text-right ${
                             passwordStrength.score === 3
                               ? "text-zinc-900"
                               : passwordStrength.score === 2
@@ -259,7 +259,7 @@ export default function Resetpassword() {
 
                 {/* Confirm New Password */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-500 mb-2 block ml-1">
+                  <label className="text-xs font-bold tracking-[0.14em] text-zinc-500 mb-2 block ml-1">
                     Confirm Password
                   </label>
                   <div className="relative group">
@@ -273,7 +273,7 @@ export default function Resetpassword() {
                   {password && repassword && (
                     <div className="mt-2 ml-1">
                       {password === repassword ? (
-                        <p className="text-xs font-bold text-zinc-900 flex items-center gap-1.5 uppercase tracking-wide">
+                        <p className="text-xs font-bold text-zinc-900 flex items-center gap-1.5 tracking-wide">
                           <svg
                             className="h-4 w-4"
                             fill="none"
@@ -290,7 +290,7 @@ export default function Resetpassword() {
                           Passwords match
                         </p>
                       ) : (
-                        <p className="text-xs font-bold text-zinc-400 flex items-center gap-1.5 uppercase tracking-wide">
+                        <p className="text-xs font-bold text-zinc-400 flex items-center gap-1.5 tracking-wide">
                           <svg
                             className="h-4 w-4"
                             fill="none"
@@ -334,7 +334,7 @@ export default function Resetpassword() {
             {/* Info Section */}
             <div className="hidden md:flex md:w-1/3 bg-zinc-50/50 p-6 md:p-8 border-l border-zinc-100 flex-col justify-between">
               <div>
-                <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-[0.14em] mb-6 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-zinc-400 tracking-[0.14em] mb-6 flex items-center gap-2">
                   Password Strength
                 </h3>
 
@@ -431,7 +431,7 @@ export default function Resetpassword() {
                       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                     />
                   </svg>
-                  <p className="text-[11px] font-medium text-zinc-400 leading-relaxed uppercase tracking-wider">
+                  <p className="text-[11px] font-medium text-zinc-400 leading-relaxed tracking-wider">
                     Terminal security protocol will automatically log out all
                     sessions after successful credential update.
                   </p>

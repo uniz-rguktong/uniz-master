@@ -137,7 +137,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-zinc-900 font-bold text-[10px] uppercase tracking-[0.14em]">
+          <div className="flex items-center gap-2 text-zinc-900 font-bold text-[10px] tracking-[0.14em]">
             <TrendingUp size={14} />
             Live Queue
           </div>
@@ -194,13 +194,13 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                     <h3 className="font-bold text-zinc-900 text-xl tracking-tight leading-none mb-2">
                       {request.username}
                     </h3>
-                    <p className="text-[12px] text-zinc-900 font-semibold uppercase tracking-[0.14em]">
-                      {request.studentId || "NO ID"}
+                    <p className="text-[12px] text-zinc-900 font-semibold tracking-[0.14em]">
+                      {request.studentId || "No ID"}
                     </p>
                   </div>
                 </div>
-                <div className="bg-amber-50 text-amber-600 px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.1em] border border-amber-100">
-                  PENDING
+                <div className="bg-amber-50 text-amber-600 px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-[0.1em] border border-amber-100">
+                  Pending
                 </div>
               </div>
 
@@ -210,7 +210,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
               <div className="flex-1 space-y-6">
                 {/* Reason Section */}
                 <div className="bg-zinc-50/50 rounded-2xl p-6 border border-zinc-100">
-                  <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] block mb-3">
+                  <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] block mb-3">
                     Reason
                   </span>
                   <p className="text-zinc-700 font-semibold text-[15px] leading-relaxed italic">
@@ -221,7 +221,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 {/* Time Grid */}
                 <div className="grid grid-cols-2 gap-6 pb-2">
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] block">
+                    <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] block">
                       From
                     </span>
                     <p
@@ -232,7 +232,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                     </p>
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] block">
+                    <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] block">
                       To
                     </span>
                     <p
@@ -246,7 +246,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
 
                 <div className="grid grid-cols-2 gap-6 pb-2">
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] block">
+                    <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] block">
                       Duration
                     </span>
                     <p className="text-zinc-900 font-bold text-[13px]">
@@ -254,7 +254,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                     </p>
                   </div>
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] block text-right">
+                    <span className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] block text-right">
                       Submitted
                     </span>
                     <p className="text-zinc-900 font-bold text-[13px] text-right truncate">
@@ -272,7 +272,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 <button
                   onClick={() => handleAction("approve", request._id)}
                   disabled={!!actionLoading}
-                  className="h-12 bg-[#1a1f2e] text-white rounded-2xl font-bold uppercase tracking-[0.14em] text-[10px] hover:bg-[#252c41] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-zinc-200"
+                  className="h-12 bg-[#1a1f2e] text-white rounded-2xl font-bold tracking-[0.14em] text-[10px] hover:bg-[#252c41] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-zinc-200"
                 >
                   {actionLoading === request._id ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -284,7 +284,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 <button
                   onClick={() => handleAction("reject", request._id)}
                   disabled={!!actionLoading}
-                  className="h-12 bg-black text-white rounded-2xl font-bold uppercase tracking-[0.14em] text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="h-12 bg-black text-white rounded-2xl font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-800 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                   {actionLoading === request._id ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -296,7 +296,7 @@ export default function RequestManagement({ type }: RequestManagementProps) {
                 <button
                   onClick={() => handleAction("forward", request._id)}
                   disabled={!!actionLoading}
-                  className="h-12 bg-zinc-50 text-zinc-900 border border-zinc-100 rounded-2xl font-bold uppercase tracking-[0.14em] text-[10px] hover:bg-zinc-100 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="h-12 bg-zinc-50 text-zinc-900 border border-zinc-100 rounded-2xl font-bold tracking-[0.14em] text-[10px] hover:bg-zinc-100 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                   {actionLoading === request._id ? (
                     <Loader2 size={16} className="animate-spin" />

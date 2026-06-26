@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { formatStatus } from "@/utils/displayText";
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -216,7 +217,7 @@ export default function SemesterApproval({ role }: { role: string }) {
                   {sem.name}
                 </p>
                 <p className={cn(adminLabelClass, "mt-1 normal-case")}>
-                  {sem.status.replace(/_/g, " ")}
+                  {formatStatus(sem.status)}
                 </p>
               </button>
             ))}
@@ -327,7 +328,7 @@ function DetailView({
           <p className={cn(adminLabelClass, "text-white/60 mb-1")}>
             {sem.program || "B.Tech"}
             {sem.batch ? ` · Batch ${sem.batch}` : ""} ·{" "}
-            {sem.status.replace(/_/g, " ")}
+            {formatStatus(sem.status)}
           </p>
           <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em]">
             {sem.name}

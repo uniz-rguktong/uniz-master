@@ -121,7 +121,7 @@ export default function RequestComp({ type }: RequestCompProps) {
       <div className="mb-10 mt-2 md:mt-0">
         <button
           onClick={() => navigateTo("/student")}
-          className="text-zinc-400 hover:text-zinc-900 font-bold text-[11px] uppercase tracking-[0.14em] flex items-center gap-2 mb-10 transition-all group"
+          className="text-zinc-400 hover:text-zinc-900 font-bold text-[11px] tracking-[0.14em] flex items-center gap-2 mb-10 transition-all group"
         >
           <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
           Protocol Terminal
@@ -129,7 +129,7 @@ export default function RequestComp({ type }: RequestCompProps) {
 
         <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-6">
           <div className="text-center md:text-left">
-            <p className="text-zinc-400 font-medium text-[11px] mb-2 uppercase tracking-[0.14em] leading-none">
+            <p className="text-zinc-400 font-medium text-[11px] mb-2 tracking-[0.14em] leading-none">
               Institutional Exit terminal
             </p>
             <h1 className="text-2xl md:text-3xl font-semibold text-zinc-900 tracking-tight leading-none mb-3">
@@ -155,7 +155,7 @@ export default function RequestComp({ type }: RequestCompProps) {
           <div className="bg-white rounded-xl p-6 md:p-8 border border-zinc-100 shadow-sm">
             <div className="space-y-8">
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
                   Reason for {type}
                 </label>
                 <textarea
@@ -169,7 +169,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                 {type === "outpass" ? (
                   <>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                      <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
                         Departure Date
                       </label>
                       <Input
@@ -179,7 +179,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                       />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                      <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
                         Expected Return
                       </label>
                       <Input
@@ -192,7 +192,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                 ) : (
                   <>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                      <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
                         Exit Time
                       </label>
                       <Input
@@ -202,7 +202,7 @@ export default function RequestComp({ type }: RequestCompProps) {
                       />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400 ml-1">
+                      <label className="text-[10px] font-bold tracking-[0.14em] text-zinc-400 ml-1">
                         Return Window
                       </label>
                       <Input
@@ -237,7 +237,7 @@ export default function RequestComp({ type }: RequestCompProps) {
             </div>
 
             <div className="p-5 bg-zinc-50 rounded-xl border border-zinc-50">
-              <p className="text-[10px] font-bold text-zinc-300 uppercase tracking-[0.14em] mb-1.5">
+              <p className="text-[10px] font-bold text-zinc-300 tracking-[0.14em] mb-1.5">
                 Receipt Channel
               </p>
               <p className="text-[13px] font-semibold text-zinc-600 truncate">

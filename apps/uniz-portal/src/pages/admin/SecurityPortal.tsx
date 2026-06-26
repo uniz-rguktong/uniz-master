@@ -134,7 +134,7 @@ export default function SecurityPortal() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <History size={22} className="text-zinc-400" />
-                <h3 className="text-xl font-semibold text-zinc-900 uppercase tracking-tight italic">
+                <h3 className="text-xl font-semibold text-zinc-900 tracking-tight italic">
                   Recent Activity Logs
                 </h3>
               </div>
@@ -154,12 +154,12 @@ export default function SecurityPortal() {
                       <p className="text-[15px] font-semibold text-zinc-900 tracking-tight">
                         STUDENT_ID_{i}00{i}
                       </p>
-                      <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.14em] mt-0.5">
+                      <p className="text-[10px] font-bold text-zinc-400 tracking-[0.14em] mt-0.5">
                         Entry Recorded • 14:2{i} • Gate 01
                       </p>
                     </div>
                   </div>
-                  <div className="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] border border-emerald-100">
+                  <div className="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-semibold tracking-[0.14em] border border-emerald-100">
                     Verified
                   </div>
                 </div>
@@ -185,7 +185,7 @@ export default function SecurityPortal() {
           <div className="relative z-10 space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 backdrop-blur-md">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-400">
+              <span className="text-[10px] font-bold tracking-[0.14em] text-emerald-400">
                 Gate Security Operational • Terminal-A
               </span>
             </div>
@@ -207,7 +207,7 @@ export default function SecurityPortal() {
         {/* Stats Summary */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white p-7 rounded-3xl border border-zinc-100 shadow-none transition-all hover:border-emerald-200">
-            <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] mb-1 leading-none">
+            <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] mb-1 leading-none">
               Students Outside
             </p>
             <h3 className="text-4xl font-semibold text-zinc-900 leading-tight tracking-tight italic">
@@ -215,7 +215,7 @@ export default function SecurityPortal() {
             </h3>
           </div>
           <div className="bg-white p-7 rounded-3xl border border-zinc-100 shadow-none transition-all hover:border-emerald-200">
-            <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] mb-1 leading-none">
+            <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] mb-1 leading-none">
               Today's Checkins
             </p>
             <h3 className="text-4xl font-semibold text-emerald-600 leading-tight tracking-tight italic">
@@ -223,7 +223,7 @@ export default function SecurityPortal() {
             </h3>
           </div>
           <div className="bg-white p-7 rounded-3xl border border-zinc-100 shadow-none transition-all hover:border-emerald-200">
-            <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] mb-1 leading-none">
+            <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] mb-1 leading-none">
               Today's Checkouts
             </p>
             <h3 className="text-4xl font-semibold text-amber-600 leading-tight tracking-tight italic">
@@ -231,7 +231,7 @@ export default function SecurityPortal() {
             </h3>
           </div>
           <div className="bg-white p-7 rounded-3xl border border-zinc-100 shadow-none transition-all hover:border-emerald-200">
-            <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] mb-1 leading-none">
+            <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] mb-1 leading-none">
               Sync Status
             </p>
             <h3 className="text-4xl font-semibold text-zinc-900 leading-tight tracking-tight italic">
@@ -256,7 +256,7 @@ export default function SecurityPortal() {
             <button
               type="submit"
               disabled={searching}
-              className="absolute inset-y-4 right-4 px-10 bg-emerald-950 text-white rounded-2xl font-semibold uppercase tracking-[0.14em] text-[11px] hover:bg-black transition-all flex items-center gap-3 shadow-none active:scale-95 disabled:opacity-50"
+              className="absolute inset-y-4 right-4 px-10 bg-emerald-950 text-white rounded-2xl font-semibold tracking-[0.14em] text-[11px] hover:bg-black transition-all flex items-center gap-3 shadow-none active:scale-95 disabled:opacity-50"
             >
               {searching ? (
                 <Loader2 size={18} className="animate-spin" />
@@ -272,7 +272,7 @@ export default function SecurityPortal() {
             <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
               <div className="flex items-center gap-2 mb-6 ml-2">
                 <Users size={18} className="text-zinc-400" />
-                <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-[0.14em] leading-none">
+                <h4 className="text-xs font-semibold text-zinc-400 tracking-[0.14em] leading-none">
                   Personnel Records Identified ({searchResults.length})
                 </h4>
               </div>
@@ -289,7 +289,7 @@ export default function SecurityPortal() {
                       <h4 className="font-semibold text-zinc-900 tracking-tight text-xl italic mb-1">
                         {student.name}
                       </h4>
-                      <p className="text-xs font-bold text-zinc-400 uppercase tracking-[0.14em]">
+                      <p className="text-xs font-bold text-zinc-400 tracking-[0.14em]">
                         {student.username} • {student.branch} {student.year}
                       </p>
                     </div>
@@ -299,7 +299,7 @@ export default function SecurityPortal() {
                     <button
                       onClick={() => handleAction(student.username, "checkout")}
                       disabled={processingId === student.username}
-                      className="flex items-center gap-2.5 px-8 py-4 bg-amber-500 text-white rounded-2xl font-semibold uppercase tracking-[0.14em] text-[10px] hover:bg-amber-600 transition-all shadow-none active:scale-95 disabled:opacity-50"
+                      className="flex items-center gap-2.5 px-8 py-4 bg-amber-500 text-white rounded-2xl font-semibold tracking-[0.14em] text-[10px] hover:bg-amber-600 transition-all shadow-none active:scale-95 disabled:opacity-50"
                     >
                       {processingId === student.username ? (
                         <Loader2 size={16} className="animate-spin" />
@@ -311,7 +311,7 @@ export default function SecurityPortal() {
                     <button
                       onClick={() => handleAction(student.username, "checkin")}
                       disabled={processingId === student.username}
-                      className="flex items-center gap-2.5 px-8 py-4 bg-emerald-600 text-white rounded-2xl font-semibold uppercase tracking-[0.14em] text-[10px] hover:bg-emerald-700 transition-all shadow-none active:scale-95 disabled:opacity-50"
+                      className="flex items-center gap-2.5 px-8 py-4 bg-emerald-600 text-white rounded-2xl font-semibold tracking-[0.14em] text-[10px] hover:bg-emerald-700 transition-all shadow-none active:scale-95 disabled:opacity-50"
                     >
                       {processingId === student.username ? (
                         <Loader2 size={16} className="animate-spin" />
@@ -341,7 +341,7 @@ export default function SecurityPortal() {
           </div>
           <div className="relative z-10 mt-8 md:mt-0">
             <div className="px-8 py-4 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center gap-5 border border-white/20">
-              <span className="font-semibold uppercase tracking-[0.14em] text-[11px]">
+              <span className="font-semibold tracking-[0.14em] text-[11px]">
                 System Operational
               </span>
               <div className="w-3 h-3 rounded-full bg-emerald-300 animate-pulse shadow-[0_0_15px_rgba(110,231,183,1)]" />

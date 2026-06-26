@@ -28,7 +28,7 @@ export function InlineError({
         <button
           type="button"
           onClick={onRetry}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-2xl font-bold text-xs uppercase tracking-[0.14em] transition-all"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-2xl font-bold text-xs tracking-[0.14em] transition-all"
         >
           <RefreshCw size={14} />
           {retryLabel}

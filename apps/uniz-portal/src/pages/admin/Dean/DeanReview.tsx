@@ -212,7 +212,7 @@ export default function DeanReview() {
               <select
                 value={filterYear}
                 onChange={(e) => setFilterYear(e.target.value)}
-                className="font-semibold text-[10px] uppercase tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
+                className="font-semibold text-[10px] tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
               >
                 <option value="all">All Years</option>
                 {["E1", "E2", "E3", "E4"].map((y) => (
@@ -227,7 +227,7 @@ export default function DeanReview() {
               <select
                 value={filterBatch}
                 onChange={(e) => setFilterBatch(e.target.value)}
-                className="font-semibold text-[10px] uppercase tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
+                className="font-semibold text-[10px] tracking-[0.14em] text-zinc-700 outline-none border-none bg-transparent"
               >
                 <option value="all">All Batches</option>
                 {availableBatches.map((b) => (
@@ -258,7 +258,7 @@ export default function DeanReview() {
           </button>
           <div className="flex items-center gap-3 px-6 py-3 bg-amber-50 rounded-2xl border border-amber-100">
             <AlertCircle className="text-amber-500" size={18} />
-            <p className="text-amber-700 text-xs font-semibold uppercase tracking-[0.14em]">
+            <p className="text-amber-700 text-xs font-semibold tracking-[0.14em]">
               {allocations.filter((a: any) => !a.isApproved).length} Pending
               Approvals
             </p>
@@ -294,11 +294,11 @@ export default function DeanReview() {
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+                      <span className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
                         {alloc.subject.code}
                       </span>
                       {alloc.isApproved && (
-                        <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md text-[8px] font-semibold uppercase tracking-[0.14em] flex items-center gap-1">
+                        <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-md text-[8px] font-semibold tracking-[0.14em] flex items-center gap-1">
                           <Check size={8} strokeWidth={4} /> Approved
                         </span>
                       )}
@@ -329,7 +329,7 @@ export default function DeanReview() {
                       <button
                         disabled={approving === alloc.id}
                         onClick={() => handleApprove(alloc.id)}
-                        className="bg-zinc-900 text-white px-8 py-3.5 rounded-2xl font-semibold uppercase tracking-[0.14em] text-[10px] flex items-center gap-2 hover:bg-black transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                        className="bg-zinc-900 text-white px-8 py-3.5 rounded-2xl font-semibold tracking-[0.14em] text-[10px] flex items-center gap-2 hover:bg-black transition-all shadow-xl active:scale-95 disabled:opacity-50"
                       >
                         {approving === alloc.id ? (
                           <Spinner size="sm" className="brightness-200" />
@@ -350,7 +350,7 @@ export default function DeanReview() {
               {/* Subject Meta (Secondary info) */}
               <div className="mt-6 pt-6 border-t border-zinc-50 flex flex-wrap gap-8">
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-semibold text-zinc-300 uppercase tracking-[0.14em]">
+                  <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
                     Credits
                   </span>
                   <span className="font-bold text-zinc-600 text-xs">
@@ -358,7 +358,7 @@ export default function DeanReview() {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-semibold text-zinc-300 uppercase tracking-[0.14em]">
+                  <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
                     Semester
                   </span>
                   <span className="font-bold text-zinc-600 text-xs">
@@ -367,7 +367,7 @@ export default function DeanReview() {
                 </div>
                 {alloc.batch && (
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-semibold text-zinc-300 uppercase tracking-[0.14em]">
+                    <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
                       Batch
                     </span>
                     <span className="font-bold text-zinc-600 text-xs">
@@ -376,7 +376,7 @@ export default function DeanReview() {
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-semibold text-zinc-300 uppercase tracking-[0.14em]">
+                  <span className="text-[9px] font-semibold text-zinc-300 tracking-[0.14em]">
                     Year
                   </span>
                   <span className="font-bold text-zinc-600 text-xs text-zinc-900">
@@ -384,7 +384,7 @@ export default function DeanReview() {
                   </span>
                 </div>
                 {!alloc.isApproved && (
-                  <div className="ml-auto flex items-center gap-2 text-[10px] font-bold text-zinc-900 uppercase tracking-[0.14em]">
+                  <div className="ml-auto flex items-center gap-2 text-[10px] font-bold text-zinc-900 tracking-[0.14em]">
                     Ready for Review <ArrowRight size={12} />
                   </div>
                 )}

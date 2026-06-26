@@ -196,22 +196,22 @@ export default function PushNotificationSection() {
           <table className="w-full text-left border-collapse min-w-[900px]">
             <thead>
               <tr className="border-b border-zinc-200/70 bg-zinc-50/50">
-                <th className="px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
                   Person
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
                   Student ID
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
                   Academic
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
                   Device
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
                   Status
                 </th>
-                <th className="px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                <th className="px-6 py-3.5 text-[10px] font-semibold tracking-[0.14em] text-zinc-500">
                   Registered
                 </th>
               </tr>
@@ -254,7 +254,7 @@ export default function PushNotificationSection() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-[12px] font-semibold text-zinc-800 tabular-nums uppercase">
+                        <p className="text-[12px] font-semibold text-zinc-800 tabular-nums ">
                           {sub.username}
                         </p>
                       </td>

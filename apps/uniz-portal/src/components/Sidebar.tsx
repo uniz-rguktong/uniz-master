@@ -62,7 +62,7 @@ interface MainContent {
 }
 
 const ContentSkeleton = () => (
-  <div className="flex h-screen items-center justify-center text-zinc-400 font-bold uppercase tracking-[0.14em] text-sm animate-pulse">
+  <div className="flex h-screen items-center justify-center text-zinc-400 font-bold tracking-[0.14em] text-sm animate-pulse">
     Loading...
   </div>
 );
@@ -405,7 +405,7 @@ export default function Sidebar({ content }: MainContent) {
               <div className="md:hidden mb-6">
                 <button
                   onClick={() => navigate("/student")}
-                  className="flex items-center gap-1 text-zinc-500 font-bold text-[10px] uppercase tracking-[0.14em] py-2"
+                  className="flex items-center gap-1 text-zinc-500 font-bold text-[10px] tracking-[0.14em] py-2"
                 >
                   <ChevronLeft size={20} strokeWidth={3} />
                 </button>

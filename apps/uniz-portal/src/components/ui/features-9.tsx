@@ -145,7 +145,7 @@ export function Features() {
                 <span className="flex justify-center items-center size-5 rounded-full border border-zinc-200 bg-white shadow-sm">
                   <span className="size-2.5 rounded-full bg-zinc-400" />
                 </span>
-                <span className="text-zinc-400 font-semibold text-[11px] uppercase tracking-wider">
+                <span className="text-zinc-400 font-semibold text-[11px] tracking-wider">
                   You
                 </span>
               </div>
@@ -175,7 +175,7 @@ export function Features() {
               <div
                 className={`w-2 h-2 rounded-full animate-pulse ${getDisplayHealthStatus(health) === "ok" ? "bg-emerald-500" : "bg-red-500"}`}
               ></div>
-              <span className="text-xs font-bold text-zinc-600 uppercase tracking-[0.14em]">
+              <span className="text-xs font-bold text-zinc-600 tracking-[0.14em]">
                 Systems{" "}
                 {getDisplayHealthStatus(health) === "ok"
                   ? "Operating Normally"
@@ -348,7 +348,7 @@ const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
     <div className="rounded-2xl border border-zinc-100/60 bg-white/70 backdrop-blur-sm p-5 sm:p-8 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.06)]">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 mb-1">
+          <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 mb-1">
             Response latency
           </p>
           <p className="text-2xl font-semibold tracking-[-0.04em] text-zinc-950 tabular-nums">
@@ -358,7 +358,7 @@ const MonitoringChart = ({ healthStatus }: { healthStatus: any }) => {
         </div>
         <div
           className={cn(
-            "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider",
+            "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold tracking-wider",
             unhealthyCount === 0
               ? "border-emerald-100 bg-emerald-50 text-emerald-700"
               : "border-amber-100 bg-amber-50 text-amber-700",

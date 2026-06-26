@@ -158,7 +158,7 @@ export default function GrievanceSection() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-5 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-[0.14em] transition-all ${filter === f ? "bg-white text-zinc-800 shadow-none border border-zinc-100" : "text-zinc-500 hover:text-zinc-900"}`}
+              className={`px-5 py-2 rounded-xl text-[10px] font-semibold tracking-[0.14em] transition-all ${filter === f ? "bg-white text-zinc-800 shadow-none border border-zinc-100" : "text-zinc-500 hover:text-zinc-900"}`}
             >
               {f}
             </button>
@@ -187,7 +187,7 @@ export default function GrievanceSection() {
                         <Tag size={16} />
                       </div>
                       <div>
-                        <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] leading-none mb-1.5">
+                        <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] leading-none mb-1.5">
                           Category
                         </p>
                         <p className="font-semibold text-zinc-900 text-sm">
@@ -196,7 +196,7 @@ export default function GrievanceSection() {
                       </div>
                     </div>
                     <div
-                      className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-[10px] font-semibold uppercase tracking-[0.14em] ${getStatusStyles(grievance.status)}`}
+                      className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-[10px] font-semibold tracking-[0.14em] ${getStatusStyles(grievance.status)}`}
                     >
                       {getStatusIcon(grievance.status)}
                       {grievance.status || "Pending"}
@@ -214,7 +214,7 @@ export default function GrievanceSection() {
                       <User size={16} />
                     </div>
                     <div>
-                      <p className="text-[9px] font-semibold text-zinc-400 uppercase tracking-[0.14em] leading-none mb-1">
+                      <p className="text-[9px] font-semibold text-zinc-400 tracking-[0.14em] leading-none mb-1">
                         Submitted By
                       </p>
                       <p className="text-xs font-semibold text-zinc-900 leading-none">
@@ -225,7 +225,7 @@ export default function GrievanceSection() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-[9px] font-semibold text-zinc-400 uppercase tracking-[0.14em] leading-none mb-1">
+                    <p className="text-[9px] font-semibold text-zinc-400 tracking-[0.14em] leading-none mb-1">
                       Date
                     </p>
                     <p className="text-xs font-semibold text-zinc-900 leading-none">
@@ -314,7 +314,7 @@ function StatCard({ label, count, icon: Icon, color }: any) {
         <Icon size={26} />
       </div>
       <div>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 leading-none mb-2.5">
+        <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 leading-none mb-2.5">
           {label}
         </p>
         <p className="text-3xl font-semibold text-zinc-900 leading-none tracking-tight">
