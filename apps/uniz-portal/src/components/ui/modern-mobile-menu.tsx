@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LucideIcon, Plus } from "lucide-react";
+import { LucideIcon, LayoutGrid, X } from "lucide-react";
 import { cn } from "../../utils/cn";
 
 type IconComponentType = LucideIcon | React.ElementType<{ className?: string }>;
@@ -15,91 +15,105 @@ export interface InteractiveMenuItem {
 export interface InteractiveMenuProps {
   primaryItems: InteractiveMenuItem[];
   moreItems: InteractiveMenuItem[];
+  moreTitle?: string;
 }
 
 const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
   primaryItems,
   moreItems,
+  moreTitle = "Academics & more",
 }) => {
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number>(0);
+
+  const moreActive = moreItems.some((item) => item.isActive);
 
   useEffect(() => {
     const active = primaryItems.findIndex((item) => item.isActive);
     if (active !== -1) setActiveIndex(active);
   }, [primaryItems]);
 
-  const toggleMore = () => setIsMoreOpen(!isMoreOpen);
-
-  const getPopupItemStyle = (index: number, total: number) => {
-    const radius = 105;
-    const startAngle = -150;
-    const endAngle = -30;
-    const angleStep = total > 1 ? (endAngle - startAngle) / (total - 1) : 0;
-    const angle = startAngle + index * angleStep;
-    const radian = (angle * Math.PI) / 180;
-
-    return {
-      x: radius * Math.cos(radian),
-      y: radius * Math.sin(radian),
+  useEffect(() => {
+    if (!isMoreOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
     };
-  };
+  }, [isMoreOpen]);
 
   const middleIndex = Math.floor(primaryItems.length / 2);
   const leftItems = primaryItems.slice(0, middleIndex);
   const rightItems = primaryItems.slice(middleIndex + 1);
-  const middleItem = primaryItems[middleIndex];
 
   return (
     <div className="relative flex flex-col items-center select-none w-full">
-      {/* Pop-up Arc (More Menu) */}
       <AnimatePresence>
         {isMoreOpen && (
-          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-[70]">
-            {moreItems.map((item, index) => {
-              const { x, y } = getPopupItemStyle(index, moreItems.length);
-              return (
-                <motion.button
-                  key={item.label}
-                  initial={{ scale: 0, x: 0, y: 0, opacity: 0 }}
-                  animate={{ scale: 1, x, y, opacity: 1 }}
-                  exit={{ scale: 0, x: 0, y: 0, opacity: 0 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 400,
-                    damping: 25,
-                    mass: 0.8,
-                    delay: index * 0.05,
-                  }}
-                  onClick={() => {
-                    item.onClick?.();
-                    setIsMoreOpen(false);
-                  }}
-                  className="absolute flex flex-col items-center justify-center gap-2 group"
-                  style={{ left: -32, top: -32, width: 64, height: 64 }}
+          <>
+            <motion.button
+              type="button"
+              aria-label="Close menu"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMoreOpen(false)}
+              className="fixed inset-0 z-[55] bg-zinc-900/25 backdrop-blur-[2px]"
+            />
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 24 }}
+              transition={{ type: "spring", stiffness: 420, damping: 32 }}
+              className="fixed bottom-[88px] left-3 right-3 z-[70] rounded-2xl border border-zinc-200/80 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.14)] overflow-hidden"
+            >
+              <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-100">
+                <p className="text-[13px] font-bold text-zinc-900 tracking-tight">
+                  {moreTitle}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setIsMoreOpen(false)}
+                  className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
                 >
-                  <div className="flex items-center justify-center w-[52px] h-[52px] rounded-full bg-white text-zinc-900 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-zinc-100 group-hover:bg-zinc-50 group-active:scale-95 transition-all">
-                    <item.icon size={24} strokeWidth={2.5} />
-                  </div>
-                  <motion.span
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 + 0.15 }}
-                    className="text-[11px] font-bold text-zinc-800 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-3 py-1 rounded-full border border-zinc-100 whitespace-nowrap"
-                  >
-                    {item.label}
-                  </motion.span>
-                </motion.button>
-              );
-            })}
-          </div>
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 p-3">
+                {moreItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.label}
+                      type="button"
+                      onClick={() => {
+                        item.onClick?.();
+                        setIsMoreOpen(false);
+                      }}
+                      className={cn(
+                        "flex flex-col items-center justify-center gap-2 rounded-xl px-2 py-3 transition-all active:scale-[0.97]",
+                        item.isActive
+                          ? "bg-zinc-900 text-white shadow-sm"
+                          : "bg-zinc-50 text-zinc-700 hover:bg-zinc-100",
+                      )}
+                    >
+                      <Icon size={22} strokeWidth={2.25} />
+                      <span className="text-[10px] font-bold leading-tight text-center">
+                        {item.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
       <div className="relative w-full">
-        {/* The Dock Container with Custom SVG Background */}
         <div className="relative h-[72px] w-full">
-          {/* SVG Notch Background */}
           <div className="absolute inset-0 z-0">
             <svg
               width="100%"
@@ -122,9 +136,7 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
             </svg>
           </div>
 
-          {/* Navigation Items */}
-          <nav className="relative z-10 flex items-center justify-between h-full px-6 overflow-visible pt-1">
-            {/* Left Items */}
+          <nav className="relative z-10 flex items-center justify-between h-full px-4 overflow-visible pt-1">
             <div className="flex flex-1 justify-around items-center">
               {leftItems.map((item, idx) => (
                 <NavItem
@@ -140,42 +152,28 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
               ))}
             </div>
 
-            {/* Middle Raised Button */}
-            <div className="relative w-24 flex justify-center overflow-visible">
-              <div className="absolute -top-14 transform transition-all duration-300">
+            <div className="relative w-20 flex justify-center overflow-visible">
+              <div className="absolute -top-12">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
+                  type="button"
                   whileTap={{ scale: 0.95 }}
-                  animate={{
-                    rotate: isMoreOpen ? 90 : 0,
-                    scale: isMoreOpen ? 1.1 : 1,
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 20,
-                  }}
-                  onClick={toggleMore}
+                  animate={{ scale: isMoreOpen ? 1.05 : 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  onClick={() => setIsMoreOpen((open) => !open)}
                   className={cn(
-                    "flex items-center justify-center w-16 h-16 rounded-full shadow-2xl transition-colors duration-500 border-4 border-white",
-                    isMoreOpen
+                    "flex flex-col items-center justify-center w-[60px] h-[60px] rounded-full shadow-xl transition-colors duration-300 border-4 border-white",
+                    isMoreOpen || moreActive
                       ? "bg-zinc-900 text-white"
                       : "bg-[#0B2A47] text-white",
                   )}
+                  aria-label={isMoreOpen ? "Close menu" : "Open academics menu"}
+                  aria-expanded={isMoreOpen}
                 >
-                  {middleItem ? (
-                    (() => {
-                      const Icon = middleItem.icon;
-                      return <Icon size={28} strokeWidth={2.5} />;
-                    })()
-                  ) : (
-                    <Plus size={28} />
-                  )}
+                  <LayoutGrid size={24} strokeWidth={2.5} />
                 </motion.button>
               </div>
             </div>
 
-            {/* Right Items */}
             <div className="flex flex-1 justify-around items-center">
               {rightItems.map((item, idx) => {
                 const actualIdx = middleIndex + 1 + idx;
@@ -196,16 +194,6 @@ const InteractiveMenu: React.FC<InteractiveMenuProps> = ({
           </nav>
         </div>
       </div>
-
-      {/* Backdrop */}
-      <AnimatePresence>
-        {isMoreOpen && (
-          <div
-            onClick={() => setIsMoreOpen(false)}
-            className="fixed inset-0 z-[55] pointer-events-auto bg-transparent"
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 };
@@ -222,8 +210,9 @@ const NavItem = ({
   const Icon = item.icon;
   return (
     <button
+      type="button"
       onClick={onClick}
-      className="flex flex-col items-center gap-1.5 transition-all active:scale-95"
+      className="flex flex-col items-center gap-1 min-w-[56px] transition-all active:scale-95"
     >
       <div
         className={cn(
@@ -235,7 +224,7 @@ const NavItem = ({
       </div>
       <span
         className={cn(
-          "text-[10px] font-bold tracking-tight transition-colors duration-300",
+          "text-[10px] font-bold tracking-tight transition-colors duration-300 max-w-[64px] truncate",
           isActive ? "text-zinc-900" : "text-zinc-400 font-medium",
         )}
       >

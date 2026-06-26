@@ -246,16 +246,13 @@ export default function Sidebar({ content }: MainContent) {
       isActive: content === "dashboard",
     },
     {
-      label: "Security",
-      icon: Lock,
-      onClick: () => navigate("/student/resetpassword"),
-      isActive: content === "resetpassword",
+      label: "Register",
+      icon: ClipboardCheck,
+      onClick: () => navigate("/student/registration"),
+      isActive: content === "registration",
     },
-    {
-      label: "Explore",
-      icon: LayoutGrid,
-      isActive: ["gradehub", "attendance"].includes(content),
-    },
+    // Center FAB placeholder — opens the academics sheet
+    { label: "More", icon: LayoutGrid },
     {
       label: "Grievance",
       icon: AlertCircle,
@@ -282,6 +279,12 @@ export default function Sidebar({ content }: MainContent) {
       icon: CalendarCheck,
       onClick: () => navigate("/student/attendance"),
       isActive: content === "attendance",
+    },
+    {
+      label: "Security",
+      icon: Lock,
+      onClick: () => navigate("/student/resetpassword"),
+      isActive: content === "resetpassword",
     },
   ];
 
@@ -429,6 +432,7 @@ export default function Sidebar({ content }: MainContent) {
           <InteractiveMenu
             primaryItems={primaryMobileItems}
             moreItems={moreMobileItems}
+            moreTitle="Academics & account"
           />
         </div>
       </div>
