@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { adminChipClass } from "@/components/admin/admin-ui";
 
 type UnizLogoProps = {
   /** Sidebar collapsed — show monogram only */
@@ -7,6 +8,9 @@ type UnizLogoProps = {
   abbreviate?: boolean;
   /** Larger wordmark for auth/marketing surfaces */
   size?: "md" | "lg";
+  /** Auth screens: wordmark-only lockup with optional portal chip */
+  variant?: "default" | "auth";
+  portalLabel?: string;
   className?: string;
 };
 
@@ -37,9 +41,46 @@ export function UnizLogo({
   collapsed = false,
   abbreviate = false,
   size = "md",
+  variant = "default",
+  portalLabel,
   className,
 }: UnizLogoProps) {
   const large = size === "lg";
+
+  if (variant === "auth") {
+    return (
+      <div
+        className={cn(
+          "flex items-center justify-between gap-4 w-full",
+          className,
+        )}
+      >
+        <div className="min-w-0 flex items-baseline gap-2.5">
+          <p
+            className={cn(
+              "uniz-logo-wordmark text-zinc-950 leading-none",
+              large ? "text-[2.125rem]" : "text-[1.75rem]",
+            )}
+          >
+            uniZ
+          </p>
+          <span
+            className={cn(
+              "font-semibold uppercase text-zinc-400 tracking-[0.14em]",
+              large ? "text-[9px] pb-0.5" : "text-[8px]",
+            )}
+          >
+            RGUKT
+          </span>
+        </div>
+        {portalLabel && (
+          <span className={cn(adminChipClass, "shrink-0 text-zinc-600")}>
+            {portalLabel}
+          </span>
+        )}
+      </div>
+    );
+  }
 
   if (collapsed && abbreviate) {
     return (
@@ -63,16 +104,16 @@ export function UnizLogo({
       <div className="min-w-0 leading-none">
         <p
           className={cn(
-            "uniz-logo-wordmark text-zinc-950",
-            large ? "text-[2.35rem]" : "text-[1.65rem]",
+            "uniz-logo-wordmark text-zinc-950 leading-none",
+            large ? "text-[1.85rem]" : "text-[1.5rem]",
           )}
         >
           uniZ
         </p>
         <p
           className={cn(
-            "font-semibold tracking-[0.2em] text-zinc-400",
-            large ? "mt-1.5 text-[10px]" : "mt-1 text-[9px]",
+            "font-medium uppercase tracking-[0.12em] text-zinc-400",
+            large ? "mt-1 text-[9px]" : "mt-0.5 text-[8px]",
           )}
         >
           RGUKT
