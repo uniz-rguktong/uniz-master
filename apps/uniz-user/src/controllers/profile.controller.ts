@@ -25,6 +25,14 @@ const AUTH_SERVICE_URL = (
   process.env.AUTH_SERVICE_URL || `${GATEWAY_URL}/auth`
 ).replace(/\/$/, "");
 
+const ACADEMICS_SERVICE_URL = (
+  process.env.ACADEMICS_SERVICE_URL || `${GATEWAY_URL}/academics`
+).replace(/\/$/, "");
+
+const OUTPASS_SERVICE_URL = (
+  process.env.OUTPASS_SERVICE_URL || `${GATEWAY_URL}/requests`
+).replace(/\/$/, "");
+
 const sendPush = async (username: string, title: string, body: string) => {
   try {
     const url = `${NOTIFICATION_SERVICE_URL}/push/send`;
@@ -1343,6 +1351,85 @@ export const deleteFacultyProfile = async (
     });
   }
 };
+
+export const deleteStudentProfile = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user || user.role !== UserRole.WEBMASTER) {
+    return res
+      .status(403)
+      .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  const username = String(req.params.username || "").toUpperCase();
+  if (!username) {
+    return res.status(400).json({ success: false, message: "Student ID required" });
+  }
+
+  const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+  const internalHeaders = { headers: { "x-internal-secret": SECRET }, timeout: 20000 };
+
+  try {
+    const existing = await prisma.studentProfile.findFirst({
+      where: { username: { equals: username, mode: "insensitive" } },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ success: false, message: "Student not found" });
+    }
+
+    const canonicalUsername = existing.username;
+
+    const purgeResults = await Promise.allSettled([
+      axios.delete(`${AUTH_SERVICE_URL}/internal/user/${canonicalUsername}`, internalHeaders),
+      axios.delete(
+        `${ACADEMICS_SERVICE_URL}/internal/student/${canonicalUsername}`,
+        internalHeaders,
+      ),
+      axios.delete(
+        `${OUTPASS_SERVICE_URL}/internal/student/${canonicalUsername}`,
+        internalHeaders,
+      ),
+      axios.delete(
+        `${NOTIFICATION_SERVICE_URL}/internal/subscriptions/${canonicalUsername}`,
+        internalHeaders,
+      ),
+    ]);
+
+    purgeResults.forEach((result, index) => {
+      if (result.status === "rejected") {
+        const labels = ["auth", "academics", "outpass", "notifications"];
+        console.warn(
+          `[USER] Student purge partial failure (${labels[index]}) for ${canonicalUsername}:`,
+          result.reason?.message || result.reason,
+        );
+      }
+    });
+
+    await prisma.pushSubscription.deleteMany({
+      where: { username: { equals: canonicalUsername, mode: "insensitive" } },
+    });
+
+    await prisma.studentProfile.delete({ where: { id: existing.id } });
+    await redis.del(`profile:v2:${canonicalUsername}`);
+
+    return res.json({
+      success: true,
+      message: `Student ${canonicalUsername} permanently deleted`,
+      username: canonicalUsername,
+    });
+  } catch (e: any) {
+    console.error(`[ERROR] deleteStudentProfile failed for ${username}:`, e.message || e);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete student",
+      details: e.message,
+    });
+  }
+};
+
 export const updateFacultyProfileSelf = async (
   req: AuthenticatedRequest,
   res: Response,

@@ -11,12 +11,15 @@ import {
   securityCheckIn,
   getSecuritySummary,
   getOutsideStudents,
+  purgeStudentRequests,
 } from "../controllers/request.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();
 
 router.use(authMiddleware);
+
+router.delete("/internal/student/:studentId", purgeStudentRequests);
 
 import { submissionLimiter } from "../middlewares/ratelimit.middleware";
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BASE_URL } from "../../api/endpoints";
 import {
   Search,
@@ -42,10 +42,19 @@ interface Subject {
   credits: number;
 }
 
+const SEARCH_DEBOUNCE_MS = 400;
+
+function semesterLabel(sub: Subject) {
+  const fromCode = sub.code.match(/E[1-4]-SEM-[12]/i);
+  return fromCode ? fromCode[0].toUpperCase() : sub.semester;
+}
+
 export default function CurriculumManager() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("ALL");
   const [semFilter, setSemFilter] = useState("ALL");
   const [page, setPage] = useState(1);
@@ -65,6 +74,9 @@ export default function CurriculumManager() {
     credits: 3,
   });
 
+  const fetchGenRef = useRef(0);
+  const hasLoadedRef = useRef(false);
+
   const departments = ["CSE", "ECE", "EEE", "CIVIL", "MECH"];
   const semesters = [
     "E1-SEM-1",
@@ -77,15 +89,18 @@ export default function CurriculumManager() {
     "E4-SEM-2",
   ];
 
-  const fetchSubjects = async () => {
-    setLoading(true);
+  const fetchSubjects = useCallback(async () => {
+    const gen = ++fetchGenRef.current;
+    if (!hasLoadedRef.current) setLoading(true);
+    else setRefreshing(true);
+
     try {
       const token = localStorage.getItem("admin_token")?.replace(/"/g, "");
 
       const params = new URLSearchParams({
         limit: "12",
         page: page.toString(),
-        search: searchQuery,
+        search: debouncedSearch.trim(),
       });
       if (deptFilter !== "ALL") params.append("department", deptFilter);
       if (semFilter !== "ALL") params.append("semester", semFilter);
@@ -96,6 +111,7 @@ export default function CurriculumManager() {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
+      if (gen !== fetchGenRef.current) return;
       const data = await res.json();
       if (data.success) {
         setSubjects(data.subjects || []);
@@ -103,16 +119,34 @@ export default function CurriculumManager() {
         setTotalRecords(data.meta?.total || 0);
       }
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to fetch subjects");
+      if (gen === fetchGenRef.current) {
+        console.error(err);
+        toast.error("Failed to fetch subjects");
+      }
     } finally {
-      setLoading(false);
+      if (gen === fetchGenRef.current) {
+        hasLoadedRef.current = true;
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
-  };
+  }, [page, deptFilter, semFilter, debouncedSearch]);
 
   useEffect(() => {
-    fetchSubjects();
-  }, [page, deptFilter, semFilter, searchQuery]);
+    const t = setTimeout(() => {
+      setDebouncedSearch((prev) => {
+        const next = searchInput;
+        if (next !== prev) setPage(1);
+        return next;
+      });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
+  useEffect(() => {
+    const t = setTimeout(() => fetchSubjects(), 150);
+    return () => clearTimeout(t);
+  }, [page, deptFilter, semFilter, debouncedSearch, fetchSubjects]);
 
   const handleOpenModal = (sub?: Subject) => {
     if (sub) {
@@ -214,13 +248,16 @@ export default function CurriculumManager() {
           <input
             type="text"
             placeholder="Search by name or code…"
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setPage(1);
-            }}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             className={cn(adminInputClass, "pl-10")}
           />
+          {refreshing && (
+            <Loader2
+              size={14}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-zinc-400"
+            />
+          )}
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -289,11 +326,15 @@ export default function CurriculumManager() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
+        <div
+          className={cn(
+            "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5 transition-opacity duration-200",
+            refreshing && "opacity-60 pointer-events-none",
+          )}
+        >
           {subjects.map((sub) => (
             <motion.div
-              layout
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               key={sub.id}
               className={cn(adminCardClass, adminCardHoverClass, "group p-5 relative overflow-hidden")}
@@ -335,7 +376,7 @@ export default function CurriculumManager() {
                   {sub.department}
                 </span>
                 <span className="px-2.5 py-1 bg-zinc-50 text-zinc-600 text-[10px] font-medium rounded-full uppercase tracking-wide border border-zinc-200">
-                  {sub.semester}
+                  {semesterLabel(sub)}
                 </span>
               </div>
 

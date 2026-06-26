@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Response, Request } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import ExcelJS from "exceljs";
 import axios from "axios";
@@ -1511,8 +1511,41 @@ export const getSubjects = async (req: AuthenticatedRequest, res: Response) => {
     if (deptFilter) {
       where.department = { equals: deptFilter, mode: "insensitive" };
     }
-    if (semester && semester !== "ALL")
-      where.semester = { contains: semester as string, mode: "insensitive" }; // Robust match for year-base semester strings
+    if (semester && String(semester).toUpperCase() !== "ALL") {
+      const semRaw = String(semester).trim();
+      const levelMatch = semRaw.match(/^E([1-4])-(SEM-[12])$/i);
+      const semClause = levelMatch
+        ? {
+            OR: [
+              { code: { contains: levelMatch[0], mode: "insensitive" } },
+              {
+                AND: [
+                  {
+                    semester: {
+                      equals: levelMatch[2],
+                      mode: "insensitive",
+                    },
+                  },
+                  {
+                    code: {
+                      contains: `E${levelMatch[1]}-`,
+                      mode: "insensitive",
+                    },
+                  },
+                ],
+              },
+            ],
+          }
+        : {
+            OR: [
+              { semester: { contains: semRaw, mode: "insensitive" } },
+              { code: { contains: semRaw, mode: "insensitive" } },
+            ],
+          };
+
+      if (where.AND) where.AND.push(semClause);
+      else where.AND = [semClause];
+    }
 
     let subjects: any[];
     let total: number;
@@ -2620,5 +2653,48 @@ export const downloadAttendance = async (
     res
       .status(500)
       .json({ success: false, message: "Failed to generate PDF." });
+  }
+};
+
+export const purgeStudentRecords = async (req: Request, res: Response) => {
+  const internalSecret = req.headers["x-internal-secret"];
+  const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+  if (internalSecret !== SECRET) {
+    return res.status(403).json({ success: false, message: "Forbidden" });
+  }
+
+  const studentId = String(req.params.studentId || "").toUpperCase();
+  if (!studentId) {
+    return res.status(400).json({ success: false, message: "Student ID required" });
+  }
+
+  try {
+    const [grades, attendance, registrations, seating] = await Promise.all([
+      prisma.grade.deleteMany({ where: { studentId } }),
+      prisma.attendance.deleteMany({ where: { studentId } }),
+      prisma.registration.deleteMany({ where: { studentId } }),
+      prisma.seatingArrangement.deleteMany({ where: { studentId } }),
+    ]);
+
+    await redis.del(`grades_v3:${studentId}`);
+    await redis.del(`grades:${studentId}`);
+    await redis.del(`attendance:${studentId}`);
+
+    return res.json({
+      success: true,
+      message: `Academic records purged for ${studentId}`,
+      deleted: {
+        grades: grades.count,
+        attendance: attendance.count,
+        registrations: registrations.count,
+        seating: seating.count,
+      },
+    });
+  } catch (error: any) {
+    console.error(`[Academics] purgeStudentRecords failed for ${studentId}:`, error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to purge academic records",
+    });
   }
 };

@@ -34,6 +34,8 @@ interface StudentEditModalProps {
   onClose: () => void;
   onSuccess: (student: any) => void;
   student?: any;
+  /** Render above admin drawers (z-[100]+). */
+  elevated?: boolean;
 }
 
 const BRANCHES = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME", "AI&ML"];
@@ -76,6 +78,7 @@ export default function StudentEditModal({
   onClose,
   onSuccess,
   student,
+  elevated = false,
 }: StudentEditModalProps) {
   const isEdit = !!student;
   const [loading, setLoading] = useState(false);
@@ -157,7 +160,15 @@ export default function StudentEditModal({
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent
-        className={cn("max-w-3xl max-h-[90vh] flex flex-col", adminModalShellClass)}
+        overlayClassName={cn(
+          elevated && "z-[110]",
+          elevated && "bg-zinc-900/40 backdrop-blur-sm",
+        )}
+        className={cn(
+          "max-w-3xl max-h-[90vh] flex flex-col",
+          adminModalShellClass,
+          elevated && "z-[110]",
+        )}
       >
         <button type="button" onClick={onClose} className={adminModalCloseClass}>
           <X size={20} />

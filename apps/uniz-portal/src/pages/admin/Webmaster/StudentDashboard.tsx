@@ -13,6 +13,7 @@ import {
   History,
   KeyRound,
   Edit3,
+  Trash2,
 } from "lucide-react";
 import {
   LineChart,
@@ -43,6 +44,7 @@ interface StudentDashboardProps {
   data: any;
   onSuspendToggle?: (username: string, currentStatus: boolean) => void;
   onResetPassword?: (username: string) => void;
+  onDeleteStudent?: (username: string) => void;
   onEditDetails?: (student: any) => void;
   isActionLoading?: boolean;
 }
@@ -51,6 +53,7 @@ export default function StudentDashboard({
   data,
   onSuspendToggle,
   onResetPassword,
+  onDeleteStudent,
   onEditDetails,
   isActionLoading,
 }: StudentDashboardProps) {
@@ -123,7 +126,7 @@ export default function StudentDashboard({
               {student.name}
             </h2>
           </div>
-          <p className="text-zinc-500 font-medium text-[13px] tracking-tight text-center flex items-center justify-center gap-1.5">
+          <p className="text-zinc-500 font-medium text-[13px] tracking-tight text-center flex items-center justify-center gap-1.5 max-w-full px-4 break-all">
             {student.email}
             {!student.is_suspended && (
               <BadgeCheck
@@ -183,11 +186,27 @@ export default function StudentDashboard({
             <Edit3 className="w-4 h-4" />
             Edit profile
           </button>
+
+          <button
+            type="button"
+            onClick={() => onDeleteStudent?.(student.username)}
+            disabled={isActionLoading}
+            className={cn(adminDangerButtonClass, "text-[12px]")}
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete permanently
+          </button>
         </div>
 
         <div className="w-full pt-12 border-t border-zinc-100 mt-8">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-12 gap-x-6">
-            <HeroInfo label="Email" value={student.email} icon={<Mail size={14} />} />
+            <HeroInfo
+              label="Email"
+              value={student.email}
+              icon={<Mail size={14} />}
+              className="col-span-2 md:col-span-3 lg:col-span-2"
+              valueClassName="break-all text-[12px] font-medium"
+            />
             <HeroInfo label="Branch" value={student.branch} icon={<Target size={14} />} />
             <HeroInfo label="Batch" value={student.batch || "O21"} icon={<Zap size={14} />} />
             <HeroInfo
@@ -266,18 +285,28 @@ function HeroInfo({
   label,
   value,
   icon,
+  className,
+  valueClassName,
 }: {
   label: string;
   value: string;
   icon: any;
+  className?: string;
+  valueClassName?: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className={cn("flex flex-col items-center gap-2 min-w-0 w-full px-1", className)}>
       <div className="flex items-center justify-center gap-1.5 text-zinc-400 mb-0.5">
         {icon}
         <span className={adminLabelClass}>{label}</span>
       </div>
-      <p className="text-[13px] font-semibold text-zinc-900 tracking-tight leading-none text-center">
+      <p
+        title={value}
+        className={cn(
+          "text-[13px] font-semibold text-zinc-900 tracking-tight text-center max-w-full w-full",
+          valueClassName,
+        )}
+      >
         {value}
       </p>
     </div>

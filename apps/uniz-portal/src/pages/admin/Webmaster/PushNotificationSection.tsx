@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from "react";
-import { Send, Users, Search, Loader2, X } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Send, Users, Search, Loader2, X, Bell, Smartphone } from "lucide-react";
 import { PUSH_SUBSCRIBERS, PUSH_SEND } from "../../../api/endpoints";
 import { apiClient } from "../../../api/apiClient";
 import { toast } from "@/utils/toast-ref";
-import { useRecoilState } from "recoil";
-import { pushNotificationsAtom } from "../../../store/atoms";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -23,52 +21,102 @@ import {
   adminTextareaClass,
   adminPrimaryButtonClass,
   adminGhostButtonClass,
+  adminChipClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
 
+type SubscriberRow = {
+  id: string;
+  username: string;
+  endpoint: string;
+  createdAt: string;
+  displayName?: string | null;
+  branch?: string | null;
+  year?: string | null;
+  batch?: string | null;
+  email?: string | null;
+};
+
+const SEARCH_DEBOUNCE_MS = 400;
+
+function shortEndpoint(endpoint: string) {
+  if (!endpoint) return "—";
+  try {
+    const url = new URL(endpoint);
+    const tail = url.pathname.split("/").filter(Boolean).pop();
+    return tail ? `…${tail.slice(-18)}` : url.hostname;
+  } catch {
+    return endpoint.length > 28 ? `…${endpoint.slice(-24)}` : endpoint;
+  }
+}
+
 export default function PushNotificationSection() {
-  const [pushState, setPushState] = useRecoilState(pushNotificationsAtom);
-  const subscribers = pushState.data;
-  const [loading, setLoading] = useState(!pushState.fetched);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [subscribers, setSubscribers] = useState<SubscriberRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [showSendModal, setShowSendModal] = useState(false);
   const [sending, setSending] = useState(false);
+  const fetchGenRef = useRef(0);
+  const hasLoadedRef = useRef(false);
 
-  // Broadcast Form State
   const [broadcast, setBroadcast] = useState({
-    target: "all", // all, students, year, batch, hod, dean, user
+    target: "all",
     title: "",
     body: "",
     image: "",
   });
 
-  useEffect(() => {
-    fetchSubscribers();
-  }, [page, searchQuery]);
+  const fetchSubscribers = useCallback(async () => {
+    const gen = ++fetchGenRef.current;
+    if (!hasLoadedRef.current) setLoading(true);
+    else setRefreshing(true);
 
-  const fetchSubscribers = async () => {
-    if (!pushState.fetched) setLoading(true);
     try {
       const data = await apiClient<any>(PUSH_SUBSCRIBERS, {
         params: {
-          prefix: searchQuery,
+          search: debouncedSearch.trim() || undefined,
           page,
           limit: 50,
         },
       });
-      if (data) {
-        setPushState({
-          fetched: true,
-          data: data.subscribers || [],
-        });
-      }
+      if (gen !== fetchGenRef.current || !data) return;
+      setSubscribers(data.subscribers || []);
+      setTotal(data.total ?? data.subscribers?.length ?? 0);
+      setTotalPages(data.totalPages ?? 1);
     } catch (error) {
-      console.error("Error fetching subscribers:", error);
+      if (gen === fetchGenRef.current) {
+        console.error("Error fetching subscribers:", error);
+        toast.error("Failed to load subscribers");
+      }
     } finally {
-      setLoading(false);
+      if (gen === fetchGenRef.current) {
+        hasLoadedRef.current = true;
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
-  };
+  }, [debouncedSearch, page]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch((prev) => {
+        const next = searchInput;
+        if (next !== prev) setPage(1);
+        return next;
+      });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
+  useEffect(() => {
+    const t = setTimeout(() => fetchSubscribers(), 150);
+    return () => clearTimeout(t);
+  }, [fetchSubscribers]);
 
   const handleSendBroadcast = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,13 +154,20 @@ export default function PushNotificationSection() {
               />
               <input
                 type="text"
-                placeholder="Search subscribers…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={cn(adminInputClass, "pl-10 w-[240px]")}
+                placeholder="Search by ID, name, or email…"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className={cn(adminInputClass, "pl-10 w-[280px]")}
               />
+              {refreshing && (
+                <Loader2
+                  size={14}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-zinc-400"
+                />
+              )}
             </div>
             <button
+              type="button"
               onClick={() => setShowSendModal(true)}
               className={adminPrimaryButtonClass}
             >
@@ -122,110 +177,150 @@ export default function PushNotificationSection() {
         }
       />
 
-      {/* Content Sections */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <span className={adminChipClass}>
+          <Users size={12} /> {total.toLocaleString()} subscribers
+        </span>
+        <span className={adminChipClass}>
+          Page {page} of {totalPages}
+        </span>
+        {debouncedSearch.trim() && (
+          <span className={adminChipClass}>
+            Filter: &quot;{debouncedSearch.trim()}&quot;
+          </span>
+        )}
+      </div>
+
       <div className={cn(adminCardClass, "overflow-hidden")}>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[900px]">
             <thead>
-              <tr className="border-b border-zinc-200/70">
-                <th className="px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
-                  Subscriber
+              <tr className="border-b border-zinc-200/70 bg-zinc-50/50">
+                <th className="px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                  Person
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
-                  Endpoint Identifier
+                <th className="px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                  Student ID
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+                <th className="px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                  Academic
+                </th>
+                <th className="px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                  Device
+                </th>
+                <th className="px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
                   Status
                 </th>
-                <th className="px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
-                  Creation Date
+                <th className="px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                  Registered
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
               {loading ? (
-                Array(7)
+                Array(6)
                   .fill(0)
                   .map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td className="px-8 py-5">
-                        <div className="flex items-center gap-3.5">
-                          <div className="w-10 h-10 rounded-xl bg-zinc-100" />
-                          <div className="space-y-2">
-                            <div className="h-4 w-24 bg-zinc-100 rounded-lg" />
-                            <div className="h-2 w-16 bg-zinc-50 rounded" />
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="h-3.5 w-48 bg-zinc-50 rounded-lg" />
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="h-6 w-20 bg-zinc-100 rounded-full" />
-                      </td>
-                      <td className="px-8 py-5">
-                        <div className="space-y-2">
-                          <div className="h-4 w-28 bg-zinc-100 rounded-lg" />
-                          <div className="h-2 w-16 bg-zinc-50 rounded" />
-                        </div>
+                      <td className="px-6 py-4" colSpan={6}>
+                        <div className="h-10 bg-zinc-100 rounded-lg" />
                       </td>
                     </tr>
                   ))
               ) : subscribers.length > 0 ? (
-                subscribers.map((sub, idx) => (
-                  <tr
-                    key={idx}
-                    className="hover:bg-zinc-50/60 transition-colors group"
-                  >
-                    <td className="px-8 py-5">
-                      <div className="flex items-center gap-3.5">
-                        <div className="w-10 h-10 rounded-xl bg-zinc-900 text-white flex items-center justify-center font-semibold text-[13px] uppercase shrink-0">
-                          {sub.username?.[0] || "U"}
+                subscribers.map((sub) => {
+                  const displayName = sub.displayName || sub.username;
+                  const initials = (displayName || "U").slice(0, 1).toUpperCase();
+                  return (
+                    <tr
+                      key={sub.id}
+                      className="hover:bg-zinc-50/60 transition-colors"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3 min-w-[200px]">
+                          <div className="w-9 h-9 rounded-lg bg-zinc-900 text-white flex items-center justify-center font-semibold text-[12px] shrink-0">
+                            {initials}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-semibold text-zinc-900 text-[13px] truncate">
+                              {displayName}
+                            </p>
+                            {sub.email && (
+                              <p className="text-[11px] text-zinc-500 truncate max-w-[220px]">
+                                {sub.email}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                        <p className="font-semibold text-zinc-900 tracking-tight">
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="text-[12px] font-semibold text-zinc-800 tabular-nums uppercase">
                           {sub.username}
                         </p>
-                      </div>
-                    </td>
-                    <td className="px-8 py-5">
-                      <p
-                        className="text-[12px] text-zinc-400 truncate max-w-[300px]"
-                        title={sub.endpoint}
-                      >
-                        {sub.endpoint}
-                      </p>
-                    </td>
-                    <td className="px-8 py-5">
-                      <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-full border border-zinc-200 w-fit">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        <span className="text-[11px] font-medium">Active</span>
-                      </div>
-                    </td>
-                    <td className="px-8 py-5">
-                      <div className="flex flex-col">
-                        <p className="text-[13px] font-medium tracking-tight text-zinc-700 tabular-nums">
+                      </td>
+                      <td className="px-6 py-4">
+                        {sub.branch || sub.year || sub.batch ? (
+                          <div className="flex flex-wrap gap-1">
+                            {sub.branch && (
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700">
+                                {sub.branch}
+                              </span>
+                            )}
+                            {sub.year && (
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700">
+                                {sub.year}
+                              </span>
+                            )}
+                            {sub.batch && (
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700">
+                                {sub.batch}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-[12px] text-zinc-400">—</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1.5 text-zinc-500 max-w-[160px]">
+                          <Smartphone size={13} className="shrink-0" />
+                          <span
+                            className="text-[11px] font-mono truncate"
+                            title={sub.endpoint}
+                          >
+                            {shortEndpoint(sub.endpoint)}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 w-fit">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          <span className="text-[11px] font-medium">Active</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="text-[12px] font-medium text-zinc-700 tabular-nums">
                           {new Date(sub.createdAt).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "short",
                             year: "numeric",
                           })}
                         </p>
-                        <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-[0.12em] mt-0.5">
-                          Registered
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
-                  <td colSpan={4} className="py-20 text-center">
+                  <td colSpan={6} className="py-20 text-center">
                     <div className="flex flex-col items-center gap-4">
                       <div className="w-16 h-16 flex items-center justify-center bg-zinc-50 rounded-2xl border border-zinc-200/70 text-zinc-300">
-                        <Users size={32} strokeWidth={1.5} />
+                        <Bell size={32} strokeWidth={1.5} />
                       </div>
-                      <p className="text-[14px] font-medium text-zinc-500 tracking-tight">
-                        No active push subscribers found.
+                      <p className="text-[14px] font-medium text-zinc-500">
+                        {debouncedSearch.trim()
+                          ? "No subscribers match your search."
+                          : "No active push subscribers found."}
                       </p>
                     </div>
                   </td>
@@ -235,26 +330,28 @@ export default function PushNotificationSection() {
           </table>
         </div>
 
-        {/* Pagination bar */}
         {subscribers.length > 0 && (
-          <div className="px-8 py-4 bg-zinc-50/50 border-t border-zinc-200/70 flex items-center justify-between">
-            <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-[0.12em]">
-              Subscriber Pulse Monitor
+          <div className="px-6 py-4 bg-zinc-50/50 border-t border-zinc-200/70 flex items-center justify-between gap-4">
+            <p className="text-[11px] font-medium text-zinc-500">
+              Showing {(page - 1) * 50 + 1}–{Math.min(page * 50, total)} of {total}
             </p>
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="h-8 px-3.5 border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 bg-white hover:text-zinc-900 hover:border-zinc-300 transition-all disabled:opacity-30 disabled:pointer-events-none"
+                className="h-8 px-3.5 border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 bg-white hover:border-zinc-300 disabled:opacity-30 disabled:pointer-events-none"
               >
                 Prev
               </button>
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-900 text-white text-[12px] font-semibold tabular-nums">
-                {page}
-              </div>
+              <span className="text-[12px] font-semibold text-zinc-900 tabular-nums px-2">
+                {page} / {totalPages}
+              </span>
               <button
+                type="button"
+                disabled={page >= totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="h-8 px-3.5 border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 bg-white hover:text-zinc-900 hover:border-zinc-300 transition-all active:scale-95"
+                className="h-8 px-3.5 border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 bg-white hover:border-zinc-300 disabled:opacity-30 disabled:pointer-events-none"
               >
                 Next
               </button>
@@ -274,8 +371,8 @@ export default function PushNotificationSection() {
       >
         <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl shadow-xl">
           <div className="relative">
-            {/* Close Button */}
             <button
+              type="button"
               onClick={() => {
                 setShowSendModal(false);
                 setBroadcast({ target: "all", title: "", body: "", image: "" });
@@ -294,12 +391,8 @@ export default function PushNotificationSection() {
               </AlertDialogDescription>
             </AlertDialogHeader>
 
-            <form
-              onSubmit={handleSendBroadcast}
-              className="px-8 pb-8 space-y-6"
-            >
+            <form onSubmit={handleSendBroadcast} className="px-8 pb-8 space-y-6">
               <div className="space-y-5">
-                {/* Target */}
                 <div className="space-y-2">
                   <label className={adminLabelClass}>Target Audience</label>
                   <select
@@ -319,7 +412,6 @@ export default function PushNotificationSection() {
                   </select>
                 </div>
 
-                {/* Conditional extra field based on target */}
                 {broadcast.target === "user" && (
                   <div className="space-y-2">
                     <label className={adminLabelClass}>User ID / Username</label>
@@ -378,7 +470,6 @@ export default function PushNotificationSection() {
                   </div>
                 )}
 
-                {/* Title */}
                 <div className="space-y-2">
                   <label className={adminLabelClass}>Alert Title</label>
                   <input
@@ -393,7 +484,6 @@ export default function PushNotificationSection() {
                   />
                 </div>
 
-                {/* Body */}
                 <div className="space-y-2">
                   <label className={adminLabelClass}>Payload Message</label>
                   <textarea
@@ -408,7 +498,6 @@ export default function PushNotificationSection() {
                   />
                 </div>
 
-                {/* Image URL */}
                 <div className="space-y-2">
                   <label className={adminLabelClass}>
                     Banner Asset URL (Optional)
@@ -425,7 +514,6 @@ export default function PushNotificationSection() {
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"

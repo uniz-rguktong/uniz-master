@@ -13,6 +13,7 @@ import {
   changePassword,
   adminResetPassword,
   globalAdminResetPassword,
+  deleteUserByUsername,
 } from "../controllers/auth.controller";
 import {
   rateLimiter,
@@ -134,5 +135,6 @@ router.post("/logout", (req: Request, res: Response) => {
 });
 
 router.get("/internal/user/status/:id", getUserStatus);
+router.delete("/internal/user/:username", deleteUserByUsername);
 
 export default router;

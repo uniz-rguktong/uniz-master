@@ -13,6 +13,7 @@ import {
   searchFaculty,
   updateFacultyProfile,
   deleteFacultyProfile,
+  deleteStudentProfile,
   getTargetingData,
   updateFacultyProfileSelf,
   updateAdminProfile,
@@ -231,6 +232,7 @@ router.put(
   validateRequest(AdminUpdateStudentSchema),
   adminUpdateStudentProfile,
 );
+router.delete("/admin/student/:username", authMiddleware, deleteStudentProfile);
 router.post("/student/search", authMiddleware, searchStudents);
 router.put(
   "/admin/student/:username/suspend",

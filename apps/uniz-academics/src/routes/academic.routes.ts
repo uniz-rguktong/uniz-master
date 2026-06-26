@@ -20,6 +20,7 @@ import {
   publishResults,
   downloadGrades,
   downloadAttendance,
+  purgeStudentRecords,
 } from "../controllers/academic.controller";
 import {
   initSemester,
@@ -151,5 +152,7 @@ router.delete("/faculty/:id", deleteFaculty);
 router.get("/seating/student", getStudentSeating);
 router.get("/seating/template", getSeatingTemplate);
 router.post("/seating/upload", upload.single("file"), uploadSeating);
+
+router.delete("/internal/student/:studentId", purgeStudentRecords);
 
 export default router;
