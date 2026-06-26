@@ -170,9 +170,12 @@ const serviceMap: Record<string, string> = {
       : "http://127.0.0.1:3333"),
 };
 
-const landingApiTarget =
+const landingApiTarget = (
   process.env.LANDING_API_URL ||
-  "http://uniz-landing-backend-svc.default.svc.cluster.local:8000";
+  (process.env.DOCKER_ENV === "true"
+    ? "http://uniz-landing-backend-svc.default.svc.cluster.local:8000"
+    : "http://127.0.0.1:8000")
+).replace(/\/$/, "");
 
 // 4. Documentation Engine Assets & Navigation Helper (Aggressive Asset Retrieval)
 app.use((req, res, next) => {
@@ -282,6 +285,13 @@ app.all("/api/v1/analytics/*path", (req: any, res: any) => {
   proxy.web(req, res, { target: landingApiTarget, changeOrigin: true });
 });
 
+// Landing CMS (website content) — same-origin via gateway (never call 127.0.0.1 from browser)
+app.all("/api/v1/cms/*path", (req: any, res: any) => {
+  const subPath = proxyPathFromParams(req.params.path);
+  req.url = subPath.startsWith("/") ? subPath : `/${subPath}`;
+  proxy.web(req, res, { target: landingApiTarget, changeOrigin: true });
+});
+
 // 5. Warp-Speed Proxy Engine (Express 5 / path-to-regexp v6+ wildcard syntax)
 app.all("/api/v1/:service/*path", async (req: any, res: any) => {
   const service = (req.params.service as string).toLowerCase();
@@ -289,7 +299,11 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
 
   if (!target) return res.status(404).json({ error: "Service Not Found" });
 
-  req.url = proxyPathFromParams(req.params.path);
+  const subPath = proxyPathFromParams(req.params.path);
+  const queryStart = req.originalUrl.indexOf("?");
+  const queryString =
+    queryStart >= 0 ? req.originalUrl.slice(queryStart) : "";
+  req.url = subPath + queryString;
 
   // Bypass Warp Engine for binary files or download routes to prevent corruption
   const isBinaryRequest =
@@ -315,7 +329,7 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
     // Generate unique key based on URL and User Context (Auth Token / User-Agent)
     const userKey =
       req.headers["authorization"] || req.headers["uid"] || "guest";
-    const cacheKey = `p3:${service}:${Buffer.from(req.url).toString("base64").substring(0, 16)}:${Buffer.from(userKey).toString("base64").substring(0, 8)}`;
+    const cacheKey = `p3:${service}:${Buffer.from(req.url).toString("base64")}:${Buffer.from(userKey).toString("base64").substring(0, 16)}`;
 
     try {
       const cached = await redis.get(cacheKey);

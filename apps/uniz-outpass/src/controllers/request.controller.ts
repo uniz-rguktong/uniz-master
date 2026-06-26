@@ -1585,3 +1585,38 @@ export const getOutsideStudents = async (
     });
   }
 };
+
+export const purgeStudentRequests = async (req: AuthenticatedRequest, res: Response) => {
+  const internalSecret = req.headers["x-internal-secret"];
+  const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+  if (internalSecret !== SECRET) {
+    return res.status(403).json({ success: false, message: "Forbidden" });
+  }
+
+  const studentId = String(req.params.studentId || "").toUpperCase();
+  if (!studentId) {
+    return res.status(400).json({ success: false, message: "Student ID required" });
+  }
+
+  try {
+    const [outpasses, outings] = await Promise.all([
+      prisma.outpass.deleteMany({ where: { studentId } }),
+      prisma.outing.deleteMany({ where: { studentId } }),
+    ]);
+
+    return res.json({
+      success: true,
+      message: `Request records purged for ${studentId}`,
+      deleted: {
+        outpasses: outpasses.count,
+        outings: outings.count,
+      },
+    });
+  } catch (e: any) {
+    console.error(`[OUTPASS] purgeStudentRequests failed for ${studentId}:`, e.message);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to purge request records",
+    });
+  }
+};

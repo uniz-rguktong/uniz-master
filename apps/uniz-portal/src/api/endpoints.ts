@@ -3,9 +3,9 @@ export const BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
 export const ANALYTICS_BASE_URL =
   import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app";
 
-/** Landing CMS (home, institute, academics pages) — local or production. */
+/** Landing CMS (home, institute, academics pages) — proxied via gateway `/api/v1/cms`. */
 export const LANDING_API_URL =
-  import.meta.env.VITE_LANDING_API_URL || "http://127.0.0.1:8000";
+  import.meta.env.VITE_LANDING_API_URL || `${BASE_URL}/cms`;
 
 // Notification service URL - routes through same-origin nginx proxy
 export const NOTIFICATION_SERVICE_URL = `${BASE_URL}/notifications`;
@@ -123,6 +123,8 @@ export const GET_GRADES_TEMPLATE = (
 export const ADMIN_SUSPEND_STUDENT = (id: string) =>
   `${BASE_URL}/profile/admin/student/${id}/suspend`;
 export const ADMIN_UPDATE_STUDENT = (id: string) =>
+  `${BASE_URL}/profile/admin/student/${id}`;
+export const ADMIN_DELETE_STUDENT = (id: string) =>
   `${BASE_URL}/profile/admin/student/${id}`;
 export const ADMIN_STUDENT_CREATE = `${BASE_URL}/profile/admin/student/create`;
 export const ADMIN_STUDENT_PROMOTE = `${BASE_URL}/profile/admin/student/promote`;
