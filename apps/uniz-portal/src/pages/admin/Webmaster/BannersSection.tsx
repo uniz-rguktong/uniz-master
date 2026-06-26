@@ -526,7 +526,7 @@ export default function BannersSection() {
                       }
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <p className="text-[10px] font-semibold text-white uppercase tracking-widest">
+                      <p className="text-[10px] font-semibold text-white uppercase tracking-[0.14em]">
                         Current Selection
                       </p>
                     </div>

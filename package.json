@@ -16,7 +16,7 @@
     "setup": "cp secrets.env.example secrets.env && npm run vault:sync",
     "dev": "concurrently -n \"GATEWAY,AUTH,USER,PORTAL\" -c \"cyan,magenta,blue,yellow\" \"npm run dev -w uniz-production-gateway\" \"npm run dev -w uniz-auth-service\" \"npm run dev -w uniz-user-service\" \"npm run dev -w uniz\"",
     "sync:host": "concurrently -n \"GATEWAY,AUTH,USER,PORTAL\" -c \"cyan,magenta,blue,yellow\" \"npm run dev -w uniz-production-gateway\" \"npm run dev -w uniz-auth-service\" \"npm run dev -w uniz-user-service\" \"npm run sync -w uniz\"",
-    "dev:all": "concurrently -n \"CORE,ACADEMICS,OUTPASS,FILES,NOTIFY,MAIL,DOCS\" -c \"reset,green,cyan,white,yellow,magenta,blue\" \"npm run dev\" \"npm run dev -w uniz-academics-service\" \"npm run dev -w uniz-outpass-service\" \"npm run dev -w uniz-files-service\" \"npm run dev -w uniz-notification-service\" \"npm run dev -w uniz-mail-service\" \"npm run dev -w uniz-docs-service\"",
+    "dev:all": "concurrently -n \"CORE,ACADEMICS,OUTPASS,FILES,NOTIFY,MAIL,DOCS\" -c \"reset,green,cyan,white,yellow,magenta,blue\" \"npm run dev\" \"npm run dev -w uniz-academics-service\" \"npm run dev -w uniz-outpass-service\" \"npm run dev -w uniz-files-service\" \"npm run dev -w uniz-notification-service\" \"npm run dev -w uniz-mail-service\" \"npm run dev -w uniz-docs\"",
     "dev:cron": "npm run dev -w uniz-cron-service",
     "setup:local": "bash ./scripts/setup-local.sh",
     "prisma:generate": "bash ./scripts/prisma-generate-all.sh",

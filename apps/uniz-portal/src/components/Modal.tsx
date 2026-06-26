@@ -1,6 +1,12 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import { cn } from "../utils/cn";
+import {
+  adminModalShellClass,
+  adminModalTitleClass,
+  adminModalDescClass,
+  adminModalCloseClass,
+} from "./admin/admin-ui";
 
 interface ModalProps {
   children: React.ReactNode;
@@ -8,7 +14,7 @@ interface ModalProps {
   onClose: () => void;
   title?: string;
   description?: string;
-  className?: string; // Content wrapper class
+  className?: string;
 }
 
 export function Modal({
@@ -25,7 +31,7 @@ export function Modal({
     };
     if (isOpen) {
       document.addEventListener("keydown", handleEsc);
-      document.body.style.overflow = "hidden"; // Prevent scroll
+      document.body.style.overflow = "hidden";
     }
     return () => {
       document.removeEventListener("keydown", handleEsc);
@@ -37,40 +43,38 @@ export function Modal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-      {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Content */}
       <div
         className={cn(
-          "relative w-full max-w-lg bg-white rounded-xl shadow-2xl ring-1 ring-slate-900/5 transition-all transform scale-100 opacity-100",
+          "relative w-full max-w-lg",
+          adminModalShellClass,
           className,
         )}
         role="dialog"
         aria-modal="true"
       >
-        <div className="flex items-start justify-between p-6 border-b border-slate-100">
-          <div>
-            {title && (
-              <h3 className="text-lg font-semibold text-slate-900 leading-none">
-                {title}
-              </h3>
-            )}
-            {description && (
-              <p className="text-sm text-slate-500 mt-1.5">{description}</p>
-            )}
+        {(title || description) && (
+          <div className="flex items-start justify-between p-6 pb-4 border-b border-zinc-200/70">
+            <div className="pr-10">
+              {title && <h3 className={adminModalTitleClass}>{title}</h3>}
+              {description && (
+                <p className={cn(adminModalDescClass, "mt-1.5")}>{description}</p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className={cn(adminModalCloseClass, "static")}
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+        )}
 
         <div className="p-6">{children}</div>
       </div>

@@ -31,14 +31,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const variants = {
       primary:
-        "bg-slate-900 text-white hover:bg-slate-900/95 shadow-none ring-slate-900",
+        "bg-zinc-900 text-white hover:bg-zinc-900/95 shadow-none ring-zinc-900",
       secondary:
-        "bg-slate-100 text-slate-900 hover:bg-slate-200/95 shadow-none ring-slate-200",
+        "bg-zinc-100 text-zinc-900 hover:bg-zinc-200/95 shadow-none ring-zinc-200",
       outline:
-        "border border-slate-300 bg-transparent hover:bg-slate-50 text-slate-700 ring-slate-300",
+        "border border-zinc-300 bg-transparent hover:bg-zinc-50 text-zinc-700 ring-zinc-300",
       danger: "bg-black text-white hover:bg-black/95 shadow-none ring-black",
       ghost:
-        "bg-transparent hover:bg-slate-100/95 text-slate-700 ring-slate-100",
+        "bg-transparent hover:bg-zinc-100/95 text-zinc-700 ring-zinc-100",
     };
 
     const sizes = {

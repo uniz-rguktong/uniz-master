@@ -258,7 +258,7 @@ export default function GradeHub() {
   // Function to cycle through motivational messages
 
   return (
-    <div className="font-sans text-slate-900">
+    <div className="font-sans text-zinc-900">
       {/* Party Confetti Blast Overlay */}
       {showConfetti && (
         <div className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden">
@@ -300,10 +300,10 @@ export default function GradeHub() {
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="bg-white/95 backdrop-blur-sm rounded-3xl px-10 py-8 shadow-2xl border border-yellow-100 flex flex-col items-center gap-3 animate-bounce">
               <PartyPopper size={48} className="text-yellow-500" />
-              <p className="text-2xl font-black text-slate-900 tracking-tight">
+              <p className="text-2xl font-semibold text-zinc-900 tracking-tight">
                 Outstanding GPA! 🎉
               </p>
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
+              <p className="text-sm font-bold text-zinc-500 uppercase tracking-[0.14em]">
                 Above 9.0 - Exceptional Performance
               </p>
             </div>
@@ -320,41 +320,41 @@ export default function GradeHub() {
       <div className="max-w-6xl mx-auto px-4 pb-10">
         {/* Header */}
         <div className="flex flex-col gap-1.5 mb-8">
-          <p className="text-slate-500 font-medium text-[13px]">
+          <p className="text-zinc-500 font-medium text-[13px]">
             Academic Performance Terminal
           </p>
-          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-zinc-900 leading-none">
             Results
           </h1>
         </div>
 
         {/* Selection Criteria */}
-        <div className="mb-8 md:bg-white p-6 px-0 md:px-6 md:rounded-xl md:border md:border-slate-100 md:shadow-sm bg-transparent">
+        <div className="mb-8 md:bg-white p-6 px-0 md:px-6 md:rounded-xl md:border md:border-zinc-100 md:shadow-sm bg-transparent">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
             <div className="relative group">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
+              <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500 mb-1.5 block">
                 Academic Year
               </label>
               <div
-                className="w-full flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg p-3 cursor-pointer hover:border-navy-900 transition-colors"
+                className="w-full flex items-center justify-between bg-zinc-50 border border-zinc-200 rounded-lg p-3 cursor-pointer hover:border-zinc-900 transition-colors"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
                 <span className="font-bold text-sm">{selectedYear}</span>
                 <ChevronDown
                   size={16}
-                  className="text-slate-400 group-hover:text-navy-900 transition-colors"
+                  className="text-zinc-400 group-hover:text-zinc-900 transition-colors"
                 />
               </div>
 
               {showDropdown && (
-                <div className="absolute z-50 mt-1 w-full bg-white border border-slate-100 rounded-xl shadow-xl overflow-hidden">
+                <div className="absolute z-50 mt-1 w-full bg-white border border-zinc-100 rounded-xl shadow-xl overflow-hidden">
                   {years.map((year) => (
                     <div
                       key={year}
                       className={`p-3 cursor-pointer text-sm font-semibold transition-colors ${
                         selectedYear === year
-                          ? "bg-navy-900 text-white"
-                          : "hover:bg-slate-50 text-slate-600"
+                          ? "bg-zinc-900 text-white"
+                          : "hover:bg-zinc-50 text-zinc-600"
                       }`}
                       onClick={() => {
                         setSelectedYear(year);
@@ -370,7 +370,7 @@ export default function GradeHub() {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
+              <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500 mb-1.5 block">
                 Semester
               </label>
               <div className="relative">
@@ -380,7 +380,7 @@ export default function GradeHub() {
                     setSelectedSemester(e.target.value);
                     setResultsFetched(false);
                   }}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 font-bold text-sm appearance-none focus:outline-none focus:border-navy-900 focus:ring-1 focus:ring-navy-900 transition-all"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-lg p-3 font-bold text-sm appearance-none focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all"
                 >
                   {semesterOptions.map((opt) => (
                     <option key={opt} value={opt}>
@@ -389,7 +389,7 @@ export default function GradeHub() {
                   ))}
                 </select>
                 <ChevronDown
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
                   size={16}
                 />
               </div>
@@ -399,7 +399,7 @@ export default function GradeHub() {
               <div className="md:w-48">
                 <button
                   onClick={() => handleFetchResults(false)}
-                  className="w-full h-[46px] bg-navy-900 hover:bg-navy-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm disabled:opacity-50"
+                  className="w-full h-[46px] bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl font-bold text-sm transition-all active:scale-[0.98] shadow-sm disabled:opacity-50"
                   disabled={isLoading || !user?.username}
                 >
                   {isLoading ? (
@@ -424,14 +424,14 @@ export default function GradeHub() {
 
         {/* Loading State in Display Section */}
         {isLoading && (
-          <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-10 text-center animate-pulse">
+          <div className="bg-zinc-50/50 border border-zinc-100 rounded-xl p-10 text-center animate-pulse">
             <img
               src={PIKACHU_IMAGE}
               alt="Pikachu"
               className="w-16 h-16 mx-auto mb-4 opacity-50 contrast-50 grayscale"
             />
 
-            <p className="text-slate-400 text-xs font-medium">
+            <p className="text-zinc-400 text-xs font-medium">
               {loadingMessage}
             </p>
           </div>
@@ -441,16 +441,16 @@ export default function GradeHub() {
         {resultsFetched && grades && grades.success && !isLoading && (
           <div
             ref={resultsRef}
-            className="-mx-4 md:mx-0 md:bg-white md:border md:border-slate-100 md:rounded-xl overflow-hidden md:shadow-sm bg-transparent scroll-mt-4"
+            className="-mx-4 md:mx-0 md:bg-white md:border md:border-zinc-100 md:rounded-xl overflow-hidden md:shadow-sm bg-transparent scroll-mt-4"
           >
             {/* Results Header */}
-            <div className="md:bg-white border-b border-slate-100 md:px-6 px-4 py-5 flex justify-between items-center bg-transparent">
+            <div className="md:bg-white border-b border-zinc-100 md:px-6 px-4 py-5 flex justify-between items-center bg-transparent">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">
+                <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400 block mb-1">
                   Transcript For
                 </span>
-                <h2 className="text-[17px] font-semibold text-slate-900 tracking-tight">
-                  {grades.year} <span className="text-slate-300 mx-1">/</span>{" "}
+                <h2 className="text-[17px] font-semibold text-zinc-900 tracking-tight">
+                  {grades.year} <span className="text-zinc-300 mx-1">/</span>{" "}
                   {grades.semester}
                 </h2>
               </div>
@@ -467,7 +467,7 @@ export default function GradeHub() {
                         { studentId: user.username, reportType: "REGULAR" },
                       );
                     }}
-                    className="h-10 px-4 bg-navy-900 hover:bg-navy-800 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm"
+                    className="h-10 px-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 shadow-sm"
                   >
                     <Download size={14} /> Output PDF
                   </button>
@@ -478,13 +478,13 @@ export default function GradeHub() {
             {/* Content */}
             {!grades.calculation_details ||
             grades.calculation_details.length === 0 ? (
-              <div className="p-12 text-center bg-slate-50/30">
+              <div className="p-12 text-center bg-zinc-50/30">
                 <AlertCircle
                   size={48}
-                  className="mx-auto mb-4 text-slate-300"
+                  className="mx-auto mb-4 text-zinc-300"
                 />
                 <h3 className="text-xl font-bold mb-2">No Results Available</h3>
-                <p className="text-slate-500 max-w-sm mx-auto">
+                <p className="text-zinc-500 max-w-sm mx-auto">
                   Calculated records for this semester are not yet finalized.
                   Please check back later or contact your department.
                 </p>
@@ -496,41 +496,41 @@ export default function GradeHub() {
                   {grades.regular?.length > 0 ? (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                          <div className="w-1.5 h-4 rounded-full bg-navy-900"></div>
+                        <h3 className="text-[13px] font-bold text-zinc-400 uppercase tracking-[0.14em] flex items-center gap-2">
+                          <div className="w-1.5 h-4 rounded-full bg-zinc-900"></div>
                           REGULAR RESULTS
                         </h3>
                       </div>
-                      <div className="md:rounded-2xl md:bg-white bg-transparent border border-slate-100 overflow-hidden shadow-sm">
+                      <div className="md:rounded-2xl md:bg-white bg-transparent border border-zinc-100 overflow-hidden shadow-sm">
                         <table className="w-full text-sm table-fixed">
                           <thead>
-                            <tr className="bg-slate-50/50 border-b border-slate-100">
-                              <th className="px-5 py-4 text-left font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[55%]">
+                            <tr className="bg-zinc-50/50 border-b border-zinc-100">
+                              <th className="px-5 py-4 text-left font-bold text-[10px] uppercase tracking-[0.14em] text-zinc-400 w-[55%]">
                                 Subjects
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-[0.14em] text-zinc-400 w-[15%]">
                                 Credits
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-[0.14em] text-zinc-400 w-[15%]">
                                 Grade
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-[0.14em] text-zinc-400 w-[15%]">
                                 Status
                               </th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-50">
+                          <tbody className="divide-y divide-zinc-50">
                             {grades.regular.map((item: any, gIdx: number) => (
                               <tr
                                 key={gIdx}
-                                className="hover:bg-slate-50/30 transition-colors"
+                                className="hover:bg-zinc-50/30 transition-colors"
                               >
                                 <td className="px-5 py-4">
-                                  <span className="font-bold text-slate-800 text-xs leading-tight">
+                                  <span className="font-bold text-zinc-800 text-xs leading-tight">
                                     {item.subject}
                                   </span>
                                 </td>
-                                <td className="px-2 py-4 text-center text-slate-500 font-medium text-xs">
+                                <td className="px-2 py-4 text-center text-zinc-500 font-medium text-xs">
                                   {Number(item.credits).toFixed(1)}
                                 </td>
                                 <td className="px-2 py-4 text-center">
@@ -538,10 +538,10 @@ export default function GradeHub() {
                                     className={cn(
                                       "inline-block px-2.5 py-1 rounded-md font-bold text-[11px]",
                                       item.grade === "Ex" || item.grade === "A"
-                                        ? "bg-navy-900 text-white"
+                                        ? "bg-zinc-900 text-white"
                                         : item.grade === "R"
                                           ? "bg-red-50 text-red-600"
-                                          : "bg-slate-100 text-slate-800",
+                                          : "bg-zinc-100 text-zinc-800",
                                     )}
                                   >
                                     {item.grade}
@@ -549,11 +549,11 @@ export default function GradeHub() {
                                 </td>
                                 <td className="px-2 py-4 text-center">
                                   {item.grade === "R" ? (
-                                    <span className="text-[9px] font-black text-red-400 uppercase tracking-tighter">
+                                    <span className="text-[9px] font-semibold text-red-400 uppercase tracking-tighter">
                                       Failed
                                     </span>
                                   ) : (
-                                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-tighter">
+                                    <span className="text-[9px] font-semibold text-emerald-500 uppercase tracking-tighter">
                                       Passed
                                     </span>
                                   )}
@@ -570,7 +570,7 @@ export default function GradeHub() {
                   {grades.remedial?.length > 0 ? (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <h3 className="text-[13px] font-bold text-zinc-400 uppercase tracking-[0.14em] flex items-center gap-2">
                           <div className="w-1.5 h-4 rounded-full bg-orange-500"></div>
                           REMEDIAL RESULTS
                         </h3>
@@ -593,45 +593,45 @@ export default function GradeHub() {
                           <Download size={14} /> Output Remedial PDF
                         </button>
                       </div>
-                      <div className="md:rounded-2xl md:bg-white bg-transparent border border-slate-100 overflow-hidden shadow-sm">
+                      <div className="md:rounded-2xl md:bg-white bg-transparent border border-zinc-100 overflow-hidden shadow-sm">
                         <table className="w-full text-sm table-fixed">
                           <thead>
-                            <tr className="bg-slate-50/50 border-b border-slate-100">
-                              <th className="px-5 py-4 text-left font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[55%]">
+                            <tr className="bg-zinc-50/50 border-b border-zinc-100">
+                              <th className="px-5 py-4 text-left font-bold text-[10px] uppercase tracking-[0.14em] text-zinc-400 w-[55%]">
                                 Subjects
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-[0.14em] text-zinc-400 w-[15%]">
                                 Credits
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-[0.14em] text-zinc-400 w-[15%]">
                                 Grade
                               </th>
-                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-widest text-slate-400 w-[15%]">
+                              <th className="px-2 py-4 text-center font-bold text-[10px] uppercase tracking-[0.14em] text-zinc-400 w-[15%]">
                                 Status
                               </th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-50">
+                          <tbody className="divide-y divide-zinc-50">
                             {grades.remedial.map((item: any, gIdx: number) => (
                               <tr
                                 key={gIdx}
-                                className="hover:bg-slate-50/30 transition-colors"
+                                className="hover:bg-zinc-50/30 transition-colors"
                               >
                                 <td className="px-5 py-4">
                                   <div className="flex flex-col gap-1">
                                     <div className="flex items-center gap-2">
-                                      <span className="font-bold text-slate-800 text-xs leading-tight">
+                                      <span className="font-bold text-zinc-800 text-xs leading-tight">
                                         {item.subject}
                                       </span>
                                       {item.attemptNumber > 1 && (
-                                        <span className="shrink-0 px-1.5 py-0.5 bg-amber-50 text-amber-600 rounded text-[8px] font-black uppercase tracking-tighter border border-amber-100/50">
+                                        <span className="shrink-0 px-1.5 py-0.5 bg-amber-50 text-amber-600 rounded text-[8px] font-semibold uppercase tracking-tighter border border-amber-100/50">
                                           Remedial
                                         </span>
                                       )}
                                     </div>
                                   </div>
                                 </td>
-                                <td className="px-2 py-4 text-center text-slate-500 font-medium text-xs">
+                                <td className="px-2 py-4 text-center text-zinc-500 font-medium text-xs">
                                   {Number(item.credits).toFixed(1)}
                                 </td>
                                 <td className="px-2 py-4 text-center">
@@ -639,10 +639,10 @@ export default function GradeHub() {
                                     className={cn(
                                       "inline-block px-2.5 py-1 rounded-md font-bold text-[11px]",
                                       item.grade === "Ex" || item.grade === "A"
-                                        ? "bg-navy-900 text-white"
+                                        ? "bg-zinc-900 text-white"
                                         : item.grade === "R"
                                           ? "bg-red-50 text-red-600"
-                                          : "bg-slate-100 text-slate-800",
+                                          : "bg-zinc-100 text-zinc-800",
                                     )}
                                   >
                                     {item.grade}
@@ -650,11 +650,11 @@ export default function GradeHub() {
                                 </td>
                                 <td className="px-2 py-4 text-center">
                                   {item.grade === "R" ? (
-                                    <span className="text-[9px] font-black text-red-400 uppercase tracking-tighter">
+                                    <span className="text-[9px] font-semibold text-red-400 uppercase tracking-tighter">
                                       Failed
                                     </span>
                                   ) : (
-                                    <span className="text-[9px] font-black text-emerald-500 uppercase tracking-tighter">
+                                    <span className="text-[9px] font-semibold text-emerald-500 uppercase tracking-tighter">
                                       Passed
                                     </span>
                                   )}
@@ -669,13 +669,13 @@ export default function GradeHub() {
                 </div>
 
                 {/* GPA Display - Centered below table */}
-                <div className="px-6 py-8 md:bg-slate-50/30 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 border-t border-slate-50 bg-transparent">
+                <div className="px-6 py-8 md:bg-zinc-50/30 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 border-t border-zinc-50 bg-transparent">
                   {/* SGPA Section */}
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
+                    <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] mb-1">
                       Semester GPA
                     </span>
-                    <span className="text-4xl font-black text-navy-900 tracking-tighter">
+                    <span className="text-4xl font-semibold text-zinc-900 tracking-tighter">
                       {grades.gpa !== null && grades.gpa !== undefined
                         ? Number(grades.gpa).toFixed(2)
                         : "N/A"}
@@ -683,14 +683,14 @@ export default function GradeHub() {
                   </div>
 
                   {/* Subtle Divider */}
-                  <div className="w-[1px] h-12 bg-slate-200 hidden md:block"></div>
+                  <div className="w-[1px] h-12 bg-zinc-200 hidden md:block"></div>
 
                   {/* CGPA Section */}
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
+                    <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] mb-1">
                       Cumulative GPA
                     </span>
-                    <span className="text-4xl font-black text-emerald-600 tracking-tighter">
+                    <span className="text-4xl font-semibold text-emerald-600 tracking-tighter">
                       {grades.cgpa !== null && grades.cgpa !== undefined
                         ? Number(grades.cgpa).toFixed(2)
                         : "N/A"}
@@ -701,12 +701,12 @@ export default function GradeHub() {
                   {grades.totalBacklogs !== undefined &&
                     grades.totalBacklogs > 0 && (
                       <>
-                        <div className="w-[1px] h-12 bg-slate-200 hidden md:block"></div>
+                        <div className="w-[1px] h-12 bg-zinc-200 hidden md:block"></div>
                         <div className="flex flex-col items-center">
-                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
+                          <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] mb-1">
                             Active Backlogs
                           </span>
-                          <span className="text-4xl font-black text-red-500 tracking-tighter flex items-center gap-2">
+                          <span className="text-4xl font-semibold text-red-500 tracking-tighter flex items-center gap-2">
                             {grades.totalBacklogs}
                           </span>
                         </div>
@@ -715,8 +715,8 @@ export default function GradeHub() {
                 </div>
 
                 {grades.motivational_messages && (
-                  <div className="px-6 pb-8 bg-slate-50/30 text-center">
-                    <p className="text-slate-500 font-medium italic text-sm max-w-2xl mx-auto">
+                  <div className="px-6 pb-8 bg-zinc-50/30 text-center">
+                    <p className="text-zinc-500 font-medium italic text-sm max-w-2xl mx-auto">
                       "{grades.motivational_messages}"
                     </p>
                   </div>
@@ -731,12 +731,12 @@ export default function GradeHub() {
 
         {/* Not Logged In State - only show AFTER /me has resolved */}
         {!authLoading && !user?.username && !isLoading && !resultsFetched && (
-          <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center">
-            <div className="bg-white w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
-              <AlertCircle size={40} className="text-navy-900" />
+          <div className="bg-zinc-50 border border-zinc-200 rounded-3xl p-12 text-center">
+            <div className="bg-white w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-zinc-100">
+              <AlertCircle size={40} className="text-zinc-900" />
             </div>
-            <h3 className="text-2xl font-black mb-3">Sign In Required</h3>
-            <p className="text-slate-500 mb-8 max-w-md mx-auto font-medium">
+            <h3 className="text-2xl font-semibold mb-3">Sign In Required</h3>
+            <p className="text-zinc-500 mb-8 max-w-md mx-auto font-medium">
               Please sign in to your student account to access your academic
               performance records and grades.
             </p>
@@ -752,13 +752,13 @@ export default function GradeHub() {
           !isLoading &&
           !resultsFetched &&
           !error && (
-            <div className="bg-slate-50 border border-slate-200 rounded-3xl p-12 text-center">
-              <div className="md:bg-white w-20 h-20 md:rounded-2xl flex items-center justify-center mx-auto mb-6 md:shadow-sm md:border md:border-slate-100 bg-transparent">
-                <GraduationCap size={40} className="text-navy-900" />
+            <div className="bg-zinc-50 border border-zinc-200 rounded-3xl p-12 text-center">
+              <div className="md:bg-white w-20 h-20 md:rounded-2xl flex items-center justify-center mx-auto mb-6 md:shadow-sm md:border md:border-zinc-100 bg-transparent">
+                <GraduationCap size={40} className="text-zinc-900" />
               </div>
 
-              <h3 className="text-2xl font-black mb-3">No Results Selected</h3>
-              <p className="text-slate-500 mb-6 max-w-sm mx-auto font-medium">
+              <h3 className="text-2xl font-semibold mb-3">No Results Selected</h3>
+              <p className="text-zinc-500 mb-6 max-w-sm mx-auto font-medium">
                 Select an academic year and semester above, then click "Get
                 Results" to see your grades.
               </p>

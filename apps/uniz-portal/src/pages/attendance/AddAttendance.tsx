@@ -84,17 +84,17 @@ export default function AddAttendance() {
       <div className="flex flex-col gap-6">
         <button
           onClick={() => navigate("/admin")}
-          className="self-start inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+          className="self-start inline-flex items-center text-sm font-medium text-zinc-500 hover:text-zinc-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
         </button>
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-zinc-900">
               Upload Attendance
             </h1>
-            <p className="text-slate-500 mt-1">
+            <p className="text-zinc-500 mt-1">
               Bulk upload attendance records via Excel.
             </p>
           </div>
@@ -113,7 +113,7 @@ export default function AddAttendance() {
             "border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200",
             error
               ? "border-red-300 bg-red-50"
-              : "border-slate-300 hover:border-navy-900 hover:bg-slate-50",
+              : "border-zinc-300 hover:border-zinc-900 hover:bg-zinc-50",
           )}
         >
           <input
@@ -130,14 +130,14 @@ export default function AddAttendance() {
             htmlFor="fileInput"
             className="cursor-pointer flex flex-col items-center gap-4"
           >
-            <div className="w-16 h-16 bg-navy-50 text-navy-900 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 bg-zinc-50 text-zinc-900 rounded-full flex items-center justify-center">
               <Upload className="w-8 h-8" />
             </div>
             <div>
-              <p className="text-lg font-semibold text-slate-900">
+              <p className="text-lg font-semibold text-zinc-900">
                 Click to upload excel sheet
               </p>
-              <p className="text-slate-500 text-sm mt-1">
+              <p className="text-zinc-500 text-sm mt-1">
                 Supports .xlsx, .xls, .csv
               </p>
             </div>
@@ -151,20 +151,20 @@ export default function AddAttendance() {
       ) : (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* File Info Bar */}
-          <div className="bg-navy-900 text-white p-4 rounded-xl flex items-center justify-between shadow-lg shadow-navy-100/20">
+          <div className="bg-zinc-900 text-white p-4 rounded-xl flex items-center justify-between shadow-lg shadow-zinc-100/20">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-slate-800 rounded-lg">
+              <div className="p-2 bg-zinc-800 rounded-lg">
                 <FileSpreadsheet className="w-6 h-6 text-green-400" />
               </div>
               <div>
                 <p className="font-semibold">{file?.name}</p>
-                <p className="text-xs text-slate-400">Ready to upload</p>
+                <p className="text-xs text-zinc-400">Ready to upload</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={clearFile}
-                className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
+                className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
                 title="Remove File"
               >
                 <X className="w-5 h-5" />
@@ -177,7 +177,7 @@ export default function AddAttendance() {
               onClick={handleUpload}
               isLoading={uploading}
               disabled={uploading}
-              className="bg-navy-900 hover:bg-navy-800 w-full md:w-auto"
+              className="bg-zinc-900 hover:bg-zinc-800 w-full md:w-auto"
             >
               <Upload className="w-4 h-4 mr-2" /> Process File
             </Button>
@@ -195,7 +195,7 @@ export default function AddAttendance() {
               </p>
               {success.errors && success.errors.length > 0 && (
                 <div className="mt-2 p-2 bg-white rounded border border-green-200 max-h-40 overflow-y-auto text-xs text-red-600">
-                  <p className="font-semibold text-slate-700 mb-1">Errors:</p>
+                  <p className="font-semibold text-zinc-700 mb-1">Errors:</p>
                   {success.errors.map((e: string, i: number) => (
                     <div key={i}>{e}</div>
                   ))}

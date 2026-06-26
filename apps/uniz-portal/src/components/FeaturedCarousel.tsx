@@ -122,7 +122,7 @@ export default function FeaturedCarousel({ items }: FeaturedCarouselProps) {
                     label={item.tag || "Campus"}
                     accent={TAG_ACCENTS[idx % TAG_ACCENTS.length]}
                   />
-                  <h3 className="text-[15px] font-black text-zinc-950 tracking-tight leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-zinc-800 transition-colors">
+                  <h3 className="text-[15px] font-semibold text-zinc-950 tracking-tight leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-zinc-800 transition-colors">
                     {item.title}
                   </h3>
                   <p className="text-[12.5px] font-medium text-zinc-500/80 leading-relaxed">

@@ -44,11 +44,11 @@ export default function Resetpassword() {
     switch (score) {
       case 0:
       case 1:
-        return { score, label: "Weak", color: "bg-slate-200" };
+        return { score, label: "Weak", color: "bg-zinc-200" };
       case 2:
-        return { score, label: "Moderate", color: "bg-slate-400" };
+        return { score, label: "Moderate", color: "bg-zinc-400" };
       case 3:
-        return { score, label: "Strong", color: "bg-navy-900" };
+        return { score, label: "Strong", color: "bg-zinc-900" };
       default:
         return { score: 0, label: "", color: "" };
     }
@@ -101,19 +101,19 @@ export default function Resetpassword() {
   };
 
   return (
-    <div className="font-sans text-slate-900">
+    <div className="font-sans text-zinc-900">
       <div className="max-w-6xl mx-auto px-4 pb-10">
         <div className="flex flex-col gap-1.5 md:mb-8 mb-4">
-          <p className="text-slate-500 font-medium text-[13px]">
+          <p className="text-zinc-500 font-medium text-[13px]">
             Account Security Terminal
           </p>
-          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-zinc-900 leading-none">
             Reset Password
           </h1>
         </div>
 
         {/* Main Content */}
-        <div className="md:bg-white md:rounded-xl md:overflow-hidden md:border md:border-slate-100 md:shadow-sm bg-transparent">
+        <div className="md:bg-white md:rounded-xl md:overflow-hidden md:border md:border-zinc-100 md:shadow-sm bg-transparent">
           <div className="md:flex">
             {/* Form Section */}
             {/* Form Section */}
@@ -123,7 +123,7 @@ export default function Resetpassword() {
               <div className="space-y-4 md:space-y-6">
                 {/* Current Password */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500 mb-1.5 block">
                     Current Password
                   </label>
                   <div className="relative group">
@@ -131,14 +131,14 @@ export default function Resetpassword() {
                       type="password"
                       onchangeFunction={handleInputChange(setCurrentPassword)}
                       placeholder="Enter current password"
-                      className="focus:border-navy-900 focus:ring-navy-900"
+                      className="focus:border-zinc-900 focus:ring-zinc-900"
                     />
                   </div>
                 </div>
 
                 {/* New Password */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500 mb-1.5 block">
                     New Password
                   </label>
                   <div className="relative group">
@@ -146,13 +146,13 @@ export default function Resetpassword() {
                       type="password"
                       onchangeFunction={handleInputChange(setPassword)}
                       placeholder="Enter new password"
-                      className="focus:border-navy-900 focus:ring-navy-900"
+                      className="focus:border-zinc-900 focus:ring-zinc-900"
                     />
                   </div>
                   {password && (
                     <div className="mt-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-2 flex-1 bg-zinc-100 rounded-full overflow-hidden">
                           <div
                             className={`h-full transition-all duration-500 ${passwordStrength.color}`}
                             style={{
@@ -160,7 +160,7 @@ export default function Resetpassword() {
                             }}
                           ></div>
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
                           {passwordStrength.label}
                         </span>
                       </div>
@@ -170,7 +170,7 @@ export default function Resetpassword() {
 
                 {/* Confirm New Password */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 block">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-500 mb-1.5 block">
                     Confirm Password
                   </label>
                   <div className="relative group">
@@ -178,7 +178,7 @@ export default function Resetpassword() {
                       type="password"
                       onchangeFunction={handleInputChange(setRePassword)}
                       placeholder="Repeat new password"
-                      className="focus:border-navy-900 focus:ring-navy-900"
+                      className="focus:border-zinc-900 focus:ring-zinc-900"
                     />
                   </div>
                 </div>
@@ -195,36 +195,36 @@ export default function Resetpassword() {
             </div>
 
             {/* Info Section */}
-            <div className="hidden md:flex md:w-1/3 bg-slate-50/50 p-6 md:p-8 border-l border-slate-100 flex-col justify-between">
+            <div className="hidden md:flex md:w-1/3 bg-zinc-50/50 p-6 md:p-8 border-l border-zinc-100 flex-col justify-between">
               <div>
-                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-[0.14em] mb-6 flex items-center gap-2">
                   Password Strength
                 </h3>
 
                 <div className="space-y-6">
                   <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${password.length >= 8 ? "text-navy-900" : "text-slate-400"}`}
+                    className={`flex items-center gap-3 transition-colors duration-300 ${password.length >= 8 ? "text-zinc-900" : "text-zinc-400"}`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${password.length >= 8 ? "border-navy-900 bg-navy-900 text-white" : "border-slate-200"}`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${password.length >= 8 ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-200"}`}
                     >
                       {/* ... */}
                     </div>
                   </div>
                   <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${/[0-9]/.test(password) ? "text-navy-900" : "text-slate-400"}`}
+                    className={`flex items-center gap-3 transition-colors duration-300 ${/[0-9]/.test(password) ? "text-zinc-900" : "text-zinc-400"}`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[0-9]/.test(password) ? "border-navy-900 bg-navy-900 text-white" : "border-slate-200"}`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[0-9]/.test(password) ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-200"}`}
                     >
                       {/* ... */}
                     </div>
                   </div>
                   <div
-                    className={`flex items-center gap-3 transition-colors duration-300 ${/[^A-Za-z0-9]/.test(password) ? "text-navy-900" : "text-slate-400"}`}
+                    className={`flex items-center gap-3 transition-colors duration-300 ${/[^A-Za-z0-9]/.test(password) ? "text-zinc-900" : "text-zinc-400"}`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[^A-Za-z0-9]/.test(password) ? "border-navy-900 bg-navy-900 text-white" : "border-slate-200"}`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${/[^A-Za-z0-9]/.test(password) ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-200"}`}
                     >
                       {/* ... */}
                     </div>
@@ -232,10 +232,10 @@ export default function Resetpassword() {
                 </div>
               </div>
 
-              <div className="mt-8 p-6 bg-slate-50/50 rounded-xl border border-slate-100 hidden md:block">
+              <div className="mt-8 p-6 bg-zinc-50/50 rounded-xl border border-zinc-100 hidden md:block">
                 <div className="flex items-start gap-3">
                   <svg
-                    className="h-5 w-5 text-navy-900 mt-0.5"
+                    className="h-5 w-5 text-zinc-900 mt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -247,7 +247,7 @@ export default function Resetpassword() {
                       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                     />
                   </svg>
-                  <p className="text-[11px] font-medium text-slate-400 leading-relaxed uppercase tracking-wider">
+                  <p className="text-[11px] font-medium text-zinc-400 leading-relaxed uppercase tracking-wider">
                     Terminal security protocol will automatically log out all
                     sessions after successful credential update.
                   </p>
