@@ -23,6 +23,18 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
+import { SectionHeader } from "../../../components/admin/SectionHeader";
+import {
+  adminPageWrapClass,
+  adminCardClass,
+  adminCardHoverClass,
+  adminLabelClass,
+  adminInputClass,
+  adminTextareaClass,
+  adminPrimaryButtonClass,
+  adminGhostButtonClass,
+} from "../../../components/admin/admin-ui";
+import { cn } from "../../../utils/cn";
 
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
@@ -244,60 +256,57 @@ export default function BannersSection() {
   };
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex flex-col gap-1.5">
-          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
-            Banner Management
-          </h2>
-          <p className="text-slate-500 font-medium text-[15px]">
-            Create and control featured spotlight content for student portals.
-          </p>
-        </div>
-
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="h-11 px-6 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-navy-800 active:scale-95 transition-all flex items-center justify-center gap-2"
-        >
-          <Plus size={16} /> New Banners
-        </button>
-      </div>
+    <div className={cn(adminPageWrapClass, "animate-in fade-in duration-700 pb-20")}>
+      <SectionHeader
+        icon={<ImageIcon size={18} />}
+        eyebrow="Campus"
+        title="Banner Management"
+        subtitle="Create and control featured spotlight content for student portals."
+        actions={
+          <button
+            onClick={() => setShowAddModal(true)}
+            className={adminPrimaryButtonClass}
+          >
+            <Plus size={16} /> New Banner
+          </button>
+        }
+      />
 
       {/* Banners Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="bg-white rounded-xl border border-slate-100 overflow-hidden flex flex-col animate-pulse shadow-none"
+              className={cn(adminCardClass, "overflow-hidden flex flex-col animate-pulse")}
             >
-              <div className="h-44 w-full bg-slate-50 border-b border-slate-100 relative overflow-hidden" />
+              <div className="h-44 w-full bg-zinc-100 border-b border-zinc-200/70" />
               <div className="p-6 space-y-5">
                 <div className="space-y-3">
-                  <div className="h-5 w-3/4 bg-slate-100 rounded-lg" />
-                  <div className="h-3 w-full bg-slate-50 rounded-md" />
-                  <div className="h-3 w-5/6 bg-slate-50 rounded-md" />
+                  <div className="h-5 w-3/4 bg-zinc-100 rounded-lg" />
+                  <div className="h-3 w-full bg-zinc-50 rounded-md" />
+                  <div className="h-3 w-5/6 bg-zinc-50 rounded-md" />
                 </div>
                 <div className="pt-4 flex items-center gap-2">
-                  <div className="h-10 flex-1 bg-slate-50 rounded-full" />
-                  <div className="h-10 w-10 bg-slate-50 rounded-xl" />
-                  <div className="h-10 w-10 bg-slate-50 rounded-xl" />
+                  <div className="h-10 flex-1 bg-zinc-50 rounded-xl" />
+                  <div className="h-10 w-10 bg-zinc-50 rounded-xl" />
+                  <div className="h-10 w-10 bg-zinc-50 rounded-xl" />
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : banners.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {banners.map((banner) => {
             const bannerId = banner.id || banner._id || banner.uuid;
             return (
               <div
                 key={bannerId}
-                className="bg-white rounded-xl border border-slate-100 hover:translate-y-[-4px] transition-all overflow-hidden flex flex-col group relative"
+                className={cn(adminCardClass, adminCardHoverClass, "overflow-hidden flex flex-col group relative")}
               >
                 {/* Preview Image */}
-                <div className="h-44 w-full bg-slate-50 relative overflow-hidden shrink-0 border-b border-slate-100">
+                <div className="h-44 w-full bg-zinc-100 relative overflow-hidden shrink-0 border-b border-zinc-200/70">
                   {banner.imageUrl ? (
                     <img
                       src={banner.imageUrl}
@@ -305,30 +314,28 @@ export default function BannersSection() {
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-300">
+                    <div className="w-full h-full flex items-center justify-center text-zinc-300">
                       <ImageIcon size={40} strokeWidth={1} />
                     </div>
                   )}
 
                   {/* Status Badge */}
                   <div
-                    className={`absolute top-4 right-4 px-3 py-1.5 rounded-xl text-[10px] font-semibold uppercase tracking-widest flex items-center gap-1.5 border backdrop-blur-md ${banner.isVisible ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-slate-50 text-slate-500 border-slate-200"}`}
+                    className={`absolute top-3.5 right-3.5 px-2.5 py-1 rounded-full text-[10px] font-medium tracking-tight flex items-center gap-1.5 border backdrop-blur-md ${banner.isVisible ? "bg-white/90 text-zinc-700 border-zinc-200" : "bg-white/90 text-zinc-400 border-zinc-200"}`}
                   >
-                    {banner.isVisible ? (
-                      <Eye size={12} />
-                    ) : (
-                      <EyeOff size={12} />
-                    )}
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${banner.isVisible ? "bg-emerald-500" : "bg-zinc-300"}`}
+                    />
                     {banner.isVisible ? "Active" : "Hidden"}
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-6 flex flex-col flex-1">
-                  <h3 className="font-semibold text-slate-900 text-[17px] leading-tight mb-2 line-clamp-1">
+                <div className="p-5 flex flex-col flex-1">
+                  <h3 className="font-semibold text-zinc-900 text-[15px] leading-tight mb-1.5 line-clamp-1">
                     {banner.title}
                   </h3>
-                  <p className="text-slate-500 font-medium text-[13px] line-clamp-2 leading-relaxed mb-6">
+                  <p className="text-zinc-500 text-[13px] line-clamp-2 leading-relaxed mb-5">
                     {banner.text}
                   </p>
 
@@ -336,11 +343,7 @@ export default function BannersSection() {
                     <button
                       onClick={() => toggleVisibilityAction(banner)}
                       disabled={actionLoading === bannerId}
-                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-bold uppercase tracking-widest text-[9px] transition-all border ${
-                        banner.isVisible
-                          ? "bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white"
-                          : "bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-600 hover:text-white"
-                      } active:scale-95 disabled:opacity-50`}
+                      className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl border border-zinc-200 bg-white text-zinc-600 text-[12px] font-semibold hover:text-zinc-900 hover:border-zinc-300 active:scale-[0.98] transition-all disabled:opacity-50"
                     >
                       {actionLoading === bannerId ? (
                         <Loader2 size={13} className="animate-spin" />
@@ -353,14 +356,14 @@ export default function BannersSection() {
                     </button>
                     <button
                       onClick={() => handleEditClick(banner)}
-                      className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-navy-50 hover:text-navy-900 border border-slate-100 transition-all active:scale-95"
+                      className="h-10 w-10 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:text-zinc-900 hover:border-zinc-300 border border-zinc-200 transition-all active:scale-95"
                     >
                       <Edit3 size={14} />
                     </button>
                     <button
                       onClick={() => deleteBanner(bannerId)}
                       disabled={actionLoading === bannerId}
-                      className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-red-50 hover:text-red-600 border border-slate-100 transition-all active:scale-95"
+                      className="h-10 w-10 flex items-center justify-center bg-white text-zinc-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-zinc-200 transition-all active:scale-95"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -371,24 +374,24 @@ export default function BannersSection() {
           })}
         </div>
       ) : (
-        <div className="p-32 flex flex-col items-center justify-center text-center space-y-7 bg-white rounded-xl border border-slate-100">
-          <div className="w-24 h-24 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-300">
-            <ImageIcon size={48} strokeWidth={1.5} />
+        <div className={cn(adminCardClass, "py-24 flex flex-col items-center justify-center text-center space-y-6")}>
+          <div className="w-16 h-16 bg-zinc-50 border border-zinc-200/70 rounded-2xl flex items-center justify-center text-zinc-300">
+            <ImageIcon size={32} strokeWidth={1.5} />
           </div>
-          <div>
-            <p className="text-2xl font-semibold text-slate-900 tracking-tight">
+          <div className="space-y-1.5">
+            <p className="text-[17px] font-semibold text-zinc-900 tracking-tight">
               No Active Banners
             </p>
-            <p className="text-slate-400 font-medium mt-2 max-w-sm text-[15px]">
+            <p className="text-zinc-500 max-w-sm text-[13px] leading-relaxed">
               Bring your campus to life by creating featured banners for events,
               announcements, or updates.
             </p>
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="uniz-primary-btn px-8"
+            className={adminPrimaryButtonClass}
           >
-            Add First Banner
+            <Plus size={16} /> Add First Banner
           </button>
         </div>
       )}
@@ -408,7 +411,7 @@ export default function BannersSection() {
           }
         }}
       >
-        <AlertDialogContent className="max-w-md p-0 overflow-hidden bg-white border-slate-100 rounded-2xl shadow-2xl">
+        <AlertDialogContent className="max-w-md p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl shadow-xl">
           <div className="relative">
             {/* Close Button */}
             <button
@@ -423,18 +426,18 @@ export default function BannersSection() {
                   isVisible: true,
                 });
               }}
-              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
 
             <form onSubmit={handleSaveBanner} className="p-8">
               {/* Header */}
-              <AlertDialogHeader className="flex flex-col items-center text-center gap-2 mb-8">
-                <AlertDialogTitle className="text-2xl font-black text-slate-900 tracking-tight uppercase italic">
+              <AlertDialogHeader className="flex flex-col items-start text-left gap-1.5 mb-7">
+                <AlertDialogTitle className="text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]">
                   {editingBanner ? "Edit Banner" : "New Banner"}
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-[14px] font-medium text-slate-500 mt-1 leading-relaxed">
+                <AlertDialogDescription className="text-[13px] text-zinc-500 leading-relaxed">
                   {editingBanner
                     ? "Update your featured spotlight content."
                     : "Configure a new spotlight for the student portal."}
@@ -444,9 +447,7 @@ export default function BannersSection() {
               <div className="space-y-5">
                 {/* Title */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                    Banner Title
-                  </label>
+                  <label className={adminLabelClass}>Banner Title</label>
                   <input
                     required
                     type="text"
@@ -455,15 +456,13 @@ export default function BannersSection() {
                       setNewBanner({ ...newBanner, title: e.target.value })
                     }
                     placeholder="e.g. UniZ v2.0 is Live!"
-                    className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
+                    className={adminInputClass}
                   />
                 </div>
 
                 {/* Text */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                    Body Content
-                  </label>
+                  <label className={adminLabelClass}>Body Content</label>
                   <textarea
                     required
                     rows={3}
@@ -472,28 +471,26 @@ export default function BannersSection() {
                       setNewBanner({ ...newBanner, text: e.target.value })
                     }
                     placeholder="Briefly describe what this banner is about..."
-                    className="w-full bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl px-6 py-4 font-bold text-slate-900 outline-none transition-all resize-none placeholder:text-slate-300"
+                    className={adminTextareaClass}
                   />
                 </div>
 
                 {/* Image URL & Upload */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between px-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      Banner Image
-                    </label>
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <label className={adminLabelClass}>Banner Image</label>
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={uploading}
-                      className="flex items-center gap-2 text-[10px] font-bold text-navy-900 hover:text-black transition-colors"
+                      className="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-600 hover:text-zinc-900 transition-colors"
                     >
                       {uploading ? (
                         <Loader2 size={12} className="animate-spin" />
                       ) : (
                         <Upload size={12} />
                       )}
-                      {uploading ? "UPLOADING..." : "UPLOAD FILE"}
+                      {uploading ? "Uploading…" : "Upload file"}
                     </button>
                     <input
                       type="file"
@@ -504,23 +501,21 @@ export default function BannersSection() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <input
-                      required
-                      type="url"
-                      value={newBanner.imageUrl}
-                      onChange={(e) =>
-                        setNewBanner({ ...newBanner, imageUrl: e.target.value })
-                      }
-                      placeholder="Or paste image URL (https://...)"
-                      className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
-                    />
-                  </div>
+                  <input
+                    required
+                    type="url"
+                    value={newBanner.imageUrl}
+                    onChange={(e) =>
+                      setNewBanner({ ...newBanner, imageUrl: e.target.value })
+                    }
+                    placeholder="Or paste image URL (https://...)"
+                    className={adminInputClass}
+                  />
                 </div>
 
                 {/* Image Preview */}
                 {newBanner.imageUrl && (
-                  <div className="h-24 w-full rounded-xl overflow-hidden border-2 border-slate-100 relative group">
+                  <div className="h-24 w-full rounded-xl overflow-hidden border border-zinc-200 relative group">
                     <img
                       src={newBanner.imageUrl}
                       alt="preview"
@@ -531,7 +526,7 @@ export default function BannersSection() {
                       }
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <p className="text-[10px] font-bold text-white uppercase tracking-widest">
+                      <p className="text-[10px] font-semibold text-white uppercase tracking-widest">
                         Current Selection
                       </p>
                     </div>
@@ -540,7 +535,7 @@ export default function BannersSection() {
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3 mt-10">
+              <div className="flex gap-3 mt-8">
                 <button
                   type="button"
                   onClick={() => {
@@ -553,14 +548,14 @@ export default function BannersSection() {
                       isVisible: true,
                     });
                   }}
-                  className="flex-1 py-3.5 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 font-black uppercase tracking-widest text-[10px] transition-all"
+                  className={cn(adminGhostButtonClass, "flex-1")}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!!actionLoading}
-                  className="flex-[2] py-3.5 rounded-xl bg-navy-900 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-lg shadow-navy-100 hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className={cn(adminPrimaryButtonClass, "flex-[2]")}
                 >
                   {actionLoading === "creating" ||
                   actionLoading === "updating" ? (
@@ -570,7 +565,7 @@ export default function BannersSection() {
                   ) : (
                     <Plus size={16} />
                   )}
-                  {editingBanner ? "UPDATE BANNER" : "LAUNCH BANNER"}
+                  {editingBanner ? "Update Banner" : "Launch Banner"}
                 </button>
               </div>
             </form>

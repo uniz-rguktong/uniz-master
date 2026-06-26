@@ -18,6 +18,17 @@ import {
 } from "lucide-react";
 import { toast } from "../../utils/toast-ref";
 import { motion, AnimatePresence } from "framer-motion";
+import { SectionHeader } from "../../components/admin/SectionHeader";
+import {
+  adminPageWrapClass,
+  adminCardClass,
+  adminCardHoverClass,
+  adminLabelClass,
+  adminInputClass,
+  adminSelectClass,
+  adminPrimaryButtonClass,
+} from "../../components/admin/admin-ui";
+import { cn } from "../../utils/cn";
 
 interface Subject {
   id: string;
@@ -173,50 +184,50 @@ export default function CurriculumManager() {
   };
 
   return (
-    <div className="animate-in fade-in duration-700">
+    <div className={cn(adminPageWrapClass, "animate-in fade-in duration-700")}>
       {/* Header Area */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-            Academic Subjects
-          </h1>
-          <p className="text-slate-500 text-sm font-medium">
-            Manage the core institutional curriculum ({totalRecords} records)
-          </p>
-        </div>
-        <button
-          onClick={() => handleOpenModal()}
-          className="bg-navy-900 text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-navy-900/10"
-        >
-          <Plus size={18} strokeWidth={3} />
-          NEW SUBJECT
-        </button>
-      </div>
+      <SectionHeader
+        icon={<BookOpen size={18} />}
+        eyebrow="Academic"
+        title="Academic Subjects"
+        subtitle={`Manage the core institutional curriculum (${totalRecords} records)`}
+        actions={
+          <button
+            onClick={() => handleOpenModal()}
+            className={adminPrimaryButtonClass}
+          >
+            <Plus size={16} /> New Subject
+          </button>
+        }
+      />
 
       {/* Filters Area */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col lg:flex-row gap-4 mb-8">
+      <div className={cn(adminCardClass, "p-3 flex flex-col lg:flex-row gap-3")}>
         <div className="relative flex-1">
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            size={18}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"
+            size={16}
           />
           <input
             type="text"
-            placeholder="Search by name or code..."
+            placeholder="Search by name or code…"
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
               setPage(1);
             }}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all"
+            className={cn(adminInputClass, "pl-10")}
           />
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl">
-            <Filter size={14} className="text-slate-400" />
+          <div className="relative">
+            <Filter
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none z-10"
+              size={14}
+            />
             <select
-              className="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
+              className={cn(adminSelectClass, "pl-9 w-[180px]")}
               value={deptFilter}
               onChange={(e) => {
                 setDeptFilter(e.target.value);
@@ -232,10 +243,13 @@ export default function CurriculumManager() {
             </select>
           </div>
 
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl">
-            <BookOpen size={14} className="text-slate-400" />
+          <div className="relative">
+            <BookOpen
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none z-10"
+              size={14}
+            />
             <select
-              className="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
+              className={cn(adminSelectClass, "pl-9 w-[180px]")}
               value={semFilter}
               onChange={(e) => {
                 setSemFilter(e.target.value);
@@ -256,18 +270,18 @@ export default function CurriculumManager() {
       {/* Grid Area */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
-          <Loader2 className="animate-spin text-navy-900" size={40} />
-          <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">
-            Hydrating Curriculum...
+          <Loader2 className="animate-spin text-zinc-900" size={32} />
+          <p className="text-zinc-400 font-medium text-[12px] uppercase tracking-[0.14em]">
+            Loading curriculum…
           </p>
         </div>
       ) : subjects.length === 0 ? (
-        <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-          <GraduationCap size={64} className="mx-auto text-slate-200 mb-4" />
-          <h3 className="text-lg font-bold text-slate-900">
+        <div className={cn(adminCardClass, "text-center py-20 border-dashed border-zinc-300")}>
+          <GraduationCap size={48} strokeWidth={1.5} className="mx-auto text-zinc-200 mb-4" />
+          <h3 className="text-[16px] font-semibold tracking-tight text-zinc-900">
             No subjects found
           </h3>
-          <p className="text-slate-500 text-sm">
+          <p className="text-zinc-500 text-[13px] mt-1">
             Try adjusting your filters or search query.
           </p>
         </div>
@@ -279,23 +293,23 @@ export default function CurriculumManager() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               key={sub.id}
-              className="group bg-white p-5 rounded-3xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:border-navy-900/10 transition-all relative overflow-hidden"
+              className={cn(adminCardClass, adminCardHoverClass, "group p-5 relative overflow-hidden")}
             >
               {/* Card Header */}
               <div className="flex justify-between items-start mb-4">
-                <div className="w-10 h-10 bg-slate-50 rounded-2xl flex items-center justify-center text-navy-900 group-hover:bg-navy-900 group-hover:text-white transition-colors duration-500">
+                <div className="w-10 h-10 bg-zinc-100 rounded-xl flex items-center justify-center text-zinc-600 ring-1 ring-inset ring-zinc-900/5 group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
                   <GraduationCap size={20} />
                 </div>
                 <div className="flex gap-1">
                   <button
                     onClick={() => handleOpenModal(sub)}
-                    className="p-2 text-slate-400 hover:text-navy-900 hover:bg-slate-50 rounded-xl transition-all"
+                    className="p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-lg transition-all"
                   >
                     <Edit size={16} />
                   </button>
                   <button
                     onClick={() => handleDelete(sub.id)}
-                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                    className="p-2 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -304,48 +318,48 @@ export default function CurriculumManager() {
 
               {/* Card Body */}
               <div className="space-y-1 mb-5">
-                <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                <p className="text-[11px] font-semibold text-zinc-400 uppercase tracking-[0.12em]">
                   {sub.code}
                 </p>
-                <h3 className="text-[17px] font-bold text-slate-900 line-clamp-1 leading-tight">
+                <h3 className="text-[16px] font-semibold text-zinc-900 line-clamp-1 leading-tight">
                   {sub.name}
                 </h3>
               </div>
 
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-6">
-                <span className="px-2.5 py-1 bg-navy-50 text-navy-900 text-[10px] font-black rounded-lg uppercase tracking-wider">
+                <span className="px-2.5 py-1 bg-zinc-900 text-white text-[10px] font-medium rounded-full uppercase tracking-wide">
                   {sub.department}
                 </span>
-                <span className="px-2.5 py-1 bg-slate-50 text-slate-600 text-[10px] font-black rounded-lg uppercase tracking-wider">
+                <span className="px-2.5 py-1 bg-zinc-50 text-zinc-600 text-[10px] font-medium rounded-full uppercase tracking-wide border border-zinc-200">
                   {sub.semester}
                 </span>
               </div>
 
               {/* Progress Bar (Weight) */}
               <div className="space-y-2">
-                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <div className="flex justify-between items-center text-[10px] font-medium uppercase tracking-[0.12em] text-zinc-400">
                   <span>Academic Weight</span>
-                  <span>{((sub.credits / 4) * 100).toFixed(0)}%</span>
+                  <span className="tabular-nums">{((sub.credits / 4) * 100).toFixed(0)}%</span>
                 </div>
-                <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden">
+                <div className="h-1.5 w-full bg-zinc-100 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${(sub.credits / 4) * 100}%` }}
-                    className="h-full bg-navy-900 rounded-full"
+                    className="h-full bg-zinc-900 rounded-full"
                   />
                 </div>
               </div>
 
               {/* Footer */}
-              <div className="mt-5 pt-4 border-t border-slate-50 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-slate-400">
+              <div className="mt-5 pt-4 border-t border-zinc-100 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-zinc-400">
                   <BookOpen size={14} />
-                  <span className="text-[10px] font-black uppercase tracking-widest">
-                    {sub.credits} CREDITS
+                  <span className="text-[10px] font-medium uppercase tracking-[0.12em] tabular-nums">
+                    {sub.credits} Credits
                   </span>
                 </div>
-                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
               </div>
             </motion.div>
           ))}
@@ -354,28 +368,28 @@ export default function CurriculumManager() {
 
       {/* Pagination Controls */}
       {!loading && totalRecords > 0 && (
-        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-4 p-5 bg-white rounded-2xl border border-slate-100 shadow-sm">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-            Showing <span className="text-slate-900">{subjects.length}</span> of{" "}
+        <div className={cn(adminCardClass, "flex flex-col md:flex-row items-center justify-between gap-4 px-6 py-4")}>
+          <div className="text-[11px] font-medium text-zinc-400 uppercase tracking-[0.12em]">
+            Showing <span className="text-zinc-900">{subjects.length}</span> of{" "}
             {totalRecords} records
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-xl text-slate-400 hover:text-navy-900 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="w-9 h-9 flex items-center justify-center bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             >
-              <ChevronLeft size={20} />
+              <ChevronLeft size={18} />
             </button>
-            <div className="px-4 text-xs font-black text-navy-900 uppercase tracking-widest">
+            <div className="px-3 text-[12px] font-semibold text-zinc-900 tabular-nums">
               Page {page} of {totalPages}
             </div>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-xl text-slate-400 hover:text-navy-900 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="w-9 h-9 flex items-center justify-center bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             >
-              <ChevronRight size={20} />
+              <ChevronRight size={18} />
             </button>
           </div>
         </div>
@@ -397,35 +411,33 @@ export default function CurriculumManager() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-white rounded-[32px] shadow-2xl overflow-hidden"
+              className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl border border-zinc-200 overflow-hidden"
             >
               <div className="p-8">
-                <div className="flex justify-between items-center mb-8">
-                  <div>
-                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+                <div className="flex justify-between items-start mb-7">
+                  <div className="space-y-1.5">
+                    <h2 className="text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]">
                       {editingSubject ? "Edit Subject" : "Create Subject"}
                     </h2>
-                    <p className="text-slate-500 text-sm font-medium">
-                      Define metadata for the new curriculum node
+                    <p className="text-zinc-500 text-[13px]">
+                      Define metadata for the curriculum entry
                     </p>
                   </div>
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-2xl text-slate-400 hover:text-slate-600 transition-all"
+                    className="w-9 h-9 flex items-center justify-center bg-zinc-50 rounded-full text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
                   >
-                    <X size={20} />
+                    <X size={18} />
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">
-                        Subject Code
-                      </label>
+                      <label className={adminLabelClass}>Subject Code</label>
                       <div className="relative">
                         <Hash
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300"
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-300 z-10"
                           size={16}
                         />
                         <input
@@ -438,17 +450,15 @@ export default function CurriculumManager() {
                             })
                           }
                           placeholder="e.g. CSE-302"
-                          className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all"
+                          className={cn(adminInputClass, "pl-10")}
                         />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">
-                        Credits
-                      </label>
+                      <label className={adminLabelClass}>Credits</label>
                       <div className="relative">
                         <CreditCard
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300"
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-300 z-10"
                           size={16}
                         />
                         <input
@@ -464,16 +474,14 @@ export default function CurriculumManager() {
                               credits: Number(e.target.value),
                             })
                           }
-                          className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all"
+                          className={cn(adminInputClass, "pl-10")}
                         />
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">
-                      Display Name
-                    </label>
+                    <label className={adminLabelClass}>Display Name</label>
                     <input
                       required
                       value={formData.name}
@@ -481,15 +489,13 @@ export default function CurriculumManager() {
                         setFormData({ ...formData, name: e.target.value })
                       }
                       placeholder="e.g. Advanced Operating Systems"
-                      className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all"
+                      className={adminInputClass}
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">
-                        Department
-                      </label>
+                      <label className={adminLabelClass}>Department</label>
                       <select
                         value={formData.department}
                         onChange={(e) =>
@@ -498,7 +504,7 @@ export default function CurriculumManager() {
                             department: e.target.value,
                           })
                         }
-                        className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all appearance-none"
+                        className={adminSelectClass}
                       >
                         {departments.map((d) => (
                           <option key={d} value={d}>
@@ -508,15 +514,13 @@ export default function CurriculumManager() {
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">
-                        Level (Semester)
-                      </label>
+                      <label className={adminLabelClass}>Level (Semester)</label>
                       <select
                         value={formData.semester}
                         onChange={(e) =>
                           setFormData({ ...formData, semester: e.target.value })
                         }
-                        className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-navy-900/5 transition-all appearance-none"
+                        className={adminSelectClass}
                       >
                         {semesters.map((s) => (
                           <option key={s} value={s}>
@@ -529,11 +533,9 @@ export default function CurriculumManager() {
 
                   <button
                     type="submit"
-                    className="w-full bg-navy-900 text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-800 transition-all active:scale-95 shadow-xl shadow-navy-900/20"
+                    className={cn(adminPrimaryButtonClass, "h-12 w-full")}
                   >
-                    {editingSubject
-                      ? "Update Curriculum Node"
-                      : "Deploy Subject"}
+                    {editingSubject ? "Update Subject" : "Create Subject"}
                   </button>
                 </form>
               </div>
