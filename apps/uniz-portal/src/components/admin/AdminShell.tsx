@@ -408,12 +408,12 @@ export default function AdminShell({
               </h1>
             )}
           </div>
-          <div className="flex items-center gap-3.5 ml-auto">
-            <div className="text-right hidden sm:block leading-tight">
-              <p className="text-[13.5px] font-semibold text-zinc-900 tracking-[-0.01em]">
+          <div className="flex items-center gap-3.5 ml-auto pt-1.5">
+            <div className="text-right hidden sm:block">
+              <p className="text-[13.5px] font-semibold text-zinc-900 tracking-[-0.01em] leading-snug">
                 {profileName || username}
               </p>
-              <p className="text-[11px] text-zinc-400 font-medium mt-0.5 lowercase">
+              <p className="text-[11px] text-zinc-400 font-medium mt-1 lowercase leading-normal">
                 {headerSubtitle ||
                   profileEmail ||
                   `${username}@rguktong.ac.in`}
