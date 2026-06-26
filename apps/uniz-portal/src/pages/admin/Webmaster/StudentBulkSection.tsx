@@ -17,6 +17,20 @@ import {
 import { toast } from "@/utils/toast-ref";
 import { FileUploader } from "../../../components/ui/FileUploader";
 import { downloadFile } from "../../../api/apiClient";
+import { Users } from "lucide-react";
+import { SectionHeader } from "../../../components/admin/SectionHeader";
+import {
+  adminPageWrapClass,
+  adminCardClass,
+  adminLabelClass,
+  adminSelectClass,
+  adminPrimaryButtonClass,
+  adminGhostButtonClass,
+  adminSegmentWrapClass,
+  adminSegmentActiveClass,
+  adminSegmentInactiveClass,
+} from "../../../components/admin/admin-ui";
+import { cn } from "../../../utils/cn";
 
 export default function StudentBulkSection() {
   const [file, setFile] = useState<File | null>(null);
@@ -189,47 +203,54 @@ export default function StudentBulkSection() {
   };
 
   return (
-    <div className="p-6 space-y-8 pb-20 text-slate-900">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex flex-col gap-1.5">
-          <h2 className="text-2xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
-            Student Bulk Operations
-          </h2>
-          <p className="text-slate-500 font-medium text-[13px]">
-            Bulk onboard identities or extract global batch records.
-          </p>
-        </div>
-
-        <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/60 backdrop-blur-sm">
-          <button
-            onClick={() => setActiveTab("upload")}
-            className={`flex items-center gap-2 px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-[9px] transition-all ${activeTab === "upload" ? "bg-white text-slate-900 shadow-sm border border-slate-200/50" : "text-slate-500 hover:text-slate-900"}`}
-          >
-            <Upload size={13} /> Bulk Upload
-          </button>
-          <button
-            onClick={() => setActiveTab("export")}
-            className={`flex items-center gap-2 px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-[9px] transition-all ${activeTab === "export" ? "bg-white text-slate-900 shadow-sm border border-slate-200/50" : "text-slate-500 hover:text-slate-900"}`}
-          >
-            <Download size={13} /> Batch Export
-          </button>
-        </div>
-      </div>
+    <div className={cn(adminPageWrapClass, "pb-20")}>
+      <SectionHeader
+        icon={<Users size={18} />}
+        eyebrow="Students"
+        title="Student Bulk Operations"
+        subtitle="Bulk onboard identities or extract global batch records."
+        actions={
+          <div className={adminSegmentWrapClass}>
+            <button
+              onClick={() => setActiveTab("upload")}
+              className={cn(
+                "flex items-center gap-2",
+                activeTab === "upload"
+                  ? adminSegmentActiveClass
+                  : adminSegmentInactiveClass,
+              )}
+            >
+              <Upload size={13} /> Bulk Upload
+            </button>
+            <button
+              onClick={() => setActiveTab("export")}
+              className={cn(
+                "flex items-center gap-2",
+                activeTab === "export"
+                  ? adminSegmentActiveClass
+                  : adminSegmentInactiveClass,
+              )}
+            >
+              <Download size={13} /> Batch Export
+            </button>
+          </div>
+        }
+      />
 
       {activeTab === "upload" ? (
         <div className="w-full space-y-6">
-          <div className="flex justify-end pr-2">
+          <div className="flex justify-end">
             <button
               onClick={handleDownloadTemplate}
-              className="group flex items-center gap-2.5 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl border border-slate-200 hover:bg-white hover:text-slate-900 hover:border-slate-300 transition-all font-bold uppercase tracking-widest text-[9px] active:scale-95"
+              className={adminGhostButtonClass}
             >
-              <Download size={13} className="text-slate-500" />
+              <Download size={14} />
               Download Template
             </button>
           </div>
 
           <div className="w-full space-y-6">
-            <div className="rounded-xl border border-slate-900 overflow-hidden bg-transparent p-6">
+            <div className={cn(adminCardClass, "overflow-hidden border-dashed border-zinc-300 bg-zinc-50/40 p-6")}>
               <FileUploader
                 onFileSelect={(f) => {
                   setFile(f);
@@ -248,7 +269,7 @@ export default function StudentBulkSection() {
             <button
               onClick={handleUpload}
               disabled={!file || loading || !!uploadId}
-              className="w-full h-12 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] shadow-none hover:bg-slate-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-[0.98]"
+              className={cn(adminPrimaryButtonClass, "h-12 w-full")}
             >
               {loading ? (
                 <Loader2 className="animate-spin w-4 h-4" />
@@ -268,9 +289,7 @@ export default function StudentBulkSection() {
         <div className="w-full space-y-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="space-y-2">
-              <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
-                Branch Focus
-              </label>
+              <label className={adminLabelClass}>Branch Focus</label>
               <div className="relative group">
                 <select
                   value={exportParams.branch}
@@ -280,7 +299,7 @@ export default function StudentBulkSection() {
                       branch: e.target.value,
                     })
                   }
-                  className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none font-black text-slate-900 text-[10px] cursor-pointer transition-all appearance-none uppercase tracking-widest shadow-none"
+                  className={adminSelectClass}
                 >
                   <option value="ALL">All Departments</option>
                   {["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"].map(
@@ -297,16 +316,14 @@ export default function StudentBulkSection() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
-                Academic Year
-              </label>
+              <label className={adminLabelClass}>Academic Year</label>
               <div className="relative group">
                 <select
                   value={exportParams.year}
                   onChange={(e) =>
                     setExportParams({ ...exportParams, year: e.target.value })
                   }
-                  className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none font-black text-slate-900 text-[10px] cursor-pointer transition-all appearance-none uppercase tracking-widest shadow-none"
+                  className={adminSelectClass}
                 >
                   <option value="ALL">All Levels</option>
                   {["E1", "E2", "E3", "E4"].map((y) => (
@@ -321,9 +338,7 @@ export default function StudentBulkSection() {
             </div>
 
             <div className="space-y-2 md:col-span-1">
-              <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 ml-1">
-                Batch Target
-              </label>
+              <label className={adminLabelClass}>Batch Target</label>
               <div className="relative group">
                 <select
                   value={exportParams.batch}
@@ -333,7 +348,7 @@ export default function StudentBulkSection() {
                       batch: e.target.value,
                     })
                   }
-                  className="w-full h-11 pl-5 pr-10 bg-slate-100/50 border border-slate-200/60 rounded-xl focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 outline-none font-black text-slate-900 text-[10px] cursor-pointer transition-all appearance-none uppercase tracking-widest shadow-none"
+                  className={adminSelectClass}
                 >
                   <option value="ALL">All Universal</option>
                   {availableBatches.map((b) => (
@@ -353,7 +368,7 @@ export default function StudentBulkSection() {
           {/* New Attribute Schema Checkbox Area */}
           <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
+              <label className={adminLabelClass}>
                 Attribute Schema Selector
               </label>
               <div className="flex gap-4">
@@ -361,40 +376,40 @@ export default function StudentBulkSection() {
                   onClick={() =>
                     setSelectedFields(Object.values(FIELD_GROUPS).flat())
                   }
-                  className="text-[9px] font-bold text-navy-600 hover:text-navy-900 uppercase tracking-widest transition-colors"
+                  className="text-[11px] font-semibold text-zinc-700 hover:text-zinc-900 transition-colors"
                 >
                   Select All
                 </button>
                 <button
                   onClick={() => setSelectedFields(["username", "name"])}
-                  className="text-[9px] font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-colors"
+                  className="text-[11px] font-semibold text-zinc-400 hover:text-zinc-600 transition-colors"
                 >
                   Reset
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-slate-50/50 p-6 rounded-[2rem] border border-slate-200/60">
+            <div className={cn(adminCardClass, "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-zinc-50/40 p-6")}>
               {Object.entries(FIELD_GROUPS).map(([group, fields]) => (
                 <div key={group} className="space-y-3">
-                  <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] px-1 border-l-2 border-slate-200 ml-1">
+                  <h4 className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] px-2 border-l-2 border-zinc-300">
                     {group}
                   </h4>
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1.5">
                     {fields.map((field) => (
                       <label
                         key={field}
-                        className={`flex items-center gap-3 p-3 rounded-2xl cursor-pointer transition-all border group ${
+                        className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all border group ${
                           selectedFields.includes(field)
-                            ? "bg-white border-navy-200 shadow-sm"
-                            : "bg-transparent border-transparent hover:bg-white/50"
+                            ? "bg-white border-zinc-300 shadow-[0_1px_2px_rgba(10,10,10,0.04)]"
+                            : "bg-transparent border-transparent hover:bg-white/60"
                         }`}
                       >
                         <div
-                          className={`w-4 h-4 rounded-md border-2 flex items-center justify-center transition-all ${
+                          className={`w-4 h-4 rounded-md border flex items-center justify-center transition-all ${
                             selectedFields.includes(field)
-                              ? "bg-navy-900 border-navy-900"
-                              : "border-slate-300 bg-white group-hover:border-slate-400"
+                              ? "bg-zinc-900 border-zinc-900"
+                              : "border-zinc-300 bg-white group-hover:border-zinc-400"
                           }`}
                         >
                           {selectedFields.includes(field) && (
@@ -416,10 +431,10 @@ export default function StudentBulkSection() {
                           }}
                         />
                         <span
-                          className={`text-[11px] font-bold capitalize tracking-tight ${
+                          className={`text-[12px] font-medium capitalize tracking-tight ${
                             selectedFields.includes(field)
-                              ? "text-navy-900"
-                              : "text-slate-500"
+                              ? "text-zinc-900"
+                              : "text-zinc-500"
                           }`}
                         >
                           {field.replace(/([A-Z])/g, " $1").trim()}
@@ -432,11 +447,11 @@ export default function StudentBulkSection() {
             </div>
           </div>
 
-          <div className="pt-2 space-y-6">
+          <div className="pt-2 space-y-5">
             <button
               onClick={handleExport}
               disabled={loading}
-              className="w-full h-12 flex items-center justify-center gap-3 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-slate-800 transition-all active:scale-[0.98] disabled:opacity-50"
+              className={cn(adminPrimaryButtonClass, "h-12 w-full")}
             >
               {loading ? (
                 <Loader2 className="animate-spin w-4 h-4" />
@@ -445,8 +460,8 @@ export default function StudentBulkSection() {
               )}
               Download the data
             </button>
-            <p className="text-center text-slate-400 text-[9px] font-bold uppercase tracking-[0.4em] opacity-40">
-              Encrypted Data Streams active • Protocol 04-X
+            <p className="text-center text-zinc-300 text-[10px] font-medium uppercase tracking-[0.24em]">
+              Encrypted data streams active • Protocol 04-X
             </p>
           </div>
         </div>

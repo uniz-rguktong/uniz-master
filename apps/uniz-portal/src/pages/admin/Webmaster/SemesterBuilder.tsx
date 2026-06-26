@@ -35,6 +35,16 @@ import {
   GET_SUBJECTS,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { SectionHeader } from "../../../components/admin/SectionHeader";
+import {
+  adminPageWrapClass,
+  adminCardClass,
+  adminCardHoverClass,
+  adminLabelClass,
+  adminInputClass,
+  adminPrimaryButtonClass,
+} from "../../../components/admin/admin-ui";
+import { cn } from "../../../utils/cn";
 
 const BRANCHES = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"];
 const YEARS = ["E1", "E2", "E3", "E4"];
@@ -109,8 +119,8 @@ const STATUS_META: Record<
 > = {
   DRAFT: {
     label: "Draft",
-    tone: "bg-slate-100 text-slate-600 border-slate-200",
-    dot: "bg-slate-400",
+    tone: "bg-zinc-100 text-zinc-600 border-zinc-200",
+    dot: "bg-zinc-400",
   },
   DEAN_REVIEW: {
     label: "Dean Review",
@@ -141,10 +151,8 @@ const STATUS_META: Record<
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
-const inputClass =
-  "w-full px-4 py-3 bg-slate-50 border border-slate-200/70 rounded-xl text-sm font-semibold text-slate-800 placeholder:text-slate-400 outline-none transition-all focus:bg-white focus:border-navy-300 focus:ring-4 focus:ring-navy-900/5";
-const labelClass =
-  "text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-2 block";
+const inputClass = adminInputClass;
+const labelClass = adminLabelClass;
 
 export default function SemesterBuilder() {
   const [semesters, setSemesters] = useState<any[]>([]);
@@ -205,32 +213,23 @@ export default function SemesterBuilder() {
   };
 
   return (
-    <div className="p-6 md:p-8 space-y-8 animate-in fade-in duration-500">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-navy-50 text-navy-900 text-[10px] font-black uppercase tracking-[0.2em]">
-            <Sparkles size={12} /> Academic Workflow
-          </div>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900">
-            Semester Registration
-          </h1>
-          <p className="text-slate-500 font-medium max-w-xl">
-            Build a semester from the subject catalog, configure electives,
-            then route through Dean and HOD approval.
-          </p>
-        </div>
-        <button
-          onClick={() => setBuilderOpen(true)}
-          className="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-gradient-to-br from-navy-900 to-navy-700 text-white font-bold text-sm shadow-lg shadow-navy-900/15 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all"
-        >
-          <Plus
-            size={18}
-            className="group-hover:rotate-90 transition-transform duration-300"
-          />
-          Create Semester
-        </button>
-      </div>
+    <div className={cn(adminPageWrapClass, "animate-in fade-in duration-500")}>
+      <SectionHeader
+        icon={<CalendarClock size={18} />}
+        eyebrow={
+          <>
+            <Sparkles size={12} /> Academic workflow
+          </>
+        }
+        title="Semester Registration"
+        subtitle="Build a semester from the subject catalog, configure electives, then route through Dean and HOD approval."
+        actions={
+          <button type="button" onClick={() => setBuilderOpen(true)} className={adminPrimaryButtonClass}>
+            <Plus size={16} />
+            Create Semester
+          </button>
+        }
+      />
 
       {/* List */}
       {loading ? (
@@ -238,7 +237,7 @@ export default function SemesterBuilder() {
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="h-44 rounded-3xl bg-slate-100/70 animate-pulse"
+              className="h-44 rounded-2xl bg-zinc-100/80 animate-pulse"
             />
           ))}
         </div>
@@ -276,21 +275,18 @@ export default function SemesterBuilder() {
 
 function EmptyState({ onCreate }: { onCreate: () => void }) {
   return (
-    <div className="rounded-3xl border border-dashed border-slate-200 bg-white/60 py-20 px-6 text-center">
-      <div className="w-16 h-16 mx-auto rounded-2xl bg-navy-50 text-navy-900 flex items-center justify-center mb-5">
-        <CalendarClock size={30} />
+    <div className="rounded-2xl border border-dashed border-zinc-200 bg-white py-20 px-6 text-center">
+      <div className="w-14 h-14 mx-auto rounded-xl bg-zinc-100 text-zinc-700 flex items-center justify-center mb-5">
+        <CalendarClock size={28} />
       </div>
-      <h3 className="text-xl font-black text-slate-900 mb-1.5">
+      <h3 className="text-lg font-semibold text-zinc-900 mb-1.5">
         No semesters yet
       </h3>
-      <p className="text-slate-500 text-sm max-w-sm mx-auto mb-7">
+      <p className="text-zinc-500 text-sm max-w-sm mx-auto mb-7">
         Create your first registration cycle. Subjects can change every term —
         you add exactly what's offered this semester.
       </p>
-      <button
-        onClick={onCreate}
-        className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-navy-900 text-white font-bold text-sm hover:bg-navy-800 transition-all"
-      >
+      <button type="button" onClick={onCreate} className={adminPrimaryButtonClass}>
         <Plus size={16} /> Create Semester
       </button>
     </div>
@@ -319,22 +315,22 @@ function SemesterCard({
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.35 }}
-      className="group relative rounded-3xl border border-slate-200/70 bg-white p-6 shadow-sm hover:shadow-lg hover:border-slate-300/70 transition-all overflow-hidden"
+      className={cn(adminCardClass, adminCardHoverClass, "group relative p-6 overflow-hidden")}
     >
-      <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-gradient-to-br from-slate-50 to-transparent opacity-70 group-hover:scale-125 transition-transform duration-700" />
+      <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-gradient-to-br from-zinc-50 to-transparent opacity-70 group-hover:scale-125 transition-transform duration-700" />
 
       <div className="relative flex items-start justify-between gap-3 mb-5">
         <div className="min-w-0">
-          <h3 className="text-lg font-black text-slate-900 tracking-tight truncate">
+          <h3 className="text-lg font-semibold text-zinc-900 tracking-tight truncate">
             {sem.name}
           </h3>
-          <p className="text-xs font-semibold text-slate-400 mt-0.5">
+          <p className="text-xs font-semibold text-zinc-400 mt-0.5">
             {sem.batch ? `Batch ${sem.batch} · ` : ""}
             {sem.program || "B.Tech"}
           </p>
         </div>
         <span
-          className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${meta.tone}`}
+          className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-semibold uppercase tracking-widest border ${meta.tone}`}
         >
           <span className={`w-1.5 h-1.5 rounded-full ${meta.dot}`} />
           {meta.label}
@@ -342,19 +338,19 @@ function SemesterCard({
       </div>
 
       <div className="relative grid grid-cols-2 gap-3 mb-6">
-        <div className="rounded-2xl bg-slate-50 px-4 py-3">
-          <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+        <div className="rounded-2xl bg-zinc-50 px-4 py-3">
+          <p className="text-[9px] font-semibold uppercase tracking-widest text-zinc-400">
             Registrations
           </p>
-          <p className="text-xl font-black text-slate-900">
+          <p className="text-xl font-semibold text-zinc-900">
             {sem._count?.registrations ?? 0}
           </p>
         </div>
-        <div className="rounded-2xl bg-slate-50 px-4 py-3">
-          <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+        <div className="rounded-2xl bg-zinc-50 px-4 py-3">
+          <p className="text-[9px] font-semibold uppercase tracking-widest text-zinc-400">
             Reg. Window
           </p>
-          <p className="text-sm font-black text-slate-900">
+          <p className="text-sm font-semibold text-zinc-900">
             {fmt(sem.registrationStart)} – {fmt(sem.registrationEnd)}
           </p>
         </div>
@@ -372,7 +368,7 @@ function SemesterCard({
           />
         )}
         {(sem.status === "DEAN_REVIEW" || sem.status === "HOD_REVIEW") && (
-          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500">
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-500">
             <Hourglass size={14} className="text-amber-500" />
             Awaiting {sem.status === "DEAN_REVIEW" ? "Dean" : "HOD"} approval
           </span>
@@ -400,7 +396,7 @@ function SemesterCard({
         <div className="flex-1" />
         <button
           onClick={() => onRemove(sem.id, sem.name)}
-          className="p-2.5 rounded-xl bg-slate-50 text-slate-400 hover:bg-rose-500 hover:text-white transition-all"
+          className="p-2.5 rounded-xl bg-zinc-50 text-zinc-400 hover:bg-rose-500 hover:text-white transition-all"
           title="Delete semester"
         >
           <Trash2 size={15} />
@@ -422,8 +418,8 @@ function ActionBtn({
   tone?: "primary" | "dark";
 }) {
   const tones: Record<string, string> = {
-    primary: "bg-navy-900 text-white hover:bg-navy-800",
-    dark: "bg-slate-900 text-white hover:bg-black",
+    primary: "bg-zinc-900 text-white hover:bg-zinc-800",
+    dark: "bg-zinc-900 text-white hover:bg-black",
   };
   return (
     <button
@@ -581,7 +577,7 @@ function BuilderDrawer({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[120] flex justify-end bg-slate-900/40 backdrop-blur-sm"
+      className="fixed inset-0 z-[120] flex justify-end bg-zinc-900/40 backdrop-blur-sm"
       onClick={onClose}
     >
       <motion.div
@@ -589,28 +585,28 @@ function BuilderDrawer({
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ type: "spring", damping: 30, stiffness: 280 }}
-        className="relative w-full max-w-2xl h-full bg-slate-50 shadow-2xl flex flex-col"
+        className="relative w-full max-w-2xl h-full bg-zinc-50 shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header + stepper */}
-        <div className="px-7 pt-6 pb-5 bg-white border-b border-slate-100">
+        <div className="px-7 pt-6 pb-5 bg-white border-b border-zinc-100">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-navy-900 to-navy-700 text-white flex items-center justify-center">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 text-white flex items-center justify-center">
                 <GraduationCap size={20} />
               </div>
               <div>
-                <h2 className="text-lg font-black text-slate-900 leading-tight">
+                <h2 className="text-lg font-semibold text-zinc-900 leading-tight">
                   New Semester
                 </h2>
-                <p className="text-xs text-slate-400 font-semibold">
+                <p className="text-xs text-zinc-400 font-semibold">
                   Step {step + 1} of {STEPS.length} · {STEPS[step].label}
                 </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 transition-colors"
+              className="p-2 rounded-xl text-zinc-400 hover:bg-zinc-100 transition-colors"
             >
               <X size={20} />
             </button>
@@ -623,10 +619,10 @@ function BuilderDrawer({
                   onClick={() => setStep(i)}
                   className={`flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-bold transition-all w-full justify-center ${
                     i === step
-                      ? "bg-navy-900 text-white"
+                      ? "bg-zinc-900 text-white"
                       : i < step
                         ? "bg-emerald-50 text-emerald-700"
-                        : "bg-slate-100 text-slate-400"
+                        : "bg-zinc-100 text-zinc-400"
                   }`}
                 >
                   {i < step ? (
@@ -711,10 +707,10 @@ function BuilderDrawer({
         </div>
 
         {/* Footer */}
-        <div className="px-7 py-4 bg-white border-t border-slate-100 flex items-center gap-3">
+        <div className="px-7 py-4 bg-white border-t border-zinc-100 flex items-center gap-3">
           <button
             onClick={() => (step === 0 ? onClose() : setStep(step - 1))}
-            className="inline-flex items-center gap-1.5 px-5 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-all"
+            className="inline-flex items-center gap-1.5 px-5 py-3 rounded-xl bg-zinc-100 text-zinc-600 font-bold text-sm hover:bg-zinc-200 transition-all"
           >
             <ChevronLeft size={16} />
             {step === 0 ? "Cancel" : "Back"}
@@ -723,7 +719,7 @@ function BuilderDrawer({
           {step < STEPS.length - 1 ? (
             <button
               onClick={() => setStep(step + 1)}
-              className="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-navy-900 text-white font-bold text-sm hover:bg-navy-800 transition-all"
+              className="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-zinc-900 text-white font-bold text-sm hover:bg-zinc-800 transition-all"
             >
               Continue
               <ChevronRight size={16} />
@@ -733,14 +729,14 @@ function BuilderDrawer({
               <button
                 disabled={saving}
                 onClick={() => submit("draft")}
-                className="inline-flex items-center gap-1.5 px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-all disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-5 py-3 rounded-xl bg-zinc-100 text-zinc-700 font-bold text-sm hover:bg-zinc-200 transition-all disabled:opacity-50"
               >
                 <Save size={15} /> Save Draft
               </button>
               <button
                 disabled={saving}
                 onClick={() => submit("submit")}
-                className="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-gradient-to-br from-navy-900 to-navy-700 text-white font-bold text-sm hover:shadow-lg transition-all disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-6 py-3 rounded-xl bg-gradient-to-br from-zinc-900 to-zinc-800 text-white font-bold text-sm hover:shadow-lg transition-all disabled:opacity-50"
               >
                 <Send size={15} /> Submit for Review
               </button>
@@ -820,8 +816,8 @@ function DetailsStep(p: any) {
         />
       </div>
 
-      <div className="rounded-2xl border border-slate-200/70 bg-white p-5 space-y-4">
-        <p className="text-xs font-black uppercase tracking-widest text-navy-900 flex items-center gap-2">
+      <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 space-y-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-900 flex items-center gap-2">
           <Clock size={14} /> Registration Window
         </p>
         <div className="grid grid-cols-2 gap-4">
@@ -846,8 +842,8 @@ function DetailsStep(p: any) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200/70 bg-white p-5 space-y-4">
-        <p className="text-xs font-black uppercase tracking-widest text-navy-900 flex items-center gap-2">
+      <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 space-y-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-900 flex items-center gap-2">
           <CalendarClock size={14} /> Semester Dates
         </p>
         <div className="grid grid-cols-2 gap-4">
@@ -984,18 +980,18 @@ function SubjectsStep({
   return (
     <div className="space-y-6">
       {/* Catalog picker */}
-      <div className="rounded-2xl border border-slate-200/70 bg-white p-5 space-y-4">
+      <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 space-y-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-black uppercase tracking-widest text-navy-900 inline-flex items-center gap-2">
+            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-900 inline-flex items-center gap-2">
               <Library size={14} /> Pick from Subject Catalog
             </p>
-            <p className="text-[11px] text-slate-400 font-medium mt-1">
+            <p className="text-[11px] text-zinc-400 font-medium mt-1">
               Search and add existing subjects — no need to re-type codes or names.
               {catalogSemester ? ` Filtered for ${catalogSemester}.` : ""}
             </p>
           </div>
-          <span className="shrink-0 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-wider">
+          <span className="shrink-0 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-semibold uppercase tracking-wider">
             {subjects.length} on list
           </span>
         </div>
@@ -1003,7 +999,7 @@ function SubjectsStep({
         <div className="relative">
           <Search
             size={16}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"
           />
           <input
             className={`${inputClass} pl-11`}
@@ -1048,12 +1044,12 @@ function SubjectsStep({
               onClick={() => setPickType(t.id)}
               className={`text-left px-3 py-2 rounded-xl border transition-all ${
                 pickType === t.id
-                  ? "border-navy-300 bg-navy-50"
-                  : "border-slate-200/70 bg-slate-50 hover:border-slate-300"
+                  ? "border-zinc-300 bg-zinc-100"
+                  : "border-zinc-200/70 bg-zinc-50 hover:border-zinc-300"
               }`}
             >
-              <p className="text-[11px] font-black text-slate-800">{t.label}</p>
-              <p className="text-[10px] text-slate-400 font-semibold">{t.hint}</p>
+              <p className="text-[11px] font-semibold text-zinc-800">{t.label}</p>
+              <p className="text-[10px] text-zinc-400 font-semibold">{t.hint}</p>
             </button>
           ))}
         </div>
@@ -1076,13 +1072,13 @@ function SubjectsStep({
           </div>
         )}
 
-        <div className="max-h-52 overflow-y-auto rounded-xl border border-slate-100 bg-slate-50/50 divide-y divide-slate-100 scrollbar-hide">
+        <div className="max-h-52 overflow-y-auto rounded-xl border border-zinc-100 bg-zinc-50/50 divide-y divide-zinc-100 scrollbar-hide">
           {catalogLoading ? (
-            <div className="py-10 text-center text-sm text-slate-400 font-semibold animate-pulse">
+            <div className="py-10 text-center text-sm text-zinc-400 font-semibold animate-pulse">
               Loading catalog…
             </div>
           ) : visibleCatalog.length === 0 ? (
-            <div className="py-10 px-4 text-center text-sm text-slate-400 font-semibold">
+            <div className="py-10 px-4 text-center text-sm text-zinc-400 font-semibold">
               No catalog matches — try another branch/year or add a custom subject below.
             </div>
           ) : (
@@ -1094,10 +1090,10 @@ function SubjectsStep({
                   className="flex items-center gap-3 px-4 py-3 bg-white/80 hover:bg-white transition-colors"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-slate-800 truncate">
+                    <p className="text-sm font-bold text-zinc-800 truncate">
                       {item.name}
                     </p>
-                    <p className="text-[10px] font-bold text-slate-400 tracking-wide">
+                    <p className="text-[10px] font-bold text-zinc-400 tracking-wide">
                       {item.code} · {item.department} · {item.semester} ·{" "}
                       {item.credits}C
                     </p>
@@ -1112,10 +1108,10 @@ function SubjectsStep({
                         electiveGroupCode: pickIsElective ? pickGroup : "",
                       })
                     }
-                    className={`shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${
+                    className={`shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg text-[10px] font-semibold uppercase tracking-wider transition-all ${
                       added
                         ? "bg-emerald-50 text-emerald-600 cursor-default"
-                        : "bg-navy-900 text-white hover:bg-navy-800"
+                        : "bg-zinc-900 text-white hover:bg-zinc-800"
                     }`}
                   >
                     {added ? (
@@ -1138,7 +1134,7 @@ function SubjectsStep({
       {/* Term list */}
       {subjects.length > 0 && (
         <div className="space-y-2.5">
-          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-400">
             This semester ({subjects.length})
           </p>
           {subjects.map((s: SubjectDraft) => (
@@ -1154,30 +1150,30 @@ function SubjectsStep({
       )}
 
       {subjects.length === 0 && (
-        <p className="text-center text-sm text-slate-400 font-semibold py-2">
+        <p className="text-center text-sm text-zinc-400 font-semibold py-2">
           Pick subjects from the catalog above to build this term's list.
         </p>
       )}
 
       {/* Custom / ad-hoc — only when not in catalog */}
-      <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/40 overflow-hidden">
+      <div className="rounded-2xl border border-dashed border-zinc-200 bg-zinc-50/40 overflow-hidden">
         <button
           type="button"
           onClick={() => setShowCustomForm((v) => !v)}
-          className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-slate-50 transition-colors"
+          className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-zinc-50 transition-colors"
         >
-          <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-500">
+          <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">
             <PenLine size={14} />
             New subject not in catalog?
           </span>
           <ChevronRight
             size={16}
-            className={`text-slate-400 transition-transform ${showCustomForm ? "rotate-90" : ""}`}
+            className={`text-zinc-400 transition-transform ${showCustomForm ? "rotate-90" : ""}`}
           />
         </button>
         {showCustomForm && (
-          <div className="px-5 pb-5 space-y-4 border-t border-slate-100 pt-4">
-            <p className="text-[11px] text-slate-400 font-medium">
+          <div className="px-5 pb-5 space-y-4 border-t border-zinc-100 pt-4">
+            <p className="text-[11px] text-zinc-400 font-medium">
               For one-off or new codes only — will be upserted into the catalog when you save.
             </p>
             <div className="grid grid-cols-3 gap-3">
@@ -1244,12 +1240,12 @@ function SubjectsStep({
                   onClick={() => setDraft({ ...draft, subjectType: t.id })}
                   className={`text-left px-3 py-2.5 rounded-xl border transition-all ${
                     draft.subjectType === t.id
-                      ? "border-navy-300 bg-navy-50"
-                      : "border-slate-200/70 bg-white hover:border-slate-300"
+                      ? "border-zinc-300 bg-zinc-100"
+                      : "border-zinc-200/70 bg-white hover:border-zinc-300"
                   }`}
                 >
-                  <p className="text-xs font-black text-slate-800">{t.label}</p>
-                  <p className="text-[10px] text-slate-400 font-semibold">
+                  <p className="text-xs font-semibold text-zinc-800">{t.label}</p>
+                  <p className="text-[10px] text-zinc-400 font-semibold">
                     {t.hint}
                   </p>
                 </button>
@@ -1279,7 +1275,7 @@ function SubjectsStep({
             )}
             <button
               onClick={addSubject}
-              className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-800 text-white font-bold text-sm hover:bg-slate-900 transition-all"
+              className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-zinc-800 text-white font-bold text-sm hover:bg-zinc-900 transition-all"
             >
               <Plus size={16} /> Add Custom Subject
             </button>
@@ -1293,31 +1289,31 @@ function SubjectsStep({
 function SubjectRow({ s, onRemove }: { s: SubjectDraft; onRemove: () => void }) {
   const typeMeta: Record<string, string> = {
     CORE: "bg-rose-50 text-rose-600 border-rose-100",
-    ELECTIVE: "bg-navy-50 text-navy-900 border-navy-100",
+    ELECTIVE: "bg-zinc-100 text-zinc-900 border-zinc-200",
     OPEN_ELECTIVE: "bg-sky-50 text-sky-700 border-sky-100",
     PE: "bg-emerald-50 text-emerald-700 border-emerald-100",
   };
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-slate-200/70 bg-white px-4 py-3">
-      <div className="w-9 h-9 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0">
+    <div className="flex items-center gap-3 rounded-2xl border border-zinc-200/70 bg-white px-4 py-3">
+      <div className="w-9 h-9 rounded-xl bg-zinc-50 text-zinc-400 flex items-center justify-center shrink-0">
         <BookOpen size={16} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-black text-slate-800 truncate">{s.name}</p>
-        <p className="text-[10px] font-bold text-slate-400 tracking-wide">
+        <p className="text-sm font-semibold text-zinc-800 truncate">{s.name}</p>
+        <p className="text-[10px] font-bold text-zinc-400 tracking-wide">
           {s.code} · {s.department} · {s.academicYear} · {s.credits || 0}C
           {s.electiveGroupCode ? ` · ${s.electiveGroupCode}` : ""}
           {s.fromCatalog ? " · catalog" : " · custom"}
         </p>
       </div>
       <span
-        className={`shrink-0 px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border ${typeMeta[s.subjectType] || typeMeta.CORE}`}
+        className={`shrink-0 px-2.5 py-1 rounded-lg text-[8px] font-semibold uppercase tracking-widest border ${typeMeta[s.subjectType] || typeMeta.CORE}`}
       >
         {s.subjectType.replace("_", " ")}
       </span>
       <button
         onClick={onRemove}
-        className="p-2 rounded-lg text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-all shrink-0"
+        className="p-2 rounded-lg text-zinc-300 hover:text-rose-500 hover:bg-rose-50 transition-all shrink-0"
       >
         <Trash2 size={15} />
       </button>
@@ -1337,8 +1333,8 @@ function ElectivesStep({ groups, setGroups, gDraft, setGDraft, addGroup }: any) 
         </p>
       </div>
 
-      <div className="rounded-2xl border border-slate-200/70 bg-white p-5 space-y-4">
-        <p className="text-xs font-black uppercase tracking-widest text-navy-900">
+      <div className="rounded-2xl border border-zinc-200/70 bg-white p-5 space-y-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-900">
           Add Elective Group
         </p>
         <div className="grid grid-cols-2 gap-3">
@@ -1397,14 +1393,14 @@ function ElectivesStep({ groups, setGroups, gDraft, setGDraft, addGroup }: any) 
         </div>
         <button
           onClick={addGroup}
-          className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-navy-900 text-white font-bold text-sm hover:bg-navy-800 transition-all"
+          className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-zinc-900 text-white font-bold text-sm hover:bg-zinc-800 transition-all"
         >
           <Plus size={16} /> Add Group
         </button>
       </div>
 
       {groups.length === 0 ? (
-        <p className="text-center text-sm text-slate-400 font-semibold py-6">
+        <p className="text-center text-sm text-zinc-400 font-semibold py-6">
           No elective groups — only core subjects this term.
         </p>
       ) : (
@@ -1412,16 +1408,16 @@ function ElectivesStep({ groups, setGroups, gDraft, setGDraft, addGroup }: any) 
           {groups.map((g: GroupDraft) => (
             <div
               key={g.key}
-              className="flex items-center gap-3 rounded-2xl border border-slate-200/70 bg-white px-4 py-3"
+              className="flex items-center gap-3 rounded-2xl border border-zinc-200/70 bg-white px-4 py-3"
             >
               <div className="w-9 h-9 rounded-xl bg-violet-50 text-violet-500 flex items-center justify-center shrink-0">
                 <Layers size={16} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-black text-slate-800 truncate">
+                <p className="text-sm font-semibold text-zinc-800 truncate">
                   {g.groupName}
                 </p>
-                <p className="text-[10px] font-bold text-slate-400 tracking-wide">
+                <p className="text-[10px] font-bold text-zinc-400 tracking-wide">
                   {g.groupCode} · {g.branch} · choose {g.selectionLimit}
                   {g.academicYear ? ` · ${g.academicYear}` : ""}
                 </p>
@@ -1430,7 +1426,7 @@ function ElectivesStep({ groups, setGroups, gDraft, setGDraft, addGroup }: any) 
                 onClick={() =>
                   setGroups(groups.filter((x: GroupDraft) => x.key !== g.key))
                 }
-                className="p-2 rounded-lg text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-all shrink-0"
+                className="p-2 rounded-lg text-zinc-300 hover:text-rose-500 hover:bg-rose-50 transition-all shrink-0"
               >
                 <Trash2 size={15} />
               </button>
@@ -1460,12 +1456,12 @@ function ReviewStep({
   );
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl bg-gradient-to-br from-navy-900 to-navy-700 text-white p-6">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 mb-1">
+      <div className="rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 text-white p-6">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60 mb-1">
           {program} {batch ? `· Batch ${batch}` : ""}{" "}
           {academicYear ? `· ${academicYear}` : ""}
         </p>
-        <h3 className="text-2xl font-black tracking-tight">
+        <h3 className="text-2xl font-semibold tracking-tight">
           {name || "Untitled Semester"}
         </h3>
         <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm font-semibold text-white/80">
@@ -1479,19 +1475,19 @@ function ReviewStep({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-2xl border border-slate-200/70 bg-white p-4">
-          <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">
+        <div className="rounded-2xl border border-zinc-200/70 bg-white p-4">
+          <p className="text-[9px] font-semibold uppercase tracking-widest text-zinc-400 mb-1">
             Registration Opens
           </p>
-          <p className="text-sm font-black text-slate-800">
+          <p className="text-sm font-semibold text-zinc-800">
             {fmt(registrationStart)}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200/70 bg-white p-4">
-          <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">
+        <div className="rounded-2xl border border-zinc-200/70 bg-white p-4">
+          <p className="text-[9px] font-semibold uppercase tracking-widest text-zinc-400 mb-1">
             Registration Closes
           </p>
-          <p className="text-sm font-black text-slate-800">
+          <p className="text-sm font-semibold text-zinc-800">
             {fmt(registrationEnd)}
           </p>
         </div>
@@ -1518,8 +1514,8 @@ function ReviewStep({
 function ReviewList({ title, items }: { title: string; items: SubjectDraft[] }) {
   if (items.length === 0) return null;
   return (
-    <div className="rounded-2xl border border-slate-200/70 bg-white p-4">
-      <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-3">
+    <div className="rounded-2xl border border-zinc-200/70 bg-white p-4">
+      <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-3">
         {title}
       </p>
       <div className="space-y-1.5">
@@ -1528,10 +1524,10 @@ function ReviewList({ title, items }: { title: string; items: SubjectDraft[] }) 
             key={s.key}
             className="flex items-center justify-between text-sm"
           >
-            <span className="font-bold text-slate-700 truncate">
+            <span className="font-bold text-zinc-700 truncate">
               {s.code} · {s.name}
             </span>
-            <span className="text-[10px] font-black text-slate-400 shrink-0 ml-3">
+            <span className="text-[10px] font-semibold text-zinc-400 shrink-0 ml-3">
               {s.department} · {s.credits || 0}C
             </span>
           </div>

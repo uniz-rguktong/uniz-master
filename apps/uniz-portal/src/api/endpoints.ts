@@ -3,6 +3,10 @@ export const BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
 export const ANALYTICS_BASE_URL =
   import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app";
 
+/** Landing CMS (home, institute, academics pages) — local or production. */
+export const LANDING_API_URL =
+  import.meta.env.VITE_LANDING_API_URL || "http://127.0.0.1:8000";
+
 // Notification service URL - routes through same-origin nginx proxy
 export const NOTIFICATION_SERVICE_URL = `${BASE_URL}/notifications`;
 

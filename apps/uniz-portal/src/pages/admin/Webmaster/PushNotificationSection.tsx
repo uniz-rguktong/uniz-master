@@ -13,6 +13,18 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
+import { SectionHeader } from "../../../components/admin/SectionHeader";
+import {
+  adminPageWrapClass,
+  adminCardClass,
+  adminLabelClass,
+  adminInputClass,
+  adminSelectClass,
+  adminTextareaClass,
+  adminPrimaryButtonClass,
+  adminGhostButtonClass,
+} from "../../../components/admin/admin-ui";
+import { cn } from "../../../utils/cn";
 
 export default function PushNotificationSection() {
   const [pushState, setPushState] = useRecoilState(pushNotificationsAtom);
@@ -79,90 +91,82 @@ export default function PushNotificationSection() {
   };
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in duration-700 pb-20 text-slate-900">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex flex-col gap-1.5">
-          <h2 className="text-3xl font-semibold tracking-[-0.02em] text-slate-900 leading-none">
-            Push & Alerts
-          </h2>
-          <p className="text-slate-500 font-medium text-[15px]">
-            Manage browser push subscriptions and broadcast instant system
-            alerts.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="relative group">
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors"
-              size={14}
-            />
-            <input
-              type="text"
-              placeholder="Subscriber Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-5 h-11 bg-white border border-slate-200 rounded-xl text-[11px] font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-navy-900/5 focus:border-navy-100 transition-all w-[240px]"
-            />
-          </div>
-
-          <button
-            onClick={() => setShowSendModal(true)}
-            className="h-11 px-6 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-navy-800 active:scale-95 transition-all flex items-center justify-center gap-2.5"
-          >
-            Send Broadcast
-          </button>
-        </div>
-      </div>
+    <div className={cn(adminPageWrapClass, "animate-in fade-in duration-700 pb-20")}>
+      <SectionHeader
+        icon={<Send size={18} />}
+        eyebrow="Campus"
+        title="Push & Alerts"
+        subtitle="Manage browser push subscriptions and broadcast instant system alerts."
+        actions={
+          <>
+            <div className="relative">
+              <Search
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400"
+                size={15}
+              />
+              <input
+                type="text"
+                placeholder="Search subscribers…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={cn(adminInputClass, "pl-10 w-[240px]")}
+              />
+            </div>
+            <button
+              onClick={() => setShowSendModal(true)}
+              className={adminPrimaryButtonClass}
+            >
+              <Send size={15} /> Send Broadcast
+            </button>
+          </>
+        }
+      />
 
       {/* Content Sections */}
-      <div className="bg-white rounded-xl border border-slate-100 overflow-hidden text-slate-900 shadow-none">
+      <div className={cn(adminCardClass, "overflow-hidden")}>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-50">
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+              <tr className="border-b border-zinc-200/70">
+                <th className="px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                   Subscriber
                 </th>
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                   Endpoint Identifier
                 </th>
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                   Status
                 </th>
-                <th className="px-10 py-6 text-[11px] font-semibold uppercase tracking-widest text-slate-400 bg-slate-50/20">
+                <th className="px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
                   Creation Date
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50/60">
+            <tbody className="divide-y divide-zinc-100">
               {loading ? (
                 Array(7)
                   .fill(0)
                   .map((_, i) => (
-                    <tr
-                      key={i}
-                      className="animate-pulse border-b border-slate-50 last:border-0 hover:bg-transparent"
-                    >
-                      <td className="px-10 py-6">
-                        <div className="flex items-center gap-4">
-                          <div className="w-11 h-11 rounded-xl bg-slate-100 border-2 border-white ring-1 ring-slate-100 shadow-sm" />
+                    <tr key={i} className="animate-pulse">
+                      <td className="px-8 py-5">
+                        <div className="flex items-center gap-3.5">
+                          <div className="w-10 h-10 rounded-xl bg-zinc-100" />
                           <div className="space-y-2">
-                            <div className="h-4 w-24 bg-slate-100 rounded-lg shadow-sm" />
-                            <div className="h-2 w-16 bg-slate-50 rounded shadow-sm opacity-60" />
+                            <div className="h-4 w-24 bg-zinc-100 rounded-lg" />
+                            <div className="h-2 w-16 bg-zinc-50 rounded" />
                           </div>
                         </div>
                       </td>
-                      <td className="px-10 py-6">
-                        <div className="h-3.5 w-48 bg-slate-50 rounded-lg shadow-sm opacity-60" />
+                      <td className="px-8 py-5">
+                        <div className="h-3.5 w-48 bg-zinc-50 rounded-lg" />
                       </td>
-                      <td className="px-10 py-6">
-                        <div className="h-7 w-20 bg-emerald-50/50 rounded-xl border border-emerald-100/50" />
+                      <td className="px-8 py-5">
+                        <div className="h-6 w-20 bg-zinc-100 rounded-full" />
                       </td>
-                      <td className="px-10 py-6">
+                      <td className="px-8 py-5">
                         <div className="space-y-2">
-                          <div className="h-4 w-28 bg-slate-100 rounded-lg shadow-sm" />
-                          <div className="h-2 w-16 bg-slate-50 rounded shadow-sm opacity-60" />
+                          <div className="h-4 w-28 bg-zinc-100 rounded-lg" />
+                          <div className="h-2 w-16 bg-zinc-50 rounded" />
                         </div>
                       </td>
                     </tr>
@@ -171,44 +175,42 @@ export default function PushNotificationSection() {
                 subscribers.map((sub, idx) => (
                   <tr
                     key={idx}
-                    className="hover:bg-slate-50/30 transition-all group"
+                    className="hover:bg-zinc-50/60 transition-colors group"
                   >
-                    <td className="px-10 py-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-11 h-11 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm border-2 border-white ring-1 ring-slate-100 uppercase">
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-10 h-10 rounded-xl bg-zinc-900 text-white flex items-center justify-center font-semibold text-[13px] uppercase shrink-0">
                           {sub.username?.[0] || "U"}
                         </div>
-                        <p className="font-semibold text-slate-900 tracking-tight leading-none group-hover:text-navy-900 transition-colors">
+                        <p className="font-semibold text-zinc-900 tracking-tight">
                           {sub.username}
                         </p>
                       </div>
                     </td>
-                    <td className="px-10 py-6">
+                    <td className="px-8 py-5">
                       <p
-                        className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[300px] opacity-70"
+                        className="text-[12px] text-zinc-400 truncate max-w-[300px]"
                         title={sub.endpoint}
                       >
                         {sub.endpoint}
                       </p>
                     </td>
-                    <td className="px-10 py-6">
-                      <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-100 w-fit">
-                        <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span className="text-[9px] font-bold uppercase tracking-widest">
-                          Active
-                        </span>
+                    <td className="px-8 py-5">
+                      <div className="inline-flex items-center gap-1.5 text-zinc-700 bg-zinc-50 px-2.5 py-1 rounded-full border border-zinc-200 w-fit">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span className="text-[11px] font-medium">Active</span>
                       </div>
                     </td>
-                    <td className="px-10 py-6">
+                    <td className="px-8 py-5">
                       <div className="flex flex-col">
-                        <p className="text-sm font-semibold tracking-tight text-slate-700">
+                        <p className="text-[13px] font-medium tracking-tight text-zinc-700 tabular-nums">
                           {new Date(sub.createdAt).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "short",
                             year: "numeric",
                           })}
                         </p>
-                        <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">
+                        <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-[0.12em] mt-0.5">
                           Registered
                         </p>
                       </div>
@@ -217,12 +219,12 @@ export default function PushNotificationSection() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="p-24 text-center">
-                    <div className="flex flex-col items-center gap-5">
-                      <div className="p-6 bg-slate-50 rounded-xl border border-slate-100 text-slate-300">
-                        <Users size={40} />
+                  <td colSpan={4} className="py-20 text-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 flex items-center justify-center bg-zinc-50 rounded-2xl border border-zinc-200/70 text-zinc-300">
+                        <Users size={32} strokeWidth={1.5} />
                       </div>
-                      <p className="font-semibold text-slate-400 italic text-sm tracking-tight">
+                      <p className="text-[14px] font-medium text-zinc-500 tracking-tight">
                         No active push subscribers found.
                       </p>
                     </div>
@@ -235,24 +237,24 @@ export default function PushNotificationSection() {
 
         {/* Pagination bar */}
         {subscribers.length > 0 && (
-          <div className="px-10 py-5 bg-slate-50/30 border-t border-slate-50 flex items-center justify-between">
-            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+          <div className="px-8 py-4 bg-zinc-50/50 border-t border-zinc-200/70 flex items-center justify-between">
+            <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-[0.12em]">
               Subscriber Pulse Monitor
             </p>
             <div className="flex items-center gap-2">
               <button
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="px-4 py-2 border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all disabled:opacity-30 disabled:pointer-events-none"
+                className="h-8 px-3.5 border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 bg-white hover:text-zinc-900 hover:border-zinc-300 transition-all disabled:opacity-30 disabled:pointer-events-none"
               >
                 Prev
               </button>
-              <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-slate-900 text-white text-[10px] font-bold">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-900 text-white text-[12px] font-semibold tabular-nums">
                 {page}
               </div>
               <button
                 onClick={() => setPage((p) => p + 1)}
-                className="px-4 py-2 border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all active:scale-95"
+                className="h-8 px-3.5 border border-zinc-200 rounded-lg text-[12px] font-semibold text-zinc-600 bg-white hover:text-zinc-900 hover:border-zinc-300 transition-all active:scale-95"
               >
                 Next
               </button>
@@ -270,7 +272,7 @@ export default function PushNotificationSection() {
           }
         }}
       >
-        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-slate-100 rounded-2xl shadow-2xl">
+        <AlertDialogContent className="max-w-xl p-0 overflow-hidden bg-white border-zinc-200 rounded-2xl shadow-xl">
           <div className="relative">
             {/* Close Button */}
             <button
@@ -278,16 +280,16 @@ export default function PushNotificationSection() {
                 setShowSendModal(false);
                 setBroadcast({ target: "all", title: "", body: "", image: "" });
               }}
-              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-full transition-all z-10"
+              className="absolute top-5 right-5 p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 rounded-full transition-all z-10"
             >
               <X size={20} />
             </button>
 
-            <AlertDialogHeader className="p-8 pb-4 flex flex-col items-center text-center gap-2">
-              <AlertDialogTitle className="text-2xl font-black text-slate-900 tracking-tight uppercase italic">
+            <AlertDialogHeader className="p-8 pb-3 flex flex-col items-start text-left gap-1.5">
+              <AlertDialogTitle className="text-[20px] font-semibold text-zinc-900 tracking-[-0.01em]">
                 Push Broadcast
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-[14px] font-medium text-slate-500 mt-1 leading-relaxed">
+              <AlertDialogDescription className="text-[13px] text-zinc-500 leading-relaxed">
                 Send an instant pulse alert to campus devices.
               </AlertDialogDescription>
             </AlertDialogHeader>
@@ -299,15 +301,13 @@ export default function PushNotificationSection() {
               <div className="space-y-5">
                 {/* Target */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                    Target Audience
-                  </label>
+                  <label className={adminLabelClass}>Target Audience</label>
                   <select
                     value={broadcast.target}
                     onChange={(e) =>
                       setBroadcast({ ...broadcast, target: e.target.value })
                     }
-                    className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
+                    className={adminSelectClass}
                   >
                     <option value="all">All (Students + Faculty)</option>
                     <option value="students">All Students</option>
@@ -322,9 +322,7 @@ export default function PushNotificationSection() {
                 {/* Conditional extra field based on target */}
                 {broadcast.target === "user" && (
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                      User ID / Username
-                    </label>
+                    <label className={adminLabelClass}>User ID / Username</label>
                     <input
                       required
                       type="text"
@@ -336,15 +334,13 @@ export default function PushNotificationSection() {
                         } as any)
                       }
                       placeholder="e.g. O210193"
-                      className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
+                      className={adminInputClass}
                     />
                   </div>
                 )}
                 {broadcast.target === "batch" && (
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                      Batch Prefix
-                    </label>
+                    <label className={adminLabelClass}>Batch Prefix</label>
                     <input
                       required
                       type="text"
@@ -356,15 +352,13 @@ export default function PushNotificationSection() {
                         } as any)
                       }
                       placeholder="e.g. o21"
-                      className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
+                      className={adminInputClass}
                     />
                   </div>
                 )}
                 {broadcast.target === "year" && (
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                      Academic Year
-                    </label>
+                    <label className={adminLabelClass}>Academic Year</label>
                     <select
                       value={(broadcast as any).year || "E1"}
                       onChange={(e) =>
@@ -373,7 +367,7 @@ export default function PushNotificationSection() {
                           year: e.target.value,
                         } as any)
                       }
-                      className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all cursor-pointer"
+                      className={adminSelectClass}
                     >
                       {["E1", "E2", "E3", "E4"].map((y) => (
                         <option key={y} value={y}>
@@ -386,9 +380,7 @@ export default function PushNotificationSection() {
 
                 {/* Title */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                    Alert Title
-                  </label>
+                  <label className={adminLabelClass}>Alert Title</label>
                   <input
                     required
                     type="text"
@@ -397,15 +389,13 @@ export default function PushNotificationSection() {
                       setBroadcast({ ...broadcast, title: e.target.value })
                     }
                     placeholder="e.g. Campus Holiday Tomorrow"
-                    className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
+                    className={adminInputClass}
                   />
                 </div>
 
                 {/* Body */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                    Payload Message
-                  </label>
+                  <label className={adminLabelClass}>Payload Message</label>
                   <textarea
                     required
                     rows={3}
@@ -414,13 +404,13 @@ export default function PushNotificationSection() {
                       setBroadcast({ ...broadcast, body: e.target.value })
                     }
                     placeholder="Enter the alert content..."
-                    className="w-full bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl px-6 py-4 font-bold text-slate-900 outline-none transition-all resize-none placeholder:text-slate-300"
+                    className={adminTextareaClass}
                   />
                 </div>
 
                 {/* Image URL */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                  <label className={adminLabelClass}>
                     Banner Asset URL (Optional)
                   </label>
                   <input
@@ -430,13 +420,13 @@ export default function PushNotificationSection() {
                       setBroadcast({ ...broadcast, image: e.target.value })
                     }
                     placeholder="https://..."
-                    className="w-full h-14 px-6 bg-slate-50 border-2 border-slate-200 focus:border-navy-900 focus:bg-white rounded-xl outline-none font-bold text-slate-900 transition-all placeholder:text-slate-300"
+                    className={adminInputClass}
                   />
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => {
@@ -448,21 +438,21 @@ export default function PushNotificationSection() {
                       image: "",
                     });
                   }}
-                  className="flex-1 py-3.5 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 font-black uppercase tracking-widest text-[10px] transition-all"
+                  className={cn(adminGhostButtonClass, "flex-1")}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={sending}
-                  className="flex-[2] py-3.5 rounded-xl bg-navy-900 text-white font-black uppercase tracking-[0.2em] text-[10px] shadow-lg shadow-navy-100 hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className={cn(adminPrimaryButtonClass, "flex-[2]")}
                 >
                   {sending ? (
                     <Loader2 className="animate-spin w-4 h-4" />
                   ) : (
                     <Send size={16} />
                   )}
-                  {sending ? "DELIVERING..." : "DELIVER PULSE"}
+                  {sending ? "Delivering…" : "Deliver Pulse"}
                 </button>
               </div>
             </form>
