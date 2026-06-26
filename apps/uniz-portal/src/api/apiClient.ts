@@ -30,6 +30,10 @@ export interface ApiOptions extends RequestInit {
   params?: Record<string, any>;
 }
 
+export type ApiResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; status: number; message: string; code?: string };
+
 export async function apiClient<T = any>(
   endpoint: string,
   options: ApiOptions = {},
@@ -105,6 +109,83 @@ export async function apiClient<T = any>(
   }
 }
 
+/** Like apiClient but returns structured success/failure for forms that need inline errors. */
+export async function apiRequest<T = any>(
+  endpoint: string,
+  options: ApiOptions = {},
+  showToast = false,
+): Promise<ApiResult<T>> {
+  const token =
+    localStorage.getItem("admin_token") ||
+    localStorage.getItem("faculty_token") ||
+    localStorage.getItem("student_token");
+  const cleanToken = token ? token.replace(/^"|"$/g, "") : null;
+  const isFormData = options.body instanceof FormData;
+
+  const defaultHeaders: Record<string, string> = {
+    ...(cleanToken ? { Authorization: `Bearer ${cleanToken}` } : {}),
+    ...(ANALYTICS_KEY ? { "x-api-key": ANALYTICS_KEY } : {}),
+  };
+  if (!isFormData) {
+    defaultHeaders["Content-Type"] = "application/json";
+  }
+
+  let url = endpoint;
+  if (options.params) {
+    const searchParams = new URLSearchParams();
+    Object.entries(options.params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        searchParams.append(key, String(value));
+      }
+    });
+    const queryString = searchParams.toString();
+    if (queryString) {
+      url += (url.includes("?") ? "&" : "?") + queryString;
+    }
+  }
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: { ...defaultHeaders, ...options.headers },
+    });
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      const message = "Unexpected response format (Expected JSON)";
+      if (showToast) handleHttpError(response.status, { message }, true, url);
+      return { ok: false, status: response.status, message };
+    }
+
+    const data: ApiResponse<T> = await response.json();
+    if (!response.ok) {
+      const message = extractApiErrorMessage(data);
+      if (showToast) handleHttpError(response.status, data, true, url);
+      return {
+        ok: false,
+        status: response.status,
+        message,
+        code: data.code || (data as any).error?.code,
+      };
+    }
+
+    return { ok: true, data: (data.data || data) as T };
+  } catch (error: any) {
+    const message =
+      error.message || "Network connection error. Please check your internet.";
+    if (showToast) toast.error(message);
+    return { ok: false, status: 0, message };
+  }
+}
+
+function extractApiErrorMessage(data: any): string {
+  if (typeof data?.error === "string" && data.error.trim()) return data.error;
+  if (typeof data?.message === "string" && data.message.trim()) return data.message;
+  if (typeof data?.msg === "string" && data.msg.trim()) return data.msg;
+  if (typeof data?.error?.message === "string") return data.error.message;
+  return "Request failed";
+}
+
 export async function downloadFile(
   endpoint: string,
   fileName: string,
@@ -169,7 +250,9 @@ function handleHttpError(
   if (!showToast) return;
 
   const code = data.code || data.error?.code;
-  const message = data.message || data.msg || data.error?.message;
+  const message =
+    extractApiErrorMessage(data) ||
+    (typeof data.error === "string" ? data.error : undefined);
 
   const isLoginPath =
     url.includes("/auth/login") ||

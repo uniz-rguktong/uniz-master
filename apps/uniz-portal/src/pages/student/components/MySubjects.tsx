@@ -1,28 +1,12 @@
-import { formatStatus } from "@/utils/displayText";
-import { useState, useEffect } from "react";
-import {
-  BookText,
-  GraduationCap,
-  CheckCircle2,
-  User,
-  Info,
-  Loader2,
-} from "lucide-react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useCallback } from "react";
+import { Loader2, ClipboardList, BookOpenCheck } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
-
-interface Subject {
-  id: string;
-  subject: {
-    code: string;
-    name: string;
-    credits: number;
-    department: string;
-  };
-  faculty?: {
-    name: string;
-  };
-}
+import { GET_AVAILABLE_SUBJECTS, GET_CURRENT_SUBJECTS } from "../../../api/endpoints";
+import { cn } from "@/lib/utils";
+import CourseRegistration from "./CourseRegistration";
+import RegisteredSubjectsPanel, {
+  type RegisteredSubjectRow,
+} from "./RegisteredSubjectsPanel";
 
 interface Semester {
   id: string;
@@ -31,12 +15,12 @@ interface Semester {
 }
 
 interface CurrentSubjectsResponse {
-  semester: Semester;
-  subjects: Subject[];
+  semester: Semester | null;
+  subjects: RegisteredSubjectRow[];
+  alreadyRegistered?: boolean;
 }
 
-import { GET_CURRENT_SUBJECTS } from "../../../api/endpoints";
-import CourseRegistration from "./CourseRegistration";
+type TabId = "subjects" | "register";
 
 export default function MySubjects({
   studentId,
@@ -48,27 +32,47 @@ export default function MySubjects({
   year: string;
 }) {
   const [data, setData] = useState<CurrentSubjectsResponse | null>(null);
+  const [registrationOpen, setRegistrationOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<TabId>("subjects");
 
-  const fetchSubjects = async () => {
+  const fetchSubjects = useCallback(async () => {
+    if (!studentId) return;
     try {
       setLoading(true);
-      const res = await apiClient<CurrentSubjectsResponse>(
-        GET_CURRENT_SUBJECTS(studentId),
-        {},
-        false,
-      );
-      setData(res);
+      const [current, available] = await Promise.all([
+        apiClient<CurrentSubjectsResponse>(
+          GET_CURRENT_SUBJECTS(studentId),
+          {},
+          false,
+        ),
+        apiClient<{
+          alreadyRegistered?: boolean;
+          isOpen?: boolean;
+        }>(GET_AVAILABLE_SUBJECTS(branch, year), {}, false).catch(() => null),
+      ]);
+
+      const registered =
+        (current?.subjects?.length ?? 0) > 0 ||
+        current?.alreadyRegistered ||
+        available?.alreadyRegistered;
+
+      setData(current);
+      setRegistrationOpen(available?.isOpen ?? false);
+      setActiveTab(registered ? "subjects" : "register");
     } catch (err) {
       console.error("Failed to fetch subjects:", err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [studentId, branch, year]);
 
   useEffect(() => {
-    if (studentId) fetchSubjects();
-  }, [studentId]);
+    fetchSubjects();
+  }, [fetchSubjects]);
+
+  const hasRegistered = (data?.subjects?.length ?? 0) > 0;
+  const showRegisterTab = !hasRegistered && registrationOpen;
 
   if (loading) {
     return (
@@ -78,109 +82,67 @@ export default function MySubjects({
     );
   }
 
-  if (!data || data.subjects.length === 0) {
-    return (
-      <CourseRegistration
-        branch={branch}
-        year={year}
-        onComplete={fetchSubjects}
-      />
-    );
-  }
-
   return (
-    <div className="space-y-8">
-      {/* Semester Header Card */}
-      <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-3xl p-8 text-white shadow-xl shadow-zinc-100/50">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <span className="text-zinc-100 text-xs font-semibold tracking-[0.14em]">
-              Active Semester
-            </span>
-            <h2 className="text-3xl font-semibold tracking-tight">
-              {data.semester.name}
-            </h2>
-            <div className="flex items-center gap-3 mt-1">
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold tracking-wider backdrop-blur-sm">
-                <CheckCircle2 className="w-3 h-3" /> Status:{" "}
-                {formatStatus(data.semester.status)}
-              </span>
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold tracking-wider backdrop-blur-sm">
-                <GraduationCap className="w-3 h-3" /> Total Credits:{" "}
-                {data.subjects.reduce(
-                  (acc, curr) => acc + (curr.subject?.credits || 0),
-                  0,
-                )}
-              </span>
-            </div>
-          </div>
-          <div className="hidden lg:block opacity-20">
-            <GraduationCap className="w-24 h-24" />
-          </div>
-        </div>
-      </div>
-
-      {/* Subjects Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {data.subjects.map((subject, idx) => (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.05 }}
-            key={subject.id}
-            className="group bg-white border border-zinc-100 p-4 rounded-xl hover:border-zinc-100 transition-all duration-300 relative overflow-hidden flex flex-col h-full"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-8 h-8 bg-zinc-50 rounded-lg text-zinc-900 flex items-center justify-center group-hover:bg-zinc-900 group-hover:text-white transition-all duration-300">
-                <BookText size={16} />
-              </div>
-              <span className="px-2 py-0.5 bg-zinc-50 rounded-lg text-[8px] font-semibold tracking-[0.14em] text-zinc-400 border border-zinc-100">
-                {subject.subject?.code}
-              </span>
-            </div>
-
-            <div className="relative z-10 flex flex-col h-full justify-between gap-3">
-              <h3 className="text-[13px] font-bold text-zinc-800 leading-snug mb-2 min-h-[40px] line-clamp-2 group-hover:text-zinc-900 transition-colors">
-                {subject.subject?.name}
-              </h3>
-
-              <div className="flex items-center justify-between mt-auto pt-3 border-t border-zinc-50">
-                <div className="text-[8px] font-semibold tracking-[0.14em] text-zinc-400">
-                  {subject.subject?.department} • {subject.subject?.credits}{" "}
-                  Credits
-                </div>
-                {subject.faculty && (
-                  <div className="flex items-center gap-1.5 text-zinc-400">
-                    <User size={10} />
-                    <span className="text-[9px] font-bold tracking-wider truncate max-w-[80px]">
-                      {subject.faculty?.name?.split(" ")[0] || "Staff"}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Info Note */}
-      <div className="flex items-start gap-4 p-6 bg-zinc-50/50 rounded-2xl border border-zinc-100/50">
-        <div className="p-2 bg-zinc-100 rounded-xl text-zinc-900">
-          <Info className="w-5 h-5" />
-        </div>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h4 className="text-sm font-bold text-zinc-900 mb-1">
-            Academic Registration Policy
-          </h4>
-          <p className="text-xs text-zinc-800 leading-relaxed font-medium">
-            These are your officially registered subjects for the current
-            academic session. Any discrepancies should be reported to the
-            Academic Affairs or Branch Dean office immediately. Changes to
-            subject registration are only allowed during the "Registration Open"
-            window.
+          <p className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400 uppercase">
+            Semester registration
           </p>
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+            {hasRegistered ? "Your current semester" : "Course registration"}
+          </h1>
+        </div>
+
+        <div className="flex gap-1 p-1 bg-zinc-100 rounded-xl w-fit">
+          <button
+            type="button"
+            onClick={() => setActiveTab("subjects")}
+            className={cn(
+              "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all",
+              activeTab === "subjects"
+                ? "bg-white text-zinc-900 shadow-sm"
+                : "text-zinc-500 hover:text-zinc-800",
+            )}
+          >
+            <BookOpenCheck size={14} />
+            My subjects
+          </button>
+          {showRegisterTab && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("register")}
+              className={cn(
+                "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all",
+                activeTab === "register"
+                  ? "bg-white text-zinc-900 shadow-sm"
+                  : "text-zinc-500 hover:text-zinc-800",
+              )}
+            >
+              <ClipboardList size={14} />
+              Register
+            </button>
+          )}
         </div>
       </div>
+
+      {activeTab === "subjects" ? (
+        <RegisteredSubjectsPanel
+          semester={data?.semester ?? null}
+          subjects={data?.subjects ?? []}
+        />
+      ) : showRegisterTab ? (
+        <CourseRegistration
+          branch={branch}
+          year={year}
+          onComplete={fetchSubjects}
+        />
+      ) : (
+        <RegisteredSubjectsPanel
+          semester={data?.semester ?? null}
+          subjects={data?.subjects ?? []}
+        />
+      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import {
   BookOpen,
   Loader2,
@@ -7,13 +7,14 @@ import {
   ShieldCheck,
   Hash,
   Circle,
+  AlertCircle,
 } from "lucide-react";
 import {
   GET_AVAILABLE_SUBJECTS,
   REGISTER_SUBJECTS,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
-import { apiClient } from "../../../api/apiClient";
+import { apiRequest } from "../../../api/apiClient";
 import { cn } from "@/lib/utils";
 import {
   adminCardClass,
@@ -149,16 +150,25 @@ export default function CourseRegistration({
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const [semesterName, setSemesterName] = useState("");
+  const [windowMessage, setWindowMessage] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [confirmation, setConfirmation] = useState<any>(null);
+  const submitLockRef = useRef(false);
 
   const fetchAvailable = async () => {
     setLoading(true);
+    setSubmitError(null);
     try {
-      const data = await apiClient<any>(
+      const result = await apiRequest<any>(
         GET_AVAILABLE_SUBJECTS(branch, year),
         {},
         false,
       );
+      if (!result.ok) {
+        setSubmitError(result.message);
+        return;
+      }
+      const data = result.data;
       if (data) {
         const subs: AllocRow[] = data.subjects || [];
         setAvailable(subs);
@@ -169,7 +179,11 @@ export default function CourseRegistration({
         setSelectedIds(mandatoryIds);
         setAlreadyRegistered(data.alreadyRegistered || false);
         setIsOpen(data.isOpen ?? true);
+        setWindowMessage(data.windowMessage || null);
         setSemesterName(data.semester?.name || "");
+        if (data.alreadyRegistered) {
+          submitLockRef.current = true;
+        }
       }
     } catch (error) {
       console.error("Failed to fetch available subjects", error);
@@ -243,6 +257,10 @@ export default function CourseRegistration({
   };
 
   const handleRegister = async () => {
+    if (submitting || alreadyRegistered || submitLockRef.current) {
+      return;
+    }
+
     const groups: Record<string, { limit: number; selected: number; name: string }> =
       {};
     available.forEach((s) => {
@@ -271,15 +289,42 @@ export default function CourseRegistration({
     }
 
     setSubmitting(true);
+    setSubmitError(null);
+    submitLockRef.current = true;
     try {
-      const res = await apiClient<any>(REGISTER_SUBJECTS, {
-        method: "POST",
-        body: JSON.stringify({ subjectIds: selectedIds }),
-      });
+      const result = await apiRequest<any>(
+        REGISTER_SUBJECTS,
+        {
+          method: "POST",
+          body: JSON.stringify({ subjectIds: selectedIds }),
+        },
+        false,
+      );
+
+      if (!result.ok) {
+        submitLockRef.current = result.status === 409;
+        setSubmitError(result.message);
+        if (result.status === 409) {
+          setAlreadyRegistered(true);
+          toast.info(result.message);
+        } else {
+          toast.error(result.message);
+        }
+        return;
+      }
+
+      const res = result.data;
+      if (!res?.success && !res?.confirmation) {
+        submitLockRef.current = false;
+        const msg = "Registration could not be completed. Please try again.";
+        setSubmitError(msg);
+        toast.error(msg);
+        return;
+      }
+
       toast.success("Registration submitted successfully");
+      setAlreadyRegistered(true);
       setConfirmation(res?.confirmation || { semester: semesterName });
-    } catch (error: any) {
-      toast.error(error.message || "Registration failed");
     } finally {
       setSubmitting(false);
     }
@@ -380,13 +425,19 @@ export default function CourseRegistration({
   if (!isOpen) {
     return (
       <div className={cn(adminCardClass, "max-w-xl mx-auto p-10 text-center border-dashed")}>
-        <div className="w-14 h-14 mx-auto rounded-2xl bg-zinc-100 text-zinc-500 flex items-center justify-center mb-5">
+        <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-5">
           <ShieldCheck size={28} />
         </div>
-        <h3 className="text-xl font-semibold text-zinc-900">Registration not open yet</h3>
+        <h3 className="text-xl font-semibold text-zinc-900">
+          Registration not open yet
+        </h3>
         <p className="text-sm text-zinc-500 mt-2 leading-relaxed">
-          <strong>{semesterName}</strong> is still under review. You can register once
-          your department opens the window.
+          {windowMessage || (
+            <>
+              <strong>{semesterName}</strong> is still under review or outside
+              the registration window.
+            </>
+          )}
         </p>
       </div>
     );
@@ -514,6 +565,17 @@ export default function CourseRegistration({
 
       {/* Submit */}
       <div className="space-y-4 pt-2 border-t border-zinc-200/70">
+        {submitError && (
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 flex gap-3 text-left">
+            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-rose-900">
+                Registration failed
+              </p>
+              <p className="text-sm text-rose-800/90 mt-1">{submitError}</p>
+            </div>
+          </div>
+        )}
         <div className={adminWarningBannerClass}>
           <ShieldCheck size={16} className="text-amber-600 shrink-0 mt-0.5" />
           <div>
@@ -526,7 +588,7 @@ export default function CourseRegistration({
         </div>
         <button
           type="button"
-          disabled={submitting || selectedIds.length === 0}
+          disabled={submitting || selectedIds.length === 0 || alreadyRegistered}
           onClick={handleRegister}
           className={cn(adminPrimaryButtonClass, "w-full h-12")}
         >
