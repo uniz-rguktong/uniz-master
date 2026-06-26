@@ -18,6 +18,9 @@ export const initSemester = async (
 ) => {
   const { academicSemester, branches } = req.body; // academicSemester is the label like "AY 2024-25 E1-SEM-1"
   const user = req.user;
+  if (!user || !isSemesterAdmin(user.role as string)) {
+    return res.status(403).json({ error: "Webmaster access required" });
+  }
 
   try {
     // 0. Check if semester already exists to prevent duplicates
@@ -170,6 +173,45 @@ const canonicalSubjectSemester = (
   return `${yr}-${deriveSemSuffix(label)}`;
 };
 
+const SEMESTER_ADMIN_ROLES = ["webmaster", "coe", "director"] as const;
+
+function isSemesterAdmin(role?: string): boolean {
+  return SEMESTER_ADMIN_ROLES.includes(role as (typeof SEMESTER_ADMIN_ROLES)[number]);
+}
+
+function resolveHodBranch(user: AuthenticatedRequest["user"]): string {
+  if (!user) return "";
+  const fromJwt = String(user.department || "")
+    .trim()
+    .toUpperCase();
+  if (fromJwt && fromJwt !== "GENERAL") return fromJwt;
+  return String(user.username.split("_")[1] || "")
+    .trim()
+    .toUpperCase();
+}
+
+function assertHodOwnBranch(
+  user: AuthenticatedRequest["user"],
+  requestedBranch: string | undefined,
+  res: Response,
+): string | null {
+  const hodBranch = resolveHodBranch(user);
+  if (!hodBranch) {
+    res.status(400).json({ error: "Could not determine HOD branch" });
+    return null;
+  }
+  const reqBranch = String(requestedBranch || hodBranch)
+    .trim()
+    .toUpperCase();
+  if (reqBranch !== hodBranch) {
+    res.status(403).json({
+      error: `HOD can only approve their own branch (${hodBranch})`,
+    });
+    return null;
+  }
+  return hodBranch;
+}
+
 /** Branches that still need HOD sign-off before registration can open. */
 async function getPendingHodBranches(semesterId: string): Promise<string[]> {
   const allocations = await prisma.branchAllocation.findMany({
@@ -214,7 +256,7 @@ export const createSemester = async (
   res: Response,
 ) => {
   const user = req.user;
-  if (!user || !["webmaster", "coe", "director"].includes(user.role as string)) {
+  if (!user || !isSemesterAdmin(user.role as string)) {
     return res.status(403).json({ error: "Webmaster access required" });
   }
 
@@ -531,7 +573,7 @@ export const advanceSemester = async (
         body: `"${semester.name}" was sent back for modifications by ${role.toUpperCase()}.`,
       };
     } else if (action === "submit") {
-      if (!["webmaster", "coe", "director"].includes(role)) {
+      if (!isSemesterAdmin(role)) {
         return res.status(403).json({ error: "Only Webmaster can submit" });
       }
       nextStatus = "DEAN_REVIEW";
@@ -570,16 +612,8 @@ export const advanceSemester = async (
             .json({ error: "Semester is not pending HOD approval" });
         }
 
-        const hodBranch = String(
-          req.body.branch || user.username.split("_")[1] || "",
-        )
-          .trim()
-          .toUpperCase();
-        if (!hodBranch) {
-          return res
-            .status(400)
-            .json({ error: "Could not determine HOD branch" });
-        }
+        const hodBranch = assertHodOwnBranch(user, req.body.branch, res);
+        if (!hodBranch) return;
 
         await prisma.branchAllocation.updateMany({
           where: {
@@ -714,6 +748,11 @@ export const updateSemesterStatus = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
+  const user = req.user;
+  if (!user || !isSemesterAdmin(user.role as string)) {
+    return res.status(403).json({ error: "Webmaster access required" });
+  }
+
   const { id } = req.params;
   const { status } = req.body;
 
@@ -767,9 +806,8 @@ export const createAllocation = async (
   try {
     // Role Check
     if (user?.role === "hod") {
-      // derive branch from username e.g. hod_cse -> CSE
-      const hodBranch = user.username.split("_")[1]?.toUpperCase();
-      if (branch.toUpperCase() !== hodBranch) {
+      const hodBranch = resolveHodBranch(user);
+      if (!hodBranch || branch.toUpperCase() !== hodBranch) {
         return res.status(403).json({ error: "Unauthorized for this branch" });
       }
     }
@@ -993,9 +1031,13 @@ export const approveBranchAllocation = async (
       target = "hod"; // Targeted to HODs
       targetBranch = branch;
     } else if (user?.role === "hod") {
+      const hodBranch = assertHodOwnBranch(user, branch, res);
+      if (!hodBranch) return;
+
       nextStatus = "APPROVED";
-      targetBranch = branch || user.username.split("_")[1]?.toUpperCase();
+      targetBranch = hodBranch;
       targetYear = year;
+      whereClause.branch = { equals: hodBranch, mode: "insensitive" };
 
       const pendingBranches = await getPendingHodBranches(semesterId);
       if (pendingBranches.length > 0) {
@@ -1082,14 +1124,17 @@ export const getAvailableSubjects = async (
       }
     }
 
-    const openSem = await prisma.academicSemester.findFirst({
-      where: {
-        status: {
-          in: ["REGISTRATION_OPEN", "HOD_REVIEW", "DEAN_REVIEW", "APPROVED"],
+    const openSem =
+      (await prisma.academicSemester.findFirst({
+        where: { status: "REGISTRATION_OPEN" },
+        orderBy: { createdAt: "desc" },
+      })) ||
+      (await prisma.academicSemester.findFirst({
+        where: {
+          status: { in: ["HOD_REVIEW", "DEAN_REVIEW", "APPROVED"] },
         },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+        orderBy: { createdAt: "desc" },
+      }));
 
     if (!openSem) {
       return res.status(404).json({ error: "No active semester found" });
@@ -1218,6 +1263,20 @@ export const registerSubjects = async (
     if ((sem as any).registrationEnd && now > (sem as any).registrationEnd) {
       return res.status(403).json({
         error: "The registration window has closed.",
+      });
+    }
+
+    const existingRegistrationCount = await prisma.registration.count({
+      where: {
+        studentId: user.username,
+        semesterId: sem.id,
+        status: "REGISTERED",
+      },
+    });
+    if (existingRegistrationCount > 0) {
+      return res.status(409).json({
+        error: "You have already registered for this semester",
+        alreadyRegistered: true,
       });
     }
 

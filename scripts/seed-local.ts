@@ -184,10 +184,24 @@ async function seed() {
       { email: "swo@rguktong.ac.in", name: "SWO Chief" },
     );
 
-    // --- SEEDING HODs removed as per user request ---
-    console.log(
-      "- Skipping HOD/Faculty Seeding (Only Admin accounts are being kept)",
-    );
+    console.log("- Seeding department HODs...");
+    const hodBranches = ["CSE", "ECE", "EEE", "CIVIL", "MECH"] as const;
+    for (const dept of hodBranches) {
+      const username = `hod_${dept.toLowerCase()}`;
+      await upsertUser(
+        `${username}-id`,
+        username,
+        "hod",
+        `${dept} Head of Department`,
+        "Faculty",
+        {
+          name: `HOD ${dept}`,
+          email: `${username}@uniz`,
+          dept,
+          designation: "Head of Department",
+        },
+      );
+    }
 
     // --- SEEDING STUDENTS (minimal set for local portal testing) ---
     console.log("- Seeding sample students...");
