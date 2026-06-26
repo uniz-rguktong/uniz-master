@@ -158,6 +158,28 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Wait for VPS SSH
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          host="${{ secrets.VPS_IP }}"
+          user="${{ secrets.VPS_USER }}"
+          for attempt in $(seq 1 12); do
+            if ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=20 \
+              -i ~/.ssh/deploy_key "${user}@${host}" 'echo ssh-ok'; then
+              echo "VPS SSH reachable on attempt ${attempt}"
+              exit 0
+            fi
+            echo "VPS SSH attempt ${attempt}/12 failed; retrying in 30s..."
+            sleep 30
+          done
+          echo "::error::VPS SSH unreachable after 12 attempts — check VPS is online and port 22 allows GitHub Actions."
+          exit 1
+
       - name: Deploy via SSH
         id: vps_deploy
         uses: appleboy/ssh-action@v1.2.0
