@@ -17,7 +17,7 @@ import {
   ANALYTICS_CAMPUS_OCCUPANCY,
   ANALYTICS_ACADEMIC_HEATMAP,
   ANALYTICS_GRIEVANCE_TRENDS,
-  ANALYTICS_KEY,
+  getAnalyticsHeaders,
   BASE_URL,
 } from "../../../api/endpoints";
 import { KPICard, SubjectHeatmap } from "../AnalyticsUI";
@@ -161,10 +161,7 @@ export default function DeanOverview({ username }: { username: string }) {
     const fetchData = async () => {
       try {
         if (!cachedData.fetched) setLoading(true);
-        const authHeaders = {
-          "x-api-key": ANALYTICS_KEY,
-          "Content-Type": "application/json",
-        };
+        const authHeaders = getAnalyticsHeaders();
         const [occRes, hMapRes, gvRes] = await Promise.all([
           fetch(ANALYTICS_CAMPUS_OCCUPANCY, { headers: authHeaders }),
           fetch(ANALYTICS_ACADEMIC_HEATMAP, { headers: authHeaders }),

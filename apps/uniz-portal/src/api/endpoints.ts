@@ -1,4 +1,6 @@
 // Set this to your Azure VM IP or Domain in .env as VITE_API_URL
+import { getStoredAuthToken } from "../utils/security";
+
 export const BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
 export const ANALYTICS_BASE_URL =
   import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app";
@@ -248,3 +250,12 @@ export const STUDENT_ATTENDANCE_ANALYTICS = (id: string) =>
   `${ANALYTICS_BASE_URL}/api/analytics/student/${id}/attendance`;
 export const STUDENT_GRADES_TREND_ANALYTICS = (id: string) =>
   `${ANALYTICS_BASE_URL}/api/analytics/student/${id}/grades-trend`;
+
+/** Headers for gateway analytics routes (JWT + optional API key). */
+export function getAnalyticsHeaders(): Record<string, string> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (ANALYTICS_KEY) headers["x-api-key"] = ANALYTICS_KEY;
+  const token = getStoredAuthToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+}

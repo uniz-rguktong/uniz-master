@@ -5,6 +5,20 @@ import { ANALYTICS_KEY } from "./endpoints";
  * Automatically injects the x-api-key into all fetch requests
  * that target UniZ services or analytics.
  */
+
+function requestHadBearerAuth(config: RequestInit): boolean {
+  const headers = config.headers;
+  if (!headers) return false;
+  if (headers instanceof Headers) {
+    return headers.has("Authorization");
+  }
+  if (Array.isArray(headers)) {
+    return headers.some(([key]) => key.toLowerCase() === "authorization");
+  }
+  return Object.keys(headers as Record<string, string>).some(
+    (key) => key.toLowerCase() === "authorization",
+  );
+}
 export function initializeGlobalInterceptor() {
   const { fetch: originalFetch } = window;
 
@@ -62,9 +76,9 @@ export function initializeGlobalInterceptor() {
       url.includes("/auth/signin") ||
       url.includes("/auth/otp");
 
-    if (response.status === 401 && !isLoginAttempt) {
+    if (response.status === 401 && !isLoginAttempt && requestHadBearerAuth(config)) {
       console.warn(
-        "[NetworkInterceptor] 401 Unauthorized detected. Clearing session...",
+        "[NetworkInterceptor] 401 on authenticated request. Clearing session...",
       );
 
       // Destructive clear to ensure no state remains
@@ -72,7 +86,12 @@ export function initializeGlobalInterceptor() {
 
       // Sudden redirect to login gateway
       setTimeout(() => {
-        if (window.location.pathname !== "/login") {
+        const path = window.location.pathname;
+        if (path.startsWith("/admin")) {
+          window.location.href = "/admin/signin";
+        } else if (path.startsWith("/student")) {
+          window.location.href = "/student/signin";
+        } else if (window.location.pathname !== "/login") {
           window.location.href = "/login";
         }
       }, 500);

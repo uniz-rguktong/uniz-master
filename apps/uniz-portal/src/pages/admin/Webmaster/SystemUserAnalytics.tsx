@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Users, Shield, UserCheck, UserX } from "lucide-react";
-import { ANALYTICS_SYSTEM_USERS, ANALYTICS_KEY } from "../../../api/endpoints";
+import { ANALYTICS_SYSTEM_USERS, getAnalyticsHeaders } from "../../../api/endpoints";
 import { KPICard } from "../AnalyticsUI";
 import { DonutChart } from "../../../components/ui/donut-chart";
 import { Card } from "../../../components/ui/card";
@@ -36,16 +36,8 @@ export default function SystemUserAnalytics() {
 
       try {
         if (!cachedData.fetched) setLoading(true);
-        const token =
-          localStorage.getItem("admin_token") ||
-          localStorage.getItem("faculty_token") ||
-          localStorage.getItem("student_token");
         const res = await fetch(ANALYTICS_SYSTEM_USERS, {
-          headers: {
-            "x-api-key": ANALYTICS_KEY,
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          headers: getAnalyticsHeaders(),
         });
         const json = await res.json();
 

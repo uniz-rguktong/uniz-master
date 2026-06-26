@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   Users,
   LayoutDashboard,
@@ -12,6 +12,7 @@ import {
 import AdminShell from "@/components/admin/AdminShell";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
+import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
 import StudentDetails from "../Webmaster/StudentDetails";
 import SubjectManagement from "../Webmaster/SubjectManagement";
 import UploadSection from "../Webmaster/UploadSection";
@@ -27,21 +28,6 @@ import SecuritySection from "../Webmaster/SecuritySection";
 
 export default function DeanDashboard() {
   useIsAuth();
-  const [activeTab, setActiveTab] = useState<
-    | "dashboard"
-    | "student"
-    | "student_bulk"
-    | "subjects"
-    | "attendance"
-    | "grades"
-    | "semester_review"
-    | "faculty"
-    | "system_logs"
-    | "banners"
-    | "updates"
-    | "push_alerts"
-    | "security"
-  >("dashboard");
 
   const username = (localStorage.getItem("username") || "Dean").replace(
     /"/g,
@@ -51,6 +37,28 @@ export default function DeanDashboard() {
     /"/g,
     "",
   );
+
+  const allowedTabs = useMemo(
+    () =>
+      [
+        "dashboard",
+        "student",
+        "student_bulk",
+        "subjects",
+        "attendance",
+        "grades",
+        "semester_review",
+        "faculty",
+        "system_logs",
+        "banners",
+        "updates",
+        "push_alerts",
+        "security",
+      ] as const,
+    [],
+  );
+
+  const { activeTab, setActiveTab } = useAdminSectionRoute(allowedTabs);
 
   const roleLabel =
     role === "hod"
@@ -141,7 +149,7 @@ export default function DeanDashboard() {
     <AdminShell
       navGroups={navGroups}
       activeTab={activeTab}
-      onTabChange={(id) => setActiveTab(id as any)}
+      onTabChange={(id) => setActiveTab(id)}
       onLogout={logout}
       username={username}
       roleLabel={roleLabel}
