@@ -24,6 +24,7 @@ import {
   Search,
   Library,
   PenLine,
+  Pencil,
 } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
 import {
@@ -1141,6 +1142,11 @@ function SubjectsStep({
             <SubjectRow
               key={s.key}
               s={s}
+              onRename={(name) =>
+                setSubjects((prev) =>
+                  prev.map((x) => (x.key === s.key ? { ...x, name } : x)),
+                )
+              }
               onRemove={() =>
                 setSubjects(subjects.filter((x: SubjectDraft) => x.key !== s.key))
               }
@@ -1286,7 +1292,38 @@ function SubjectsStep({
   );
 }
 
-function SubjectRow({ s, onRemove }: { s: SubjectDraft; onRemove: () => void }) {
+function SubjectRow({
+  s,
+  onRename,
+  onRemove,
+}: {
+  s: SubjectDraft;
+  onRename: (name: string) => void;
+  onRemove: () => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draftName, setDraftName] = useState(s.name);
+
+  useEffect(() => {
+    if (!editing) setDraftName(s.name);
+  }, [s.name, editing]);
+
+  const commitRename = () => {
+    const trimmed = draftName.trim();
+    if (!trimmed) {
+      setDraftName(s.name);
+      setEditing(false);
+      return;
+    }
+    if (trimmed !== s.name) onRename(trimmed);
+    setEditing(false);
+  };
+
+  const cancelRename = () => {
+    setDraftName(s.name);
+    setEditing(false);
+  };
+
   const typeMeta: Record<string, string> = {
     CORE: "bg-rose-50 text-rose-600 border-rose-100",
     ELECTIVE: "bg-zinc-100 text-zinc-900 border-zinc-200",
@@ -1294,13 +1331,48 @@ function SubjectRow({ s, onRemove }: { s: SubjectDraft; onRemove: () => void }) 
     PE: "bg-emerald-50 text-emerald-700 border-emerald-100",
   };
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-zinc-200/70 bg-white px-4 py-3">
+    <div className="flex items-center gap-3 rounded-2xl border border-zinc-200/70 bg-white px-4 py-3 group/row">
       <div className="w-9 h-9 rounded-xl bg-zinc-50 text-zinc-400 flex items-center justify-center shrink-0">
         <BookOpen size={16} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-zinc-800 truncate">{s.name}</p>
-        <p className="text-[10px] font-bold text-zinc-400 tracking-wide">
+        {editing ? (
+          <input
+            autoFocus
+            value={draftName}
+            onChange={(e) => setDraftName(e.target.value)}
+            onBlur={commitRename}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                commitRename();
+              }
+              if (e.key === "Escape") {
+                e.preventDefault();
+                cancelRename();
+              }
+            }}
+            className={cn(
+              inputClass,
+              "h-8 text-sm font-semibold text-zinc-800 py-1",
+            )}
+            placeholder="Subject display name"
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            className="group/name flex items-center gap-1.5 min-w-0 max-w-full text-left rounded-md -ml-1 px-1 hover:bg-zinc-50 transition-colors"
+            title="Rename for this semester"
+          >
+            <p className="text-sm font-semibold text-zinc-800 truncate">{s.name}</p>
+            <Pencil
+              size={12}
+              className="shrink-0 text-zinc-300 opacity-0 group-hover/name:opacity-100 group-hover/row:opacity-60 transition-opacity"
+            />
+          </button>
+        )}
+        <p className="text-[10px] font-bold text-zinc-400 tracking-wide mt-0.5">
           {s.code} · {s.department} · {s.academicYear} · {s.credits || 0}C
           {s.electiveGroupCode ? ` · ${s.electiveGroupCode}` : ""}
           {s.fromCatalog ? " · catalog" : " · custom"}
@@ -1311,9 +1383,21 @@ function SubjectRow({ s, onRemove }: { s: SubjectDraft; onRemove: () => void }) 
       >
         {s.subjectType.replace("_", " ")}
       </span>
+      {!editing && (
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          className="p-2 rounded-lg text-zinc-300 hover:text-zinc-700 hover:bg-zinc-100 transition-all shrink-0"
+          title="Rename"
+        >
+          <PenLine size={15} />
+        </button>
+      )}
       <button
+        type="button"
         onClick={onRemove}
         className="p-2 rounded-lg text-zinc-300 hover:text-rose-500 hover:bg-rose-50 transition-all shrink-0"
+        title="Remove"
       >
         <Trash2 size={15} />
       </button>

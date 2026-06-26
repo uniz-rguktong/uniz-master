@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import { useWebSocket } from "./hooks/useWebSocket";
+import { useAdminDesktopViewport } from "./hooks/useAdminDesktopViewport";
 import { useLocation } from "react-router-dom";
 
 const Navbar = React.lazy(() => import("./components/Navbar"));
@@ -11,6 +12,8 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   const location = useLocation();
 
+  useAdminDesktopViewport();
+
   useWebSocket(undefined, (msg) => {
     console.log("Real-time update signal:", msg);
   });
@@ -21,7 +24,13 @@ export function Layout({ children }: LayoutProps) {
     ["/studyspace", "/campushub"].includes(location.pathname);
 
   if (shouldHideNavbar) {
-    return <div className="min-h-screen bg-zinc-50/50">{children}</div>;
+    return (
+      <div
+        className={`min-h-screen bg-zinc-50/50${location.pathname.includes("/admin") ? " min-w-[1280px]" : ""}`}
+      >
+        {children}
+      </div>
+    );
   }
 
   const isHomePage = location.pathname === "/";
