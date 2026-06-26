@@ -16,8 +16,50 @@ import { UserRole } from "../shared/roles.enum";
 import { UAParser } from "ua-parser-js";
 import { verifyTurnstileToken } from "../utils/turnstile.util";
 
+function getUserServiceBase(): string {
+  const rawUserUrl = (
+    process.env.USER_SERVICE_URL || "http://localhost:3002"
+  ).trim();
+  return rawUserUrl.endsWith("/health") ? rawUserUrl.slice(0, -7) : rawUserUrl;
+}
+
+async function resolveStaffUsernameFromEmail(email: string): Promise<string | null> {
+  const USER_SERVICE = getUserServiceBase();
+  const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+
+  try {
+    const res = await axios.get(`${USER_SERVICE}/internal/resolve-login`, {
+      params: { email: email.trim().toLowerCase() },
+      headers: { "x-internal-secret": INTERNAL_SECRET },
+      timeout: 3000,
+    });
+    if (res.data?.username) {
+      return String(res.data.username).trim();
+    }
+  } catch (e) {
+    // Fall through — caller treats unresolved email as invalid credentials
+  }
+  return null;
+}
+
+async function resolveLoginIdentifier(
+  identifier: string,
+  allowEmailLogin: boolean,
+): Promise<string> {
+  const trimmed = identifier.trim();
+  if (!allowEmailLogin || !trimmed.includes("@")) {
+    return trimmed;
+  }
+  const resolved = await resolveStaffUsernameFromEmail(trimmed);
+  return resolved || trimmed;
+}
+
 export const login = async (req: Request, res: Response) => {
-  const username = (req.body.username || "").trim(); // Case-insensitive: handled by Prisma mode:"insensitive" below
+  const allowEmailLogin = Boolean((req as any).allowEmailLogin);
+  let username = await resolveLoginIdentifier(
+    req.body.username || "",
+    allowEmailLogin,
+  );
   const password = req.body.password;
   const captchaToken = req.body.captchaToken;
 
@@ -39,7 +81,9 @@ export const login = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(401).json({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
-        message: "Invalid username or password",
+        message: allowEmailLogin
+          ? "Invalid staff ID, email, or password"
+          : "Invalid username or password",
       });
     }
 
@@ -58,7 +102,9 @@ export const login = async (req: Request, res: Response) => {
     if (!isValid) {
       return res.status(401).json({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
-        message: "Invalid username or password",
+        message: allowEmailLogin
+          ? "Invalid staff ID, email, or password"
+          : "Invalid username or password",
       });
     }
 
@@ -195,10 +241,17 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const studentLogin = login;
-export const adminLogin = login;
+export const adminLogin = async (req: Request, res: Response) => {
+  (req as any).allowEmailLogin = true;
+  return login(req, res);
+};
 
 export const requestOtp = async (req: Request, res: Response) => {
-  const username = String(req.body.username || "").toUpperCase();
+  const rawIdentifier = String(req.body.username || "").trim();
+  const allowEmail = rawIdentifier.includes("@");
+  let username = allowEmail
+    ? (await resolveStaffUsernameFromEmail(rawIdentifier)) || rawIdentifier
+    : rawIdentifier.toUpperCase();
   const captchaToken = req.body.captchaToken;
 
   // Cloudflare Turnstile Verification
@@ -307,7 +360,11 @@ export const requestOtp = async (req: Request, res: Response) => {
 
 // Explicitly request OTP via email (Manual fallback)
 export const requestOtpEmail = async (req: Request, res: Response) => {
-  const username = String(req.body.username || "").toUpperCase();
+  const rawIdentifier = String(req.body.username || "").trim();
+  const allowEmail = rawIdentifier.includes("@");
+  let username = allowEmail
+    ? (await resolveStaffUsernameFromEmail(rawIdentifier)) || rawIdentifier
+    : rawIdentifier.toUpperCase();
   const captchaToken = req.body.captchaToken;
 
   // Cloudflare Turnstile Verification
@@ -409,12 +466,16 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
 
 export const verifyOtp = async (req: Request, res: Response) => {
   const { otp } = req.body;
-  const username = String(req.body.username || "").toUpperCase();
+  const rawIdentifier = String(req.body.username || "").trim();
+  const allowEmail = rawIdentifier.includes("@");
+  const username = allowEmail
+    ? (await resolveStaffUsernameFromEmail(rawIdentifier)) || rawIdentifier
+    : rawIdentifier.toUpperCase();
 
   try {
     const validOtp = await prisma.otpLog.findFirst({
       where: {
-        username,
+        username: { equals: username, mode: "insensitive" },
         otp,
         expiresAt: { gt: new Date() },
         consumedAt: null,
@@ -452,7 +513,12 @@ export const verifyOtp = async (req: Request, res: Response) => {
 };
 
 export const resetPassword = async (req: Request, res: Response) => {
-  const { username, newPassword, resetToken } = req.body;
+  const { newPassword, resetToken } = req.body;
+  const rawIdentifier = String(req.body.username || "").trim();
+  const allowEmail = rawIdentifier.includes("@");
+  const username = allowEmail
+    ? (await resolveStaffUsernameFromEmail(rawIdentifier)) || rawIdentifier
+    : rawIdentifier;
 
   // Validate Reset Token First
   if (!resetToken) {

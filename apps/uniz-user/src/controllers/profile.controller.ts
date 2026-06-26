@@ -26,6 +26,43 @@ const AUTH_SERVICE_URL = (
   process.env.AUTH_SERVICE_URL || `${GATEWAY_URL}/auth`
 ).replace(/\/$/, "");
 
+export const resolveLoginByEmail = async (req: Request, res: Response) => {
+  const secret = req.headers["x-internal-secret"];
+  const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+  if (secret !== INTERNAL_SECRET) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
+  const email = String(req.query.email || "")
+    .trim()
+    .toLowerCase();
+  if (!email || !email.includes("@")) {
+    return res.status(400).json({ message: "Valid email required" });
+  }
+
+  try {
+    const faculty = await prisma.facultyProfile.findFirst({
+      where: { email: { equals: email, mode: "insensitive" } },
+      select: { username: true },
+    });
+    if (faculty) {
+      return res.json({ username: faculty.username, profileType: "faculty" });
+    }
+
+    const admin = await prisma.adminProfile.findFirst({
+      where: { email: { equals: email, mode: "insensitive" } },
+      select: { username: true },
+    });
+    if (admin) {
+      return res.json({ username: admin.username, profileType: "admin" });
+    }
+
+    return res.status(404).json({ message: "Not found" });
+  } catch {
+    return res.status(500).json({ message: "Lookup failed" });
+  }
+};
+
 const ACADEMICS_SERVICE_URL = (
   process.env.ACADEMICS_SERVICE_URL || `${GATEWAY_URL}/academics`
 ).replace(/\/$/, "");
@@ -1267,6 +1304,14 @@ export const updateFacultyProfile = async (
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
   }
 
+  const isWebmaster = user.role === UserRole.WEBMASTER;
+  if (email !== undefined && email !== null && email !== "" && !isWebmaster) {
+    return res.status(403).json({
+      code: ErrorCode.AUTH_FORBIDDEN,
+      message: "Only webmaster can change faculty email",
+    });
+  }
+
   try {
     // Find the record to update (check faculty first, then admin)
     let profileType: "FACULTY" | "ADMIN" = "FACULTY";
@@ -1297,7 +1342,7 @@ export const updateFacultyProfile = async (
         where: { id: existingProfile.id },
         data: {
           ...updates,
-          ...(email && { email }),
+          ...(isWebmaster && email && { email }),
           username: targetUsername,
         },
       });
@@ -1306,7 +1351,7 @@ export const updateFacultyProfile = async (
         where: { id: existingProfile.id },
         data: {
           ...updates,
-          ...(email && { email }),
+          ...(isWebmaster && email && { email }),
           username: targetUsername.toUpperCase(), // Admin usually uppercase
         },
       })) as any;
@@ -1611,7 +1656,6 @@ export const updateFacultyProfileSelf = async (
   try {
     const cleanUpdates: any = {};
     if (updates.name) cleanUpdates.name = updates.name;
-    if (updates.email) cleanUpdates.email = updates.email;
     if (updates.contact) cleanUpdates.contact = updates.contact;
     if (updates.designation) cleanUpdates.designation = updates.designation;
     if (updates.profileUrl || updates.profile_url)
@@ -1686,7 +1730,6 @@ export const updateAdminProfile = async (
       // Explicitly map fields to avoid Prisma errors with extra data
       const facultyData: any = {};
       if (updates.name !== undefined) facultyData.name = updates.name;
-      if (updates.email !== undefined) facultyData.email = updates.email;
       if (updates.contact !== undefined) facultyData.contact = updates.contact;
       if (updates.designation !== undefined)
         facultyData.designation = updates.designation;
@@ -1924,7 +1967,17 @@ export const bulkUpdateFaculty = async (
       // Explicitly map allowed fields to avoid Prisma errors with extra/invalid data
       const data: any = {};
       if (upd.name !== undefined) data.name = upd.name;
-      if (upd.email !== undefined) data.email = upd.email;
+      if (upd.email !== undefined) {
+        if (user.role !== UserRole.WEBMASTER) {
+          results.push({
+            username: rawUsername,
+            status: "error",
+            reason: "Only webmaster can change faculty email",
+          });
+          continue;
+        }
+        data.email = upd.email;
+      }
       if (upd.role !== undefined) data.role = upd.role;
       if (upd.designation !== undefined) data.designation = upd.designation;
       if (upd.department !== undefined) data.department = upd.department;
