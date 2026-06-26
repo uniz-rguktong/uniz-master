@@ -502,6 +502,35 @@ export const sendGrievanceSubmissionNotification = async (
   }
 };
 
+export const sendGrievanceResolvedNotification = async (
+  email: string,
+  studentName: string,
+  category: string,
+): Promise<boolean> => {
+  try {
+    const safeName = studentName?.trim() || "Student";
+    const content = `
+      <p>Dear <strong>${safeName}</strong>,</p>
+      <p>Your concern about <strong>${category}</strong> has been received and we will resolve it.</p>
+      <div style="background-color: #f0fdf4; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #bbf7d0;">
+        <p style="margin: 0;"><strong>Category:</strong> ${category}</p>
+        <p style="margin: 10px 0 0 0;"><strong>Status:</strong> Resolved</p>
+      </div>
+      <p>The Student Welfare Office has reviewed your grievance. Thank you for bringing this to our attention.</p>
+    `;
+
+    return await sendEmailUnified({
+      from: '"UniZ SWO" <no-reply@rguktong.in>',
+      to: email,
+      subject: `Grievance update: ${category}`,
+      html: emailTemplate("Grievance Resolved", content),
+    });
+  } catch (error) {
+    console.error(`Failed to send grievance resolved email:`, error);
+    return false;
+  }
+};
+
 export const sendActionConfirmationToAdmin = async (
   adminEmail: string,
   action: "approved" | "rejected",
