@@ -448,12 +448,19 @@ export const searchStudents = async (
     year,
     batch,
     gender,
+    section,
+    category,
+    campus,
     page = 1,
     limit = 10,
     isSuspended,
     minCgpa,
     maxCgpa,
+    minBacklogs,
+    maxBacklogs,
     hasRemedials, // "all" | "active" | "cleared"
+    sortBy = "username",
+    sortDir = "asc",
   } = req.body;
 
   try {
@@ -479,6 +486,15 @@ export const searchStudents = async (
       where.year = { equals: year, mode: "insensitive" };
     }
     if (gender && String(gender).toUpperCase() !== "ALL") where.gender = gender;
+    if (section && String(section).toUpperCase() !== "ALL") {
+      where.section = { equals: String(section), mode: "insensitive" };
+    }
+    if (category && String(category).toUpperCase() !== "ALL") {
+      where.category = { equals: String(category), mode: "insensitive" };
+    }
+    if (campus && String(campus).toUpperCase() !== "ALL") {
+      where.campus = { equals: String(campus), mode: "insensitive" };
+    }
     if (
       isSuspended !== undefined &&
       String(isSuspended).toUpperCase() !== "ALL"
@@ -528,6 +544,32 @@ export const searchStudents = async (
       where.totalBacklogs = { equals: 0 };
     }
 
+    if (
+      (minBacklogs !== undefined && minBacklogs !== "") ||
+      (maxBacklogs !== undefined && maxBacklogs !== "")
+    ) {
+      where.totalBacklogs = where.totalBacklogs || {};
+      if (minBacklogs !== undefined && minBacklogs !== "")
+        where.totalBacklogs.gte = Number(minBacklogs);
+      if (maxBacklogs !== undefined && maxBacklogs !== "")
+        where.totalBacklogs.lte = Number(maxBacklogs);
+    }
+
+    const sortFieldMap: Record<string, string> = {
+      username: "username",
+      name: "name",
+      email: "email",
+      branch: "branch",
+      year: "year",
+      batch: "batch",
+      section: "section",
+      cgpa: "cgpa",
+      total_backlogs: "totalBacklogs",
+    };
+    const orderField =
+      sortFieldMap[String(sortBy).toLowerCase()] || "username";
+    const orderDirection = String(sortDir).toLowerCase() === "desc" ? "desc" : "asc";
+
     // Disable aggressive caching for searches
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     const [students, total] = await Promise.all([
@@ -535,7 +577,7 @@ export const searchStudents = async (
         where,
         skip,
         take: Number(limit),
-        orderBy: { username: "asc" },
+        orderBy: { [orderField]: orderDirection },
       }),
       prisma.studentProfile.count({ where }),
     ]);

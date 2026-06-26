@@ -13,6 +13,13 @@ import {
   X,
   FileSpreadsheet,
   Trash2,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown,
+  SlidersHorizontal,
+  CheckSquare,
+  Square,
+  Pencil,
 } from "lucide-react";
 import StudentPerformanceModal from "./StudentPerformanceModal";
 import StudentDashboard from "./StudentDashboard";
@@ -42,6 +49,7 @@ import {
   GET_AVAILABLE_BATCHES,
   ADMIN_STUDENT_EXPORT,
   ADMIN_DELETE_STUDENT,
+  ADMIN_UPDATE_STUDENT,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 
@@ -80,6 +88,65 @@ function TableSkeleton() {
     </div>
   );
 }
+
+type SortKey =
+  | "username"
+  | "name"
+  | "email"
+  | "branch"
+  | "year"
+  | "batch"
+  | "section"
+  | "cgpa"
+  | "total_backlogs";
+
+const SORTABLE_KEYS = new Set<string>([
+  "username",
+  "name",
+  "email",
+  "branch",
+  "year",
+  "batch",
+  "section",
+  "cgpa",
+  "total_backlogs",
+]);
+
+const EDITABLE_KEYS = new Set<string>([
+  "name",
+  "email",
+  "branch",
+  "year",
+  "batch",
+  "section",
+  "phone_number",
+  "gender",
+  "blood_group",
+  "roomno",
+  "cgpa",
+  "total_backlogs",
+]);
+
+const COLUMN_API_FIELD: Record<string, string> = {
+  name: "name",
+  email: "email",
+  branch: "branch",
+  year: "year",
+  batch: "batch",
+  section: "section",
+  phone_number: "phone",
+  gender: "gender",
+  blood_group: "bloodGroup",
+  roomno: "roomno",
+  cgpa: "cgpa",
+  total_backlogs: "totalBacklogs",
+};
+
+const BRANCH_OPTIONS = ["ALL", "CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME", "AI&ML"];
+const YEAR_OPTIONS = ["ALL", "E1", "E2", "E3", "E4"];
+const GENDER_OPTIONS = ["ALL", "M", "F", "Other"];
+const CATEGORY_OPTIONS = ["ALL", "GENERAL", "OBC", "SC", "ST", "EWS"];
+const CAMPUS_OPTIONS = ["ALL", "ONGOLE", "NIDADAVOLE"];
 
 const COLUMNS: { key: string; label: string; className?: string }[] = [
   { key: "row", label: "#", className: "w-12 text-center" },
@@ -153,9 +220,25 @@ export default function StudentDetails() {
     hasRemedials: "all",
     minCgpa: "",
     maxCgpa: "",
+    minBacklogs: "",
+    maxBacklogs: "",
     isPresentInCampus: "ALL",
     isSuspended: "ALL",
+    isApplicationPending: "ALL",
+    gender: "ALL",
+    section: "ALL",
+    category: "ALL",
+    campus: "ALL",
   });
+  const [sortBy, setSortBy] = useState<SortKey>("username");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [editingCell, setEditingCell] = useState<{ username: string; key: string } | null>(
+    null,
+  );
+  const [cellDraft, setCellDraft] = useState("");
+  const [savingCell, setSavingCell] = useState<string | null>(null);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [availableBatches, setAvailableBatches] = useState<string[]>([]);
 
   const [pagination, setPagination] = useState({
@@ -244,6 +327,8 @@ export default function StudentDetails() {
             year,
             batch,
             ...intelligenceFilters,
+            sortBy,
+            sortDir,
             page,
             limit: PAGE_SIZE,
           }),
@@ -266,7 +351,7 @@ export default function StudentDetails() {
         if (gen === fetchGenRef.current) setLoading(false);
       }
     },
-    [query, branch, year, batch, intelligenceFilters, enrichAttendance],
+    [query, branch, year, batch, intelligenceFilters, sortBy, sortDir, enrichAttendance],
   );
 
   useEffect(() => {
@@ -283,7 +368,7 @@ export default function StudentDetails() {
     if (skipAutoSearchRef.current) return;
     const t = setTimeout(() => fetchStudents(1), SEARCH_DEBOUNCE_MS);
     return () => clearTimeout(t);
-  }, [query, branch, year, batch, intelligenceFilters, fetchStudents]);
+  }, [query, branch, year, batch, intelligenceFilters, sortBy, sortDir, fetchStudents]);
 
   useEffect(() => {
     if (!query || query.trim().length < 2) {
@@ -372,6 +457,233 @@ export default function StudentDetails() {
     detailData && selectedRow && detailData.username === selectedRow.username
       ? detailData.name || selectedRow.name || selectedRow.username
       : selectedRow?.name || selectedRow?.username || "";
+
+  const pageUsernames = rows.map((r) => r.username);
+  const allPageSelected =
+    pageUsernames.length > 0 && pageUsernames.every((id) => selectedIds.has(id));
+  const somePageSelected = pageUsernames.some((id) => selectedIds.has(id));
+
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (allPageSelected) pageUsernames.forEach((id) => next.delete(id));
+      else pageUsernames.forEach((id) => next.add(id));
+      return next;
+    });
+  };
+
+  const toggleRowSelect = (username: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(username)) next.delete(username);
+      else next.add(username);
+      return next;
+    });
+  };
+
+  const handleSort = (key: string) => {
+    if (!SORTABLE_KEYS.has(key)) return;
+    const k = key as SortKey;
+    if (sortBy === k) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else {
+      setSortBy(k);
+      setSortDir("asc");
+    }
+  };
+
+  const clearAllFilters = () => {
+    setQuery("");
+    setBranch("ALL");
+    setYear("ALL");
+    setBatch("ALL");
+    setIntelligenceFilters({
+      hasRemedials: "all",
+      minCgpa: "",
+      maxCgpa: "",
+      minBacklogs: "",
+      maxBacklogs: "",
+      isPresentInCampus: "ALL",
+      isSuspended: "ALL",
+      isApplicationPending: "ALL",
+      gender: "ALL",
+      section: "ALL",
+      category: "ALL",
+      campus: "ALL",
+    });
+    setSortBy("username");
+    setSortDir("asc");
+  };
+
+  const activeFilterCount = [
+    branch !== "ALL",
+    year !== "ALL",
+    batch !== "ALL",
+    query.trim().length > 0,
+    intelligenceFilters.gender !== "ALL",
+    intelligenceFilters.section !== "ALL",
+    intelligenceFilters.category !== "ALL",
+    intelligenceFilters.campus !== "ALL",
+    intelligenceFilters.hasRemedials !== "all",
+    intelligenceFilters.isPresentInCampus !== "ALL",
+    intelligenceFilters.isSuspended !== "ALL",
+    intelligenceFilters.isApplicationPending !== "ALL",
+    intelligenceFilters.minCgpa !== "",
+    intelligenceFilters.maxCgpa !== "",
+    intelligenceFilters.minBacklogs !== "",
+    intelligenceFilters.maxBacklogs !== "",
+  ].filter(Boolean).length;
+
+  const startCellEdit = (row: StudentRow, key: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!EDITABLE_KEYS.has(key)) return;
+    const raw = row[key];
+    setEditingCell({ username: row.username, key });
+    setCellDraft(
+      key === "cgpa"
+        ? raw != null
+          ? String(raw)
+          : ""
+        : key === "total_backlogs"
+          ? String(raw ?? 0)
+          : String(raw ?? ""),
+    );
+  };
+
+  const saveCellEdit = async (username: string, key: string) => {
+    const apiField = COLUMN_API_FIELD[key];
+    if (!apiField) return;
+
+    let payloadValue: string | number = cellDraft.trim();
+    if (key === "cgpa") payloadValue = Number(cellDraft) || 0;
+    if (key === "total_backlogs") payloadValue = parseInt(cellDraft, 10) || 0;
+
+    setSavingCell(`${username}:${key}`);
+    try {
+      const res = await fetch(ADMIN_UPDATE_STUDENT(username), {
+        method: "PUT",
+        headers: authHeaders(),
+        body: JSON.stringify({ [apiField]: payloadValue }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRows((prev) =>
+          prev.map((r) =>
+            r.username === username
+              ? { ...r, ...(data.student || {}), [key]: payloadValue }
+              : r,
+          ),
+        );
+        if (detailData?.username === username && data.student) {
+          setDetailData(data.student);
+        }
+        toast.success("Cell updated");
+      } else {
+        toast.error(data.message || "Update failed");
+      }
+    } catch {
+      toast.error("Failed to save cell");
+    } finally {
+      setSavingCell(null);
+      setEditingCell(null);
+    }
+  };
+
+  const cancelCellEdit = () => {
+    setEditingCell(null);
+    setCellDraft("");
+  };
+
+  const renderSortIcon = (key: string) => {
+    if (!SORTABLE_KEYS.has(key)) return null;
+    if (sortBy !== key) return <ArrowUpDown size={11} className="text-zinc-300" />;
+    return sortDir === "asc" ? (
+      <ArrowUp size={11} className="text-zinc-700" />
+    ) : (
+      <ArrowDown size={11} className="text-zinc-700" />
+    );
+  };
+
+  const renderEditableCell = (row: StudentRow, col: (typeof COLUMNS)[number]) => {
+    const isEditing =
+      editingCell?.username === row.username && editingCell?.key === col.key;
+    const isSaving = savingCell === `${row.username}:${col.key}`;
+
+    if (isEditing) {
+      if (col.key === "branch") {
+        return (
+          <select
+            autoFocus
+            value={cellDraft}
+            onChange={(e) => setCellDraft(e.target.value)}
+            onBlur={() => saveCellEdit(row.username, col.key)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") saveCellEdit(row.username, col.key);
+              if (e.key === "Escape") cancelCellEdit();
+            }}
+            onClick={(e) => e.stopPropagation()}
+            className={cn(adminSelectClass, "h-7 text-[11px] min-w-[72px]")}
+          >
+            {BRANCH_OPTIONS.filter((b) => b !== "ALL").map((b) => (
+              <option key={b} value={b}>
+                {b}
+              </option>
+            ))}
+          </select>
+        );
+      }
+      if (col.key === "year") {
+        return (
+          <select
+            autoFocus
+            value={cellDraft}
+            onChange={(e) => setCellDraft(e.target.value)}
+            onBlur={() => saveCellEdit(row.username, col.key)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") saveCellEdit(row.username, col.key);
+              if (e.key === "Escape") cancelCellEdit();
+            }}
+            onClick={(e) => e.stopPropagation()}
+            className={cn(adminSelectClass, "h-7 text-[11px]")}
+          >
+            {YEAR_OPTIONS.filter((y) => y !== "ALL").map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+        );
+      }
+      return (
+        <input
+          autoFocus
+          type={col.key === "cgpa" || col.key === "total_backlogs" ? "number" : "text"}
+          step={col.key === "cgpa" ? "0.01" : undefined}
+          value={cellDraft}
+          onChange={(e) => setCellDraft(e.target.value)}
+          onBlur={() => saveCellEdit(row.username, col.key)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") saveCellEdit(row.username, col.key);
+            if (e.key === "Escape") cancelCellEdit();
+          }}
+          onClick={(e) => e.stopPropagation()}
+          className={cn(adminInputClass, "h-7 text-[11px] py-1")}
+        />
+      );
+    }
+
+    return (
+      <span className="inline-flex items-center gap-1 group/cell">
+        {cellValue(row, col.key, 0)}
+        {EDITABLE_KEYS.has(col.key) && (
+          <Pencil
+            size={10}
+            className="opacity-0 group-hover/cell:opacity-40 text-zinc-400 shrink-0"
+          />
+        )}
+        {isSaving && <Loader2 size={10} className="animate-spin text-zinc-400" />}
+      </span>
+    );
+  };
 
   const handleExport = async () => {
     setExporting(true);
@@ -611,27 +923,36 @@ export default function StudentDetails() {
               )}
             </AnimatePresence>
           </div>
-          {(loading || enriching) && (
-            <span className={cn(adminChipClass, "self-center shrink-0")}>
-              {loading ? "Searching…" : "Loading attendance…"}
-            </span>
-          )}
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setShowAdvancedFilters((v) => !v)}
+              className={cn(
+                adminGhostButtonClass,
+                "h-10",
+                showAdvancedFilters && "bg-zinc-100 border-zinc-300",
+              )}
+            >
+              <SlidersHorizontal size={14} />
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 rounded-full bg-zinc-900 text-white text-[10px] font-semibold">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+            {activeFilterCount > 0 && (
+              <button type="button" onClick={clearAllFilters} className={adminGhostButtonClass}>
+                Clear all
+              </button>
+            )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
           {[
-            {
-              label: "Branch",
-              value: branch,
-              onChange: setBranch,
-              options: ["ALL", "CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"],
-            },
-            {
-              label: "Year",
-              value: year,
-              onChange: setYear,
-              options: ["ALL", "E1", "E2", "E3", "E4"],
-            },
+            { label: "Branch", value: branch, onChange: setBranch, options: BRANCH_OPTIONS },
+            { label: "Year", value: year, onChange: setYear, options: YEAR_OPTIONS },
             {
               label: "Batch",
               value: batch,
@@ -639,36 +960,31 @@ export default function StudentDetails() {
               options: ["ALL", ...availableBatches],
             },
             {
-              label: "Remedials",
-              value: intelligenceFilters.hasRemedials,
+              label: "Gender",
+              value: intelligenceFilters.gender,
               onChange: (v: string) =>
-                setIntelligenceFilters((f) => ({ ...f, hasRemedials: v })),
-              options: [
-                { v: "all", l: "All" },
-                { v: "active", l: "Active BL" },
-                { v: "cleared", l: "Cleared" },
-              ],
+                setIntelligenceFilters((f) => ({ ...f, gender: v })),
+              options: GENDER_OPTIONS,
             },
             {
-              label: "Campus",
-              value: intelligenceFilters.isPresentInCampus,
+              label: "Section",
+              value: intelligenceFilters.section,
               onChange: (v: string) =>
-                setIntelligenceFilters((f) => ({ ...f, isPresentInCampus: v })),
-              options: [
-                { v: "ALL", l: "Any" },
-                { v: "true", l: "In" },
-                { v: "false", l: "Out" },
-              ],
+                setIntelligenceFilters((f) => ({ ...f, section: v })),
+              options: ["ALL", "A", "B", "C", "D"],
             },
             {
-              label: "Status",
-              value: intelligenceFilters.isSuspended,
-              onChange: (v: string) =>
-                setIntelligenceFilters((f) => ({ ...f, isSuspended: v })),
+              label: "Sort by",
+              value: sortBy,
+              onChange: (v: string) => setSortBy(v as SortKey),
               options: [
-                { v: "ALL", l: "Any" },
-                { v: "false", l: "Active" },
-                { v: "true", l: "Suspended" },
+                { v: "username", l: "Student ID" },
+                { v: "name", l: "Name" },
+                { v: "branch", l: "Branch" },
+                { v: "year", l: "Year" },
+                { v: "batch", l: "Batch" },
+                { v: "cgpa", l: "CGPA" },
+                { v: "total_backlogs", l: "Backlogs" },
               ],
             },
           ].map((f) => (
@@ -700,37 +1016,146 @@ export default function StudentDetails() {
             </div>
           ))}
           <div className="space-y-1">
-            <span className={adminLabelClass}>Min CGPA</span>
-            <input
-              type="number"
-              step="0.01"
-              placeholder="0"
-              value={intelligenceFilters.minCgpa}
-              onChange={(e) =>
-                setIntelligenceFilters((f) => ({ ...f, minCgpa: e.target.value }))
-              }
-              className={cn(adminInputClass, "h-9 text-[11px]")}
-            />
-          </div>
-          <div className="space-y-1">
-            <span className={adminLabelClass}>Max CGPA</span>
-            <input
-              type="number"
-              step="0.01"
-              placeholder="10"
-              value={intelligenceFilters.maxCgpa}
-              onChange={(e) =>
-                setIntelligenceFilters((f) => ({ ...f, maxCgpa: e.target.value }))
-              }
-              className={cn(adminInputClass, "h-9 text-[11px]")}
-            />
+            <span className={adminLabelClass}>Order</span>
+            <div className="relative">
+              <select
+                value={sortDir}
+                onChange={(e) => setSortDir(e.target.value as "asc" | "desc")}
+                className={cn(adminSelectClass, "h-9 text-[11px]")}
+              >
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+              </select>
+              <ChevronDown
+                size={12}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+              />
+            </div>
           </div>
         </div>
+
+        <AnimatePresence>
+          {showAdvancedFilters && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="pt-3 border-t border-zinc-100 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                {[
+                  {
+                    label: "Remedials",
+                    value: intelligenceFilters.hasRemedials,
+                    onChange: (v: string) =>
+                      setIntelligenceFilters((f) => ({ ...f, hasRemedials: v })),
+                    options: [
+                      { v: "all", l: "All" },
+                      { v: "active", l: "Active BL" },
+                      { v: "cleared", l: "Cleared" },
+                    ],
+                  },
+                  {
+                    label: "On campus",
+                    value: intelligenceFilters.isPresentInCampus,
+                    onChange: (v: string) =>
+                      setIntelligenceFilters((f) => ({ ...f, isPresentInCampus: v })),
+                    options: [
+                      { v: "ALL", l: "Any" },
+                      { v: "true", l: "In" },
+                      { v: "false", l: "Out" },
+                    ],
+                  },
+                  {
+                    label: "Account",
+                    value: intelligenceFilters.isSuspended,
+                    onChange: (v: string) =>
+                      setIntelligenceFilters((f) => ({ ...f, isSuspended: v })),
+                    options: [
+                      { v: "ALL", l: "Any" },
+                      { v: "false", l: "Active" },
+                      { v: "true", l: "Suspended" },
+                    ],
+                  },
+                  {
+                    label: "Application",
+                    value: intelligenceFilters.isApplicationPending,
+                    onChange: (v: string) =>
+                      setIntelligenceFilters((f) => ({ ...f, isApplicationPending: v })),
+                    options: [
+                      { v: "ALL", l: "Any" },
+                      { v: "true", l: "Pending" },
+                      { v: "false", l: "Clear" },
+                    ],
+                  },
+                  {
+                    label: "Category",
+                    value: intelligenceFilters.category,
+                    onChange: (v: string) =>
+                      setIntelligenceFilters((f) => ({ ...f, category: v })),
+                    options: CATEGORY_OPTIONS,
+                  },
+                  {
+                    label: "Campus site",
+                    value: intelligenceFilters.campus,
+                    onChange: (v: string) =>
+                      setIntelligenceFilters((f) => ({ ...f, campus: v })),
+                    options: CAMPUS_OPTIONS,
+                  },
+                ].map((f) => (
+                  <div key={f.label} className="space-y-1">
+                    <span className={adminLabelClass}>{f.label}</span>
+                    <select
+                      value={f.value}
+                      onChange={(e) => f.onChange(e.target.value)}
+                      className={cn(adminSelectClass, "h-9 text-[11px]")}
+                    >
+                      {(f.options as any[]).map((o) =>
+                        typeof o === "string" ? (
+                          <option key={o} value={o}>
+                            {o}
+                          </option>
+                        ) : (
+                          <option key={o.v} value={o.v}>
+                            {o.l}
+                          </option>
+                        ),
+                      )}
+                    </select>
+                  </div>
+                ))}
+                {[
+                  { label: "Min CGPA", key: "minCgpa" as const, max: "10" },
+                  { label: "Max CGPA", key: "maxCgpa" as const, max: "10" },
+                  { label: "Min BL", key: "minBacklogs" as const, max: "20" },
+                  { label: "Max BL", key: "maxBacklogs" as const, max: "20" },
+                ].map((f) => (
+                  <div key={f.key} className="space-y-1">
+                    <span className={adminLabelClass}>{f.label}</span>
+                    <input
+                      type="number"
+                      step={f.key.includes("Cgpa") ? "0.01" : "1"}
+                      placeholder="—"
+                      value={intelligenceFilters[f.key]}
+                      onChange={(e) =>
+                        setIntelligenceFilters((prev) => ({
+                          ...prev,
+                          [f.key]: e.target.value,
+                        }))
+                      }
+                      className={cn(adminInputClass, "h-9 text-[11px]")}
+                    />
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Sheet toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className={adminChipClass}>
             {pagination.total.toLocaleString()} students
           </span>
@@ -744,9 +1169,21 @@ export default function StudentDetails() {
               )}
             </span>
           )}
+          {selectedIds.size > 0 && (
+            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-zinc-900 text-white text-[11px] font-semibold">
+              {selectedIds.size} selected
+              <button
+                type="button"
+                onClick={() => setSelectedIds(new Set())}
+                className="opacity-70 hover:opacity-100"
+              >
+                <X size={12} />
+              </button>
+            </span>
+          )}
         </div>
         <p className="text-[11px] text-zinc-400">
-          Click a row for full profile · Double-click for grades & attendance charts
+          Click row for profile · Double-click for charts · Click cell to edit inline
         </p>
       </div>
 
@@ -761,19 +1198,41 @@ export default function StudentDetails() {
         </div>
       ) : (
         <div className={cn(adminCardClass, "overflow-hidden")}>
-          <div className="overflow-x-auto custom-sidebar-scroll">
-            <table className="w-full border-collapse text-[12px] min-w-[1400px]">
-              <thead>
-                <tr className="bg-zinc-50 border-b border-zinc-200">
+          <div className="overflow-x-auto custom-sidebar-scroll max-h-[calc(100vh-22rem)]">
+            <table className="w-full border-collapse text-[12px] min-w-[1500px]">
+              <thead className="sticky top-0 z-10">
+                <tr className="bg-zinc-50 border-b border-zinc-200 shadow-sm">
+                  <th className="w-10 px-2 py-2.5 border-r border-zinc-100">
+                    <button
+                      type="button"
+                      onClick={toggleSelectAll}
+                      className="flex items-center justify-center w-full text-zinc-500 hover:text-zinc-900"
+                      title={allPageSelected ? "Deselect page" : "Select page"}
+                    >
+                      {allPageSelected ? (
+                        <CheckSquare size={15} />
+                      ) : somePageSelected ? (
+                        <CheckSquare size={15} className="text-zinc-400" />
+                      ) : (
+                        <Square size={15} />
+                      )}
+                    </button>
+                  </th>
                   {COLUMNS.map((col) => (
                     <th
                       key={col.key}
+                      onClick={() => handleSort(col.key)}
                       className={cn(
                         "px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wide text-zinc-500 whitespace-nowrap border-r border-zinc-100 last:border-r-0",
+                        SORTABLE_KEYS.has(col.key) &&
+                          "cursor-pointer hover:bg-zinc-100/80 select-none",
                         col.className,
                       )}
                     >
-                      {col.label}
+                      <span className="inline-flex items-center gap-1">
+                        {col.label}
+                        {renderSortIcon(col.key)}
+                      </span>
                     </th>
                   ))}
                   <th className="w-10 px-2 py-2.5 border-l border-zinc-100" />
@@ -787,25 +1246,48 @@ export default function StudentDetails() {
                     onDoubleClick={() => handleOpenPerformance(row)}
                     className={cn(
                       "border-b border-zinc-100 cursor-pointer transition-colors",
-                      selectedRow?.username === row.username
+                      selectedIds.has(row.username) && "bg-zinc-100",
+                      selectedRow?.username === row.username && !selectedIds.has(row.username)
                         ? "bg-zinc-100/80"
-                        : "hover:bg-zinc-50/80",
+                        : !selectedIds.has(row.username) && "hover:bg-zinc-50/80",
                       idx % 2 === 0 ? "bg-white" : "bg-zinc-50/30",
                     )}
                   >
+                    <td
+                      className="px-2 py-2 border-r border-zinc-50"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => toggleRowSelect(row.username)}
+                        className="flex items-center justify-center w-full text-zinc-400 hover:text-zinc-900"
+                      >
+                        {selectedIds.has(row.username) ? (
+                          <CheckSquare size={15} className="text-zinc-900" />
+                        ) : (
+                          <Square size={15} />
+                        )}
+                      </button>
+                    </td>
                     {COLUMNS.map((col) => (
                       <td
                         key={col.key}
+                        onClick={(e) => {
+                          if (EDITABLE_KEYS.has(col.key)) startCellEdit(row, col.key, e);
+                        }}
                         className={cn(
                           "px-3 py-2 text-zinc-800 whitespace-nowrap border-r border-zinc-50 last:border-r-0 font-medium",
                           col.key === "username" && "font-semibold text-zinc-900 tabular-nums",
                           col.key === "email" && "text-zinc-500 text-[11px]",
                           col.key === "cgpa" && adminNumsClass,
                           col.key === "attendance_pct" && adminNumsClass,
+                          EDITABLE_KEYS.has(col.key) && "hover:ring-1 hover:ring-inset hover:ring-zinc-200",
                           col.className,
                         )}
                       >
-                        {cellValue(row, col.key, rangeStart + idx)}
+                        {EDITABLE_KEYS.has(col.key)
+                          ? renderEditableCell(row, col)
+                          : cellValue(row, col.key, rangeStart + idx)}
                       </td>
                     ))}
                     <td className="px-2 py-2 border-l border-zinc-50 text-zinc-300">
@@ -822,7 +1304,10 @@ export default function StudentDetails() {
       <Pagination
         currentPage={pagination.page}
         totalPages={pagination.totalPages}
-        onPageChange={(p) => fetchStudents(p)}
+        onPageChange={(p) => {
+          setSelectedIds(new Set());
+          fetchStudents(p);
+        }}
       />
 
       {/* Detail drawer */}
