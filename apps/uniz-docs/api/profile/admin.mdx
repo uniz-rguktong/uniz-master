@@ -537,3 +537,53 @@ curl --request GET \
   ]
 }
 ```
+
+---
+
+## Delete a student
+
+`DELETE /profile/admin/student/:username`
+
+Permanently removes a student and purges related records across auth, academics, outpass, and notifications.
+
+**Auth required:** Webmaster
+
+```bash
+curl --request DELETE \
+  --url https://api.uniz.rguktong.in/api/v1/profile/admin/student/O210008 \
+  --header 'Authorization: Bearer <token>'
+```
+
+**200 OK**
+
+```json
+{
+  "success": true,
+  "message": "Student O210008 permanently deleted",
+  "username": "O210008"
+}
+```
+
+---
+
+## Bulk delete students
+
+`DELETE /profile/admin/student/bulk-delete`
+
+**Auth required:** Webmaster
+
+```json
+{
+  "usernames": ["O210008", "O210009"]
+}
+```
+
+Maximum **100** usernames per request. Each account is purged through the same cross-service pipeline as single delete.
+
+---
+
+## Promote cohort
+
+`POST /profile/admin/student/promote`
+
+Bulk-update `year` for a cohort (e.g. E3 → E4, or E4 → `PASSED_OUT`). See [Academic Management — Global cohort promotion](/admin/academics#global-cohort-promotion-protocol).

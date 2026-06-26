@@ -17,7 +17,8 @@ Every user in UniZ is assigned a role when their account is created. Your role d
 | `director`                            | Director of the institution | Super authority, student status override               |
 | `security`                            | Security staff at gates     | Gate check-in/check-out, approved outpass verification |
 | `faculty`                             | Teaching staff              | Grade and attendance uploads, student record access    |
-| `webmaster`                           | Platform administrator      | Banner management, announcements, system health        |
+| `hod`                                 | Head of Department          | Department-scoped student view, elective review, registration tracking |
+| `webmaster`                           | Platform administrator      | Semester builder, banners, bulk data, system health    |
 
 ---
 
@@ -32,6 +33,7 @@ Every user in UniZ is assigned a role when their account is created. Your role d
     - View your grades and subject-wise attendance
     - Submit outpass requests (multi-day leave from campus)
     - Submit outing requests (short-duration exits)
+    - **Register semester subjects** when registration is open (Register tab)
     - Track the status and history of your requests
     - Update personal contact details
 
@@ -77,9 +79,26 @@ Every user in UniZ is assigned a role when their account is created. Your role d
     **You can:**
     - Review outpass requests escalated from the warden level
     - Approve or reject requests with comments
+    - **View and resolve student grievances** (with email notification to verified students)
     - Act as an intermediary step in the full approval chain
 
     The SWO sits between the warden and the final authority (dean/director) in the approval workflow.
+
+  </Card>
+
+  <Card title="HOD" icon="user-graduate" href="/admin/semester-registration">
+    Head of Department — department-scoped academic access.
+
+    **You can:**
+    - View **read-only** student profiles in your department only
+    - Review and edit elective allocations during `HOD_REVIEW`
+    - Track semester registration completion for your branch
+    - Export/search students within your department
+
+    **You cannot:**
+    - View students outside your department
+    - Delete students or change roles
+    - Give final outpass approval (unless also assigned dean/director)
 
   </Card>
 
@@ -152,6 +171,7 @@ Every user in UniZ is assigned a role when their account is created. Your role d
 
 - Create campus announcements and banners (title, body text, image)
 - Publish or unpublish banners — published banners appear to all logged-in users
+- **Build semesters**, open registration, and track enrollment
 - Manage technical configurations
 - Monitor real-time system health across all UniZ services
 

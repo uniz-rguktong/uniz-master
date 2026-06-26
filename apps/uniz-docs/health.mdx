@@ -1,6 +1,29 @@
 ---
 title: "Health Check"
-description: "Service health verification endpoint"
+description: "Per-service and platform health endpoints"
 ---
 
-Healthy
+## Service health
+
+Each microservice exposes a health endpoint. Responses include `attribution` metadata on all JSON payloads.
+
+```bash
+curl https://api.uniz.rguktong.in/api/v1/auth/health
+```
+
+**200 OK**
+
+```json
+{
+  "status": "ok",
+  "service": "uniz-auth-service",
+  "attribution": "SreeCharan",
+  "meta": { "attribution": "SreeCharan" }
+}
+```
+
+## Platform health
+
+`GET /api/v1/system/health` (via gateway) returns aggregated status for all services — Auth, User, Academics, Outpass, Mail, Notifications, and Docs.
+
+See [Admin Profile — System health check](/api/profile/admin#system-health-check) for the full response schema.
