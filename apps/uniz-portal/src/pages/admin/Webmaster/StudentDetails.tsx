@@ -53,6 +53,8 @@ import {
   ADMIN_UPDATE_STUDENT,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { parseJwt } from "../../../utils/security";
+import { resolveAdminPortalRole, resolveHodBranch } from "../../../utils/adminRole";
 
 const PAGE_SIZE = 25;
 const SEARCH_DEBOUNCE_MS = 450;
@@ -151,7 +153,7 @@ const COLUMN_API_FIELD: Record<string, string> = {
 };
 
 const BRANCH_OPTIONS = ["ALL", "CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME", "AI&ML"];
-const YEAR_OPTIONS = ["ALL", "E1", "E2", "E3", "E4"];
+const YEAR_OPTIONS = ["ALL", "E1", "E2", "E3", "E4", "PASSED_OUT"];
 const GENDER_OPTIONS = ["ALL", "M", "F", "Other"];
 const CATEGORY_OPTIONS = ["ALL", "GENERAL", "OBC", "SC", "ST", "EWS"];
 const CAMPUS_OPTIONS = ["ALL", "ONGOLE", "NIDADAVOLE"];
@@ -225,6 +227,13 @@ function cellValue(row: StudentRow, key: string, rowIndex: number) {
 }
 
 export default function StudentDetails() {
+  const adminToken = localStorage.getItem("admin_token");
+  const decoded = adminToken ? parseJwt(adminToken) : null;
+  const username = (localStorage.getItem("username") || "").replace(/"/g, "");
+  const portalRole = resolveAdminPortalRole(decoded, username);
+  const isHodReadOnly = portalRole === "hod";
+  const hodBranch = isHodReadOnly ? resolveHodBranch(decoded, username) : "";
+
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -244,7 +253,9 @@ export default function StudentDetails() {
   const enrichGenRef = useRef(0);
   const skipAutoSearchRef = useRef(true);
 
-  const [branch, setBranch] = useState("ALL");
+  const [branch, setBranch] = useState(() =>
+    isHodReadOnly && hodBranch ? hodBranch : "ALL",
+  );
   const [year, setYear] = useState("ALL");
   const [batch, setBatch] = useState("ALL");
   const [intelligenceFilters, setIntelligenceFilters] = useState({
@@ -305,6 +316,8 @@ export default function StudentDetails() {
     "Content-Type": "application/json",
   });
 
+  const effectiveBranch = isHodReadOnly ? hodBranch : branch;
+
   const enrichAttendance = useCallback(async (students: StudentRow[]) => {
     if (!students.length) return;
     const gen = ++enrichGenRef.current;
@@ -358,7 +371,7 @@ export default function StudentDetails() {
           headers: authHeaders(),
           body: JSON.stringify({
             username: q ? q.toUpperCase() : undefined,
-            branch,
+            branch: effectiveBranch,
             year,
             batch,
             ...intelligenceFilters,
@@ -386,8 +399,14 @@ export default function StudentDetails() {
         if (gen === fetchGenRef.current) setLoading(false);
       }
     },
-    [query, branch, year, batch, intelligenceFilters, sortBy, sortDir, enrichAttendance],
+    [query, effectiveBranch, year, batch, intelligenceFilters, sortBy, sortDir, enrichAttendance],
   );
+
+  useEffect(() => {
+    if (isHodReadOnly && branch !== hodBranch) {
+      setBranch(hodBranch);
+    }
+  }, [isHodReadOnly, hodBranch, branch]);
 
   useEffect(() => {
     fetchBatches();
@@ -403,7 +422,7 @@ export default function StudentDetails() {
     if (skipAutoSearchRef.current) return;
     const t = setTimeout(() => fetchStudents(1), SEARCH_DEBOUNCE_MS);
     return () => clearTimeout(t);
-  }, [query, branch, year, batch, intelligenceFilters, sortBy, sortDir, fetchStudents]);
+  }, [query, effectiveBranch, year, batch, intelligenceFilters, sortBy, sortDir, fetchStudents]);
 
   useEffect(() => {
     if (!query || query.trim().length < 2) {
@@ -415,7 +434,11 @@ export default function StudentDetails() {
         const res = await fetch(SEARCH_STUDENTS, {
           method: "POST",
           headers: authHeaders(),
-          body: JSON.stringify({ username: query.trim().toUpperCase(), limit: 6 }),
+          body: JSON.stringify({
+            username: query.trim().toUpperCase(),
+            ...(isHodReadOnly && hodBranch ? { branch: hodBranch } : {}),
+            limit: 6,
+          }),
         });
         const data = await res.json();
         if (data.success) setRecommendations(data.students || []);
@@ -528,7 +551,7 @@ export default function StudentDetails() {
 
   const clearAllFilters = () => {
     setQuery("");
-    setBranch("ALL");
+    setBranch(isHodReadOnly && hodBranch ? hodBranch : "ALL");
     setYear("ALL");
     setBatch("ALL");
     setIntelligenceFilters({
@@ -550,7 +573,7 @@ export default function StudentDetails() {
   };
 
   const activeFilterCount = [
-    branch !== "ALL",
+    !isHodReadOnly && branch !== "ALL",
     year !== "ALL",
     batch !== "ALL",
     query.trim().length > 0,
@@ -570,7 +593,7 @@ export default function StudentDetails() {
 
   const startCellEdit = (row: StudentRow, key: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!EDITABLE_KEYS.has(key)) return;
+    if (isHodReadOnly || !EDITABLE_KEYS.has(key)) return;
     const raw = row[key];
     setEditingCell({ username: row.username, key });
     setCellDraft(
@@ -639,6 +662,17 @@ export default function StudentDetails() {
   };
 
   const renderNameCell = (row: StudentRow) => {
+    if (isHodReadOnly) {
+      return (
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <span className="truncate text-zinc-800 font-medium">{row.name || "—"}</span>
+          <span className="truncate text-[11px] text-zinc-500 font-normal">
+            {row.email || "—"}
+          </span>
+        </div>
+      );
+    }
+
     const isEditingName =
       editingCell?.username === row.username && editingCell?.key === "name";
     const isEditingEmail =
@@ -805,7 +839,7 @@ export default function StudentDetails() {
   const handleExport = async () => {
     setExporting(true);
     const url = ADMIN_STUDENT_EXPORT(
-      branch === "ALL" ? undefined : branch,
+      effectiveBranch === "ALL" ? undefined : effectiveBranch,
       year === "ALL" ? undefined : year,
       EXPORT_FIELDS,
       batch === "ALL" ? undefined : batch,
@@ -821,7 +855,7 @@ export default function StudentDetails() {
       const blob = await res.blob();
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `students_${branch}_${year}_${batch}_${Date.now()}.xlsx`;
+      a.download = `students_${effectiveBranch}_${year}_${batch}_${Date.now()}.xlsx`;
       a.click();
       toast.success("Excel export downloaded");
     } catch (e: any) {
@@ -999,8 +1033,27 @@ export default function StudentDetails() {
         icon={<FileSpreadsheet size={18} />}
         eyebrow="Students"
         title="Student Details"
-        subtitle="Spreadsheet view with attendance, grades, and full profile data. 25 students per page."
+        subtitle={
+          isHodReadOnly
+            ? `Read-only view for ${hodBranch || "your"} department — all years, full profile and performance data.`
+            : "Spreadsheet view with attendance, grades, and full profile data. 25 students per page."
+        }
         actions={
+          isHodReadOnly ? (
+            <button
+              type="button"
+              onClick={handleExport}
+              disabled={exporting}
+              className={adminGhostButtonClass}
+            >
+              {exporting ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Download size={14} />
+              )}
+              Export Excel
+            </button>
+          ) : (
           <>
             <button
               type="button"
@@ -1033,6 +1086,7 @@ export default function StudentDetails() {
               <UserPlus size={14} /> Add Student
             </button>
           </>
+          )
         }
       />
 
@@ -1112,7 +1166,13 @@ export default function StudentDetails() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
           {[
-            { label: "Branch", value: branch, onChange: setBranch, options: BRANCH_OPTIONS },
+            {
+              label: "Branch",
+              value: branch,
+              onChange: setBranch,
+              options: isHodReadOnly && hodBranch ? [hodBranch] : BRANCH_OPTIONS,
+              locked: isHodReadOnly,
+            },
             { label: "Year", value: year, onChange: setYear, options: YEAR_OPTIONS },
             {
               label: "Batch",
@@ -1155,7 +1215,12 @@ export default function StudentDetails() {
                 <select
                   value={f.value}
                   onChange={(e) => f.onChange(e.target.value)}
-                  className={cn(adminSelectClass, "h-9 text-[11px]")}
+                  disabled={"locked" in f && f.locked}
+                  className={cn(
+                    adminSelectClass,
+                    "h-9 text-[11px]",
+                    "locked" in f && f.locked && "opacity-70 cursor-not-allowed bg-zinc-50",
+                  )}
                 >
                   {(f.options as any[]).map((o) =>
                     typeof o === "string" ? (
@@ -1317,6 +1382,11 @@ export default function StudentDetails() {
       {/* Sheet toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
+          {isHodReadOnly && (
+            <span className={cn(adminChipClass, "bg-sky-50 text-sky-800 border border-sky-100")}>
+              Read-only · {hodBranch}
+            </span>
+          )}
           <span className={adminChipClass}>
             {pagination.total.toLocaleString()} students
           </span>
@@ -1330,7 +1400,7 @@ export default function StudentDetails() {
               )}
             </span>
           )}
-          {selectedIds.size > 0 && (
+          {!isHodReadOnly && selectedIds.size > 0 && (
             <span className="inline-flex items-center gap-2">
               <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-zinc-900 text-white text-[11px] font-semibold">
                 {selectedIds.size} selected
@@ -1357,7 +1427,9 @@ export default function StudentDetails() {
           )}
         </div>
         <p className="text-[11px] text-zinc-400">
-          Click row for profile · Double-click for charts · Click cell to edit inline
+          {isHodReadOnly
+            ? "Click row for profile · Double-click for charts"
+            : "Click row for profile · Double-click for charts · Click cell to edit inline"}
         </p>
       </div>
 
@@ -1376,6 +1448,7 @@ export default function StudentDetails() {
             <table className="w-full border-collapse text-[12px] min-w-[1280px]">
               <thead className="sticky top-0 z-30">
                 <tr className="bg-zinc-50 border-b border-zinc-200">
+                  {!isHodReadOnly && (
                   <th
                     className={stickyCellClass(
                       "checkbox",
@@ -1398,6 +1471,7 @@ export default function StudentDetails() {
                       )}
                     </button>
                   </th>
+                  )}
                   {COLUMNS.map((col) => (
                     <th
                       key={col.key}
@@ -1437,6 +1511,7 @@ export default function StudentDetails() {
                       idx % 2 === 1 && !selectedIds.has(row.username) && "bg-zinc-50/40",
                     )}
                   >
+                    {!isHodReadOnly && (
                     <td
                       className={stickyCellClass(
                         "checkbox",
@@ -1456,10 +1531,12 @@ export default function StudentDetails() {
                         )}
                       </button>
                     </td>
+                    )}
                     {COLUMNS.map((col) => (
                       <td
                         key={col.key}
                         onClick={(e) => {
+                          if (isHodReadOnly) return;
                           if (col.key === "name") return;
                           if (EDITABLE_KEYS.has(col.key)) startCellEdit(row, col.key, e);
                         }}
@@ -1473,7 +1550,8 @@ export default function StudentDetails() {
                           col.key === "username" && "font-semibold text-zinc-900 tabular-nums",
                           col.key === "cgpa" && adminNumsClass,
                           col.key === "attendance_pct" && adminNumsClass,
-                          (EDITABLE_KEYS.has(col.key) || col.key === "name") &&
+                          !isHodReadOnly &&
+                            (EDITABLE_KEYS.has(col.key) || col.key === "name") &&
                             "hover:bg-zinc-100/60 hover:ring-1 hover:ring-inset hover:ring-zinc-300/80",
                           col.className,
                         )}
@@ -1553,13 +1631,18 @@ export default function StudentDetails() {
                   <StudentDashboard
                     key={detailData.username}
                     data={detailData}
-                    onSuspendToggle={handleToggleSuspension}
-                    onResetPassword={handleGlobalResetPassword}
-                    onDeleteStudent={handleDeleteStudent}
-                    onEditDetails={(std) => {
-                      setEditingStudent(std);
-                      setEditModalOpen(true);
-                    }}
+                    readOnly={isHodReadOnly}
+                    onSuspendToggle={isHodReadOnly ? undefined : handleToggleSuspension}
+                    onResetPassword={isHodReadOnly ? undefined : handleGlobalResetPassword}
+                    onDeleteStudent={isHodReadOnly ? undefined : handleDeleteStudent}
+                    onEditDetails={
+                      isHodReadOnly
+                        ? undefined
+                        : (std) => {
+                            setEditingStudent(std);
+                            setEditModalOpen(true);
+                          }
+                    }
                     isActionLoading={
                       isActionLoading === detailData.username + "_suspend" ||
                       isActionLoading === detailData.username + "_reset"

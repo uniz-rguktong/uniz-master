@@ -42,6 +42,7 @@ import {
 
 interface StudentDashboardProps {
   data: any;
+  readOnly?: boolean;
   onSuspendToggle?: (username: string, currentStatus: boolean) => void;
   onResetPassword?: (username: string) => void;
   onDeleteStudent?: (username: string) => void;
@@ -51,6 +52,7 @@ interface StudentDashboardProps {
 
 export default function StudentDashboard({
   data,
+  readOnly = false,
   onSuspendToggle,
   onResetPassword,
   onDeleteStudent,
@@ -146,6 +148,7 @@ export default function StudentDashboard({
           <span className={adminChipClass}>{student.year}</span>
         </div>
 
+        {!readOnly && (
         <div className="flex flex-wrap justify-center gap-2.5 z-10">
           <button
             type="button"
@@ -197,6 +200,7 @@ export default function StudentDashboard({
             Delete permanently
           </button>
         </div>
+        )}
 
         <div className="w-full pt-12 border-t border-zinc-100 mt-8">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-12 gap-x-6">
