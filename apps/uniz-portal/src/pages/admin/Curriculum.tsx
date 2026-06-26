@@ -211,9 +211,11 @@ export default function CurriculumManager() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (data.success) {
+      if (res.ok && data.success) {
         toast.success("Subject deleted");
         fetchSubjects();
+      } else {
+        toast.error(data.message || "Failed to delete subject");
       }
     } catch (err) {
       toast.error("Failed to delete");

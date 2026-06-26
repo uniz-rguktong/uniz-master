@@ -1764,7 +1764,11 @@ export const deleteSubject = async (
 
     // Branch check for HOD
     if (user?.role === "hod") {
-      const hodBranch = user.username.split("_")[1]?.toUpperCase();
+      const hodBranch = String(
+        user.department || user.username.split("_")[1] || "",
+      )
+        .trim()
+        .toUpperCase();
       if (existing.department.toUpperCase() !== hodBranch) {
         return res.status(403).json({
           success: false,
@@ -1773,10 +1777,37 @@ export const deleteSubject = async (
       }
     }
 
-    await prisma.subject.delete({ where: { id } });
+    const [gradeCount, attendanceCount] = await Promise.all([
+      prisma.grade.count({ where: { subjectId: id } }),
+      prisma.attendance.count({ where: { subjectId: id } }),
+    ]);
+
+    if (gradeCount > 0 || attendanceCount > 0) {
+      return res.status(409).json({
+        success: false,
+        message: `Cannot delete subject with existing academic records (${gradeCount} grade(s), ${attendanceCount} attendance record(s)).`,
+        grades: gradeCount,
+        attendance: attendanceCount,
+      });
+    }
+
+    await prisma.$transaction([
+      prisma.registration.deleteMany({ where: { subjectId: id } }),
+      prisma.branchAllocation.deleteMany({ where: { subjectId: id } }),
+      prisma.seatingArrangement.deleteMany({ where: { subjectId: id } }),
+      prisma.subject.delete({ where: { id } }),
+    ]);
+
     return res.json({ success: true, message: "Subject deleted successfully" });
   } catch (e: any) {
     console.error("[Academics] deleteSubject Error:", e);
+    if (e?.code === "P2003") {
+      return res.status(409).json({
+        success: false,
+        message:
+          "Cannot delete subject while it is still referenced by other records.",
+      });
+    }
     return res
       .status(500)
       .json({ success: false, message: "Failed to delete subject" });
