@@ -41,6 +41,7 @@
             "pages": [
               "admin/overview",
               "admin/approvals",
+              "admin/semester-registration",
               "admin/academics",
               "admin/security"
             ]
@@ -70,7 +71,8 @@
             "pages": [
               "api/academics/grades",
               "api/academics/attendance",
-              "api/academics/subjects"
+              "api/academics/subjects",
+              "api/academics/registration"
             ]
           },
           {
@@ -78,7 +80,8 @@
             "pages": [
               "api/requests/outpass",
               "api/requests/outing",
-              "api/requests/approvals"
+              "api/requests/approvals",
+              "api/requests/grievances"
             ]
           },
           {
