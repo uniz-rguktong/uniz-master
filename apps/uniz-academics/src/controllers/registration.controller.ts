@@ -1173,7 +1173,10 @@ export const getAvailableSubjects = async (
     // 3. Check if current student has registrations for this semester
     const registrationCount = await prisma.registration.count({
       where: {
-        studentId: req.user?.username,
+        studentId: {
+          equals: String(req.user?.username || ""),
+          mode: "insensitive",
+        },
         semesterId: openSem.id,
         status: "REGISTERED",
       },
@@ -1268,7 +1271,7 @@ export const registerSubjects = async (
 
     const existingRegistrationCount = await prisma.registration.count({
       where: {
-        studentId: user.username,
+        studentId: { equals: user.username, mode: "insensitive" },
         semesterId: sem.id,
         status: "REGISTERED",
       },
