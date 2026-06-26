@@ -288,6 +288,7 @@ for i in "${!SERVICES[@]}"; do
     echo "MAIL_SERVICE_URL=http://127.0.0.1:3006"
     echo "NOTIFICATION_SERVICE_URL=http://127.0.0.1:3007"
     echo "CRON_SERVICE_URL=http://127.0.0.1:3008"
+    echo "LANDING_API_URL=http://127.0.0.1:8000"
   } >> "$path/.env"
 
   if [ -f "$path/prisma/schema.prisma" ]; then

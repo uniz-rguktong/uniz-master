@@ -73,14 +73,14 @@ export default function StudentDashboard({
           <div
             className="relative p-[4px] md:p-[5px] rounded-full"
             style={{
-              background: student.is_suspended ? "#f43f5e" : "#2ebd59",
+              background: student.is_suspended ? "#f43f5e" : "#0b2a47",
             }}
           >
             <div className="relative bg-slate-50 p-[3px] rounded-full">
               <div
                 className={cn(
                   "relative w-[110px] h-[110px] md:w-[130px] md:h-[130px] rounded-full flex justify-center items-center text-white text-[54px] font-medium overflow-hidden shadow-none transition-all duration-500",
-                  student.profile_url ? "bg-slate-50" : "bg-emerald-900",
+                  student.profile_url ? "bg-slate-50" : "bg-navy-900",
                 )}
               >
                 {student.profile_url ? (
@@ -116,9 +116,9 @@ export default function StudentDashboard({
             {student.email}
             {!student.is_suspended && (
               <BadgeCheck
-                className="w-[15px] h-[15px] text-[#2ebd59]"
-                fill="#2ebd59"
-                fillOpacity={0.15}
+                className="w-[15px] h-[15px] text-navy-900"
+                fill="#0b2a47"
+                fillOpacity={0.12}
                 strokeWidth={2.5}
               />
             )}
@@ -260,7 +260,7 @@ export default function StudentDashboard({
           label="CGPA"
           data={gpaData}
           dataKey="gpa"
-          color="#2563eb"
+          color="#0b2a47"
         />
 
         {/* Attendance Graph */}
@@ -271,7 +271,7 @@ export default function StudentDashboard({
           label="LATEST"
           data={attendanceSeries}
           dataKey="percentage"
-          color="#10b981"
+          color="#256aa6"
         />
       </div>
 

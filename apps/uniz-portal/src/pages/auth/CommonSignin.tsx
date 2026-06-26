@@ -253,7 +253,12 @@ function TurnstileWidget({
       <Turnstile
         ref={turnstileRef}
         siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-        options={{ theme: "light", size: "normal" }}
+        scriptOptions={{ defer: true, async: true }}
+        options={{
+          theme: "light",
+          size: "compact",
+          appearance: "interaction-only",
+        }}
         onSuccess={(token) => {
           captchaTokenRef.current = token;
           onTokenChange(token);

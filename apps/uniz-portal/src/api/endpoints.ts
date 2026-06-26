@@ -225,22 +225,17 @@ export const GET_SEATING_TEMPLATE = (
 export const UPLOAD_SEATING = `${BASE_URL}/academics/seating/upload`;
 export const GET_STUDENT_SEATING = `${BASE_URL}/academics/seating/student`;
 
-// Analytics Centralized
-const RAW_ANALYTICS_URL =
-  import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app";
-export const ANALYTICS_URL = RAW_ANALYTICS_URL.endsWith("/api")
-  ? RAW_ANALYTICS_URL
-  : `${RAW_ANALYTICS_URL}/api`;
+// Analytics — always via main API gateway (avoids cross-subdomain CORS to landing-api).
 export const ANALYTICS_KEY =
   import.meta.env.VITE_ANALYTICS_KEY ||
   import.meta.env.VITE_ANALYTICS_API_KEY ||
   "";
 
-export const ANALYTICS_UPLOAD_HEALTH = `${ANALYTICS_URL}/analytics/webmaster/upload-health`;
-export const ANALYTICS_SYSTEM_USERS = `${ANALYTICS_URL}/analytics/webmaster/system-users`;
-export const ANALYTICS_CAMPUS_OCCUPANCY = `${ANALYTICS_URL}/analytics/dean/campus-occupancy`;
-export const ANALYTICS_ACADEMIC_HEATMAP = `${ANALYTICS_URL}/analytics/dean/academic-heatmap`;
-export const ANALYTICS_GRIEVANCE_TRENDS = `${ANALYTICS_URL}/analytics/dean/grievance-trends`;
+export const ANALYTICS_UPLOAD_HEALTH = `${BASE_URL}/analytics/webmaster/upload-health`;
+export const ANALYTICS_SYSTEM_USERS = `${BASE_URL}/analytics/webmaster/system-users`;
+export const ANALYTICS_CAMPUS_OCCUPANCY = `${BASE_URL}/analytics/dean/campus-occupancy`;
+export const ANALYTICS_ACADEMIC_HEATMAP = `${BASE_URL}/analytics/dean/academic-heatmap`;
+export const ANALYTICS_GRIEVANCE_TRENDS = `${BASE_URL}/analytics/dean/grievance-trends`;
 
 export const STUDENT_ATTENDANCE_ANALYTICS = (id: string) =>
   `${ANALYTICS_BASE_URL}/api/analytics/student/${id}/attendance`;

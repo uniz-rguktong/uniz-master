@@ -131,6 +131,7 @@ export default function SemesterApproval({ role }: { role: string }) {
         loading={detailLoading}
         acting={acting}
         isHod={isHod}
+        myBranch={myBranch}
         canAct={selected.status === pendingStatus}
         onBack={() => setSelected(null)}
         onAct={act}
@@ -255,6 +256,7 @@ function DetailView({
   loading,
   acting,
   isHod,
+  myBranch,
   canAct,
   onBack,
   onAct,
@@ -265,6 +267,7 @@ function DetailView({
   loading: boolean;
   acting: boolean;
   isHod: boolean;
+  myBranch: string;
   canAct: boolean;
   onBack: () => void;
   onAct: (a: "approve" | "reject") => void;

@@ -239,7 +239,7 @@ export default function StudentDetails() {
           batch,
           ...(searchMode === "intelligence" ? intelligenceFilters : {}),
           page,
-          limit: searchMode === "intelligence" ? 50 : 10,
+          limit: 25,
         }),
       });
       const data = await res.json();
@@ -445,7 +445,7 @@ export default function StudentDetails() {
               setEditingStudent(null);
               setEditModalOpen(true);
             }}
-            className="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-bold uppercase tracking-widest text-[9px] transition-all hover:bg-emerald-600 shadow-lg shadow-emerald-500/20 active:scale-95"
+            className="flex items-center gap-2 px-6 py-3 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-widest text-[9px] transition-all hover:bg-navy-800 shadow-lg shadow-navy-900/20 active:scale-95"
           >
             <UserPlus size={14} className="text-white/80" />
             Add Individual Student
@@ -456,69 +456,84 @@ export default function StudentDetails() {
       <div className="w-full animate-in fade-in slide-in-from-top-4 duration-1000">
         <div className="flex flex-col md:flex-row gap-4">
           {searchMode === "id" ? (
-            <div className="flex-1 relative group" ref={dropdownRef}>
-              <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors"
-                size={16}
-              />
-              <input
-                type="text"
-                placeholder="Enter Student ID (e.g. O210001)..."
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value.toUpperCase())}
-                className="w-full h-11 pl-11 pr-11 bg-slate-100/50 border border-slate-200/60 rounded-xl font-bold text-slate-900 text-[13px] outline-none focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 transition-all placeholder:text-slate-400 tracking-wider shadow-none"
-                onKeyDown={(e) => e.key === "Enter" && fetchStudentById()}
-                onFocus={() =>
-                  studentId.length >= 3 &&
-                  setRecommendations([...recommendations])
-                }
-              />
-              {isTyping && (
-                <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                  <Loader2 size={12} className="animate-spin text-slate-400" />
-                </div>
-              )}
-
-              <AnimatePresence>
-                {recommendations.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.1)] overflow-hidden"
-                  >
-                    <div className="p-2 space-y-1">
-                      {recommendations.map((rec) => (
-                        <button
-                          key={rec.username}
-                          onClick={() => {
-                            setStudentId(rec.username);
-                            setRecommendations([]);
-                            fetchStudentById(rec.username);
-                          }}
-                          className="w-full flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl transition-all text-left group/result"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-navy-900 flex items-center justify-center text-[10px] font-black text-white shrink-0">
-                            {rec.name?.[0]?.toUpperCase() || "U"}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[12px] font-bold text-slate-900 truncate leading-tight">
-                              {rec.name}
-                            </p>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                              {rec.username} • {rec.branch}
-                            </p>
-                          </div>
-                          <ChevronRight
-                            size={14}
-                            className="text-slate-300 group-hover/result:text-navy-900 group-hover/result:translate-x-1 transition-all"
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </motion.div>
+            <div className="flex-1 flex flex-col sm:flex-row gap-3">
+              <div className="flex-1 relative group" ref={dropdownRef}>
+                <Search
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-navy-900 transition-colors"
+                  size={16}
+                />
+                <input
+                  type="text"
+                  placeholder="Enter Student ID (e.g. O210001)..."
+                  value={studentId}
+                  onChange={(e) => setStudentId(e.target.value.toUpperCase())}
+                  className="w-full h-11 pl-11 pr-11 bg-slate-100/50 border border-slate-200/60 rounded-xl font-bold text-slate-900 text-[13px] outline-none focus:bg-white focus:border-navy-400 focus:ring-4 focus:ring-navy-900/5 transition-all placeholder:text-slate-400 tracking-wider shadow-none"
+                  onKeyDown={(e) => e.key === "Enter" && fetchStudentById()}
+                  onFocus={() =>
+                    studentId.length >= 3 &&
+                    setRecommendations([...recommendations])
+                  }
+                />
+                {isTyping && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <Loader2 size={12} className="animate-spin text-slate-400" />
+                  </div>
                 )}
-              </AnimatePresence>
+
+                <AnimatePresence>
+                  {recommendations.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.1)] overflow-hidden"
+                    >
+                      <div className="p-2 space-y-1">
+                        {recommendations.map((rec) => (
+                          <button
+                            key={rec.username}
+                            onClick={() => {
+                              setStudentId(rec.username);
+                              setRecommendations([]);
+                              fetchStudentById(rec.username);
+                            }}
+                            className="w-full flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl transition-all text-left group/result"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-navy-900 flex items-center justify-center text-[10px] font-black text-white shrink-0">
+                              {rec.name?.[0]?.toUpperCase() || "U"}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[12px] font-bold text-slate-900 truncate leading-tight">
+                                {rec.name}
+                              </p>
+                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                {rec.username} • {rec.branch}
+                              </p>
+                            </div>
+                            <ChevronRight
+                              size={14}
+                              className="text-slate-300 group-hover/result:text-navy-900 group-hover/result:translate-x-1 transition-all"
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <button
+                onClick={() => fetchStudentById()}
+                disabled={loading || !studentId.trim()}
+                className="shrink-0 h-11 px-7 bg-navy-900 text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[9px] hover:bg-navy-800 transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 active:scale-[0.98]"
+              >
+                {loading ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <Search size={16} />
+                )}
+                Search
+              </button>
             </div>
           ) : (
             <div className="flex-1 space-y-4">
@@ -780,7 +795,7 @@ export default function StudentDetails() {
                                 "w-11 h-11 rounded-full flex items-center justify-center text-white text-[12px] font-black border border-white shadow-sm overflow-hidden shrink-0",
                                 std.profile_url
                                   ? "bg-slate-50"
-                                  : "bg-emerald-900",
+                                  : "bg-navy-900",
                               )}
                             >
                               {std.profile_url ? (
@@ -809,7 +824,7 @@ export default function StudentDetails() {
                             <span className="px-2.5 py-1 bg-slate-100 text-slate-900 rounded-lg text-[10px] font-black uppercase tracking-widest border border-slate-200/50">
                               {std.branch}
                             </span>
-                            <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg text-[10px] font-black uppercase tracking-widest border border-blue-100/50">
+                            <span className="px-2.5 py-1 bg-navy-50 text-navy-900 rounded-lg text-[10px] font-black uppercase tracking-widest border border-navy-100">
                               {std.year || "E1"}
                             </span>
                           </div>
@@ -822,9 +837,9 @@ export default function StudentDetails() {
                                 className={cn(
                                   "text-[13px] font-black tracking-tighter",
                                   (std.cgpa || 0) >= 8
-                                    ? "text-emerald-600"
+                                    ? "text-navy-900"
                                     : (std.cgpa || 0) >= 6
-                                      ? "text-blue-600"
+                                      ? "text-navy-500"
                                       : "text-slate-400",
                                 )}
                               >
@@ -911,7 +926,7 @@ export default function StudentDetails() {
 
             <div className="space-y-3">
               <h4 className="text-xl font-black text-slate-900 tracking-tight lowercase first-letter:uppercase">
-                Ready for <span className="text-blue-600">analysis</span>
+                Ready for <span className="text-navy-900">analysis</span>
               </h4>
               <p className="text-slate-400 font-medium text-[15px] leading-relaxed">
                 Enter a student ID or use filters to fetch student records from

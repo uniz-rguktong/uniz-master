@@ -77,6 +77,18 @@ function deriveCatalogSemester(name: string): string {
   return sem ? `${yr}-SEM-${sem[1]}` : "";
 }
 
+function buildSemesterQuery(
+  catalogSemester: string,
+  filterYear: string,
+): string | undefined {
+  const semMatch = catalogSemester.match(/SEM-[12]/i);
+  const semPart = semMatch ? semMatch[0].toUpperCase() : null;
+  const yr = filterYear || deriveYearFromSemesterName(catalogSemester);
+  if (semPart && yr) return `${yr}-${semPart}`;
+  if (catalogSemester) return catalogSemester;
+  return filterYear || undefined;
+}
+
 function inferYearFromSubjectSemester(semester: string): string {
   const m = String(semester || "").match(/\b(E[1-4])\b/i);
   return m ? m[1].toUpperCase() : "E1";
@@ -905,32 +917,43 @@ function SubjectsStep({
   const fetchCatalog = useCallback(async () => {
     setCatalogLoading(true);
     try {
-      const res = await apiClient<any>(
-        GET_SUBJECTS,
-        {
-          params: {
-            page: 1,
-            limit: 200,
-            search: search.trim() || undefined,
-            department: filterBranch || undefined,
-            semester: catalogSemester || undefined,
+      const semesterQuery = buildSemesterQuery(catalogSemester, filterYear);
+      let page = 1;
+      let totalPages = 1;
+      const all: CatalogSubject[] = [];
+
+      do {
+        const res = await apiClient<any>(
+          GET_SUBJECTS,
+          {
+            params: {
+              page,
+              limit: 200,
+              search: search.trim() || undefined,
+              department: filterBranch || undefined,
+              semester: semesterQuery || undefined,
+            },
           },
-        },
-        false,
-      );
-      const list = res?.subjects ?? (Array.isArray(res) ? res : []);
-      setCatalog(list);
+          false,
+        );
+        const list = res?.subjects ?? (Array.isArray(res) ? res : []);
+        all.push(...list);
+        totalPages = res?.meta?.totalPages ?? 1;
+        page += 1;
+      } while (page <= totalPages && page <= 15);
+
+      setCatalog(all);
     } catch {
       toast.error("Failed to load subject catalog");
     } finally {
       setCatalogLoading(false);
     }
-  }, [search, filterBranch, catalogSemester]);
+  }, [search, filterBranch, filterYear, catalogSemester]);
 
   useEffect(() => {
     const t = setTimeout(fetchCatalog, search ? 250 : 0);
     return () => clearTimeout(t);
-  }, [fetchCatalog, search]);
+  }, [fetchCatalog, search, filterBranch, filterYear]);
 
   const addedCodes = useMemo(
     () => new Set(subjects.map((s) => s.code.toUpperCase())),
@@ -939,12 +962,21 @@ function SubjectsStep({
 
   const visibleCatalog = useMemo(() => {
     return catalog.filter((item) => {
-      if (filterYear && !item.semester?.toUpperCase().includes(filterYear)) {
+      if (
+        filterYear &&
+        !item.semester?.toUpperCase().includes(filterYear.toUpperCase())
+      ) {
+        return false;
+      }
+      if (
+        filterBranch &&
+        item.department?.toUpperCase() !== filterBranch.toUpperCase()
+      ) {
         return false;
       }
       return true;
     });
-  }, [catalog, filterYear]);
+  }, [catalog, filterYear, filterBranch]);
 
   const isElective = draft.subjectType !== "CORE";
   const pickIsElective = pickType !== "CORE";
