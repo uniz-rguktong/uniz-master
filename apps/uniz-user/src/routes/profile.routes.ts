@@ -25,6 +25,7 @@ import {
   internalSyncStudentStats,
   createIndividualStudent,
   promoteCohort,
+  resolveLoginByEmail,
 } from "../controllers/profile.controller";
 
 import multer from "multer";
@@ -219,6 +220,7 @@ router.post("/internal/upload-history", recordExternalUpload);
 router.post("/internal/bulk-profiles", getBulkProfiles);
 router.post("/internal/targeting", getTargetingData);
 router.post("/internal/sync-student-stats", internalSyncStudentStats);
+router.get("/internal/resolve-login", resolveLoginByEmail);
 
 router.get("/admin/student/:username", authMiddleware, getStudentProfile);
 router.put(

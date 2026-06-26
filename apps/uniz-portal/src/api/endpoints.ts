@@ -15,7 +15,9 @@ export const NOTIFICATION_SERVICE_URL = `${BASE_URL}/notifications`;
 // New Microservices Architecture Endpoints
 // Auth
 export const SIGNIN = (type: "student" | "admin" | "faculty") =>
-  type === "admin" ? `${BASE_URL}/auth/login/admin` : `${BASE_URL}/auth/login`;
+  type === "student"
+    ? `${BASE_URL}/auth/login/student`
+    : `${BASE_URL}/auth/login/admin`;
 export const SIGNUP = (_type: "student" | "admin" | "faculty") =>
   `${BASE_URL}/auth/signup`;
 export const FORGOT_PASS_ENDPOINT = `${BASE_URL}/auth/otp/request`;
@@ -203,6 +205,12 @@ export const ADD_SEMESTER_SUBJECTS = (id: string) =>
   `${BASE_URL}/academics/semester/${id}/subjects`;
 export const ADVANCE_SEMESTER = (id: string) =>
   `${BASE_URL}/academics/semester/${id}/advance`;
+export const REQUEST_DIRECT_PUBLISH_CODE = (id: string) =>
+  `${BASE_URL}/academics/semester/${id}/publish/request-code`;
+export const RESEND_DIRECT_PUBLISH_CODE = (id: string) =>
+  `${BASE_URL}/academics/semester/${id}/publish/resend-code`;
+export const CONFIRM_DIRECT_PUBLISH = (id: string) =>
+  `${BASE_URL}/academics/semester/${id}/publish`;
 export const ELECTIVE_GROUPS = (id: string) =>
   `${BASE_URL}/academics/semester/${id}/elective-groups`;
 export const DELETE_ELECTIVE_GROUP = (groupId: string) =>

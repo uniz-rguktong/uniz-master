@@ -26,6 +26,7 @@ import {
   PenLine,
   Pencil,
   BarChart3,
+  Rocket,
 } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
 import {
@@ -48,6 +49,7 @@ import {
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
 import RegistrationTracking from "./RegistrationTracking";
+import DirectPublishModal from "./DirectPublishModal";
 
 const BRANCHES = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"];
 const YEARS = ["E1", "E2", "E3", "E4"];

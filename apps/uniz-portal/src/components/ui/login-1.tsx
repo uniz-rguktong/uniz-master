@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { UnizLogo } from "@/components/admin/UnizLogo";
-import { cn } from "@/lib/utils";
 
 interface LoginScreenProps {
   isLogin?: boolean;
@@ -114,21 +113,12 @@ export default function LoginScreen({
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="mb-8"
+              className="mb-7"
             >
-              <UnizLogo size="lg" />
-              <span
-                className={cn(
-                  "mt-4 inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold tracking-wide",
-                  role === "admin"
-                    ? "border-zinc-200 bg-white text-zinc-600"
-                    : role === "faculty"
-                      ? "border-violet-100 bg-violet-50 text-violet-700"
-                      : "border-sky-100 bg-sky-50 text-sky-700",
-                )}
-              >
-                {meta.label}
-              </span>
+              <UnizLogo size="lg" variant="auth" portalLabel={meta.label} />
+              <p className="mt-2 text-[12px] text-zinc-400 font-medium">
+                {meta.hint}
+              </p>
             </motion.div>
 
             <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 sm:p-7 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_8px_24px_rgba(10,10,10,0.04)]">

@@ -5,6 +5,8 @@ import { ErrorCode } from "../shared/error-codes";
 import { resolveEffectiveRole } from "@uniz/shared";
 import axios from "axios";
 import * as ExcelJS from "exceljs";
+import { redis } from "../utils/redis.util";
+import { enforcePublishOtpRateLimit } from "../middlewares/publish-otp-ratelimit.middleware";
 
 /**
  * @desc Initialize a new semester with branch allocations
@@ -182,6 +184,75 @@ const canonicalSubjectSemester = (
 
 const SEMESTER_ADMIN_ROLES = ["webmaster", "coe", "director"] as const;
 
+function isWebmaster(role?: string): boolean {
+  return role === "webmaster";
+}
+
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!domain) return "***";
+  const visible = local.slice(0, Math.min(2, local.length));
+  return `${visible}***@${domain}`;
+}
+
+async function getStaffEmail(username: string): Promise<string> {
+  const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+  const endpoints = [
+    `faculty/${username.toUpperCase()}`,
+    `admin/${username.toUpperCase()}`,
+  ];
+
+  for (const endpoint of endpoints) {
+    try {
+      const res = await axios.get(`${USER_SERVICE_URL}/admin/${endpoint}`, {
+        headers: { "x-internal-secret": SECRET },
+        timeout: 3000,
+      });
+      const data =
+        res.data?.faculty || res.data?.data || res.data?.student || res.data;
+      if (data?.email) return String(data.email).toLowerCase();
+    } catch {
+      // try next profile type
+    }
+  }
+
+  return `${username.toLowerCase()}@rguktong.ac.in`;
+}
+
+async function sendPublishVerificationEmail(
+  email: string,
+  username: string,
+  otp: string,
+): Promise<void> {
+  const rawMailUrl = (
+    process.env.MAIL_SERVICE_URL || `${GATEWAY_URL}/mail`
+  ).trim();
+  const MAIL_SERVICE_URL = rawMailUrl.endsWith("/health")
+    ? rawMailUrl.slice(0, -7)
+    : rawMailUrl;
+  const SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+
+  await axios.post(
+    `${MAIL_SERVICE_URL}/send`,
+    {
+      type: "otp",
+      to: email,
+      data: {
+        username,
+        otp,
+      },
+    },
+    {
+      headers: { "x-internal-secret": SECRET },
+      timeout: 8000,
+    },
+  );
+}
+
+function directPublishRedisKey(webmasterUsername: string, semesterId: string) {
+  return `semester:direct-publish:${webmasterUsername.toLowerCase()}:${semesterId}`;
+}
+
 function isSemesterAdmin(role?: string): boolean {
   return SEMESTER_ADMIN_ROLES.includes(role as (typeof SEMESTER_ADMIN_ROLES)[number]);
 }
@@ -254,6 +325,172 @@ async function openSemesterRegistration(semesterId: string) {
     data: { status: "APPROVED", isApproved: true },
   });
 }
+
+/**
+ * @desc Request or resend email verification code before publishing registration directly to students.
+ * @access Webmaster only — rate limited (2/min per semester, 10/hour per user)
+ */
+async function issueDirectPublishCode(
+  user: NonNullable<AuthenticatedRequest["user"]>,
+  semesterId: string,
+  res: Response,
+  isResend: boolean,
+) {
+  const allowed = await enforcePublishOtpRateLimit(user.username, semesterId, res);
+  if (!allowed) return;
+
+  const semester = await prisma.academicSemester.findUnique({
+    where: { id: semesterId },
+  });
+  if (!semester) {
+    res.status(404).json({ error: "Semester not found" });
+    return;
+  }
+
+  if (semester.status === "REGISTRATION_OPEN") {
+    res.status(400).json({
+      error: "Registration is already open for this semester",
+    });
+    return;
+  }
+  if (semester.status === "REGISTRATION_CLOSED") {
+    res.status(400).json({ error: "This semester registration is closed" });
+    return;
+  }
+
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const redisKey = directPublishRedisKey(user.username, semesterId);
+  await redis.set(redisKey, otp, "EX", 600);
+
+  const email = await getStaffEmail(user.username);
+  await sendPublishVerificationEmail(email, user.username, otp);
+
+  res.json({
+    success: true,
+    resent: isResend,
+    message: isResend
+      ? "A new verification code was sent to your registered email"
+      : "Verification code sent to your registered email",
+    maskedEmail: maskEmail(email),
+    expiresInSeconds: 600,
+    resendCooldownSeconds: 60,
+  });
+}
+
+export const requestDirectPublishCode = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user || !isWebmaster(user.role as string)) {
+    return res
+      .status(403)
+      .json({ error: "Only webmaster can publish registrations directly" });
+  }
+
+  const { id } = req.params;
+
+  try {
+    await issueDirectPublishCode(user, id, res, false);
+  } catch (error: any) {
+    console.error("Request Direct Publish Code Error:", error);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to send verification code" });
+    }
+  }
+};
+
+export const resendDirectPublishCode = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user || !isWebmaster(user.role as string)) {
+    return res
+      .status(403)
+      .json({ error: "Only webmaster can publish registrations directly" });
+  }
+
+  const { id } = req.params;
+
+  try {
+    await issueDirectPublishCode(user, id, res, true);
+  } catch (error: any) {
+    console.error("Resend Direct Publish Code Error:", error);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to resend verification code" });
+    }
+  }
+};
+
+/**
+ * @desc Verify email code and open semester registration to all students immediately.
+ * @access Webmaster only
+ */
+export const confirmDirectPublish = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user || !isWebmaster(user.role as string)) {
+    return res
+      .status(403)
+      .json({ error: "Only webmaster can publish registrations directly" });
+  }
+
+  const { id } = req.params;
+  const code = String(req.body.code || "").trim();
+
+  if (!/^\d{6}$/.test(code)) {
+    return res
+      .status(400)
+      .json({ error: "A valid 6-digit verification code is required" });
+  }
+
+  try {
+    const redisKey = directPublishRedisKey(user.username, id);
+    const stored = await redis.get(redisKey);
+    if (!stored || stored !== code) {
+      return res
+        .status(403)
+        .json({ error: "Invalid or expired verification code" });
+    }
+
+    const semester = await prisma.academicSemester.findUnique({ where: { id } });
+    if (!semester) return res.status(404).json({ error: "Semester not found" });
+
+    if (semester.status === "REGISTRATION_OPEN") {
+      await redis.del(redisKey);
+      return res
+        .status(400)
+        .json({ error: "Registration is already open for this semester" });
+    }
+    if (semester.status === "REGISTRATION_CLOSED") {
+      return res
+        .status(400)
+        .json({ error: "This semester registration is closed" });
+    }
+
+    await openSemesterRegistration(id);
+    await redis.del(redisKey);
+
+    await NOTIFY({
+      target: "students",
+      title: "Semester Registration is LIVE! 🎓",
+      body: `Registration for "${semester.name}" is now open. Choose your subjects before the deadline.`,
+    });
+
+    const updated = await prisma.academicSemester.findUnique({ where: { id } });
+    return res.json({
+      success: true,
+      semester: updated,
+      message: "Registration published to students",
+    });
+  } catch (error: any) {
+    console.error("Confirm Direct Publish Error:", error);
+    return res.status(500).json({ error: "Failed to publish registration" });
+  }
+};
 
 /**
  * @desc Create a semester with a manual, per-semester subject list and
@@ -765,6 +1002,13 @@ export const updateSemesterStatus = async (
 
   const { id } = req.params;
   const { status } = req.body;
+
+  if (status === "REGISTRATION_OPEN") {
+    return res.status(403).json({
+      error:
+        "Opening registration requires email verification. Use Publish to Students on the semester card.",
+    });
+  }
 
   try {
     const semester = await prisma.academicSemester.update({

@@ -46,6 +46,9 @@ import {
   getRegistrations,
   getRegistrationTracking,
   getSemesterOverview,
+  requestDirectPublishCode,
+  resendDirectPublishCode,
+  confirmDirectPublish,
 } from "../controllers/registration.controller";
 import {
   getSeatingTemplate,
@@ -124,6 +127,9 @@ router.get("/semester/overview", getSemesterOverview);
 router.put("/semester/:id/config", updateSemesterConfig);
 router.post("/semester/:id/subjects", addSemesterSubjects);
 router.post("/semester/:id/advance", advanceSemester);
+router.post("/semester/:id/publish/request-code", requestDirectPublishCode);
+router.post("/semester/:id/publish/resend-code", resendDirectPublishCode);
+router.post("/semester/:id/publish", confirmDirectPublish);
 router.get("/semester/:id/elective-groups", getElectiveGroups);
 router.post("/semester/:id/elective-groups", upsertElectiveGroup);
 router.delete("/semester/elective-groups/:groupId", deleteElectiveGroup);

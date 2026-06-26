@@ -87,6 +87,9 @@ const DEPARTMENTS = [
 const getToken = () =>
   (localStorage.getItem("admin_token") || "").replace(/"/g, "");
 
+const isWebmasterRole = () =>
+  (localStorage.getItem("admin_role") || "").toLowerCase() === "webmaster";
+
 export default function FacultyManagement({
   deptRestrict,
 }: {
@@ -426,7 +429,13 @@ export default function FacultyManagement({
     if (bulkUpdateFields.department)
       fieldsToApply.department = bulkUpdateFields.department;
     if (bulkUpdateFields.name) fieldsToApply.name = bulkUpdateFields.name;
-    if (bulkUpdateFields.email) fieldsToApply.email = bulkUpdateFields.email;
+    if (bulkUpdateFields.email) {
+      if (!isWebmasterRole()) {
+        toast.error("Only webmaster can change faculty email");
+        return;
+      }
+      fieldsToApply.email = bulkUpdateFields.email;
+    }
     if (bulkUpdateFields.contact)
       fieldsToApply.contact = bulkUpdateFields.contact;
     if (bulkUpdateFields.profileUrl)
@@ -779,6 +788,23 @@ export default function FacultyManagement({
                       className={adminInputClass}
                     />
                   </div>
+                  {isWebmasterRole() && (
+                    <div className="space-y-2">
+                      <label className={adminLabelClass}>New Email</label>
+                      <input
+                        type="email"
+                        value={bulkUpdateFields.email}
+                        onChange={(e) =>
+                          setBulkUpdateFields((p) => ({
+                            ...p,
+                            email: e.target.value,
+                          }))
+                        }
+                        placeholder="Apply same email to all"
+                        className={adminInputClass}
+                      />
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <label className={adminLabelClass}>Profile URL</label>
                     <input
@@ -1340,7 +1366,7 @@ export default function FacultyManagement({
                   <input
                     required
                     type="email"
-                    disabled={editMode}
+                    disabled={editMode && !isWebmasterRole()}
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
