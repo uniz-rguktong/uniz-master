@@ -35,6 +35,7 @@ import {
   BULK_DELETE_FACULTY,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
+import { cn } from "@/utils/cn";
 import { formatRoleLabel } from "@/utils/displayText";
 import { FileUploader } from "../../../components/ui/FileUploader";
 import { useRecoilState } from "recoil";
@@ -63,7 +64,6 @@ import {
   adminModalTitleClass,
   adminModalDescClass,
 } from "../../../components/admin/admin-ui";
-import { formatRoleLabel } from "@/utils/displayText";
 
 const ROLES = ["webmaster", "coe", "swo", "dean", "ao", "OTHER"];
 const DEPARTMENTS = [

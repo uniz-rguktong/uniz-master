@@ -183,8 +183,7 @@ function stickyCellClass(
 const COLUMNS: { key: string; label: string; className?: string }[] = [
   { key: "row", label: "#", className: "w-12 text-center" },
   { key: "username", label: "Student ID", className: "min-w-[100px]" },
-  { key: "name", label: "Name", className: "min-w-[200px] max-w-[240px]" },
-  { key: "email", label: "Email", className: "min-w-[200px]" },
+  { key: "name", label: "Name", className: "min-w-[220px] max-w-[260px]" },
   { key: "branch", label: "Branch", className: "w-20" },
   { key: "year", label: "Year", className: "w-16" },
   { key: "batch", label: "Batch", className: "w-16" },
@@ -636,6 +635,88 @@ export default function StudentDetails() {
       <ArrowUp size={11} className="text-zinc-700" />
     ) : (
       <ArrowDown size={11} className="text-zinc-700" />
+    );
+  };
+
+  const renderNameCell = (row: StudentRow) => {
+    const isEditingName =
+      editingCell?.username === row.username && editingCell?.key === "name";
+    const isEditingEmail =
+      editingCell?.username === row.username && editingCell?.key === "email";
+    const isSavingName = savingCell === `${row.username}:name`;
+    const isSavingEmail = savingCell === `${row.username}:email`;
+
+    if (isEditingName) {
+      return (
+        <div className="flex flex-col gap-1 min-w-0">
+          <input
+            autoFocus
+            type="text"
+            value={cellDraft}
+            onChange={(e) => setCellDraft(e.target.value)}
+            onBlur={() => saveCellEdit(row.username, "name")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") saveCellEdit(row.username, "name");
+              if (e.key === "Escape") cancelCellEdit();
+            }}
+            onClick={(e) => e.stopPropagation()}
+            className={cn(adminInputClass, "h-7 text-[11px] py-1")}
+          />
+          <span className="truncate text-[11px] text-zinc-500 font-normal">
+            {row.email || "—"}
+          </span>
+        </div>
+      );
+    }
+
+    if (isEditingEmail) {
+      return (
+        <div className="flex flex-col gap-1 min-w-0">
+          <span className="truncate text-zinc-800 font-medium">{row.name || "—"}</span>
+          <input
+            autoFocus
+            type="text"
+            value={cellDraft}
+            onChange={(e) => setCellDraft(e.target.value)}
+            onBlur={() => saveCellEdit(row.username, "email")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") saveCellEdit(row.username, "email");
+              if (e.key === "Escape") cancelCellEdit();
+            }}
+            onClick={(e) => e.stopPropagation()}
+            className={cn(adminInputClass, "h-7 text-[11px] py-1")}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col gap-0.5 min-w-0">
+        <span
+          className="inline-flex items-center gap-1 min-w-0 group/name cursor-text"
+          onClick={(e) => startCellEdit(row, "name", e)}
+        >
+          <span className="truncate text-zinc-800 font-medium">{row.name || "—"}</span>
+          <Pencil
+            size={10}
+            className="opacity-0 group-hover/name:opacity-40 text-zinc-400 shrink-0"
+          />
+          {isSavingName && <Loader2 size={10} className="animate-spin text-zinc-400 shrink-0" />}
+        </span>
+        <span
+          className="inline-flex items-center gap-1 min-w-0 group/email cursor-text"
+          onClick={(e) => startCellEdit(row, "email", e)}
+        >
+          <span className="truncate text-[11px] text-zinc-500 font-normal">
+            {row.email || "—"}
+          </span>
+          <Pencil
+            size={10}
+            className="opacity-0 group-hover/email:opacity-40 text-zinc-400 shrink-0"
+          />
+          {isSavingEmail && <Loader2 size={10} className="animate-spin text-zinc-400 shrink-0" />}
+        </span>
+      </div>
     );
   };
 
@@ -1292,7 +1373,7 @@ export default function StudentDetails() {
       ) : (
         <div className={cn(adminCardClass, "overflow-hidden p-0")}>
           <div className="overflow-x-auto custom-sidebar-scroll max-h-[calc(100vh-22rem)] border-b border-zinc-200">
-            <table className="w-full border-collapse text-[12px] min-w-[1500px]">
+            <table className="w-full border-collapse text-[12px] min-w-[1280px]">
               <thead className="sticky top-0 z-30">
                 <tr className="bg-zinc-50 border-b border-zinc-200">
                   <th
@@ -1379,26 +1460,29 @@ export default function StudentDetails() {
                       <td
                         key={col.key}
                         onClick={(e) => {
+                          if (col.key === "name") return;
                           if (EDITABLE_KEYS.has(col.key)) startCellEdit(row, col.key, e);
                         }}
                         className={cn(
                           stickyCellClass(
                             col.key,
-                            "px-3 py-2.5 text-zinc-800 whitespace-nowrap border-r border-zinc-200 last:border-r-0 font-medium",
+                            "px-3 py-2.5 text-zinc-800 border-r border-zinc-200 last:border-r-0 font-medium align-top",
                           ),
-                          col.key === "name" && "truncate max-w-[240px]",
+                          col.key !== "name" && "whitespace-nowrap",
+                          col.key === "name" && "overflow-hidden",
                           col.key === "username" && "font-semibold text-zinc-900 tabular-nums",
-                          col.key === "email" && "text-zinc-500 text-[11px]",
                           col.key === "cgpa" && adminNumsClass,
                           col.key === "attendance_pct" && adminNumsClass,
-                          EDITABLE_KEYS.has(col.key) &&
+                          (EDITABLE_KEYS.has(col.key) || col.key === "name") &&
                             "hover:bg-zinc-100/60 hover:ring-1 hover:ring-inset hover:ring-zinc-300/80",
                           col.className,
                         )}
                       >
-                        {EDITABLE_KEYS.has(col.key)
-                          ? renderEditableCell(row, col)
-                          : cellValue(row, col.key, rangeStart + idx)}
+                        {col.key === "name"
+                          ? renderNameCell(row)
+                          : EDITABLE_KEYS.has(col.key)
+                            ? renderEditableCell(row, col)
+                            : cellValue(row, col.key, rangeStart + idx)}
                       </td>
                     ))}
                     <td className="px-2 py-2.5 border-l border-zinc-200 text-zinc-300">
