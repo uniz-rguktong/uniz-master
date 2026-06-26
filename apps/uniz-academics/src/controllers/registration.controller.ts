@@ -2,6 +2,7 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import prisma from "../utils/prisma.util";
 import { ErrorCode } from "../shared/error-codes";
+import { resolveEffectiveRole } from "@uniz/shared";
 import axios from "axios";
 import * as ExcelJS from "exceljs";
 
@@ -11,6 +12,12 @@ import * as ExcelJS from "exceljs";
  */
 const GATEWAY_URL =
   process.env.GATEWAY_URL || "http://uniz-gateway-api:3000/api/v1";
+
+const USER_SERVICE_URL = (
+  (process.env.DOCKER_ENV === "true"
+    ? "http://uniz-user-service:3002"
+    : process.env.USER_SERVICE_URL) || "http://localhost:3002"
+).replace(/\/$/, "");
 
 export const initSemester = async (
   req: AuthenticatedRequest,
@@ -1647,6 +1654,195 @@ export const exportAcademicData = async (
     res.status(500).json({ error: "Export failed" });
   }
 };
+/**
+ * @desc Per-student registration completion for a semester (registered vs pending).
+ * @access Dean, Webmaster, HOD, Director, COE
+ */
+export const getRegistrationTracking = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+  const role = resolveEffectiveRole(user);
+  const allowed = new Set(["webmaster", "coe", "dean", "director", "hod"]);
+  if (!allowed.has(role)) {
+    return res.status(403).json({ error: "Not authorized" });
+  }
+
+  const {
+    semesterId,
+    branch,
+    year,
+    batch,
+    status: regStatus = "all",
+    query: searchQuery,
+    page = "1",
+    limit = "25",
+  } = req.query;
+
+  try {
+    let sem = null;
+    if (semesterId) {
+      sem = await prisma.academicSemester.findUnique({
+        where: { id: semesterId as string },
+      });
+    } else {
+      sem = await prisma.academicSemester.findFirst({
+        where: {
+          status: { in: ["REGISTRATION_OPEN", "REGISTRATION_CLOSED"] },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    }
+
+    if (!sem) {
+      return res.json({
+        success: true,
+        semester: null,
+        summary: { eligible: 0, registered: 0, pending: 0, percent: 0 },
+        students: [],
+        pagination: { page: 1, totalPages: 1, total: 0 },
+      });
+    }
+
+    let branchFilter =
+      branch && String(branch).toLowerCase() !== "all"
+        ? String(branch).toUpperCase()
+        : undefined;
+
+    if (role === "hod") {
+      branchFilter = resolveHodBranch(user);
+      if (!branchFilter) {
+        return res.status(400).json({ error: "Could not determine HOD branch" });
+      }
+    }
+
+    const yearFilter =
+      year && String(year).toLowerCase() !== "all"
+        ? String(year).toUpperCase()
+        : undefined;
+    const batchFilter =
+      batch && String(batch).toLowerCase() !== "all"
+        ? String(batch).toUpperCase()
+        : sem.batch
+          ? String(sem.batch).toUpperCase()
+          : undefined;
+
+    const searchBody: Record<string, unknown> = {
+      limit: 10000,
+      isSuspended: false,
+    };
+    if (branchFilter) searchBody.branch = branchFilter;
+    if (yearFilter) searchBody.year = yearFilter;
+    if (batchFilter) searchBody.batch = batchFilter;
+    if (searchQuery && String(searchQuery).trim()) {
+      searchBody.username = String(searchQuery).trim().toUpperCase();
+    }
+
+    const profilesRes = await axios.post(
+      `${USER_SERVICE_URL}/student/search`,
+      searchBody,
+      {
+        headers: { Authorization: req.headers.authorization || "" },
+        timeout: 60000,
+      },
+    );
+
+    const allStudents: any[] = profilesRes.data?.students || [];
+
+    const regs = await prisma.registration.findMany({
+      where: {
+        semesterId: sem.id,
+        status: "REGISTERED",
+      },
+      select: { studentId: true, submittedAt: true, createdAt: true },
+    });
+
+    const regByStudent = new Map<
+      string,
+      { count: number; submittedAt: Date | null }
+    >();
+    for (const r of regs) {
+      const id = r.studentId.toUpperCase();
+      const cur = regByStudent.get(id) || { count: 0, submittedAt: null };
+      cur.count += 1;
+      const submitted = r.submittedAt || r.createdAt;
+      if (!cur.submittedAt || submitted > cur.submittedAt) {
+        cur.submittedAt = submitted;
+      }
+      regByStudent.set(id, cur);
+    }
+
+    const enriched = allStudents.map((s) => {
+      const id = String(s.username).toUpperCase();
+      const info = regByStudent.get(id);
+      const registered = !!info && info.count > 0;
+      return {
+        username: s.username,
+        name: s.name,
+        email: s.email,
+        branch: s.branch,
+        year: s.year,
+        batch: s.batch,
+        section: s.section,
+        registered,
+        subjectCount: info?.count ?? 0,
+        submittedAt: info?.submittedAt ?? null,
+      };
+    });
+
+    const summary = {
+      eligible: enriched.length,
+      registered: enriched.filter((s) => s.registered).length,
+      pending: enriched.filter((s) => !s.registered).length,
+      percent: 0,
+    };
+    summary.percent = summary.eligible
+      ? Math.round((summary.registered / summary.eligible) * 1000) / 10
+      : 0;
+
+    let filtered = enriched;
+    if (regStatus === "registered") {
+      filtered = enriched.filter((s) => s.registered);
+    } else if (regStatus === "pending") {
+      filtered = enriched.filter((s) => !s.registered);
+    }
+
+    filtered.sort((a, b) => {
+      if (a.registered !== b.registered) return a.registered ? -1 : 1;
+      return String(a.username).localeCompare(String(b.username));
+    });
+
+    const pageNum = Math.max(1, Number(page) || 1);
+    const limitNum = Math.min(100, Math.max(1, Number(limit) || 25));
+    const total = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(total / limitNum));
+    const students = filtered.slice(
+      (pageNum - 1) * limitNum,
+      pageNum * limitNum,
+    );
+
+    res.json({
+      success: true,
+      semester: {
+        id: sem.id,
+        name: sem.name,
+        status: sem.status,
+        batch: sem.batch,
+        academicYear: sem.academicYear,
+      },
+      summary,
+      students,
+      pagination: { page: pageNum, totalPages, total },
+    });
+  } catch (error) {
+    console.error("Registration tracking error:", error);
+    res.status(500).json({ error: "Failed to fetch registration tracking" });
+  }
+};
+
 /**
  * @desc Get all registered students and their subjects
  * @access Dean, Webmaster
