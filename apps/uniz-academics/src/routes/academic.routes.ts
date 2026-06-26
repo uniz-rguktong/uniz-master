@@ -44,6 +44,7 @@ import {
   deleteSemester,
   deleteAllocation,
   getRegistrations,
+  getRegistrationTracking,
   getSemesterOverview,
 } from "../controllers/registration.controller";
 import {
@@ -140,6 +141,7 @@ router.post("/student/register", registerSubjects);
 router.get("/student/current/:studentId", getCurrentSubjects);
 
 router.get("/export", exportAcademicData);
+router.get("/registrations/tracking", getRegistrationTracking);
 router.get("/registrations", getRegistrations);
 
 // Faculty Management

@@ -13,6 +13,7 @@ import {
   Hourglass,
   Building2,
   Inbox,
+  BarChart3,
 } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
 import {
@@ -38,6 +39,7 @@ import {
   adminSegmentInactiveClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
+import RegistrationTracking from "../Webmaster/RegistrationTracking";
 
 const BRANCHES = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"];
 
@@ -61,6 +63,7 @@ export default function SemesterApproval({ role }: { role: string }) {
   const [groups, setGroups] = useState<any[]>([]);
   const [detailLoading, setDetailLoading] = useState(false);
   const [acting, setActing] = useState(false);
+  const [trackingSem, setTrackingSem] = useState<any | null>(null);
 
   const pendingStatus = isHod ? "HOD_REVIEW" : "DEAN_REVIEW";
 
@@ -139,6 +142,15 @@ export default function SemesterApproval({ role }: { role: string }) {
   const pending = semesters.filter((s) => s.status === pendingStatus);
   const others = semesters.filter((s) => s.status !== pendingStatus);
 
+  if (trackingSem) {
+    return (
+      <RegistrationTracking
+        semester={trackingSem}
+        onBack={() => setTrackingSem(null)}
+      />
+    );
+  }
+
   if (selected) {
     return (
       <DetailView
@@ -208,18 +220,34 @@ export default function SemesterApproval({ role }: { role: string }) {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {others.map((sem) => (
-              <button
+              <div
                 key={sem.id}
-                onClick={() => openDetail(sem)}
-                className={cn(adminCardClass, "text-left px-5 py-4 hover:border-zinc-300 transition-all")}
+                className={cn(adminCardClass, "px-5 py-4 flex flex-col gap-3")}
               >
-                <p className={cn(adminSectionTitleClass, "truncate")}>
-                  {sem.name}
-                </p>
-                <p className={cn(adminLabelClass, "mt-1 normal-case")}>
-                  {formatStatus(sem.status)}
-                </p>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => openDetail(sem)}
+                  className="text-left hover:opacity-90 transition-opacity"
+                >
+                  <p className={cn(adminSectionTitleClass, "truncate")}>
+                    {sem.name}
+                  </p>
+                  <p className={cn(adminLabelClass, "mt-1 normal-case")}>
+                    {formatStatus(sem.status)}
+                  </p>
+                </button>
+                {(sem.status === "REGISTRATION_OPEN" ||
+                  sem.status === "REGISTRATION_CLOSED") && (
+                  <button
+                    type="button"
+                    onClick={() => setTrackingSem(sem)}
+                    className={cn(adminGhostButtonClass, "w-full text-xs")}
+                  >
+                    <BarChart3 size={14} />
+                    Registration progress
+                  </button>
+                )}
+              </div>
             ))}
           </div>
         </section>
