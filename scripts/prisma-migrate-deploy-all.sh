@@ -11,6 +11,16 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
+# Load VPS secrets the same way deploy.sh does (values are shell-quoted).
+if [ -f "/root/uniz-secrets.env" ]; then
+  while IFS= read -r line || [ -n "$line" ]; do
+    [[ "$line" =~ ^#.*$ ]] && continue
+    [[ -z "$line" ]] && continue
+    [[ "$line" != *"="* ]] && continue
+    eval "export $line"
+  done < /root/uniz-secrets.env
+fi
+
 PRISMA_VERSION="${PRISMA_MIGRATE_VERSION:-6.19.3}"
 PRISMA="npx --yes prisma@${PRISMA_VERSION}"
 
