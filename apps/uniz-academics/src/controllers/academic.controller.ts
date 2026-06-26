@@ -1493,8 +1493,12 @@ export const publishAttendance = async (
 export const getSubjects = async (req: AuthenticatedRequest, res: Response) => {
   const { page = 1, limit = 10, search, department, semester } = req.query;
   const p = Math.max(1, Number(page));
-  const l = Math.max(1, Math.min(100, Number(limit)));
+  const l = Math.max(1, Math.min(500, Number(limit)));
   const skip = (p - 1) * l;
+  const deptFilter =
+    department && String(department).toUpperCase() !== "ALL"
+      ? String(department).trim()
+      : "";
 
   try {
     const where: any = {};
@@ -1504,20 +1508,58 @@ export const getSubjects = async (req: AuthenticatedRequest, res: Response) => {
         { code: { contains: search as string, mode: "insensitive" } },
       ];
     }
-    if (department && department !== "ALL")
-      where.department = department as string;
+    if (deptFilter) {
+      where.department = { equals: deptFilter, mode: "insensitive" };
+    }
     if (semester && semester !== "ALL")
       where.semester = { contains: semester as string, mode: "insensitive" }; // Robust match for year-base semester strings
 
-    const [subjects, total] = await Promise.all([
-      prisma.subject.findMany({
+    let subjects: any[];
+    let total: number;
+
+    if (deptFilter) {
+      // Single department — straightforward paginated query.
+      [subjects, total] = await Promise.all([
+        prisma.subject.findMany({
+          where,
+          skip,
+          take: l,
+          orderBy: [{ semester: "asc" }, { code: "asc" }],
+        }),
+        prisma.subject.count({ where }),
+      ]);
+    } else {
+      // Browse-all view: round-robin interleave departments so every page is a
+      // representative mix. Without this, "CIVIL" (alphabetically first) fills
+      // the initial pages and looks like the catalog only contains Civil.
+      const all = await prisma.subject.findMany({
         where,
-        skip,
-        take: l,
-        orderBy: [{ semester: "asc" }, { code: "asc" }],
-      }),
-      prisma.subject.count({ where }),
-    ]);
+        orderBy: [{ department: "asc" }, { semester: "asc" }, { code: "asc" }],
+      });
+
+      const groups = new Map<string, any[]>();
+      for (const s of all) {
+        const key = (s.department || "").toUpperCase();
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key)!.push(s);
+      }
+
+      const lists = [...groups.values()];
+      const interleaved: any[] = [];
+      for (let row = 0; interleaved.length < all.length; row++) {
+        let progressed = false;
+        for (const list of lists) {
+          if (row < list.length) {
+            interleaved.push(list[row]);
+            progressed = true;
+          }
+        }
+        if (!progressed) break;
+      }
+
+      total = all.length;
+      subjects = interleaved.slice(skip, skip + l);
+    }
 
     return res.json({
       success: true,

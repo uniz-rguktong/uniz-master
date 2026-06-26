@@ -66,7 +66,7 @@ app.use(
       );
       res.setHeader(
         "Access-Control-Allow-Headers",
-        "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-cms-api-key, x-api-key, uid, role",
+        "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-cms-api-key, x-api-key, x-internal-secret, uid, role",
       );
       res.setHeader("Access-Control-Max-Age", "86400");
     }
@@ -170,6 +170,10 @@ const serviceMap: Record<string, string> = {
       : "http://127.0.0.1:3333"),
 };
 
+const landingApiTarget =
+  process.env.LANDING_API_URL ||
+  "http://uniz-landing-backend-svc.default.svc.cluster.local:8000";
+
 // 4. Documentation Engine Assets & Navigation Helper (Aggressive Asset Retrieval)
 app.use((req, res, next) => {
   const referer = req.headers.referer || "";
@@ -271,6 +275,12 @@ function proxyPathFromParams(pathParam: unknown): string {
     : String(pathParam).split("/").filter(Boolean);
   return segments.length ? `/${segments.join("/")}` : "/";
 }
+
+// Analytics (landing-api) — same-origin via gateway to avoid cross-subdomain CORS
+app.all("/api/v1/analytics/*path", (req: any, res: any) => {
+  req.url = `/api/analytics${proxyPathFromParams(req.params.path)}`;
+  proxy.web(req, res, { target: landingApiTarget, changeOrigin: true });
+});
 
 // 5. Warp-Speed Proxy Engine (Express 5 / path-to-regexp v6+ wildcard syntax)
 app.all("/api/v1/:service/*path", async (req: any, res: any) => {
