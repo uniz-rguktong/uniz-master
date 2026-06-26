@@ -153,9 +153,9 @@ export default function SystemUserAnalytics() {
     : 100;
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* KPI Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           title="Total Identities"
           value={totalUsers.toLocaleString()}
@@ -191,15 +191,15 @@ export default function SystemUserAnalytics() {
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
         {/* New Interactive Donut Chart */}
         <div className="lg:col-span-4 flex">
-          <Card className="p-10 w-full flex flex-col items-center justify-center space-y-8 bg-white border-slate-100 shadow-sm rounded-xl hover:shadow-lg transition-shadow duration-500">
+          <Card className="p-7 w-full flex flex-col items-center justify-center space-y-7 bg-white border border-zinc-200/70 shadow-[0_1px_2px_rgba(10,10,10,0.03)] rounded-2xl transition-colors duration-300 hover:border-zinc-300">
             <div className="text-center space-y-1">
-              <h2 className="text-xl font-black text-slate-900 tracking-tight">
+              <h2 className="text-[15px] font-semibold text-zinc-900 tracking-[-0.01em]">
                 User Demographics
               </h2>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-[0.14em]">
                 Distribution by Role
               </p>
             </div>
@@ -223,14 +223,14 @@ export default function SystemUserAnalytics() {
                       transition={{ duration: 0.2, ease: "circOut" }}
                       className="flex flex-col items-center justify-center text-center"
                     >
-                      <p className="text-slate-400 text-[10px] font-black uppercase tracking-wider mb-0.5 max-w-[120px] truncate">
+                      <p className="text-zinc-400 text-[10px] font-medium uppercase tracking-[0.12em] mb-1 max-w-[120px] truncate">
                         {displayLabel}
                       </p>
-                      <p className="text-3xl font-black text-slate-900 leading-none tracking-tighter">
+                      <p className="text-[32px] font-semibold text-zinc-900 leading-none tracking-[-0.03em] tabular-nums">
                         {displayValue.toLocaleString()}
                       </p>
                       {activeSegment && (
-                        <p className="text-xs font-black text-blue-600 mt-1">
+                        <p className="text-xs font-semibold text-zinc-500 mt-1.5 tabular-nums">
                           {displayPercentage.toFixed(1)}%
                         </p>
                       )}
@@ -240,32 +240,32 @@ export default function SystemUserAnalytics() {
               />
             </div>
 
-            <div className="flex flex-col space-y-2.5 w-full pt-6 border-t border-slate-50">
+            <div className="flex flex-col space-y-1 w-full pt-5 border-t border-zinc-100">
               {roleData.map((segment, index) => (
                 <motion.div
                   key={segment.label}
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 + index * 0.1 }}
+                  transition={{ delay: 0.35 + index * 0.06 }}
                   className={cn(
-                    "flex items-center justify-between p-2 rounded-xl transition-all duration-300 group cursor-pointer",
+                    "flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors duration-200 group cursor-pointer",
                     hoveredSegment === segment.label
-                      ? "bg-slate-50 translate-x-1"
-                      : "hover:bg-slate-50/50",
+                      ? "bg-zinc-50"
+                      : "hover:bg-zinc-50/60",
                   )}
                   onMouseEnter={() => setHoveredSegment(segment.label)}
                   onMouseLeave={() => setHoveredSegment(null)}
                 >
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2.5">
                     <div
-                      className="h-2.5 w-2.5 rounded-full shadow-sm group-hover:scale-125 transition-transform"
+                      className="h-2 w-2 rounded-full group-hover:scale-125 transition-transform"
                       style={{ backgroundColor: segment.color }}
                     />
-                    <span className="text-xs font-black text-slate-600 uppercase tracking-wide">
-                      {segment.label}
+                    <span className="text-[12.5px] font-medium text-zinc-600 capitalize tracking-tight">
+                      {segment.label.toLowerCase()}
                     </span>
                   </div>
-                  <span className="text-xs font-black text-slate-900">
+                  <span className="text-[12.5px] font-semibold text-zinc-900 tabular-nums">
                     {segment.value.toLocaleString()}
                   </span>
                 </motion.div>
