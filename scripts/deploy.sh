@@ -259,6 +259,12 @@ deploy_logic() {
 
   fi
 
+  # Sync Prisma schemas before rolling out services (idempotent on every deploy).
+  if [ -f "scripts/prisma-migrate-deploy-all.sh" ]; then
+    echo "[Prisma] Applying database migrations..."
+    bash scripts/prisma-migrate-deploy-all.sh
+  fi
+
   # Generate Infrastructure from templates
   if [ -f "infra/core-infra/kubernetes/base/shared/secrets.yaml.template" ]; then
     echo "[Infra] Generating secrets.yaml..."
