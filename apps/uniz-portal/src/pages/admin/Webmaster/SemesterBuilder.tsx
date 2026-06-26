@@ -25,6 +25,7 @@ import {
   Library,
   PenLine,
   Pencil,
+  BarChart3,
 } from "lucide-react";
 import { apiClient } from "../../../api/apiClient";
 import {
@@ -46,6 +47,7 @@ import {
   adminPrimaryButtonClass,
 } from "../../../components/admin/admin-ui";
 import { cn } from "../../../utils/cn";
+import RegistrationTracking from "./RegistrationTracking";
 
 const BRANCHES = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CHEM", "MME"];
 const YEARS = ["E1", "E2", "E3", "E4"];
@@ -242,6 +244,7 @@ export default function SemesterBuilder() {
   const [semesters, setSemesters] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [builderOpen, setBuilderOpen] = useState(false);
+  const [trackingSem, setTrackingSem] = useState<any | null>(null);
 
   const fetchSemesters = async () => {
     setLoading(true);
@@ -296,6 +299,15 @@ export default function SemesterBuilder() {
     }
   };
 
+  if (trackingSem) {
+    return (
+      <RegistrationTracking
+        semester={trackingSem}
+        onBack={() => setTrackingSem(null)}
+      />
+    );
+  }
+
   return (
     <div className={cn(adminPageWrapClass, "animate-in fade-in duration-500")}>
       <SectionHeader
@@ -337,6 +349,12 @@ export default function SemesterBuilder() {
               onAdvance={advance}
               onSetStatus={setStatus}
               onRemove={remove}
+              onTrack={
+                sem.status === "REGISTRATION_OPEN" ||
+                sem.status === "REGISTRATION_CLOSED"
+                  ? () => setTrackingSem(sem)
+                  : undefined
+              }
             />
           ))}
         </div>
@@ -383,12 +401,14 @@ function SemesterCard({
   onAdvance,
   onSetStatus,
   onRemove,
+  onTrack,
 }: {
   sem: any;
   index: number;
   onAdvance: (id: string, action: string, label: string) => void;
   onSetStatus: (id: string, status: string, label: string) => void;
   onRemove: (id: string, name: string) => void;
+  onTrack?: () => void;
 }) {
   const meta = STATUS_META[sem.status] || STATUS_META.DRAFT;
   const fmt = (d?: string) =>
@@ -468,13 +488,31 @@ function SemesterCard({
           />
         )}
         {sem.status === "REGISTRATION_OPEN" && (
+          <>
+            <ActionBtn
+              tone="dark"
+              icon={<StopCircle size={14} />}
+              label="Close"
+              onClick={() =>
+                onSetStatus(sem.id, "REGISTRATION_CLOSED", "Registration closed")
+              }
+            />
+            {onTrack && (
+              <ActionBtn
+                tone="primary"
+                icon={<BarChart3 size={14} />}
+                label="Track progress"
+                onClick={onTrack}
+              />
+            )}
+          </>
+        )}
+        {sem.status === "REGISTRATION_CLOSED" && onTrack && (
           <ActionBtn
-            tone="dark"
-            icon={<StopCircle size={14} />}
-            label="Close"
-            onClick={() =>
-              onSetStatus(sem.id, "REGISTRATION_CLOSED", "Registration closed")
-            }
+            tone="primary"
+            icon={<BarChart3 size={14} />}
+            label="Track progress"
+            onClick={onTrack}
           />
         )}
         <div className="flex-1" />
