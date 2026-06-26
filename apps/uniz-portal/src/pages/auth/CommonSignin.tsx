@@ -30,6 +30,10 @@ type SigninProps = {
   type: "student" | "admin" | "faculty";
 };
 
+const isStudentIdFormat = (value: string) => /^[A-Z]\d+/i.test(value.trim());
+const isEmailFormat = (value: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
 interface SigninResponse {
   msg?: string;
   student_token?: string;
@@ -371,7 +375,7 @@ export default function Signin({ type }: SigninProps) {
       return;
     }
 
-    const isStudentFormat = /^[A-Z]\d+/i.test(username.trim());
+    const isStudentFormat = isStudentIdFormat(username);
 
     if (type === "student" && !isStudentFormat) {
       toast.error(
@@ -384,6 +388,16 @@ export default function Signin({ type }: SigninProps) {
       toast.error(
         `Students are not allowed to access the ${type === "admin" ? "Admin" : "Faculty"} Portal`,
       );
+      return;
+    }
+
+    if (
+      (type === "admin" || type === "faculty") &&
+      !isStudentFormat &&
+      username.includes("@") &&
+      !isEmailFormat(username)
+    ) {
+      toast.error("Enter a valid staff ID or university email address");
       return;
     }
 
@@ -434,14 +448,15 @@ export default function Signin({ type }: SigninProps) {
 
       const token =
         data.student_token || data.admin_token || (data as any).token;
+      const resolvedUsername = data.username || username.trim();
 
       if (type === "student" && token && data.role === "student") {
         localStorage.removeItem("admin_token");
         localStorage.removeItem("faculty_token");
         localStorage.setItem("student_token", token);
-        localStorage.setItem("username", username.trim());
+        localStorage.setItem("username", resolvedUsername);
         setAuth({ is_authenticated: true, type: "student" });
-        toast.success(`Welcome back, ${username.trim()}.`, {
+        toast.success(`Welcome back, ${resolvedUsername}.`, {
           title: "Signed in",
         });
         navigate("/student", { replace: true });
@@ -453,10 +468,10 @@ export default function Signin({ type }: SigninProps) {
         localStorage.removeItem("student_token");
         localStorage.removeItem("admin_token");
         localStorage.setItem("faculty_token", token || "");
-        localStorage.setItem("username", username.trim());
+        localStorage.setItem("username", resolvedUsername);
         localStorage.setItem("role", data.role || "teacher");
         setAuth({ is_authenticated: true, type: "faculty" });
-        toast.success(`Welcome, Professor ${username.trim()}.`, {
+        toast.success(`Welcome, Professor ${resolvedUsername}.`, {
           title: "Signed in",
         });
         navigate("/faculty", { replace: true });
@@ -464,7 +479,7 @@ export default function Signin({ type }: SigninProps) {
         localStorage.removeItem("student_token");
         localStorage.removeItem("faculty_token");
         localStorage.setItem("admin_token", token);
-        localStorage.setItem("username", username.trim());
+        localStorage.setItem("username", resolvedUsername);
         const jwtRole = token ? parseJwt(token)?.role : null;
         const jwtDept = token ? parseJwt(token)?.department : null;
         localStorage.setItem(
@@ -476,7 +491,7 @@ export default function Signin({ type }: SigninProps) {
         }
 
         setAuth({ is_authenticated: true, type: "admin" });
-        setAdmin(username.trim());
+        setAdmin(resolvedUsername);
         toast.success("Your admin session is ready.", {
           title: "Signed in",
         });
@@ -485,10 +500,10 @@ export default function Signin({ type }: SigninProps) {
         localStorage.removeItem("student_token");
         localStorage.removeItem("admin_token");
         localStorage.setItem("faculty_token", token);
-        localStorage.setItem("username", username.trim());
+        localStorage.setItem("username", resolvedUsername);
         localStorage.setItem("role", (data as any).role);
         setAuth({ is_authenticated: true, type: "faculty" });
-        toast.success(`Welcome, Professor ${username.trim()}.`, {
+        toast.success(`Welcome, Professor ${resolvedUsername}.`, {
           title: "Signed in",
         });
         navigate("/faculty", { replace: true });
@@ -518,7 +533,7 @@ export default function Signin({ type }: SigninProps) {
       return;
     }
 
-    const isStudentFormat = /^[A-Z]\d+/i.test(username.trim());
+    const isStudentFormat = isStudentIdFormat(username);
 
     if (type === "student" && !isStudentFormat) {
       toast.error("Student ID must be a valid University ID (e.g., O210001 or S220059)");
@@ -529,6 +544,16 @@ export default function Signin({ type }: SigninProps) {
       toast.error(
         `Students cannot request OTP from the ${type === "admin" ? "Admin" : "Faculty"} Portal`,
       );
+      return;
+    }
+
+    if (
+      (type === "admin" || type === "faculty") &&
+      !isStudentFormat &&
+      username.includes("@") &&
+      !isEmailFormat(username)
+    ) {
+      toast.error("Enter a valid staff ID or university email address");
       return;
     }
 
@@ -572,7 +597,7 @@ export default function Signin({ type }: SigninProps) {
   }, [username, type]);
 
   const requestEmailOtp = useCallback(async () => {
-    const isStudentFormat = /^[A-Z]\d+/i.test(username.trim());
+    const isStudentFormat = isStudentIdFormat(username);
 
     if (type === "student" && !isStudentFormat) {
       toast.error("Student ID must be a valid University ID (e.g., O210001 or S220059)");
@@ -583,6 +608,16 @@ export default function Signin({ type }: SigninProps) {
       toast.error(
         `Students cannot request OTP from the ${type === "admin" ? "Admin" : "Faculty"} Portal`,
       );
+      return;
+    }
+
+    if (
+      (type === "admin" || type === "faculty") &&
+      !isStudentFormat &&
+      username.includes("@") &&
+      !isEmailFormat(username)
+    ) {
+      toast.error("Enter a valid staff ID or university email address");
       return;
     }
 
@@ -734,9 +769,7 @@ export default function Signin({ type }: SigninProps) {
                 label={
                   type === "student"
                     ? "University ID"
-                    : type === "faculty"
-                      ? "Staff ID"
-                      : "Admin ID"
+                    : "Staff ID or email"
                 }
                 labelClassName={loginLabelClass}
                 icon={<User className="w-4 h-4" />}
@@ -745,9 +778,7 @@ export default function Signin({ type }: SigninProps) {
                 placeholder={
                   type === "student"
                     ? "O210001"
-                    : type === "faculty"
-                      ? "Staff ID"
-                      : "Admin ID"
+                    : "username or email@rguktong.ac.in"
                 }
                 autoCapitalize="none"
                 autoCorrect="off"

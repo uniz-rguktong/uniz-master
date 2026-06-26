@@ -3,29 +3,25 @@ kind: CronJob
 metadata:
   name: uniz-storage-cleanup-job
 spec:
-  schedule: "0 3 * * *" # Run daily at 3:00 AM
+  schedule: "0 3 * * *" # Run daily at 3:00 AM UTC
+  concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 5
   failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 1800
       template:
         spec:
+          restartPolicy: OnFailure
           containers:
             - name: storage-cleaner
               image: uniz-cron-service:local
               imagePullPolicy: IfNotPresent
-              command:
-                [
-                  "node",
-                  "-e",
-                  "require('./dist/utils/storage.js').runStorageCleanup().then(() => process.exit(0))",
-                ]
+              command: ["node", "dist/jobs/run-storage-cleanup.js"]
               securityContext:
                 privileged: true
-              # Mount the host sockets and log directories to allow cleanup
               volumeMounts:
-                - name: docker-sock
-                  mountPath: /var/run/docker.sock
                 - name: containerd-sock
                   mountPath: /run/k3s/containerd/containerd.sock
                 - name: docker-logs
@@ -36,12 +32,7 @@ spec:
                     name: uniz-config
                 - secretRef:
                     name: uniz-secrets
-          restartPolicy: OnFailure
           volumes:
-            - name: docker-sock
-              hostPath:
-                path: /var/run/docker.sock
-                type: Socket
             - name: containerd-sock
               hostPath:
                 path: /run/k3s/containerd/containerd.sock
@@ -49,4 +40,4 @@ spec:
             - name: docker-logs
               hostPath:
                 path: /var/lib/docker/containers
-                type: Directory
+                type: DirectoryOrCreate
