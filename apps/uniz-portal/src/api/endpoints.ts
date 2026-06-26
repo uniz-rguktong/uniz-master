@@ -3,7 +3,7 @@ export const BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
 export const ANALYTICS_BASE_URL =
   import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app";
 
-/** Landing CMS (home, institute, academics pages) — proxied via gateway `/api/v1/cms`. */
+/** Landing website CMS (`/api/home`, `/api/institute`, …) via gateway `/api/v1/cms/api/*`. */
 export const LANDING_API_URL =
   import.meta.env.VITE_LANDING_API_URL || `${BASE_URL}/cms`;
 
