@@ -1,9 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft } from "lucide-react";
 import { UnizLogo } from "@/components/admin/UnizLogo";
+import { cn } from "@/lib/utils";
 
 interface LoginScreenProps {
   isLogin?: boolean;
   onToggleMode?: () => void;
+  onBack?: () => void;
   title?: string;
   subtitle?: string;
   children?: React.ReactNode;
@@ -13,52 +16,76 @@ interface LoginScreenProps {
   stepKey?: string;
 }
 
+const roleMeta: Record<
+  NonNullable<LoginScreenProps["role"]>,
+  { label: string; hint: string }
+> = {
+  student: { label: "Student portal", hint: "Grades, attendance, outpass" },
+  admin: { label: "Staff portal", hint: "Campus operations & records" },
+  faculty: { label: "Faculty portal", hint: "Classes, marks & attendance" },
+};
+
 export default function LoginScreen({
   isLogin = true,
   onToggleMode,
+  onBack,
   title,
   subtitle,
   children,
   heroTitle,
   bottomText,
+  role = "student",
   stepKey,
 }: LoginScreenProps) {
+  const meta = roleMeta[role];
+
   return (
-    <div className="w-full min-h-screen flex bg-white font-sans selection:bg-zinc-200 selection:text-zinc-950">
+    <div className="w-full min-h-screen flex bg-[#fafafa] font-sans selection:bg-zinc-200 selection:text-zinc-950">
       {/* Left — cinematic hero */}
       <div className="hidden lg:flex flex-1 relative overflow-hidden bg-zinc-950">
         <div className="absolute inset-0">
           <img
             src="https://res.cloudinary.com/diipfzmyj/image/upload/v1772885809/signIn_ojzi3w.png"
             alt=""
-            className="h-full w-full object-cover scale-[1.03]"
+            className="h-full w-full object-cover scale-[1.02] opacity-90"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-zinc-950/10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/80 via-zinc-950/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/55 to-zinc-950/25" />
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/90 via-zinc-950/35 to-transparent" />
 
-        <div className="relative z-10 flex flex-1 flex-col justify-end p-12 xl:p-16">
+        <div className="relative z-10 flex flex-1 flex-col p-10 xl:p-14">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="inline-flex w-fit items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back
+            </button>
+          )}
+
           {heroTitle ? (
-            <h1 className="text-white text-5xl xl:text-6xl font-semibold leading-[1.05] tracking-[-0.04em] max-w-lg mb-auto pt-4">
+            <h1 className="mt-auto text-white text-5xl xl:text-6xl font-semibold leading-[1.05] tracking-[-0.04em] max-w-lg">
               {heroTitle}
             </h1>
           ) : (
-            <div className="mb-auto pt-4 max-w-md">
-              <p className="text-3xl xl:text-[2.75rem] font-semibold text-white tracking-[-0.04em] leading-[1.08]">
+            <div className="mt-auto max-w-md">
+              <p className="text-[2.35rem] xl:text-[2.85rem] font-semibold text-white tracking-[-0.04em] leading-[1.08]">
                 One login.
-                <span className="block text-white/40 font-light mt-1">
-                  Your whole campus.
-                </span>
+              </p>
+              <p className="mt-2 text-xl xl:text-2xl font-light text-white/55 tracking-[-0.02em]">
+                Your whole campus.
               </p>
             </div>
           )}
 
           {bottomText && (
             <motion.p
-              className="text-[10px] font-semibold tracking-[0.3em] text-white/40"
+              className="mt-10 text-[11px] font-semibold tracking-[0.22em] text-white/50 uppercase"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
+              transition={{ delay: 0.35, duration: 0.5 }}
             >
               {bottomText}
             </motion.p>
@@ -67,61 +94,94 @@ export default function LoginScreen({
       </div>
 
       {/* Right — form */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-20 sm:px-12 lg:px-16 xl:px-24">
-        <div className="w-full max-w-[380px] mx-auto lg:mx-0 lg:max-w-[400px]">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="mb-10"
-          >
-            <UnizLogo size="lg" />
-          </motion.div>
+      <div className="flex-1 flex flex-col min-h-screen">
+        {onBack && (
+          <div className="lg:hidden px-5 pt-5">
+            <button
+              type="button"
+              onClick={onBack}
+              className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-950"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back
+            </button>
+          </div>
+        )}
 
-          <AnimatePresence mode="wait">
+        <div className="flex flex-1 items-center justify-center px-5 py-10 sm:px-10 lg:px-14 xl:px-20">
+          <div className="w-full max-w-[420px]">
             <motion.div
-              key={stepKey || title}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.4 }}
               className="mb-8"
             >
-              <h1 className="text-[1.75rem] sm:text-[2rem] font-semibold text-zinc-950 tracking-[-0.04em] leading-tight">
-                {title || (isLogin ? "Sign in" : "Create account")}
-              </h1>
-              {subtitle && (
-                <p className="mt-2 text-[15px] text-zinc-400 font-medium leading-relaxed">
-                  {subtitle}
-                </p>
-              )}
-            </motion.div>
-          </AnimatePresence>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={stepKey || "form"}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              {children}
-            </motion.div>
-          </AnimatePresence>
-
-          {onToggleMode && (
-            <div className="mt-10 pt-6 border-t border-zinc-100 text-[14px] text-zinc-500">
-              {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-              <button
-                type="button"
-                onClick={onToggleMode}
-                className="text-zinc-950 font-semibold hover:underline underline-offset-4 transition-colors"
+              <UnizLogo size="lg" />
+              <span
+                className={cn(
+                  "mt-4 inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold tracking-wide",
+                  role === "admin"
+                    ? "border-zinc-200 bg-white text-zinc-600"
+                    : role === "faculty"
+                      ? "border-violet-100 bg-violet-50 text-violet-700"
+                      : "border-sky-100 bg-sky-50 text-sky-700",
+                )}
               >
-                {isLogin ? "Sign up" : "Sign in"}
-              </button>
+                {meta.label}
+              </span>
+            </motion.div>
+
+            <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 sm:p-7 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_8px_24px_rgba(10,10,10,0.04)]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={stepKey || title}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.25 }}
+                  className="mb-6"
+                >
+                  <h1 className="text-[1.625rem] font-semibold text-zinc-950 tracking-[-0.03em] leading-tight">
+                    {title || (isLogin ? "Sign in" : "Create account")}
+                  </h1>
+                  {subtitle && (
+                    <p className="mt-1.5 text-[14px] text-zinc-500 leading-relaxed">
+                      {subtitle}
+                    </p>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={stepKey || "form"}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {children}
+                </motion.div>
+              </AnimatePresence>
             </div>
-          )}
+
+            {onToggleMode && (
+              <div className="mt-8 text-center text-[14px] text-zinc-500">
+                {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+                <button
+                  type="button"
+                  onClick={onToggleMode}
+                  className="text-zinc-950 font-semibold hover:underline underline-offset-4 transition-colors"
+                >
+                  {isLogin ? "Sign up" : "Sign in"}
+                </button>
+              </div>
+            )}
+
+            <p className="mt-6 text-center text-[12px] text-zinc-400 lg:hidden">
+              {meta.hint}
+            </p>
+          </div>
         </div>
       </div>
     </div>

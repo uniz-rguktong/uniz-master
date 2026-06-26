@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CalendarClock,
@@ -103,6 +103,89 @@ function buildSemesterQuery(
 function inferYearFromSubjectSemester(semester: string): string {
   const m = String(semester || "").match(/\b(E[1-4])\b/i);
   return m ? m[1].toUpperCase() : "E1";
+}
+
+function getSemNumberFromName(name: string): string {
+  const m = String(name || "").match(/SEM[-\s]?([12])/i);
+  return m ? m[1] : "1";
+}
+
+function parseSubjectCodeSlots(
+  codes: string[],
+  prefix: string,
+): { maxSlot: number; variantsBySlot: Map<number, number> } {
+  const escaped = prefix.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(`^${escaped}-(\\d{2})(?:-(\\d+))?$`, "i");
+  let maxSlot = 0;
+  const variantsBySlot = new Map<number, number>();
+
+  for (const code of codes) {
+    const m = code.trim().toUpperCase().match(re);
+    if (!m) continue;
+    const slot = parseInt(m[1], 10);
+    maxSlot = Math.max(maxSlot, slot);
+    if (m[2]) {
+      const variant = parseInt(m[2], 10);
+      variantsBySlot.set(slot, Math.max(variantsBySlot.get(slot) ?? 0, variant));
+    }
+  }
+
+  return { maxSlot, variantsBySlot };
+}
+
+/** Suggest next catalog-style code; open electives use a `-1`, `-2` variant suffix. */
+function suggestCustomSubjectCode(opts: {
+  semesterName: string;
+  department: string;
+  academicYear: string;
+  subjectType: string;
+  electiveGroupCode?: string;
+  existingSubjects: SubjectDraft[];
+}): string {
+  const {
+    semesterName,
+    department,
+    academicYear,
+    subjectType,
+    electiveGroupCode,
+    existingSubjects,
+  } = opts;
+  const dept = department.trim().toUpperCase();
+  const year = academicYear.trim().toUpperCase();
+  if (!dept || !year) return "";
+
+  const semNum = getSemNumberFromName(semesterName);
+  const prefix = `${dept}-${year}-SEM-${semNum}`;
+  const allCodes = existingSubjects.map((s) => s.code);
+  const { maxSlot, variantsBySlot } = parseSubjectCodeSlots(allCodes, prefix);
+
+  if (subjectType === "OPEN_ELECTIVE") {
+    const groupKey = electiveGroupCode?.trim().toUpperCase() ?? "";
+    const groupPeers = groupKey
+      ? existingSubjects.filter(
+          (s) =>
+            s.subjectType === "OPEN_ELECTIVE" &&
+            s.electiveGroupCode.toUpperCase() === groupKey,
+        )
+      : [];
+
+    if (groupPeers.length > 0) {
+      const { maxSlot: peerSlot, variantsBySlot: peerVariants } =
+        parseSubjectCodeSlots(
+          groupPeers.map((s) => s.code),
+          prefix,
+        );
+      const slot = peerSlot;
+      const variant = (peerVariants.get(slot) ?? groupPeers.length) + 1;
+      return `${prefix}-${String(slot).padStart(2, "0")}-${variant}`;
+    }
+
+    const nextSlot = maxSlot + 1;
+    return `${prefix}-${String(nextSlot).padStart(2, "0")}-1`;
+  }
+
+  const nextSlot = maxSlot + 1;
+  return `${prefix}-${String(nextSlot).padStart(2, "0")}`;
 }
 
 type GroupDraft = {
@@ -901,6 +984,8 @@ function SubjectsStep({
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [pickType, setPickType] = useState("CORE");
   const [pickGroup, setPickGroup] = useState("");
+  const [codeTouched, setCodeTouched] = useState(false);
+  const prevDraftKeyRef = useRef("");
 
   const catalogSemester = useMemo(
     () => deriveCatalogSemester(semesterName),
@@ -910,6 +995,60 @@ function SubjectsStep({
   useEffect(() => {
     setFilterYear(deriveYearFromSemesterName(semesterName));
   }, [semesterName]);
+
+  useEffect(() => {
+    const draftKey = `${draft.code}|${draft.name}`;
+    if (!draft.code && !draft.name && prevDraftKeyRef.current !== "|") {
+      setCodeTouched(false);
+    }
+    prevDraftKeyRef.current = draftKey;
+  }, [draft.code, draft.name]);
+
+  const withSuggestedCode = useCallback(
+    (next: SubjectDraft): SubjectDraft => {
+      if (next.subjectType !== "OPEN_ELECTIVE") return next;
+      const suggested = suggestCustomSubjectCode({
+        semesterName,
+        department: next.department,
+        academicYear: next.academicYear,
+        subjectType: next.subjectType,
+        electiveGroupCode: next.electiveGroupCode,
+        existingSubjects: subjects,
+      });
+      return suggested ? { ...next, code: suggested } : next;
+    },
+    [semesterName, subjects],
+  );
+
+  useEffect(() => {
+    if (!showCustomForm || codeTouched || draft.subjectType !== "OPEN_ELECTIVE") {
+      return;
+    }
+    if (!draft.department) return;
+
+    const suggested = suggestCustomSubjectCode({
+      semesterName,
+      department: draft.department,
+      academicYear: draft.academicYear,
+      subjectType: draft.subjectType,
+      electiveGroupCode: draft.electiveGroupCode,
+      existingSubjects: subjects,
+    });
+    if (suggested && suggested !== draft.code) {
+      setDraft((d) => ({ ...d, code: suggested }));
+    }
+  }, [
+    showCustomForm,
+    codeTouched,
+    draft.subjectType,
+    draft.department,
+    draft.academicYear,
+    draft.electiveGroupCode,
+    draft.code,
+    semesterName,
+    subjects,
+    setDraft,
+  ]);
 
   const fetchCatalog = useCallback(async () => {
     setCatalogLoading(true);
@@ -1165,7 +1304,29 @@ function SubjectsStep({
       <div className="rounded-2xl border border-dashed border-zinc-200 bg-zinc-50/40 overflow-hidden">
         <button
           type="button"
-          onClick={() => setShowCustomForm((v) => !v)}
+          onClick={() => {
+            setShowCustomForm((v) => {
+              const opening = !v;
+              if (opening) {
+                setCodeTouched(false);
+                setDraft((d) =>
+                  withSuggestedCode({
+                    ...d,
+                    academicYear:
+                      deriveYearFromSemesterName(semesterName) || d.academicYear,
+                    department: filterBranch || d.department,
+                    subjectType:
+                      pickType === "OPEN_ELECTIVE" ? "OPEN_ELECTIVE" : d.subjectType,
+                    electiveGroupCode:
+                      pickType === "OPEN_ELECTIVE" && pickGroup
+                        ? pickGroup
+                        : d.electiveGroupCode,
+                  }),
+                );
+              }
+              return opening;
+            });
+          }}
           className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-zinc-50 transition-colors"
         >
           <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-zinc-500">
@@ -1183,14 +1344,22 @@ function SubjectsStep({
               For one-off or new codes only — will be upserted into the catalog when you save.
             </p>
             <div className="grid grid-cols-3 gap-3">
-              <input
-                className={inputClass}
-                placeholder="Code (CS301)"
-                value={draft.code}
-                onChange={(e) =>
-                  setDraft({ ...draft, code: e.target.value.toUpperCase() })
-                }
-              />
+              <div className="space-y-1">
+                <input
+                  className={inputClass}
+                  placeholder="Code (CS301)"
+                  value={draft.code}
+                  onChange={(e) => {
+                    setCodeTouched(true);
+                    setDraft({ ...draft, code: e.target.value.toUpperCase() });
+                  }}
+                />
+                {draft.subjectType === "OPEN_ELECTIVE" && !codeTouched && draft.code && (
+                  <p className="text-[10px] text-sky-600 font-semibold">
+                    Auto-suggested — edit if needed
+                  </p>
+                )}
+              </div>
               <input
                 className={`${inputClass} col-span-2`}
                 placeholder="Subject name"
@@ -1202,9 +1371,14 @@ function SubjectsStep({
               <select
                 className={inputClass}
                 value={draft.department}
-                onChange={(e) =>
-                  setDraft({ ...draft, department: e.target.value })
-                }
+                onChange={(e) => {
+                  const department = e.target.value;
+                  setDraft((d) =>
+                    codeTouched
+                      ? { ...d, department }
+                      : withSuggestedCode({ ...d, department }),
+                  );
+                }}
               >
                 <option value="">Branch…</option>
                 {BRANCHES.map((b) => (
@@ -1216,9 +1390,14 @@ function SubjectsStep({
               <select
                 className={inputClass}
                 value={draft.academicYear}
-                onChange={(e) =>
-                  setDraft({ ...draft, academicYear: e.target.value })
-                }
+                onChange={(e) => {
+                  const academicYear = e.target.value;
+                  setDraft((d) =>
+                    codeTouched
+                      ? { ...d, academicYear }
+                      : withSuggestedCode({ ...d, academicYear }),
+                  );
+                }}
               >
                 {YEARS.map((y) => (
                   <option key={y} value={y}>
@@ -1243,7 +1422,13 @@ function SubjectsStep({
                 <button
                   key={t.id}
                   type="button"
-                  onClick={() => setDraft({ ...draft, subjectType: t.id })}
+                  onClick={() => {
+                    if (t.id === "OPEN_ELECTIVE" && !codeTouched) {
+                      setDraft((d) => withSuggestedCode({ ...d, subjectType: t.id }));
+                    } else {
+                      setDraft({ ...draft, subjectType: t.id });
+                    }
+                  }}
                   className={`text-left px-3 py-2.5 rounded-xl border transition-all ${
                     draft.subjectType === t.id
                       ? "border-zinc-300 bg-zinc-100"
@@ -1264,12 +1449,14 @@ function SubjectsStep({
                   className={inputClass}
                   placeholder="e.g. PE101"
                   value={draft.electiveGroupCode}
-                  onChange={(e) =>
-                    setDraft({
-                      ...draft,
-                      electiveGroupCode: e.target.value.toUpperCase(),
-                    })
-                  }
+                  onChange={(e) => {
+                    const electiveGroupCode = e.target.value.toUpperCase();
+                    setDraft((d) =>
+                      codeTouched || d.subjectType !== "OPEN_ELECTIVE"
+                        ? { ...d, electiveGroupCode }
+                        : withSuggestedCode({ ...d, electiveGroupCode }),
+                    );
+                  }}
                   list="group-codes"
                 />
                 <datalist id="group-codes">

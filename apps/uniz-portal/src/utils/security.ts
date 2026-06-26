@@ -54,3 +54,18 @@ export const clearSession = () => {
       .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
   });
 };
+
+/** Read bearer token from localStorage (handles JSON-quoted values). */
+export function getStoredAuthToken(): string | null {
+  const raw =
+    localStorage.getItem("admin_token") ||
+    localStorage.getItem("faculty_token") ||
+    localStorage.getItem("student_token");
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return typeof parsed === "string" ? parsed : raw.replace(/^"|"$/g, "");
+  } catch {
+    return raw.replace(/^"|"$/g, "");
+  }
+}

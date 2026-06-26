@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   LayoutDashboard,
   MessageSquare,
@@ -9,15 +9,19 @@ import AdminShell from "@/components/admin/AdminShell";
 import SecuritySection from "../Webmaster/SecuritySection";
 import { useIsAuth } from "../../../hooks/is_authenticated";
 import { useLogout } from "../../../hooks/useLogout";
+import { useAdminSectionRoute } from "../../../hooks/useAdminSectionRoute";
 import RequestManagement from "./RequestManagement";
 import GrievanceList from "./GrievanceList";
 import WebmasterOverview from "../Webmaster/WebmasterOverview";
 
 export default function SWODashboard() {
   useIsAuth();
-  const [activeTab, setActiveTab] = useState<
-    "dashboard" | "outing" | "outpass" | "grievance" | "security"
-  >("dashboard");
+
+  const allowedTabs = useMemo(
+    () => ["dashboard", "outing", "outpass", "grievance", "security"] as const,
+    [],
+  );
+  const { activeTab, setActiveTab } = useAdminSectionRoute(allowedTabs);
 
   const username = (localStorage.getItem("username") || "SWO").replace(
     /"/g,
@@ -68,7 +72,7 @@ export default function SWODashboard() {
     <AdminShell
       navGroups={navGroups}
       activeTab={activeTab}
-      onTabChange={(id) => setActiveTab(id as any)}
+      onTabChange={(id) => setActiveTab(id)}
       onLogout={logout}
       username={username}
       collapseBranding="hide"
