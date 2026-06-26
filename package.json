@@ -53,6 +53,9 @@
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.3"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.62.2"
+  },
   "overrides": {
     "undici": "^6.22.1",
     "path-to-regexp": "^6.3.0",
