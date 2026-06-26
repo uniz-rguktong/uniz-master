@@ -185,7 +185,7 @@ export function NotificationsPage() {
           style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
         />
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] uppercase text-amber-400 bg-amber-400/10 border border-amber-400/30 rounded-full">
+          <span className="inline-block px-5 py-2 mb-6 text-xs font-bold tracking-[0.2em] text-amber-400 bg-amber-400/10 border border-amber-400/30 rounded-full">
             Rajiv Gandhi University of Knowledge Technologies
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-6">

@@ -86,7 +86,7 @@ export function LandingSectionHeader({
         )}
       >
         <div className="w-1.5 h-1.5 rounded-full bg-zinc-950 animate-pulse" />
-        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+        <span className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
           {eyebrow}
         </span>
       </div>
@@ -143,7 +143,7 @@ export function LandingPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[9.5px] font-semibold tracking-[0.14em] uppercase",
+        "inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[9.5px] font-semibold tracking-[0.14em] ",
         PILL_ACCENTS[accent],
         className,
       )}

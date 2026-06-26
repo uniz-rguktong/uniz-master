@@ -57,7 +57,7 @@ const CustomTooltip = ({ active, payload, label, mode }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="rounded-2xl border border-white/40 bg-white/70 backdrop-blur-xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] min-w-[200px] text-zinc-900 animate-in zoom-in-95 duration-200">
-        <div className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] mb-3 pb-2 border-b border-zinc-100/50">
+        <div className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] mb-3 pb-2 border-b border-zinc-100/50">
           {mode === "subject" ? "Intelligence Unit" : `${label} Overview`}
         </div>
 
@@ -67,7 +67,7 @@ const CustomTooltip = ({ active, payload, label, mode }: any) => {
               {payload[0].payload.subject_name}
             </div>
             <div className="flex justify-between items-center py-1">
-              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-zinc-500 tracking-wider">
                 Attendance
               </span>
               <span
@@ -89,7 +89,7 @@ const CustomTooltip = ({ active, payload, label, mode }: any) => {
                     className="w-1.5 h-1.5 rounded-full shadow-sm"
                     style={{ backgroundColor: entry.color }}
                   />
-                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.14em]">
+                  <span className="text-[10px] font-bold text-zinc-500 tracking-[0.14em]">
                     {entry.name}
                   </span>
                 </div>
@@ -248,7 +248,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
             </div>
             <div className="absolute inset-0 border-t-2 border-zinc-900 rounded-full animate-spin" />
           </div>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-900/40">
+          <span className="text-[10px] font-semibold tracking-[0.3em] text-zinc-900/40">
             Piping Academic Intelligence
           </span>
         </div>
@@ -266,7 +266,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2.5">
                   <div className="w-2 h-2 rounded-full bg-zinc-900 animate-pulse" />
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-zinc-900/40">
+                  <span className="text-[10px] font-semibold tracking-[0.25em] text-zinc-900/40">
                     Real-time Visualizer
                   </span>
                 </div>
@@ -288,7 +288,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
               <div className="flex items-center gap-2 bg-zinc-50/50 p-1.5 rounded-2xl border border-zinc-100">
                 <button
                   onClick={() => setView("semester")}
-                  className={`px-6 py-2.5 rounded-xl text-[11px] font-semibold uppercase tracking-[0.14em] transition-all duration-500 ${
+                  className={`px-6 py-2.5 rounded-xl text-[11px] font-semibold tracking-[0.14em] transition-all duration-500 ${
                     view === "semester"
                       ? "bg-white text-zinc-900 shadow-xl shadow-zinc-200"
                       : "text-zinc-400 hover:text-zinc-900"
@@ -298,7 +298,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                 </button>
                 <button
                   onClick={() => setView("subject")}
-                  className={`px-6 py-2.5 rounded-xl text-[11px] font-semibold uppercase tracking-[0.14em] transition-all duration-500 ${
+                  className={`px-6 py-2.5 rounded-xl text-[11px] font-semibold tracking-[0.14em] transition-all duration-500 ${
                     view === "subject"
                       ? "bg-white text-zinc-900 shadow-xl shadow-zinc-200"
                       : "text-zinc-400 hover:text-zinc-900"
@@ -313,7 +313,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                     view === "semester" ? setTimeHorizon : setSubjectFilter
                   }
                 >
-                  <SelectTrigger className="w-[140px] h-10 rounded-xl bg-transparent border-none text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-600 focus:ring-0">
+                  <SelectTrigger className="w-[140px] h-10 rounded-xl bg-transparent border-none text-[10px] font-semibold tracking-[0.14em] text-zinc-600 focus:ring-0">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-2xl border-zinc-100 shadow-2xl">
@@ -321,19 +321,19 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                       <>
                         <SelectItem
                           value="overall"
-                          className="text-[10px] font-semibold tracking-[0.14em] uppercase"
+                          className="text-[10px] font-semibold tracking-[0.14em] "
                         >
                           Overall
                         </SelectItem>
                         <SelectItem
                           value="year"
-                          className="text-[10px] font-semibold tracking-[0.14em] uppercase"
+                          className="text-[10px] font-semibold tracking-[0.14em] "
                         >
                           Past Year
                         </SelectItem>
                         <SelectItem
                           value="recent"
-                          className="text-[10px] font-semibold tracking-[0.14em] uppercase"
+                          className="text-[10px] font-semibold tracking-[0.14em] "
                         >
                           Recent
                         </SelectItem>
@@ -342,25 +342,25 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                       <>
                         <SelectItem
                           value="all"
-                          className="text-[10px] font-semibold tracking-[0.14em] uppercase"
+                          className="text-[10px] font-semibold tracking-[0.14em] "
                         >
                           All Classes
                         </SelectItem>
                         <SelectItem
                           value="theory"
-                          className="text-[10px] font-semibold tracking-[0.14em] uppercase"
+                          className="text-[10px] font-semibold tracking-[0.14em] "
                         >
                           Theory
                         </SelectItem>
                         <SelectItem
                           value="lab"
-                          className="text-[10px] font-semibold tracking-[0.14em] uppercase"
+                          className="text-[10px] font-semibold tracking-[0.14em] "
                         >
                           Labs
                         </SelectItem>
                         <SelectItem
                           value="low"
-                          className="text-[10px] font-semibold tracking-[0.14em] uppercase"
+                          className="text-[10px] font-semibold tracking-[0.14em] "
                         >
                           Low (75%)
                         </SelectItem>
@@ -378,7 +378,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                   <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500">
                     <Monitor size={14} />
                   </div>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">
+                  <span className="text-[10px] font-semibold tracking-[0.14em]">
                     Presence
                   </span>
                 </div>
@@ -394,7 +394,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                   <div className="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500">
                     <Award size={14} />
                   </div>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">
+                  <span className="text-[10px] font-semibold tracking-[0.14em]">
                     Latest SGPA
                   </span>
                 </div>
@@ -410,7 +410,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                   <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500">
                     <Activity size={14} />
                   </div>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">
+                  <span className="text-[10px] font-semibold tracking-[0.14em]">
                     Cumulative
                   </span>
                 </div>
@@ -426,7 +426,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                   <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500">
                     <TrendingUp size={14} />
                   </div>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.14em]">
+                  <span className="text-[10px] font-semibold tracking-[0.14em]">
                     Momentum
                   </span>
                 </div>
@@ -617,7 +617,7 @@ const StudentAnalytics: React.FC<AnalyticsProps> = ({ studentId }) => {
                                       textAnchor="end"
                                       fill="#94a3b8"
                                       transform="rotate(-30)"
-                                      className="text-[10px] font-semibold uppercase tracking-tighter"
+                                      className="text-[10px] font-semibold tracking-tighter"
                                     >
                                       {payload.value?.length > 20
                                         ? payload.value.substring(0, 18) + ".."
@@ -707,7 +707,7 @@ const InsightCard = ({ title, subject, value, icon, color }: any) => {
           {icon}
         </div>
         <div className="space-y-1">
-          <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+          <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
             {title}
           </p>
           <p className="text-sm font-semibold text-zinc-900 leading-none truncate max-w-[150px]">

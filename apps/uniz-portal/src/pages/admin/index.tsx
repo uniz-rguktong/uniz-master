@@ -63,7 +63,7 @@ const QuickActionButton = ({
       <h3 className="font-bold text-zinc-950 text-lg leading-tight mb-1 group-hover:translate-x-0.5 transition-transform">
         {title}
       </h3>
-      <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide group-hover:text-zinc-500 transition-colors">
+      <p className="text-xs font-medium text-zinc-400 tracking-wide group-hover:text-zinc-500 transition-colors">
         {subtitle}
       </p>
     </div>
@@ -274,7 +274,7 @@ export default function Admin() {
               </h1>
               <div className="flex items-center gap-1.5 mt-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-[0.14em]">
+                <p className="text-xs font-bold text-zinc-400 tracking-[0.14em]">
                   {role.replace("_", " ")} Dashboard
                 </p>
               </div>
@@ -297,7 +297,7 @@ export default function Admin() {
             </button>
             <button
               onClick={handleLogout}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${adminLogoutButtonClass} !w-auto !h-auto hover:!bg-red-50`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs tracking-wider transition-all ${adminLogoutButtonClass} !w-auto !h-auto hover:!bg-red-50`}
             >
               <LogOut className="w-4 h-4" /> LOGOUT
             </button>
@@ -315,7 +315,7 @@ export default function Admin() {
           >
             <div className="flex items-center gap-2 mb-6 ml-1">
               <Zap className="w-5 h-5 text-zinc-950 fill-zinc-950" />
-              <h2 className="text-lg font-semibold tracking-tight uppercase text-zinc-950">
+              <h2 className="text-lg font-semibold tracking-tight text-zinc-950">
                 Priority Actions
               </h2>
             </div>
@@ -340,7 +340,7 @@ export default function Admin() {
               >
                 <div className="flex items-center gap-2 mb-6 ml-1 border-b border-zinc-100/80 pb-2">
                   <LayoutGrid className="w-4 h-4 text-zinc-400" />
-                  <h2 className="text-sm font-bold text-zinc-400 uppercase tracking-[0.14em]">
+                  <h2 className="text-sm font-bold text-zinc-400 tracking-[0.14em]">
                     {section.title}
                   </h2>
                 </div>

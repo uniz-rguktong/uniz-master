@@ -260,7 +260,7 @@ const Home = () => {
               </LandingCTA>
             )}
             {isInstalled && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold uppercase tracking-[0.14em] border border-emerald-100">
+              <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold tracking-[0.14em] border border-emerald-100">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm" />
                 Native App Instance Active
               </div>

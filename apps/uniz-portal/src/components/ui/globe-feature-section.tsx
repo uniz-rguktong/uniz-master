@@ -23,7 +23,7 @@ function StatPill({
       <span className="text-[28px] font-semibold tracking-[-0.04em] text-zinc-950 leading-none">
         {value}
       </span>
-      <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">
+      <span className="mt-1 text-[10px] font-bold tracking-[0.16em] text-zinc-400">
         {label}
       </span>
     </motion.div>
@@ -47,7 +47,7 @@ export default function GlobeFeature() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
           </span>
-          <span className="text-[10.5px] font-bold uppercase tracking-[0.14em] text-zinc-500">
+          <span className="text-[10.5px] font-bold tracking-[0.14em] text-zinc-500">
             Open Source
           </span>
         </motion.div>

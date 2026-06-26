@@ -163,7 +163,7 @@ export default function AddStudents() {
       {/* Configuration Bar */}
       <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">
+          <label className="text-xs font-semibold text-zinc-500 tracking-wide">
             Year
           </label>
           <div className="flex bg-zinc-100 p-1 rounded-lg">
@@ -184,7 +184,7 @@ export default function AddStudents() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">
+          <label className="text-xs font-semibold text-zinc-500 tracking-wide">
             Semester
           </label>
           <select
@@ -198,7 +198,7 @@ export default function AddStudents() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">
+          <label className="text-xs font-semibold text-zinc-500 tracking-wide">
             Branch
           </label>
           <select
@@ -293,7 +293,7 @@ export default function AddStudents() {
             </div>
             <div className="overflow-x-auto max-h-[500px]">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-zinc-500 uppercase bg-zinc-50 sticky top-0 z-10">
+                <thead className="text-xs text-zinc-500 bg-zinc-50 sticky top-0 z-10">
                   <tr>
                     {headers.map((h, i) => (
                       <th
@@ -347,7 +347,7 @@ export default function AddStudents() {
                 Upload Status
               </span>
               <span
-                className={`text-xs font-semibold uppercase tracking-[0.14em] px-2 py-1 rounded-full ${progress.status === "completed" ? "bg-black text-white" : "bg-zinc-200 text-zinc-700"}`}
+                className={`text-xs font-semibold tracking-[0.14em] px-2 py-1 rounded-full ${progress.status === "completed" ? "bg-black text-white" : "bg-zinc-200 text-zinc-700"}`}
               >
                 {progress.status === "completed" ? "Completed" : "Processing"}
               </span>
@@ -361,7 +361,7 @@ export default function AddStudents() {
                 </span>
               </div>
             ) : (
-              <div className="flex items-center gap-3 text-black mb-2 font-semibold uppercase tracking-[0.14em]">
+              <div className="flex items-center gap-3 text-black mb-2 font-semibold tracking-[0.14em]">
                 <Loader2 className="w-5 h-5 animate-spin" />
                 <span className="text-sm font-medium">Uploading data...</span>
               </div>

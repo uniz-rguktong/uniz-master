@@ -49,6 +49,7 @@ import {
   GET_AVAILABLE_BATCHES,
   ADMIN_STUDENT_EXPORT,
   ADMIN_DELETE_STUDENT,
+  ADMIN_BULK_DELETE_STUDENTS,
   ADMIN_UPDATE_STUDENT,
 } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
@@ -295,6 +296,10 @@ export default function StudentDetails() {
   const [deleteTargetUser, setDeleteTargetUser] = useState("");
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
+
+  const [bulkDeleteModalOpen, setBulkDeleteModalOpen] = useState(false);
+  const [bulkDeleteConfirmText, setBulkDeleteConfirmText] = useState("");
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const authHeaders = () => ({
     Authorization: `Bearer ${(localStorage.getItem("admin_token") || "").replace(/"/g, "")}`,
@@ -840,6 +845,50 @@ export default function StudentDetails() {
     }
   };
 
+  const openBulkDelete = () => {
+    if (selectedIds.size === 0) return;
+    setBulkDeleteConfirmText("");
+    setBulkDeleteModalOpen(true);
+  };
+
+  const confirmBulkDelete = async () => {
+    const count = selectedIds.size;
+    const confirmPhrase = `Delete ${count}`;
+    if (bulkDeleteConfirmText.trim().toLowerCase() !== confirmPhrase.toLowerCase()) {
+      toast.error(`Type "${confirmPhrase}" to confirm`);
+      return;
+    }
+    setBulkDeleting(true);
+    const ids = [...selectedIds];
+    try {
+      const res = await fetch(ADMIN_BULK_DELETE_STUDENTS, {
+        method: "DELETE",
+        headers: authHeaders(),
+        body: JSON.stringify({ usernames: ids }),
+      });
+      const data = await res.json();
+      if (data.success || data.summary?.deleted > 0) {
+        toast.success(data.message || `Deleted ${data.summary?.deleted ?? 0} student(s)`);
+        setBulkDeleteModalOpen(false);
+        setSelectedIds(new Set());
+        const deletedSet = new Set(
+          (data.results || [])
+            .filter((r: { status: string }) => r.status === "deleted")
+            .map((r: { username: string }) => r.username),
+        );
+        setRows((prev) => prev.filter((s) => !deletedSet.has(s.username)));
+        if (selectedRow && deletedSet.has(selectedRow.username)) closeDrawer();
+        fetchStudents(pagination.page);
+      } else {
+        toast.error(data.message || "Bulk delete failed");
+      }
+    } catch {
+      toast.error("Failed to delete selected students");
+    } finally {
+      setBulkDeleting(false);
+    }
+  };
+
   const handleOpenPerformance = async (std: StudentRow) => {
     setSelectedStudentName(std.name);
     setSelectedStudentId(std.username);
@@ -1201,14 +1250,27 @@ export default function StudentDetails() {
             </span>
           )}
           {selectedIds.size > 0 && (
-            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-zinc-900 text-white text-[11px] font-semibold">
-              {selectedIds.size} selected
+            <span className="inline-flex items-center gap-2">
+              <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-zinc-900 text-white text-[11px] font-semibold">
+                {selectedIds.size} selected
+                <button
+                  type="button"
+                  onClick={() => setSelectedIds(new Set())}
+                  className="opacity-70 hover:opacity-100"
+                >
+                  <X size={12} />
+                </button>
+              </span>
               <button
                 type="button"
-                onClick={() => setSelectedIds(new Set())}
-                className="opacity-70 hover:opacity-100"
+                onClick={openBulkDelete}
+                className={cn(
+                  adminDangerButtonClass,
+                  "h-8 px-3 text-[11px] border-rose-200 text-rose-600 hover:bg-rose-50",
+                )}
               >
-                <X size={12} />
+                <Trash2 size={13} />
+                Delete selected
               </button>
             </span>
           )}
@@ -1262,7 +1324,7 @@ export default function StudentDetails() {
                       className={cn(
                         stickyCellClass(
                           col.key,
-                          "px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wide text-zinc-500 whitespace-nowrap border-r border-zinc-200 last:border-r-0",
+                          "px-3 py-2.5 text-left text-[10px] font-semibold tracking-wide text-zinc-500 whitespace-nowrap border-r border-zinc-200 last:border-r-0",
                           true,
                         ),
                         SORTABLE_KEYS.has(col.key) &&
@@ -1383,7 +1445,7 @@ export default function StudentDetails() {
             >
               <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b border-zinc-200/70">
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-400">
+                  <p className="text-[10px] font-semibold tracking-wide text-zinc-400">
                     Student profile
                   </p>
                   <p className="text-lg font-semibold text-zinc-900">
@@ -1515,6 +1577,75 @@ export default function StudentDetails() {
               value={deleteConfirmText}
               onChange={(e) => setDeleteConfirmText(e.target.value)}
               placeholder={deleteTargetUser}
+              className={adminInputClass}
+              autoComplete="off"
+            />
+          </div>
+        </div>
+      </AdminDialog>
+
+      <AdminDialog
+        open={bulkDeleteModalOpen}
+        onOpenChange={setBulkDeleteModalOpen}
+        elevated
+        title={`Delete ${selectedIds.size} student(s)`}
+        description="Permanent removal of profiles, logins, grades, attendance, and request history for every selected student."
+        maxWidth="max-w-md"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setBulkDeleteModalOpen(false)}
+              className={adminGhostButtonClass}
+              disabled={bulkDeleting}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={confirmBulkDelete}
+              disabled={
+                bulkDeleting ||
+                bulkDeleteConfirmText.trim().toLowerCase() !==
+                `Delete ${selectedIds.size}`.toLowerCase()
+              }
+              className={adminDangerButtonClass}
+            >
+              {bulkDeleting ? (
+                <Loader2 className="animate-spin w-4 h-4" />
+              ) : (
+                <Trash2 className="w-4 h-4" />
+              )}
+              Delete {selectedIds.size} permanently
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-[13px] text-zinc-600">
+            You are about to delete{" "}
+            <span className="font-semibold text-zinc-900">{selectedIds.size}</span>{" "}
+            student record(s). Type{" "}
+            <span className="font-semibold text-rose-600">
+              Delete {selectedIds.size}
+            </span>{" "}
+            to confirm.
+          </p>
+          <div className="max-h-32 overflow-y-auto rounded-xl border border-zinc-200 bg-zinc-50/80 p-3 text-[11px] font-mono text-zinc-600 space-y-0.5">
+            {[...selectedIds].slice(0, 12).map((id) => (
+              <div key={id}>{id}</div>
+            ))}
+            {selectedIds.size > 12 && (
+              <div className="text-zinc-400">+ {selectedIds.size - 12} more…</div>
+            )}
+          </div>
+          <div className="space-y-2">
+            <label className={adminLabelClass}>Confirmation</label>
+            <input
+              type="text"
+              value={bulkDeleteConfirmText}
+              onChange={(e) => setBulkDeleteConfirmText(e.target.value)}
+              placeholder={`Delete ${selectedIds.size}`}
               className={adminInputClass}
               autoComplete="off"
             />

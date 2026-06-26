@@ -158,7 +158,7 @@ export default function AdminShell({
             )}
           />
           {isSidebarOpen && (
-            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-zinc-200/60 rounded text-[9px] font-bold text-zinc-400 uppercase">
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-white border border-zinc-200/60 rounded text-[9px] font-bold text-zinc-400 ">
               /
             </div>
           )}
@@ -238,7 +238,7 @@ export default function AdminShell({
               <div className="w-12 h-12 bg-zinc-50 rounded-full flex items-center justify-center mb-3">
                 <Search size={20} className="text-zinc-300" />
               </div>
-              <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-[0.14em] px-4">
+              <p className="text-[11px] font-bold text-zinc-400 tracking-[0.14em] px-4">
                 No operations found
               </p>
             </div>
@@ -364,7 +364,7 @@ export default function AdminShell({
                         {profileName || username}
                       </p>
                       {roleLabel && (
-                        <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider truncate mt-0.5">
+                        <p className="text-[9px] font-bold text-zinc-400 tracking-wider truncate mt-0.5">
                           {roleLabel}
                         </p>
                       )}
@@ -489,7 +489,7 @@ export default function AdminShell({
                   </div>
                   <span
                     className={cn(
-                      "text-[9px] font-bold uppercase tracking-wider",
+                      "text-[9px] font-bold tracking-wider",
                       isActive ? "opacity-100" : "opacity-60",
                     )}
                   >

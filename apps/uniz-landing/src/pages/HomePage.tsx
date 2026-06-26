@@ -48,7 +48,7 @@ export function HomePage() {
       <div className="flex h-screen w-full items-center justify-center bg-white cursor-wait">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
-          <p className="text-slate-600 font-semibold uppercase tracking-widest text-sm animate-pulse">Loading Campus Data...</p>
+          <p className="text-slate-600 font-semibold tracking-widest text-sm animate-pulse">Loading Campus Data...</p>
         </div>
       </div>
     );

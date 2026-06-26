@@ -60,7 +60,7 @@ export default function RequestCard({
               {type} Protocol Record
             </h4>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-[9px] font-bold text-zinc-400 bg-zinc-50 px-1.5 py-0.5 rounded-md uppercase tracking-[0.14em]">
+              <span className="text-[9px] font-bold text-zinc-400 bg-zinc-50 px-1.5 py-0.5 rounded-md tracking-[0.14em]">
                 ID: {request._id.slice(-8).toUpperCase()}
               </span>
               <span className="w-1 h-1 rounded-full bg-zinc-200"></span>
@@ -78,7 +78,7 @@ export default function RequestCard({
         <div className="flex flex-col items-end gap-2">
           <StatusBadge />
           {isPending && request.current_level && (
-            <div className="text-[10px] uppercase tracking-[0.1em] font-semibold text-zinc-300 flex items-center gap-1.5">
+            <div className="text-[10px] tracking-[0.1em] font-semibold text-zinc-300 flex items-center gap-1.5">
               Pending at {request.current_level.replace(/_/g, " ")}{" "}
               <ArrowRight className="w-3 h-3 text-zinc-900/50" />
             </div>
@@ -89,7 +89,7 @@ export default function RequestCard({
       {/* Content Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-10 text-[14px] mb-4">
         <div className="col-span-1 md:col-span-2">
-          <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.14em] mb-1">
+          <p className="text-[9px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
             Reason for Leave
           </p>
           <p className="text-zinc-600 font-medium italic leading-relaxed px-1">
@@ -97,7 +97,7 @@ export default function RequestCard({
           </p>
         </div>
         <div>
-          <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.14em] mb-1">
+          <p className="text-[9px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
             {type === "outing" ? "Time Window" : "Duration Period"}
           </p>
           <p className="text-lg font-semibold text-zinc-900 tracking-tight">
@@ -107,10 +107,10 @@ export default function RequestCard({
           </p>
         </div>
         <div>
-          <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.14em] mb-1">
+          <p className="text-[9px] font-bold text-zinc-400 tracking-[0.14em] mb-1">
             Interval Net
           </p>
-          <div className="inline-flex items-center px-2 py-0.5 rounded-md bg-zinc-50 text-zinc-900 font-bold text-[10px] uppercase tracking-wider border border-zinc-100">
+          <div className="inline-flex items-center px-2 py-0.5 rounded-md bg-zinc-50 text-zinc-900 font-bold text-[10px] tracking-wider border border-zinc-100">
             {formatDuration(
               calculateDuration(
                 type === "outing" ? request.from_time : request.from_day,
@@ -122,7 +122,7 @@ export default function RequestCard({
 
         {isRejected && request.message && (
           <div className="col-span-full p-5 bg-red-50/30 border border-red-100/50 rounded-2xl text-red-900 text-[14px]">
-            <span className="font-semibold text-[10px] uppercase tracking-[0.14em] block mb-2 flex items-center gap-2 text-red-500">
+            <span className="font-semibold text-[10px] tracking-[0.14em] block mb-2 flex items-center gap-2 text-red-500">
               <XCircle className="w-3.5 h-3.5" /> Rejection Feedback
             </span>
             <p className="font-bold text-red-800/80">{request.message}</p>
@@ -135,7 +135,7 @@ export default function RequestCard({
         <div className="pt-5 border-t border-zinc-50">
           <div className="flex items-center gap-2 mb-4">
             <History className="w-3.5 h-3.5 text-zinc-300" />
-            <span className="text-[10px] font-semibold text-zinc-300 uppercase tracking-[0.14em]">
+            <span className="text-[10px] font-semibold text-zinc-300 tracking-[0.14em]">
               Activity Audit Log
             </span>
           </div>
@@ -154,7 +154,7 @@ export default function RequestCard({
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <span className="text-zinc-600 font-semibold group-hover/log:text-zinc-900 transition-colors">
                     <span
-                      className={`font-semibold uppercase text-[11px] tracking-[0.14em] ${
+                      className={`font-semibold text-[11px] tracking-[0.14em] ${
                         log.action === "approve"
                           ? "text-zinc-900"
                           : log.action === "reject"
@@ -166,7 +166,7 @@ export default function RequestCard({
                     </span>{" "}
                     by <span className="text-zinc-900">{log.role}</span>
                   </span>
-                  <span className="text-[10px] font-semibold text-zinc-300 font-mono uppercase tracking-tighter">
+                  <span className="text-[10px] font-semibold text-zinc-300 font-mono tracking-tighter">
                     {new Date(log.time).toLocaleString()}
                   </span>
                 </div>

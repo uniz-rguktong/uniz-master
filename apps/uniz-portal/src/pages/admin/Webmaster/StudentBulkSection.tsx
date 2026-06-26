@@ -392,7 +392,7 @@ export default function StudentBulkSection() {
             <div className={cn(adminCardClass, "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-zinc-50/40 p-6")}>
               {Object.entries(FIELD_GROUPS).map(([group, fields]) => (
                 <div key={group} className="space-y-3">
-                  <h4 className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] px-2 border-l-2 border-zinc-300">
+                  <h4 className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] px-2 border-l-2 border-zinc-300">
                     {group}
                   </h4>
                   <div className="flex flex-col gap-1.5">
@@ -460,7 +460,7 @@ export default function StudentBulkSection() {
               )}
               Download the data
             </button>
-            <p className="text-center text-zinc-300 text-[10px] font-medium uppercase tracking-[0.24em]">
+            <p className="text-center text-zinc-300 text-[10px] font-medium tracking-[0.24em]">
               Encrypted data streams active • Protocol 04-X
             </p>
           </div>

@@ -297,7 +297,7 @@ export default function WebmasterOverview({ username }: { username: string }) {
                       <Icon size={13} className="text-zinc-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.12em]">
+                      <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.12em]">
                         {label}
                       </p>
                       <input

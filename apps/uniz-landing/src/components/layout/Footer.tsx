@@ -72,7 +72,7 @@ export function Footer() {
             <img src="/rgukt-logo.png" alt="RGUKT" className="w-9 h-9 object-contain mix-blend-lighten" />
             <div className="flex flex-col leading-none">
               <span className="font-extrabold text-white text-base tracking-tight">RGUKT</span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#800000]">Ongole Campus</span>
+              <span className="text-[10px] font-bold tracking-widest text-[#800000]">Ongole Campus</span>
             </div>
           </Link>
           <p className="text-slate-500 text-sm leading-relaxed">
@@ -81,7 +81,7 @@ export function Footer() {
           <div className="flex gap-3 text-xs text-slate-500 mt-2">
             <MapPin className="w-4 h-4 mt-0.5 text-[#800000] flex-shrink-0" />
             <div className="flex flex-col gap-1 leading-relaxed">
-              <span className="font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-1">Contact Us</span>
+              <span className="font-bold text-slate-400 tracking-widest text-[10px] mb-1">Contact Us</span>
               <span>RGUKT Ongole Campus,</span>
               <span>Kurnool Road,</span>
               <span>Santhanuthalapadu(V&M),</span>
@@ -93,7 +93,7 @@ export function Footer() {
         {/* Link columns */}
         {columns.map((col, idx) => (
           <div key={idx}>
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 mb-4">{col.title}</p>
+            <p className="text-[10px] font-bold tracking-[0.2em] text-slate-600 mb-4">{col.title}</p>
             <ul className="flex flex-col gap-2.5">
               {col.links.map((lk, li) => (
                 <li key={li}>
@@ -107,7 +107,7 @@ export function Footer() {
 
       {/* ── Bottom bar ── */}
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-3 flex flex-col sm:flex-row justify-between items-center gap-5">
-        <p className="text-[10px] font-medium uppercase tracking-widest text-slate-600 text-center sm:text-left">
+        <p className="text-[10px] font-medium tracking-widest text-slate-600 text-center sm:text-left">
           © {new Date().getFullYear()} RGUKT Ongole. All rights reserved.
         </p>
         <div className="flex gap-2">

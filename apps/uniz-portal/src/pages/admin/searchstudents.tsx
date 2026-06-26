@@ -62,7 +62,7 @@ interface StudentProps {
 
 const Detail = ({ label, value }: { label: string; value?: any }) => (
   <div className="group">
-    <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1 block group-hover:text-zinc-500 transition-colors">
+    <label className="text-[10px] font-bold text-zinc-400 tracking-wider mb-1 block group-hover:text-zinc-500 transition-colors">
       {label}
     </label>
     <p className="text-sm font-semibold text-zinc-700">{value || "-"}</p>
@@ -246,7 +246,7 @@ export default function SearchStudents() {
             {selectedStudent && (
               <button
                 onClick={() => setSelectedStudent(null)}
-                className="p-2 bg-white border border-zinc-200 rounded-lg shadow-sm hover:bg-zinc-50 transition-all font-semibold text-xs uppercase"
+                className="p-2 bg-white border border-zinc-200 rounded-lg shadow-sm hover:bg-zinc-50 transition-all font-semibold text-xs "
               >
                 Close Profile
               </button>
@@ -313,7 +313,7 @@ export default function SearchStudents() {
                             <p className="text-sm font-bold text-zinc-900 group-hover:text-black transition-colors">
                               {s.name}
                             </p>
-                            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+                            <p className="text-xs font-semibold text-zinc-400 tracking-[0.14em]">
                               {s.username} • {s.branch} {s.year}
                             </p>
                           </div>
@@ -337,7 +337,7 @@ export default function SearchStudents() {
               >
                 <div className="pt-6 border-t border-zinc-100 grid grid-cols-2 lg:grid-cols-5 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] px-1">
+                    <label className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] px-1">
                       Branch
                     </label>
                     <select
@@ -354,7 +354,7 @@ export default function SearchStudents() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] px-1">
+                    <label className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] px-1">
                       Year
                     </label>
                     <select
@@ -371,7 +371,7 @@ export default function SearchStudents() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em] px-1">
+                    <label className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em] px-1">
                       Type Filter
                     </label>
                     <div className="flex gap-2">
@@ -380,7 +380,7 @@ export default function SearchStudents() {
                           setIsPending(isPending === true ? undefined : true)
                         }
                         className={cn(
-                          "flex-1 h-11 rounded-xl text-[10px] font-semibold uppercase border shadow-sm transition-all",
+                          "flex-1 h-11 rounded-xl text-[10px] font-semibold border shadow-sm transition-all",
                           isPending
                             ? "bg-zinc-900 border-zinc-900 text-white shadow-zinc-200"
                             : "bg-white border-zinc-200 text-zinc-600",
@@ -393,7 +393,7 @@ export default function SearchStudents() {
                           setIsOutside(isOutside === true ? undefined : true)
                         }
                         className={cn(
-                          "flex-1 h-11 rounded-xl text-[10px] font-semibold uppercase border shadow-sm transition-all",
+                          "flex-1 h-11 rounded-xl text-[10px] font-semibold border shadow-sm transition-all",
                           isOutside
                             ? "bg-black border-black text-white"
                             : "bg-white border-zinc-200 text-zinc-600",
@@ -408,7 +408,7 @@ export default function SearchStudents() {
                           )
                         }
                         className={cn(
-                          "flex-1 h-11 rounded-xl text-[10px] font-semibold uppercase border shadow-sm transition-all",
+                          "flex-1 h-11 rounded-xl text-[10px] font-semibold border shadow-sm transition-all",
                           isSuspended
                             ? "bg-red-900 border-red-900 text-white shadow-red-200"
                             : "bg-white border-zinc-200 text-zinc-600",
@@ -429,7 +429,7 @@ export default function SearchStudents() {
                         setIsSuspended(undefined);
                         setQuery("");
                       }}
-                      className="w-full h-11 text-xs font-semibold text-zinc-400 hover:text-zinc-900 uppercase tracking-[0.14em] transition-all"
+                      className="w-full h-11 text-xs font-semibold text-zinc-400 hover:text-zinc-900 tracking-[0.14em] transition-all"
                     >
                       Reset All Application Filters
                     </button>
@@ -448,7 +448,7 @@ export default function SearchStudents() {
           className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 shadow-sm"
         >
           <AlertCircle className="w-5 h-5" />
-          <p className="text-sm font-bold uppercase tracking-wider">{error}</p>
+          <p className="text-sm font-bold tracking-wider">{error}</p>
         </motion.div>
       )}
 
@@ -485,27 +485,27 @@ export default function SearchStudents() {
                       <h4 className="font-bold text-zinc-900 text-lg leading-tight group-hover:text-black transition-colors">
                         {student.name}
                       </h4>
-                      <p className="text-xs font-bold text-zinc-400 uppercase tracking-[0.14em]">
+                      <p className="text-xs font-bold text-zinc-400 tracking-[0.14em]">
                         {student.username}
                       </p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-3 bg-zinc-50 rounded-2xl relative">
-                      <p className="text-[10px] font-bold text-zinc-400 uppercase mb-1">
+                      <p className="text-[10px] font-bold text-zinc-400 mb-1">
                         Branch
                       </p>
                       <p className="text-sm font-bold text-zinc-700">
                         {student.branch}
                       </p>
                       {student.is_suspended && (
-                        <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-red-600 text-white text-[8px] font-semibold uppercase rounded shadow-lg ring-2 ring-white">
+                        <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-red-600 text-white text-[8px] font-semibold rounded shadow-lg ring-2 ring-white">
                           Suspended
                         </span>
                       )}
                     </div>
                     <div className="p-3 bg-zinc-50 rounded-2xl">
-                      <p className="text-[10px] font-bold text-zinc-400 uppercase mb-1">
+                      <p className="text-[10px] font-bold text-zinc-400 mb-1">
                         Year
                       </p>
                       <p className="text-sm font-bold text-zinc-700">
@@ -547,7 +547,7 @@ export default function SearchStudents() {
                     </div>
                     <div
                       className={cn(
-                        "absolute -bottom-2 -right-2 px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.14em] shadow-lg border-2 border-black bg-white text-black",
+                        "absolute -bottom-2 -right-2 px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-[0.14em] shadow-lg border-2 border-black bg-white text-black",
                         selectedStudent.is_suspended &&
                           "bg-red-600 border-red-900 text-white",
                       )}
@@ -562,10 +562,10 @@ export default function SearchStudents() {
 
                   <div className="text-center md:text-left space-y-4">
                     <div>
-                      <h2 className="text-4xl font-semibold text-black tracking-tighter uppercase">
+                      <h2 className="text-4xl font-semibold text-black tracking-tighter ">
                         {selectedStudent.name}
                       </h2>
-                      <p className="text-zinc-400 font-bold tracking-[0.14em] uppercase text-xs mt-2">
+                      <p className="text-zinc-400 font-bold tracking-[0.14em] text-xs mt-2">
                         {selectedStudent.username} • {selectedStudent.branch}{" "}
                         {selectedStudent.year}
                       </p>
@@ -605,7 +605,7 @@ export default function SearchStudents() {
                     size={120}
                     fgColor="#000000"
                   />
-                  <p className="text-[10px] text-center font-semibold text-zinc-400 mt-2 tracking-[0.14em] uppercase">
+                  <p className="text-[10px] text-center font-semibold text-zinc-400 mt-2 tracking-[0.14em] ">
                     Scan Identity
                   </p>
                 </div>
@@ -667,7 +667,7 @@ export default function SearchStudents() {
                           <p className="text-sm font-bold text-zinc-900">
                             {g.subject}
                           </p>
-                          <p className="text-[10px] font-bold text-zinc-400 uppercase">
+                          <p className="text-[10px] font-bold text-zinc-400 ">
                             {g.semester}
                           </p>
                         </div>
@@ -716,7 +716,7 @@ export default function SearchStudents() {
                             }}
                           />
                         </div>
-                        <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+                        <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
                           {a.attendedClasses} / {a.totalClasses} Lectures
                         </p>
                       </div>
@@ -758,7 +758,7 @@ export default function SearchStudents() {
                         className="p-4 bg-zinc-900 border border-zinc-800 rounded-2xl flex flex-col gap-3 shadow-lg"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="text-white font-semibold text-sm uppercase tracking-tighter">
+                          <span className="text-white font-semibold text-sm tracking-tighter">
                             {sem} Report
                           </span>
                           <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
@@ -772,7 +772,7 @@ export default function SearchStudents() {
                                 { studentId: selectedStudent.username },
                               )
                             }
-                            className="flex-1 bg-white text-black py-2 rounded-xl font-bold text-[10px] uppercase flex items-center justify-center gap-1.5 hover:bg-zinc-100 transition-all"
+                            className="flex-1 bg-white text-black py-2 rounded-xl font-bold text-[10px] flex items-center justify-center gap-1.5 hover:bg-zinc-100 transition-all"
                           >
                             <GraduationCap size={12} /> Grade
                           </button>
@@ -784,7 +784,7 @@ export default function SearchStudents() {
                                 { studentId: selectedStudent.username },
                               )
                             }
-                            className="flex-1 bg-white/10 text-white py-2 rounded-xl font-bold text-[10px] uppercase flex items-center justify-center gap-1.5 hover:bg-white/20 transition-all border border-white/10"
+                            className="flex-1 bg-white/10 text-white py-2 rounded-xl font-bold text-[10px] flex items-center justify-center gap-1.5 hover:bg-white/20 transition-all border border-white/10"
                           >
                             <BookOpen size={12} /> Attendance
                           </button>
@@ -798,7 +798,7 @@ export default function SearchStudents() {
               <div className="space-y-6">
                 <div className="flex items-center gap-3 px-4">
                   <History className="w-5 h-5 text-black" />
-                  <h3 className="font-semibold text-black uppercase tracking-[0.14em] text-lg">
+                  <h3 className="font-semibold text-black tracking-[0.14em] text-lg">
                     Request History
                   </h3>
                 </div>
@@ -806,7 +806,7 @@ export default function SearchStudents() {
                 {isHistoryLoading ? (
                   <div className="flex flex-col items-center justify-center py-20 gap-4">
                     <div className="w-8 h-8 border-3 border-zinc-200 border-t-black rounded-full animate-spin" />
-                    <p className="text-zinc-400 font-bold text-xs uppercase tracking-[0.14em]">
+                    <p className="text-zinc-400 font-bold text-xs tracking-[0.14em]">
                       Compiling history...
                     </p>
                   </div>
@@ -833,7 +833,7 @@ export default function SearchStudents() {
                             </div>
                             <div>
                               <div className="flex items-center gap-3 mb-1">
-                                <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+                                <span className="text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
                                   {req.type}
                                 </span>
                                 <span
@@ -846,7 +846,7 @@ export default function SearchStudents() {
                                         : "bg-black animate-pulse",
                                   )}
                                 />
-                                <span className="text-xs font-semibold uppercase tracking-[0.14em]">
+                                <span className="text-xs font-semibold tracking-[0.14em]">
                                   {req.is_approved
                                     ? "Granted"
                                     : req.is_rejected
@@ -857,16 +857,16 @@ export default function SearchStudents() {
                               <p className="font-bold text-black text-lg">
                                 "{req.reason}"
                               </p>
-                              <p className="text-xs font-semibold text-zinc-400 mt-1 uppercase tracking-[0.14em]">
+                              <p className="text-xs font-semibold text-zinc-400 mt-1 tracking-[0.14em]">
                                 {new Date(req.requested_time).toLocaleString()}
                               </p>
                             </div>
                           </div>
                           <div className="w-full md:w-auto p-4 bg-zinc-50 rounded-2xl border border-zinc-100 flex flex-col items-end gap-1">
-                            <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-[0.14em]">
+                            <p className="text-[10px] font-semibold text-zinc-400 tracking-[0.14em]">
                               Gateway Status
                             </p>
-                            <p className="text-sm font-semibold text-black uppercase tracking-tighter">
+                            <p className="text-sm font-semibold text-black tracking-tighter">
                               {req.current_level?.replace("_", " ") ||
                                 "Finalized"}
                             </p>
@@ -892,7 +892,7 @@ export default function SearchStudents() {
                       <History className="w-8 h-8" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-black font-semibold text-lg uppercase tracking-[0.14em]">
+                      <p className="text-black font-semibold text-lg tracking-[0.14em]">
                         No Request History
                       </p>
                       <p className="text-zinc-400 text-sm font-medium italic">
@@ -910,7 +910,7 @@ export default function SearchStudents() {
               <Search className="w-12 h-12" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-zinc-900 uppercase tracking-[0.14em]">
+              <h3 className="text-xl font-semibold text-zinc-900 tracking-[0.14em]">
                 Ready to search
               </h3>
               <p className="text-zinc-400 max-w-sm font-medium italic">

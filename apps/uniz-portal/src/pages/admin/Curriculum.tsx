@@ -313,7 +313,7 @@ export default function CurriculumManager() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <Loader2 className="animate-spin text-zinc-900" size={32} />
-          <p className="text-zinc-400 font-medium text-[12px] uppercase tracking-[0.14em]">
+          <p className="text-zinc-400 font-medium text-[12px] tracking-[0.14em]">
             Loading curriculum…
           </p>
         </div>
@@ -364,7 +364,7 @@ export default function CurriculumManager() {
 
               {/* Card Body */}
               <div className="space-y-1 mb-5">
-                <p className="text-[11px] font-semibold text-zinc-400 uppercase tracking-[0.12em]">
+                <p className="text-[11px] font-semibold text-zinc-400 tracking-[0.12em]">
                   {sub.code}
                 </p>
                 <h3 className="text-[16px] font-semibold text-zinc-900 line-clamp-1 leading-tight">
@@ -374,17 +374,17 @@ export default function CurriculumManager() {
 
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-6">
-                <span className="px-2.5 py-1 bg-zinc-900 text-white text-[10px] font-medium rounded-full uppercase tracking-wide">
+                <span className="px-2.5 py-1 bg-zinc-900 text-white text-[10px] font-medium rounded-full tracking-wide">
                   {sub.department}
                 </span>
-                <span className="px-2.5 py-1 bg-zinc-50 text-zinc-600 text-[10px] font-medium rounded-full uppercase tracking-wide border border-zinc-200">
+                <span className="px-2.5 py-1 bg-zinc-50 text-zinc-600 text-[10px] font-medium rounded-full tracking-wide border border-zinc-200">
                   {semesterLabel(sub)}
                 </span>
               </div>
 
               {/* Progress Bar (Weight) */}
               <div className="space-y-2">
-                <div className="flex justify-between items-center text-[10px] font-medium uppercase tracking-[0.12em] text-zinc-400">
+                <div className="flex justify-between items-center text-[10px] font-medium tracking-[0.12em] text-zinc-400">
                   <span>Academic Weight</span>
                   <span className="tabular-nums">{((sub.credits / 4) * 100).toFixed(0)}%</span>
                 </div>
@@ -401,7 +401,7 @@ export default function CurriculumManager() {
               <div className="mt-5 pt-4 border-t border-zinc-100 flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-zinc-400">
                   <BookOpen size={14} />
-                  <span className="text-[10px] font-medium uppercase tracking-[0.12em] tabular-nums">
+                  <span className="text-[10px] font-medium tracking-[0.12em] tabular-nums">
                     {sub.credits} Credits
                   </span>
                 </div>
@@ -415,7 +415,7 @@ export default function CurriculumManager() {
       {/* Pagination Controls */}
       {!loading && totalRecords > 0 && (
         <div className={cn(adminCardClass, "flex flex-col md:flex-row items-center justify-between gap-4 px-6 py-4")}>
-          <div className="text-[11px] font-medium text-zinc-400 uppercase tracking-[0.12em]">
+          <div className="text-[11px] font-medium text-zinc-400 tracking-[0.12em]">
             Showing <span className="text-zinc-900">{subjects.length}</span> of{" "}
             {totalRecords} records
           </div>

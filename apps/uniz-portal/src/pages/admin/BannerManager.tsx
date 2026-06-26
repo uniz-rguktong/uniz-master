@@ -92,7 +92,7 @@ function SortableBannerCard({
         <div className="absolute top-3 right-3">
           <span
             className={cn(
-              "px-2 py-1 text-xs font-bold uppercase tracking-wide rounded-md backdrop-blur-md shadow-sm border",
+              "px-2 py-1 text-xs font-bold tracking-wide rounded-md backdrop-blur-md shadow-sm border",
               banner.isPublished
                 ? "bg-emerald-500/90 text-white border-emerald-400"
                 : "bg-zinc-500/90 text-white border-zinc-400",
@@ -276,7 +276,7 @@ export default function BannerManager() {
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-semibold text-[10px] uppercase tracking-[0.14em] hover:bg-black transition-all flex items-center gap-3 shadow-lg shadow-zinc-100/50"
+            className="h-12 px-8 bg-zinc-900 text-white rounded-xl font-semibold text-[10px] tracking-[0.14em] hover:bg-black transition-all flex items-center gap-3 shadow-lg shadow-zinc-100/50"
           >
             <PlusCircle size={16} /> New Banner
           </button>
@@ -323,20 +323,20 @@ export default function BannerManager() {
                     {image ? (
                       <div className="text-emerald-700">
                         <ImageIcon className="w-6 h-6 mx-auto mb-1.5" />
-                        <p className="font-bold text-[10px] truncate max-w-[250px] uppercase">
+                        <p className="font-bold text-[10px] truncate max-w-[250px] ">
                           {image.name}
                         </p>
-                        <p className="text-[9px] opacity-70 mt-0.5 font-semibold uppercase">
+                        <p className="text-[9px] opacity-70 mt-0.5 font-semibold ">
                           Click to change
                         </p>
                       </div>
                     ) : (
                       <div className="text-zinc-500">
                         <Upload className="w-6 h-6 mx-auto mb-1.5 text-zinc-400" />
-                        <p className="font-bold text-[10px] uppercase tracking-wider">
+                        <p className="font-bold text-[10px] tracking-wider">
                           Select Banner Image
                         </p>
-                        <p className="text-[9px] opacity-60 mt-0.5 font-semibold uppercase">
+                        <p className="text-[9px] opacity-60 mt-0.5 font-semibold ">
                           Drop or click
                         </p>
                       </div>

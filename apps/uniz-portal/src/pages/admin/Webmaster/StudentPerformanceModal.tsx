@@ -250,7 +250,7 @@ export default function StudentPerformanceModal({
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                   {Object.entries(data.gpa_stats).map(([sem, stats]) => (
                     <div key={sem} className={cn(adminCardClass, "p-4")}>
-                      <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-400">
+                      <p className="text-[10px] font-semibold tracking-wide text-zinc-400">
                         {sem}
                       </p>
                       <p className={cn("text-2xl font-semibold text-zinc-900 mt-1", adminNumsClass)}>
@@ -286,7 +286,7 @@ function StatCard({
   return (
     <div className={cn(adminCardClass, "p-5 flex flex-col gap-3")}>
       <div className="flex items-center justify-between">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
+        <p className="text-[11px] font-semibold tracking-wide text-zinc-400">
           {label}
         </p>
         <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center">

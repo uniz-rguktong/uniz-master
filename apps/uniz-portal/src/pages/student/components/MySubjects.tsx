@@ -1,3 +1,4 @@
+import { formatStatus } from "@/utils/displayText";
 import { useState, useEffect } from "react";
 import {
   BookText,
@@ -93,18 +94,18 @@ export default function MySubjects({
       <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-3xl p-8 text-white shadow-xl shadow-zinc-100/50">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <span className="text-zinc-100 text-xs font-semibold uppercase tracking-[0.14em]">
+            <span className="text-zinc-100 text-xs font-semibold tracking-[0.14em]">
               Active Semester
             </span>
             <h2 className="text-3xl font-semibold tracking-tight">
               {data.semester.name}
             </h2>
             <div className="flex items-center gap-3 mt-1">
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold tracking-wider backdrop-blur-sm">
                 <CheckCircle2 className="w-3 h-3" /> Status:{" "}
-                {data.semester.status.replace("_", " ")}
+                {formatStatus(data.semester.status)}
               </span>
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold tracking-wider backdrop-blur-sm">
                 <GraduationCap className="w-3 h-3" /> Total Credits:{" "}
                 {data.subjects.reduce(
                   (acc, curr) => acc + (curr.subject?.credits || 0),
@@ -133,7 +134,7 @@ export default function MySubjects({
               <div className="w-8 h-8 bg-zinc-50 rounded-lg text-zinc-900 flex items-center justify-center group-hover:bg-zinc-900 group-hover:text-white transition-all duration-300">
                 <BookText size={16} />
               </div>
-              <span className="px-2 py-0.5 bg-zinc-50 rounded-lg text-[8px] font-semibold uppercase tracking-[0.14em] text-zinc-400 border border-zinc-100">
+              <span className="px-2 py-0.5 bg-zinc-50 rounded-lg text-[8px] font-semibold tracking-[0.14em] text-zinc-400 border border-zinc-100">
                 {subject.subject?.code}
               </span>
             </div>
@@ -144,14 +145,14 @@ export default function MySubjects({
               </h3>
 
               <div className="flex items-center justify-between mt-auto pt-3 border-t border-zinc-50">
-                <div className="text-[8px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+                <div className="text-[8px] font-semibold tracking-[0.14em] text-zinc-400">
                   {subject.subject?.department} • {subject.subject?.credits}{" "}
                   Credits
                 </div>
                 {subject.faculty && (
                   <div className="flex items-center gap-1.5 text-zinc-400">
                     <User size={10} />
-                    <span className="text-[9px] font-bold uppercase tracking-wider truncate max-w-[80px]">
+                    <span className="text-[9px] font-bold tracking-wider truncate max-w-[80px]">
                       {subject.faculty?.name?.split(" ")[0] || "Staff"}
                     </span>
                   </div>
