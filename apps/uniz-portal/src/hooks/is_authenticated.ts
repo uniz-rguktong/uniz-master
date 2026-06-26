@@ -3,6 +3,7 @@ import { is_authenticated } from "../store";
 import { useRecoilState } from "recoil";
 import { useNavigate, useLocation } from "react-router-dom";
 import { isTokenValid, parseJwt, clearSession } from "../utils/security";
+import { resolveAdminPortalRole } from "../utils/adminRole";
 import { toast } from "@/utils/toast-ref";
 import { initPushNotifications } from "../utils/pushNotifications";
 import { NOTIFICATION_SERVICE_URL } from "../api/endpoints";
@@ -101,6 +102,7 @@ export function useIsAuth() {
         "swo",
         "hod",
         "faculty",
+        "teacher",
         "security",
         "warden_male",
         "warden_female",
@@ -108,18 +110,8 @@ export function useIsAuth() {
         "caretaker_female",
         "coe",
       ];
-      const storedRole = localStorage.getItem("admin_role")?.replace(/"/g, "");
-      const jwtRole = decoded?.role?.toLowerCase();
-      const localRole = storedRole?.toLowerCase();
 
-      // Keep localStorage role aligned with the signed JWT (case-insensitive).
-      if (jwtRole && localRole && jwtRole !== localRole) {
-        localStorage.setItem("admin_role", jwtRole);
-      } else if (jwtRole && !localRole) {
-        localStorage.setItem("admin_role", jwtRole);
-      }
-
-      const roleToVerify = jwtRole || localRole || "admin";
+      const roleToVerify = resolveAdminPortalRole(decoded);
 
       if (!validAdminRoles.includes(roleToVerify)) {
         return logoutAndRedirect("Access violation: Invalid Role");
