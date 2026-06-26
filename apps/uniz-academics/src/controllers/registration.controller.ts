@@ -249,10 +249,6 @@ const canonicalSubjectSemester = (
 
 const SEMESTER_ADMIN_ROLES = ["webmaster", "coe", "director"] as const;
 
-function normalizeStudentId(username: string): string {
-  return String(username || "").trim().toUpperCase();
-}
-
 function isWebmaster(role?: string): boolean {
   return role === "webmaster";
 }
