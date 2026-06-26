@@ -37,6 +37,7 @@ import { Pagination } from "../../components/Pagination";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { InfoCard } from "./components/InfoCard";
 import AcademicRecord from "./components/AcademicRecord";
+import ProfileSemesterSubjects from "./components/ProfileSemesterSubjects";
 import SeatingArrangement, {
   fetchSeatingOnce,
 } from "./components/SeatingArrangement";
@@ -859,6 +860,18 @@ export default function StudentProfilePage() {
                       />
                     ))}
                   </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-6 w-1.5 bg-zinc-900 rounded-full" />
+                    <h3 className="text-[17px] font-semibold tracking-tight text-zinc-900">
+                      Current semester subjects
+                    </h3>
+                  </div>
+                  {user?.username && (
+                    <ProfileSemesterSubjects studentId={user.username} />
+                  )}
                 </div>
 
                 <div className="space-y-6">
