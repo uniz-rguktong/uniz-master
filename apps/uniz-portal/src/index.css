@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Pattaya&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap");
@@ -188,8 +189,10 @@
   }
 
   .uniz-logo-wordmark {
-    font-family: "Outfit", "Google Sans", system-ui, sans-serif;
-    font-feature-settings: "ss01" on;
+    font-family: "Pattaya", cursive;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0;
   }
 
   .spinner-blade {

@@ -82,7 +82,7 @@ export default function SEOLanding() {
       <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-zinc-100 flex items-center justify-between px-6 z-50">
         <Link
           to="/"
-          className="font-outfit font-semibold text-2xl tracking-tighter text-zinc-900"
+          className="uniz-logo-wordmark text-2xl text-zinc-900"
         >
           uniZ.
         </Link>
@@ -236,7 +236,7 @@ export default function SEOLanding() {
       {/* Footer */}
       <footer className="max-w-4xl mx-auto px-6 mt-32 pt-10 border-t border-zinc-200 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
-          <h4 className="font-outfit font-semibold text-xl mb-4">uniZ.</h4>
+          <h4 className="uniz-logo-wordmark text-xl mb-4">uniZ.</h4>
           <p className="text-sm text-zinc-400 font-medium">
             The next generation unified learning workspace built specifically
             for engineering and college students.
