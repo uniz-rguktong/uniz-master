@@ -114,7 +114,7 @@ export const InstallPWA = () => {
           <div className="flex items-center justify-between gap-4">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-0.5">
-                <h3 className="unifrakturcook-bold text-xl text-zinc-800 tracking-tight leading-none">
+                <h3 className="uniz-logo-wordmark text-xl text-zinc-800 leading-none">
                   uniZ
                 </h3>
                 <span className="text-[9px] font-bold text-zinc-900 bg-zinc-50 px-1.5 py-0.5 rounded tracking-wider">

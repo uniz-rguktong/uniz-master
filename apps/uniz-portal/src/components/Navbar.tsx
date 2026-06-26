@@ -31,7 +31,7 @@ export default function Navbar() {
         {/* Left: Logo - Cal.com style font */}
         <div className="flex items-center gap-10">
           <Link to="/" className="flex items-center gap-2 cursor-pointer group">
-            <span className="text-2xl font-semibold text-[#111111] tracking-tighter hover:opacity-80 transition-opacity">
+            <span className="uniz-logo-wordmark text-2xl text-[#111111] hover:opacity-80 transition-opacity">
               uniZ.
             </span>
           </Link>

@@ -344,7 +344,7 @@ export default function Sidebar({ content }: MainContent) {
             className={`md:hidden sticky top-0 z-40 p-4 px-6 flex justify-between items-center h-16 transition-all duration-300 ${isScrolled ? "bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm" : "bg-transparent border-transparent"}`}
           >
             <h1
-              className={`unifrakturcook-bold text-3xl tracking-tighter transition-colors duration-300 ${isScrolled ? "text-zinc-900" : "text-zinc-800"}`}
+              className={`uniz-logo-wordmark text-3xl transition-colors duration-300 ${isScrolled ? "text-zinc-900" : "text-zinc-800"}`}
             >
               uniZ
             </h1>
@@ -362,7 +362,7 @@ export default function Sidebar({ content }: MainContent) {
           >
             {/* Left: App Branding */}
             <div className="flex items-center gap-4">
-              <h1 className="unifrakturcook-bold text-3xl text-zinc-800 tracking-tight">
+              <h1 className="uniz-logo-wordmark text-3xl text-zinc-800">
                 uniZ
               </h1>
             </div>

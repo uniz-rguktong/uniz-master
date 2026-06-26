@@ -277,7 +277,7 @@ const DatabaseWithRestApi = ({
         </div>
         {/* box outter circle */}
         <div className="absolute -bottom-12 z-30 grid h-[100px] w-[100px] place-items-center rounded-full border border-zinc-200 bg-white shadow-md text-zinc-950 font-semibold group cursor-pointer">
-          <span className="unifrakturcook-bold text-[3rem] text-zinc-900 tracking-tight leading-none group-hover:scale-110 transition-transform duration-300">
+          <span className="uniz-logo-wordmark text-[3rem] text-zinc-900 leading-none group-hover:scale-110 transition-transform duration-300">
             uniZ
           </span>
         </div>
