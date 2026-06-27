@@ -25,7 +25,7 @@ import LoginScreen from "../../components/ui/login-1";
 import { TurnstileLoadingPlaceholder } from "../../components/ui/TurnstileLoadingPlaceholder";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { prepareStudentSession } from "../../utils/studentSessionCache";
 
 type SigninProps = {
   type: "student" | "admin" | "faculty";
@@ -501,6 +501,7 @@ export default function Signin({ type }: SigninProps) {
         localStorage.removeItem("faculty_token");
         localStorage.setItem("student_token", token);
         localStorage.setItem("username", resolvedUsername);
+        prepareStudentSession(resolvedUsername);
         setAuth({ is_authenticated: true, type: "student" });
         toast.success(`Welcome back, ${resolvedUsername}.`, {
           title: "Signed in",
