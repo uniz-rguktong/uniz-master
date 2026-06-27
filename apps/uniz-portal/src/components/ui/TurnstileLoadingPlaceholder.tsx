@@ -1,8 +1,16 @@
 /** Branded placeholder shown while Cloudflare Turnstile iframe loads */
-export function TurnstileLoadingPlaceholder() {
+export function TurnstileLoadingPlaceholder({
+  compact = false,
+}: {
+  compact?: boolean;
+}) {
   return (
     <div
-      className="relative flex w-full max-w-[302px] items-center justify-center overflow-hidden rounded-md border border-zinc-200/90 bg-[#fafafa] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+      className={
+        compact
+          ? "relative flex w-full max-w-[168px] items-center justify-center overflow-hidden rounded-md border border-zinc-200/90 bg-[#fafafa] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+          : "relative flex w-full max-w-[302px] items-center justify-center overflow-hidden rounded-md border border-zinc-200/90 bg-[#fafafa] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+      }
       role="status"
       aria-label="Loading security check"
     >
@@ -14,16 +22,16 @@ export function TurnstileLoadingPlaceholder() {
         <div className="cf-turnstile-shimmer absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/70 to-transparent" />
       </div>
 
-      <div className="relative flex items-center gap-3">
+      <div className="relative flex min-w-0 items-center gap-2.5 sm:gap-3">
         {/* Orbiting ring + cloud mark */}
-        <div className="relative flex h-9 w-9 shrink-0 items-center justify-center">
+        <div className="relative flex h-8 w-8 shrink-0 items-center justify-center sm:h-9 sm:w-9">
           <div
             className="cf-turnstile-ring absolute inset-0 rounded-full border-2 border-transparent border-t-[#F6821F] border-r-[#F6821F]/25"
             aria-hidden
           />
           <svg
             viewBox="0 0 48 32"
-            className="cf-turnstile-cloud relative h-5 w-8 text-[#F6821F]"
+            className="cf-turnstile-cloud relative h-4 w-7 text-[#F6821F] sm:h-5 sm:w-8"
             fill="currentColor"
             aria-hidden
           >
@@ -32,10 +40,10 @@ export function TurnstileLoadingPlaceholder() {
         </div>
 
         <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-[11px] font-semibold tracking-tight text-zinc-700">
+          <span className="truncate text-[10px] font-semibold tracking-tight text-zinc-700 sm:text-[11px]">
             Verifying you&apos;re human
           </span>
-          <span className="text-[10px] font-medium text-zinc-400">
+          <span className="truncate text-[9px] font-medium text-zinc-400 sm:text-[10px]">
             Protected by{" "}
             <span className="text-[#F6821F]">Cloudflare</span>
           </span>
