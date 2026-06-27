@@ -244,6 +244,7 @@ function waitForCaptchaToken(
 
 async function ensureCaptchaToken(
   captchaTokenRef: React.MutableRefObject<string | null>,
+  turnstileRef: React.RefObject<{ execute?: () => void } | null>,
   onWaitingChange?: (waiting: boolean) => void,
 ): Promise<boolean> {
   if (!requiresCaptcha()) {
@@ -254,11 +255,13 @@ async function ensureCaptchaToken(
     return true;
   }
 
+  turnstileRef.current?.execute?.();
   onWaitingChange?.(true);
   const token = await waitForCaptchaToken(captchaTokenRef, CAPTCHA_WAIT_MS);
   onWaitingChange?.(false);
 
   if (!token) {
+    turnstileRef.current?.execute?.();
     toast.error(
       "Security check is still loading. Wait a moment and try again.",
     );
@@ -316,7 +319,12 @@ function TurnstileWidget({
           onTokenChange(null);
           onStatusChange("error");
         }}
-        onLoad={() => onStatusChange("loading")}
+        onLoad={() => {
+          onStatusChange("loading");
+          window.requestAnimationFrame(() => {
+            turnstileRef.current?.execute?.();
+          });
+        }}
       />
     </div>
   );
@@ -335,19 +343,9 @@ function CaptchaStatus({
     return null;
   }
 
+  // Submit button already shows progress — avoid duplicate spinners.
   if (waitingOnSubmit) {
-    return (
-      <div
-        className="flex items-center justify-center gap-2 rounded-xl border border-zinc-100 bg-zinc-50/80 px-3 py-2.5"
-        role="status"
-        aria-live="polite"
-      >
-        <span className="size-3.5 shrink-0 rounded-full border-2 border-zinc-200 border-t-zinc-700 animate-spin" />
-        <p className="text-[11px] font-medium text-zinc-600">
-          Completing security check…
-        </p>
-      </div>
-    );
+    return null;
   }
 
   if (hasToken || status === "ready") {
@@ -446,7 +444,23 @@ export default function Signin({ type }: SigninProps) {
     setNewPassword("");
     setStep("signin");
     setIsLoading(false);
+    setWaitingForCaptcha(false);
   }, [type]);
+
+  // Invisible Turnstile: run verification as soon as the sign-in form is shown.
+  useEffect(() => {
+    if (!requiresCaptcha() || step !== "signin") return;
+    if (captchaTokenRef.current) return;
+
+    const run = () => turnstileRef.current?.execute?.();
+    const t0 = window.setTimeout(run, 50);
+    const t1 = window.setTimeout(run, 1500);
+
+    return () => {
+      window.clearTimeout(t0);
+      window.clearTimeout(t1);
+    };
+  }, [step, type]);
 
   const sendDataToBackend = useCallback(async () => {
     if (username.trim() === "" || password.trim() === "") {
@@ -485,11 +499,18 @@ export default function Signin({ type }: SigninProps) {
       return;
     }
 
-    setIsLoading(true);
     try {
-      if (!(await ensureCaptchaToken(captchaTokenRef, setWaitingForCaptcha))) {
+      if (
+        !(await ensureCaptchaToken(
+          captchaTokenRef,
+          turnstileRef,
+          setWaitingForCaptcha,
+        ))
+      ) {
         return;
       }
+
+      setIsLoading(true);
 
       const data = await apiClient<SigninResponse>(SIGNIN(type), {
         method: "POST",
@@ -595,6 +616,7 @@ export default function Signin({ type }: SigninProps) {
       syncCaptchaToken(null);
     } finally {
       setIsLoading(false);
+      setWaitingForCaptcha(false);
     }
   }, [
     username,
@@ -636,11 +658,18 @@ export default function Signin({ type }: SigninProps) {
       return;
     }
 
-    setIsLoading(true);
     try {
-      if (!(await ensureCaptchaToken(captchaTokenRef, setWaitingForCaptcha))) {
+      if (
+        !(await ensureCaptchaToken(
+          captchaTokenRef,
+          turnstileRef,
+          setWaitingForCaptcha,
+        ))
+      ) {
         return;
       }
+
+      setIsLoading(true);
 
       const data = await apiClient<{
         success: boolean;
@@ -671,6 +700,7 @@ export default function Signin({ type }: SigninProps) {
       }
     } finally {
       setIsLoading(false);
+      setWaitingForCaptcha(false);
     }
   }, [username, type]);
 
@@ -699,11 +729,18 @@ export default function Signin({ type }: SigninProps) {
       return;
     }
 
-    setIsLoading(true);
     try {
-      if (!(await ensureCaptchaToken(captchaTokenRef, setWaitingForCaptcha))) {
+      if (
+        !(await ensureCaptchaToken(
+          captchaTokenRef,
+          turnstileRef,
+          setWaitingForCaptcha,
+        ))
+      ) {
         return;
       }
+
+      setIsLoading(true);
 
       const data = await apiClient<{
         success: boolean;
@@ -725,6 +762,7 @@ export default function Signin({ type }: SigninProps) {
       }
     } finally {
       setIsLoading(false);
+      setWaitingForCaptcha(false);
     }
   }, [username, type]);
 
@@ -905,7 +943,7 @@ export default function Signin({ type }: SigninProps) {
               <Button
                 className={loginBtnClass}
                 size="lg"
-                isLoading={isLoading}
+                isLoading={isLoading || waitingForCaptcha}
                 type="submit"
                 disabled={!username.trim() || !password.trim()}
               >
