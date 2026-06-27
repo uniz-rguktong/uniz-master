@@ -21,7 +21,7 @@ The recommended workflow for submitting an entire batch's grades is to download 
     student IDs for that batch, so you do not need to enter them manually.
 
     ```bash
-    GET https://api.uniz.rguktong.in/api/v1/academics/grades/template?branch=CSE&year=E3&semester=SEM-1&subjectCode=E3-SEM-1-CSE-1
+    GET https://api-uniz.rguktong.in/api/v1/academics/grades/template?branch=CSE&year=E3&semester=SEM-1&subjectCode=E3-SEM-1-CSE-1
     Authorization: Bearer <your-token>
     ```
 
@@ -71,7 +71,7 @@ The recommended workflow for submitting an entire batch's grades is to download 
     Post the completed file to `/academics/grades/upload` as a multipart form.
 
     ```bash
-    POST https://api.uniz.rguktong.in/api/v1/academics/grades/upload
+    POST https://api-uniz.rguktong.in/api/v1/academics/grades/upload
     Authorization: Bearer <your-token>
     Content-Type: multipart/form-data
 
@@ -109,7 +109,7 @@ The recommended workflow for submitting an entire batch's grades is to download 
     For large batches, poll the progress endpoint until the job completes.
 
     ```bash
-    GET https://api.uniz.rguktong.in/api/v1/academics/grades/upload/progress
+    GET https://api-uniz.rguktong.in/api/v1/academics/grades/upload/progress
     Authorization: Bearer <your-token>
     ```
 
@@ -141,7 +141,7 @@ To record or correct a grade for a single student without re-uploading a full
 sheet, use the add grades endpoint directly.
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/academics/grades/add
+POST https://api-uniz.rguktong.in/api/v1/academics/grades/add
 Authorization: Bearer <your-token>
 Content-Type: application/json
 ```
@@ -178,7 +178,7 @@ for example, after a re-evaluation — send a JSON array of updates to the bulk
 update endpoint.
 
 ```bash
-PUT https://api.uniz.rguktong.in/api/v1/academics/grades/bulk-update
+PUT https://api-uniz.rguktong.in/api/v1/academics/grades/bulk-update
 Authorization: Bearer <your-token>
 Content-Type: application/json
 ```
@@ -221,14 +221,14 @@ To download a consolidated grade report for a semester, use the download
 endpoint with the semester ID.
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/academics/grades/download/:semesterId
+GET https://api-uniz.rguktong.in/api/v1/academics/grades/download/:semesterId
 Authorization: Bearer <your-token>
 ```
 
 **Example:**
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/academics/grades/download/SEM-1
+GET https://api-uniz.rguktong.in/api/v1/academics/grades/download/SEM-1
 Authorization: Bearer <your-token>
 ```
 
@@ -252,7 +252,7 @@ job that sends report card emails to all students for that semester.
 You can monitor the publish progress at:
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/academics/grades/publish/progress
+GET https://api-uniz.rguktong.in/api/v1/academics/grades/publish/progress
 Authorization: Bearer <your-token>
 ```
 

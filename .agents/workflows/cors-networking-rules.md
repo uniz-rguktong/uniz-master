@@ -8,7 +8,7 @@ To permanently eliminate CORS errors and simplify debugging, we have adopted a s
 
 ## 1. NEVER Use Absolute URLs in the Frontend
 
-**Rule**: Do not hardcode `https://api.uniz.rguktong.in` or `http://localhost:3000` anywhere in the frontend React codebase.
+**Rule**: Do not hardcode `https://api-uniz.rguktong.in` or `http://localhost:3000` anywhere in the frontend React codebase.
 
 - **Why**: Making cross-origin requests immediately triggers browser CORS policies, preflight requests (`OPTIONS`), and requires complex header management. It is brittle and error-prone.
 - **Instead**: ALWAYS use relative paths (e.g., `/api/v1/user/profile`) or import `BASE_URL` from `src/api/endpoints.ts`.
@@ -40,7 +40,7 @@ To prevent the browser from blocking requests to `http://localhost:3000` (the ga
 
 1. Browser requests `http://localhost:5173/api/v1/auth/login`. (Same-origin: ✅ No CORS).
 2. The Vite dev server (`vite.config.ts`) catches any `/api/*` request.
-3. Vite makes a server-side HTTP call to `https://api.uniz.rguktong.in` (Target specified in `vite.config.ts`).
+3. Vite makes a server-side HTTP call to `https://api-uniz.rguktong.in` (Target specified in `vite.config.ts`).
 4. Vite returns the response to the browser.
 
 ### B. Production Environment (Nginx in Kubernetes)
@@ -60,7 +60,7 @@ Since requests are structurally same-origin, true CORS issues are technically im
 1. **Check Nginx Proxy:**
    Ensure the `nginx.conf` in `apps/uniz-portal/nginx.conf` has the correct `location /api/v1/` block pointing to `http://uniz-gateway-api:3000/api/v1/`.
 2. **Check for Hardcoded URLs:**
-   Search the codebase: `grep -rn "api.uniz.rguktong.in" apps/uniz-portal/src/`. If any results appear, refactor them immediately to use `BASE_URL`.
+   Search the codebase: `grep -rn "api-uniz.rguktong.in" apps/uniz-portal/src/`. If any results appear, refactor them immediately to use `BASE_URL`.
 3. **Check Browser Cache (Stale HTML trick):**
    Sometimes the gateway goes down and Nginx serves a 502 HTML error page. The browser heavily caches this HTML response. When the API comes back up, the browser still loads the cached HTML but expects JSON, throwing confusing syntax or policy errors.
    **Fix**: Have the user "Empty Cache and Hard Reload". (Nginx must also set `Cache-Control: no-store` on all `/api/v1/` blocks).

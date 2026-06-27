@@ -2788,7 +2788,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://api.uniz.rguktong.in",
+      "value": "https://api-uniz.rguktong.in",
       "type": "string"
     },
     {

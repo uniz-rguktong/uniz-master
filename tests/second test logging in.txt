@@ -1,6 +1,6 @@
 second test logging in 
 
-curl 'https://api.uniz.rguktong.in/api/v1/auth/login' \
+curl 'https://api-uniz.rguktong.in/api/v1/auth/login' \
   -H 'accept: */*' \
   -H 'accept-language: en-GB,en-US;q=0.9,en;q=0.8' \
   -H 'content-type: application/json' \

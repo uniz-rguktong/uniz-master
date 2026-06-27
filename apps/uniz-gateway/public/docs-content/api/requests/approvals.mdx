@@ -87,7 +87,7 @@ Advances the request to the next approval level. The action taken depends on the
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/requests/req-789/approve \
+  --url https://api-uniz.rguktong.in/api/v1/requests/req-789/approve \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -147,7 +147,7 @@ Rejects the request at the current level and ends the approval chain. The studen
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/requests/req-789/reject \
+  --url https://api-uniz.rguktong.in/api/v1/requests/req-789/reject \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -189,7 +189,7 @@ Records that a student has physically left campus. Call this after the request i
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/requests/req-789/checkout \
+  --url https://api-uniz.rguktong.in/api/v1/requests/req-789/checkout \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -227,7 +227,7 @@ Records that a student has returned to campus. Call this when the student arrive
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/requests/req-789/checkin \
+  --url https://api-uniz.rguktong.in/api/v1/requests/req-789/checkin \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -284,7 +284,7 @@ Returns a summary of students currently outside campus — those who have checke
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/requests/security/summary \
+  --url https://api-uniz.rguktong.in/api/v1/requests/security/summary \
   --header 'Authorization: Bearer <token>'
 ```
 

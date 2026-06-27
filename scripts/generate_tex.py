@@ -792,7 +792,7 @@ M.~Jones, J.~Bradley, and N.~Sakimura, \emph{JSON Web Token (JWT)}, IETF RFC 751
 \begin{spacing}{1.0}
 \begin{verbatim}
 HTTP POST /api/v1/academics/grades/upload HTTP/1.1
-Host: api.uniz.rguktong.in
+Host: api-uniz.rguktong.in
 Authorization: Bearer <token_signature>
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 

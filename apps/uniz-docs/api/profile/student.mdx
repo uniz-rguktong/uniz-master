@@ -56,7 +56,7 @@ Returns the profile of the authenticated student.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/profile/student/me \
+  --url https://api-uniz.rguktong.in/api/v1/profile/student/me \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -150,7 +150,7 @@ Updates the authenticated student's own profile fields. All fields are optional;
 
 ```bash
 curl --request PUT \
-  --url https://api.uniz.rguktong.in/api/v1/profile/student/update \
+  --url https://api-uniz.rguktong.in/api/v1/profile/student/update \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -191,7 +191,7 @@ Sets whether a student is currently present on campus. Security personnel use th
 
 ```bash
 curl --request PUT \
-  --url https://api.uniz.rguktong.in/api/v1/profile/student/status \
+  --url https://api-uniz.rguktong.in/api/v1/profile/student/status \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -292,7 +292,7 @@ Searches students with optional filters. Returns paginated results. Administrato
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/profile/student/search \
+  --url https://api-uniz.rguktong.in/api/v1/profile/student/search \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -345,7 +345,7 @@ Returns the full profile of any student by their roll number. Only accessible to
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/admin/student/O210008 \
+  --url https://api-uniz.rguktong.in/api/v1/admin/student/O210008 \
   --header 'Authorization: Bearer <token>'
 ```
 

@@ -102,5 +102,5 @@ ssh -o StrictHostKeyChecking=no root@76.13.241.174 "/bin/bash -s" << 'EOF'
 EOF
 
 echo "🚀 Check..."
-curl -s -o /dev/null -w "Status: %{http_code}\n" https://api.uniz.rguktong.in/api/v1/system/health || true
+curl -s -o /dev/null -w "Status: %{http_code}\n" https://api-uniz.rguktong.in/api/v1/system/health || true
 echo "✅ Done!"
