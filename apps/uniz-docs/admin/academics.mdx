@@ -12,7 +12,7 @@ Fetch grades for an entire batch at once using the batch grades endpoint. You ca
 **Endpoint:** `GET /academics/grades/batch`
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/academics/grades/batch?branch=CSE&year=E2&semesterId=SEM-1&failedOnly=false
+GET https://api-uniz.rguktong.in/api/v1/academics/grades/batch?branch=CSE&year=E2&semesterId=SEM-1&failedOnly=false
 Authorization: Bearer <TOKEN>
 ```
 
@@ -61,7 +61,7 @@ Use this endpoint to update multiple grades directly without uploading an Excel 
 **Endpoint:** `POST /academics/grades/bulk-update`
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/academics/grades/bulk-update
+POST https://api-uniz.rguktong.in/api/v1/academics/grades/bulk-update
 Authorization: Bearer <TOKEN>
 Content-Type: application/json
 ```
@@ -102,7 +102,7 @@ For large-scale grade entry, download a pre-filled template, fill in grades, and
     Fetch the Excel template for a specific batch. The file comes pre-filled with student IDs for the selected branch, year, and semester.
 
     ```bash
-    GET https://api.uniz.rguktong.in/api/v1/academics/grades/template?branch=CSE&year=E1&semester=SEM-1&subjectCode=E1-SEM-1-CSE-1
+    GET https://api-uniz.rguktong.in/api/v1/academics/grades/template?branch=CSE&year=E1&semester=SEM-1&subjectCode=E1-SEM-1-CSE-1
     Authorization: Bearer <TOKEN>
     ```
 
@@ -116,7 +116,7 @@ For large-scale grade entry, download a pre-filled template, fill in grades, and
     Submit the filled file to the upload endpoint. The system processes the records in batches.
 
     ```bash
-    POST https://api.uniz.rguktong.in/api/v1/academics/grades/upload
+    POST https://api-uniz.rguktong.in/api/v1/academics/grades/upload
     Authorization: Bearer <TOKEN>
     Content-Type: multipart/form-data
     ```
@@ -128,7 +128,7 @@ For large-scale grade entry, download a pre-filled template, fill in grades, and
     Poll the upload progress endpoint to track the background job.
 
     ```bash
-    GET https://api.uniz.rguktong.in/api/v1/academics/grades/upload/progress
+    GET https://api-uniz.rguktong.in/api/v1/academics/grades/upload/progress
     Authorization: Bearer <TOKEN>
     ```
 
@@ -166,7 +166,7 @@ For attendance data, staff with the appropriate role can access attendance recor
 **Endpoint:** `POST /academics/grades/publish-email`
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/academics/grades/publish-email
+POST https://api-uniz.rguktong.in/api/v1/academics/grades/publish-email
 Authorization: Bearer <TOKEN>
 Content-Type: application/json
 ```
@@ -180,7 +180,7 @@ Content-Type: application/json
 After triggering the job, monitor its progress:
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/academics/grades/publish/progress
+GET https://api-uniz.rguktong.in/api/v1/academics/grades/publish/progress
 Authorization: Bearer <TOKEN>
 ```
 
@@ -206,7 +206,7 @@ Use the Add Students feature to onboard a new batch or add records for a new sem
   </Step>
   <Step title="Download the student template">
     ```bash
-    GET https://api.uniz.rguktong.in/api/v1/admin/student/template
+    GET https://api-uniz.rguktong.in/api/v1/admin/student/template
     Authorization: Bearer <TOKEN>
     ```
 
@@ -225,7 +225,7 @@ Use the Add Students feature to onboard a new batch or add records for a new sem
   </Step>
   <Step title="Upload the spreadsheet">
     ```bash
-    POST https://api.uniz.rguktong.in/api/v1/admin/student/upload
+    POST https://api-uniz.rguktong.in/api/v1/admin/student/upload
     Authorization: Bearer <TOKEN>
     Content-Type: multipart/form-data
     ```
@@ -246,7 +246,7 @@ Manual provisioning creates both the authentication credentials and the academic
 **Endpoint:** `POST /profile/admin/student/create`
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/profile/admin/student/create
+POST https://api-uniz.rguktong.in/api/v1/profile/admin/student/create
 Authorization: Bearer <TOKEN>
 Content-Type: application/json
 ```
@@ -278,7 +278,7 @@ To update any parameter of an existing student (academic, personal, or family), 
 **Endpoint:** `PUT /profile/admin/student/:username`
 
 ```bash
-PUT https://api.uniz.rguktong.in/api/v1/profile/admin/student/O210008
+PUT https://api-uniz.rguktong.in/api/v1/profile/admin/student/O210008
 Authorization: Bearer <TOKEN>
 Content-Type: application/json
 ```
@@ -305,7 +305,7 @@ Webmasters create and manage homepage banners visible to all students in the Uni
 **Endpoint:** `POST /profile/admin/banners`
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/profile/admin/banners
+POST https://api-uniz.rguktong.in/api/v1/profile/admin/banners
 Authorization: Bearer <TOKEN>
 Content-Type: application/json
 ```
@@ -347,7 +347,7 @@ The Global Cohort Promotion protocol allows administrators to bulk upgrade the a
 **Endpoint:** `POST /profile/admin/student/promote`
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/profile/admin/student/promote
+POST https://api-uniz.rguktong.in/api/v1/profile/admin/student/promote
 Authorization: Bearer <TOKEN>
 Content-Type: application/json
 ```
@@ -373,7 +373,7 @@ Content-Type: application/json
 **Endpoint:** `POST /profile/admin/banners/:id/publish`
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/profile/admin/banners/ban-456/publish
+POST https://api-uniz.rguktong.in/api/v1/profile/admin/banners/ban-456/publish
 Authorization: Bearer <TOKEN>
 Content-Type: application/json
 ```
@@ -397,7 +397,7 @@ To unpublish (revert to draft):
 ### Viewing all banners
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/profile/admin/banners
+GET https://api-uniz.rguktong.in/api/v1/profile/admin/banners
 Authorization: Bearer <TOKEN>
 ```
 

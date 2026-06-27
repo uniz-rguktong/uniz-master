@@ -19,7 +19,7 @@ Returns all subjects configured in the system.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/subjects \
+  --url https://api-uniz.rguktong.in/api/v1/academics/subjects \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -110,7 +110,7 @@ Creates a new subject.
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/academics/subjects/add \
+  --url https://api-uniz.rguktong.in/api/v1/academics/subjects/add \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -177,7 +177,7 @@ All fields are optional. Provide only the fields you want to change.
 
 ```bash
 curl --request PUT \
-  --url https://api.uniz.rguktong.in/api/v1/academics/subjects/3fa85f64-5717-4562-b3fc-2c963f66afa6 \
+  --url https://api-uniz.rguktong.in/api/v1/academics/subjects/3fa85f64-5717-4562-b3fc-2c963f66afa6 \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -214,7 +214,7 @@ Permanently removes a subject by its UUID.
 
 ```bash
 curl --request DELETE \
-  --url https://api.uniz.rguktong.in/api/v1/academics/subjects/3fa85f64-5717-4562-b3fc-2c963f66afa6 \
+  --url https://api-uniz.rguktong.in/api/v1/academics/subjects/3fa85f64-5717-4562-b3fc-2c963f66afa6 \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -241,7 +241,7 @@ Returns all semesters in the system.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/semester \
+  --url https://api-uniz.rguktong.in/api/v1/academics/semester \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -312,7 +312,7 @@ Creates and activates a new semester.
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/academics/semester/init \
+  --url https://api-uniz.rguktong.in/api/v1/academics/semester/init \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -364,7 +364,7 @@ Changes the status of an existing semester (e.g. mark it as inactive or archived
 
 ```bash
 curl --request PATCH \
-  --url https://api.uniz.rguktong.in/api/v1/academics/semester/status/sem-uuid-001 \
+  --url https://api-uniz.rguktong.in/api/v1/academics/semester/status/sem-uuid-001 \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -395,7 +395,7 @@ Returns a high-level overview of the current semester, including registration co
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/semester/overview \
+  --url https://api-uniz.rguktong.in/api/v1/academics/semester/overview \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -428,7 +428,7 @@ Returns the list of subjects available for the authenticated student to register
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/student/available \
+  --url https://api-uniz.rguktong.in/api/v1/academics/student/available \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -468,7 +468,7 @@ Registers the authenticated student for one or more subjects in the current seme
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/academics/student/register \
+  --url https://api-uniz.rguktong.in/api/v1/academics/student/register \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -517,7 +517,7 @@ Returns the subjects a student is currently registered for in the active semeste
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/student/current/O210008 \
+  --url https://api-uniz.rguktong.in/api/v1/academics/student/current/O210008 \
   --header 'Authorization: Bearer <token>'
 ```
 

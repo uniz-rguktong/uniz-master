@@ -22,7 +22,7 @@ The recommended workflow for submitting a batch's attendance is to download the 
     manually.
 
     ```bash
-    GET https://api.uniz.rguktong.in/api/v1/academics/attendance/template?branch=CSE&year=E3&semester=SEM-1&subjectCode=E3-SEM-1-CSE-1
+    GET https://api-uniz.rguktong.in/api/v1/academics/attendance/template?branch=CSE&year=E3&semester=SEM-1&subjectCode=E3-SEM-1-CSE-1
     Authorization: Bearer <your-token>
     ```
 
@@ -76,7 +76,7 @@ The recommended workflow for submitting a batch's attendance is to download the 
     form.
 
     ```bash
-    POST https://api.uniz.rguktong.in/api/v1/academics/attendance/upload
+    POST https://api-uniz.rguktong.in/api/v1/academics/attendance/upload
     Authorization: Bearer <your-token>
     Content-Type: multipart/form-data
 
@@ -115,7 +115,7 @@ The recommended workflow for submitting a batch's attendance is to download the 
     For large batches, poll the progress endpoint until the job completes.
 
     ```bash
-    GET https://api.uniz.rguktong.in/api/v1/academics/attendance/upload/progress
+    GET https://api-uniz.rguktong.in/api/v1/academics/attendance/upload/progress
     Authorization: Bearer <your-token>
     ```
 
@@ -147,7 +147,7 @@ To record or correct attendance for a single student without re-uploading a
 full sheet, use the add attendance endpoint directly.
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/academics/attendance/add
+POST https://api-uniz.rguktong.in/api/v1/academics/attendance/add
 Authorization: Bearer <your-token>
 Content-Type: application/json
 ```
@@ -184,14 +184,14 @@ To download a consolidated attendance report for a semester, use the download
 endpoint with the semester ID.
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/academics/attendance/download/:semesterId
+GET https://api-uniz.rguktong.in/api/v1/academics/attendance/download/:semesterId
 Authorization: Bearer <your-token>
 ```
 
 **Example:**
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/academics/attendance/download/SEM-1
+GET https://api-uniz.rguktong.in/api/v1/academics/attendance/download/SEM-1
 Authorization: Bearer <your-token>
 ```
 
@@ -265,7 +265,7 @@ release.
 If you need to trigger an email summary for audit or legacy purposes:
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/academics/attendance/publish-email
+POST https://api-uniz.rguktong.in/api/v1/academics/attendance/publish-email
 Authorization: Bearer <your-token>
 Content-Type: application/json
 ```

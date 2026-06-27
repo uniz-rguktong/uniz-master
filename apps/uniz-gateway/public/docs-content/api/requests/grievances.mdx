@@ -4,7 +4,7 @@ description: "Submit student grievances, list and resolve concerns (SWO), with e
 ---
 
 <Info>
-  Base URL: `https://api.uniz.rguktong.in/api/v1/grievance`
+  Base URL: `https://api-uniz.rguktong.in/api/v1/grievance`
 </Info>
 
 The grievance module lets students raise welfare concerns. The **SWO** (Student Welfare Officer), **director**, and **admin** roles can review the queue and mark items resolved. Verified (non-anonymous) students receive email and push notification on resolution.
@@ -27,7 +27,7 @@ The grievance module lets students raise welfare concerns. The **SWO** (Student 
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/grievance/submit \
+  --url https://api-uniz.rguktong.in/api/v1/grievance/submit \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -66,7 +66,7 @@ curl --request POST \
 
 ```bash
 curl --request GET \
-  --url 'https://api.uniz.rguktong.in/api/v1/grievance/list?page=1&limit=20' \
+  --url 'https://api-uniz.rguktong.in/api/v1/grievance/list?page=1&limit=20' \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -114,7 +114,7 @@ Marks a grievance as resolved. For verified students, sends:
 
 ```bash
 curl --request PATCH \
-  --url https://api.uniz.rguktong.in/api/v1/grievance/uuid-here/resolve \
+  --url https://api-uniz.rguktong.in/api/v1/grievance/uuid-here/resolve \
   --header 'Authorization: Bearer <token>'
 ```
 

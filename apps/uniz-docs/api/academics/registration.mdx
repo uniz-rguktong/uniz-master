@@ -5,7 +5,7 @@ description: "Student subject registration, semester lifecycle, elective groups,
 
 <Info>
   All endpoints require `Authorization: Bearer <token>` unless noted otherwise.
-  Base URL: `https://api.uniz.rguktong.in/api/v1/academics`
+  Base URL: `https://api-uniz.rguktong.in/api/v1/academics`
 </Info>
 
 UniZ manages **in-portal semester registration**. Webmasters configure a semester and subject catalog; deans and HODs review allocations; students register subjects during an IST registration window; administrators track completion per student.
@@ -52,7 +52,7 @@ Returns approved subjects for the student's branch/year when registration is ope
 
 ```bash
 curl --request GET \
-  --url 'https://api.uniz.rguktong.in/api/v1/academics/student/available' \
+  --url 'https://api-uniz.rguktong.in/api/v1/academics/student/available' \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -119,7 +119,7 @@ Registers the authenticated student for the active open semester. Each student m
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/academics/student/register \
+  --url https://api-uniz.rguktong.in/api/v1/academics/student/register \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{"subjectIds":["uuid-1","uuid-2"]}'
@@ -161,7 +161,7 @@ Returns all academic semesters. `_count.registrations` is the number of **distin
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/semester \
+  --url https://api-uniz.rguktong.in/api/v1/academics/semester \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -238,7 +238,7 @@ Per-student registration completion for a semester — registered vs pending, wi
 
 ```bash
 curl --request GET \
-  --url 'https://api.uniz.rguktong.in/api/v1/academics/registrations/tracking?semesterId=E3-SEM-2&status=all' \
+  --url 'https://api-uniz.rguktong.in/api/v1/academics/registrations/tracking?semesterId=E3-SEM-2&status=all' \
   --header 'Authorization: Bearer <token>'
 ```
 
