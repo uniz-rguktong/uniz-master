@@ -33,6 +33,9 @@ if [[ ! -f ./config.sh ]]; then
   rm -f actions-runner.tar.gz
 fi
 
+# GitHub runner blocks root unless explicitly allowed (VPS deploy runs as root today).
+export RUNNER_ALLOW_RUNASROOT=1
+
 ./config.sh \
   --url "https://github.com/${REPO}" \
   --token "$GITHUB_RUNNER_TOKEN" \
