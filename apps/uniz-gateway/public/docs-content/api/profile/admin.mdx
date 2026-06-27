@@ -45,7 +45,7 @@ Returns the profile of the authenticated admin user.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/admin/me \
+  --url https://api-uniz.rguktong.in/api/v1/admin/me \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -87,7 +87,7 @@ Updates the authenticated admin's own profile. All fields are optional.
 
 ```bash
 curl --request PUT \
-  --url https://api.uniz.rguktong.in/api/v1/admin/me/update \
+  --url https://api-uniz.rguktong.in/api/v1/admin/me/update \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -135,7 +135,7 @@ Returns all available student batches (combinations of branch and year) in the s
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/admin/batches \
+  --url https://api-uniz.rguktong.in/api/v1/admin/batches \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -166,7 +166,7 @@ Downloads an Excel template pre-populated with the expected column structure for
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/admin/student/template \
+  --url https://api-uniz.rguktong.in/api/v1/admin/student/template \
   --header 'Authorization: Bearer <token>' \
   --output students_template.xlsx
 ```
@@ -206,7 +206,7 @@ Imports students in bulk from an Excel file. The request must be sent as `multip
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/admin/student/upload \
+  --url https://api-uniz.rguktong.in/api/v1/admin/student/upload \
   --header 'Authorization: Bearer <token>' \
   --form 'file=@students.xlsx'
 ```
@@ -257,7 +257,7 @@ Returns the status of an ongoing or completed student bulk upload job.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/admin/student/upload/progress \
+  --url https://api-uniz.rguktong.in/api/v1/admin/student/upload/progress \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -299,7 +299,7 @@ Exports student records as a downloadable file. Use query parameters to filter t
 
 ```bash
 curl --request GET \
-  --url 'https://api.uniz.rguktong.in/api/v1/admin/student/export?branch=CSE&year=E2' \
+  --url 'https://api-uniz.rguktong.in/api/v1/admin/student/export?branch=CSE&year=E2' \
   --header 'Authorization: Bearer <token>' \
   --output students_cse_e2.xlsx
 ```
@@ -355,7 +355,7 @@ Returns all banners, both published and unpublished. Cached for performance.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/profile/admin/banners \
+  --url https://api-uniz.rguktong.in/api/v1/profile/admin/banners \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -422,7 +422,7 @@ Creates a new banner. Newly created banners are unpublished by default. Use the 
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/profile/admin/banners \
+  --url https://api-uniz.rguktong.in/api/v1/profile/admin/banners \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -470,7 +470,7 @@ Toggles the published state of a banner. Set `publish: true` to make it visible 
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/profile/admin/banners/ban-456/publish \
+  --url https://api-uniz.rguktong.in/api/v1/profile/admin/banners/ban-456/publish \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -521,7 +521,7 @@ Returns the real-time health status and latency of all services in the UniZ plat
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/system/health
+  --url https://api-uniz.rguktong.in/api/v1/system/health
 ```
 
 **200 OK**
@@ -550,7 +550,7 @@ Permanently removes a student and purges related records across auth, academics,
 
 ```bash
 curl --request DELETE \
-  --url https://api.uniz.rguktong.in/api/v1/profile/admin/student/O210008 \
+  --url https://api-uniz.rguktong.in/api/v1/profile/admin/student/O210008 \
   --header 'Authorization: Bearer <token>'
 ```
 

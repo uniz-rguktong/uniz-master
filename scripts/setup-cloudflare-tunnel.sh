@@ -21,12 +21,13 @@ if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]] && [[ -f /root/uniz-secrets.env ]]; then
   set +a
 fi
 
+# api-uniz.rguktong.in is one DNS label under rguktong.in → free Universal SSL at Cloudflare edge.
+# Nested api.uniz.* requires Advanced Certificate Manager ($10/mo) or grey-cloud origin TLS.
 HOSTS=(
   "rguktong.in"
   "uniz.rguktong.in"
   "www.uniz.rguktong.in"
-  "api.uniz.rguktong.in"
-  "www.api.uniz.rguktong.in"
+  "api-uniz.rguktong.in"
   "landing-api.rguktong.in"
   "www.landing-api.rguktong.in"
 )
@@ -147,6 +148,26 @@ create_api_tunnel() {
   echo "[tunnel] API tunnel $tunnel_id active"
 }
 
+sync_existing_tunnel() {
+  if [[ ! -f "$CONFIG" ]]; then
+    return 1
+  fi
+  local tunnel_id zone_id
+  tunnel_id=$(grep -E '^tunnel:' "$CONFIG" | head -1 | awk '{print $2}')
+  [[ -z "$tunnel_id" ]] && return 1
+
+  zone_id=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+    "https://api.cloudflare.com/client/v4/zones?name=$ZONE_NAME" \
+    | python3 -c 'import sys,json; r=json.load(sys.stdin)["result"]; print(r[0]["id"] if r else "")')
+  [[ -z "$zone_id" ]] && return 1
+
+  write_local_config "$tunnel_id"
+  upsert_tunnel_dns "$tunnel_id" "$zone_id"
+  systemctl restart cloudflared 2>/dev/null || true
+  echo "[tunnel] Synced existing tunnel $tunnel_id (DNS + config)"
+  return 0
+}
+
 main() {
   install_cloudflared
 
@@ -157,6 +178,10 @@ main() {
   fi
 
   if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
+    if sync_existing_tunnel; then
+      echo "[tunnel] Done (sync mode)"
+      return 0
+    fi
     if create_api_tunnel; then
       echo "[tunnel] Done (API mode)"
       return 0

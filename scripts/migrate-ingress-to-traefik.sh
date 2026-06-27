@@ -43,8 +43,8 @@ kubectl rollout status deployment/traefik -n traefik --timeout=180s
 info "=== Smoke test Traefik via NodePort (HTTPS) ==="
 WEBSECURE_NODE=$(kubectl get svc -n traefik traefik -o jsonpath='{.spec.ports[?(@.name=="websecure")].nodePort}')
 CODE=$(curl -k -s -o /dev/null -w "%{http_code}" --max-time 10 \
-  --resolve "api.uniz.rguktong.in:${WEBSECURE_NODE}:127.0.0.1" \
-  "https://api.uniz.rguktong.in:${WEBSECURE_NODE}/api/v1/system/health" || echo 000)
+  --resolve "api-uniz.rguktong.in:${WEBSECURE_NODE}:127.0.0.1" \
+  "https://api-uniz.rguktong.in:${WEBSECURE_NODE}/api/v1/system/health" || echo 000)
 info "Internal health via NodePort ${WEBSECURE_NODE}: HTTP $CODE"
 [ "$CODE" = "200" ] || fail "Traefik not routing before cutover (HTTP $CODE)"
 
@@ -76,7 +76,7 @@ fi
 
 info "=== Verify HTTPS (public) ==="
 for i in $(seq 1 10); do
-  CODE=$(curl -k -s -o /dev/null -w "%{http_code}" --max-time 10 https://api.uniz.rguktong.in/api/v1/system/health || echo 000)
+  CODE=$(curl -k -s -o /dev/null -w "%{http_code}" --max-time 10 https://api-uniz.rguktong.in/api/v1/system/health || echo 000)
   info "Health check attempt $i: HTTP $CODE"
   [ "$CODE" = "200" ] && break
   sleep 5

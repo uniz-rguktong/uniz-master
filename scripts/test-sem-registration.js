@@ -1,4 +1,4 @@
-const BASE_URL = "https://api.uniz.rguktong.in/api/v1";
+const BASE_URL = "https://api-uniz.rguktong.in/api/v1";
 
 async function run() {
   console.log("🚀 Starting Semester Registration E2E Flow...\n");

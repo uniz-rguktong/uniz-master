@@ -36,7 +36,7 @@ The frontend is now served by a custom-tuned Nginx container inside Kubernetes:
 
 ## 🧪 3. Stress Test Results (500 Concurrent Users)
 
-Target: `https://api.uniz.rguktong.in/api/v1/system/health`
+Target: `https://api-uniz.rguktong.in/api/v1/system/health`
 
 | Metric              | Result                                                 |
 | :------------------ | :----------------------------------------------------- |
@@ -49,7 +49,7 @@ Target: `https://api.uniz.rguktong.in/api/v1/system/health`
 
 ## 4. Final Configuration Manual
 
-- **Health Dashboard**: [api.uniz.rguktong.in/health](https://api.uniz.rguktong.in/health)
+- **Health Dashboard**: [api-uniz.rguktong.in/health](https://api-uniz.rguktong.in/health)
 - **Manual Scaling**: `kubectl scale deployment <name> --replicas=<num>`
 - **Live Logs**: `kubectl logs -f -l app=<service-name>`
 - **View Scaling Events**: `kubectl get hpa -w`

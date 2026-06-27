@@ -11,7 +11,7 @@ function req(method, path, data, token) {
     }
     const r = https.request(
       {
-        hostname: "api.uniz.rguktong.in",
+        hostname: "api-uniz.rguktong.in",
         path,
         method,
         headers,

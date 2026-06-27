@@ -37,7 +37,7 @@ Fetch all pending outpass requests. The API returns all records â€” your fronten
 **Endpoint:** `GET /requests/outpass/all`
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/requests/outpass/all
+GET https://api-uniz.rguktong.in/api/v1/requests/outpass/all
 Authorization: Bearer <TOKEN>
 ```
 
@@ -66,7 +66,7 @@ Authorization: Bearer <TOKEN>
 To view pending outing requests, use the equivalent endpoint:
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/requests/outing/all
+GET https://api-uniz.rguktong.in/api/v1/requests/outing/all
 Authorization: Bearer <TOKEN>
 ```
 
@@ -81,7 +81,7 @@ Send a `POST` to `/:id/approve` with the request ID. You may include an optional
 **Endpoint:** `POST /requests/:id/approve`
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/requests/req-123/approve
+POST https://api-uniz.rguktong.in/api/v1/requests/req-123/approve
 Authorization: Bearer <TOKEN>
 Content-Type: application/json
 ```
@@ -116,7 +116,7 @@ You can also forward a request directly to the next level without approving it â
 **Endpoint:** `POST /requests/:id/forward`
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/requests/req-123/forward
+POST https://api-uniz.rguktong.in/api/v1/requests/req-123/forward
 Authorization: Bearer <TOKEN>
 ```
 
@@ -133,7 +133,7 @@ To reject a request, provide a mandatory reason in the `comment` field. The stud
 **Endpoint:** `POST /requests/:id/reject`
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/requests/req-123/reject
+POST https://api-uniz.rguktong.in/api/v1/requests/req-123/reject
 Authorization: Bearer <TOKEN>
 Content-Type: application/json
 ```
