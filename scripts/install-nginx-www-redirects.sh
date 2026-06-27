@@ -32,6 +32,26 @@ NGINX
 
 write_redirect "uniz-portal-www" "www.uniz.rguktong.in" "uniz.rguktong.in"
 write_redirect "uniz-landing-api-www" "www.landing-api.rguktong.in" "landing-api.rguktong.in"
+write_redirect "uniz-api-www" "www.api.uniz.rguktong.in" "api-uniz.rguktong.in"
+
+# HTTP → HTTPS for grey-cloud www hits (direct to VPS)
+write_http_redirect() {
+  local file="$1"
+  local www_host="$2"
+  local apex="$3"
+  cat >"/etc/nginx/sites-available/$file" <<NGINX
+server {
+    listen 80;
+    server_name $www_host;
+    return 308 https://$apex\$request_uri;
+}
+NGINX
+  ln -sf "/etc/nginx/sites-available/$file" "/etc/nginx/sites-enabled/$file"
+}
+
+write_http_redirect "uniz-portal-www-http" "www.uniz.rguktong.in" "uniz.rguktong.in"
+write_http_redirect "uniz-api-www-http" "www.api.uniz.rguktong.in" "api-uniz.rguktong.in"
+write_http_redirect "uniz-landing-api-www-http" "www.landing-api.rguktong.in" "landing-api.rguktong.in"
 
 # Remove www from apex vhosts when a dedicated *-www redirect site exists
 sed -i 's/server_name uniz.rguktong.in www.uniz.rguktong.in;/server_name uniz.rguktong.in;/' /etc/nginx/sites-available/uniz-portal 2>/dev/null || true

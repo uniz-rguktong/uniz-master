@@ -488,6 +488,11 @@ deploy_logic() {
   if [ -f "$(dirname "$0")/setup-cloudflare-tunnel.sh" ]; then
     bash "$(dirname "$0")/setup-cloudflare-tunnel.sh" || true
   fi
+  if [ -n "${CLOUDFLARE_API_TOKEN:-}" ] && [ -f "$(dirname "$0")/ensure-cloudflare-www-dns.sh" ]; then
+    echo "[Infra] Ensuring www.* grey-cloud DNS (after tunnel sync)..."
+    bash "$(dirname "$0")/ensure-cloudflare-www-dns.sh" || true
+    bash "$(dirname "$0")/install-nginx-www-redirects.sh" 2>/dev/null || true
+  fi
 
   if [ -f "$(dirname "$0")/vps-storage-cleanup.sh" ]; then
     bash "$(dirname "$0")/vps-storage-cleanup.sh" || true
