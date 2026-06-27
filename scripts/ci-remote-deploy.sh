@@ -23,6 +23,8 @@ fi
 
 cd "$WORK_DIR"
 git fetch origin "$GITHUB_REF_NAME"
+# clean before reset — manual scp'd files must not block checkout
+git clean -fd
 git checkout -B "$GITHUB_REF_NAME" "origin/$GITHUB_REF_NAME"
 git reset --hard "$GITHUB_SHA"
 git clean -fd
