@@ -23,7 +23,8 @@ fi
 
 cd "$WORK_DIR"
 git fetch origin "$GITHUB_REF_NAME"
-# clean before reset — manual scp'd files must not block checkout
+# Discard manual/rsync edits on VPS so checkout never blocks CI deploys
+git reset --hard "origin/$GITHUB_REF_NAME"
 git clean -fd
 git checkout -B "$GITHUB_REF_NAME" "origin/$GITHUB_REF_NAME"
 git reset --hard "$GITHUB_SHA"
