@@ -31,12 +31,12 @@ NGINX
 }
 
 write_redirect "uniz-portal-www" "www.uniz.rguktong.in" "uniz.rguktong.in"
-write_redirect "uniz-api-www" "www.api.uniz.rguktong.in" "api.uniz.rguktong.in"
 write_redirect "uniz-landing-api-www" "www.landing-api.rguktong.in" "landing-api.rguktong.in"
 
 # Remove www from apex vhosts when a dedicated *-www redirect site exists
 sed -i 's/server_name uniz.rguktong.in www.uniz.rguktong.in;/server_name uniz.rguktong.in;/' /etc/nginx/sites-available/uniz-portal 2>/dev/null || true
-sed -i 's/server_name api.uniz.rguktong.in www.api.uniz.rguktong.in;/server_name api.uniz.rguktong.in;/' /etc/nginx/sites-available/uniz-api 2>/dev/null || true
+sed -i 's/server_name api-uniz.rguktong.in www.api-uniz.rguktong.in;/server_name api-uniz.rguktong.in;/' /etc/nginx/sites-available/uniz-api 2>/dev/null || true
+sed -i 's/server_name api-uniz.rguktong.in;/server_name api-uniz.rguktong.in;/' /etc/nginx/sites-available/uniz-api 2>/dev/null || true
 sed -i 's/server_name landing-api.rguktong.in www.landing-api.rguktong.in;/server_name landing-api.rguktong.in;/' /etc/nginx/sites-available/uniz-landing-api 2>/dev/null || true
 # Drop inline www redirect block from landing-api (handled by uniz-landing-api-www)
 python3 - <<'PY'

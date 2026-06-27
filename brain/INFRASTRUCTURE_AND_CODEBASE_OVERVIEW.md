@@ -7,7 +7,7 @@
 UniZ is a **microservices-based monorepo** built with Node.js, Express, Docker, and Nginx.
 
 - **Frontend**: `uniz-portal` (React/Vite)
-- **Backend API**: Accessible via `https://api.uniz.rguktong.in` (Production)
+- **Backend API**: Accessible via `https://api-uniz.rguktong.in` (Production)
 - **Runtime**: Hybrid transition from Docker Compose to **Kubernetes (K3s)**.
 - **Gateway**: A dual-layer setup involving K8s Nginx Ingress/Nginx Load Balancer and an Express-based Application Gateway.
 

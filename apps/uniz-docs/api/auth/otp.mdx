@@ -62,7 +62,7 @@ Sends a 6-digit OTP to the device registered for push notifications on the accou
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/auth/otp/request \
+  --url https://api-uniz.rguktong.in/api/v1/auth/otp/request \
   --header 'Content-Type: application/json' \
   --data '{
     "username": "O210008"
@@ -117,7 +117,7 @@ Sends a 6-digit OTP to the email address registered on the account.
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/auth/otp/request-email \
+  --url https://api-uniz.rguktong.in/api/v1/auth/otp/request-email \
   --header 'Content-Type: application/json' \
   --data '{
     "username": "O210008"
@@ -176,7 +176,7 @@ Validates the 6-digit code and, if correct, returns a short-lived `resetToken`. 
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/auth/otp/verify \
+  --url https://api-uniz.rguktong.in/api/v1/auth/otp/verify \
   --header 'Content-Type: application/json' \
   --data '{
     "username": "O210008",

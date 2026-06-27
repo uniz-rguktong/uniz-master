@@ -10,7 +10,7 @@ import {
   ExternalLink,
   Trash2,
 } from "lucide-react";
-import { UPDATES_BASE, GET_NOTIFICATIONS } from "../../../api/endpoints";
+import { UPDATES_BASE, GET_NOTIFICATIONS, BASE_URL } from "../../../api/endpoints";
 import { toast } from "@/utils/toast-ref";
 import { useRecoilState } from "recoil";
 import { updatesAtom } from "../../../store/atoms";
@@ -65,7 +65,7 @@ export default function UpdatesSection() {
 
   const fetchUpdates = async () => {
     if (!updatesState.fetched) setLoading(true);
-    const primaryUrl = "https://api.uniz.rguktong.in/api/v1/cms/notifications";
+    const primaryUrl = `${BASE_URL}/cms/notifications`;
     const proxyUrl = GET_NOTIFICATIONS;
 
     console.log("CMS_SYNC: Initiating sync with primary endpoint:", primaryUrl);

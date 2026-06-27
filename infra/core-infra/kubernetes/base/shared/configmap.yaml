@@ -6,7 +6,7 @@ data:
   NODE_ENV: "production"
   DOCKER_ENV: "true"
   INTERNAL_SECRET: "uniz-core"
-  GATEWAY_URL: "https://api.uniz.rguktong.in/api/v1"
+  GATEWAY_URL: "https://api-uniz.rguktong.in/api/v1"
   SMTP_HOST: "smtp.gmail.com"
   SMTP_PORT: "465"
   SMTP_SECURE: "true"

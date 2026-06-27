@@ -157,7 +157,7 @@ verify_deployment() {
   for attempt in 1 2 3 4 5; do
     # -k: host nginx LE cert for api.* may be expired; verify app health not TLS here
     code=$(curl -sk -o /tmp/uniz-health.json -w "%{http_code}" --max-time 15 \
-      https://api.uniz.rguktong.in/api/v1/system/health 2>/dev/null || true)
+      https://api-uniz.rguktong.in/api/v1/system/health 2>/dev/null || true)
     code=${code:-000}
     if [ "$code" = "200" ] || [ "$code" = "503" ]; then
       body=$(cat /tmp/uniz-health.json 2>/dev/null || echo "")
@@ -546,5 +546,5 @@ else
 EOF
 fi
 
-echo "[Health] API: \$(curl -s -o /dev/null -w "%{http_code}" https://api.uniz.rguktong.in/api/v1/system/health || echo 'FAIL')"
+echo "[Health] API: \$(curl -s -o /dev/null -w "%{http_code}" https://api-uniz.rguktong.in/api/v1/system/health || echo 'FAIL')"
 echo "[Done] Branch $CURRENT_BRANCH Deployed."

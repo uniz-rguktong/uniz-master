@@ -78,7 +78,7 @@ PY
 }
 
 upsert_record "www.uniz" "uniz.rguktong.in"
-upsert_record "www.api.uniz" "api.uniz.rguktong.in"
+# api-uniz is flat subdomain — no www.api.uniz needed (nested www lacks free edge SSL)
 upsert_record "www.landing-api" "landing-api.rguktong.in"
 
 echo "[cloudflare-www-dns] Done (proxied=$PROXIED, ip=$VPS_IP)"

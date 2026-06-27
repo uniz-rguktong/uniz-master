@@ -16,7 +16,7 @@ try {
 
 // --- CONFIGURATION ---
 const CONCURRENCY = parseInt(process.env.CONCURRENCY || "50", 10);
-const API_URL = "https://api.uniz.rguktong.in";
+const API_URL = "https://api-uniz.rguktong.in";
 const FRONTEND_URL = "https://portal.uniz.rguktong.in";
 const LANDING_URL = "https://uniz.rguktong.in";
 const INTERNAL_SECRET = process.env.INTERNAL_SECRET || internalSecret;

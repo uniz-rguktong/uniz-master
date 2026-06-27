@@ -19,7 +19,7 @@ Returns the authenticated student's attendance records across all subjects for t
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/attendance \
+  --url https://api-uniz.rguktong.in/api/v1/academics/attendance \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -118,7 +118,7 @@ Records attendance for a student in a subject for a given session.
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/academics/attendance/add \
+  --url https://api-uniz.rguktong.in/api/v1/academics/attendance/add \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -171,7 +171,7 @@ Downloads an Excel template pre-filled with student IDs for the specified batch.
 
 ```bash
 curl --request GET \
-  --url 'https://api.uniz.rguktong.in/api/v1/academics/attendance/template?branch=CSE&year=E1&semester=SEM-1&subjectCode=E1-SEM-1-CSE-1' \
+  --url 'https://api-uniz.rguktong.in/api/v1/academics/attendance/template?branch=CSE&year=E1&semester=SEM-1&subjectCode=E1-SEM-1-CSE-1' \
   --header 'Authorization: Bearer <token>' \
   --output attendance_template.xlsx
 ```
@@ -201,7 +201,7 @@ Uploads a completed Excel template to import attendance records in bulk.
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/academics/attendance/upload \
+  --url https://api-uniz.rguktong.in/api/v1/academics/attendance/upload \
   --header 'Authorization: Bearer <token>' \
   --form 'file=@/path/to/attendance_template.xlsx'
 ```
@@ -235,7 +235,7 @@ Polls the status of a background attendance upload job.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/attendance/upload/progress \
+  --url https://api-uniz.rguktong.in/api/v1/academics/attendance/upload/progress \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -292,7 +292,7 @@ Downloads the compiled attendance report for a semester as an Excel file.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/attendance/download/SEM-1 \
+  --url https://api-uniz.rguktong.in/api/v1/academics/attendance/download/SEM-1 \
   --header 'Authorization: Bearer <token>' \
   --output attendance_report_SEM-1.xlsx
 ```
@@ -326,7 +326,7 @@ Triggers a background job to email attendance reports to students for a given se
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/academics/attendance/publish-email \
+  --url https://api-uniz.rguktong.in/api/v1/academics/attendance/publish-email \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{

@@ -255,7 +255,8 @@ for i in "${!SERVICES[@]}"; do
   robust_sed 's/76.13.241.174/127.0.0.1/g' "$path/.env"
   robust_sed 's/uniz-redis/127.0.0.1/g' "$path/.env"
   robust_sed 's/uniz-postgres/127.0.0.1/g' "$path/.env"
-  robust_sed 's/api.uniz.rguktong.in/127.0.0.1:3000/g' "$path/.env"
+  robust_sed 's/api-uniz.rguktong.in/127.0.0.1:3000/g' "$path/.env"
+  robust_sed 's/api\.uniz\.rguktong\.in/127.0.0.1:3000/g' "$path/.env"
   robust_sed 's/https:\/\/127.0.0.1:3000/http:\/\/127.0.0.1:3000/g' "$path/.env"
   # Cloudflare Turnstile test keys (always pass) — keep site + secret paired for local login
   robust_sed 's/0x4AAAAAACnuFU49Yv6dqJum/1x00000000000000000000AA/g' "$path/.env"

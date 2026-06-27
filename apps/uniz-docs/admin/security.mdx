@@ -26,7 +26,7 @@ These counters update automatically. The portal polls the summary endpoint every
 **Endpoint:** `GET /requests/security/summary`
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/requests/security/summary
+GET https://api-uniz.rguktong.in/api/v1/requests/security/summary
 Authorization: Bearer <TOKEN>
 ```
 
@@ -50,7 +50,7 @@ Fetch all outpass records to verify a student's approved long-duration leave.
 **Endpoint:** `GET /requests/outpass/all`
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/requests/outpass/all
+GET https://api-uniz.rguktong.in/api/v1/requests/outpass/all
 Authorization: Bearer <TOKEN>
 ```
 
@@ -81,7 +81,7 @@ Fetch approved short-duration outing requests.
 **Endpoint:** `GET /requests/outing/all`
 
 ```bash
-GET https://api.uniz.rguktong.in/api/v1/requests/outing/all
+GET https://api-uniz.rguktong.in/api/v1/requests/outing/all
 Authorization: Bearer <TOKEN>
 ```
 
@@ -94,7 +94,7 @@ Use this procedure when a student presents their approved pass at the gate to le
     Enter the student's university ID in the scan field on the Security Portal dashboard. You can type the ID manually or scan the student's ID card.
 
     ```bash
-    POST https://api.uniz.rguktong.in/api/v1/profile/student/search
+    POST https://api-uniz.rguktong.in/api/v1/profile/student/search
     Authorization: Bearer <TOKEN>
     Content-Type: application/json
     ```
@@ -118,7 +118,7 @@ Use this procedure when a student presents their approved pass at the gate to le
     **Endpoint:** `POST /requests/:id/checkout`
 
     ```bash
-    POST https://api.uniz.rguktong.in/api/v1/requests/O210008/checkout
+    POST https://api-uniz.rguktong.in/api/v1/requests/O210008/checkout
     Authorization: Bearer <TOKEN>
     ```
 
@@ -148,7 +148,7 @@ When a student returns to campus, log their entry to update their presence statu
     **Endpoint:** `POST /requests/:id/checkin`
 
     ```bash
-    POST https://api.uniz.rguktong.in/api/v1/requests/O210008/checkin
+    POST https://api-uniz.rguktong.in/api/v1/requests/O210008/checkin
     Authorization: Bearer <TOKEN>
     ```
 
@@ -171,7 +171,7 @@ If you need to correct a student's campus status outside of the normal check-in/
 **Endpoint:** `PUT /profile/student/status`
 
 ```bash
-PUT https://api.uniz.rguktong.in/api/v1/profile/student/status
+PUT https://api-uniz.rguktong.in/api/v1/profile/student/status
 Authorization: Bearer <TOKEN>
 Content-Type: application/json
 ```
@@ -198,7 +198,7 @@ Generate a list of all students who have not yet returned to campus. This is use
 **Endpoint:** `POST /profile/student/search`
 
 ```bash
-POST https://api.uniz.rguktong.in/api/v1/profile/student/search
+POST https://api-uniz.rguktong.in/api/v1/profile/student/search
 Authorization: Bearer <TOKEN>
 Content-Type: application/json
 ```

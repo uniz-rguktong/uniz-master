@@ -55,7 +55,7 @@ Authenticates any user — student or admin — and returns a JWT with the calle
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/auth/login \
+  --url https://api-uniz.rguktong.in/api/v1/auth/login \
   --header 'Content-Type: application/json' \
   --data '{
     "username": "O210008",
@@ -117,7 +117,7 @@ Identical to general login but rejects credentials that do not belong to a `stud
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/auth/login/student \
+  --url https://api-uniz.rguktong.in/api/v1/auth/login/student \
   --header 'Content-Type: application/json' \
   --data '{
     "username": "O210008",
@@ -169,7 +169,7 @@ Authenticates administrative accounts only. Rejects student credentials.
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/auth/login/admin \
+  --url https://api-uniz.rguktong.in/api/v1/auth/login/admin \
   --header 'Content-Type: application/json' \
   --data '{
     "username": "director",
@@ -210,7 +210,7 @@ Clears the server-side session. The client should also discard the stored JWT.
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/auth/logout \
+  --url https://api-uniz.rguktong.in/api/v1/auth/logout \
   --header 'Authorization: Bearer <token>'
 ```
 

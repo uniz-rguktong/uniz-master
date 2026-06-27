@@ -50,7 +50,7 @@ Returns the profile of the authenticated faculty member.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/profile/faculty/me \
+  --url https://api-uniz.rguktong.in/api/v1/profile/faculty/me \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -102,7 +102,7 @@ Updates the authenticated faculty member's own profile. All fields are optional.
 
 ```bash
 curl --request PUT \
-  --url https://api.uniz.rguktong.in/api/v1/faculty/me/update \
+  --url https://api-uniz.rguktong.in/api/v1/faculty/me/update \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -138,7 +138,7 @@ Returns the full profile of any faculty member. Only accessible to administrator
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/admin/faculty/faculty_cse_01 \
+  --url https://api-uniz.rguktong.in/api/v1/admin/faculty/faculty_cse_01 \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -200,7 +200,7 @@ Updates any faculty member's profile. Only accessible to administrators.
 
 ```bash
 curl --request PUT \
-  --url https://api.uniz.rguktong.in/api/v1/admin/faculty/faculty_cse_01 \
+  --url https://api-uniz.rguktong.in/api/v1/admin/faculty/faculty_cse_01 \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -242,7 +242,7 @@ Permanently removes a faculty member's account.
 
 ```bash
 curl --request DELETE \
-  --url https://api.uniz.rguktong.in/api/v1/admin/faculty/faculty_cse_01 \
+  --url https://api-uniz.rguktong.in/api/v1/admin/faculty/faculty_cse_01 \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -294,7 +294,7 @@ Searches faculty members with optional filters. Returns matching results.
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/faculty/search \
+  --url https://api-uniz.rguktong.in/api/v1/faculty/search \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -368,7 +368,7 @@ The request body is an array of faculty objects.
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/admin/faculty/bulk-create \
+  --url https://api-uniz.rguktong.in/api/v1/admin/faculty/bulk-create \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '[

@@ -20,8 +20,7 @@ spec:
         - www.rguktong.in
         - uniz.rguktong.in
         - www.uniz.rguktong.in
-        - api.uniz.rguktong.in
-        - www.api.uniz.rguktong.in
+        - api-uniz.rguktong.in
         - landing-api.rguktong.in
         - www.landing-api.rguktong.in
       secretName: uniz-tls-cert
@@ -53,7 +52,7 @@ spec:
                 name: uniz-portal
                 port:
                   number: 80
-    - host: api.uniz.rguktong.in
+    - host: api-uniz.rguktong.in
       http:
         paths:
           - path: /

@@ -86,7 +86,7 @@ The `currentLevel` field tells you which role must act next:
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/requests/outpass \
+  --url https://api-uniz.rguktong.in/api/v1/requests/outpass \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -170,7 +170,7 @@ Returns all outpass requests in the system. Intended for caretakers, wardens, an
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/requests/outpass/all \
+  --url https://api-uniz.rguktong.in/api/v1/requests/outpass/all \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -244,7 +244,7 @@ Returns the authenticated student's own outpass and outing request history, newe
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/requests/history \
+  --url https://api-uniz.rguktong.in/api/v1/requests/history \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -310,7 +310,7 @@ Returns the list of students who currently have an approved outpass and have not
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/requests/outside \
+  --url https://api-uniz.rguktong.in/api/v1/requests/outside \
   --header 'Authorization: Bearer <token>'
 ```
 

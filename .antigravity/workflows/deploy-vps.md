@@ -36,8 +36,8 @@ Run the comprehensive test suite against the Production API.
 
 ```bash
 export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin && \
-BASE_URL=https://api.uniz.rguktong.in/api/v1 \
-GW_STATUS_URL=https://api.uniz.rguktong.in/api/v1/system/health \
+BASE_URL=https://api-uniz.rguktong.in/api/v1 \
+GW_STATUS_URL=https://api-uniz.rguktong.in/api/v1/system/health \
 SKIP_OTP=true \
 INTERNAL_SECRET=uniz-core \
 MAP_LOCALHOST=false \

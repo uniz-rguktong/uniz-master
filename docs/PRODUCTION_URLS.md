@@ -2,7 +2,8 @@
 
 ## API Gateway
 
-- **Production Gateway**: `https://api.uniz.rguktong.in/api/v1`
+- **Production Gateway**: `https://api-uniz.rguktong.in/api/v1`
+- **Legacy (broken edge SSL)**: `api-uniz.rguktong.in` — nested subdomain, do not use
 
 ## Microservices
 

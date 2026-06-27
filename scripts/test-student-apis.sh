@@ -2,7 +2,7 @@
 # Test student APIs on production. Login needs Turnstile; use TOKEN env var or mint on VPS.
 set -euo pipefail
 
-BASE="${BASE_URL:-https://api.uniz.rguktong.in/api/v1}"
+BASE="${BASE_URL:-https://api-uniz.rguktong.in/api/v1}"
 USER="${STUDENT_USER:-O210008}"
 PASS="${STUDENT_PASS:-}"
 

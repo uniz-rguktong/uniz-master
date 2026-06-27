@@ -101,7 +101,7 @@
 \vspace{1.2cm}
 \begin{tabular}{ll}
 \textbf{Platform:} & \url{https://uniz.rguktong.in} \\[4pt]
-\textbf{API Base:} & \url{https://api.uniz.rguktong.in/api/v1} \\
+\textbf{API Base:} & \url{https://api-uniz.rguktong.in/api/v1} \\
 \end{tabular}
 \vspace{1.5cm}
 {\large \textbf{Submitted by}}\\[0.4cm]
@@ -148,7 +148,7 @@ Dept. of CSE, RGUKT ONG & Dept. of CSE, RGUKT ONG \\
 \noindent University administration in residential engineering institutions encompasses a heterogeneous set of operational concerns: academic record management, student campus mobility, hostel governance, gate security enforcement, and institutional communication. In the absence of integrated software systems, these concerns are managed through fragmented, paper-based workflows that introduce delays, data inconsistency, lack of audit trails, and significant administrative overhead.
 
 \vspace{0.4cm}
-\noindent This report presents \textbf{UniZ}, a distributed university administration platform purpose-built for Rajiv Gandhi University of Knowledge Technologies (RGUKT), Ongole. UniZ is architected as a Progressive Web Application (PWA) served at \url{https://uniz.rguktong.in}, backed by a RESTful API at \url{https://api.uniz.rguktong.in/api/v1}. The platform unifies five primary operational domains: student academic record management, outpass and outing request workflows, hostel administration, campus security gate operations, and institutional announcement management under a single, role-differentiated interface.
+\noindent This report presents \textbf{UniZ}, a distributed university administration platform purpose-built for Rajiv Gandhi University of Knowledge Technologies (RGUKT), Ongole. UniZ is architected as a Progressive Web Application (PWA) served at \url{https://uniz.rguktong.in}, backed by a RESTful API at \url{https://api-uniz.rguktong.in/api/v1}. The platform unifies five primary operational domains: student academic record management, outpass and outing request workflows, hostel administration, campus security gate operations, and institutional announcement management under a single, role-differentiated interface.
 
 \vspace{0.4cm}
 \noindent The platform implements a formal Role-Based Access Control (RBAC) model in which access permissions are determined by the function $\textsc{Access} = f(\text{role}, \text{resource}, \text{action})$. Nine distinct roles are modelled: \role{student}, \role{caretaker\_male}, \role{caretaker\_female}, \role{warden\_male}, \role{warden\_female}, \role{swo}, \role{dean}, \role{director}, \role{security}, \role{faculty}, and \role{webmaster}. Each role exposes a strictly bounded capability surface, enforced at both the API gateway and the database query layer.
@@ -217,7 +217,7 @@ Chapter~2 provides a system overview. Chapter~3 formalises the RBAC model. Chapt
 
 \section{Platform Identity and Deployment}
 
-UniZ (University Intelligence Zone) is an enterprise-grade, web-first university administration platform deployed at RGUKT Ongole. The platform is publicly accessible at \url{https://uniz.rguktong.in} and exposes its programmatic interface via a versioned REST API at \url{https://api.uniz.rguktong.in/api/v1}. The platform is structured as a client-server system with strict separation of concerns: all business logic, data persistence, access control enforcement, and external service integration reside on the server; the client is a thin, stateless PWA responsible solely for rendering and user interaction.
+UniZ (University Intelligence Zone) is an enterprise-grade, web-first university administration platform deployed at RGUKT Ongole. The platform is publicly accessible at \url{https://uniz.rguktong.in} and exposes its programmatic interface via a versioned REST API at \url{https://api-uniz.rguktong.in/api/v1}. The platform is structured as a client-server system with strict separation of concerns: all business logic, data persistence, access control enforcement, and external service integration reside on the server; the client is a thin, stateless PWA responsible solely for rendering and user interaction.
 
 \section{Technology Stack}
 

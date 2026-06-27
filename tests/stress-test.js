@@ -28,7 +28,7 @@ export const options = {
   },
 };
 
-const BASE_URL = "https://api.uniz.rguktong.in/api/v1";
+const BASE_URL = "https://api-uniz.rguktong.in/api/v1";
 const CAPTCHA_BYPASS = "uniz_dev_bypass_token_2026";
 const SEMESTER_ID = "E1-SEM-1";
 

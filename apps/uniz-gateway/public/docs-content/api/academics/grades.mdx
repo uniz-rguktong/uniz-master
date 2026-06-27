@@ -24,7 +24,7 @@ Returns the authenticated student's grades across all semesters.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/grades \
+  --url https://api-uniz.rguktong.in/api/v1/academics/grades \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -129,7 +129,7 @@ Returns grades for an entire batch, with optional filtering. Intended for admini
 
 ```bash
 curl --request GET \
-  --url 'https://api.uniz.rguktong.in/api/v1/academics/grades/batch?branch=CSE&year=E2&semesterId=SEM-1&failedOnly=true' \
+  --url 'https://api-uniz.rguktong.in/api/v1/academics/grades/batch?branch=CSE&year=E2&semesterId=SEM-1&failedOnly=true' \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -219,7 +219,7 @@ Records a grade for a single student in a specific subject and semester.
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/academics/grades/add \
+  --url https://api-uniz.rguktong.in/api/v1/academics/grades/add \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -273,7 +273,7 @@ Updates multiple grade records in a single request. Useful for re-evaluations or
 
 ```bash
 curl --request PUT \
-  --url https://api.uniz.rguktong.in/api/v1/academics/grades/bulk-update \
+  --url https://api-uniz.rguktong.in/api/v1/academics/grades/bulk-update \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -336,7 +336,7 @@ Downloads an Excel template pre-filled with student IDs for the specified batch.
 
 ```bash
 curl --request GET \
-  --url 'https://api.uniz.rguktong.in/api/v1/academics/grades/template?branch=CSE&year=E1&semester=SEM-1&subjectCode=E1-SEM-1-CSE-1' \
+  --url 'https://api-uniz.rguktong.in/api/v1/academics/grades/template?branch=CSE&year=E1&semester=SEM-1&subjectCode=E1-SEM-1-CSE-1' \
   --header 'Authorization: Bearer <token>' \
   --output grades_template.xlsx
 ```
@@ -366,7 +366,7 @@ Uploads a filled-in Excel template to import grades in bulk. The file is process
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/academics/grades/upload \
+  --url https://api-uniz.rguktong.in/api/v1/academics/grades/upload \
   --header 'Authorization: Bearer <token>' \
   --form 'file=@/path/to/grades_template.xlsx'
 ```
@@ -400,7 +400,7 @@ Polls the status of a background grade upload job.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/grades/upload/progress \
+  --url https://api-uniz.rguktong.in/api/v1/academics/grades/upload/progress \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -451,7 +451,7 @@ Polls the status of a background grade publishing (email dispatch) job.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/grades/publish/progress \
+  --url https://api-uniz.rguktong.in/api/v1/academics/grades/publish/progress \
   --header 'Authorization: Bearer <token>'
 ```
 
@@ -489,7 +489,7 @@ Downloads the compiled grade report for a semester as a file.
 
 ```bash
 curl --request GET \
-  --url https://api.uniz.rguktong.in/api/v1/academics/grades/download/SEM-1 \
+  --url https://api-uniz.rguktong.in/api/v1/academics/grades/download/SEM-1 \
   --header 'Authorization: Bearer <token>' \
   --output grades_report_SEM-1.xlsx
 ```
@@ -516,7 +516,7 @@ Triggers a background job that emails grade report cards to all students for the
 
 ```bash
 curl --request POST \
-  --url https://api.uniz.rguktong.in/api/v1/academics/grades/publish-email \
+  --url https://api-uniz.rguktong.in/api/v1/academics/grades/publish-email \
   --header 'Authorization: Bearer <token>' \
   --header 'Content-Type: application/json' \
   --data '{

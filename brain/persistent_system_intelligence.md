@@ -25,7 +25,7 @@ This file serves as the **authoritative source of truth** for the UniZ ecosystem
   - `8080/tcp` (Gateway Direct Access)
 - **Load Balancing**: None (Single Node)
 - **SSL**: Let's Encrypt (Managed via Certbot/Nginx)
-- **Domain**: `api.uniz.rguktong.in` maps to `76.13.241.174`
+- **Domain**: `api-uniz.rguktong.in` maps to `76.13.241.174`
 
 ### Container Orchestration
 
