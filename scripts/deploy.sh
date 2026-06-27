@@ -294,7 +294,14 @@ deploy_logic() {
     kubectl create secret generic cloudflare-api-token -n cert-manager \
       --from-literal=api-token="$CLOUDFLARE_API_TOKEN" \
       --dry-run=client -o yaml | kubectl apply -f -
+    echo "[Infra] Ensuring Cloudflare www.* DNS records..."
+    bash "$(dirname "$0")/ensure-cloudflare-www-dns.sh" || true
   fi
+
+  echo "[Infra] Syncing host nginx TLS + www redirects..."
+  bash "$(dirname "$0")/sync-nginx-k8s-tls.sh" 2>/dev/null || true
+  bash "$(dirname "$0")/install-nginx-www-redirects.sh" 2>/dev/null || true
+  bash "$(dirname "$0")/install-nginx-k8s-tls-cron.sh" 2>/dev/null || true
   
   echo "[Infra] Applying branch components ($K_BASE)..."
   kubectl apply -k "$K_BASE" || true
