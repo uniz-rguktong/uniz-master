@@ -7,6 +7,13 @@ import axios from "axios";
 import { redis } from "../utils/redis.util";
 import { randomUUID } from "crypto";
 import { resolveHodBranch } from "../utils/hod.util";
+import {
+  bootstrapCacheKey,
+  invalidateStudentProfileCaches,
+  profileCacheKey,
+} from "../utils/student-cache.util";
+
+const BOOTSTRAP_CACHE_TTL_SEC = 45;
 
 const NOTIFICATION_SERVICE_URL = (
   (process.env.DOCKER_ENV === "true"
@@ -64,7 +71,9 @@ export const resolveLoginByEmail = async (req: Request, res: Response) => {
 };
 
 const ACADEMICS_SERVICE_URL = (
-  process.env.ACADEMICS_SERVICE_URL || `${GATEWAY_URL}/academics`
+  process.env.DOCKER_ENV === "true"
+    ? "http://uniz-academics-service:3004"
+    : process.env.ACADEMICS_SERVICE_URL || `${GATEWAY_URL}/academics`
 ).replace(/\/$/, "");
 
 const OUTPASS_SERVICE_URL = (
@@ -206,7 +215,7 @@ export const getStudentProfile = async (
 
   try {
     // 1. High Performance Cache Layer
-    const cacheKey = `profile:v2:${targetUsername}`;
+    const cacheKey = profileCacheKey(targetUsername);
     const cached = await redis.get(cacheKey);
     if (cached) {
       return res.json({
@@ -308,6 +317,122 @@ export const getStudentProfile = async (
   }
 };
 
+/** One round-trip for student dashboard: profile + grades + attendance (JWT-scoped). */
+export const getStudentBootstrap = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const user = req.user;
+  if (!user) {
+    return res.status(401).json({ code: ErrorCode.AUTH_UNAUTHORIZED });
+  }
+  if (user.role !== UserRole.STUDENT) {
+    return res.status(403).json({
+      code: ErrorCode.AUTH_FORBIDDEN,
+      message: "Students only",
+    });
+  }
+
+  const username = user.username.toUpperCase();
+  const cacheKey = bootstrapCacheKey(username);
+  const authHeader = req.headers.authorization;
+
+  res.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  res.setHeader("Vary", "Authorization");
+
+  try {
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      return res.json({
+        ...parsed,
+        source: "cache",
+        meta: { ...parsed.meta, username, cache: "redis" },
+      });
+    }
+
+    const profile = await prisma.studentProfile.findUnique({
+      where: { username },
+    });
+    if (!profile) {
+      return res.status(404).json({
+        code: ErrorCode.RESOURCE_NOT_FOUND,
+        message: "Profile not found",
+      });
+    }
+
+    const headers = authHeader ? { Authorization: authHeader } : {};
+    const [gradesRes, attendanceRes] = await Promise.all([
+      axios
+        .get(`${ACADEMICS_SERVICE_URL}/grades`, {
+          headers,
+          timeout: 8000,
+        })
+        .catch(() => ({ data: null })),
+      axios
+        .get(`${ACADEMICS_SERVICE_URL}/attendance`, {
+          headers,
+          timeout: 8000,
+        })
+        .catch(() => ({ data: null })),
+    ]);
+
+    const student = mapStudentProfile(profile);
+    const grades = gradesRes.data?.success ? gradesRes.data : null;
+    const attendance = attendanceRes.data?.success ? attendanceRes.data : null;
+
+    if (grades) {
+      student.cgpa = grades.cgpa ?? student.cgpa;
+      student.total_backlogs = grades.totalBacklogs ?? student.total_backlogs;
+    }
+
+    const payload = {
+      success: true,
+      student,
+      grades,
+      attendance,
+      meta: {
+        username,
+        fetchedAt: new Date().toISOString(),
+        cache: "none",
+      },
+    };
+
+    await redis.setex(cacheKey, BOOTSTRAP_CACHE_TTL_SEC, JSON.stringify(payload));
+
+    return res.json({ ...payload, source: "db" });
+  } catch (e) {
+    console.error("[Bootstrap] error:", e);
+    return res.status(500).json({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Failed to load student dashboard",
+    });
+  }
+};
+
+export const internalInvalidateStudentCache = async (
+  req: Request,
+  res: Response,
+) => {
+  const secret = req.headers["x-internal-secret"];
+  const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+  if (secret !== INTERNAL_SECRET) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
+  const username = String(req.body?.username || "")
+    .trim()
+    .toUpperCase();
+  if (!username) {
+    return res.status(400).json({ message: "username required" });
+  }
+
+  await invalidateStudentProfileCaches(username);
+  return res.json({ success: true, username });
+};
+
 export const updateStudentProfile = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -332,7 +457,7 @@ export const updateStudentProfile = async (
     });
 
     // Invalidate profile cache to prevent stale data
-    await redis.del(`profile:v2:${user.username}`);
+    await invalidateStudentProfileCaches(user.username);
 
     // Notify student (Backgrounded for latency optimization)
     sendPush(
@@ -378,7 +503,7 @@ export const adminUpdateStudentProfile = async (
     });
 
     // Invalidate profile cache to prevent stale data
-    await redis.del(`profile:v2:${username}`);
+    await invalidateStudentProfileCaches(username);
 
     // Notify student (Backgrounded for latency optimization)
     sendPush(
@@ -467,7 +592,7 @@ export const createIndividualStudent = async (
     });
 
     // Invalidate cache
-    await redis.del(`profile:v2:${username}`);
+    await invalidateStudentProfileCaches(username);
 
     return res.json({
       success: true,
@@ -978,7 +1103,7 @@ export const updateStudentPresence = async (
     }
 
     // Invalidate cache
-    await redis.del(`profile:v2:${username}`);
+    await invalidateStudentProfileCaches(username);
 
     return res.json({ success: true, student: mapStudentProfile(updated) });
   } catch (e) {
@@ -1039,7 +1164,7 @@ export const internalSyncStudentStats = async (req: Request, res: Response) => {
     });
 
     // Invalidate profile cache
-    await redis.del(`profile:v2:${studentId.toUpperCase()}`);
+    await invalidateStudentProfileCaches(studentId.toUpperCase());
 
     return res.json({ success: true, student: mapStudentProfile(updated) });
   } catch (e) {
@@ -1184,7 +1309,7 @@ export const toggleUserSuspension = async (
     }
 
     // 3. Invalidate Cache
-    await redis.del(`profile:v2:${targetUsername}`);
+    await invalidateStudentProfileCaches(targetUsername);
 
     // 4. Notify User
     sendPush(
@@ -1569,7 +1694,7 @@ async function purgeStudentAccount(rawUsername: string): Promise<PurgeStudentRes
     });
 
     await prisma.studentProfile.delete({ where: { id: existing.id } });
-    await redis.del(`profile:v2:${canonicalUsername}`);
+    await invalidateStudentProfileCaches(canonicalUsername);
 
     return { username: canonicalUsername, status: "deleted" };
   } catch (e: any) {

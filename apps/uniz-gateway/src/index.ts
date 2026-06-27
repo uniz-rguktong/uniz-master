@@ -340,7 +340,8 @@ app.all("/api/v1/:service/*path", async (req: any, res: any) => {
     req.url.includes("/profile") ||
     req.url.includes("/student/me") ||
     req.url.includes("/grades") ||
-    req.url.includes("/attendance");
+    req.url.includes("/attendance") ||
+    req.url.includes("/bootstrap");
 
   if (
     req.method === "GET" &&

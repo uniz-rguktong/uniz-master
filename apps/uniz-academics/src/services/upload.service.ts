@@ -2,6 +2,7 @@ import { redis } from "../utils/redis.util";
 import prisma from "../utils/prisma.util";
 import { mapGradeToPoint } from "../utils/helpers.util";
 import { buildSubjectSnapshot } from "../utils/subject-snapshot.util";
+import { invalidateStudentAcademicCaches } from "../utils/student-cache.util";
 import axios from "axios";
 
 const GATEWAY_URL = (
@@ -323,11 +324,7 @@ export async function processNextBatch() {
             });
             successCount++;
 
-            // Cache Invalidation
-            await redis.del(`grades:${studentId}`);
-            await redis.del(`grades_v3:${studentId.toUpperCase()}`);
-            await redis.del(`profile:v2:${studentId}`);
-            await redis.del(`profile:v3:${studentId}`); // Improved cache invalidation
+            await invalidateStudentAcademicCaches(studentId);
           } catch (err: any) {
             if (failCount === 0) {
               console.error(`[Worker] [GRADES] First failure on row:`, row);

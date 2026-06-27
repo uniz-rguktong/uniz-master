@@ -125,15 +125,14 @@ Phase 2 → Redis/indexes (only if origin p95 rises under peak load)
 Phase 4 → peak/DDoS simulation + rate limits
 ```
 
-### Phase 5 — External sub-500ms (NEW, current focus)
+### Phase 5 — External sub-500ms (in progress)
 
 - [x] Portal `preconnect` to API
-- [ ] Verify Phase 1 deploy: cold `/system/health` < 100ms external
-- [ ] Add `GET /api/v1/student/bootstrap` (profile + grades + attendance in one response)
-- [ ] CF cache rule for `/cms/banners/public`
-- [ ] Audit CF Bot Fight / WAF on `api-uniz` subdomain
-- [ ] cloudflared `http2Origin` + keep-alive
-- [ ] Optional: grey-cloud `api-uniz` if tunnel hop still > 300ms after above
+- [x] **`GET /profile/student/bootstrap`** — one round-trip (profile + grades + attendance)
+- [x] Per-student client cache (`owner` = JWT username); purge on login/logout
+- [x] Server Redis bootstrap cache (45s TTL) + invalidation on profile/grade writes
+- [x] Fix `grades_v3` invalidation on grade updates
+- [ ] Verify external p95 after deploy
 
 **Exit criteria:** External p95 < 500ms for profile, grades, attendance on 4G from India.
 

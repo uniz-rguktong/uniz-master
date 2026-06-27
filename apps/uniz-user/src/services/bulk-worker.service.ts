@@ -1,5 +1,6 @@
 import { prisma } from "../utils/prisma";
 import { redis } from "../utils/redis.util";
+import { invalidateStudentProfileCaches } from "../utils/student-cache.util";
 import axios from "axios";
 
 const AUTH_SERVICE_URL =
@@ -166,7 +167,7 @@ export async function processNextStudentBatch() {
             },
           });
           successCount++;
-          await redis.del(`profile:v2:${id}`);
+          await invalidateStudentProfileCaches(id);
 
           // Auth Sync
           try {

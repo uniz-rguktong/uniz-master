@@ -28,6 +28,7 @@ export const CHANGE_PASS_ENDPOINT = `${BASE_URL}/auth/password/change`;
 
 // Profile (User Service)
 export const STUDENT_INFO = `${BASE_URL}/profile/student/me`;
+export const STUDENT_BOOTSTRAP = `${BASE_URL}/profile/student/bootstrap`;
 export const UPDATE_DETAILS = `${BASE_URL}/profile/student/update`;
 export const FACULTY_INFO = `${BASE_URL}/profile/faculty/me`;
 export const ADMIN_INFO = `${BASE_URL}/profile/admin/me`;

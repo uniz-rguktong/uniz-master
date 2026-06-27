@@ -1,6 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
 import {
   getStudentProfile,
+  getStudentBootstrap,
+  internalInvalidateStudentCache,
   updateStudentProfile,
   adminUpdateStudentProfile,
   getAdminProfile,
@@ -204,6 +206,7 @@ const FacultyCreateSchema = z.object({
 });
 
 router.get("/student/me", authMiddleware, getStudentProfile);
+router.get("/student/bootstrap", authMiddleware, getStudentBootstrap);
 
 // Bulk Import Routes
 router.get("/admin/student/template", authMiddleware, getStudentsTemplate);
@@ -220,6 +223,7 @@ router.post("/internal/upload-history", recordExternalUpload);
 router.post("/internal/bulk-profiles", getBulkProfiles);
 router.post("/internal/targeting", getTargetingData);
 router.post("/internal/sync-student-stats", internalSyncStudentStats);
+router.post("/internal/invalidate-student-cache", internalInvalidateStudentCache);
 router.get("/internal/resolve-login", resolveLoginByEmail);
 
 router.get("/admin/student/:username", authMiddleware, getStudentProfile);
