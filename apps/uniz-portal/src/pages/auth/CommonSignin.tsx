@@ -6,7 +6,6 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { adminUsername, is_authenticated, resetTokenState } from "../../store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/utils/toast-ref";
-import { cn } from "@/lib/utils";
 import {
   SIGNIN,
   FORGOT_PASS_ENDPOINT,
@@ -23,9 +22,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import LoginScreen from "../../components/ui/login-1";
-import { TurnstileLoadingPlaceholder } from "../../components/ui/TurnstileLoadingPlaceholder";
 import { Turnstile } from "@marsidev/react-turnstile";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { prepareStudentSession } from "../../utils/studentSessionCache";
 
 type SigninProps = {
@@ -220,53 +218,68 @@ function requiresCaptcha() {
   return turnstileEnabled() && !isLocalTestTurnstile();
 }
 
-function useCompactTurnstile() {
-  const [compact, setCompact] = useState(() =>
-    typeof window !== "undefined"
-      ? window.matchMedia("(max-width: 639px)").matches
-      : false,
-  );
+const CAPTCHA_WAIT_MS = 12_000;
 
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 639px)");
-    const apply = () => setCompact(mq.matches);
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
-  }, []);
+function waitForCaptchaToken(
+  captchaTokenRef: React.MutableRefObject<string | null>,
+  timeoutMs: number,
+): Promise<string | null> {
+  if (captchaTokenRef.current) {
+    return Promise.resolve(captchaTokenRef.current);
+  }
 
-  return compact;
+  return new Promise((resolve) => {
+    const started = Date.now();
+    const timer = window.setInterval(() => {
+      if (captchaTokenRef.current) {
+        window.clearInterval(timer);
+        resolve(captchaTokenRef.current);
+      } else if (Date.now() - started >= timeoutMs) {
+        window.clearInterval(timer);
+        resolve(null);
+      }
+    }, 80);
+  });
 }
 
-/** Warm Cloudflare Turnstile script as soon as the sign-in form mounts. */
-function useTurnstileScriptPreload() {
-  useEffect(() => {
-    const src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-    if (document.querySelector(`script[src^="${src}"]`)) return;
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.as = "script";
-    link.href = src;
-    link.crossOrigin = "anonymous";
-    document.head.appendChild(link);
-  }, []);
+async function ensureCaptchaToken(
+  captchaTokenRef: React.MutableRefObject<string | null>,
+  onWaitingChange?: (waiting: boolean) => void,
+): Promise<boolean> {
+  if (!requiresCaptcha()) {
+    return true;
+  }
+
+  if (captchaTokenRef.current) {
+    return true;
+  }
+
+  onWaitingChange?.(true);
+  const token = await waitForCaptchaToken(captchaTokenRef, CAPTCHA_WAIT_MS);
+  onWaitingChange?.(false);
+
+  if (!token) {
+    toast.error(
+      "Security check is still loading. Wait a moment and try again.",
+    );
+    return false;
+  }
+
+  return true;
 }
 
-/** Visible Cloudflare Turnstile — standard managed challenge */
+/** Invisible Turnstile — verifies in background while the user fills the form. */
 function TurnstileWidget({
   turnstileRef,
   captchaTokenRef,
   onTokenChange,
+  onStatusChange,
 }: {
   turnstileRef: React.RefObject<any>;
   captchaTokenRef: React.MutableRefObject<string | null>;
   onTokenChange: (token: string | null) => void;
+  onStatusChange: (status: "loading" | "ready" | "error") => void;
 }) {
-  const [isWidgetReady, setIsWidgetReady] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
-  const compact = useCompactTurnstile();
-  useTurnstileScriptPreload();
-
   if (!turnstileEnabled()) {
     return import.meta.env.DEV ? (
       <p className="text-center text-[11px] text-amber-600 font-medium py-1">
@@ -276,89 +289,104 @@ function TurnstileWidget({
   }
 
   return (
-    <div
-      className={cn(
-        "relative flex w-full max-w-full flex-col items-center justify-center overflow-hidden rounded-xl px-1 py-2 sm:px-2 sm:py-2.5",
-        isVerified
-          ? "min-h-0 border-0 bg-transparent"
-          : "min-h-[64px] border border-zinc-100 bg-zinc-50/60 sm:min-h-[72px]",
-      )}
-    >
-      <AnimatePresence mode="wait">
-        {!isWidgetReady && !isVerified && (
-          <motion.div
-            key="loading"
-            className="absolute inset-0 z-10 flex items-center justify-center px-1"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-          >
-            <TurnstileLoadingPlaceholder compact={compact} />
-          </motion.div>
-        )}
-        {isVerified && (
-          <motion.div
-            key="verified"
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex w-full max-w-full items-center gap-3 rounded-md border border-emerald-200/80 bg-emerald-50/90 px-3 py-2.5 sm:max-w-[302px] sm:px-4 sm:py-3"
-          >
-            <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
-            <div className="min-w-0">
-              <p className="text-[11px] font-semibold text-emerald-800">
-                Security check passed
-              </p>
-              <p className="text-[10px] font-medium text-emerald-600/80">
-                You can continue to sign in
-              </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="sr-only" aria-hidden>
+      <Turnstile
+        ref={turnstileRef}
+        siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+        scriptOptions={{ async: true, defer: true, appendTo: "head" }}
+        options={{
+          theme: "light",
+          size: "invisible",
+          retry: "auto",
+          "refresh-expired": "auto",
+        }}
+        onSuccess={(token) => {
+          captchaTokenRef.current = token;
+          onTokenChange(token);
+          onStatusChange("ready");
+        }}
+        onExpire={() => {
+          captchaTokenRef.current = null;
+          onTokenChange(null);
+          onStatusChange("loading");
+          turnstileRef.current?.reset();
+        }}
+        onError={() => {
+          captchaTokenRef.current = null;
+          onTokenChange(null);
+          onStatusChange("error");
+        }}
+        onLoad={() => onStatusChange("loading")}
+      />
+    </div>
+  );
+}
 
+function CaptchaStatus({
+  status,
+  hasToken,
+  waitingOnSubmit,
+}: {
+  status: "loading" | "ready" | "error";
+  hasToken: boolean;
+  waitingOnSubmit?: boolean;
+}) {
+  if (!requiresCaptcha()) {
+    return null;
+  }
+
+  if (waitingOnSubmit) {
+    return (
       <div
-        className={
-          isVerified
-            ? "sr-only h-0 overflow-hidden"
-            : cn(
-                "flex w-full max-w-full justify-center",
-                compact ? "min-h-[56px]" : "min-h-[65px]",
-                !isWidgetReady && "invisible",
-              )
-        }
-        aria-hidden={isVerified}
+        className="flex items-center justify-center gap-2 rounded-xl border border-zinc-100 bg-zinc-50/80 px-3 py-2.5"
+        role="status"
+        aria-live="polite"
       >
-        <Turnstile
-          ref={turnstileRef}
-          siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-          scriptOptions={{ async: true }}
-          options={{
-            theme: "light",
-            size: compact ? "compact" : "normal",
-            appearance: "always",
-          }}
-          onSuccess={(token) => {
-            captchaTokenRef.current = token;
-            onTokenChange(token);
-            setIsVerified(true);
-            setIsWidgetReady(true);
-          }}
-          onExpire={() => {
-            captchaTokenRef.current = null;
-            onTokenChange(null);
-            setIsVerified(false);
-            setIsWidgetReady(false);
-            turnstileRef.current?.reset();
-          }}
-          onError={() => {
-            captchaTokenRef.current = null;
-            onTokenChange(null);
-            setIsVerified(false);
-            setIsWidgetReady(false);
-          }}
-          onLoad={() => setIsWidgetReady(true)}
-        />
+        <span className="size-3.5 shrink-0 rounded-full border-2 border-zinc-200 border-t-zinc-700 animate-spin" />
+        <p className="text-[11px] font-medium text-zinc-600">
+          Completing security check…
+        </p>
       </div>
+    );
+  }
+
+  if (hasToken || status === "ready") {
+    return (
+      <div
+        className="flex items-center justify-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/80 px-3 py-2.5"
+        role="status"
+      >
+        <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+        <p className="text-[11px] font-medium text-emerald-700">
+          Security check complete — you can continue
+        </p>
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <div
+        className="rounded-xl border border-amber-100 bg-amber-50/80 px-3 py-2.5 text-center"
+        role="alert"
+      >
+        <p className="text-[11px] font-medium text-amber-800">
+          Security check failed. Refresh the page and try again.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="flex items-center justify-center gap-2 rounded-xl border border-zinc-100 bg-zinc-50/80 px-3 py-2.5"
+      role="status"
+      aria-live="polite"
+    >
+      <span className="size-3.5 shrink-0 rounded-full border-2 border-zinc-200 border-t-zinc-700 animate-spin" />
+      <p className="text-[11px] font-medium text-zinc-500">
+        Preparing secure sign-in…
+      </p>
     </div>
   );
 }
@@ -373,6 +401,10 @@ export default function Signin({ type }: SigninProps) {
     "signin",
   );
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaStatus, setCaptchaStatus] = useState<
+    "loading" | "ready" | "error"
+  >("loading");
+  const [waitingForCaptcha, setWaitingForCaptcha] = useState(false);
   const captchaTokenRef = useRef<string | null>(null);
   const turnstileRef = useRef<any>(null);
   const [resetToken, setResetToken] = useRecoilState(resetTokenState);
@@ -455,8 +487,7 @@ export default function Signin({ type }: SigninProps) {
 
     setIsLoading(true);
     try {
-      if (requiresCaptcha() && !captchaTokenRef.current) {
-        toast.error("Please complete the security check below.");
+      if (!(await ensureCaptchaToken(captchaTokenRef, setWaitingForCaptcha))) {
         return;
       }
 
@@ -607,8 +638,7 @@ export default function Signin({ type }: SigninProps) {
 
     setIsLoading(true);
     try {
-      if (requiresCaptcha() && !captchaTokenRef.current) {
-        toast.error("Please complete the security check below.");
+      if (!(await ensureCaptchaToken(captchaTokenRef, setWaitingForCaptcha))) {
         return;
       }
 
@@ -671,8 +701,7 @@ export default function Signin({ type }: SigninProps) {
 
     setIsLoading(true);
     try {
-      if (requiresCaptcha() && !captchaTokenRef.current) {
-        toast.error("Please complete the security check below.");
+      if (!(await ensureCaptchaToken(captchaTokenRef, setWaitingForCaptcha))) {
         return;
       }
 
@@ -809,6 +838,14 @@ export default function Signin({ type }: SigninProps) {
         role={type}
         stepKey={step}
       >
+        {requiresCaptcha() && (
+          <TurnstileWidget
+            turnstileRef={turnstileRef}
+            captchaTokenRef={captchaTokenRef}
+            onTokenChange={syncCaptchaToken}
+            onStatusChange={setCaptchaStatus}
+          />
+        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* ─── Sign In Step ─────────────────────────── */}
           {step === "signin" && (
@@ -857,20 +894,28 @@ export default function Signin({ type }: SigninProps) {
                 </div>
               </div>
 
-              <TurnstileWidget
-                turnstileRef={turnstileRef}
-                captchaTokenRef={captchaTokenRef}
-                onTokenChange={syncCaptchaToken}
-              />
+              {requiresCaptcha() && (
+                <CaptchaStatus
+                  status={captchaStatus}
+                  hasToken={!!captchaToken}
+                  waitingOnSubmit={waitingForCaptcha}
+                />
+              )}
 
               <Button
                 className={loginBtnClass}
                 size="lg"
                 isLoading={isLoading}
                 type="submit"
-                disabled={requiresCaptcha() && !captchaToken}
+                disabled={!username.trim() || !password.trim()}
               >
-                <span className="relative z-10">Continue</span>
+                <span className="relative z-10">
+                  {waitingForCaptcha
+                    ? "Checking security…"
+                    : isLoading
+                      ? "Signing in…"
+                      : "Continue"}
+                </span>
                 <span className={loginBtnShimmer} />
               </Button>
             </div>
@@ -893,20 +938,24 @@ export default function Signin({ type }: SigninProps) {
                 className={loginInputWithIconClass}
               />
 
-              <TurnstileWidget
-                turnstileRef={turnstileRef}
-                captchaTokenRef={captchaTokenRef}
-                onTokenChange={syncCaptchaToken}
-              />
+              {requiresCaptcha() && (
+                <CaptchaStatus
+                  status={captchaStatus}
+                  hasToken={!!captchaToken}
+                  waitingOnSubmit={waitingForCaptcha}
+                />
+              )}
 
               <Button
                 className={loginBtnClass}
                 size="lg"
                 isLoading={isLoading}
                 onClick={requestOtp}
-                disabled={requiresCaptcha() && !captchaToken}
+                disabled={!username.trim()}
               >
-                <span className="relative z-10">Send code</span>
+                <span className="relative z-10">
+                  {waitingForCaptcha ? "Checking security…" : "Send code"}
+                </span>
                 <span className={loginBtnShimmer} />
               </Button>
               <div className="text-center">
@@ -947,16 +996,10 @@ export default function Signin({ type }: SigninProps) {
                       type="button"
                       className="text-[11px] text-zinc-500 hover:text-zinc-950 font-semibold tracking-wider transition-all disabled:opacity-50"
                       onClick={requestEmailOtp}
-                      disabled={isLoading || (requiresCaptcha() && !captchaToken)}
+                      disabled={isLoading}
                     >
                       Resend via Email
                     </button>
-
-                    <TurnstileWidget
-                      turnstileRef={turnstileRef}
-                      captchaTokenRef={captchaTokenRef}
-                      onTokenChange={syncCaptchaToken}
-                    />
                   </div>
                 </div>
               )}

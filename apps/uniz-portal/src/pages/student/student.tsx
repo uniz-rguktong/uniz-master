@@ -34,7 +34,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import RequestCard from "../../components/RequestCard";
 import { toast } from "@/utils/toast-ref";
 import { Pagination } from "../../components/Pagination";
-import { useWebSocket } from "../../hooks/useWebSocket";
+// WebSocket side channel not deployed — useStudentData polling handles refresh.
+// import { useWebSocket } from "../../hooks/useWebSocket";
 import { InfoCard } from "./components/InfoCard";
 import AcademicRecord from "./components/AcademicRecord";
 import ProfileSemesterSubjects from "./components/ProfileSemesterSubjects";
@@ -192,13 +193,13 @@ export default function StudentProfilePage() {
     motherPhoneNumber: "",
   });
 
-  // WebSocket
-  useWebSocket(undefined, (msg) => {
-    if (msg.type === "REFRESH_REQUESTS" && msg.payload.userId === user?._id) {
-      refetch();
-      toast.info(`Request updated: ${msg.payload.status}`);
-    }
-  });
+  // WebSocket — disabled until a server-side side channel is deployed.
+  // useWebSocket(undefined, (msg) => {
+  //   if (msg.type === "REFRESH_REQUESTS" && msg.payload.userId === user?._id) {
+  //     refetch();
+  //     toast.info(`Request updated: ${msg.payload.status}`);
+  //   }
+  // });
 
   // Polling removed - now handled centrally in useStudentData hook
 
