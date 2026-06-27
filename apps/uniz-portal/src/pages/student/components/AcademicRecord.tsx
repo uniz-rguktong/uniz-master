@@ -1,16 +1,24 @@
 import { Grade, Attendance, Student } from "../../../types";
 import { Percent, Award } from "lucide-react";
 import { motion } from "framer-motion";
+import {
+  asAttendanceList,
+  asGradeList,
+  gradeSemesterLabel,
+} from "../../../utils/bootstrapNormalize";
 
 interface AcademicRecordProps {
   student: Student;
 }
 
 export default function AcademicRecord({ student }: AcademicRecordProps) {
+  const gradeRows = asGradeList(student.grades) as Grade[];
+  const attendanceRows = asAttendanceList(student.attendance) as Attendance[];
+
   // Group grades by Semester
-  const gradesBySemester = (student.grades || []).reduce(
-    (acc: any, grade: Grade) => {
-      const semName = grade.semester?.name || "Unknown";
+  const gradesBySemester = gradeRows.reduce(
+    (acc: Record<string, Grade[]>, grade: Grade) => {
+      const semName = gradeSemesterLabel(grade);
       if (!acc[semName]) acc[semName] = [];
       acc[semName].push(grade);
       return acc;
@@ -19,9 +27,9 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
   );
 
   // Group attendance by Semester
-  const attendanceBySemester = (student.attendance || []).reduce(
-    (acc: any, att: Attendance) => {
-      const semName = att.semester?.name || "Unknown";
+  const attendanceBySemester = attendanceRows.reduce(
+    (acc: Record<string, Attendance[]>, att: Attendance) => {
+      const semName = gradeSemesterLabel(att);
       if (!acc[semName]) acc[semName] = [];
       acc[semName].push(att);
       return acc;
@@ -87,7 +95,9 @@ export default function AcademicRecord({ student }: AcademicRecordProps) {
                           </span>
                           <div className="flex items-center gap-3">
                             <span className="text-[10px] font-semibold tracking-[0.14em] text-zinc-300 font-mono">
-                              {g.subject.id}
+                              {g.subject?.id ||
+                                (g.subject as { code?: string })?.code ||
+                                "—"}
                             </span>
                             <div className="w-1 h-1 rounded-full bg-zinc-200" />
                             <span className="text-[10px] font-bold text-zinc-400 tracking-[0.14em]">
