@@ -134,7 +134,8 @@ create_api_tunnel() {
   tunnel_id=$(echo "$resp" | python3 -c 'import sys,json; print(json.load(sys.stdin)["result"]["id"])')
   tunnel_token=$(echo "$resp" | python3 -c 'import sys,json; print(json.load(sys.stdin)["result"]["token"])')
 
-  echo "$resp" | python3 -c 'import sys,json; cred=json.load(sys.stdin)["result"]["credentials_file"]; import pathlib; p=pathlib.Path(sys.argv[1]); p.write_text(__import__("json").dumps(cred)); print(cred["TunnelID"])' "$CF_DIR/${tunnel_id}.json" >/dev/null
+  mkdir -p "$CF_DIR"
+  echo "$resp" | python3 -c 'import sys,json; cred=json.load(sys.stdin)["result"]["credentials_file"]; import pathlib; p=pathlib.Path(sys.argv[1]); p.write_text(__import__("json").dumps(cred))' "$CF_DIR/${tunnel_id}.json"
 
   write_local_config "$tunnel_id"
   upsert_tunnel_dns "$tunnel_id" "$zone_id"
