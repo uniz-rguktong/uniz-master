@@ -51,14 +51,14 @@ export function UnizLogo({
     return (
       <div
         className={cn(
-          "flex items-center justify-between gap-4 w-full",
+          "flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3",
           className,
         )}
       >
-        <div className="min-w-0 flex items-baseline gap-2.5">
+        <div className="flex min-w-0 items-baseline gap-2.5">
           <p
             className={cn(
-              "uniz-logo-wordmark text-zinc-950 leading-none",
+              "uniz-logo-wordmark shrink-0 text-zinc-950 leading-none",
               large ? "text-[2.125rem]" : "text-[1.75rem]",
             )}
           >
@@ -66,7 +66,7 @@ export function UnizLogo({
           </p>
           <span
             className={cn(
-              "font-semibold uppercase text-zinc-400 tracking-[0.14em]",
+              "shrink-0 font-semibold uppercase text-zinc-400 tracking-[0.14em]",
               large ? "text-[9px] pb-0.5" : "text-[8px]",
             )}
           >
@@ -74,7 +74,12 @@ export function UnizLogo({
           </span>
         </div>
         {portalLabel && (
-          <span className={cn(adminChipClass, "shrink-0 text-zinc-600")}>
+          <span
+            className={cn(
+              adminChipClass,
+              "hidden w-fit max-w-full truncate text-zinc-600 sm:inline-flex",
+            )}
+          >
             {portalLabel}
           </span>
         )}
