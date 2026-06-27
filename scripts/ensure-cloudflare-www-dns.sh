@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 # Ensure www.* DNS records exist in Cloudflare (idempotent).
 #
-# Default: grey-cloud A → VPS IP (works with host nginx + k8s TLS for nested www hosts).
-# With --proxied: CNAME → apex, proxied=true (requires Cloudflare Total TLS for nested subdomains).
+# Default: grey-cloud A → VPS IP (DNS-only). Works with host nginx + k8s TLS for nested www.
+# Nested www through orange-cloud/tunnel has NO free edge cert (Total TLS = $10/mo).
 #
 # Requires CLOUDFLARE_API_TOKEN with Zone:DNS:Edit on rguktong.in
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PROXIED=false
 VPS_IP="${VPS_IP:-76.13.241.174}"
 ZONE_NAME="${ZONE_NAME:-rguktong.in}"
@@ -67,18 +66,20 @@ PY
       -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
       -H "Content-Type: application/json" \
       --data "$payload" >/dev/null
-    echo "[cloudflare-www-dns] updated $fqdn"
+    echo "[cloudflare-www-dns] updated $fqdn (proxied=$PROXIED → $VPS_IP)"
   else
     curl -sS -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records" \
       -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
       -H "Content-Type: application/json" \
       --data "$payload" >/dev/null
-    echo "[cloudflare-www-dns] created $fqdn"
+    echo "[cloudflare-www-dns] created $fqdn (proxied=$PROXIED)"
   fi
 }
 
+# Force grey-cloud A — fixes ERR_SSL_VERSION_OR_CIPHER_MISMATCH on nested www via tunnel
 upsert_record "www.uniz" "uniz.rguktong.in"
-# api-uniz is flat subdomain — no www.api.uniz needed (nested www lacks free edge SSL)
 upsert_record "www.landing-api" "landing-api.rguktong.in"
+# Legacy nested API www → grey A; nginx redirects to api-uniz.rguktong.in
+upsert_record "www.api.uniz" "api-uniz.rguktong.in"
 
 echo "[cloudflare-www-dns] Done (proxied=$PROXIED, ip=$VPS_IP)"

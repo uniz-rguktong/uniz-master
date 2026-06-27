@@ -21,15 +21,13 @@ if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]] && [[ -f /root/uniz-secrets.env ]]; then
   set +a
 fi
 
-# api-uniz.rguktong.in is one DNS label under rguktong.in → free Universal SSL at Cloudflare edge.
-# Nested api.uniz.* requires Advanced Certificate Manager ($10/mo) or grey-cloud origin TLS.
+# Nested www.* (www.uniz, www.landing-api) are NOT in the tunnel — no free edge SSL.
+# Use ensure-cloudflare-www-dns.sh (grey A) + install-nginx-www-redirects.sh instead.
 HOSTS=(
   "rguktong.in"
   "uniz.rguktong.in"
-  "www.uniz.rguktong.in"
   "api-uniz.rguktong.in"
   "landing-api.rguktong.in"
-  "www.landing-api.rguktong.in"
 )
 
 install_cloudflared() {
