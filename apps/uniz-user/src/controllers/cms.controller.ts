@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
 import { prisma } from "../utils/prisma";
+import { redis } from "../utils/redis.util";
+import {
+  CMS_PUBLIC_CACHE_TTL_SEC,
+  publicBannersCacheKey,
+  publicNotificationsCacheKey,
+} from "../utils/cms-cache.util";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { UserRole } from "../shared/roles.enum";
 import { ErrorCode } from "../shared/error-codes";
@@ -11,13 +17,25 @@ import { ErrorCode } from "../shared/error-codes";
 // Consolidated public banners
 export const getPublicBanners = async (req: Request, res: Response) => {
   try {
-    // Cache for 10 seconds (Balance between load and freshness)
     res.setHeader("Cache-Control", "s-maxage=10, stale-while-revalidate=60");
+
+    const cacheKey = publicBannersCacheKey();
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      return res.json(JSON.parse(cached));
+    }
+
     const banners = await prisma.banner.findMany({
       where: { isVisible: true },
       orderBy: { createdAt: "desc" },
     });
-    return res.json({ success: true, banners });
+    const payload = { success: true, banners };
+    await redis.setex(
+      cacheKey,
+      CMS_PUBLIC_CACHE_TTL_SEC,
+      JSON.stringify(payload),
+    );
+    return res.json(payload);
   } catch (e) {
     console.error("[CMS-Public-Error] Failed to fetch banners:", e);
     // Fail-safe: Return empty array so landing page doesn't crash
@@ -30,15 +48,27 @@ export const getPublicNotifications = async (req: Request, res: Response) => {
   try {
     res.setHeader("Cache-Control", "s-maxage=10, stale-while-revalidate=60");
 
+    const cacheKey = publicNotificationsCacheKey();
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      return res.json(JSON.parse(cached));
+    }
+
     const updates = await prisma.publicNotification.findMany({
       where: { isVisible: true },
       orderBy: { createdAt: "desc" },
     });
 
-    return res.json({
+    const payload = {
       success: true,
       notifications: { updates, tenders: [] },
-    });
+    };
+    await redis.setex(
+      cacheKey,
+      CMS_PUBLIC_CACHE_TTL_SEC,
+      JSON.stringify(payload),
+    );
+    return res.json(payload);
   } catch (e) {
     console.error("[CMS-Public-Error] Failed to fetch notifications:", e);
     // Fail-safe: Return empty structure
