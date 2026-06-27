@@ -157,9 +157,8 @@ const serviceMap: Record<string, string> = {
     process.env.NOTIFICATION_SERVICE_URL ||
     "http://uniz-notification-service.default.svc.cluster.local:3007",
   cron:
-    process.env.OUTPASS_SERVICE_URL ||
     process.env.CRON_SERVICE_URL ||
-    "http://uniz-outpass-service.default.svc.cluster.local:3003",
+    "http://uniz-cron-service.default.svc.cluster.local:3008",
   grievance:
     process.env.OUTPASS_SERVICE_URL ||
     "http://uniz-outpass-service.default.svc.cluster.local:3003",
@@ -238,22 +237,26 @@ app.get(
       return res.json({ ...healthCache.get(cacheKey)!.data, cached: true });
     }
 
+    const optionalServices = new Set(["docs"]);
+
     const resultPromises = Object.entries(serviceMap).map(
       async ([name, url]) => {
         try {
           const start = performance.now();
-          // Doc service is a static site server (Mintlify) and uses root for health check
-          const path = name === "docs" ? "/" : "/health";
-          await internalClient.get(`${url.replace(/\/$/, "")}${path}`);
+          const path = "/health";
+          const probeTimeout = name === "docs" ? 250 : 5000;
+          await internalClient.get(`${url.replace(/\/$/, "")}${path}`, {
+            timeout: probeTimeout,
+          });
           const latency = (performance.now() - start).toFixed(2);
           return { name, status: "healthy", latency: `${latency}ms` };
         } catch (e: any) {
-          // Fallback: If docs service returns a response (like a 404 page), it's technically UP
-          if (name === "docs" && e.response) {
+          if (optionalServices.has(name)) {
             return {
               name,
               status: "healthy",
-              statusDetail: "up but path not found",
+              statusDetail: "optional probe skipped",
+              latency: "0ms",
             };
           }
           return { name, status: "unhealthy", error: e.message };
@@ -262,7 +265,6 @@ app.get(
     );
 
     const results = await Promise.all(resultPromises);
-    const optionalServices = new Set(["docs"]);
     const criticalOk = results
       .filter((r) => !optionalServices.has(r.name))
       .every((r) => r.status === "healthy");
@@ -272,7 +274,7 @@ app.get(
       services: results,
     };
 
-    healthCache.set(cacheKey, { data, expiry: now + 2000 }); // Cache for 2 seconds
+    healthCache.set(cacheKey, { data, expiry: now + 15000 }); // Cache for 15 seconds
     res.status(criticalOk ? 200 : 503).json(data);
   },
 );

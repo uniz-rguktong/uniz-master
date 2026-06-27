@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 # Test student APIs on production. Login needs Turnstile; use TOKEN env var or mint on VPS.
+#
+#   export TOKEN='...'              # localStorage student_token (recommended)
+#   export STUDENT_USER=O210008
+#   bash scripts/test-student-apis.sh
+#
+# Login only (needs STUDENT_PASS + CAPTCHA_TOKEN):
+#   export STUDENT_PASS='...'
+#   export CAPTCHA_TOKEN='...'
+#   bash scripts/test-student-apis.sh
 set -euo pipefail
 
 BASE="${BASE_URL:-https://api-uniz.rguktong.in/api/v1}"
@@ -8,7 +17,8 @@ PASS="${STUDENT_PASS:-}"
 
 test_api() {
   local method="$1" path="$2" body="${3:-}"
-  local code result preview
+  local code t0 ms result preview
+  t0=$(python3 -c "import time; print(time.perf_counter())")
   if [ "$method" = "GET" ]; then
     code=$(curl -s -o /tmp/uniz_resp.json -w "%{http_code}" --max-time 25 \
       -H "Authorization: Bearer $TOKEN" "$BASE$path")
@@ -17,23 +27,25 @@ test_api() {
       -X "$method" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
       -d "$body" "$BASE$path")
   fi
+  ms=$(python3 -c "import time; print(int((time.perf_counter()-float('$t0'))*1000))")
   result="PASS"; [ "$code" -ge 400 ] && result="FAIL"
   preview=$(python3 -c "import json; d=json.load(open('/tmp/uniz_resp.json')); print(str(d)[:75])" 2>/dev/null || head -c 75 /tmp/uniz_resp.json)
-  printf "%-4s %-38s %s  %s  %s\n" "$method" "$path" "$result" "$code" "$preview"
+  printf "%-4s %-38s %s  %3s  %4sms  %s\n" "$method" "$path" "$result" "$code" "$ms" "$preview"
 }
 
 if [ -z "${TOKEN:-}" ]; then
   if [ -z "$PASS" ]; then
-    echo "Set TOKEN or STUDENT_PASS (login also needs captchaToken from portal Turnstile widget)"
+    echo "Set TOKEN (browser localStorage student_token) or STUDENT_PASS for login."
+    echo "See docs/SUB_500MS_ACTION_PLAN.md"
     exit 1
   fi
-  echo "=== Login (needs captchaToken for production) ==="
+  echo "=== Login (needs captchaToken — use scripts/mint-student-token.sh) ==="
   curl -s -X POST "$BASE/auth/login/student" -H "Content-Type: application/json" \
     -d "{\"username\":\"$USER\",\"password\":\"$PASS\",\"captchaToken\":\"${CAPTCHA_TOKEN:-}\"}" | python3 -m json.tool
   exit 0
 fi
 
-echo "=== Student API tests for $USER ==="
+echo "=== Student API tests for $USER (target <500ms) ==="
 test_api GET "/profile/student/me"
 test_api GET "/academics/grades"
 test_api GET "/academics/attendance"

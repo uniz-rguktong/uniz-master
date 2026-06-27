@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 """Production API latency audit — run on VPS or anywhere with api access."""
 import json
+import os
 import ssl
 import time
 import urllib.error
 import urllib.request
 
-BASE = "https://api-uniz.rguktong.in/api/v1"
+BASE = os.environ.get("BASE_URL", "https://api-uniz.rguktong.in/api/v1").rstrip("/")
+INSECURE = os.environ.get("INSECURE_SSL", "").lower() in ("1", "true", "yes")
 CTX = ssl.create_default_context()
+if INSECURE:
+    CTX.check_hostname = False
+    CTX.verify_mode = ssl.CERT_NONE
 RUNS = 5
 SLOW_MS = 500
 
@@ -76,7 +81,7 @@ services = [
     ("notifications", "/notifications/health"),
     ("cron", "/cron/health"),
     ("grievance", "/grievance/health"),
-    ("docs", "/docs/"),
+    ("docs", "/docs/health"),
 ]
 
 print(f"\n=== Gateway-routed probes ({RUNS} runs each, ms) ===")

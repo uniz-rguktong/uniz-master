@@ -25,6 +25,7 @@ import LoginScreen from "../../components/ui/login-1";
 import { TurnstileLoadingPlaceholder } from "../../components/ui/TurnstileLoadingPlaceholder";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 type SigninProps = {
   type: "student" | "admin" | "faculty";
@@ -218,6 +219,38 @@ function requiresCaptcha() {
   return turnstileEnabled() && !isLocalTestTurnstile();
 }
 
+function useCompactTurnstile() {
+  const [compact, setCompact] = useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia("(max-width: 639px)").matches
+      : false,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    const apply = () => setCompact(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  return compact;
+}
+
+/** Warm Cloudflare Turnstile script as soon as the sign-in form mounts. */
+function useTurnstileScriptPreload() {
+  useEffect(() => {
+    const src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    if (document.querySelector(`script[src^="${src}"]`)) return;
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "script";
+    link.href = src;
+    link.crossOrigin = "anonymous";
+    document.head.appendChild(link);
+  }, []);
+}
+
 /** Visible Cloudflare Turnstile — standard managed challenge */
 function TurnstileWidget({
   turnstileRef,
@@ -230,6 +263,8 @@ function TurnstileWidget({
 }) {
   const [isWidgetReady, setIsWidgetReady] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
+  const compact = useCompactTurnstile();
+  useTurnstileScriptPreload();
 
   if (!turnstileEnabled()) {
     return import.meta.env.DEV ? (
@@ -240,17 +275,24 @@ function TurnstileWidget({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center relative min-h-[78px] rounded-xl border border-zinc-100 bg-zinc-50/60 px-3 py-3">
+    <div
+      className={cn(
+        "relative flex w-full max-w-full flex-col items-center justify-center overflow-hidden rounded-xl px-1 py-2 sm:px-2 sm:py-2.5",
+        isVerified
+          ? "min-h-0 border-0 bg-transparent"
+          : "min-h-[64px] border border-zinc-100 bg-zinc-50/60 sm:min-h-[72px]",
+      )}
+    >
       <AnimatePresence mode="wait">
         {!isWidgetReady && !isVerified && (
           <motion.div
             key="loading"
-            className="absolute inset-0 flex items-center justify-center z-10"
+            className="absolute inset-0 z-10 flex items-center justify-center px-1"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            <TurnstileLoadingPlaceholder />
+            <TurnstileLoadingPlaceholder compact={compact} />
           </motion.div>
         )}
         {isVerified && (
@@ -258,7 +300,7 @@ function TurnstileWidget({
             key="verified"
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex w-full max-w-[302px] items-center gap-3 rounded-md border border-emerald-200/80 bg-emerald-50/90 px-4 py-3"
+            className="flex w-full max-w-full items-center gap-3 rounded-md border border-emerald-200/80 bg-emerald-50/90 px-3 py-2.5 sm:max-w-[302px] sm:px-4 sm:py-3"
           >
             <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
             <div className="min-w-0">
@@ -277,17 +319,21 @@ function TurnstileWidget({
         className={
           isVerified
             ? "sr-only h-0 overflow-hidden"
-            : "flex w-full justify-center min-h-[65px]"
+            : cn(
+                "flex w-full max-w-full justify-center",
+                compact ? "min-h-[56px]" : "min-h-[65px]",
+                !isWidgetReady && "invisible",
+              )
         }
         aria-hidden={isVerified}
       >
         <Turnstile
           ref={turnstileRef}
           siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-          scriptOptions={{ defer: true, async: true }}
+          scriptOptions={{ async: true }}
           options={{
             theme: "light",
-            size: "normal",
+            size: compact ? "compact" : "normal",
             appearance: "always",
           }}
           onSuccess={(token) => {
