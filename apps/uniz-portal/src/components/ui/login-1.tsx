@@ -39,7 +39,7 @@ export default function LoginScreen({
   const meta = roleMeta[role];
 
   return (
-    <div className="w-full min-h-screen flex bg-[#fafafa] font-sans selection:bg-zinc-200 selection:text-zinc-950">
+    <div className="w-full min-h-screen overflow-x-hidden flex bg-[#fafafa] font-sans selection:bg-zinc-200 selection:text-zinc-950">
       {/* Left — cinematic hero */}
       <div className="hidden lg:flex flex-1 relative overflow-hidden bg-zinc-950">
         <div className="absolute inset-0">
@@ -93,7 +93,7 @@ export default function LoginScreen({
       </div>
 
       {/* Right — form */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex min-w-0 flex-1 flex-col min-h-screen overflow-x-hidden">
         {onBack && (
           <div className="lg:hidden px-5 pt-5">
             <button
@@ -107,8 +107,8 @@ export default function LoginScreen({
           </div>
         )}
 
-        <div className="flex flex-1 items-center justify-center px-5 py-10 sm:px-10 lg:px-14 xl:px-20">
-          <div className="w-full max-w-[420px]">
+        <div className="flex flex-1 items-center justify-center px-4 py-8 sm:px-10 sm:py-10 lg:px-14 xl:px-20">
+          <div className="w-full min-w-0 max-w-[420px]">
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -121,7 +121,7 @@ export default function LoginScreen({
               </p>
             </motion.div>
 
-            <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 sm:p-7 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_8px_24px_rgba(10,10,10,0.04)]">
+            <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-[0_1px_2px_rgba(10,10,10,0.04),0_8px_24px_rgba(10,10,10,0.04)] sm:p-7">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={stepKey || title}

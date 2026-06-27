@@ -4,7 +4,10 @@
 **Date:** 2026-06-26  
 **Target:** All production API routes sub-500ms (p95)  
 **Audit script:** `scripts/audit-prod-latency.py`  
-**Authenticated test script:** `scripts/test-student-apis.sh`
+**Full action plan:** `docs/SUB_500MS_ACTION_PLAN.md`  
+**Authenticated test script:** `scripts/test-student-apis.sh`  
+**Auth latency audit:** `scripts/audit-auth-latency.py`  
+**Master suite:** `scripts/run-latency-suite.sh`
 
 ---
 
