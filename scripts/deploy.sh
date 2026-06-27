@@ -481,6 +481,10 @@ deploy_logic() {
     bash "$(dirname "$0")/install-vps-storage-cron.sh" || true
   fi
 
+  if [ -f "$(dirname "$0")/harden-vps.sh" ]; then
+    bash "$(dirname "$0")/harden-vps.sh" || true
+  fi
+
   if [ -f "$(dirname "$0")/vps-storage-cleanup.sh" ]; then
     bash "$(dirname "$0")/vps-storage-cleanup.sh" || true
   fi
