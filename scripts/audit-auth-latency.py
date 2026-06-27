@@ -22,16 +22,21 @@ import urllib.request
 BASE = os.environ.get("BASE_URL", "https://api-uniz.rguktong.in/api/v1").rstrip("/")
 TOKEN = os.environ.get("TOKEN", "").strip()
 STUDENT = os.environ.get("STUDENT_USER", "O210008").upper()
-RUNS = int(os.environ.get("RUNS", "5"))
+DEFAULT_RUNS = int(os.environ.get("RUNS", "5"))
 SLOW_MS = int(os.environ.get("SLOW_MS", "500"))
 CTX = ssl.create_default_context()
+if os.environ.get("INSECURE_SSL", "").lower() in ("1", "true", "yes"):
+    CTX.check_hostname = False
+    CTX.verify_mode = ssl.CERT_NONE
 
 
-def measure(method: str, path: str, body: dict | None = None, runs: int = RUNS) -> dict:
+def measure(
+    method: str, path: str, body: dict | None = None, runs: int = DEFAULT_RUNS
+) -> dict:
     url = path if path.startswith("http") else f"{BASE}{path}"
     times: list[float] = []
     status = err = None
-    headers = {"Authorization": f"Bearer {TOKEN}"}
+    headers = auth_headers()
     if body is not None:
         headers["Content-Type"] = "application/json"
         data = json.dumps(body).encode()
@@ -73,11 +78,19 @@ def flag(ms: int | None) -> str:
     return "SLOW" if ms > SLOW_MS else "OK"
 
 
+def auth_headers() -> dict[str, str]:
+    return {
+        "Authorization": f"Bearer {TOKEN}",
+        "User-Agent": "uniz-latency-audit/1.0",
+        "Accept": "application/json",
+    }
+
+
 def bootstrap() -> dict:
     """Fetch profile to resolve dynamic route params."""
     req = urllib.request.Request(
         f"{BASE}/profile/student/me",
-        headers={"Authorization": f"Bearer {TOKEN}"},
+        headers=auth_headers(),
     )
     with urllib.request.urlopen(req, timeout=30, context=CTX) as r:
         data = json.loads(r.read())
@@ -89,7 +102,7 @@ def bootstrap() -> dict:
     try:
         greq = urllib.request.Request(
             f"{BASE}/academics/grades",
-            headers={"Authorization": f"Bearer {TOKEN}"},
+            headers=auth_headers(),
         )
         with urllib.request.urlopen(greq, timeout=30, context=CTX) as gr:
             gd = json.loads(gr.read())
@@ -104,10 +117,9 @@ def bootstrap() -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Authenticated student API latency audit")
     parser.add_argument("--json", action="store_true", help="JSON output")
-    parser.add_argument("--runs", type=int, default=RUNS)
+    parser.add_argument("--runs", type=int, default=DEFAULT_RUNS)
     args = parser.parse_args()
-    global RUNS
-    RUNS = args.runs
+    runs = args.runs
 
     if not TOKEN:
         print("ERROR: Set TOKEN (see docs/SUB_500MS_ACTION_PLAN.md)", file=sys.stderr)
@@ -151,7 +163,7 @@ def main() -> int:
     all_routes = static_routes + dynamic_routes
     results = []
     for method, path, body in all_routes:
-        m = measure(method, path, body)
+        m = measure(method, path, body, runs=runs)
         results.append({"method": method, "path": path, **m})
 
     results.sort(key=lambda x: x.get("p95") or 99999, reverse=True)
@@ -163,7 +175,7 @@ def main() -> int:
                 {
                     "base": BASE,
                     "student": ctx["user"],
-                    "runs": RUNS,
+                    "runs": runs,
                     "slow_threshold_ms": SLOW_MS,
                     "routes": results,
                     "slow_count": len(slow),
@@ -173,7 +185,7 @@ def main() -> int:
         )
         return 0
 
-    print(f"=== Authenticated latency audit ({RUNS} runs, p95 target {SLOW_MS}ms) ===")
+    print(f"=== Authenticated latency audit ({runs} runs, p95 target {SLOW_MS}ms) ===")
     print(f"  student: {ctx['user']}  branch: {ctx['branch']}  year: {ctx['year']}  sem: {ctx['semester']}")
     print(f"{'METHOD':6} {'PATH':42} {'p50':>6} {'p95':>6} {'max':>6} {'HTTP':>4} {'FLAG'}")
     print("-" * 90)
