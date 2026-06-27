@@ -10,14 +10,20 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    # Redirect www.* → apex host (e.g. www.uniz.rguktong.in → uniz.rguktong.in)
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
         - rguktong.in
+        - www.rguktong.in
         - uniz.rguktong.in
+        - www.uniz.rguktong.in
         - api.uniz.rguktong.in
+        - www.api.uniz.rguktong.in
         - landing-api.rguktong.in
+        - www.landing-api.rguktong.in
       secretName: uniz-tls-cert
   rules:
     - host: rguktong.in
