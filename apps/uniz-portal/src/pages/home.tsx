@@ -5,7 +5,6 @@ import {
   memo,
   lazy,
   Suspense,
-  useRef,
   useMemo,
 } from "react";
 import { useIsAuth } from "../hooks/is_authenticated";
@@ -34,9 +33,11 @@ import {
   LandingPill,
   LandingCTA,
 } from "../components/ui/landing-section";
+import { cn } from "@/lib/utils";
 
-// Lazy load heavy UI sections for better initial paint performance
-const FeaturedCarousel = lazy(() => import("../components/FeaturedCarousel"));
+import FeaturedCarousel from "../components/FeaturedCarousel";
+
+// Lazy load below-fold sections; FeaturedCarousel is eager (first below fold)
 const Timeline = lazy(() =>
   import("../components/ui/timeline").then((module) => ({
     default: module.Timeline,
@@ -54,11 +55,28 @@ const GlobeFeature = lazy(
   () => import("../components/ui/globe-feature-section"),
 );
 
-// Loading placeholder for Suspense
-const SectionLoader = () => (
-  <div className="w-full h-48 flex items-center justify-center">
-    <div className="size-8 rounded-full border-2 border-zinc-200 border-t-zinc-950 animate-spin" />
+const SectionSkeleton = ({ className = "h-64" }: { className?: string }) => (
+  <div className="max-w-[1280px] mx-auto px-6">
+    <div className={cn("w-full animate-pulse rounded-[2.5rem] bg-zinc-50/80", className)} />
   </div>
+);
+
+const MotionSection = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <motion.div
+    initial={{ opacity: 0, y: 24 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "200px 0px" }}
+    transition={{ duration: 0.5 }}
+    className={className}
+  >
+    {children}
+  </motion.div>
 );
 
 // ─── Platform Icons ─────────────────────────────────────────────────────────
@@ -199,32 +217,6 @@ const LiveUpdatesFeed = ({ notifications }: { notifications: any[] }) => {
   );
 };
 
-const ScrollRevealer = ({ children }: { children: React.ReactNode }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.05, rootMargin: "200px" },
-    );
-
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div ref={ref} className="min-h-[100px] w-full">
-      {isVisible ? children : <SectionLoader />}
-    </div>
-  );
-};
-
 const Home = () => {
   useIsAuth();
   const navigate = useNavigate();
@@ -326,44 +318,39 @@ const Home = () => {
       signal: controller.signal,
     };
 
-    const loadLandingData = () => {
-      fetch(PUBLIC_BANNERS, fetchOpts)
-        .then((res) => (res.ok ? res.json() : null))
-        .then((result) => {
-          if (!cancelled && result?.success) {
-            setBanners(result.banners || []);
-          }
-        })
-        .catch(() => {});
-
-      fetch(`${BASE_URL}/cms/notifications`, fetchOpts)
-        .then((res) => (res.ok ? res.json() : null))
-        .then((result) => {
-          if (
-            !cancelled &&
-            result?.success &&
-            result.notifications?.updates?.length > 0
-          ) {
-            setNotifications(result.notifications.updates);
-          }
-        })
-        .catch(() => {});
-    };
-
-    const defer =
-      typeof window !== "undefined" && "requestIdleCallback" in window
-        ? window.requestIdleCallback(loadLandingData, { timeout: 2500 })
-        : window.setTimeout(loadLandingData, 200);
+    Promise.all([
+      fetch(PUBLIC_BANNERS, fetchOpts).then((res) =>
+        res.ok ? res.json() : null,
+      ),
+      fetch(`${BASE_URL}/cms/notifications`, fetchOpts).then((res) =>
+        res.ok ? res.json() : null,
+      ),
+    ])
+      .then(([bannerResult, notifResult]) => {
+        if (cancelled) return;
+        if (bannerResult?.success) {
+          setBanners(bannerResult.banners || []);
+        }
+        if (
+          notifResult?.success &&
+          notifResult.notifications?.updates?.length > 0
+        ) {
+          setNotifications(notifResult.notifications.updates);
+        }
+      })
+      .catch(() => {});
 
     return () => {
       cancelled = true;
       controller.abort();
-      if (typeof defer === "number") {
-        window.clearTimeout(defer);
-      } else if (typeof window !== "undefined" && "cancelIdleCallback" in window) {
-        window.cancelIdleCallback(defer);
-      }
     };
+  }, []);
+
+  useEffect(() => {
+    void import("../components/ui/timeline");
+    void import("../components/ui/database-with-rest-api");
+    void import("../components/ui/features-9");
+    void import("../components/ui/globe-feature-section");
   }, []);
 
   useEffect(() => {
@@ -391,28 +378,30 @@ const Home = () => {
         <LiveUpdatesFeed notifications={notifications} />
         <LandingDivider />
 
-        <Suspense fallback={<SectionLoader />}>
-          <ScrollRevealer>
-            <FeaturedCarousel
-              items={banners.map((b, i) => ({
-                id: b.id || i,
-                imageUrl: b.imageUrl,
-                title: b.title,
-                tag: i % 2 === 0 ? "Featured" : "New Update",
-                hasHeart: true,
-              }))}
-            />
-          </ScrollRevealer>
+        <MotionSection>
+          <FeaturedCarousel
+            items={banners.map((b, i) => ({
+              id: b.id || i,
+              imageUrl: b.imageUrl,
+              title: b.title,
+              tag: i % 2 === 0 ? "Featured" : "New Update",
+              hasHeart: true,
+            }))}
+          />
+        </MotionSection>
 
-          <LandingDivider />
+        <LandingDivider />
 
-          <ScrollRevealer>
+        <MotionSection>
+          <Suspense fallback={<SectionSkeleton className="h-96" />}>
             <Timeline data={timelineData} />
-          </ScrollRevealer>
+          </Suspense>
+        </MotionSection>
 
-          <LandingDivider />
+        <LandingDivider />
 
-          <ScrollRevealer>
+        <MotionSection>
+          <Suspense fallback={<SectionSkeleton className="h-[420px]" />}>
             <LandingSection className="!pb-8 md:!pb-12">
               <LandingSectionHeader
                 eyebrow="Platform"
@@ -424,23 +413,28 @@ const Home = () => {
                 <DatabaseWithRestApi />
               </LandingCard>
             </LandingSection>
-          </ScrollRevealer>
+          </Suspense>
+        </MotionSection>
 
-          <LandingDivider />
+        <LandingDivider />
 
-          <ScrollRevealer>
+        <MotionSection>
+          <Suspense fallback={<SectionSkeleton className="h-80" />}>
             <Features />
-          </ScrollRevealer>
+          </Suspense>
+        </MotionSection>
 
-          <LandingDivider />
+        <LandingDivider />
 
-          <ScrollRevealer>
+        <MotionSection>
+          <Suspense fallback={<SectionSkeleton className="h-[480px]" />}>
             <GlobeFeature />
-          </ScrollRevealer>
+          </Suspense>
+        </MotionSection>
 
-          <LandingDivider />
+        <LandingDivider />
 
-          <motion.section
+        <motion.section
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -474,7 +468,6 @@ const Home = () => {
               </LandingCard>
             </div>
           </motion.section>
-        </Suspense>
       </main>
     </div>
   );
