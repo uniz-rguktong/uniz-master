@@ -137,6 +137,7 @@ def main() -> int:
         return 1
 
     static_routes: list[tuple[str, str, dict | None]] = [
+        ("GET", "/profile/student/bootstrap", None),
         ("GET", "/profile/student/me", None),
         ("GET", "/academics/grades", None),
         ("GET", "/academics/attendance", None),
