@@ -1,11 +1,16 @@
 import { useEffect, useCallback } from "react";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import { student, studentAuthLoading, studentProfileError } from "../store";
-import { STUDENT_INFO } from "../api/endpoints";
+import { STUDENT_BOOTSTRAP } from "../api/endpoints";
 import { apiClient } from "../api/apiClient";
-
-const CACHE_KEY = "uniz_student_cache";
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes - background refresh after this
+import {
+  clearAllStudentSessionCaches,
+  getActiveStudentUsername,
+  readBootstrapCache,
+  writeBootstrapCache,
+  writeProfileCache,
+} from "../utils/studentSessionCache";
+import { seedAcademicCachesFromBootstrap } from "../utils/academicCache";
 
 const PROFILE_LOAD_ERROR =
   "We couldn't load your profile. Please try again.";
@@ -19,58 +24,43 @@ let globalSetAuthLoading: any = null;
 let globalSetProfileError: any = null;
 let isPollingStarted = false;
 
-/** Read from localStorage cache */
-function readCache(): { data: any; timestamp: number } | null {
-  try {
-    const raw = localStorage.getItem(CACHE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-/** Write to localStorage cache */
-function writeCache(data: any) {
-  try {
-    localStorage.setItem(
-      CACHE_KEY,
-      JSON.stringify({ data, timestamp: Date.now() }),
-    );
-  } catch {
-    // Storage quota - silently ignore
-  }
-}
-
 function setProfileErrorMessage(message: string | null) {
   const setter = globalSetProfileError;
   if (setter) setter(message);
 }
 
-/** Call this on logout to clear the deduplication cache. */
+function applyBootstrapToState(
+  payload: {
+    student?: Record<string, unknown>;
+    grades?: unknown;
+    attendance?: unknown;
+  },
+  setStudent: (v: any) => void,
+) {
+  if (!payload.student) return;
+  const merged = {
+    ...payload.student,
+    grades: payload.grades ?? (payload.student as any).grades ?? [],
+    attendance:
+      payload.attendance ?? (payload.student as any).attendance ?? [],
+  };
+  setStudent(merged);
+}
+
+/** Call on logout to clear deduplication + scoped caches. */
 export function resetStudentDataCache() {
   lastFetchTime = 0;
   fetchPromise = null;
   setProfileErrorMessage(null);
-  try {
-    localStorage.removeItem(CACHE_KEY);
-  } catch {}
+  clearAllStudentSessionCaches();
 }
 
-interface StudentData {
-  _id: string;
-  name: string;
-  email: string;
-  username: string;
-  gender: string;
-  is_in_campus: boolean;
-  has_pending_requests: boolean;
-}
-
-interface StudentInfoResponse {
+interface BootstrapResponse {
   success: boolean;
-  student?: StudentData;
-  msg?: string;
+  student?: Record<string, unknown>;
+  grades?: unknown;
+  attendance?: unknown;
+  source?: string;
 }
 
 export function useStudentData() {
@@ -79,7 +69,6 @@ export function useStudentData() {
   const setProfileError = useSetRecoilState(studentProfileError);
   const error = useRecoilValue(studentProfileError);
 
-  // Keep references to the latest setters for the global interval
   useEffect(() => {
     globalSetStudent = setStudent;
     globalSetAuthLoading = setAuthLoading;
@@ -88,55 +77,59 @@ export function useStudentData() {
 
   const fetchStudentData = useCallback(
     async (force = false) => {
-      const token = localStorage.getItem("student_token");
-      if (!token) {
+      const owner = getActiveStudentUsername();
+      if (!owner) {
         setAuthLoading(false);
         setProfileError(null);
         return;
       }
 
-      // ── Instant cache rehydration ──────────────────────────────────────────
-      const cached = readCache();
-      if (cached && cached.data) {
-        // Push cached data immediately - UI renders without waiting for network
+      const cachedStale = readBootstrapCache(owner, true);
+      if (cachedStale?.student) {
         const setter = globalSetStudent ?? setStudent;
-        setter(cached.data);
+        applyBootstrapToState(cachedStale, setter);
         setProfileError(null);
+        setAuthLoading(false);
 
-        // If the cache is fresh enough and not forced, skip the network call
-        if (!force && Date.now() - cached.timestamp < CACHE_TTL) {
-          const loadingSetter = globalSetAuthLoading ?? setAuthLoading;
-          loadingSetter(false);
+        if (!force && readBootstrapCache(owner, false)?.student) {
           return;
         }
-        // Cache is stale - still show cached data but fetch in background
-        const loadingSetter = globalSetAuthLoading ?? setAuthLoading;
-        loadingSetter(false); // Don't block UI - data already shown from cache
       }
-      // ── End instant cache rehydration ─────────────────────────────────────
 
       const now = Date.now();
-      // Prevent duplicate calls. If not forced, skip if less than 60s since last fetch
       if (!force && now - lastFetchTime < 60000) {
         return fetchPromise;
       }
 
       if (fetchPromise) return fetchPromise;
 
-      fetchPromise = apiClient<StudentInfoResponse>(STUDENT_INFO, {}, false)
+      fetchPromise = apiClient<BootstrapResponse>(STUDENT_BOOTSTRAP, {}, false)
         .then((data) => {
           if (data && data.success && data.student) {
             lastFetchTime = Date.now();
-            writeCache(data.student); // ← persist to localStorage
+            const payload = {
+              student: data.student,
+              grades: data.grades,
+              attendance: data.attendance,
+            };
+            writeBootstrapCache(owner, payload);
+            writeProfileCache(owner, data.student);
+            const year = String(data.student.year || "E4");
+            seedAcademicCachesFromBootstrap(
+              owner,
+              year,
+              data.grades,
+              data.attendance,
+            );
             const setter = globalSetStudent ?? setStudent;
-            setter(data.student);
+            applyBootstrapToState(payload, setter);
             setProfileErrorMessage(null);
           } else {
             setProfileErrorMessage(PROFILE_LOAD_ERROR);
           }
         })
         .catch((err) => {
-          console.error("Error fetching student data:", err);
+          console.error("Error fetching student bootstrap:", err);
           const message =
             err?.message?.toLowerCase?.().includes("fetch") ||
             err?.name === "TypeError"
@@ -161,14 +154,19 @@ export function useStudentData() {
     if (!isPollingStarted) {
       isPollingStarted = true;
       setInterval(() => {
-        const token = localStorage.getItem("student_token");
-        if (token && globalSetStudent) {
-          apiClient<StudentInfoResponse>(STUDENT_INFO, {}, false)
+        const owner = getActiveStudentUsername();
+        if (owner && globalSetStudent) {
+          apiClient<BootstrapResponse>(STUDENT_BOOTSTRAP, {}, false)
             .then((data) => {
               if (data && data.success && data.student) {
                 lastFetchTime = Date.now();
-                writeCache(data.student);
-                globalSetStudent(data.student);
+                const payload = {
+                  student: data.student,
+                  grades: data.grades,
+                  attendance: data.attendance,
+                };
+                writeBootstrapCache(owner, payload);
+                applyBootstrapToState(payload, globalSetStudent);
                 setProfileErrorMessage(null);
               }
             })

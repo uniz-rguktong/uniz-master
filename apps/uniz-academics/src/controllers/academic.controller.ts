@@ -3,6 +3,7 @@ import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import ExcelJS from "exceljs";
 import axios from "axios";
 import prisma from "../utils/prisma.util";
+import { invalidateStudentAcademicCaches } from "../utils/student-cache.util";
 import { ErrorCode } from "../shared/error-codes";
 
 const GATEWAY_URL = (
@@ -639,8 +640,7 @@ export const addGrades = async (req: AuthenticatedRequest, res: Response) => {
       }),
     );
 
-    // Invalidate Cache
-    await redis.del(`grades:${studentId.toUpperCase()}`);
+    await invalidateStudentAcademicCaches(studentId);
 
     return res.json({ success: true, count: results.length });
   } catch (e: any) {
@@ -799,14 +799,13 @@ export const bulkUpdateGrades = async (
       }),
     );
 
-    // Clear relevant caches (Safe operation)
     try {
       const uniqueStudentIds = [
         ...new Set(updates.map((u) => String(u.studentId || "").toUpperCase())),
       ];
-      for (const sid of uniqueStudentIds) {
-        await redis.del(`grades:${sid}`);
-      }
+      await Promise.all(
+        uniqueStudentIds.map((sid) => invalidateStudentAcademicCaches(sid)),
+      );
     } catch (redisErr) {
       console.warn("Cache invalidation skipped (Redis unreachable)");
     }
