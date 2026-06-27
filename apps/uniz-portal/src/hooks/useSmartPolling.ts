@@ -1,27 +1,23 @@
 import { useEffect, useRef, useCallback } from "react";
-import { useWebSocket } from "./useWebSocket";
+// import { useWebSocket } from "./useWebSocket";
 
 /**
- * useSmartPolling - A hook that fetches data at dynamic intervals
- * - Polls frequently (e.g. 30s) if WebSocket is disconnected or restricted.
- * - Polls rarely (e.g. 5m) if WebSocket is active (heartbeat fallback).
- * - Pauses polling when the window/tab is hidden to save resources.
+ * useSmartPolling - Polls on a fixed interval while the tab is visible.
+ * WebSocket-aware fast/slow switching is disabled until a side channel exists.
  */
 export function useSmartPolling(
   fetcher: () => void,
   options: {
-    activeInterval?: number; // ms during active usage with WS
-    fallbackInterval?: number; // ms when WS is disconnected
+    activeInterval?: number;
+    fallbackInterval?: number;
     disabled?: boolean;
   } = {},
 ) {
   const {
-    activeInterval = 300000, // 5 minutes heartbeat if WS is on
-    fallbackInterval = 30000, // 30 seconds if WS is off
+    fallbackInterval = 30000,
     disabled = false,
   } = options;
 
-  const { isConnected } = useWebSocket(undefined);
   const fetcherRef = useRef(fetcher);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -41,7 +37,7 @@ export function useSmartPolling(
       return;
     }
 
-    const intervalTime = isConnected ? activeInterval : fallbackInterval;
+    const intervalTime = fallbackInterval;
 
     // Initial fetch if needed (optional, hooks usually fetch on mount separately)
     // but here we just manage the timer.
@@ -66,5 +62,5 @@ export function useSmartPolling(
       if (intervalRef.current) clearInterval(intervalRef.current);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [isConnected, activeInterval, fallbackInterval, disabled, runTick]);
+  }, [fallbackInterval, disabled, runTick]);
 }

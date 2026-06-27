@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
-import { useWebSocket } from "./hooks/useWebSocket";
+// WebSocket side channel not deployed — polling handles refresh today.
+// import { useWebSocket } from "./hooks/useWebSocket";
 import { useAdminDesktopViewport } from "./hooks/useAdminDesktopViewport";
 import { useLocation } from "react-router-dom";
 
@@ -14,9 +15,9 @@ export function Layout({ children }: LayoutProps) {
 
   useAdminDesktopViewport();
 
-  useWebSocket(undefined, (msg) => {
-    console.log("Real-time update signal:", msg);
-  });
+  // useWebSocket(undefined, (msg) => {
+  //   console.log("Real-time update signal:", msg);
+  // });
 
   const shouldHideNavbar =
     location.pathname.startsWith("/student") ||

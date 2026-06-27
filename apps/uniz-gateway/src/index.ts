@@ -40,6 +40,7 @@ const proxy = httpProxy.createProxyServer({
 proxy.on("error", (err: Error, req: any, res: any) => {
   console.error("[Proxy-Error]", err.message);
   if (!res.headersSent) {
+    applyCorsHeaders(req, res);
     res
       .status(502)
       .json({ error: "Upstream Service Unreachable", message: err.message });
@@ -53,23 +54,30 @@ const allowedOrigins = process.env.CLIENT_URL
   ? process.env.CLIENT_URL.split(",").map((origin) => origin.trim())
   : ["http://localhost:5173", "http://localhost:3000"];
 
+function applyCorsHeaders(
+  req: express.Request,
+  res: express.Response,
+): void {
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD",
+    );
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-cms-api-key, x-api-key, x-internal-secret, uid, role",
+    );
+    res.setHeader("Access-Control-Max-Age", "86400");
+  }
+}
+
 // 2. Optimized CORS
 app.use(
   (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    const origin = req.headers.origin;
-    if (origin && allowedOrigins.includes(origin)) {
-      res.setHeader("Access-Control-Allow-Origin", origin);
-      res.setHeader("Access-Control-Allow-Credentials", "true");
-      res.setHeader(
-        "Access-Control-Allow-Methods",
-        "GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD",
-      );
-      res.setHeader(
-        "Access-Control-Allow-Headers",
-        "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, x-cms-api-key, x-api-key, x-internal-secret, uid, role",
-      );
-      res.setHeader("Access-Control-Max-Age", "86400");
-    }
+    applyCorsHeaders(req, res);
 
     if (req.method === "OPTIONS") return res.status(204).end();
     next();

@@ -1,7 +1,24 @@
 // Set this to your Azure VM IP or Domain in .env as VITE_API_URL
 import { getStoredAuthToken } from "../utils/security";
 
-export const BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
+/** Prefer same-origin API on the portal host (nginx proxies /api/v1 → gateway). */
+function resolveApiBaseUrl(): string {
+  const configured = import.meta.env.VITE_API_URL;
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (
+      host === "uniz.rguktong.in" ||
+      host === "www.uniz.rguktong.in" ||
+      host === "localhost" ||
+      host === "127.0.0.1"
+    ) {
+      return "/api/v1";
+    }
+  }
+  return configured || "/api/v1";
+}
+
+export const BASE_URL = resolveApiBaseUrl();
 export const ANALYTICS_BASE_URL =
   import.meta.env.VITE_ANALYTICS_URL || "https://college-analytics.vercel.app";
 

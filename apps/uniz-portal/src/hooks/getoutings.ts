@@ -2,7 +2,7 @@ import { useEffect, useCallback } from "react";
 import { useSetRecoilState } from "recoil";
 import { outings } from "../store";
 import { GET_OUTING_REQUESTS } from "../api/endpoints";
-import { useWebSocket } from "./useWebSocket";
+// import { useWebSocket } from "./useWebSocket";
 import { useSmartPolling } from "./useSmartPolling";
 
 export function useGetOutings(page = 1, limit = 50) {
@@ -43,12 +43,11 @@ export function useGetOutings(page = 1, limit = 50) {
     fallbackInterval: 30000, // 30s if WS disconnected
   });
 
-  useWebSocket(undefined, (msg) => {
-    if (msg.type === "REFRESH_REQUESTS") {
-      if (msg.payload?.type === "outing" || !msg.payload?.type) {
-        console.log("WebSocket signal received: Refreshing Outings...");
-        getDetails();
-      }
-    }
-  });
+  // useWebSocket(undefined, (msg) => {
+  //   if (msg.type === "REFRESH_REQUESTS") {
+  //     if (msg.payload?.type === "outing" || !msg.payload?.type) {
+  //       getDetails();
+  //     }
+  //   }
+  // });
 }

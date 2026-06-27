@@ -25,6 +25,10 @@ import { ConfirmModal } from "./ConfirmPopup";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dock } from "./ui/dock-two";
 import { InteractiveMenu, InteractiveMenuItem } from "./ui/modern-mobile-menu";
+import {
+  StudentPageSkeleton,
+  studentContentSkeletonVariant,
+} from "./StudentPageSkeleton";
 
 const Attendance = lazy(() => import("../pages/attendance/Attendance"));
 const OutpassOuting = lazy(() => import("../pages/student/outpass&outing"));
@@ -60,10 +64,8 @@ interface MainContent {
     | "error";
 }
 
-const ContentSkeleton = () => (
-  <div className="flex h-screen items-center justify-center text-zinc-400 font-bold tracking-[0.14em] text-sm animate-pulse">
-    Loading...
-  </div>
+const ContentSkeleton = ({ content }: { content: MainContent["content"] }) => (
+  <StudentPageSkeleton variant={studentContentSkeletonVariant(content)} />
 );
 
 export default function Sidebar({ content }: MainContent) {
@@ -416,7 +418,7 @@ export default function Sidebar({ content }: MainContent) {
                 </button>
               </div>
             )}
-            <Suspense fallback={<ContentSkeleton />}>
+            <Suspense fallback={<ContentSkeleton content={content} />}>
               {contentMap[content] || <Error />}
             </Suspense>
           </div>
