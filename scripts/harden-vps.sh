@@ -96,13 +96,14 @@ systemctl enable uniz-docker-firewall.service >/dev/null
 systemctl restart uniz-docker-firewall.service
 echo "[$MARKER] Docker admin ports blocked from internet"
 
-# --- 5. UFW: only SSH + HTTP/S public ---
-ufw --force reset >/dev/null 2>&1 || true
-ufw default deny incoming >/dev/null
-ufw default allow outgoing >/dev/null
-ufw allow OpenSSH >/dev/null
-ufw allow 'Nginx Full' >/dev/null
-ufw --force enable >/dev/null
+# --- 5. UFW: only SSH + HTTP/S public (idempotent — never reset during deploy) ---
+if ! ufw status 2>/dev/null | grep -q "Status: active"; then
+  ufw default deny incoming >/dev/null
+  ufw default allow outgoing >/dev/null
+fi
+ufw allow OpenSSH >/dev/null 2>&1 || true
+ufw allow 'Nginx Full' >/dev/null 2>&1 || true
+ufw --force enable >/dev/null 2>&1 || true
 echo "[$MARKER] UFW enabled (22, 80, 443 only)"
 
 # --- 6. Automatic security updates ---
