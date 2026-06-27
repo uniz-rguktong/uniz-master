@@ -11,6 +11,7 @@ import {
   landingCardHoverClass,
 } from "./ui/landing-section";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface FeatureCard {
   id: string | number;
@@ -77,7 +78,35 @@ export default function FeaturedCarousel({ items }: FeaturedCarouselProps) {
     ],
   };
 
-  if (!items || items.length === 0) return null;
+  if (!items || items.length === 0) {
+    return (
+      <LandingSection>
+        <LandingSectionHeader
+          eyebrow="Campus Highlights"
+          title="Featured"
+          titleMuted="stories from your institute."
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+          {[0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className={cn(
+                landingCardClass,
+                "overflow-hidden shadow-[0_20px_50px_-22px_rgba(0,0,0,0.06)]",
+              )}
+            >
+              <Skeleton className="aspect-[4/5] w-full rounded-none" />
+              <div className="flex flex-col gap-2.5 p-5 pt-4">
+                <Skeleton className="h-5 w-20 rounded-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-3 w-3/4" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </LandingSection>
+    );
+  }
 
   return (
     <LandingSection>
