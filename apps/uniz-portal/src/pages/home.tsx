@@ -221,6 +221,7 @@ const Home = () => {
   useIsAuth();
   const navigate = useNavigate();
   const [banners, setBanners] = useState<any[]>([]);
+  const [bannersReady, setBannersReady] = useState(false);
   const { install, isInstalled } = usePWAInstall();
   const platform = useMemo(() => getPlatform(), []);
 
@@ -338,7 +339,10 @@ const Home = () => {
           setNotifications(notifResult.notifications.updates);
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setBannersReady(true);
+      });
 
     return () => {
       cancelled = true;
@@ -378,19 +382,23 @@ const Home = () => {
         <LiveUpdatesFeed notifications={notifications} />
         <LandingDivider />
 
-        <MotionSection>
-          <FeaturedCarousel
-            items={banners.map((b, i) => ({
-              id: b.id || i,
-              imageUrl: b.imageUrl,
-              title: b.title,
-              tag: i % 2 === 0 ? "Featured" : "New Update",
-              hasHeart: true,
-            }))}
-          />
-        </MotionSection>
-
-        <LandingDivider />
+        {(!bannersReady || banners.length > 0) && (
+          <>
+            <MotionSection>
+              <FeaturedCarousel
+                loading={!bannersReady}
+                items={banners.map((b, i) => ({
+                  id: b.id || i,
+                  imageUrl: b.imageUrl,
+                  title: b.title,
+                  tag: i % 2 === 0 ? "Featured" : "New Update",
+                  hasHeart: true,
+                }))}
+              />
+            </MotionSection>
+            <LandingDivider />
+          </>
+        )}
 
         <MotionSection>
           <Suspense fallback={<SectionSkeleton className="h-96" />}>

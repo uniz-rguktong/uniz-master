@@ -24,6 +24,8 @@ interface FeatureCard {
 
 interface FeaturedCarouselProps {
   items: FeatureCard[];
+  /** True while CMS banners are still loading; false once the fetch finished. */
+  loading?: boolean;
 }
 
 const TAG_ACCENTS = ["emerald", "blue", "amber", "slate"] as const;
@@ -52,7 +54,10 @@ const ArrowBtn = ({
   </button>
 );
 
-export default function FeaturedCarousel({ items }: FeaturedCarouselProps) {
+export default function FeaturedCarousel({
+  items,
+  loading = false,
+}: FeaturedCarouselProps) {
   const displayItems =
     items.length > 1 && items.length < 6
       ? [...items, ...items, ...items]
@@ -78,7 +83,11 @@ export default function FeaturedCarousel({ items }: FeaturedCarouselProps) {
     ],
   };
 
-  if (!items || items.length === 0) {
+  if (!loading && (!items || items.length === 0)) {
+    return null;
+  }
+
+  if (loading || !items || items.length === 0) {
     return (
       <LandingSection>
         <LandingSectionHeader
