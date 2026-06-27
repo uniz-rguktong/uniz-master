@@ -170,7 +170,9 @@ export function useStudentData() {
                 setProfileErrorMessage(null);
               }
             })
-            .catch(console.error);
+            .catch(() => {
+              /* silent background poll */
+            });
         }
       }, 60000);
     }
