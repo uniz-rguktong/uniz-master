@@ -11,6 +11,7 @@ import {
   writeProfileCache,
 } from "../utils/studentSessionCache";
 import { seedAcademicCachesFromBootstrap } from "../utils/academicCache";
+import { asAttendanceList, asGradeList } from "../utils/bootstrapNormalize";
 
 const PROFILE_LOAD_ERROR =
   "We couldn't load your profile. Please try again.";
@@ -40,9 +41,13 @@ function applyBootstrapToState(
   if (!payload.student) return;
   const merged = {
     ...payload.student,
-    grades: payload.grades ?? (payload.student as any).grades ?? [],
-    attendance:
-      payload.attendance ?? (payload.student as any).attendance ?? [],
+    grades: asGradeList(
+      payload.grades ?? (payload.student as { grades?: unknown }).grades,
+    ),
+    attendance: asAttendanceList(
+      payload.attendance ??
+        (payload.student as { attendance?: unknown }).attendance,
+    ),
   };
   setStudent(merged);
 }
