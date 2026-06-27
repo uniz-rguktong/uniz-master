@@ -25,6 +25,7 @@ fi
 # Use ensure-cloudflare-www-dns.sh (grey A) + install-nginx-www-redirects.sh instead.
 HOSTS=(
   "rguktong.in"
+  "www.rguktong.in"
   "uniz.rguktong.in"
   "api-uniz.rguktong.in"
   "landing-api.rguktong.in"
