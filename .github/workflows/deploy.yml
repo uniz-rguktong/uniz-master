@@ -7,7 +7,7 @@ permissions:
 
 concurrency:
   group: vps-deploy-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   push:
@@ -152,37 +152,15 @@ jobs:
       needs.ci.result == 'success' &&
       needs.plan-build.result == 'success' &&
       (needs.build-image.result == 'success' || needs.build-image.result == 'skipped')
-    runs-on: ubuntu-latest
+    # Self-hosted runner on the VPS avoids SSH from GitHub cloud (Hostinger blocks many GHA IPs).
+    runs-on: [self-hosted, linux, uniz-vps]
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Wait for VPS SSH
-        env:
-          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-        run: |
-          set -euo pipefail
-          mkdir -p ~/.ssh
-          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          host="${{ secrets.VPS_IP }}"
-          user="${{ secrets.VPS_USER }}"
-          for attempt in $(seq 1 12); do
-            if ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=20 \
-              -i ~/.ssh/deploy_key "${user}@${host}" 'echo ssh-ok'; then
-              echo "VPS SSH reachable on attempt ${attempt}"
-              exit 0
-            fi
-            echo "VPS SSH attempt ${attempt}/12 failed; retrying in 30s..."
-            sleep 30
-          done
-          echo "::error::VPS SSH unreachable after 12 attempts — check VPS is online and port 22 allows GitHub Actions."
-          exit 1
-
-      - name: Deploy via SSH
+      - name: Deploy on VPS (local runner)
         id: vps_deploy
-        uses: appleboy/ssh-action@v1.2.0
         env:
           JWT_SECURITY_KEY: ${{ secrets.JWT_SECURITY_KEY }}
           INTERNAL_SECRET: ${{ secrets.INTERNAL_SECRET }}
@@ -237,29 +215,13 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_BEFORE_SHA: ${{ github.event.before }}
           GITHUB_ACTOR: ${{ github.actor }}
-          USE_GHCR: "true"
-          IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-        with:
-          host: ${{ secrets.VPS_IP }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          timeout: 60m
-          command_timeout: 60m
-          envs: JWT_SECURITY_KEY,INTERNAL_SECRET,INTERNAL_BOT_SECRET,REDIS_URL,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,SES_FROM_EMAIL,EMAIL_USER,EMAIL_PASS,CLOUDINARY_CLOUD_NAME,CLOUDINARY_UPLOAD_PRESET,VITE_CLOUDINARY_CLOUD_NAME,VITE_CLOUDINARY_UPLOAD_PRESET,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY,POSTGRES_USER,POSTGRES_PASSWORD,AUTH_DATABASE_URL,USER_DATABASE_URL,ACADEMICS_DATABASE_URL,OUTPASS_DATABASE_URL,FILES_DATABASE_URL,MAIL_DATABASE_URL,NOTIFICATION_DATABASE_URL,CRON_DATABASE_URL,VITE_API_URL,VITE_MAINTENANCE_MODE,VITE_SCRAPER_URL,VITE_ANALYTICS_URL,VITE_ANALYTICS_API_KEY,INSTITUTION_LOGO_URL,VITE_TURNSTILE_SITE_KEY,TURNSTILE_SECRET_KEY,DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME,LANDING_POSTGRES_USER,LANDING_POSTGRES_PASSWORD,LANDING_POSTGRES_DB,LANDING_DATABASE_URL,LANDING_JWT_SECURITY_KEY,LANDING_JWT_ALGORITHM,DUMMY_TOKEN,CLOUDFLARE_API_TOKEN,GHCR_PULL_TOKEN,GHCR_USERNAME,GITHUB_REF_NAME,GITHUB_SHA,GITHUB_BEFORE_SHA,GITHUB_ACTOR,USE_GHCR,IMAGE_REGISTRY
-          script_path: scripts/ci-remote-deploy.sh
+        run: bash scripts/ci-local-deploy.sh
 
       - name: Fetch VPS image manifest after deploy
         if: success() && steps.vps_deploy.outcome == 'success'
         continue-on-error: true
-        env:
-          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
         run: |
-          mkdir -p ~/.ssh
-          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
-            "${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/root/.uniz_k8s_image_tags.json" \
-            .uniz-k8s-image-tags.json 2>/dev/null || echo "{}" > .uniz-k8s-image-tags.json
+          cp /root/.uniz_k8s_image_tags.json .uniz-k8s-image-tags.json 2>/dev/null || echo "{}" > .uniz-k8s-image-tags.json
 
       - name: Record successful deploy SHA
         if: success() && steps.vps_deploy.outcome == 'success'
