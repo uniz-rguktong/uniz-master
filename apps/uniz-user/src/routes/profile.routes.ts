@@ -115,10 +115,18 @@ const StudentBaseSchema = z.preprocess(
       year: z.string().max(10).optional(),
       semester: z.string().max(10).optional(),
       section: z.string().max(10).optional(),
+      batch: z.string().max(20).optional(),
+      campus: z.string().max(50).optional(),
+      category: z.string().max(50).optional(),
+      cgpa: z.coerce.number().optional(),
+      totalBacklogs: z.coerce.number().int().optional(),
+      total_backlogs: z.coerce.number().int().optional(),
       isPresentInCampus: z.boolean().optional(),
       is_in_campus: z.boolean().optional(),
       isApplicationPending: z.boolean().optional(),
       has_pending_requests: z.boolean().optional(),
+      isSuspended: z.boolean().optional(),
+      is_suspended: z.boolean().optional(),
     })
     .transform((data: any) => {
       const mapped: any = { ...data };
@@ -181,12 +189,28 @@ const StudentBaseSchema = z.preprocess(
         delete mapped.room_number;
       }
       if (data.is_in_campus !== undefined) {
-        mapped.isPresentInCampus = data.is_in_campus;
+        if (mapped.isPresentInCampus === undefined) {
+          mapped.isPresentInCampus = data.is_in_campus;
+        }
         delete mapped.is_in_campus;
       }
       if (data.has_pending_requests !== undefined) {
-        mapped.isApplicationPending = data.has_pending_requests;
+        if (mapped.isApplicationPending === undefined) {
+          mapped.isApplicationPending = data.has_pending_requests;
+        }
         delete mapped.has_pending_requests;
+      }
+      if (data.total_backlogs !== undefined) {
+        if (mapped.totalBacklogs === undefined) {
+          mapped.totalBacklogs = data.total_backlogs;
+        }
+        delete mapped.total_backlogs;
+      }
+      if (data.is_suspended !== undefined) {
+        if (mapped.isSuspended === undefined) {
+          mapped.isSuspended = data.is_suspended;
+        }
+        delete mapped.is_suspended;
       }
 
       return mapped;

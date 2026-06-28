@@ -476,13 +476,54 @@ export const updateStudentProfile = async (
   }
 };
 
+const STUDENT_PROFILE_UPDATE_FIELDS = [
+  "name",
+  "email",
+  "gender",
+  "phone",
+  "fatherName",
+  "motherName",
+  "fatherOccupation",
+  "motherOccupation",
+  "fatherEmail",
+  "motherEmail",
+  "fatherAddress",
+  "motherAddress",
+  "bloodGroup",
+  "dateOfBirth",
+  "profileUrl",
+  "year",
+  "semester",
+  "branch",
+  "section",
+  "batch",
+  "roomno",
+  "isPresentInCampus",
+  "isApplicationPending",
+  "isSuspended",
+  "category",
+  "campus",
+  "cgpa",
+  "totalBacklogs",
+] as const;
+
+const pickStudentProfileUpdates = (body: Record<string, unknown>) => {
+  const updates: Record<string, unknown> = {};
+  for (const key of STUDENT_PROFILE_UPDATE_FIELDS) {
+    if (body[key] !== undefined) {
+      updates[key] = body[key];
+    }
+  }
+  return updates;
+};
+
 export const adminUpdateStudentProfile = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
   const user = req.user;
   const username = req.params.username.toUpperCase();
-  const updates = req.body;
+  const updates = pickStudentProfileUpdates(req.body);
 
   const allowedRoles = [UserRole.WEBMASTER, UserRole.DEAN, UserRole.DIRECTOR];
   if (!user || !allowedRoles.includes(user.role as UserRole)) {
