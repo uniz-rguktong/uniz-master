@@ -4,6 +4,17 @@ import { useStudentData } from "../hooks/student_info";
 import { Link, useNavigate } from "react-router-dom";
 import { LogOut, User as UserIcon } from "lucide-react";
 
+function formatNavDisplayName(name?: string | null): string {
+  if (!name?.trim()) {
+    return localStorage.getItem("username") ?? "Student";
+  }
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(" ");
+}
+
 export default function Navbar() {
   const [isAuth, setAuth] = useRecoilState(is_authenticated);
   const user = useRecoilValue(student);
@@ -26,56 +37,54 @@ export default function Navbar() {
     (localStorage.getItem("student_token") && user);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-[100] bg-white/80 backdrop-blur-md border-b border-zinc-100 flex items-center justify-center">
-      <div className="w-full max-w-7xl mx-auto flex items-center justify-between h-[72px] px-6">
-        {/* Left: Logo - Cal.com style font */}
-        <div className="flex items-center gap-10">
-          <Link to="/" className="flex items-center gap-2 cursor-pointer group">
-            <span className="uniz-logo-wordmark text-2xl text-[#111111] hover:opacity-80 transition-opacity">
-              uniZ.
-            </span>
-          </Link>
-        </div>
+    <header className="fixed top-0 inset-x-0 z-[100] bg-white/90 backdrop-blur-xl border-b border-zinc-100/80">
+      <div className="w-full max-w-7xl mx-auto flex items-center justify-between h-16 px-6">
+        <Link to="/" className="uniz-logo-wordmark text-2xl text-zinc-950 hover:opacity-80 transition-opacity">
+          uniZ.
+        </Link>
 
-        {/* Right: Action Buttons */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1">
           {!isAuthenticated ? (
+            <button
+              onClick={() => navigate("/student/signin")}
+              className="px-5 py-2 bg-zinc-950 text-white rounded-xl text-[13px] font-semibold hover:bg-zinc-800 transition-colors active:scale-[0.98]"
+            >
+              Get started
+            </button>
+          ) : (
             <>
               <button
-                onClick={() => navigate("/student/signin")}
-                className="px-6 py-2.5 bg-[#111111] text-white rounded-xl text-[13px] font-bold hover:bg-black transition-all shadow-xl active:scale-95"
+                type="button"
+                onClick={() => navigate("/student")}
+                className="flex items-center gap-2.5 rounded-full py-1 pl-1 pr-3 hover:bg-zinc-100/90 transition-colors"
               >
-                Get started
-              </button>
-            </>
-          ) : (
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate("/student/profile")}
-                className="flex items-center gap-3 px-4 py-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 transition-all border border-zinc-200/50 shadow-sm group"
-              >
-                <div className="w-7 h-7 rounded-lg bg-zinc-900 flex items-center justify-center text-[10px] font-bold text-white overflow-hidden shadow-sm group-hover:scale-110 transition-transform">
+                <div className="w-8 h-8 rounded-full overflow-hidden bg-zinc-100 ring-1 ring-zinc-200/80 shrink-0">
                   {user?.profile_url ? (
                     <img
                       src={user.profile_url}
+                      alt=""
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <UserIcon size={14} />
+                    <span className="flex h-full w-full items-center justify-center text-zinc-500">
+                      <UserIcon size={15} />
+                    </span>
                   )}
                 </div>
-                <span className="text-[13px] font-bold text-zinc-800">
-                  {user?.name?.split(" ")[0]}
+                <span className="text-sm font-medium text-zinc-700 tracking-tight">
+                  {formatNavDisplayName(user?.name)}
                 </span>
               </button>
               <button
+                type="button"
                 onClick={logout}
-                className="w-10 h-10 flex items-center justify-center rounded-xl text-zinc-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                className="w-9 h-9 flex items-center justify-center rounded-full text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
                 title="Sign out"
+                aria-label="Sign out"
               >
-                <LogOut size={18} />
+                <LogOut size={17} strokeWidth={2} />
               </button>
-            </div>
+            </>
           )}
         </div>
       </div>
