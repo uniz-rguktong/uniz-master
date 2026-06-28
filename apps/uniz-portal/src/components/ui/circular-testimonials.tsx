@@ -38,19 +38,6 @@ interface CircularTestimonialsProps {
   fontSizes?: FontSizes;
 }
 
-function calculateGap(width: number) {
-  const minWidth = 1024;
-  const maxWidth = 1456;
-  const minGap = 60;
-  const maxGap = 86;
-  if (width <= minWidth) return minGap;
-  if (width >= maxWidth)
-    return Math.max(minGap, maxGap + 0.06018 * (width - maxWidth));
-  return (
-    minGap + (maxGap - minGap) * ((width - minWidth) / (maxWidth - minWidth))
-  );
-}
-
 export const CircularTestimonials = ({
   testimonials,
   autoplay = true,
@@ -70,9 +57,7 @@ export const CircularTestimonials = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoverPrev, setHoverPrev] = useState(false);
   const [hoverNext, setHoverNext] = useState(false);
-  const [containerWidth, setContainerWidth] = useState(1200);
 
-  const imageContainerRef = useRef<HTMLDivElement>(null);
   const autoplayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
     null,
   );
@@ -85,17 +70,6 @@ export const CircularTestimonials = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { amount: 0.5 });
-
-  useEffect(() => {
-    function handleResize() {
-      if (imageContainerRef.current) {
-        setContainerWidth(imageContainerRef.current.offsetWidth);
-      }
-    }
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     if (autoplay && isInView) {
@@ -131,43 +105,23 @@ export const CircularTestimonials = ({
   }, [handleNext, handlePrev]);
 
   function getImageStyle(index: number): React.CSSProperties {
-    const gap = calculateGap(containerWidth);
-    const maxStickUp = gap * 0.8;
     const isActive = index === activeIndex;
-    const isLeft =
-      (activeIndex - 1 + testimonialsLength) % testimonialsLength === index;
-    const isRight = (activeIndex + 1) % testimonialsLength === index;
     if (isActive) {
       return {
         zIndex: 3,
         opacity: 1,
+        visibility: "visible",
         pointerEvents: "auto",
-        transform: `translateX(0px) translateY(0px) scale(1) rotateY(0deg)`,
-        transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
-      };
-    }
-    if (isLeft) {
-      return {
-        zIndex: 2,
-        opacity: 1,
-        pointerEvents: "auto",
-        transform: `translateX(-${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(15deg)`,
-        transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
-      };
-    }
-    if (isRight) {
-      return {
-        zIndex: 2,
-        opacity: 1,
-        pointerEvents: "auto",
-        transform: `translateX(${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(-15deg)`,
+        transform: "translateX(0px) translateY(0px) scale(1) rotateY(0deg)",
         transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
       };
     }
     return {
       zIndex: 1,
       opacity: 0,
+      visibility: "hidden",
       pointerEvents: "none",
+      transform: "translateX(0px) translateY(0px) scale(0.95) rotateY(0deg)",
       transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
     };
   }
@@ -181,7 +135,7 @@ export const CircularTestimonials = ({
   return (
     <div className="testimonial-container" ref={containerRef}>
       <div className="testimonial-grid">
-        <div className="image-container" ref={imageContainerRef}>
+        <div className="image-container">
           {testimonials.map((testimonial, index) => (
             <img
               key={testimonial.src}
@@ -302,6 +256,8 @@ export const CircularTestimonials = ({
           width: 100%;
           height: 24rem;
           perspective: 1000px;
+          overflow: hidden;
+          border-radius: 1.5rem;
         }
         .testimonial-image {
           position: absolute;
