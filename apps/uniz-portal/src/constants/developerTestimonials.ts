@@ -5,7 +5,7 @@ export const developerTestimonials = [
       "Architecture isn't just about code; it's about building scalable, resilient systems that can handle the future of campus operations.",
     name: "Sree Charan",
     designation: "Backend and Architecture",
-    src: "https://github.com/sreecharan-desu.png",
+    src: "/assets/developers/sreecharan.png",
     linkedin: "https://www.linkedin.com/in/sreecharan-desu/",
   },
   {
