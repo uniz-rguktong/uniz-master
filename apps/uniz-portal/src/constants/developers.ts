@@ -3,7 +3,7 @@ export const developers = [
     id: 1,
     name: "Sree Charan",
     designation: "Backend and Architecture",
-    image: "https://github.com/sreecharan-desu.png",
+    image: "/assets/developers/sreecharan.png",
     url: "https://sreecharan.rguktong.in/",
   },
   {
