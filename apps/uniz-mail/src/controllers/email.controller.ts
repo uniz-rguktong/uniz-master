@@ -136,6 +136,7 @@ export const sendEmail = async (req: Request, res: Response) => {
           to,
           data.studentName,
           data.category,
+          data.description ?? "",
         );
         break;
       default:

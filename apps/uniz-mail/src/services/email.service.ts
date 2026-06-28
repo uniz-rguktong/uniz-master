@@ -7,6 +7,11 @@ import {
   generateAttendancePdf,
   AttendanceData,
 } from "../utils/pdf.util";
+import {
+  formatGrievanceCategoryLabel,
+  formatStudentDisplayName,
+  isActionableGrievanceDescription,
+} from "@uniz/shared";
 
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
@@ -506,24 +511,55 @@ export const sendGrievanceResolvedNotification = async (
   email: string,
   studentName: string,
   category: string,
+  description: string,
 ): Promise<boolean> => {
   try {
-    const safeName = studentName?.trim() || "Student";
-    const content = `
+    const safeName = formatStudentDisplayName(studentName);
+    const categoryLabel = formatGrievanceCategoryLabel(category);
+    const actionable = isActionableGrievanceDescription(description);
+
+    const content = actionable
+      ? `
       <p>Dear <strong>${safeName}</strong>,</p>
-      <p>Your concern about <strong>${category}</strong> has been received and we will resolve it.</p>
+      <p>We have reviewed your grievance regarding <strong>${categoryLabel}</strong>.</p>
+      <p>The Student Welfare Office has looked into the matter based on the details you shared, and this grievance has been marked as <strong>resolved</strong>.</p>
       <div style="background-color: #f0fdf4; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #bbf7d0;">
         <p style="margin: 0;"><strong>Category:</strong> ${category}</p>
         <p style="margin: 10px 0 0 0;"><strong>Status:</strong> Resolved</p>
       </div>
-      <p>The Student Welfare Office has reviewed your grievance. Thank you for bringing this to our attention.</p>
+      <p>If you feel the issue is still unresolved, or if you have additional information to share, you may submit a follow-up grievance through the uniZ portal.</p>
+      <p>Thank you for bringing this to our attention.</p>
+      <p style="margin-top: 24px; color: #525252;">Regards,<br/><strong>Student Welfare Office (SWO)</strong><br/>Rajiv Gandhi University of Knowledge Technologies, Ongole</p>
+    `
+      : `
+      <p>Dear <strong>${safeName}</strong>,</p>
+      <p>Thank you for using the uniZ grievance portal.</p>
+      <p>We have reviewed your submission regarding <strong>${categoryLabel}</strong>. After going through the details you shared, we were unable to identify a specific concern that we can take forward from the information provided.</p>
+      <p>For this reason, we are <strong>closing this grievance</strong>. This does not mean your concern is unimportant — we simply need a clear description of the issue so the Student Welfare Office can look into it properly.</p>
+      <div style="background-color: #fafafa; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #e4e4e7;">
+        <p style="margin: 0;"><strong>Category:</strong> ${category}</p>
+        <p style="margin: 10px 0 0 0;"><strong>Status:</strong> Closed</p>
+      </div>
+      <p>If you are facing a genuine issue related to ${categoryLabel}, please submit a <strong>new grievance</strong> with:</p>
+      <ul style="color: #404040; line-height: 1.7; padding-left: 20px;">
+        <li>A brief, clear description of what happened</li>
+        <li>When and where it occurred (if applicable)</li>
+        <li>Any other details that would help us verify and take action</li>
+      </ul>
+      <p>If you need help submitting the grievance, you can reply to this email or contact the SWO office.</p>
+      <p style="margin-top: 24px; color: #525252;">Regards,<br/><strong>Student Welfare Office (SWO)</strong><br/>Rajiv Gandhi University of Knowledge Technologies, Ongole</p>
     `;
+
+    const emailTitle = actionable ? "Grievance resolved" : "Grievance closed";
+    const subject = actionable
+      ? `Grievance resolved: ${category}`
+      : `Grievance update: ${category}`;
 
     return await sendEmailUnified({
       from: '"UniZ SWO" <no-reply@rguktong.in>',
       to: email,
-      subject: `Grievance update: ${category}`,
-      html: emailTemplate("Grievance Resolved", content),
+      subject,
+      html: emailTemplate(emailTitle, content),
     });
   } catch (error) {
     console.error(`Failed to send grievance resolved email:`, error);

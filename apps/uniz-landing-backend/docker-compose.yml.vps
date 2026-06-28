@@ -8,6 +8,9 @@ services:
     depends_on:
       - db
     restart: always
+    extra_hosts:
+      # Reach host-bound UniZ Postgres (127.0.0.1:5432) for analytics queries
+      - "host.docker.internal:host-gateway"
 
   db:
     image: postgres:16-alpine

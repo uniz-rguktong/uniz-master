@@ -2,6 +2,10 @@ import { Response } from "express";
 import prisma from "../utils/prisma";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { ErrorCode } from "../shared/error-codes";
+import {
+  formatGrievanceCategoryLabel,
+  isActionableGrievanceDescription,
+} from "@uniz/shared";
 import { z } from "zod"; // Assuming zod is available as per package.json
 import axios from "axios";
 
@@ -229,6 +233,7 @@ async function sendGrievanceResolvedEmail(
   email: string,
   studentName: string,
   category: string,
+  description: string,
 ) {
   const rawMailUrl = (
     process.env.MAIL_SERVICE_URL || `${GATEWAY_URL}/mail`
@@ -242,13 +247,21 @@ async function sendGrievanceResolvedEmail(
     {
       type: "grievance_resolved",
       to: email,
-      data: { studentName, category },
+      data: { studentName, category, description },
     },
     {
       headers: { "x-internal-secret": INTERNAL_SECRET },
       timeout: 10000,
     },
   );
+}
+
+function grievanceResolvedPushBody(category: string, description: string): string {
+  const label = formatGrievanceCategoryLabel(category);
+  if (isActionableGrievanceDescription(description)) {
+    return `Your grievance regarding ${label} has been reviewed and marked resolved by SWO.`;
+  }
+  return `Your grievance regarding ${label} has been reviewed and closed. Please resubmit with clear details if you have a valid concern.`;
 }
 
 export const resolveGrievance = async (
@@ -318,6 +331,7 @@ export const resolveGrievance = async (
           email,
           studentName,
           updated.category,
+          updated.description,
         );
         emailSent = true;
       } catch (mailError: any) {
@@ -329,8 +343,8 @@ export const resolveGrievance = async (
 
       sendPush(
         updated.studentId,
-        "Grievance Resolved",
-        `Your concern about ${updated.category} has been received and we will resolve it.`,
+        "Grievance update",
+        grievanceResolvedPushBody(updated.category, updated.description),
       );
     }
 
