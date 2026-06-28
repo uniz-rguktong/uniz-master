@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, MessageCircle } from "lucide-react";
+import { ChevronDown, Mail, Users } from "lucide-react";
 import { cn } from "../../utils/cn";
 
 const faqs = [
@@ -123,17 +124,41 @@ const HelpSupport = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="bg-white/60 backdrop-blur-xl p-12 rounded-3xl border border-white/20 shadow-xl text-center"
+            className="space-y-4"
           >
-            <div className="w-20 h-20 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
-              <MessageCircle className="w-10 h-10 text-zinc-900" />
-            </div>
-            <h2 className="text-xl font-bold text-zinc-900 mb-4 font-display italic">
-              Still develop the contact page.....
-            </h2>
-            <p className="text-zinc-400 font-medium tracking-tight">
-              We're building a seamless way for you to connect with support.
-            </p>
+            <a
+              href="mailto:webadmin@rguktong.ac.in"
+              className="flex items-center gap-4 bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:border-zinc-300 hover:shadow-md transition-all group"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center shrink-0">
+                <Mail className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-left min-w-0">
+                <p className="text-xs font-bold tracking-[0.12em] text-zinc-400 uppercase mb-1">
+                  Contact for support
+                </p>
+                <p className="text-[15px] font-bold text-zinc-900 group-hover:text-zinc-700 truncate">
+                  webadmin@rguktong.ac.in
+                </p>
+              </div>
+            </a>
+
+            <Link
+              to="/developers"
+              className="flex items-center gap-4 bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm hover:border-zinc-300 hover:shadow-md transition-all group"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center shrink-0 group-hover:bg-zinc-200 transition-colors">
+                <Users className="w-5 h-5 text-zinc-900" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs font-bold tracking-[0.12em] text-zinc-400 uppercase mb-1">
+                  Meet the developers
+                </p>
+                <p className="text-[15px] font-bold text-zinc-900 group-hover:text-zinc-700 underline underline-offset-4">
+                  View developers page
+                </p>
+              </div>
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
