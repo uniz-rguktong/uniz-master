@@ -20,6 +20,7 @@ const Signin = lazy(() => import("./pages/auth/CommonSignin"));
 const Admin = lazy(() => import("./pages/admin/index"));
 const Sidebar = lazy(() => import("./components/Sidebar"));
 const SEOLanding = lazy(() => import("./pages/seo-landing"));
+const Developers = lazy(() => import("./pages/Developers"));
 
 // Admin Components
 const AddStudents = lazy(() => import("./pages/admin/AddStudents"));
@@ -179,6 +180,14 @@ export default function App() {
                   </PageTransition>
                 )}
               </MaintenanceGuard>
+            }
+          />
+          <Route
+            path="/developers"
+            element={
+              <PageTransition>
+                <Developers />
+              </PageTransition>
             }
           />
           {/* SEO Marketing Pages */}
