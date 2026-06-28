@@ -57,24 +57,24 @@ const HelpSupport = () => {
         <button
           onClick={() => setActiveTab("faq")}
           className={cn(
-            "px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300",
+            "px-6 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300",
             activeTab === "faq"
               ? "bg-white text-zinc-900 shadow-sm"
               : "text-zinc-400 hover:text-zinc-600",
           )}
         >
-          FAQS
+          FAQs
         </button>
         <button
           onClick={() => setActiveTab("contact")}
           className={cn(
-            "px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300",
+            "px-6 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300",
             activeTab === "contact"
               ? "bg-white text-zinc-900 shadow-sm"
               : "text-zinc-400 hover:text-zinc-600",
           )}
         >
-          CONTACT US
+          Contact us
         </button>
       </div>
 
@@ -134,10 +134,10 @@ const HelpSupport = () => {
                 <Mail className="w-5 h-5 text-white" />
               </div>
               <div className="text-left min-w-0">
-                <p className="text-xs font-bold tracking-[0.12em] text-zinc-400 uppercase mb-1">
+                <p className="text-sm font-medium text-zinc-500 mb-0.5">
                   Contact for support
                 </p>
-                <p className="text-[15px] font-bold text-zinc-900 group-hover:text-zinc-700 truncate">
+                <p className="text-[15px] font-semibold text-zinc-900 group-hover:text-zinc-700 truncate">
                   webadmin@rguktong.ac.in
                 </p>
               </div>
@@ -151,11 +151,11 @@ const HelpSupport = () => {
                 <Users className="w-5 h-5 text-zinc-900" />
               </div>
               <div className="text-left">
-                <p className="text-xs font-bold tracking-[0.12em] text-zinc-400 uppercase mb-1">
+                <p className="text-sm font-medium text-zinc-500 mb-0.5">
                   Meet the developers
                 </p>
-                <p className="text-[15px] font-bold text-zinc-900 group-hover:text-zinc-700 underline underline-offset-4">
-                  View developers page
+                <p className="text-[15px] font-semibold text-zinc-900 group-hover:text-zinc-700">
+                  View developers page →
                 </p>
               </div>
             </Link>
