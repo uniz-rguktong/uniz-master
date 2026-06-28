@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import MeetTheDevelopersSection from "@/components/MeetTheDevelopersSection";
+import GlobeFeature from "@/components/ui/globe-feature-section";
 import { SEO } from "@/components/SEO";
 
 export default function Developers() {
@@ -15,7 +16,7 @@ export default function Developers() {
       <header className="max-w-7xl mx-auto px-6 py-6 flex items-center gap-4">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-500 hover:text-zinc-900 transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to home
@@ -23,6 +24,18 @@ export default function Developers() {
       </header>
 
       <MeetTheDevelopersSection subtitle="The minds behind UniZ." />
+
+      <section className="border-t border-zinc-100 bg-zinc-50/40">
+        <div className="max-w-3xl mx-auto px-6 pt-16 pb-4 text-center">
+          <p className="text-[clamp(1.35rem,3vw,1.875rem)] font-semibold tracking-tight text-zinc-900 leading-snug">
+            Wanna make it here?{" "}
+            <span className="text-zinc-400">
+              Contribute to the uniZ ecosystem now.
+            </span>
+          </p>
+        </div>
+        <GlobeFeature />
+      </section>
     </div>
   );
 }
