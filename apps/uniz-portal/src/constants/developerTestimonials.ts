@@ -7,6 +7,8 @@ export const developerTestimonials = [
     designation: "Backend and Architecture",
     src: "/assets/developers/sreecharan.png",
     linkedin: "https://www.linkedin.com/in/sreecharan-desu/",
+    featured: true,
+    displayDuration: 7500,
   },
   {
     quote:

@@ -14,7 +14,13 @@ interface Testimonial {
   designation: string;
   src: string;
   linkedin?: string;
+  /** Larger avatar and slightly longer carousel time when active. */
+  featured?: boolean;
+  /** Ms to show this slide before autoplay advances (default 5000). */
+  displayDuration?: number;
 }
+
+const DEFAULT_DISPLAY_DURATION = 5000;
 
 interface Colors {
   name?: string;
@@ -58,9 +64,7 @@ export const CircularTestimonials = ({
   const [hoverPrev, setHoverPrev] = useState(false);
   const [hoverNext, setHoverNext] = useState(false);
 
-  const autoplayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
-    null,
-  );
+  const autoplayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const testimonialsLength = useMemo(() => testimonials.length, [testimonials]);
   const activeTestimonial = useMemo(
@@ -72,27 +76,29 @@ export const CircularTestimonials = ({
   const isInView = useInView(containerRef, { amount: 0.5 });
 
   useEffect(() => {
-    if (autoplay && isInView) {
-      autoplayIntervalRef.current = setInterval(() => {
-        setActiveIndex((prev) => (prev + 1) % testimonialsLength);
-      }, 5000);
-    }
+    if (!autoplay || !isInView) return;
+
+    const duration =
+      testimonials[activeIndex]?.displayDuration ?? DEFAULT_DISPLAY_DURATION;
+    autoplayTimeoutRef.current = setTimeout(() => {
+      setActiveIndex((prev) => (prev + 1) % testimonialsLength);
+    }, duration);
+
     return () => {
-      if (autoplayIntervalRef.current)
-        clearInterval(autoplayIntervalRef.current);
+      if (autoplayTimeoutRef.current) clearTimeout(autoplayTimeoutRef.current);
     };
-  }, [autoplay, testimonialsLength, isInView]);
+  }, [autoplay, isInView, activeIndex, testimonialsLength, testimonials]);
 
   const handleNext = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % testimonialsLength);
-    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+    if (autoplayTimeoutRef.current) clearTimeout(autoplayTimeoutRef.current);
   }, [testimonialsLength]);
 
   const handlePrev = useCallback(() => {
     setActiveIndex(
       (prev) => (prev - 1 + testimonialsLength) % testimonialsLength,
     );
-    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+    if (autoplayTimeoutRef.current) clearTimeout(autoplayTimeoutRef.current);
   }, [testimonialsLength]);
 
   useEffect(() => {
@@ -103,6 +109,8 @@ export const CircularTestimonials = ({
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [handleNext, handlePrev]);
+
+  const featuredActive = Boolean(activeTestimonial.featured);
 
   function getImageStyle(index: number): React.CSSProperties {
     const isActive = index === activeIndex;
@@ -135,7 +143,9 @@ export const CircularTestimonials = ({
   return (
     <div className="testimonial-container" ref={containerRef}>
       <div className="testimonial-grid">
-        <div className="image-container">
+        <div
+          className={`image-container${featuredActive ? " image-container--featured" : ""}`}
+        >
           {testimonials.map((testimonial, index) => (
             <img
               key={testimonial.src}
@@ -257,6 +267,11 @@ export const CircularTestimonials = ({
           height: 12rem;
           margin: 0 auto;
           perspective: 1000px;
+          transition: width 0.8s cubic-bezier(.4,2,.3,1), height 0.8s cubic-bezier(.4,2,.3,1);
+        }
+        .image-container--featured {
+          width: 14.5rem;
+          height: 14.5rem;
         }
         .testimonial-image {
           position: absolute;
@@ -309,6 +324,10 @@ export const CircularTestimonials = ({
             width: 14rem;
             height: 14rem;
             margin: 0;
+          }
+          .image-container--featured {
+            width: 17.5rem;
+            height: 17.5rem;
           }
           .arrow-buttons {
             padding-top: 0;
