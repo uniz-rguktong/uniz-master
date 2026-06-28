@@ -428,11 +428,17 @@ deploy_logic() {
   # Docker Compose Handling (Main branch only)
   if [ "$CURRENT_BRANCH" == "main" ]; then
     LANDING_BACKEND_DIR="apps/uniz-landing-backend"
-    if [ "$FORCE_ALL" == "true" ] || echo "$CHANGED_FILES" | grep -q "^$LANDING_BACKEND_DIR/"; then
+    if [ "$FORCE_ALL" == "true" ] || echo "$CHANGED_FILES" | grep -qE "^(${LANDING_BACKEND_DIR}/|scripts/deploy\.sh|scripts/refresh-landing-backend-env\.sh)"; then
       echo "[Compose] Redeploying $LANDING_BACKEND_DIR..."
       BASE_DIR=$PWD
       cd "$BASE_DIR/$LANDING_BACKEND_DIR"
-      
+
+      # Analytics reads main UniZ Postgres (host 127.0.0.1:5432). Public API hostnames
+      # do not expose Postgres — from this compose stack use the Docker host gateway.
+      # 172.17.0.1 is the default Linux docker0 bridge; host.docker.internal also works
+      # when extra_hosts is configured in docker-compose.yml.vps.
+      LANDING_ANALYTICS_DB_HOST="${LANDING_ANALYTICS_DB_HOST:-172.17.0.1}"
+
       # Generate a strictly mapped .env for Python backend
       echo "DATABASE_URL=$LANDING_DATABASE_URL" > .env
       echo "JWT_SECURITY_KEY=$LANDING_JWT_SECURITY_KEY" >> .env
@@ -441,12 +447,11 @@ deploy_logic() {
       echo "POSTGRES_USER=$LANDING_POSTGRES_USER" >> .env
       echo "POSTGRES_PASSWORD=$LANDING_POSTGRES_PASSWORD" >> .env
       echo "POSTGRES_DB=$LANDING_POSTGRES_DB" >> .env
-      # Include specific DB connection params with safe defaults
-      echo "DB_USER=${DB_USER:-$POSTGRES_USER}" >> .env
+      echo "DB_USER=${DB_USER:-uniz_admin}" >> .env
       echo "DB_PASS=${DB_PASS:-$POSTGRES_PASSWORD}" >> .env
-      echo "DB_HOST=${DB_HOST:-"localhost"}" >> .env
-      echo "DB_PORT=${DB_PORT:-"5432"}" >> .env
-      echo "DB_NAME=${DB_NAME:-$POSTGRES_DB}" >> .env
+      echo "DB_HOST=${LANDING_ANALYTICS_DB_HOST}" >> .env
+      echo "DB_PORT=${DB_PORT:-5432}" >> .env
+      echo "DB_NAME=${DB_NAME:-uniz_db}" >> .env
 
       docker compose -f docker-compose.yml.vps up -d --build
       cd "$BASE_DIR"

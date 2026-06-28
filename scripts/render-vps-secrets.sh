@@ -50,6 +50,7 @@ env_line() {
   env_line DB_USER "${DB_USER:-}"
   env_line DB_PASS "${DB_PASS:-}"
   env_line DB_HOST "${DB_HOST:-}"
+  env_line LANDING_ANALYTICS_DB_HOST "${LANDING_ANALYTICS_DB_HOST:-172.17.0.1}"
   env_line DB_PORT "${DB_PORT:-}"
   env_line DB_NAME "${DB_NAME:-}"
   env_line LANDING_POSTGRES_USER "${LANDING_POSTGRES_USER:-}"

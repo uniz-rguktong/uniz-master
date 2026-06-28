@@ -6,3 +6,8 @@ export {
   isHodUser,
   resolveHodBranch,
 } from "./admin-role";
+export {
+  formatGrievanceCategoryLabel,
+  formatStudentDisplayName,
+  isActionableGrievanceDescription,
+} from "./grievance-email";
