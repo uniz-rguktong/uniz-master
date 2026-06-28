@@ -199,6 +199,16 @@ export const uploadHealthAnalyticsAtom = atom({
   },
 });
 
+export const webmasterInstitutionAnalyticsAtom = atom({
+  key: "webmasterInstitutionAnalyticsAtom",
+  default: {
+    fetched: false,
+    snapshot: null as Record<string, number | string | null> | null,
+    branches: [] as { branch: string; count: number }[],
+    grievances: [] as { category: string; status: string; count: number }[],
+  },
+});
+
 export const facultyAtom = atom({
   key: "facultyAtom",
   default: {
