@@ -271,6 +271,9 @@ export const ANALYTICS_KEY =
 
 export const ANALYTICS_UPLOAD_HEALTH = `${BASE_URL}/analytics/webmaster/upload-health`;
 export const ANALYTICS_SYSTEM_USERS = `${BASE_URL}/analytics/webmaster/system-users`;
+export const ANALYTICS_INSTITUTION_SNAPSHOT = `${BASE_URL}/analytics/webmaster/institution-snapshot`;
+export const ANALYTICS_BRANCH_DISTRIBUTION = `${BASE_URL}/analytics/webmaster/branch-distribution`;
+export const ANALYTICS_GRIEVANCE_SUMMARY = `${BASE_URL}/analytics/webmaster/grievance-summary`;
 export const ANALYTICS_CAMPUS_OCCUPANCY = `${BASE_URL}/analytics/dean/campus-occupancy`;
 export const ANALYTICS_ACADEMIC_HEATMAP = `${BASE_URL}/analytics/dean/academic-heatmap`;
 export const ANALYTICS_GRIEVANCE_TRENDS = `${BASE_URL}/analytics/dean/grievance-trends`;

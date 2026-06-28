@@ -151,8 +151,49 @@ async def get_academic_heatmap():
 async def get_grievance_trends():
     query = """
         SELECT category, status, COUNT(*) as count 
-        FROM uniz_cron."Grievance" 
+        FROM uniz_outpass."Grievance" 
         GROUP BY category, status
+    """
+    return await fetch_records(query)
+
+@router.get("/webmaster/institution-snapshot")
+@cache(expire=300)
+async def get_institution_snapshot():
+    query = """
+        SELECT 
+            COUNT(*) FILTER (WHERE "isSuspended" = false) as total_students,
+            COUNT(*) FILTER (WHERE "isSuspended" = false AND "isPresentInCampus" = true) as on_campus,
+            COUNT(*) FILTER (WHERE "isSuspended" = true) as suspended,
+            COUNT(*) FILTER (WHERE "isApplicationPending" = true) as pending_requests,
+            ROUND(AVG(cgpa) FILTER (WHERE "isSuspended" = false AND cgpa > 0)::numeric, 2) as avg_cgpa,
+            COUNT(*) FILTER (WHERE "totalBacklogs" > 0 AND "isSuspended" = false) as with_backlogs,
+            COUNT(*) FILTER (WHERE "profileUrl" <> '' AND "isSuspended" = false) as profiles_with_photo
+        FROM uniz_user."StudentProfile"
+    """
+    records = await fetch_records(query)
+    return records[0] if records else {}
+
+@router.get("/webmaster/branch-distribution")
+@cache(expire=3600)
+async def get_branch_distribution():
+    query = """
+        SELECT branch, COUNT(*) as count
+        FROM uniz_user."StudentProfile"
+        WHERE "isSuspended" = false AND branch <> ''
+        GROUP BY branch
+        ORDER BY count DESC
+        LIMIT 8
+    """
+    return await fetch_records(query)
+
+@router.get("/webmaster/grievance-summary")
+@cache(expire=300)
+async def get_grievance_summary():
+    query = """
+        SELECT category, status, COUNT(*) as count
+        FROM uniz_outpass."Grievance"
+        GROUP BY category, status
+        ORDER BY count DESC
     """
     return await fetch_records(query)
 

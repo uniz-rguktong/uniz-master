@@ -5,6 +5,7 @@ import { KPICard } from "../AnalyticsUI";
 import { DonutChart } from "../../../components/ui/donut-chart";
 import { Card } from "../../../components/ui/card";
 import UploadHealthAnalytics from "./UploadHealthAnalytics";
+import InstitutionAnalytics from "./InstitutionAnalytics";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDisplayText } from "@/utils/displayText";
 import { cn } from "../../../utils/cn";
@@ -66,7 +67,9 @@ export default function SystemUserAnalytics() {
       HOD: "hsl(47.9 95.8% 53.1%)",
       WEBMASTER: "hsl(262.1 83.3% 57.8%)",
       ADMIN: "hsl(262.1 83.3% 57.8%)",
-      STAFF: "hsl(262.1 83.3% 57.8%)",
+      COE: "hsl(199 89% 48%)",
+      DIRECTOR: "hsl(346 77% 50%)",
+      SWO: "hsl(25 95% 53%)",
     };
 
     // Group by role name and aggregate values
@@ -129,7 +132,7 @@ export default function SystemUserAnalytics() {
 
   const staffTotal = data
     .filter((item) =>
-      ["webmaster", "dean", "hod", "admin", "staff"].includes(
+      ["webmaster", "dean", "hod", "admin", "staff", "swo", "director", "coe"].includes(
         item.role?.toLowerCase(),
       ),
     )
@@ -146,41 +149,61 @@ export default function SystemUserAnalytics() {
     : 100;
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <InstitutionAnalytics />
+
+      <div>
+        <p className="text-[11px] font-semibold text-zinc-400 tracking-[0.14em] uppercase">
+          Access & identity
+        </p>
+        <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
+          Platform accounts
+        </h2>
+      </div>
+
       {/* KPI Cards Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
-          title="Total Identities"
+          title="Total accounts"
           value={totalUsers.toLocaleString()}
           icon={Users}
-          badge="Audited"
+          badge="Registered"
           iconColor="text-blue-600"
           iconBg="bg-blue-50"
         />
         <KPICard
-          title="Active Sessions"
+          title="Active accounts"
           value={totalActive.toLocaleString()}
           icon={UserCheck}
-          badge="Live"
+          badge="Enabled"
           iconColor="text-emerald-600"
           iconBg="bg-emerald-50"
         />
         <KPICard
-          title="Restricted Access"
+          title="Disabled accounts"
           value={totalDisabled.toLocaleString()}
           icon={UserX}
-          badge="Flagged"
+          badge="Restricted"
           iconColor="text-rose-600"
           iconBg="bg-rose-50"
         />
         <KPICard
-          title="Administrative Staff"
+          title="Staff accounts"
           value={staffTotal.toLocaleString()}
           icon={Shield}
-          badge="Secured"
+          badge="Admin roles"
           iconColor="text-zinc-600"
           iconBg="bg-zinc-50"
         />
+      </div>
+
+      <div>
+        <p className="text-[11px] font-semibold text-zinc-400 tracking-[0.14em] uppercase">
+          Operations
+        </p>
+        <h2 className="text-lg font-semibold text-zinc-900 tracking-tight mt-1">
+          Identity mix & data uploads
+        </h2>
       </div>
 
       {/* Charts Row */}
@@ -190,10 +213,10 @@ export default function SystemUserAnalytics() {
           <Card className="p-7 w-full flex flex-col items-center justify-center space-y-7 bg-white border border-zinc-200/70 shadow-[0_1px_2px_rgba(10,10,10,0.03)] rounded-2xl transition-colors duration-300 hover:border-zinc-300">
             <div className="text-center space-y-1">
               <h2 className="text-[15px] font-semibold text-zinc-900 tracking-[-0.01em]">
-                User Demographics
+                Accounts by role
               </h2>
               <p className="text-[11px] font-medium text-zinc-400 tracking-[0.14em]">
-                Distribution by Role
+                Students, faculty & admin
               </p>
             </div>
 
