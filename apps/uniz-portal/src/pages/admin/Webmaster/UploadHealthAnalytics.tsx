@@ -79,8 +79,37 @@ export default function UploadHealthAnalytics({
       )
     : [];
 
-  // Filtering data based on range
-  const filteredData = safeData.slice(-range);
+  // Roll up attendance + grades rows into one point per day
+  const byDate = safeData.reduce<
+    Record<
+      string,
+      {
+        date: string;
+        successCount: number;
+        failCount: number;
+      }
+    >
+  >((acc, row) => {
+    const key = String(row.date);
+    if (!acc[key]) {
+      acc[key] = { date: key, successCount: 0, failCount: 0 };
+    }
+    acc[key].successCount += Number(row.successCount) || 0;
+    acc[key].failCount += Number(row.failCount) || 0;
+    return acc;
+  }, {});
+
+  const enrichedData = Object.values(byDate).map((row) => {
+    const total = row.successCount + row.failCount;
+    return {
+      ...row,
+      total,
+      success_rate_percent:
+        total > 0 ? Math.round((row.successCount / total) * 1000) / 10 : 0,
+    };
+  });
+
+  const filteredData = enrichedData.slice(-range);
 
   const latest = filteredData[filteredData.length - 1] || {
     success_rate_percent: 0,
@@ -162,7 +191,7 @@ export default function UploadHealthAnalytics({
           <div className="flex justify-between items-start mb-10 relative z-10">
             <div>
               <p className="text-zinc-400 font-bold text-sm mb-2 tracking-tight">
-                Success Health
+                Bulk upload success
               </p>
               <div className="flex items-center gap-4">
                 <h3 className="text-5xl font-semibold text-zinc-900 tracking-tighter">
