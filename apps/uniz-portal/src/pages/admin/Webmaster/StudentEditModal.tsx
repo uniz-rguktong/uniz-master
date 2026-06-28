@@ -73,6 +73,66 @@ const emptyForm = () => ({
   motivation: "",
 });
 
+const GENDER_MAP: Record<string, string> = {
+  Male: "M",
+  Female: "F",
+  M: "M",
+  F: "F",
+  Other: "Other",
+};
+
+const formFromStudent = (student: any) => {
+  const base = emptyForm();
+  return {
+    username: student.username || base.username,
+    name: student.name || base.name,
+    email: student.email || base.email,
+    gender: GENDER_MAP[student.gender] || student.gender || base.gender,
+    phone: student.phone_number || student.phone || base.phone,
+    branch: student.branch || base.branch,
+    year: student.year || base.year,
+    semester: student.semester || base.semester,
+    section: student.section || base.section,
+    batch: student.batch || base.batch,
+    roomno: student.roomno || student.room_number || base.roomno,
+    fatherName: student.father_name || student.fatherName || base.fatherName,
+    motherName: student.mother_name || student.motherName || base.motherName,
+    fatherOccupation:
+      student.father_occupation || student.fatherOccupation || base.fatherOccupation,
+    motherOccupation:
+      student.mother_occupation || student.motherOccupation || base.motherOccupation,
+    fatherEmail: student.father_email || student.fatherEmail || base.fatherEmail,
+    motherEmail: student.mother_email || student.motherEmail || base.motherEmail,
+    fatherAddress:
+      student.father_address || student.fatherAddress || base.fatherAddress,
+    motherAddress:
+      student.mother_address || student.motherAddress || base.motherAddress,
+    bloodGroup: student.blood_group || student.bloodGroup || base.bloodGroup,
+    dateOfBirth: student.date_of_birth
+      ? new Date(student.date_of_birth).toISOString().split("T")[0]
+      : student.dateOfBirth
+        ? new Date(student.dateOfBirth).toISOString().split("T")[0]
+        : base.dateOfBirth,
+    category: student.category || base.category,
+    campus: student.campus || base.campus,
+    isPresentInCampus:
+      student.isPresentInCampus ?? student.is_in_campus ?? base.isPresentInCampus,
+    isSuspended:
+      student.isSuspended ?? student.is_suspended ?? base.isSuspended,
+    cgpa: student.cgpa ?? base.cgpa,
+    totalBacklogs: student.totalBacklogs ?? student.total_backlogs ?? base.totalBacklogs,
+    motivation: student.motivation || base.motivation,
+  };
+};
+
+const buildSubmitPayload = (formData: any) => {
+  const payload: Record<string, unknown> = {};
+  for (const key of Object.keys(emptyForm())) {
+    payload[key] = formData[key];
+  }
+  return payload;
+};
+
 export default function StudentEditModal({
   isOpen,
   onClose,
@@ -89,24 +149,7 @@ export default function StudentEditModal({
   useEffect(() => {
     if (!isOpen) return;
     if (student) {
-      const genderMap: Record<string, string> = {
-        Male: "M",
-        Female: "F",
-        M: "M",
-        F: "F",
-        Other: "Other",
-      };
-      setFormData({
-        ...emptyForm(),
-        ...student,
-        gender: genderMap[student.gender] || student.gender || "M",
-        dateOfBirth: student.date_of_birth
-          ? new Date(student.date_of_birth).toISOString().split("T")[0]
-          : "",
-        phone: student.phone_number || student.phone || "",
-        fatherName: student.father_name || student.fatherName || "",
-        motherName: student.mother_name || student.motherName || "",
-      });
+      setFormData(formFromStudent(student));
     } else {
       setFormData(emptyForm());
     }
@@ -127,7 +170,7 @@ export default function StudentEditModal({
           "Content-Type": "application/json",
           Authorization: `Bearer ${(token || "").replace(/"/g, "")}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(buildSubmitPayload(formData)),
       });
       const data = await res.json();
       if (data.success) {
