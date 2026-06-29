@@ -5,7 +5,7 @@ metadata:
   labels:
     app: uniz-gateway-api
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: uniz-gateway-api
@@ -73,15 +73,15 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: uniz-gateway-api
-  minReplicas: 2
-  maxReplicas: 3
+  minReplicas: 3
+  maxReplicas: 5
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 55
+          averageUtilization: 45
     - type: Resource
       resource:
         name: memory

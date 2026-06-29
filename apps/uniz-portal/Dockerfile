@@ -32,6 +32,7 @@ FROM nginx:alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+RUN sed -i 's/worker_connections  1024/worker_connections  2048/' /etc/nginx/nginx.conf
 
 EXPOSE 80
 
