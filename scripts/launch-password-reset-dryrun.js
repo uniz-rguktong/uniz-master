@@ -30,10 +30,22 @@ try {
   }
 } catch (_) {}
 
+function pgUrlForCli(url) {
+  if (!url) return url;
+  return url
+    .replace(/\\&/g, "&")
+    .replace(/[?&]schema=[^&]*/g, "")
+    .replace(/[?&]connection_limit=[^&]*/g, "")
+    .replace(/\?&/, "?")
+    .replace(/\?$/, "");
+}
+
 function runDb(query) {
-  const safe = query.replace(/'/g, "'\\''");
-  if (authDbUrl && require("child_process").spawnSync("which", ["psql"]).status === 0) {
-    return execSync(`psql "${authDbUrl}" -t -A -c '${safe}'`, { encoding: "utf8" }).trim();
+  const withSchema = `SET search_path TO uniz_auth; ${query}`;
+  const safe = withSchema.replace(/'/g, "'\\''");
+  const cliUrl = pgUrlForCli(authDbUrl);
+  if (cliUrl && require("child_process").spawnSync("which", ["psql"]).status === 0) {
+    return execSync(`psql "${cliUrl}" -t -A -c '${safe}'`, { encoding: "utf8" }).trim();
   }
   const pod = execSync(
     "kubectl get pods -l app=uniz-auth-service -o jsonpath='{.items[?(@.status.phase==\"Running\")].metadata.name}'",
