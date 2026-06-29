@@ -31,6 +31,10 @@ try {
 } catch (_) {}
 
 function runDb(query) {
+  const safe = query.replace(/'/g, "'\\''");
+  if (authDbUrl && require("child_process").spawnSync("which", ["psql"]).status === 0) {
+    return execSync(`psql "${authDbUrl}" -t -A -c '${safe}'`, { encoding: "utf8" }).trim();
+  }
   const pod = execSync(
     "kubectl get pods -l app=uniz-auth-service -o jsonpath='{.items[?(@.status.phase==\"Running\")].metadata.name}'",
     { encoding: "utf8" },
@@ -38,7 +42,6 @@ function runDb(query) {
     .trim()
     .split(" ")[0];
   if (!pod) throw new Error("No running auth pod");
-  const safe = query.replace(/'/g, "'\\''");
   const cmd = `kubectl exec -i ${pod} -- psql "${authDbUrl}" -t -A -c '${safe}'`;
   return execSync(cmd, { encoding: "utf8" }).trim();
 }
