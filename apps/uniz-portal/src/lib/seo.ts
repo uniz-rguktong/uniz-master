@@ -1,9 +1,9 @@
 export const SITE_URL = "https://uniz.rguktong.in";
 export const SITE_NAME = "uniZ";
 
-/** 1200×630 card for link previews (Cloudinary transform on brand asset). */
+/** 1200×630 JPG for link previews — no colons in URL (breaks some crawlers). */
 export const DEFAULT_OG_IMAGE =
-  "https://res.cloudinary.com/diipfzmyj/image/upload/c_fill,w_1200,h_630,bo_48px_solid_rgb:fafafa/v1773551873/91566992797-modified-removebg-preview-modified_t0cqyr.png";
+  "https://res.cloudinary.com/diipfzmyj/image/upload/w_1200,h_630,c_fill,f_jpg,q_auto/v1773551873/91566992797-modified-removebg-preview-modified_t0cqyr.png";
 
 export const HOME_SEO = {
   title: "uniZ — Campus platform for RGUKT students",

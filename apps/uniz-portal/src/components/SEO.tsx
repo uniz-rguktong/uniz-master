@@ -61,6 +61,10 @@ export function SEO({
     upsertMeta("property", "og:title", pageTitle);
     upsertMeta("property", "og:description", pageDescription);
     upsertMeta("property", "og:image", image);
+    upsertMeta("property", "og:image:width", "1200");
+    upsertMeta("property", "og:image:height", "630");
+    upsertMeta("property", "og:image:type", "image/jpeg");
+    upsertMeta("property", "og:image:alt", `${SITE_NAME} — RGUKT Ongole campus portal`);
     upsertMeta("property", "og:url", canonicalUrl);
     upsertMeta("property", "og:type", type);
 
