@@ -31,6 +31,10 @@ try {
   }
 } catch (_) {}
 const fallback = deploySha ? deploySha.slice(0, 7) : "";
+const hardcoded = {
+  "uniz-gateway": process.env.GATEWAY_NGINX_TAG || "593480a",
+  "uniz-landing": process.env.LANDING_TAG || "1a6cf28",
+};
 const seen = new Set();
 const images = [];
 for (const line of fs.readFileSync(servicesFile, "utf8").split("\n")) {
@@ -39,7 +43,7 @@ for (const line of fs.readFileSync(servicesFile, "utf8").split("\n")) {
   const img = parts[1];
   if (!img || seen.has(img)) continue;
   seen.add(img);
-  const tag = manifest[img] || fallback;
+  let tag = manifest[img] || hardcoded[img] || fallback;
   if (!tag) continue;
   images.push({ name: img, newName: `${registry}/${img}`, newTag: String(tag) });
 }
