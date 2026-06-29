@@ -266,7 +266,15 @@ function requiresCaptcha() {
   return turnstileEnabled() && !isLocalTestTurnstile();
 }
 
-const CAPTCHA_WAIT_MS = 12_000;
+const CAPTCHA_WAIT_MS = 6_000;
+
+function warmTurnstile(
+  turnstileRef: React.RefObject<{ execute?: () => void } | null>,
+  captchaTokenRef: React.MutableRefObject<string | null>,
+) {
+  if (!requiresCaptcha() || captchaTokenRef.current) return;
+  turnstileRef.current?.execute?.();
+}
 
 function waitForCaptchaToken(
   captchaTokenRef: React.MutableRefObject<string | null>,
@@ -344,7 +352,7 @@ function TurnstileWidget({
       <Turnstile
         ref={turnstileRef}
         siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-        scriptOptions={{ async: true, defer: true, appendTo: "head" }}
+        injectScript={false}
         options={{
           theme: "light",
           size: "invisible",
@@ -495,20 +503,19 @@ export default function Signin({ type }: SigninProps) {
     setWaitingForCaptcha(false);
   }, [type]);
 
-  // Invisible Turnstile: run verification as soon as the sign-in form is shown.
+  // Invisible Turnstile: warm as soon as the sign-in form is shown.
   useEffect(() => {
     if (!requiresCaptcha() || step !== "signin") return;
-    if (captchaTokenRef.current) return;
-
-    const run = () => turnstileRef.current?.execute?.();
-    const t0 = window.setTimeout(run, 50);
-    const t1 = window.setTimeout(run, 1500);
-
-    return () => {
-      window.clearTimeout(t0);
-      window.clearTimeout(t1);
-    };
+    warmTurnstile(turnstileRef, captchaTokenRef);
+    const timers = [400, 1200, 2500].map((ms) =>
+      window.setTimeout(() => warmTurnstile(turnstileRef, captchaTokenRef), ms),
+    );
+    return () => timers.forEach((t) => window.clearTimeout(t));
   }, [step, type]);
+
+  const captchaReady = !requiresCaptcha() || !!captchaToken;
+  const preparingCaptcha =
+    requiresCaptcha() && !captchaReady && captchaStatus === "loading";
 
   const sendDataToBackend = useCallback(async () => {
     if (username.trim() === "" || password.trim() === "") {
@@ -915,6 +922,7 @@ export default function Signin({ type }: SigninProps) {
                   icon={<Lock className="w-4 h-4" />}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => warmTurnstile(turnstileRef, captchaTokenRef)}
                   placeholder="Enter password"
                   autoComplete="current-password"
                   className={loginInputPasswordClass}
@@ -941,16 +949,22 @@ export default function Signin({ type }: SigninProps) {
               <Button
                 className={loginBtnClass}
                 size="lg"
-                isLoading={isLoading || waitingForCaptcha}
+                isLoading={isLoading || preparingCaptcha || waitingForCaptcha}
                 type="submit"
-                disabled={!username.trim() || !password.trim()}
+                disabled={
+                  !username.trim() ||
+                  !password.trim() ||
+                  (requiresCaptcha() && !captchaReady && captchaStatus === "error")
+                }
               >
                 <span className="relative z-10">
                   {waitingForCaptcha
                     ? "Checking security…"
-                    : isLoading
-                      ? "Signing in…"
-                      : "Continue"}
+                    : preparingCaptcha
+                      ? "Preparing security…"
+                      : isLoading
+                        ? "Signing in…"
+                        : "Continue"}
                 </span>
                 <span className={loginBtnShimmer} />
               </Button>
