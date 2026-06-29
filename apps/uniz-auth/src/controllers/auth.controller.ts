@@ -10,7 +10,7 @@ import {
   sendLoginNotification,
   sendPasswordChangeNotification,
 } from "../utils/email.util";
-import { comparePassword, hashPassword } from "../utils/password.util";
+import { comparePassword, comparePasswordForUser, hashPassword } from "../utils/password.util";
 import { ErrorCode } from "../shared/error-codes";
 import { UserRole } from "../shared/roles.enum";
 import { UAParser } from "ua-parser-js";
@@ -103,7 +103,11 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    const isValid = await comparePassword(password, user.passwordHash);
+    const isValid = await comparePasswordForUser(
+      password,
+      user.passwordHash,
+      user.username,
+    );
     if (!isValid) {
       return res.status(401).json({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
