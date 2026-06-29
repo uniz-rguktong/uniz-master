@@ -46,6 +46,12 @@ import { Student } from "../../types";
 import { BackgroundIconCloud } from "../../components/illustrations/FloatingIllustrations";
 import { InlineError } from "../../components/feedback/InlineError";
 
+const STUDENT_LOCKED_PROFILE_FIELDS = new Set([
+  "name",
+  "gender",
+  "dateOfBirth",
+]);
+
 // ─────────────────────────────────────────────────────────────────
 // Profile Skeleton
 // ─────────────────────────────────────────────────────────────────
@@ -320,6 +326,7 @@ export default function StudentProfilePage() {
     const updatedFields: Record<string, any> = {};
 
     Object.keys(fields).forEach((key) => {
+      if (STUDENT_LOCKED_PROFILE_FIELDS.has(key)) return;
       const typedKey = key as keyof typeof fields;
       // Compare current field value with initial value
       if (
@@ -520,13 +527,13 @@ export default function StudentProfilePage() {
       icon: <User className="w-4 h-4" />,
       label: "Full Name",
       name: "name",
-      editable: true,
+      editable: false,
     },
     {
       icon: <User className="w-4 h-4" />,
       label: "Gender",
       name: "gender",
-      editable: true,
+      editable: false,
       type: "select",
       options: [{v:"M", l:"Male"}, {v:"F", l:"Female"}, {v:"Other", l:"Other"}]
     },
@@ -549,7 +556,7 @@ export default function StudentProfilePage() {
       icon: <Calendar className="w-4 h-4" />,
       label: "Date of Birth",
       name: "dateOfBirth",
-      editable: true,
+      editable: false,
       type: "date",
     },
   ];

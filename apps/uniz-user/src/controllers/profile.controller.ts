@@ -441,17 +441,49 @@ export const internalInvalidateStudentCache = async (
   return res.json({ success: true, username });
 };
 
+const STUDENT_SELF_UPDATE_FIELDS = [
+  "email",
+  "phone",
+  "fatherName",
+  "motherName",
+  "fatherOccupation",
+  "motherOccupation",
+  "fatherEmail",
+  "motherEmail",
+  "fatherAddress",
+  "motherAddress",
+  "bloodGroup",
+  "profileUrl",
+] as const;
+
+const pickStudentSelfUpdates = (body: Record<string, unknown>) => {
+  const updates: Record<string, unknown> = {};
+  for (const key of STUDENT_SELF_UPDATE_FIELDS) {
+    if (body[key] !== undefined) {
+      updates[key] = body[key];
+    }
+  }
+  return updates;
+};
+
 export const updateStudentProfile = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
   const user = req.user;
-  const updates = req.body;
+  const updates = pickStudentSelfUpdates(req.body as Record<string, unknown>);
 
   if (!user || user.role !== UserRole.STUDENT) {
     return res
       .status(403)
       .json({ code: ErrorCode.AUTH_FORBIDDEN, message: "Access denied" });
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return res.status(400).json({
+      code: ErrorCode.VALIDATION_ERROR,
+      message: "No allowed profile fields to update",
+    });
   }
 
   try {
