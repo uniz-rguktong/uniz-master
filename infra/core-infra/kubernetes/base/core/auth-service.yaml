@@ -80,14 +80,14 @@ spec:
     kind: Deployment
     name: uniz-auth-service
   minReplicas: 1
-  maxReplicas: 4
+  maxReplicas: 6
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 70
+          averageUtilization: 60
     - type: Resource
       resource:
         name: memory
