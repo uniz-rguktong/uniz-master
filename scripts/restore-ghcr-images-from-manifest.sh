@@ -27,7 +27,7 @@ apply_image() {
   else
     kubectl set image "deployment/$DEP" "$CON=$FULL"
     kubectl patch "deployment/$DEP" --type=merge -p \
-      '{"spec":{"template":{"spec":{"containers":[{"name":"'"$CON"'","imagePullPolicy":"Always"}]}}}}' \
+      '{"spec":{"template":{"spec":{"containers":[{"name":"'"$CON"'","imagePullPolicy":"IfNotPresent"}]}}}}' \
       2>/dev/null || true
     kubectl patch "deployment/$DEP" --type=merge -p "$pull_patch" 2>/dev/null || true
   fi

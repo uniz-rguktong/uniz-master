@@ -254,7 +254,18 @@ deploy_logic() {
 
   ALL_SERVICES=("${UNIZ_SERVICES[@]}")
   K_BASE="infra/core-infra/kubernetes/base/core"
+  K_APPLY_PATH="$K_BASE"
   [ ! -d "$K_BASE" ] && K_BASE="infra/core-infra/kubernetes/base"
+
+  MANIFEST_PATH="/root/.uniz_k8s_image_tags.json"
+  if [ "$USE_GHCR" == "true" ] || [ -f "$MANIFEST_PATH" ]; then
+    bash "$(dirname "$0")/generate-production-kustomize.sh" \
+      "$MANIFEST_PATH" "${DEPLOY_SHA:-}" || true
+    if [ -f "infra/core-infra/kubernetes/overlays/production/kustomization.yaml" ]; then
+      K_APPLY_PATH="infra/core-infra/kubernetes/overlays/production"
+      echo "[Infra] Using production overlay (GHCR images from manifest)"
+    fi
+  fi
 
   ROLLBACK_TARGETS=()
   VERIFY_DEPLOYMENTS=()
@@ -303,14 +314,18 @@ deploy_logic() {
   bash "$(dirname "$0")/install-nginx-www-redirects.sh" 2>/dev/null || true
   bash "$(dirname "$0")/install-nginx-k8s-tls-cron.sh" 2>/dev/null || true
   
-  echo "[Infra] Applying branch components ($K_BASE)..."
-  kubectl apply -k "$K_BASE" || true
+  echo "[Infra] Applying branch components ($K_APPLY_PATH)..."
+  kubectl apply -k "$K_APPLY_PATH" || true
+
+  if [ "$USE_GHCR" == "true" ] || [ -f "$MANIFEST_PATH" ]; then
+    echo "[GHCR] Ensuring image tags after kubectl apply..."
+    ensure_ghcr_pull_secret
+    bash "$(dirname "$0")/restore-ghcr-images-from-manifest.sh" "$MANIFEST_PATH"
+    bash "$(dirname "$0")/reconcile-hpa-images.sh" "$MANIFEST_PATH"
+  fi
 
   if [ "$USE_GHCR" == "true" ]; then
     echo "[GHCR] Pull-only deploy — images built in GitHub Actions."
-    ensure_ghcr_pull_secret
-    echo "[GHCR] Restoring image tags after kubectl apply..."
-    bash "$(dirname "$0")/restore-ghcr-images-from-manifest.sh" /root/.uniz_k8s_image_tags.json
   fi
 
   # Build & Deploy Loop
