@@ -43,6 +43,74 @@ async function resolveUsernameFromEmail(email: string): Promise<string | null> {
   return null;
 }
 
+function inferDepartmentFromUsername(uname: string): string {
+  const parts = uname.toUpperCase().split("_");
+  const commonBranches = [
+    "CSE",
+    "ECE",
+    "ME",
+    "CE",
+    "MME",
+    "CHEM",
+    "EEE",
+    "CIVIL",
+    "MET",
+    "MEC",
+  ];
+  if (parts.length > 1) {
+    const lastPart = parts[parts.length - 1];
+    if (commonBranches.includes(lastPart)) return lastPart;
+  }
+  return "";
+}
+
+const DEPARTMENT_LOOKUP_MS = 500;
+
+/** Cap user-service lookup so login is not blocked on slow profile fetches. */
+async function resolveDepartmentForLogin(
+  normalizedUsername: string,
+  role: UserRole,
+): Promise<string> {
+  const inferred = inferDepartmentFromUsername(normalizedUsername);
+  const USER_SERVICE = getUserServiceBase();
+  const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
+
+  const endpoints =
+    role === UserRole.STUDENT
+      ? [`student/${normalizedUsername}`]
+      : [`faculty/${normalizedUsername}`, `admin/${normalizedUsername}`];
+
+  const lookup = async (): Promise<string> => {
+    for (const endpoint of endpoints) {
+      try {
+        const userRes = await axios.get(`${USER_SERVICE}/admin/${endpoint}`, {
+          headers: { "x-internal-secret": INTERNAL_SECRET },
+          timeout: DEPARTMENT_LOOKUP_MS,
+        });
+        const data =
+          userRes.data?.student ||
+          userRes.data?.faculty ||
+          userRes.data?.data ||
+          userRes.data;
+        const foundDept = data?.department || data?.branch;
+        if (foundDept) return foundDept;
+      } catch {
+        /* try next endpoint */
+      }
+    }
+    return "";
+  };
+
+  const fromService = await Promise.race([
+    lookup(),
+    new Promise<string>((resolve) =>
+      setTimeout(() => resolve(""), DEPARTMENT_LOOKUP_MS),
+    ),
+  ]);
+
+  return fromService || inferred;
+}
+
 async function resolveLoginIdentifier(
   identifier: string,
   allowEmailLogin: boolean,
@@ -105,95 +173,17 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    const isValid = await comparePasswordForUser(
-      password,
-      user.passwordHash,
-      user.username,
-    );
+    const normalizedUsername = user.username.toUpperCase();
+
+    const [isValid, department] = await Promise.all([
+      comparePasswordForUser(password, user.passwordHash, user.username),
+      resolveDepartmentForLogin(normalizedUsername, user.role as UserRole),
+    ]);
     if (!isValid) {
       return res.status(401).json({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
         message: invalidCredentialsMessage,
       });
-    }
-
-    const inferDepartment = (uname: string): string => {
-      const parts = uname.toUpperCase().split("_");
-      const commonBranches = [
-        "CSE",
-        "ECE",
-        "ME",
-        "CE",
-        "MME",
-        "CHEM",
-        "EEE",
-        "CIVIL",
-        "MET",
-        "MEC",
-      ];
-      if (parts.length > 1) {
-        const lastPart = parts[parts.length - 1];
-        if (commonBranches.includes(lastPart)) return lastPart;
-      }
-      return "";
-    };
-
-    const normalizedUsername = user.username.toUpperCase();
-    let department = "";
-    try {
-      const rawUserUrl = (
-        process.env.USER_SERVICE_URL || "http://localhost:3002"
-      ).trim();
-      const USER_SERVICE = rawUserUrl.endsWith("/health")
-        ? rawUserUrl.slice(0, -7)
-        : rawUserUrl;
-      const INTERNAL_SECRET = (
-        process.env.INTERNAL_SECRET || "uniz-core"
-      ).trim();
-
-      const userType = user.role === UserRole.STUDENT ? "student" : "faculty";
-      // Try faculty first, then admin if faculty fails/returns empty for non-students
-      const endpoints =
-        user.role === UserRole.STUDENT
-          ? [`student/${normalizedUsername}`]
-          : [`faculty/${normalizedUsername}`, `admin/${normalizedUsername}`];
-
-      for (const endpoint of endpoints) {
-        try {
-          const userRes = await axios.get(`${USER_SERVICE}/admin/${endpoint}`, {
-            headers: { "x-internal-secret": INTERNAL_SECRET },
-            timeout: 3000,
-          });
-          const data =
-            userRes.data?.student ||
-            userRes.data?.faculty ||
-            userRes.data?.data ||
-            userRes.data;
-          const foundDept = data?.department || data?.branch;
-          if (foundDept) {
-            department = foundDept;
-            break;
-          }
-        } catch (e) {}
-      }
-
-      console.log(
-        `[AUTH-DEBUG] Resolved department from services for ${normalizedUsername}: "${department}"`,
-      );
-    } catch (e: any) {
-      console.warn(
-        `[AUTH] Service-based department resolution failed for ${normalizedUsername}: ${e.message}`,
-      );
-    }
-
-    // Fallback: Infer from username if still empty
-    if (!department) {
-      department = inferDepartment(normalizedUsername);
-      if (department) {
-        console.log(
-          `[AUTH-DEBUG] Inferred department from username for ${normalizedUsername}: "${department}"`,
-        );
-      }
     }
 
     const token = signToken({
