@@ -33,7 +33,7 @@ try {
 function pgUrlForCli(url) {
   if (!url) return url;
   return url
-    .replace(/\\&/g, "&")
+    .replace(/\\/g, "")
     .replace(/[?&]schema=[^&]*/g, "")
     .replace(/[?&]connection_limit=[^&]*/g, "")
     .replace(/\?&/, "?")
