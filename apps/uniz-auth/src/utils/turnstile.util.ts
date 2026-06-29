@@ -4,6 +4,11 @@ import axios from "axios";
 const TURNSTILE_TEST_SECRET_ALWAYS_PASS =
   "1x0000000000000000000000000000000AA";
 
+/** Real Turnstile tokens are long alphanumeric strings (with . _ -). */
+const TURNSTILE_TOKEN_PATTERN = /^[A-Za-z0-9._-]+$/;
+const TURNSTILE_MIN_TOKEN_LENGTH = 50;
+const TURNSTILE_VERIFY_TIMEOUT_MS = 1500;
+
 /**
  * Verifies a Cloudflare Turnstile token.
  *
@@ -42,6 +47,13 @@ export const verifyTurnstileToken = async (
     return true;
   }
 
+  if (
+    token.length < TURNSTILE_MIN_TOKEN_LENGTH ||
+    !TURNSTILE_TOKEN_PATTERN.test(token)
+  ) {
+    return false;
+  }
+
   try {
     const formData = new URLSearchParams();
     formData.append("secret", secretKey);
@@ -57,6 +69,7 @@ export const verifyTurnstileToken = async (
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
+        timeout: TURNSTILE_VERIFY_TIMEOUT_MS,
       },
     );
 

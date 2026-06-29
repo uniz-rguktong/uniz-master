@@ -232,58 +232,150 @@ app.use("/docs", (req, res) => {
   });
 });
 
-// 4. Standard Health Endpoints with Precision Timing & 2s Cache
-const healthCache = new Map<string, { data: any; expiry: number }>();
+// 4. Shared Redis health cache — TTL 30s fresh, stale-while-revalidate up to 120s
+const HEALTH_REDIS_KEY = "gateway:system_health_aggregate";
+const HEALTH_FRESH_MS = 30_000;
+const HEALTH_STALE_MS = 120_000;
+const HEALTH_REDIS_TTL_SEC = 120;
+const optionalServices = new Set(["docs"]);
+
+interface HealthPayload {
+  data: { status: string; services: unknown[]; cached?: boolean };
+  httpStatus: number;
+  fetchedAt: number;
+}
+
+let inflightHealthRefresh: Promise<HealthPayload> | null = null;
+
+async function probeAllServices(): Promise<HealthPayload> {
+  const resultPromises = Object.entries(serviceMap).map(
+    async ([name, url]) => {
+      try {
+        const start = performance.now();
+        const probePath = "/health";
+        const probeTimeout = name === "docs" ? 250 : 800;
+        await internalClient.get(`${url.replace(/\/$/, "")}${probePath}`, {
+          timeout: probeTimeout,
+        });
+        const latency = (performance.now() - start).toFixed(2);
+        return { name, status: "healthy", latency: `${latency}ms` };
+      } catch (e: any) {
+        if (optionalServices.has(name)) {
+          return {
+            name,
+            status: "healthy",
+            statusDetail: "optional probe skipped",
+            latency: "0ms",
+          };
+        }
+        return { name, status: "unhealthy", error: e.message };
+      }
+    },
+  );
+
+  const results = await Promise.all(resultPromises);
+  const criticalOk = results
+    .filter((r) => !optionalServices.has(r.name))
+    .every((r) => r.status === "healthy");
+  const allOk = results.every((r) => r.status === "healthy");
+
+  return {
+    data: {
+      status: allOk ? "ok" : criticalOk ? "degraded" : "down",
+      services: results,
+    },
+    httpStatus: criticalOk ? 200 : 503,
+    fetchedAt: Date.now(),
+  };
+}
+
+async function readHealthFromRedis(): Promise<HealthPayload | null> {
+  try {
+    const raw = await redis.get(HEALTH_REDIS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as HealthPayload;
+  } catch (e) {
+    console.error("[Health-Cache-Read]", e);
+    return null;
+  }
+}
+
+async function writeHealthToRedis(payload: HealthPayload): Promise<void> {
+  await redis.setex(
+    HEALTH_REDIS_KEY,
+    HEALTH_REDIS_TTL_SEC,
+    JSON.stringify(payload),
+  );
+}
+
+async function refreshHealthCache(): Promise<HealthPayload> {
+  const payload = await probeAllServices();
+  await writeHealthToRedis(payload);
+  return payload;
+}
+
+function triggerBackgroundHealthRefresh(): void {
+  if (!inflightHealthRefresh) {
+    inflightHealthRefresh = refreshHealthCache().finally(() => {
+      inflightHealthRefresh = null;
+    });
+  }
+}
+
+async function getHealthPayload(): Promise<HealthPayload> {
+  const cached = await readHealthFromRedis();
+  const now = Date.now();
+
+  if (cached) {
+    const age = now - cached.fetchedAt;
+    if (age < HEALTH_FRESH_MS) {
+      return { ...cached, data: { ...cached.data, cached: true } };
+    }
+    if (age < HEALTH_STALE_MS) {
+      triggerBackgroundHealthRefresh();
+      return { ...cached, data: { ...cached.data, cached: true } };
+    }
+  }
+
+  if (!inflightHealthRefresh) {
+    inflightHealthRefresh = refreshHealthCache().finally(() => {
+      inflightHealthRefresh = null;
+    });
+  }
+  const fresh = await inflightHealthRefresh;
+  return { ...fresh, data: { ...fresh.data, cached: false } };
+}
+
+function startHealthWarmer(): void {
+  const warm = () =>
+    refreshHealthCache().catch((err: Error) =>
+      console.error("[Health-Warmer]", err.message),
+    );
+  warm();
+  setInterval(warm, 15_000);
+}
+
+app.get(
+  "/api/v1/system/health/live",
+  (_req: express.Request, res: express.Response) => {
+    const t0 = performance.now();
+    res.setHeader("X-Process-Time-Ms", (performance.now() - t0).toFixed(2));
+    res.json({ status: "ok" });
+  },
+);
 
 app.get(
   "/api/v1/system/health",
-  async (req: express.Request, res: express.Response) => {
-    const cacheKey = "system_health_aggregate";
-    const now = performance.now();
-
-    if (healthCache.has(cacheKey) && healthCache.get(cacheKey)!.expiry > now) {
-      return res.json({ ...healthCache.get(cacheKey)!.data, cached: true });
+  async (_req: express.Request, res: express.Response) => {
+    const t0 = performance.now();
+    try {
+      const payload = await getHealthPayload();
+      res.setHeader("X-Process-Time-Ms", (performance.now() - t0).toFixed(2));
+      res.status(payload.httpStatus).json(payload.data);
+    } catch (e: any) {
+      res.setHeader("X-Process-Time-Ms", (performance.now() - t0).toFixed(2));
+      res.status(503).json({ status: "down", error: e.message });
     }
-
-    const optionalServices = new Set(["docs"]);
-
-    const resultPromises = Object.entries(serviceMap).map(
-      async ([name, url]) => {
-        try {
-          const start = performance.now();
-          const path = "/health";
-          const probeTimeout = name === "docs" ? 250 : 5000;
-          await internalClient.get(`${url.replace(/\/$/, "")}${path}`, {
-            timeout: probeTimeout,
-          });
-          const latency = (performance.now() - start).toFixed(2);
-          return { name, status: "healthy", latency: `${latency}ms` };
-        } catch (e: any) {
-          if (optionalServices.has(name)) {
-            return {
-              name,
-              status: "healthy",
-              statusDetail: "optional probe skipped",
-              latency: "0ms",
-            };
-          }
-          return { name, status: "unhealthy", error: e.message };
-        }
-      },
-    );
-
-    const results = await Promise.all(resultPromises);
-    const criticalOk = results
-      .filter((r) => !optionalServices.has(r.name))
-      .every((r) => r.status === "healthy");
-    const allOk = results.every((r) => r.status === "healthy");
-    const data = {
-      status: allOk ? "ok" : criticalOk ? "degraded" : "down",
-      services: results,
-    };
-
-    healthCache.set(cacheKey, { data, expiry: now + 15000 }); // Cache for 15 seconds
-    res.status(criticalOk ? 200 : 503).json(data);
   },
 );
 
@@ -438,5 +530,6 @@ Attribution: SreeCharan Node
 
 app.listen(PORT, () => {
   console.log(`[Super-Gateway] Blazing fast at port ${PORT}`);
+  startHealthWarmer();
 });
 // Force build trigger - Wed Apr  1 18:19:43 IST 2026

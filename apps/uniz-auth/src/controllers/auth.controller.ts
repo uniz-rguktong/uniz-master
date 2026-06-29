@@ -58,10 +58,6 @@ async function resolveLoginIdentifier(
 export const login = async (req: Request, res: Response) => {
   const allowEmailLogin = Boolean((req as any).allowEmailLogin);
   const loginPortal = (req as any).loginPortal as string | undefined;
-  let username = await resolveLoginIdentifier(
-    req.body.username || "",
-    allowEmailLogin,
-  );
   const password = req.body.password;
   const captchaToken = req.body.captchaToken;
 
@@ -71,7 +67,7 @@ export const login = async (req: Request, res: Response) => {
       : "Invalid staff ID, email, or password"
     : "Invalid username or password";
 
-  // Cloudflare Turnstile Verification
+  // Fail fast on captcha before email/DB resolution
   const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
 
   if (!isHuman) {
@@ -80,6 +76,11 @@ export const login = async (req: Request, res: Response) => {
       message: "Security verification failed. Please try again.",
     });
   }
+
+  let username = await resolveLoginIdentifier(
+    req.body.username || "",
+    allowEmailLogin,
+  );
 
   try {
     const user = await prisma.authCredential.findFirst({
