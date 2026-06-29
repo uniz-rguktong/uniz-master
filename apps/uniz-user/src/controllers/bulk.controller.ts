@@ -4,6 +4,7 @@ import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import ExcelJS from "exceljs";
 import axios from "axios";
 import { UserRole } from "../shared/roles.enum";
+import { isValidInternalSecret } from "@uniz/shared";
 import { redis } from "../utils/redis.util";
 import { processNextStudentBatch } from "../services/bulk-worker.service";
 import { resolveHodBranch } from "../utils/hod.util";
@@ -488,6 +489,10 @@ export const getUploadHistory = async (
  * Internal POST to record history from other services (Academics)
  */
 export const recordExternalUpload = async (req: any, res: Response) => {
+  if (!isValidInternalSecret(req.headers["x-internal-secret"])) {
+    return res.status(403).json({ success: false, message: "Forbidden" });
+  }
+
   const {
     type,
     filename,
