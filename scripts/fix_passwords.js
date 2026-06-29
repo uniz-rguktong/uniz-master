@@ -24,6 +24,16 @@ const authDbUrl = process.env.AUTH_DATABASE_URL || process.env.DATABASE_URL;
 const authPool = getPgPool(authDbUrl);
 
 async function run() {
+  if (process.env.CONFIRM_RESET_ALL_STUDENT_PASSWORDS !== "1") {
+    console.error(
+      "Refusing to run: this overwrites EVERY student password in auth, including students who changed theirs.",
+    );
+    console.error(
+      "For first-time rollout only. Set CONFIRM_RESET_ALL_STUDENT_PASSWORDS=1 to proceed.",
+    );
+    process.exit(1);
+  }
+
   console.log("Starting Password Migration for O-IDs...");
 
   if (!authPool) {
@@ -31,13 +41,10 @@ async function run() {
     return;
   }
 
-  // Fetch only the ones that match 'O%' with numeric tail (O followed by numbers)
-  // Or just fetch the 946 ones. To be precise, our previous script updated all RO to O.
-  // Wait, some other 'O' users might already exist. We only want to update if we are sure.
-  // We can just update all 'O...' users who have the role 'student'.
-  const authRecordsRes = await authPool.query(`SELECT id, username FROM "AuthCredential" WHERE username LIKE 'O%' AND role = 'student'`);
+  // Fetch all students — canonical default is lowercase {id}@rguktong
+  const authRecordsRes = await authPool.query(`SELECT id, username FROM "AuthCredential" WHERE role = 'student'`);
   const authRecords = authRecordsRes.rows;
-  console.log(`Found ${authRecords.length} 'O' students in uniz-auth`);
+  console.log(`Found ${authRecords.length} students in uniz-auth`);
   
   let updated = 0;
   for (let i = 0; i < authRecords.length; i++) {
