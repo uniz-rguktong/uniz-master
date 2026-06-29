@@ -48,6 +48,14 @@ export const resolveLoginByEmail = async (req: Request, res: Response) => {
   }
 
   try {
+    const student = await prisma.studentProfile.findFirst({
+      where: { email: { equals: email, mode: "insensitive" } },
+      select: { username: true },
+    });
+    if (student) {
+      return res.json({ username: student.username, profileType: "student" });
+    }
+
     const faculty = await prisma.facultyProfile.findFirst({
       where: { email: { equals: email, mode: "insensitive" } },
       select: { username: true },

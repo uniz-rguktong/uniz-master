@@ -23,7 +23,7 @@ function getUserServiceBase(): string {
   return rawUserUrl.endsWith("/health") ? rawUserUrl.slice(0, -7) : rawUserUrl;
 }
 
-async function resolveStaffUsernameFromEmail(email: string): Promise<string | null> {
+async function resolveUsernameFromEmail(email: string): Promise<string | null> {
   const USER_SERVICE = getUserServiceBase();
   const INTERNAL_SECRET = (process.env.INTERNAL_SECRET || "uniz-core").trim();
 
@@ -50,18 +50,25 @@ async function resolveLoginIdentifier(
   if (!allowEmailLogin || !trimmed.includes("@")) {
     return trimmed;
   }
-  const resolved = await resolveStaffUsernameFromEmail(trimmed);
+  const resolved = await resolveUsernameFromEmail(trimmed);
   return resolved || trimmed;
 }
 
 export const login = async (req: Request, res: Response) => {
   const allowEmailLogin = Boolean((req as any).allowEmailLogin);
+  const loginPortal = (req as any).loginPortal as string | undefined;
   let username = await resolveLoginIdentifier(
     req.body.username || "",
     allowEmailLogin,
   );
   const password = req.body.password;
   const captchaToken = req.body.captchaToken;
+
+  const invalidCredentialsMessage = allowEmailLogin
+    ? loginPortal === "student"
+      ? "Invalid university ID, email, or password"
+      : "Invalid staff ID, email, or password"
+    : "Invalid username or password";
 
   // Cloudflare Turnstile Verification
   const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
@@ -81,9 +88,7 @@ export const login = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(401).json({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
-        message: allowEmailLogin
-          ? "Invalid staff ID, email, or password"
-          : "Invalid username or password",
+        message: invalidCredentialsMessage,
       });
     }
 
@@ -102,9 +107,7 @@ export const login = async (req: Request, res: Response) => {
     if (!isValid) {
       return res.status(401).json({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
-        message: allowEmailLogin
-          ? "Invalid staff ID, email, or password"
-          : "Invalid username or password",
+        message: invalidCredentialsMessage,
       });
     }
 
@@ -240,9 +243,14 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const studentLogin = login;
+export const studentLogin = async (req: Request, res: Response) => {
+  (req as any).allowEmailLogin = true;
+  (req as any).loginPortal = "student";
+  return login(req, res);
+};
 export const adminLogin = async (req: Request, res: Response) => {
   (req as any).allowEmailLogin = true;
+  (req as any).loginPortal = "admin";
   return login(req, res);
 };
 
@@ -250,7 +258,7 @@ export const requestOtp = async (req: Request, res: Response) => {
   const rawIdentifier = String(req.body.username || "").trim();
   const allowEmail = rawIdentifier.includes("@");
   let username = allowEmail
-    ? (await resolveStaffUsernameFromEmail(rawIdentifier)) || rawIdentifier
+    ? (await resolveUsernameFromEmail(rawIdentifier)) || rawIdentifier
     : rawIdentifier.toUpperCase();
   const captchaToken = req.body.captchaToken;
 
@@ -363,7 +371,7 @@ export const requestOtpEmail = async (req: Request, res: Response) => {
   const rawIdentifier = String(req.body.username || "").trim();
   const allowEmail = rawIdentifier.includes("@");
   let username = allowEmail
-    ? (await resolveStaffUsernameFromEmail(rawIdentifier)) || rawIdentifier
+    ? (await resolveUsernameFromEmail(rawIdentifier)) || rawIdentifier
     : rawIdentifier.toUpperCase();
   const captchaToken = req.body.captchaToken;
 
@@ -469,7 +477,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
   const rawIdentifier = String(req.body.username || "").trim();
   const allowEmail = rawIdentifier.includes("@");
   const username = allowEmail
-    ? (await resolveStaffUsernameFromEmail(rawIdentifier)) || rawIdentifier
+    ? (await resolveUsernameFromEmail(rawIdentifier)) || rawIdentifier
     : rawIdentifier.toUpperCase();
 
   try {
@@ -517,7 +525,7 @@ export const resetPassword = async (req: Request, res: Response) => {
   const rawIdentifier = String(req.body.username || "").trim();
   const allowEmail = rawIdentifier.includes("@");
   const username = allowEmail
-    ? (await resolveStaffUsernameFromEmail(rawIdentifier)) || rawIdentifier
+    ? (await resolveUsernameFromEmail(rawIdentifier)) || rawIdentifier
     : rawIdentifier;
 
   // Validate Reset Token First

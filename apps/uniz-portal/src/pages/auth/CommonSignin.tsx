@@ -34,6 +34,42 @@ const isStudentIdFormat = (value: string) => /^[A-Z]\d+/i.test(value.trim());
 const isEmailFormat = (value: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
+const isValidStudentLoginId = (value: string) =>
+  isStudentIdFormat(value) || isEmailFormat(value);
+
+function normalizeLoginIdentifier(
+  value: string,
+  type: SigninProps["type"],
+): string {
+  const trimmed = value.trim();
+  if (trimmed.includes("@")) return trimmed.toLowerCase();
+  if (type === "student") return trimmed.toUpperCase();
+  return trimmed;
+}
+
+function validateLoginIdentifier(
+  value: string,
+  type: SigninProps["type"],
+): string | null {
+  const trimmed = value.trim();
+  if (!trimmed) return "Please enter your email/ID";
+
+  if (type === "student") {
+    if (!isValidStudentLoginId(trimmed)) {
+      return "Enter a valid university ID or email (e.g., O210001 or name@rguktong.ac.in)";
+    }
+    return null;
+  }
+
+  if (isStudentIdFormat(trimmed)) {
+    return `Students are not allowed to access the ${type === "admin" ? "Admin" : "Faculty"} Portal`;
+  }
+  if (trimmed.includes("@") && !isEmailFormat(trimmed)) {
+    return "Enter a valid staff ID or university email address";
+  }
+  return null;
+}
+
 interface SigninResponse {
   msg?: string;
   student_token?: string;
@@ -468,29 +504,9 @@ export default function Signin({ type }: SigninProps) {
       return;
     }
 
-    const isStudentFormat = isStudentIdFormat(username);
-
-    if (type === "student" && !isStudentFormat) {
-      toast.error(
-        "Student username must be a valid University ID (e.g., O210001 or S220059)",
-      );
-      return;
-    }
-
-    if ((type === "admin" || type === "faculty") && isStudentFormat) {
-      toast.error(
-        `Students are not allowed to access the ${type === "admin" ? "Admin" : "Faculty"} Portal`,
-      );
-      return;
-    }
-
-    if (
-      (type === "admin" || type === "faculty") &&
-      !isStudentFormat &&
-      username.includes("@") &&
-      !isEmailFormat(username)
-    ) {
-      toast.error("Enter a valid staff ID or university email address");
+    const idError = validateLoginIdentifier(username, type);
+    if (idError) {
+      toast.error(idError);
       return;
     }
 
@@ -515,10 +531,7 @@ export default function Signin({ type }: SigninProps) {
       const data = await apiClient<SigninResponse>(SIGNIN(type), {
         method: "POST",
         body: JSON.stringify({
-          username:
-            type === "student"
-              ? username.trim().toUpperCase()
-              : username.trim(),
+          username: normalizeLoginIdentifier(username, type),
           password: password.trim(),
           captchaToken: captchaTokenRef.current,
         }),
@@ -634,27 +647,9 @@ export default function Signin({ type }: SigninProps) {
       return;
     }
 
-    const isStudentFormat = isStudentIdFormat(username);
-
-    if (type === "student" && !isStudentFormat) {
-      toast.error("Student ID must be a valid University ID (e.g., O210001 or S220059)");
-      return;
-    }
-
-    if ((type === "admin" || type === "faculty") && isStudentFormat) {
-      toast.error(
-        `Students cannot request OTP from the ${type === "admin" ? "Admin" : "Faculty"} Portal`,
-      );
-      return;
-    }
-
-    if (
-      (type === "admin" || type === "faculty") &&
-      !isStudentFormat &&
-      username.includes("@") &&
-      !isEmailFormat(username)
-    ) {
-      toast.error("Enter a valid staff ID or university email address");
+    const idError = validateLoginIdentifier(username, type);
+    if (idError) {
+      toast.error(idError);
       return;
     }
 
@@ -679,7 +674,7 @@ export default function Signin({ type }: SigninProps) {
       }>(FORGOT_PASS_ENDPOINT, {
         method: "POST",
         body: JSON.stringify({
-          username: username.trim(),
+          username: normalizeLoginIdentifier(username, type),
           captchaToken: captchaTokenRef.current,
         }),
       });
@@ -705,27 +700,9 @@ export default function Signin({ type }: SigninProps) {
   }, [username, type]);
 
   const requestEmailOtp = useCallback(async () => {
-    const isStudentFormat = isStudentIdFormat(username);
-
-    if (type === "student" && !isStudentFormat) {
-      toast.error("Student ID must be a valid University ID (e.g., O210001 or S220059)");
-      return;
-    }
-
-    if ((type === "admin" || type === "faculty") && isStudentFormat) {
-      toast.error(
-        `Students cannot request OTP from the ${type === "admin" ? "Admin" : "Faculty"} Portal`,
-      );
-      return;
-    }
-
-    if (
-      (type === "admin" || type === "faculty") &&
-      !isStudentFormat &&
-      username.includes("@") &&
-      !isEmailFormat(username)
-    ) {
-      toast.error("Enter a valid staff ID or university email address");
+    const idError = validateLoginIdentifier(username, type);
+    if (idError) {
+      toast.error(idError);
       return;
     }
 
@@ -749,7 +726,7 @@ export default function Signin({ type }: SigninProps) {
       }>(REQUEST_OTP_EMAIL_ENDPOINT, {
         method: "POST",
         body: JSON.stringify({
-          username: username.trim(),
+          username: normalizeLoginIdentifier(username, type),
           captchaToken: captchaTokenRef.current,
         }),
       });
@@ -780,7 +757,7 @@ export default function Signin({ type }: SigninProps) {
       }>(VERIFY_OTP_ENDPOINT, {
         method: "POST",
         body: JSON.stringify({
-          username: username.trim(),
+          username: normalizeLoginIdentifier(username, type),
           otp: otp.trim(),
         }),
       });
@@ -794,7 +771,7 @@ export default function Signin({ type }: SigninProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [otp, username, setResetToken]);
+  }, [otp, username, type, setResetToken]);
 
   const resetPassword = useCallback(async () => {
     if (newPassword.trim() === "") {
@@ -813,7 +790,7 @@ export default function Signin({ type }: SigninProps) {
         {
           method: "POST",
           body: JSON.stringify({
-            username: username.trim(),
+            username: normalizeLoginIdentifier(username, type),
             resetToken: resetToken,
             newPassword: newPassword,
           }),
@@ -832,7 +809,7 @@ export default function Signin({ type }: SigninProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [newPassword, username, resetToken, setResetToken]);
+  }, [newPassword, username, type, resetToken, setResetToken]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -851,7 +828,7 @@ export default function Signin({ type }: SigninProps) {
   const stepSubtitle =
     step === "signin"
       ? type === "student"
-        ? "Use your university ID and password"
+        ? "Use your university ID or college email and password"
         : "Use your staff credentials"
       : step === "forgot"
         ? "We'll send a code to your registered email"
@@ -891,7 +868,7 @@ export default function Signin({ type }: SigninProps) {
               <Input
                 label={
                   type === "student"
-                    ? "University ID"
+                    ? "University ID or email"
                     : "Staff ID or email"
                 }
                 labelClassName={loginLabelClass}
@@ -900,7 +877,7 @@ export default function Signin({ type }: SigninProps) {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder={
                   type === "student"
-                    ? "O210001"
+                    ? "O210001 or name@rguktong.ac.in"
                     : "username or email@rguktong.ac.in"
                 }
                 autoCapitalize="none"
@@ -963,7 +940,11 @@ export default function Signin({ type }: SigninProps) {
           {step === "forgot" && (
             <div className="space-y-4">
               <Input
-                label="University ID"
+                label={
+                  type === "student"
+                    ? "University ID or email"
+                    : "Staff ID or email"
+                }
                 labelClassName={loginLabelClass}
                 icon={<User className="w-4 h-4" />}
                 value={username}
@@ -972,7 +953,11 @@ export default function Signin({ type }: SigninProps) {
                 autoCorrect="off"
                 spellCheck={false}
                 autoComplete="username"
-                placeholder="Enter your ID"
+                placeholder={
+                  type === "student"
+                    ? "O210001 or name@rguktong.ac.in"
+                    : "username or email@rguktong.ac.in"
+                }
                 className={loginInputWithIconClass}
               />
 
