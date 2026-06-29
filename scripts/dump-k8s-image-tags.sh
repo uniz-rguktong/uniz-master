@@ -22,6 +22,16 @@ for s in "${UNIZ_SERVICES[@]}"; do
 
   tag="${image##*:}"
   tag="${tag//@/}"
+  # Accept GHCR sha tags; skip bare "local" (placeholder) — use running pod image below
+  if [[ "$tag" == "local" ]]; then
+    tag=""
+  fi
+  if [[ -z "$tag" ]] && kubectl get pods -l "app=$DEP" &>/dev/null; then
+    image=$(kubectl get pods -l "app=$DEP" -o jsonpath='{.items[?(@.status.phase=="Running")].spec.containers[0].image}' 2>/dev/null | awk '{print $1}')
+    tag="${image##*:}"
+    tag="${tag//@/}"
+  fi
+  [[ -z "$tag" ]] && continue
   [[ "$tag" =~ ^[0-9a-f]{7,40}$ ]] || continue
   pairs+=("\"$IMG\":\"$tag\"")
 done
