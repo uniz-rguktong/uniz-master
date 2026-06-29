@@ -46,16 +46,17 @@ function normalizeLoginIdentifier(
   return value.trim();
 }
 
-/** Default campus password: lowercase id + @rguktong */
+/** Only normalize the issued default password; leave custom passwords unchanged. */
 function normalizeStudentPassword(
   password: string,
   username: string,
 ): string {
-  const trimmed = password.trim().toLowerCase();
-  const match = trimmed.match(/^([a-z]\d+)@rguktong$/);
-  if (!match) return trimmed;
-  const id = username.includes("@") ? match[1] : username.toLowerCase();
-  return `${id}@rguktong`;
+  const trimmed = password.trim();
+  if (!/^[a-z]\d+@rguktong$/i.test(trimmed)) return trimmed;
+  const id = username.includes("@")
+    ? trimmed.slice(0, -"@rguktong".length)
+    : username.toLowerCase();
+  return `${id.toLowerCase()}@rguktong`;
 }
 
 function validateLoginIdentifier(
