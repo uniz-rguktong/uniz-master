@@ -12,7 +12,8 @@ import {
 } from "../utils/email.util";
 import { comparePassword, comparePasswordForUser, hashPassword } from "../utils/password.util";
 import { ErrorCode } from "../shared/error-codes";
-import { UserRole } from "../shared/roles.enum";
+import { UserRole, ADMIN_ROLES } from "../shared/roles.enum";
+import { isValidInternalSecret } from "@uniz/shared";
 import { UAParser } from "ua-parser-js";
 import { verifyTurnstileToken } from "../utils/turnstile.util";
 
@@ -685,9 +686,24 @@ export const changePassword = async (
     });
   }
 };
-export const toggleSuspension = async (req: Request, res: Response) => {
+export const toggleSuspension = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
   const { username, suspended } = req.body;
-  // Note: In a real system, the auth middleware would verify the requester is an admin
+  const requester = req.user;
+
+  if (
+    !requester ||
+    (requester.id !== "internal" &&
+      !ADMIN_ROLES.includes(String(requester.role)))
+  ) {
+    return res.status(403).json({
+      code: ErrorCode.AUTH_FORBIDDEN,
+      message: "Access denied. Administrative clearance required.",
+    });
+  }
+
   try {
     const targetUser = await prisma.authCredential.findFirst({
       where: { username: { equals: username, mode: "insensitive" } },
@@ -777,9 +793,14 @@ export const adminResetPassword = async (req: Request, res: Response) => {
 
 export const signup = async (req: Request, res: Response) => {
   const { username, password, role, email } = req.body;
-  const internalSecret = req.headers["x-internal-secret"];
-  const isInternal =
-    internalSecret === (process.env.INTERNAL_SECRET || "uniz-core").trim();
+  const isInternal = isValidInternalSecret(req.headers["x-internal-secret"]);
+
+  if (!isInternal) {
+    return res.status(403).json({
+      code: ErrorCode.AUTH_FORBIDDEN,
+      message: "Account registration is restricted to internal services.",
+    });
+  }
 
   try {
     const existing = await prisma.authCredential.findFirst({
@@ -952,6 +973,13 @@ export const globalAdminResetPassword = async (
 };
 
 export const getUserStatus = async (req: Request, res: Response) => {
+  if (!isValidInternalSecret(req.headers["x-internal-secret"])) {
+    return res.status(403).json({
+      success: false,
+      message: "Forbidden",
+    });
+  }
+
   const { id } = req.params;
   try {
     const user = await prisma.authCredential.findUnique({

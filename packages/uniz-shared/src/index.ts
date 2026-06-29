@@ -11,3 +11,7 @@ export {
   formatStudentDisplayName,
   isActionableGrievanceDescription,
 } from "./grievance-email";
+export {
+  getInternalSecret,
+  isValidInternalSecret,
+} from "./internal-secret";

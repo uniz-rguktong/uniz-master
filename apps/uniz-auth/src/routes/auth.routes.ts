@@ -128,7 +128,7 @@ router.post(
   validateRequest(GlobalAdminResetSchema),
   globalAdminResetPassword,
 );
-router.post("/admin/suspend", toggleSuspension);
+router.post("/admin/suspend", authMiddleware, toggleSuspension);
 
 router.post("/logout", (req: Request, res: Response) => {
   res.json({ success: true });

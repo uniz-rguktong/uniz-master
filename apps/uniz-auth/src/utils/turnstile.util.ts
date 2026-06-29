@@ -18,10 +18,16 @@ export const verifyTurnstileToken = async (
   const secretKey = process.env.TURNSTILE_SECRET_KEY;
 
   if (!secretKey) {
+    if (process.env.NODE_ENV === "production") {
+      console.error(
+        "[TURNSTILE] TURNSTILE_SECRET_KEY not configured in production.",
+      );
+      return false;
+    }
     console.warn(
-      "[TURNSTILE] TURNSTILE_SECRET_KEY not configured. Skipping verification.",
+      "[TURNSTILE] TURNSTILE_SECRET_KEY not configured. Skipping verification (dev only).",
     );
-    return true; // Don't block if not configured, but log a warning
+    return true;
   }
 
   if (!token) {
