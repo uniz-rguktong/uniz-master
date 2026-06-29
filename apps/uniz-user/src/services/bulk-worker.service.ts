@@ -175,7 +175,7 @@ export async function processNextStudentBatch() {
               `${AUTH_SERVICE_URL}/signup`,
               {
                 username: id,
-                password: `${id}@rguktong`,
+                password: `${id.toLowerCase()}@rguktong`,
                 role: "student",
                 email: finalEmail,
               },

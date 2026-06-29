@@ -41,10 +41,21 @@ function normalizeLoginIdentifier(
   value: string,
   type: SigninProps["type"],
 ): string {
-  const trimmed = value.trim();
-  if (trimmed.includes("@")) return trimmed.toLowerCase();
-  if (type === "student") return trimmed.toUpperCase();
-  return trimmed;
+  const trimmed = value.trim().toLowerCase();
+  if (type === "student") return trimmed;
+  return value.trim();
+}
+
+/** Default campus password: lowercase id + @rguktong */
+function normalizeStudentPassword(
+  password: string,
+  username: string,
+): string {
+  const trimmed = password.trim().toLowerCase();
+  const match = trimmed.match(/^([a-z]\d+)@rguktong$/);
+  if (!match) return trimmed;
+  const id = username.includes("@") ? match[1] : username.toLowerCase();
+  return `${id}@rguktong`;
 }
 
 function validateLoginIdentifier(
@@ -56,7 +67,7 @@ function validateLoginIdentifier(
 
   if (type === "student") {
     if (!isValidStudentLoginId(trimmed)) {
-      return "Enter a valid university ID or email (e.g., O210001 or name@rguktong.ac.in)";
+      return "Enter a valid university ID or email (e.g., o210001 or o210001@rguktong.ac.in)";
     }
     return null;
   }
@@ -532,7 +543,10 @@ export default function Signin({ type }: SigninProps) {
         method: "POST",
         body: JSON.stringify({
           username: normalizeLoginIdentifier(username, type),
-          password: password.trim(),
+          password:
+            type === "student"
+              ? normalizeStudentPassword(password, normalizeLoginIdentifier(username, type))
+              : password.trim(),
           captchaToken: captchaTokenRef.current,
         }),
       });
@@ -874,10 +888,16 @@ export default function Signin({ type }: SigninProps) {
                 labelClassName={loginLabelClass}
                 icon={<User className="w-4 h-4" />}
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) =>
+                  setUsername(
+                    type === "student"
+                      ? e.target.value.toLowerCase()
+                      : e.target.value,
+                  )
+                }
                 placeholder={
                   type === "student"
-                    ? "O210001 or name@rguktong.ac.in"
+                    ? "o210001 or o210001@rguktong.ac.in"
                     : "username or email@rguktong.ac.in"
                 }
                 autoCapitalize="none"
@@ -948,14 +968,20 @@ export default function Signin({ type }: SigninProps) {
                 labelClassName={loginLabelClass}
                 icon={<User className="w-4 h-4" />}
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) =>
+                  setUsername(
+                    type === "student"
+                      ? e.target.value.toLowerCase()
+                      : e.target.value,
+                  )
+                }
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck={false}
                 autoComplete="username"
                 placeholder={
                   type === "student"
-                    ? "O210001 or name@rguktong.ac.in"
+                    ? "o210001 or o210001@rguktong.ac.in"
                     : "username or email@rguktong.ac.in"
                 }
                 className={loginInputWithIconClass}

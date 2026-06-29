@@ -43,7 +43,7 @@ async function run() {
   for (let i = 0; i < authRecords.length; i++) {
     const a = authRecords[i];
     // Hash new password: username@rguktong
-    const newPassword = `${a.username}@rguktong`;
+    const newPassword = `${a.username.toLowerCase()}@rguktong`;
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     
     try {
